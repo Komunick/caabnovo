@@ -1,0 +1,32 @@
+# Dependencies and build output
+node_modules/
+.next/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime and tooling
+*.log
+.cache/
+.turbo/
+.pnpm-store/
+.DS_Store
+Thumbs.db
+
+# Local IDE settings
+.idea/
+.vscode/
+
+# Local agent-private state; project skill definitions remain versioned
+.agents/**/.env*
+.agents/**/credentials*
+.agents/**/auth*
