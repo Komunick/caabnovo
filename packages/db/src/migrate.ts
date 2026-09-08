@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { loadWorkspaceEnv } from "@caab/config/load-env";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -55,6 +55,7 @@ export async function runMigrations(connectionString: string): Promise<void> {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  loadWorkspaceEnv();
   const connectionString = process.env.DATABASE_ADMIN_URL ?? process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_ADMIN_URL or DATABASE_URL is required");
   await runMigrations(connectionString);

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { loadWorkspaceEnv } from "./load-env";
 
 const serverEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -22,5 +23,6 @@ const serverEnvSchema = z.object({
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 
 export function loadServerEnv(source: NodeJS.ProcessEnv = process.env): ServerEnv {
+  if (source === process.env) loadWorkspaceEnv();
   return serverEnvSchema.parse(source);
 }
