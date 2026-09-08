@@ -3,6 +3,7 @@ import { expect, syntheticUsers, test } from "./fixtures";
 
 const adminUrl =
   process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab";
+const origin = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
 async function signIn(page: import("@playwright/test").Page) {
   await page.goto("/login");
@@ -55,7 +56,7 @@ test("quarantined upload remains private and unavailable for download", async ({
   const checksum = "a".repeat(64);
   const intent = await page.request.post("/api/v1/files/upload-intents", {
     headers: {
-      origin: "http://localhost:3000",
+      origin,
       "x-csrf-token": crypto.randomUUID(),
       "idempotency-key": crypto.randomUUID(),
     },

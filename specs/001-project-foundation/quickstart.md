@@ -31,6 +31,8 @@ docker compose up -d postgres storage clamav otel-collector
 pnpm db:migrate
 pnpm db:seed:dev
 pnpm dev
+# Em outro terminal:
+pnpm dev:worker
 ```
 
 Expected outcome:

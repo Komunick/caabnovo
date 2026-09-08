@@ -9,25 +9,26 @@ export const QUEUES = {
   deadLetter: "caab-dead-letter",
 } as const;
 
-export const queueDefinitions: Queue[] = Object.values(QUEUES)
-  .filter((name) => name !== QUEUES.deadLetter)
-  .map((name) => ({
-    name,
+export const queueDefinitions: Queue[] = [
+  {
+    name: QUEUES.deadLetter,
     policy: "standard",
-    retryLimit: 4,
-    retryDelay: 30,
-    retryBackoff: true,
-    retryDelayMax: 900,
-    expireInSeconds: 900,
-    heartbeatSeconds: 60,
-    retentionSeconds: 1_209_600,
-    deleteAfterSeconds: 604_800,
-    deadLetter: QUEUES.deadLetter,
-  }));
-
-queueDefinitions.push({
-  name: QUEUES.deadLetter,
-  policy: "standard",
-  retryLimit: 0,
-  deleteAfterSeconds: 0,
-});
+    retryLimit: 0,
+    deleteAfterSeconds: 0,
+  },
+  ...Object.values(QUEUES)
+    .filter((name) => name !== QUEUES.deadLetter)
+    .map((name) => ({
+      name,
+      policy: "standard",
+      retryLimit: 4,
+      retryDelay: 30,
+      retryBackoff: true,
+      retryDelayMax: 900,
+      expireInSeconds: 900,
+      heartbeatSeconds: 60,
+      retentionSeconds: 1_209_600,
+      deleteAfterSeconds: 604_800,
+      deadLetter: QUEUES.deadLetter,
+    })),
+];

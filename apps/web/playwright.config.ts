@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+const serverPort = new URL(baseURL).port || (baseURL.startsWith("https:") ? "443" : "80");
+
 export default defineConfig({
   testDir: "./tests/e2e",
   globalSetup: "./tests/e2e/global-setup.ts",
@@ -9,7 +12,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000",
+    baseURL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
@@ -20,8 +23,8 @@ export default defineConfig({
     { name: "tablet", use: { ...devices["iPad Pro 11"] } },
   ],
   webServer: {
-    command: "corepack pnpm --filter @caab/web build && corepack pnpm --filter @caab/web start",
-    url: "http://127.0.0.1:3000/livez",
+    command: `corepack pnpm --filter @caab/web build && corepack pnpm --filter @caab/web start --port ${serverPort}`,
+    url: new URL("/livez", baseURL).toString(),
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
