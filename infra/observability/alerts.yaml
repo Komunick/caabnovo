@@ -1,0 +1,49 @@
+groups:
+  - name: caab-foundation
+    rules:
+      - alert: CaabApiHighLatency
+        expr:
+          histogram_quantile(0.95, sum by (le)
+          (rate(http_server_request_duration_milliseconds_bucket[5m]))) > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API p95 latency is above 1 second"
+      - alert: CaabApiHighErrorRate
+        expr:
+          sum(rate(http_server_request_errors_total[5m])) /
+          clamp_min(sum(rate(http_server_request_duration_milliseconds_count[5m])), 1) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API server error rate is above 5%"
+      - alert: CaabWorkerQueueBacklog
+        expr: max(worker_queue_depth) > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "A worker queue has more than 100 pending jobs"
+      - alert: CaabScannerUnavailable
+        expr: increase(scanner_operation_failures_total{reason="unavailable"}[5m]) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "The antivirus scanner is unavailable; uploads remain quarantined"
+      - alert: CaabStorageErrors
+        expr: increase(storage_operation_errors_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Object storage operations are repeatedly failing"
+      - alert: CaabWorkerHeartbeatMissing
+        expr: caab_worker_ready == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No ready worker heartbeat is available"

@@ -25,7 +25,7 @@ test("administrator must complete MFA before administrative navigation", async (
   await expect(page).toHaveURL(/\/mfa$/);
   await page.getByLabel("Código de verificação").fill("000000");
   await page.getByRole("button", { name: "Verificar" }).click();
-  await expect(page.locator('p[role="alert"]')).toContainText("Código inválido");
+  await expect(page.getByRole("alert").filter({ hasText: "Código inválido" })).toBeVisible();
   await expect(page).toHaveURL(/\/mfa$/);
 });
 

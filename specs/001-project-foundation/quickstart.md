@@ -124,8 +124,8 @@ Expected evidence: SC-008 passes with automated report plus signed manual checkl
 
 Verify repository rules before merging:
 
-- `dev`: PR required, at least one human review, resolved conversations, current branch, unique
-  required checks, no direct/force push or deletion, rules applied to administrators.
+- `dev`: PR required without mandatory approving review, resolved conversations, current branch,
+  unique required checks, no direct/force push or deletion, rules applied to administrators.
 - `main`: update restricted to maintainers, PR head must be `dev`, CODEOWNER/maintainer approval,
   complete gates, no automated bypass and no force push/deletion.
 - CI rejects a PR to `main` whose head is not `dev`.

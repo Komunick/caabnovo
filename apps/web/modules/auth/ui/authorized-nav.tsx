@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Menu, MenuItem } from "@/components/ui/menu";
 import { PERMISSIONS } from "../permissions";
 
 export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly string[] }>) {
   const router = useRouter();
+  const pathname = usePathname();
   const allowed = new Set(permissions);
   const items = [
     { href: "/", label: "Início", visible: true },
@@ -31,17 +34,21 @@ export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly 
   }
 
   return (
-    <nav aria-label="Navegação administrativa">
+    <Menu label="Navegação administrativa">
       {items
         .filter(({ visible }) => visible)
         .map(({ href, label }) => (
-          <Link key={href} href={href}>
-            {label}
-          </Link>
+          <MenuItem key={href}>
+            <Link href={href} aria-current={pathname === href ? "page" : undefined}>
+              {label}
+            </Link>
+          </MenuItem>
         ))}
-      <button type="button" onClick={logout}>
-        Sair
-      </button>
-    </nav>
+      <MenuItem>
+        <Button intent="ghost" onClick={logout}>
+          Sair
+        </Button>
+      </MenuItem>
+    </Menu>
   );
 }

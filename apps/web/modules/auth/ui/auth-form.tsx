@@ -2,6 +2,11 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export function AuthForm({ mode }: Readonly<{ mode: "login" | "mfa" }>) {
   const router = useRouter();
@@ -44,26 +49,16 @@ export function AuthForm({ mode }: Readonly<{ mode: "login" | "mfa" }>) {
     <form method="post" onSubmit={submit} noValidate>
       {mode === "login" ? (
         <>
-          <div className="form-field">
-            <label htmlFor="email">E-mail</label>
-            <input id="email" name="email" type="email" autoComplete="username" required />
-          </div>
-          <div className="form-field">
-            <label htmlFor="password">Senha</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </div>
+          <FormField id="email" label="E-mail">
+            <Input name="email" type="email" autoComplete="username" required />
+          </FormField>
+          <FormField id="password" label="Senha">
+            <Input name="password" type="password" autoComplete="current-password" required />
+          </FormField>
         </>
       ) : (
-        <div className="form-field">
-          <label htmlFor="code">Código de verificação</label>
-          <input
-            id="code"
+        <FormField id="code" label="Código de verificação">
+          <Input
             name="code"
             inputMode="numeric"
             autoComplete="one-time-code"
@@ -71,12 +66,20 @@ export function AuthForm({ mode }: Readonly<{ mode: "login" | "mfa" }>) {
             maxLength={6}
             required
           />
-        </div>
+        </FormField>
       )}
-      {error ? <p role="alert">{error}</p> : null}
-      <button className="primary-button" type="submit" disabled={pending || !hydrated}>
-        {pending || !hydrated ? "Aguarde…" : mode === "login" ? "Entrar" : "Verificar"}
-      </button>
+      {error ? <Alert>{error}</Alert> : null}
+      <Button intent="primary" type="submit" disabled={pending || !hydrated}>
+        {pending || !hydrated ? (
+          <>
+            <Spinner label="Autenticando" /> Aguarde…
+          </>
+        ) : mode === "login" ? (
+          "Entrar"
+        ) : (
+          "Verificar"
+        )}
+      </Button>
     </form>
   );
 }

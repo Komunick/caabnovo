@@ -15,3 +15,6 @@ jobs:
         env:
           HEAD_REF: ${{ github.head_ref }}
         run: test "$HEAD_REF" = "dev"
+      - uses: actions/checkout@v4
+      - name: Require approved privacy and retention controls
+        run: 'grep -Fx "Status: APPROVED" specs/001-project-foundation/evidence/privacy.md'

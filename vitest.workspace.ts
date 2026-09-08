@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 
 const resolveConfig = {
   alias: {
+    "@": resolve("apps/web"),
     "server-only": resolve("apps/web/node_modules/server-only/empty.js"),
   },
 };
@@ -9,6 +10,7 @@ const resolveConfig = {
 export default [
   {
     resolve: resolveConfig,
+    oxc: { jsx: { runtime: "automatic" } },
     test: {
       name: "unit",
       include: ["apps/**/*.test.{ts,tsx}", "packages/**/src/**/*.test.ts"],

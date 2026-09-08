@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolveCurrentUser } from "@/modules/auth/current-user";
 import { AuthorizedNav } from "@/modules/auth/ui/authorized-nav";
+import { AppShell } from "@/components/app-shell";
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
   const requestHeaders = await headers();
@@ -12,15 +13,16 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   if (!identity) redirect("/login");
 
   return (
-    <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <strong>CAAB Administração</strong>
-        <p>{identity.name}</p>
-        <AuthorizedNav permissions={identity.permissions} />
-      </aside>
-      <main id="main-content" className="admin-content">
-        {children}
-      </main>
-    </div>
+    <AppShell
+      sidebar={
+        <>
+          <strong>CAAB Administração</strong>
+          <p>{identity.name}</p>
+          <AuthorizedNav permissions={identity.permissions} />
+        </>
+      }
+    >
+      {children}
+    </AppShell>
   );
 }

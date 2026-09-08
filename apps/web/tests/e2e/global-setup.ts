@@ -73,6 +73,8 @@ export default async function globalSetup() {
 
   try {
     await ensureUser(syntheticUsers.ordinary, "Usuário Sintético");
+    await ensureUser(syntheticUsers.accessManager, "Gestor de Acesso Sintético");
+    await ensureUser(syntheticUsers.auditor, "Auditor Sintético");
     const adminState = await ensureUser(syntheticUsers.administrator, "Administrador Sintético");
     if (adminState !== true) {
       const cookie =
@@ -97,6 +99,124 @@ export default async function globalSetup() {
         cookie,
       );
       if (!verify.ok) throw new Error(`Unable to confirm synthetic MFA: ${verify.status}`);
+    }
+
+    const users = await admin.query<{ id: string; email: string }>(
+      `SELECT id, email::text FROM "user" WHERE email = ANY($1::citext[])`,
+      [
+        [
+          syntheticUsers.accessManager.email,
+          syntheticUsers.auditor.email,
+          syntheticUsers.administrator.email,
+        ],
+      ],
+    );
+    const userIds = new Map(users.rows.map(({ email, id }) => [email, id]));
+    const permissions = [
+      "users:read",
+      "users:create",
+      "users:update",
+      "users:disable",
+      "roles:read",
+      "roles:grant",
+      "roles:revoke",
+      "audit:read",
+      "audit:export",
+      "files:create",
+      "files:read",
+      "files:delete",
+      "jobs:read",
+      "jobs:redrive",
+    ];
+    const permissionIds = new Map<string, string>();
+    for (const permission of permissions) {
+      const [resource, action] = permission.split(":");
+      const inserted = await admin.query<{ id: string }>(
+        `INSERT INTO permission (resource, action, description, sensitive)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (resource, action) DO UPDATE SET description = EXCLUDED.description
+         RETURNING id`,
+        [resource, action, `Synthetic ${permission}`, action !== "read"],
+      );
+      permissionIds.set(permission, inserted.rows[0]!.id);
+    }
+    const roleDefinitions = [
+      {
+        code: "access-manager",
+        name: "Gestor de acesso",
+        administrative: false,
+        permissions,
+        userId: userIds.get(syntheticUsers.accessManager.email),
+      },
+      {
+        code: "auditor",
+        name: "Auditor",
+        administrative: false,
+        permissions: ["audit:read", "audit:export"],
+        userId: userIds.get(syntheticUsers.auditor.email),
+      },
+      {
+        code: "administrator",
+        name: "Administrador",
+        administrative: true,
+        permissions,
+        userId: userIds.get(syntheticUsers.administrator.email),
+      },
+      {
+        code: "user-viewer",
+        name: "Consulta de usuários",
+        administrative: false,
+        permissions: ["users:read"],
+        userId: undefined,
+      },
+    ];
+    for (const definition of roleDefinitions) {
+      const inserted = await admin.query<{ id: string }>(
+        `INSERT INTO role (code, name, description, is_administrative)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (code) DO UPDATE SET
+           name = EXCLUDED.name, description = EXCLUDED.description,
+           is_administrative = EXCLUDED.is_administrative, status = 'active', deleted_at = NULL
+         RETURNING id`,
+        [
+          definition.code,
+          definition.name,
+          `Synthetic ${definition.name}`,
+          definition.administrative,
+        ],
+      );
+      const roleId = inserted.rows[0]!.id;
+      for (const permission of definition.permissions) {
+        await admin.query(
+          `INSERT INTO role_permission (role_id, permission_id) VALUES ($1, $2)
+           ON CONFLICT DO NOTHING`,
+          [roleId, permissionIds.get(permission)],
+        );
+      }
+      if (definition.userId) {
+        await admin.query(
+          `INSERT INTO user_role (user_id, role_id, granted_by, justification)
+           VALUES ($1, $2, $1, 'Bootstrap sintético E2E')
+           ON CONFLICT DO NOTHING`,
+          [definition.userId, roleId],
+        );
+      }
+    }
+    const managerId = userIds.get(syntheticUsers.accessManager.email);
+    if (managerId) {
+      await admin.query(
+        `INSERT INTO audit_event
+          (actor_user_id, effective_identity, action, entity_type, entity_id, before, after,
+           reason, origin, request_id, correlation_id)
+         VALUES ($1::uuid, $2, 'user.updated', 'user', $1::text, $3, $4,
+           'Fixture sintética E2E', 'system', gen_random_uuid(), gen_random_uuid())`,
+        [
+          managerId,
+          `user:${managerId}`,
+          JSON.stringify({ status: "active" }),
+          JSON.stringify({ status: "active", version: 1 }),
+        ],
+      );
     }
   } finally {
     await admin.end();

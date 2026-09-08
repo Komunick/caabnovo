@@ -9,6 +9,8 @@ export const roleReferenceSchema = z.object({
   name: z.string().min(1),
 });
 
+export type RoleReference = z.infer<typeof roleReferenceSchema>;
+
 export const currentUserSchema = z.object({
   id: idSchema,
   email: z.email(),
