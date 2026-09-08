@@ -1,0 +1,28 @@
+{
+  "name": "@caab/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./repositories/*": "./src/repositories/*.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "migrate": "tsx src/migrate.ts",
+    "seed:dev": "tsx src/seed-dev.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@caab/config": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "pg": "8.23.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/pg": "8.16.0",
+    "drizzle-kit": "0.31.10",
+    "typescript": "6.0.3"
+  }
+}

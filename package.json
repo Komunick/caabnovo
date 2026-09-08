@@ -1,0 +1,46 @@
+{
+  "name": "caab-internal-management",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "build": "corepack pnpm -r --if-present build",
+    "dev": "corepack pnpm --filter @caab/web dev",
+    "dev:worker": "corepack pnpm --filter @caab/worker dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "corepack pnpm -r --if-present typecheck",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "test:contract": "vitest run --project contract",
+    "test:e2e": "playwright test --config apps/web/playwright.config.ts",
+    "test:a11y": "playwright test --config apps/web/playwright.config.ts accessibility.spec.ts",
+    "db:migrate": "corepack pnpm --filter @caab/db migrate",
+    "db:seed:dev": "corepack pnpm --filter @caab/db seed:dev",
+    "contracts:generate": "corepack pnpm --filter @caab/contracts generate",
+    "security:scan": "corepack pnpm audit --audit-level high"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "9.39.2",
+    "@playwright/test": "1.62.1",
+    "@testcontainers/postgresql": "12.1.0",
+    "@types/node": "24.10.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "dotenv": "17.2.3",
+    "eslint": "9.39.2",
+    "globals": "16.5.0",
+    "prettier": "3.9.6",
+    "testcontainers": "12.1.0",
+    "tsx": "4.21.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.69.0",
+    "vitest": "4.1.11"
+  }
+}

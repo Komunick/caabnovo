@@ -25,15 +25,15 @@ an independent increment after the shared foundation.
 
 **Purpose**: Inicializar repositório, monorepo, ferramentas e governança obrigatória.
 
-- [ ] T001 Inicializar o repositório Git em `.git/`, criar `main` e `dev` com histórico comum e criar a branch curta `feature/project-foundation` a partir de `dev`
-- [ ] T002 Criar o workspace pnpm e fixar Node.js 24 LTS em `package.json`, `pnpm-workspace.yaml`, `.nvmrc` e `pnpm-lock.yaml`
-- [ ] T003 Criar os manifests mínimos da aplicação, worker e packages em `apps/web/package.json`, `apps/worker/package.json`, `packages/db/package.json`, `packages/contracts/package.json` e `packages/config/package.json`
-- [ ] T004 [P] Configurar TypeScript strict compartilhado em `packages/config/tsconfig.base.json`, `apps/web/tsconfig.json`, `apps/worker/tsconfig.json`, `packages/db/tsconfig.json` e `packages/contracts/tsconfig.json`
-- [ ] T005 [P] Configurar Prettier e ESLint com fronteiras de módulo e imports server-only em `prettier.config.mjs`, `eslint.config.mjs` e `packages/config/eslint/boundaries.mjs`
-- [ ] T006 [P] Definir configuração tipada e exemplo sem segredos em `.env.example`, `packages/config/src/env.ts` e `packages/config/src/index.ts`
-- [ ] T007 [P] Criar serviços locais isolados em `compose.yaml`, `infra/postgres/init.sql`, `infra/storage/init.sh`, `infra/clamav/clamd.conf` e `infra/observability/otel-collector.yaml`
-- [ ] T008 [P] Criar CODEOWNERS e templates de PR com segurança, permissões, migrations e rollback em `.github/CODEOWNERS` e `.github/pull_request_template.md`
-- [ ] T009 Definir rulesets aplicáveis para `dev` e `main`, incluindo PR obrigatório, checks, bloqueio de push/force-push e promoção humana `dev -> main`, em `infra/github/rulesets/dev.json`, `infra/github/rulesets/main.json` e `infra/github/apply-rulesets.ps1`
+- [X] T001 Inicializar o repositório Git em `.git/`, criar `main` e `dev` com histórico comum e criar a branch curta `feature/project-foundation` a partir de `dev`
+- [X] T002 Criar o workspace pnpm e fixar Node.js 24 LTS em `package.json`, `pnpm-workspace.yaml`, `.nvmrc` e `pnpm-lock.yaml`
+- [X] T003 Criar os manifests mínimos da aplicação, worker e packages em `apps/web/package.json`, `apps/worker/package.json`, `packages/db/package.json`, `packages/contracts/package.json` e `packages/config/package.json`
+- [X] T004 [P] Configurar TypeScript strict compartilhado em `packages/config/tsconfig.base.json`, `apps/web/tsconfig.json`, `apps/worker/tsconfig.json`, `packages/db/tsconfig.json` e `packages/contracts/tsconfig.json`
+- [X] T005 [P] Configurar Prettier e ESLint com fronteiras de módulo e imports server-only em `prettier.config.mjs`, `eslint.config.mjs` e `packages/config/eslint/boundaries.mjs`
+- [X] T006 [P] Definir configuração tipada e exemplo sem segredos em `.env.example`, `packages/config/src/env.ts` e `packages/config/src/index.ts`
+- [X] T007 [P] Criar serviços locais isolados em `compose.yaml`, `infra/postgres/init.sql`, `infra/storage/init.sh`, `infra/clamav/clamd.conf` e `infra/observability/otel-collector.yaml`
+- [X] T008 [P] Criar CODEOWNERS e templates de PR com segurança, permissões, migrations e rollback em `.github/CODEOWNERS` e `.github/pull_request_template.md`
+- [X] T009 Definir rulesets aplicáveis para `dev` e `main`, incluindo PR obrigatório, checks, bloqueio de push/force-push e promoção humana `dev -> main`, em `infra/github/rulesets/dev.json`, `infra/github/rulesets/main.json` e `infra/github/apply-rulesets.ps1`
 
 **Checkpoint**: workspace instalável, serviços locais definidos e governança Git reproduzível.
 
@@ -45,25 +45,25 @@ an independent increment after the shared foundation.
 
 **⚠️ CRITICAL**: Nenhuma história começa até esta fase concluir e seus testes-base passarem.
 
-- [ ] T010 Implementar conexão única e runner de migrations em `packages/db/src/client.ts`, `packages/db/src/migrate.ts` e `packages/db/src/index.ts`
-- [ ] T011 Criar migration inicial de extensões, enums e identidades em `packages/db/migrations/0001_identity.sql` conforme `data-model.md`
-- [ ] T012 Criar migration RBAC para `role`, `permission`, `role_permission` e `user_role` em `packages/db/migrations/0002_rbac.sql`
-- [ ] T013 Criar migrations append-only de auditoria/segurança e privilégios runtime em `packages/db/migrations/0003_audit.sql` e `packages/db/migrations/0004_runtime_privileges.sql`
-- [ ] T014 Criar migration de arquivos, idempotência, jobs e heartbeat em `packages/db/migrations/0005_operations.sql`
-- [ ] T015 [P] Implementar schemas compartilhados de erro, paginação, IDs e correlação em `packages/contracts/src/common.ts`, `packages/contracts/src/errors.ts` e `packages/contracts/src/index.ts`
-- [ ] T016 [P] Implementar gerador e validador determinístico OpenAPI 3.1.1 em `packages/contracts/src/openapi.ts`, `packages/contracts/scripts/generate-openapi.ts` e `packages/contracts/tests/openapi.test.ts`
-- [ ] T017 Implementar contexto server-only de request, correlation ID e ator em `apps/web/modules/shared/request-context.ts` e `apps/worker/src/request-context.ts`
-- [ ] T018 [P] Implementar logs JSON com allowlist/redação de senhas, tokens, cookies e PII em `apps/web/modules/shared/logger.ts`, `apps/worker/src/logger.ts` e `packages/config/src/redaction.ts`
-- [ ] T019 Implementar writer transacional append-only de auditoria em `apps/web/modules/audit/audit-writer.ts` e `packages/db/src/repositories/audit-writer.ts`
-- [ ] T020 Implementar DAL e guard deny-by-default `requirePermission` em `apps/web/modules/auth/session-dal.ts`, `apps/web/modules/auth/authorize.ts` e `apps/web/modules/auth/permissions.ts`
-- [ ] T021 Implementar fábrica pg-boss, configuração explícita de filas e bootstrap do worker em `apps/worker/src/queue.ts`, `apps/worker/src/queues.ts` e `apps/worker/src/main.ts`
-- [ ] T022 Implementar persistência comum de `job_execution` e idempotência em `packages/db/src/repositories/job-execution.ts` e `apps/worker/src/job-runtime.ts`
-- [ ] T023 [P] Configurar OpenTelemetry para web, worker e Collector em `apps/web/instrumentation.ts`, `apps/worker/src/instrumentation.ts` e `infra/observability/otel-collector.yaml`
-- [ ] T024 [P] Criar harness de integração com migrations reais em `packages/db/tests/postgres-container.ts`, `packages/db/tests/migrations.test.ts` e `vitest.workspace.ts`
-- [ ] T025 [P] Criar harness E2E/acessibilidade e fixtures sintéticas em `apps/web/playwright.config.ts`, `apps/web/tests/e2e/fixtures.ts` e `apps/web/tests/e2e/accessibility.ts`
-- [ ] T026 Criar matriz rastreável OWASP ASVS v5.0.0 L2 para a Fundação em `docs/security/asvs-v5-l2-foundation.md`
-- [ ] T027 Criar CI bloqueante para lockfile, format, lint, typecheck, unit, integração, autorização, contrato, build, E2E, acessibilidade e scans em `.github/workflows/ci.yml` e `.github/workflows/promotion.yml`
-- [ ] T028 Validar somente migrations do zero, privilégios append-only, geração OpenAPI e smoke dos harnesses fundacionais em `packages/db/tests/migrations.test.ts`, `packages/contracts/tests/openapi.test.ts` e `specs/001-project-foundation/evidence/foundation.md`; reservar o quickstart completo para T094
+- [X] T010 Implementar conexão única e runner de migrations em `packages/db/src/client.ts`, `packages/db/src/migrate.ts` e `packages/db/src/index.ts`
+- [X] T011 Criar migration inicial de extensões, enums e identidades em `packages/db/migrations/0001_identity.sql` conforme `data-model.md`
+- [X] T012 Criar migration RBAC para `role`, `permission`, `role_permission` e `user_role` em `packages/db/migrations/0002_rbac.sql`
+- [X] T013 Criar migrations append-only de auditoria/segurança e privilégios runtime em `packages/db/migrations/0003_audit.sql` e `packages/db/migrations/0004_runtime_privileges.sql`
+- [X] T014 Criar migration de arquivos, idempotência, jobs e heartbeat em `packages/db/migrations/0005_operations.sql`
+- [X] T015 [P] Implementar schemas compartilhados de erro, paginação, IDs e correlação em `packages/contracts/src/common.ts`, `packages/contracts/src/errors.ts` e `packages/contracts/src/index.ts`
+- [X] T016 [P] Implementar gerador e validador determinístico OpenAPI 3.1.1 em `packages/contracts/src/openapi.ts`, `packages/contracts/scripts/generate-openapi.ts` e `packages/contracts/tests/openapi.test.ts`
+- [X] T017 Implementar contexto server-only de request, correlation ID e ator em `apps/web/modules/shared/request-context.ts` e `apps/worker/src/request-context.ts`
+- [X] T018 [P] Implementar logs JSON com allowlist/redação de senhas, tokens, cookies e PII em `apps/web/modules/shared/logger.ts`, `apps/worker/src/logger.ts` e `packages/config/src/redaction.ts`
+- [X] T019 Implementar writer transacional append-only de auditoria em `apps/web/modules/audit/audit-writer.ts` e `packages/db/src/repositories/audit-writer.ts`
+- [X] T020 Implementar DAL e guard deny-by-default `requirePermission` em `apps/web/modules/auth/session-dal.ts`, `apps/web/modules/auth/authorize.ts` e `apps/web/modules/auth/permissions.ts`
+- [X] T021 Implementar fábrica pg-boss, configuração explícita de filas e bootstrap do worker em `apps/worker/src/queue.ts`, `apps/worker/src/queues.ts` e `apps/worker/src/main.ts`
+- [X] T022 Implementar persistência comum de `job_execution` e idempotência em `packages/db/src/repositories/job-execution.ts` e `apps/worker/src/job-runtime.ts`
+- [X] T023 [P] Configurar OpenTelemetry para web, worker e Collector em `apps/web/instrumentation.ts`, `apps/worker/src/instrumentation.ts` e `infra/observability/otel-collector.yaml`
+- [X] T024 [P] Criar harness de integração com migrations reais em `packages/db/tests/postgres-container.ts`, `packages/db/tests/migrations.test.ts` e `vitest.workspace.ts`
+- [X] T025 [P] Criar harness E2E/acessibilidade e fixtures sintéticas em `apps/web/playwright.config.ts`, `apps/web/tests/e2e/fixtures.ts` e `apps/web/tests/e2e/accessibility.ts`
+- [X] T026 Criar matriz rastreável OWASP ASVS v5.0.0 L2 para a Fundação em `docs/security/asvs-v5-l2-foundation.md`
+- [X] T027 Criar CI bloqueante para lockfile, format, lint, typecheck, unit, integração, autorização, contrato, build, E2E, acessibilidade e scans em `.github/workflows/ci.yml` e `.github/workflows/promotion.yml`
+- [X] T028 Validar somente migrations do zero, privilégios append-only, geração OpenAPI e smoke dos harnesses fundacionais em `packages/db/tests/migrations.test.ts`, `packages/contracts/tests/openapi.test.ts` e `specs/001-project-foundation/evidence/foundation.md`; reservar o quickstart completo para T094
 
 **Checkpoint**: banco, segurança transversal, contratos, jobs, telemetria e gates prontos; US1 pode
 começar. US2, US3 e US5 dependem do núcleo de autenticação entregue pela US1.
@@ -80,21 +80,21 @@ revogação e acesso permitido/negado; a próxima ação após revogação falha
 
 ### Tests for User Story 1
 
-- [ ] T029 [P] [US1] Criar testes de unidade deny-by-default, composição de permissões e estado administrativo/MFA em `apps/web/modules/auth/authorize.test.ts` e `apps/web/modules/auth/admin-mfa-policy.test.ts`
-- [ ] T030 [P] [US1] Criar testes de integração Better Auth para sessão persistida, cookie seguro, TOTP, revogação e usuário inativo em `apps/web/tests/integration/auth-session.test.ts`
-- [ ] T031 [P] [US1] Criar testes de contrato para `/api/v1/me` e erros 401/403 seguros em `apps/web/tests/contract/current-user.test.ts`
-- [ ] T032 [P] [US1] Criar E2E de login, MFA administrativo, logout, sessão revogada e navegação autorizada em `apps/web/tests/e2e/auth-access.spec.ts`
+- [X] T029 [P] [US1] Criar testes de unidade deny-by-default, composição de permissões e estado administrativo/MFA em `apps/web/modules/auth/authorize.test.ts` e `apps/web/modules/auth/admin-mfa-policy.test.ts`
+- [X] T030 [P] [US1] Criar testes de integração Better Auth para sessão persistida, cookie seguro, TOTP, revogação e usuário inativo em `apps/web/tests/integration/auth-session.test.ts`
+- [X] T031 [P] [US1] Criar testes de contrato para `/api/v1/me` e erros 401/403 seguros em `apps/web/tests/contract/current-user.test.ts`
+- [X] T032 [P] [US1] Criar E2E de login, MFA administrativo, logout, sessão revogada e navegação autorizada em `apps/web/tests/e2e/auth-access.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T033 [US1] Configurar Better Auth com Drizzle, sessão opaca sem cookie cache e cookies seguros em `apps/web/modules/auth/auth.ts` e `apps/web/app/api/auth/[...all]/route.ts`
-- [ ] T034 [US1] Implementar enrollment, confirmação, recovery e exigência TOTP para administradores em `apps/web/modules/auth/mfa-service.ts` e `apps/web/modules/auth/admin-mfa-policy.ts`
-- [ ] T035 [P] [US1] Implementar repositório de eventos de segurança redigidos em `packages/db/src/repositories/security-events.ts` e `apps/web/modules/auth/security-events.ts`
-- [ ] T036 [US1] Implementar consulta de identidade/permissões atuais e `/api/v1/me` em `apps/web/modules/auth/current-user.ts` e `apps/web/app/api/v1/me/route.ts`
-- [ ] T037 [P] [US1] Criar telas acessíveis de login e desafio MFA em `apps/web/app/(auth)/login/page.tsx`, `apps/web/app/(auth)/mfa/page.tsx` e `apps/web/modules/auth/ui/auth-form.tsx`
-- [ ] T038 [US1] Criar shell administrativo protegido e navegação filtrada por permissão em `apps/web/app/(admin)/layout.tsx`, `apps/web/app/(admin)/page.tsx` e `apps/web/modules/auth/ui/authorized-nav.tsx`
-- [ ] T039 [US1] Implementar logout e revogação de sessões em `apps/web/modules/auth/session-actions.ts` e `apps/web/app/(admin)/sessions/page.tsx`
-- [ ] T040 [US1] Executar a validação independente da US1 e registrar resultados SC-001/SC-002 em `specs/001-project-foundation/evidence/us1-access.md`
+- [X] T033 [US1] Configurar Better Auth com Drizzle, sessão opaca sem cookie cache e cookies seguros em `apps/web/modules/auth/auth.ts` e `apps/web/app/api/auth/[...all]/route.ts`
+- [X] T034 [US1] Implementar enrollment, confirmação, recovery e exigência TOTP para administradores em `apps/web/modules/auth/mfa-service.ts` e `apps/web/modules/auth/admin-mfa-policy.ts`
+- [X] T035 [P] [US1] Implementar repositório de eventos de segurança redigidos em `packages/db/src/repositories/security-events.ts` e `apps/web/modules/auth/security-events.ts`
+- [X] T036 [US1] Implementar consulta de identidade/permissões atuais e `/api/v1/me` em `apps/web/modules/auth/current-user.ts` e `apps/web/app/api/v1/me/route.ts`
+- [X] T037 [P] [US1] Criar telas acessíveis de login e desafio MFA em `apps/web/app/(auth)/login/page.tsx`, `apps/web/app/(auth)/mfa/page.tsx` e `apps/web/modules/auth/ui/auth-form.tsx`
+- [X] T038 [US1] Criar shell administrativo protegido e navegação filtrada por permissão em `apps/web/app/(admin)/layout.tsx`, `apps/web/app/(admin)/page.tsx` e `apps/web/modules/auth/ui/authorized-nav.tsx`
+- [X] T039 [US1] Implementar logout e revogação de sessões em `apps/web/modules/auth/session-actions.ts` e `apps/web/app/(admin)/sessions/page.tsx`
+- [X] T040 [US1] Executar a validação independente da US1 e registrar resultados SC-001/SC-002 em `specs/001-project-foundation/evidence/us1-access.md`
 
 **Checkpoint**: US1 entrega acesso seguro demonstrável e pode ser apresentada como MVP técnico.
 

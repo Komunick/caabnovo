@@ -16,6 +16,7 @@ test-results/
 
 # Runtime and tooling
 *.log
+*.tsbuildinfo
 .cache/
 .turbo/
 .pnpm-store/
