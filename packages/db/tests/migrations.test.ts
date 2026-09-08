@@ -30,7 +30,31 @@ describe("database foundation migrations", () => {
       "0003_audit.sql",
       "0004_runtime_privileges.sql",
       "0005_operations.sql",
+      "0006_pgboss.sql",
     ]);
+  });
+
+  it("provisions the isolated pg-boss schema for the runtime role", async () => {
+    const result = await admin.query<{ owner: string; version: number }>(
+      `SELECT n.nspowner::regrole::text AS owner, v.version
+       FROM pg_namespace n
+       CROSS JOIN pgboss.version v
+       WHERE n.nspname = 'pgboss'`,
+    );
+    expect(result.rows).toEqual([{ owner: "caab_runtime", version: 40 }]);
+
+    await admin.query("SET ROLE caab_runtime");
+    await admin.query(
+      `SELECT pgboss.create_queue(
+        'migration-test',
+        '{"policy":"standard","retryLimit":2,"retryDelay":0,"retryBackoff":false,"expireInSeconds":900,"retentionSeconds":1209600,"deleteAfterSeconds":604800,"partition":false,"notify":false}'::jsonb
+      )`,
+    );
+    const queue = await admin.query<{ name: string }>(
+      "SELECT name FROM pgboss.queue WHERE name = 'migration-test'",
+    );
+    await admin.query("RESET ROLE");
+    expect(queue.rows).toEqual([{ name: "migration-test" }]);
   });
 
   it("prevents audit UPDATE and DELETE for the runtime role", async () => {

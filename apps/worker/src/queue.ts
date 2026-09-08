@@ -6,8 +6,8 @@ export function createQueue(connectionString: string): PgBoss {
     connectionString,
     schema: "pgboss",
     application_name: "caab-worker",
-    migrate: true,
-    createSchema: true,
+    migrate: false,
+    createSchema: false,
     supervise: true,
     useListenNotify: true,
   });

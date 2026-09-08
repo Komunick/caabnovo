@@ -49,7 +49,8 @@ export async function createJobExecution(
 export async function markJobRunning(db: Queryable, id: string): Promise<void> {
   await db.query(
     `UPDATE job_execution SET status = 'running', started_at = COALESCE(started_at, now()),
-      heartbeat_at = now(), attempt_count = attempt_count + 1 WHERE id = $1 AND status IN ('queued', 'running')`,
+      heartbeat_at = now(), finished_at = NULL, safe_error_code = NULL, safe_error_message = NULL,
+      attempt_count = attempt_count + 1 WHERE id = $1 AND status IN ('queued', 'running', 'failed')`,
     [id],
   );
 }
@@ -83,4 +84,68 @@ export async function markJobFailed(
       safe_error_code = $2, safe_error_message = $3 WHERE id = $1 AND status = 'running'`,
     [id, code, safeMessage],
   );
+}
+
+export interface JobExecutionRecord {
+  id: string;
+  jobType: string;
+  status: "queued" | "running" | "succeeded" | "failed";
+  progress: number;
+  attemptCount: number;
+  attemptLimit: number;
+  safeErrorCode: string | null;
+  safeErrorMessage: string | null;
+  createdAt: Date;
+  finishedAt: Date | null;
+  correlationId: string;
+}
+
+export async function findJobExecution(
+  db: Queryable,
+  id: string,
+): Promise<JobExecutionRecord | null> {
+  const result = await db.query<{
+    id: string;
+    job_type: string;
+    status: JobExecutionRecord["status"];
+    progress: number;
+    attempt_count: number;
+    attempt_limit: number;
+    safe_error_code: string | null;
+    safe_error_message: string | null;
+    created_at: Date;
+    finished_at: Date | null;
+    correlation_id: string;
+  }>(
+    `SELECT id, job_type, status, progress, attempt_count, attempt_limit,
+      safe_error_code, safe_error_message, created_at, finished_at, correlation_id
+     FROM job_execution WHERE id = $1`,
+    [id],
+  );
+  const row = result.rows[0];
+  return row
+    ? {
+        id: row.id,
+        jobType: row.job_type,
+        status: row.status,
+        progress: row.progress,
+        attemptCount: row.attempt_count,
+        attemptLimit: row.attempt_limit,
+        safeErrorCode: row.safe_error_code,
+        safeErrorMessage: row.safe_error_message,
+        createdAt: row.created_at,
+        finishedAt: row.finished_at,
+        correlationId: row.correlation_id,
+      }
+    : null;
+}
+
+export async function redriveJobExecution(db: Queryable, id: string): Promise<boolean> {
+  const result = await db.query(
+    `UPDATE job_execution SET status = 'queued', finished_at = NULL,
+      safe_error_code = NULL, safe_error_message = NULL, heartbeat_at = NULL
+     WHERE id = $1 AND status = 'failed' AND attempt_count < attempt_limit`,
+    [id],
+  );
+  return result.rowCount === 1;
 }

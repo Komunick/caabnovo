@@ -110,21 +110,21 @@ fora da autoridade, desativar conta e comprovar revogação e auditoria atômica
 
 ### Tests for User Story 2
 
-- [ ] T041 [P] [US2] Criar testes de unidade para concessão, vigência, revogação e prevenção de autoelevação em `apps/web/modules/users/access-policy.test.ts`
-- [ ] T042 [P] [US2] Criar testes PostgreSQL para unicidade de atribuição, concorrência do último administrador e rollback com auditoria em `apps/web/tests/integration/user-access.test.ts`
-- [ ] T043 [P] [US2] Criar testes de contrato para users, roles, paginação, 409 e 422 em `apps/web/tests/contract/users.test.ts` e `apps/web/tests/contract/roles.test.ts`
-- [ ] T044 [P] [US2] Criar E2E de criação, alteração, desativação, concessão/revogação e negações em `apps/web/tests/e2e/user-administration.spec.ts`
+- [X] T041 [P] [US2] Criar testes de unidade para concessão, vigência, revogação e prevenção de autoelevação em `apps/web/modules/users/access-policy.test.ts`
+- [X] T042 [P] [US2] Criar testes PostgreSQL para unicidade de atribuição, concorrência do último administrador e rollback com auditoria em `apps/web/tests/integration/user-access.test.ts`
+- [X] T043 [P] [US2] Criar testes de contrato para users, roles, paginação, 409 e 422 em `apps/web/tests/contract/users.test.ts` e `apps/web/tests/contract/roles.test.ts`
+- [X] T044 [P] [US2] Criar E2E de criação, alteração, desativação, concessão/revogação e negações em `apps/web/tests/e2e/user-administration.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T045 [US2] Implementar repositórios de usuário, função, permissão e atribuição em `packages/db/src/repositories/users.ts`, `packages/db/src/repositories/roles.ts` e `packages/db/src/repositories/user-roles.ts`
-- [ ] T046 [US2] Implementar serviço transacional de contas com soft delete, versão otimista, revogação de sessões, auditoria e evento de segurança redigido em `apps/web/modules/users/user-service.ts`
-- [ ] T047 [US2] Implementar serviço de concessão/revogação com autoridade do ator, MFA, lock do último administrador, auditoria e evento de segurança redigido em `apps/web/modules/users/role-assignment-service.ts`
-- [ ] T048 [US2] Implementar schemas Zod e handlers `/api/v1/users` e `/api/v1/users/{userId}` em `packages/contracts/src/users.ts`, `apps/web/app/api/v1/users/route.ts` e `apps/web/app/api/v1/users/[userId]/route.ts`
-- [ ] T049 [US2] Implementar handlers de roles e atribuições em `packages/contracts/src/roles.ts`, `apps/web/app/api/v1/roles/route.ts` e `apps/web/app/api/v1/users/[userId]/roles/[roleId]/route.ts`
-- [ ] T050 [P] [US2] Criar lista/detalhe/formulário acessíveis de usuários em `apps/web/app/(admin)/users/page.tsx`, `apps/web/app/(admin)/users/[userId]/page.tsx` e `apps/web/modules/users/ui/user-form.tsx`
-- [ ] T051 [US2] Criar editor de funções/permissões com confirmação e justificativa em `apps/web/modules/users/ui/role-assignment-form.tsx` e `apps/web/modules/users/ui/sensitive-action-dialog.tsx`
-- [ ] T052 [US2] Executar validação independente da US2 e registrar atomicidade, negações e SC-005 em `specs/001-project-foundation/evidence/us2-users.md`
+- [X] T045 [US2] Implementar repositórios de usuário, função, permissão e atribuição em `packages/db/src/repositories/users.ts`, `packages/db/src/repositories/roles.ts` e `packages/db/src/repositories/user-roles.ts`
+- [X] T046 [US2] Implementar serviço transacional de contas com soft delete, versão otimista, revogação de sessões, auditoria e evento de segurança redigido em `apps/web/modules/users/user-service.ts`
+- [X] T047 [US2] Implementar serviço de concessão/revogação com autoridade do ator, MFA, lock do último administrador, auditoria e evento de segurança redigido em `apps/web/modules/users/role-assignment-service.ts`
+- [X] T048 [US2] Implementar schemas Zod e handlers `/api/v1/users` e `/api/v1/users/{userId}` em `packages/contracts/src/users.ts`, `apps/web/app/api/v1/users/route.ts` e `apps/web/app/api/v1/users/[userId]/route.ts`
+- [X] T049 [US2] Implementar handlers de roles e atribuições em `packages/contracts/src/roles.ts`, `apps/web/app/api/v1/roles/route.ts` e `apps/web/app/api/v1/users/[userId]/roles/[roleId]/route.ts`
+- [X] T050 [P] [US2] Criar lista/detalhe/formulário acessíveis de usuários em `apps/web/app/(admin)/users/page.tsx`, `apps/web/app/(admin)/users/[userId]/page.tsx` e `apps/web/modules/users/ui/user-form.tsx`
+- [X] T051 [US2] Criar editor de funções/permissões com confirmação e justificativa em `apps/web/modules/users/ui/role-assignment-form.tsx` e `apps/web/modules/users/ui/sensitive-action-dialog.tsx`
+- [X] T052 [US2] Executar validação independente da US2 e registrar atomicidade, negações e SC-005 em `specs/001-project-foundation/evidence/us2-users.md`
 
 **Checkpoint**: US2 administra acesso com menor privilégio sem depender da UI para proteção.
 
@@ -139,18 +139,18 @@ permissão e provar que update/delete e acesso não autorizado falham.
 
 ### Tests for User Story 3
 
-- [ ] T053 [P] [US3] Criar testes de integração para append-only, filtros, redação, paginação e rollback atômico em `apps/web/tests/integration/audit.test.ts`
-- [ ] T054 [P] [US3] Criar testes de contrato de pesquisa/exportação e 401/403 em `apps/web/tests/contract/audit.test.ts`
-- [ ] T055 [P] [US3] Criar E2E de auditor read-only, busca combinada e exportação autorizada em `apps/web/tests/e2e/audit.spec.ts`
+- [X] T053 [P] [US3] Criar testes de integração para append-only, filtros, redação, paginação e rollback atômico em `apps/web/tests/integration/audit.test.ts`
+- [X] T054 [P] [US3] Criar testes de contrato de pesquisa/exportação e 401/403 em `apps/web/tests/contract/audit.test.ts`
+- [X] T055 [P] [US3] Criar E2E de auditor read-only, busca combinada e exportação autorizada em `apps/web/tests/e2e/audit.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T056 [US3] Implementar consulta paginada allowlisted de auditoria em `packages/db/src/repositories/audit-query.ts` e `apps/web/modules/audit/audit-query-service.ts`
-- [ ] T057 [US3] Implementar schemas e handlers de `/api/v1/audit-events` e `/api/v1/audit-exports` em `packages/contracts/src/audit.ts`, `apps/web/app/api/v1/audit-events/route.ts` e `apps/web/app/api/v1/audit-exports/route.ts`
-- [ ] T058 [US3] Implementar job idempotente de exportação redigida e entrega privada temporária em `apps/worker/src/jobs/audit-export.ts` e `apps/web/modules/audit/audit-export-service.ts`
-- [ ] T059 [P] [US3] Criar página acessível de filtros e detalhe antes/depois em `apps/web/app/(admin)/audit/page.tsx` e `apps/web/modules/audit/ui/audit-table.tsx`
-- [ ] T060 [US3] Criar fluxo autorizado de exportação com justificativa e acompanhamento em `apps/web/modules/audit/ui/audit-export-dialog.tsx` e `apps/web/app/(admin)/audit/exports/[jobId]/page.tsx`
-- [ ] T061 [US3] Executar validação independente da US3 e registrar SC-003/SC-004 em `specs/001-project-foundation/evidence/us3-audit.md`
+- [X] T056 [US3] Implementar consulta paginada allowlisted de auditoria em `packages/db/src/repositories/audit-query.ts` e `apps/web/modules/audit/audit-query-service.ts`
+- [X] T057 [US3] Implementar schemas e handlers de `/api/v1/audit-events` e `/api/v1/audit-exports` em `packages/contracts/src/audit.ts`, `apps/web/app/api/v1/audit-events/route.ts` e `apps/web/app/api/v1/audit-exports/route.ts`
+- [X] T058 [US3] Implementar job idempotente de exportação redigida e entrega privada temporária em `apps/worker/src/jobs/audit-export.ts` e `apps/web/modules/audit/audit-export-service.ts`
+- [X] T059 [P] [US3] Criar página acessível de filtros e detalhe antes/depois em `apps/web/app/(admin)/audit/page.tsx` e `apps/web/modules/audit/ui/audit-table.tsx`
+- [X] T060 [US3] Criar fluxo autorizado de exportação com justificativa e acompanhamento em `apps/web/modules/audit/ui/audit-export-dialog.tsx` e `apps/web/app/(admin)/audit/exports/[jobId]/page.tsx`
+- [X] T061 [US3] Executar validação independente da US3 e registrar SC-003/SC-004 em `specs/001-project-foundation/evidence/us3-audit.md`
 
 **Checkpoint**: US3 permite investigação íntegra, redigida e somente leitura.
 
@@ -166,18 +166,18 @@ apenas visual, com Axe e revisão manual registradas.
 
 ### Tests for User Story 4
 
-- [ ] T062 [P] [US4] Criar testes de unidade de tokens, variantes e nomes acessíveis dos componentes em `apps/web/components/ui/ui-contracts.test.tsx`
-- [ ] T063 [P] [US4] Criar varredura Axe das páginas e estados essenciais em `apps/web/tests/e2e/accessibility.spec.ts`
-- [ ] T064 [P] [US4] Criar E2E somente-teclado, foco, zoom/reflow e breakpoints de tablet em `apps/web/tests/e2e/keyboard-responsive.spec.ts`
+- [X] T062 [P] [US4] Criar testes de unidade de tokens, variantes e nomes acessíveis dos componentes em `apps/web/components/ui/ui-contracts.test.tsx`
+- [X] T063 [P] [US4] Criar varredura Axe das páginas e estados essenciais em `apps/web/tests/e2e/accessibility.spec.ts`
+- [X] T064 [P] [US4] Criar E2E somente-teclado, foco, zoom/reflow e breakpoints de tablet em `apps/web/tests/e2e/keyboard-responsive.spec.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T065 [US4] Definir tokens institucionais, contraste, tipografia, espaçamento, foco e densidade em `apps/web/app/globals.css` e `apps/web/styles/tokens.css`
-- [ ] T066 [P] [US4] Criar primitivas locais Button, Input, FormField, Alert e Spinner sobre HTML/Radix em `apps/web/components/ui/button.tsx`, `apps/web/components/ui/input.tsx`, `apps/web/components/ui/form-field.tsx`, `apps/web/components/ui/alert.tsx` e `apps/web/components/ui/spinner.tsx`
-- [ ] T067 [P] [US4] Criar Dialog, Menu, Table e Pagination acessíveis com ícones Lucide estáticos em `apps/web/components/ui/dialog.tsx`, `apps/web/components/ui/menu.tsx`, `apps/web/components/ui/table.tsx` e `apps/web/components/ui/pagination.tsx`
-- [ ] T068 [US4] Aplicar layout responsivo, skip link, landmarks e feedback global em `apps/web/app/layout.tsx`, `apps/web/components/app-shell.tsx` e `apps/web/components/live-region.tsx`
-- [ ] T069 [US4] Executar revisão manual WCAG 2.2 AA e registrar teclado, foco, contraste, reflow e leitor de tela em `specs/001-project-foundation/evidence/us4-accessibility.md`
-- [ ] T070 [US4] Corrigir todas as falhas automatizadas/manuais da US4 nos arquivos indicados em `specs/001-project-foundation/evidence/us4-accessibility.md` e anexar resultado final no mesmo arquivo
+- [X] T065 [US4] Definir tokens institucionais, contraste, tipografia, espaçamento, foco e densidade em `apps/web/app/globals.css` e `apps/web/styles/tokens.css`
+- [X] T066 [P] [US4] Criar primitivas locais Button, Input, FormField, Alert e Spinner sobre HTML/Radix em `apps/web/components/ui/button.tsx`, `apps/web/components/ui/input.tsx`, `apps/web/components/ui/form-field.tsx`, `apps/web/components/ui/alert.tsx` e `apps/web/components/ui/spinner.tsx`
+- [X] T067 [P] [US4] Criar Dialog, Menu, Table e Pagination acessíveis com ícones Lucide estáticos em `apps/web/components/ui/dialog.tsx`, `apps/web/components/ui/menu.tsx`, `apps/web/components/ui/table.tsx` e `apps/web/components/ui/pagination.tsx`
+- [X] T068 [US4] Aplicar layout responsivo, skip link, landmarks e feedback global em `apps/web/app/layout.tsx`, `apps/web/components/app-shell.tsx` e `apps/web/components/live-region.tsx`
+- [X] T069 [US4] Executar revisão manual WCAG 2.2 AA e registrar teclado, foco, contraste, reflow e leitor de tela em `specs/001-project-foundation/evidence/us4-accessibility.md`
+- [X] T070 [US4] Corrigir todas as falhas automatizadas/manuais da US4 nos arquivos indicados em `specs/001-project-foundation/evidence/us4-accessibility.md` e anexar resultado final no mesmo arquivo
 
 **Checkpoint**: US4 comprova WCAG 2.2 AA no escopo da Fundação e linguagem visual Lucide única.
 
@@ -193,23 +193,23 @@ idempotência, estados, correlação, alertas e bloqueio de arquivo não aprovad
 
 ### Tests for User Story 5
 
-- [ ] T071 [P] [US5] Criar testes de unidade das máquinas de estado de job/arquivo e redação de erros em `apps/worker/tests/job-state.test.ts` e `apps/worker/tests/file-state.test.ts`
-- [ ] T072 [P] [US5] Criar testes PostgreSQL de idempotência concorrente, retry, heartbeat e redrive em `apps/worker/tests/job-runtime.integration.test.ts`
-- [ ] T073 [P] [US5] Criar testes de integração de upload para MIME/signatura divergente, tamanho, checksum, antivírus e scanner indisponível em `apps/worker/tests/file-scan.integration.test.ts`
-- [ ] T074 [P] [US5] Criar testes de contrato para upload intent, finalize, download e status de job em `apps/web/tests/contract/files-jobs.test.ts`
-- [ ] T075 [P] [US5] Criar E2E de progresso, falha terminal, redrive autorizado e arquivo privado em `apps/web/tests/e2e/operations.spec.ts`
+- [X] T071 [P] [US5] Criar testes de unidade das máquinas de estado de job/arquivo e redação de erros em `apps/worker/tests/job-state.test.ts` e `apps/worker/tests/file-state.test.ts`
+- [X] T072 [P] [US5] Criar testes PostgreSQL de idempotência concorrente, retry, heartbeat e redrive em `apps/worker/tests/job-runtime.integration.test.ts`
+- [X] T073 [P] [US5] Criar testes de integração de upload para MIME/signatura divergente, tamanho, checksum, antivírus e scanner indisponível em `apps/worker/tests/file-scan.integration.test.ts`
+- [X] T074 [P] [US5] Criar testes de contrato para upload intent, finalize, download e status de job em `apps/web/tests/contract/files-jobs.test.ts`
+- [X] T075 [P] [US5] Criar E2E de progresso, falha terminal, redrive autorizado e arquivo privado em `apps/web/tests/e2e/operations.spec.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T076 [US5] Implementar adapter S3-compatible com quarentena privada, URLs curtas e checksum em `apps/web/modules/files/object-storage.ts` e `apps/worker/src/object-storage.ts`
-- [ ] T077 [US5] Implementar serviço transacional de upload intent/finalize/download autorizado em `apps/web/modules/files/file-service.ts`
-- [ ] T078 [US5] Implementar schemas e handlers de arquivos/status de jobs em `packages/contracts/src/files.ts`, `packages/contracts/src/jobs.ts`, `apps/web/app/api/v1/files/upload-intents/route.ts`, `apps/web/app/api/v1/files/[fileId]/finalize/route.ts`, `apps/web/app/api/v1/files/[fileId]/download/route.ts` e `apps/web/app/api/v1/jobs/[jobId]/route.ts`
-- [ ] T079 [US5] Implementar handler idempotente de detecção MIME/magic bytes, limites e ClamAV fail-closed em `apps/worker/src/jobs/scan-file.ts` e `apps/worker/src/clamav.ts`
-- [ ] T080 [US5] Implementar promoção limpa, rejeição, retry e reconciliador DB/storage em `apps/worker/src/jobs/promote-file.ts` e `apps/worker/src/jobs/reconcile-files.ts`
-- [ ] T081 [US5] Implementar liveness/readiness web e heartbeat/readiness worker em `apps/web/app/livez/route.ts`, `apps/web/app/readyz/route.ts`, `apps/worker/src/health.ts` e `packages/db/src/repositories/worker-heartbeat.ts`
-- [ ] T082 [P] [US5] Definir métricas, traces e alertas de latência, erros, fila, scanner e storage em `apps/web/modules/shared/metrics.ts`, `apps/worker/src/metrics.ts` e `infra/observability/alerts.yaml`
-- [ ] T083 [US5] Criar páginas autorizadas de jobs, progresso, falhas e redrive justificado em `apps/web/app/(admin)/operations/jobs/page.tsx`, `apps/web/app/(admin)/operations/jobs/[jobId]/page.tsx` e `apps/web/modules/jobs/ui/redrive-dialog.tsx`
-- [ ] T084 [US5] Executar validação independente da US5 e registrar SC-007/SC-010 em `specs/001-project-foundation/evidence/us5-operations.md`
+- [X] T076 [US5] Implementar adapter S3-compatible com quarentena privada, URLs curtas e checksum em `apps/web/modules/files/object-storage.ts` e `apps/worker/src/object-storage.ts`
+- [X] T077 [US5] Implementar serviço transacional de upload intent/finalize/download autorizado em `apps/web/modules/files/file-service.ts`
+- [X] T078 [US5] Implementar schemas e handlers de arquivos/status de jobs em `packages/contracts/src/files.ts`, `packages/contracts/src/jobs.ts`, `apps/web/app/api/v1/files/upload-intents/route.ts`, `apps/web/app/api/v1/files/[fileId]/finalize/route.ts`, `apps/web/app/api/v1/files/[fileId]/download/route.ts` e `apps/web/app/api/v1/jobs/[jobId]/route.ts`
+- [X] T079 [US5] Implementar handler idempotente de detecção MIME/magic bytes, limites e ClamAV fail-closed em `apps/worker/src/jobs/scan-file.ts` e `apps/worker/src/clamav.ts`
+- [X] T080 [US5] Implementar promoção limpa, rejeição, retry e reconciliador DB/storage em `apps/worker/src/jobs/promote-file.ts` e `apps/worker/src/jobs/reconcile-files.ts`
+- [X] T081 [US5] Implementar liveness/readiness web e heartbeat/readiness worker em `apps/web/app/livez/route.ts`, `apps/web/app/readyz/route.ts`, `apps/worker/src/health.ts` e `packages/db/src/repositories/worker-heartbeat.ts`
+- [X] T082 [P] [US5] Definir métricas, traces e alertas de latência, erros, fila, scanner e storage em `apps/web/modules/shared/metrics.ts`, `apps/worker/src/metrics.ts` e `infra/observability/alerts.yaml`
+- [X] T083 [US5] Criar páginas autorizadas de jobs, progresso, falhas e redrive justificado em `apps/web/app/(admin)/operations/jobs/page.tsx`, `apps/web/app/(admin)/operations/jobs/[jobId]/page.tsx` e `apps/web/modules/jobs/ui/redrive-dialog.tsx`
+- [X] T084 [US5] Executar validação independente da US5 e registrar SC-007/SC-010 em `specs/001-project-foundation/evidence/us5-operations.md`
 
 **Checkpoint**: US5 prova jobs observáveis/idempotentes e ciclo de arquivo seguro sem fail-open.
 
@@ -219,15 +219,15 @@ idempotência, estados, correlação, alertas e bloqueio de arquivo não aprovad
 
 **Purpose**: Consolidar qualidade, segurança, documentação e entrega sem ampliar o escopo funcional.
 
-- [ ] T085 [P] Regenerar e validar o contrato final em `specs/001-project-foundation/contracts/openapi.yaml` e registrar ausência de drift em `specs/001-project-foundation/evidence/contracts.md`
-- [ ] T086 [P] Criar testes canário contra vazamento de senha, token, cookie, stack e PII em `apps/web/tests/integration/redaction.test.ts` e `apps/worker/tests/redaction.test.ts`
+- [X] T085 [P] Regenerar e validar o contrato final em `specs/001-project-foundation/contracts/openapi.yaml` e registrar ausência de drift em `specs/001-project-foundation/evidence/contracts.md`
+- [X] T086 [P] Criar testes canário contra vazamento de senha, token, cookie, stack e PII em `apps/web/tests/integration/redaction.test.ts` e `apps/worker/tests/redaction.test.ts`
 - [ ] T087 [P] Criar testes SC-006 para login, MFA, navegação, listagem/gravação de usuários/permissões e pesquisa de auditoria em `apps/web/tests/performance/foundation.k6.ts` e registrar perfil operacional, dados sintéticos e resultados em `specs/001-project-foundation/evidence/performance.md`
-- [ ] T088 Revisar imports e remover abstrações sem três usos reais conforme KISS/DRY/YAGNI em `apps/web/modules/`, `apps/worker/src/` e `packages/`
+- [X] T088 Revisar imports e remover abstrações sem três usos reais conforme KISS/DRY/YAGNI em `apps/web/modules/`, `apps/worker/src/` e `packages/`
 - [ ] T089 Obter aprovação Jurídico/DPO e implementar inventário, finalidade, acesso, retenção, anonimização/descarte e preservação legal por categoria em `docs/privacy/data-inventory.md`, `docs/privacy/retention-policy.md`, `apps/worker/src/jobs/apply-retention.ts` e `specs/001-project-foundation/evidence/privacy.md`; bloquear PROD enquanto a aprovação ou os controles estiverem incompletos
-- [ ] T090 Executar SAST, secret scan, dependency scan e revisão dos controles ASVS; atualizar evidências em `docs/security/asvs-v5-l2-foundation.md` e `specs/001-project-foundation/evidence/security.md`
-- [ ] T091 Validar backup/restauração local e rollback de migrations sem apagar dados em `infra/postgres/backup.ps1`, `infra/postgres/restore.ps1` e `specs/001-project-foundation/evidence/recovery.md`
-- [ ] T092 [P] Documentar operação, incidentes, credenciais comprometidas, fila esgotada e scanner indisponível em `docs/runbooks/foundation.md`
-- [ ] T093 [P] Documentar arquitetura, fronteiras de módulos e decisões finais em `docs/architecture/foundation.md` e `docs/architecture/decisions/001-foundation.md`
+- [X] T090 Executar SAST, secret scan, dependency scan e revisão dos controles ASVS; atualizar evidências em `docs/security/asvs-v5-l2-foundation.md` e `specs/001-project-foundation/evidence/security.md`
+- [X] T091 Validar backup/restauração local e rollback de migrations sem apagar dados em `infra/postgres/backup.ps1`, `infra/postgres/restore.ps1` e `specs/001-project-foundation/evidence/recovery.md`
+- [X] T092 [P] Documentar operação, incidentes, credenciais comprometidas, fila esgotada e scanner indisponível em `docs/runbooks/foundation.md`
+- [X] T093 [P] Documentar arquitetura, fronteiras de módulos e decisões finais em `docs/architecture/foundation.md` e `docs/architecture/decisions/001-foundation.md`
 - [ ] T094 Executar todos os comandos e cenários de `specs/001-project-foundation/quickstart.md` em checkout limpo e registrar o resultado em `specs/001-project-foundation/evidence/final-validation.md`
 - [ ] T095 Aplicar/validar os rulesets remotos `dev`/`main`, demonstrar bloqueio de push direto e promoção inválida e registrar evidências em `specs/001-project-foundation/evidence/branch-protection.md`
 

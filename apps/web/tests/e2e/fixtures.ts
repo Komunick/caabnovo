@@ -2,6 +2,8 @@ import { test as base, expect } from "@playwright/test";
 
 export const syntheticUsers = {
   ordinary: { email: "ordinary@example.test", password: "Synthetic-Only-Password-1!" },
+  accessManager: { email: "manager@example.test", password: "Synthetic-Only-Password-3!" },
+  auditor: { email: "auditor@example.test", password: "Synthetic-Only-Password-4!" },
   administrator: { email: "admin@example.test", password: "Synthetic-Only-Password-2!" },
 } as const;
 

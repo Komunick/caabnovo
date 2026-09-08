@@ -22,7 +22,7 @@ export default defineConfig({
   webServer: {
     command: "corepack pnpm --filter @caab/web build && corepack pnpm --filter @caab/web start",
     url: "http://127.0.0.1:3000/livez",
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
       ...process.env,

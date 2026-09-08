@@ -2,10 +2,7 @@ openapi: 3.1.1
 info:
   title: CAAB Foundation API
   version: 1.0.0
-  description: >-
-    Versioned administrative contracts for identity context, access management, audit,
-    files and asynchronous operation status. Authentication endpoints are delegated to
-    Better Auth and constrained by authentication.md.
+  description: Versioned administrative contracts for identity context, access management, audit, files and asynchronous operation status. Authentication endpoints are delegated to Better Auth and constrained by authentication.md.
 servers:
   - url: /api/v1
 security:
@@ -16,129 +13,129 @@ paths:
       operationId: getCurrentUser
       summary: Return the authenticated user's effective identity and permissions
       responses:
-        '200':
+        "200":
           description: Effective identity
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CurrentUser'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/CurrentUser"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /users:
     get:
       operationId: listUsers
       summary: List users visible to an authorized administrator
       parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
         - name: status
           in: query
           schema:
-            $ref: '#/components/schemas/UserStatus'
+            $ref: "#/components/schemas/UserStatus"
       responses:
-        '200':
+        "200":
           description: User page
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserPage'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
+                $ref: "#/components/schemas/UserPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
     post:
       operationId: createUser
       summary: Create an internal user
       parameters:
-        - $ref: '#/components/parameters/CsrfToken'
-        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: "#/components/parameters/CsrfToken"
+        - $ref: "#/components/parameters/IdempotencyKey"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUserRequest'
+              $ref: "#/components/schemas/CreateUserRequest"
       responses:
-        '201':
+        "201":
           description: User created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '422':
-          $ref: '#/components/responses/Unprocessable'
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
   /users/{userId}:
     patch:
       operationId: updateUser
       summary: Update or disable a user with justification
       parameters:
-        - $ref: '#/components/parameters/UserId'
-        - $ref: '#/components/parameters/CsrfToken'
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/CsrfToken"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUserRequest'
+              $ref: "#/components/schemas/UpdateUserRequest"
       responses:
-        '200':
+        "200":
           description: Updated user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '422':
-          $ref: '#/components/responses/Unprocessable'
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
   /users/{userId}/roles/{roleId}:
     put:
       operationId: grantUserRole
       summary: Grant a role with a mandatory justification
       parameters:
-        - $ref: '#/components/parameters/UserId'
-        - $ref: '#/components/parameters/RoleId'
-        - $ref: '#/components/parameters/CsrfToken'
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/RoleId"
+        - $ref: "#/components/parameters/CsrfToken"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RoleChangeRequest'
+              $ref: "#/components/schemas/RoleChangeRequest"
       responses:
-        '204':
+        "204":
           description: Role granted
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '422':
-          $ref: '#/components/responses/Unprocessable'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
     delete:
       operationId: revokeUserRole
       summary: Revoke a role with a mandatory justification
       parameters:
-        - $ref: '#/components/parameters/UserId'
-        - $ref: '#/components/parameters/RoleId'
-        - $ref: '#/components/parameters/CsrfToken'
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/RoleId"
+        - $ref: "#/components/parameters/CsrfToken"
         - name: justification
           in: query
           required: true
@@ -146,40 +143,40 @@ paths:
             type: string
             minLength: 1
       responses:
-        '204':
+        "204":
           description: Role revoked
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /roles:
     get:
       operationId: listRoles
       summary: List active roles and their permission identifiers
       responses:
-        '200':
+        "200":
           description: Roles
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Role'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
+                  $ref: "#/components/schemas/Role"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /audit-events:
     get:
       operationId: listAuditEvents
       summary: Search redacted append-only audit events
       parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
         - name: actorId
           in: query
           schema:
@@ -204,140 +201,170 @@ paths:
             type: string
             format: date-time
       responses:
-        '200':
+        "200":
           description: Audit page
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuditPage'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
+                $ref: "#/components/schemas/AuditPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /audit-exports:
     post:
       operationId: createAuditExport
       summary: Start an authorized audit export
       parameters:
-        - $ref: '#/components/parameters/CsrfToken'
-        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: "#/components/parameters/CsrfToken"
+        - $ref: "#/components/parameters/IdempotencyKey"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuditExportRequest'
+              $ref: "#/components/schemas/AuditExportRequest"
       responses:
-        '202':
+        "202":
           description: Export accepted
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobReference'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '422':
-          $ref: '#/components/responses/Unprocessable'
+                $ref: "#/components/schemas/JobReference"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
   /files/upload-intents:
     post:
       operationId: createUploadIntent
       summary: Create a short-lived upload intent for private quarantine
       parameters:
-        - $ref: '#/components/parameters/CsrfToken'
-        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: "#/components/parameters/CsrfToken"
+        - $ref: "#/components/parameters/IdempotencyKey"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUploadIntentRequest'
+              $ref: "#/components/schemas/CreateUploadIntentRequest"
       responses:
-        '201':
+        "201":
           description: Upload intent
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UploadIntent'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '413':
-          $ref: '#/components/responses/PayloadTooLarge'
-        '422':
-          $ref: '#/components/responses/Unprocessable'
+                $ref: "#/components/schemas/UploadIntent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
   /files/{fileId}/finalize:
     post:
       operationId: finalizeUpload
       summary: Verify the quarantined object and enqueue scanning
       parameters:
-        - $ref: '#/components/parameters/FileId'
-        - $ref: '#/components/parameters/CsrfToken'
+        - $ref: "#/components/parameters/FileId"
+        - $ref: "#/components/parameters/CsrfToken"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FinalizeUploadRequest'
+              $ref: "#/components/schemas/FinalizeUploadRequest"
       responses:
-        '202':
+        "202":
           description: Scan accepted
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobReference'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '422':
-          $ref: '#/components/responses/Unprocessable'
+                $ref: "#/components/schemas/JobReference"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
   /files/{fileId}/download:
     get:
       operationId: createDownloadUrl
       summary: Return a short-lived URL for an authorized available file
       parameters:
-        - $ref: '#/components/parameters/FileId'
+        - $ref: "#/components/parameters/FileId"
       responses:
-        '200':
+        "200":
           description: Download grant
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DownloadGrant'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
+                $ref: "#/components/schemas/DownloadGrant"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
   /jobs/{jobId}:
     get:
       operationId: getJobStatus
       summary: Return authorized progress and safe terminal status
       parameters:
-        - $ref: '#/components/parameters/JobId'
+        - $ref: "#/components/parameters/JobId"
       responses:
-        '200':
+        "200":
           description: Job status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Job'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /jobs/{jobId}/redrive:
+    post:
+      operationId: redriveJob
+      summary: Requeue a failed job with an audited justification
+      parameters:
+        - $ref: "#/components/parameters/JobId"
+        - $ref: "#/components/parameters/CsrfToken"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RedriveJobRequest"
+      responses:
+        "202":
+          description: Job accepted for another attempt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
 components:
   securitySchemes:
     sessionCookie:
@@ -408,238 +435,482 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     Unauthorized:
       description: Authentication required or expired
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     Forbidden:
       description: Permission denied
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     NotFound:
       description: Resource not found or not visible to caller
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     Conflict:
       description: State, version or idempotency conflict
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     Unprocessable:
       description: Validation failed
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: "#/components/schemas/ValidationError"
     PayloadTooLarge:
       description: Declared or actual object exceeds configured limit
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
   schemas:
     UserStatus:
       type: string
-      enum: [active, disabled]
+      enum:
+        - active
+        - disabled
     User:
       type: object
       additionalProperties: false
-      required: [id, email, name, status, twoFactorEnabled, roles, version, createdAt]
+      required:
+        - id
+        - email
+        - name
+        - status
+        - twoFactorEnabled
+        - roles
+        - version
+        - createdAt
       properties:
-        id: { type: string, format: uuid }
-        email: { type: string, format: email }
-        name: { type: string, minLength: 1, maxLength: 160 }
-        status: { $ref: '#/components/schemas/UserStatus' }
-        twoFactorEnabled: { type: boolean }
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        status:
+          $ref: "#/components/schemas/UserStatus"
+        twoFactorEnabled:
+          type: boolean
         roles:
           type: array
-          items: { $ref: '#/components/schemas/RoleReference' }
-        version: { type: integer, minimum: 1 }
-        createdAt: { type: string, format: date-time }
-        updatedAt: { type: [string, 'null'], format: date-time }
+          items:
+            $ref: "#/components/schemas/RoleReference"
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type:
+            - string
+            - "null"
+          format: date-time
     CurrentUser:
       allOf:
-        - $ref: '#/components/schemas/User'
+        - $ref: "#/components/schemas/User"
         - type: object
-          required: [permissions]
+          required:
+            - permissions
           properties:
             permissions:
               type: array
-              items: { type: string, pattern: '^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$' }
+              items:
+                type: string
+                pattern: ^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$
     CreateUserRequest:
       type: object
       additionalProperties: false
-      required: [email, name, roleIds, justification]
+      required:
+        - email
+        - name
+        - roleIds
+        - justification
       properties:
-        email: { type: string, format: email }
-        name: { type: string, minLength: 1, maxLength: 160 }
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
         roleIds:
           type: array
           uniqueItems: true
-          items: { type: string, format: uuid }
-        justification: { type: string, minLength: 1 }
+          items:
+            type: string
+            format: uuid
+        justification:
+          type: string
+          minLength: 1
     UpdateUserRequest:
       type: object
       additionalProperties: false
-      required: [version, justification]
+      required:
+        - version
+        - justification
       properties:
-        name: { type: string, minLength: 1, maxLength: 160 }
-        status: { $ref: '#/components/schemas/UserStatus' }
-        version: { type: integer, minimum: 1 }
-        justification: { type: string, minLength: 1 }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        status:
+          $ref: "#/components/schemas/UserStatus"
+        version:
+          type: integer
+          minimum: 1
+        justification:
+          type: string
+          minLength: 1
     RoleChangeRequest:
       type: object
       additionalProperties: false
-      required: [justification]
+      required:
+        - justification
       properties:
-        validUntil: { type: [string, 'null'], format: date-time }
-        justification: { type: string, minLength: 1 }
+        validUntil:
+          type:
+            - string
+            - "null"
+          format: date-time
+        justification:
+          type: string
+          minLength: 1
     RoleReference:
       type: object
       additionalProperties: false
-      required: [id, code, name]
+      required:
+        - id
+        - code
+        - name
       properties:
-        id: { type: string, format: uuid }
-        code: { type: string }
-        name: { type: string }
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
     Role:
       allOf:
-        - $ref: '#/components/schemas/RoleReference'
+        - $ref: "#/components/schemas/RoleReference"
         - type: object
-          required: [administrative, permissions]
+          required:
+            - administrative
+            - permissions
           properties:
-            administrative: { type: boolean }
+            administrative:
+              type: boolean
             permissions:
               type: array
-              items: { type: string }
+              items:
+                type: string
     UserPage:
       type: object
-      required: [items, nextCursor]
+      required:
+        - items
+        - nextCursor
       properties:
         items:
           type: array
-          items: { $ref: '#/components/schemas/User' }
-        nextCursor: { type: [string, 'null'] }
+          items:
+            $ref: "#/components/schemas/User"
+        nextCursor:
+          type:
+            - string
+            - "null"
     AuditEvent:
       type: object
       additionalProperties: false
-      required: [id, occurredAt, action, entityType, entityId, origin, requestId, correlationId]
+      required:
+        - id
+        - occurredAt
+        - action
+        - entityType
+        - entityId
+        - origin
+        - requestId
+        - correlationId
       properties:
-        id: { type: string, format: uuid }
-        occurredAt: { type: string, format: date-time }
-        actorUserId: { type: [string, 'null'], format: uuid }
-        action: { type: string }
-        entityType: { type: string }
-        entityId: { type: string }
-        before: { type: [object, 'null'], additionalProperties: true }
-        after: { type: [object, 'null'], additionalProperties: true }
-        reason: { type: [string, 'null'] }
-        origin: { type: string, enum: [web, worker, system] }
-        requestId: { type: string, format: uuid }
-        correlationId: { type: string, format: uuid }
+        id:
+          type: string
+          format: uuid
+        occurredAt:
+          type: string
+          format: date-time
+        actorUserId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        before:
+          type:
+            - object
+            - "null"
+          additionalProperties: true
+        after:
+          type:
+            - object
+            - "null"
+          additionalProperties: true
+        reason:
+          type:
+            - string
+            - "null"
+        origin:
+          type: string
+          enum:
+            - web
+            - worker
+            - system
+        requestId:
+          type: string
+          format: uuid
+        correlationId:
+          type: string
+          format: uuid
     AuditPage:
       type: object
-      required: [items, nextCursor]
+      required:
+        - items
+        - nextCursor
       properties:
         items:
           type: array
-          items: { $ref: '#/components/schemas/AuditEvent' }
-        nextCursor: { type: [string, 'null'] }
+          items:
+            $ref: "#/components/schemas/AuditEvent"
+        nextCursor:
+          type:
+            - string
+            - "null"
     AuditExportRequest:
       type: object
       additionalProperties: false
-      required: [from, to, justification]
+      required:
+        - from
+        - to
+        - justification
       properties:
-        from: { type: string, format: date-time }
-        to: { type: string, format: date-time }
-        actorId: { type: string, format: uuid }
-        action: { type: string }
-        entityType: { type: string }
-        justification: { type: string, minLength: 1 }
+        from:
+          type: string
+          format: date-time
+        to:
+          type: string
+          format: date-time
+        actorId:
+          type: string
+          format: uuid
+        action:
+          type: string
+        entityType:
+          type: string
+        justification:
+          type: string
+          minLength: 1
     CreateUploadIntentRequest:
       type: object
       additionalProperties: false
-      required: [originalName, declaredMime, sizeBytes, checksumSha256, ownerType, ownerId]
+      required:
+        - originalName
+        - declaredMime
+        - sizeBytes
+        - checksumSha256
+        - ownerType
+        - ownerId
       properties:
-        originalName: { type: string, minLength: 1, maxLength: 255 }
-        declaredMime: { type: string, maxLength: 127 }
-        sizeBytes: { type: integer, minimum: 1 }
-        checksumSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
-        ownerType: { type: string, minLength: 1, maxLength: 64 }
-        ownerId: { type: string, minLength: 1, maxLength: 128 }
+        originalName:
+          type: string
+          minLength: 1
+          maxLength: 255
+        declaredMime:
+          type: string
+          enum:
+            - application/pdf
+            - image/jpeg
+            - image/png
+        sizeBytes:
+          type: integer
+          minimum: 1
+          maximum: 26214400
+        checksumSha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        ownerType:
+          type: string
+          minLength: 1
+          maxLength: 64
+        ownerId:
+          type: string
+          minLength: 1
+          maxLength: 128
     UploadIntent:
       type: object
       additionalProperties: false
-      required: [fileId, uploadUrl, expiresAt, requiredHeaders]
+      required:
+        - fileId
+        - uploadUrl
+        - expiresAt
+        - requiredHeaders
       properties:
-        fileId: { type: string, format: uuid }
-        uploadUrl: { type: string, format: uri }
-        expiresAt: { type: string, format: date-time }
+        fileId:
+          type: string
+          format: uuid
+        uploadUrl:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
         requiredHeaders:
           type: object
-          additionalProperties: { type: string }
+          additionalProperties:
+            type: string
     FinalizeUploadRequest:
       type: object
       additionalProperties: false
-      required: [checksumSha256]
+      required:
+        - checksumSha256
       properties:
-        checksumSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+        checksumSha256:
+          type: string
+          pattern: ^[a-f0-9]{64}$
     DownloadGrant:
       type: object
       additionalProperties: false
-      required: [url, expiresAt]
+      required:
+        - url
+        - expiresAt
       properties:
-        url: { type: string, format: uri }
-        expiresAt: { type: string, format: date-time }
+        url:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
     JobReference:
       type: object
       additionalProperties: false
-      required: [jobId, statusUrl]
+      required:
+        - jobId
+        - statusUrl
       properties:
-        jobId: { type: string, format: uuid }
-        statusUrl: { type: string, format: uri-reference }
+        jobId:
+          type: string
+          format: uuid
+        statusUrl:
+          type: string
+          format: uri-reference
     Job:
       type: object
       additionalProperties: false
-      required: [id, jobType, status, progress, attemptCount, createdAt, correlationId]
+      required:
+        - id
+        - jobType
+        - status
+        - progress
+        - attemptCount
+        - createdAt
+        - correlationId
       properties:
-        id: { type: string, format: uuid }
-        jobType: { type: string }
-        status: { type: string, enum: [queued, running, succeeded, failed] }
-        progress: { type: integer, minimum: 0, maximum: 100 }
-        attemptCount: { type: integer, minimum: 0 }
-        safeErrorCode: { type: [string, 'null'] }
-        safeErrorMessage: { type: [string, 'null'] }
-        createdAt: { type: string, format: date-time }
-        finishedAt: { type: [string, 'null'], format: date-time }
-        correlationId: { type: string, format: uuid }
+        id:
+          type: string
+          format: uuid
+        jobType:
+          type: string
+        status:
+          type: string
+          enum:
+            - queued
+            - running
+            - succeeded
+            - failed
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        attemptCount:
+          type: integer
+          minimum: 0
+        safeErrorCode:
+          type:
+            - string
+            - "null"
+        safeErrorMessage:
+          type:
+            - string
+            - "null"
+        createdAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type:
+            - string
+            - "null"
+          format: date-time
+        correlationId:
+          type: string
+          format: uuid
+    RedriveJobRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 500
     Error:
       type: object
       additionalProperties: false
-      required: [code, message, requestId]
+      required:
+        - code
+        - message
+        - requestId
       properties:
-        code: { type: string }
-        message: { type: string }
-        requestId: { type: string, format: uuid }
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string
+          format: uuid
     ValidationError:
       allOf:
-        - $ref: '#/components/schemas/Error'
+        - $ref: "#/components/schemas/Error"
         - type: object
-          required: [fields]
+          required:
+            - fields
           properties:
             fields:
               type: array
               items:
                 type: object
-                required: [path, code]
+                required:
+                  - path
+                  - code
                 properties:
-                  path: { type: string }
-                  code: { type: string }
+                  path:
+                    type: string
+                  code:
+                    type: string
