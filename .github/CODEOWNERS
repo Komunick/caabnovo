@@ -1,0 +1,7 @@
+* @Gabriel-Komunick
+
+/.github/ @Gabriel-Komunick
+/packages/db/migrations/ @Gabriel-Komunick
+/apps/web/modules/auth/ @Gabriel-Komunick
+/apps/web/modules/audit/ @Gabriel-Komunick
+/infra/ @Gabriel-Komunick
