@@ -1,4 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
+import { loadWorkspaceEnv } from "@caab/config";
+
+loadWorkspaceEnv();
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 const serverPort = new URL(baseURL).port || (baseURL.startsWith("https:") ? "443" : "80");
