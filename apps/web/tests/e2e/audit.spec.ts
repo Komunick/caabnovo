@@ -13,7 +13,10 @@ async function signIn(page: import("@playwright/test").Page, email: string, pass
 
 test("auditor searches combined filters and starts an authorized export", async ({ page }) => {
   await signIn(page, syntheticUsers.auditor.email, syntheticUsers.auditor.password);
-  await page.getByRole("link", { name: "Auditoria" }).click();
+  await page
+    .getByRole("navigation", { name: "Navegação administrativa" })
+    .getByRole("link", { name: "Auditoria", exact: true })
+    .click();
   await expect(page.getByRole("heading", { name: "Auditoria" })).toBeVisible();
   await expectWcag22AA(page);
 
@@ -33,7 +36,7 @@ test("auditor searches combined filters and starts an authorized export", async 
 
 test("ordinary user cannot access audit search or export", async ({ page }) => {
   await signIn(page, syntheticUsers.ordinary.email, syntheticUsers.ordinary.password);
-  await expect(page.getByRole("link", { name: "Auditoria" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Auditoria", exact: true })).toHaveCount(0);
   await page.goto("/audit");
   await expect(page.getByText("Você não tem permissão para acessar a auditoria.")).toBeVisible();
 

@@ -32,7 +32,10 @@ test("operator follows progress, sees safe failure and performs an authorized re
       [jobId, `e2e-${jobId}`, fileId],
     );
     await signIn(page);
-    await page.getByRole("link", { name: "Operações" }).click();
+    await page
+      .getByRole("navigation", { name: "Navegação administrativa" })
+      .getByRole("link", { name: "Operações", exact: true })
+      .click();
     await expect(page.getByRole("heading", { name: "Processamentos" })).toBeVisible({
       timeout: 15_000,
     });
