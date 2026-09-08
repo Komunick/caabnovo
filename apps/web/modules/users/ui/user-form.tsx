@@ -60,8 +60,17 @@ export function UserForm(props: Readonly<UserFormProps>) {
     if (!response.ok) {
       setError(await errorMessage(response));
     } else {
-      setMessage(editing ? "Alterações salvas." : "Usuário criado.");
-      if (!editing) form.reset();
+      if (!editing) {
+        const created = (await response.json()) as { id?: string };
+        if (!created.id) {
+          setError("O usuário foi criado, mas não foi possível abrir o cadastro.");
+          setPending(false);
+          return;
+        }
+        router.push(`/users/${created.id}`);
+        return;
+      }
+      setMessage("Alterações salvas.");
       router.refresh();
     }
     setPending(false);

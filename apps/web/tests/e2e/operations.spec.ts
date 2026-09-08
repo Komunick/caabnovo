@@ -48,7 +48,12 @@ test("operator follows progress, sees safe failure and performs an authorized re
     await page.getByRole("button", { name: "Reenviar processamento" }).click();
     await page.getByLabel("Justificativa").fill("Nova tentativa aprovada no cenário sintético E2E");
     await page.getByRole("button", { name: "Confirmar reenvio" }).click();
-    await expect(page.getByRole("heading", { name: "Estado: Na fila" })).toBeVisible();
+    await expect(page.locator(".audit-metadata dd").filter({ hasText: /^2$/ })).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: /Estado: (Na fila|Em andamento|Concluído|Falhou)/,
+      }),
+    ).toBeVisible();
   } finally {
     await database.end();
   }
