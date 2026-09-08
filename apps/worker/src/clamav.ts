@@ -59,5 +59,5 @@ function writeInstream(socket: Socket, body: Uint8Array): void {
     socket.write(length);
     socket.write(chunk);
   }
-  socket.end(Buffer.alloc(4));
+  socket.write(Buffer.alloc(4));
 }
