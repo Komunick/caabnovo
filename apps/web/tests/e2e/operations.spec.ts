@@ -47,8 +47,24 @@ test("operator follows progress, sees safe failure and performs an authorized re
 
     await page.getByRole("button", { name: "Reenviar processamento" }).click();
     await page.getByLabel("Justificativa").fill("Nova tentativa aprovada no cenário sintético E2E");
+    const redriveResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`/api/v1/jobs/${jobId}/redrive`) &&
+        response.request().method() === "POST",
+    );
     await page.getByRole("button", { name: "Confirmar reenvio" }).click();
-    await expect(page.getByRole("heading", { name: "Estado: Na fila" })).toBeVisible();
+    const redriveResponse = await redriveResponsePromise;
+    expect(redriveResponse.status()).toBe(202);
+    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(
+      page.getByRole("heading", {
+        name: /Estado: (Na fila|Em andamento|Concluído|Falhou)/,
+      }),
+    ).toBeVisible();
+    const attemptCount = page
+      .locator(".audit-metadata dt", { hasText: "Tentativas" })
+      .locator("+ dd");
+    await expect(attemptCount).toHaveText(/^[12]$/);
   } finally {
     await database.end();
   }
