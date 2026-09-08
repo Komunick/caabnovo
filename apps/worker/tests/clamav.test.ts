@@ -13,7 +13,7 @@ afterEach(async () => {
 });
 
 async function fakeClamd(response: string): Promise<number> {
-  const server = createServer({ allowHalfOpen: true }, (socket) => {
+  const server = createServer((socket) => {
     let received = Buffer.alloc(0);
     socket.on("data", (chunk: Buffer) => {
       received = Buffer.concat([received, chunk]);

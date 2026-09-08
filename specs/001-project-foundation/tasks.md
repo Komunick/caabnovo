@@ -228,7 +228,7 @@ idempotência, estados, correlação, alertas e bloqueio de arquivo não aprovad
 - [X] T091 Validar backup/restauração local e rollback de migrations sem apagar dados em `infra/postgres/backup.ps1`, `infra/postgres/restore.ps1` e `specs/001-project-foundation/evidence/recovery.md`
 - [X] T092 [P] Documentar operação, incidentes, credenciais comprometidas, fila esgotada e scanner indisponível em `docs/runbooks/foundation.md`
 - [X] T093 [P] Documentar arquitetura, fronteiras de módulos e decisões finais em `docs/architecture/foundation.md` e `docs/architecture/decisions/001-foundation.md`
-- [ ] T094 Executar todos os comandos e cenários de `specs/001-project-foundation/quickstart.md` em checkout limpo e registrar o resultado em `specs/001-project-foundation/evidence/final-validation.md`
+- [X] T094 Executar todos os comandos e cenários de `specs/001-project-foundation/quickstart.md` em checkout limpo e registrar o resultado em `specs/001-project-foundation/evidence/final-validation.md`
 - [ ] T095 Aplicar/validar os rulesets remotos `dev`/`main`, demonstrar bloqueio de push direto e promoção inválida e registrar evidências em `specs/001-project-foundation/evidence/branch-protection.md`
 
 ---

@@ -1,6 +1,8 @@
 import { expectWcag22AA } from "./accessibility";
 import { expect, syntheticUsers, test } from "./fixtures";
 
+const origin = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+
 async function signIn(page: import("@playwright/test").Page, email: string, password: string) {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(email);
@@ -37,7 +39,7 @@ test("ordinary user cannot access audit search or export", async ({ page }) => {
 
   const response = await page.request.post("/api/v1/audit-exports", {
     headers: {
-      origin: "http://localhost:3000",
+      origin,
       "x-csrf-token": crypto.randomUUID(),
       "idempotency-key": crypto.randomUUID(),
     },

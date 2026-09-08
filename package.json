@@ -22,7 +22,7 @@
     "test:e2e": "playwright test --config apps/web/playwright.config.ts",
     "test:a11y": "playwright test --config apps/web/playwright.config.ts accessibility.spec.ts",
     "db:migrate": "corepack pnpm --filter @caab/db migrate",
-    "db:seed:dev": "corepack pnpm --filter @caab/db seed:dev",
+    "db:seed:dev": "corepack pnpm --filter @caab/web seed:dev",
     "contracts:generate": "corepack pnpm --filter @caab/contracts generate",
     "security:scan": "corepack pnpm audit --audit-level high"
   },

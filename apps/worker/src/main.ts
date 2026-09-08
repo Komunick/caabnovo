@@ -1,5 +1,4 @@
-import "dotenv/config";
-import { loadServerEnv } from "@caab/config";
+import { loadServerEnv, loadWorkspaceEnv } from "@caab/config";
 import { logger } from "./logger.js";
 import { createQueue, startQueue } from "./queue.js";
 import { QUEUES } from "./queues.js";
@@ -15,6 +14,7 @@ import { promoteFile, purgeRejectedFile } from "./jobs/promote-file.js";
 import { reconcileFiles } from "./jobs/reconcile-files.js";
 import { startQueueMetrics } from "./metrics.js";
 
+loadWorkspaceEnv();
 const env = loadServerEnv();
 const boss = await startQueue(createQueue(env.DATABASE_URL));
 const database = createDatabaseClient(env.DATABASE_URL);
