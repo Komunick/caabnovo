@@ -208,8 +208,16 @@ export default async function globalSetup() {
         `INSERT INTO audit_event
           (actor_user_id, effective_identity, action, entity_type, entity_id, before, after,
            reason, origin, request_id, correlation_id)
-         VALUES ($1::uuid, $2, 'user.updated', 'user', $1::text, $3, $4,
-           'Fixture sintética E2E', 'system', gen_random_uuid(), gen_random_uuid())`,
+         SELECT $1::uuid, $2, 'user.updated', 'user', $1::text, $3, $4,
+           'Fixture sintética E2E', 'system', gen_random_uuid(), gen_random_uuid()
+         WHERE NOT EXISTS (
+           SELECT 1 FROM audit_event
+           WHERE actor_user_id = $1::uuid
+             AND action = 'user.updated'
+             AND entity_type = 'user'
+             AND entity_id = $1::text
+             AND reason = 'Fixture sintética E2E'
+         )`,
         [
           managerId,
           `user:${managerId}`,
