@@ -18,7 +18,10 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   const updatedName = `${name} Atualizado`;
   const email = `managed-${testInfo.project.name}-${suffix}@example.test`;
   await signIn(page, syntheticUsers.accessManager.email, syntheticUsers.accessManager.password);
-  await page.getByRole("link", { name: "Usuários" }).click();
+  await page
+    .getByRole("navigation", { name: "Navegação administrativa" })
+    .getByRole("link", { name: "Usuários", exact: true })
+    .click();
   await expect(page.getByRole("heading", { name: "Usuários" })).toBeVisible();
   await expectWcag22AA(page);
 
@@ -57,7 +60,7 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
 
 test("ordinary user cannot open user administration", async ({ page }) => {
   await signIn(page, syntheticUsers.ordinary.email, syntheticUsers.ordinary.password);
-  await expect(page.getByRole("link", { name: "Usuários" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Usuários", exact: true })).toHaveCount(0);
   await page.goto("/users");
   await expect(page.getByText("Você não tem permissão para acessar usuários.")).toBeVisible();
 });
