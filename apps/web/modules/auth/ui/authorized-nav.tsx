@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { Activity, FileClock, House, LogOut, MonitorCog, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import { PERMISSIONS } from "../permissions";
@@ -11,15 +12,26 @@ export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly 
   const pathname = usePathname();
   const allowed = new Set(permissions);
   const items = [
-    { href: "/", label: "Início", visible: true },
-    { href: "/users", label: "Usuários", visible: allowed.has(PERMISSIONS.usersRead) },
-    { href: "/audit", label: "Auditoria", visible: allowed.has(PERMISSIONS.auditRead) },
+    { href: "/", label: "Início", icon: House, visible: true },
+    {
+      href: "/users",
+      label: "Usuários",
+      icon: UsersRound,
+      visible: allowed.has(PERMISSIONS.usersRead),
+    },
+    {
+      href: "/audit",
+      label: "Auditoria",
+      icon: FileClock,
+      visible: allowed.has(PERMISSIONS.auditRead),
+    },
     {
       href: "/operations/jobs",
       label: "Operações",
+      icon: Activity,
       visible: allowed.has(PERMISSIONS.jobsRead),
     },
-    { href: "/sessions", label: "Sessões", visible: true },
+    { href: "/sessions", label: "Sessões", icon: MonitorCog, visible: true },
   ];
 
   async function logout() {
@@ -34,21 +46,37 @@ export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly 
   }
 
   return (
-    <Menu label="Navegação administrativa">
-      {items
-        .filter(({ visible }) => visible)
-        .map(({ href, label }) => (
-          <MenuItem key={href}>
-            <Link href={href} aria-current={pathname === href ? "page" : undefined}>
-              {label}
-            </Link>
-          </MenuItem>
-        ))}
-      <MenuItem>
-        <Button intent="ghost" onClick={logout}>
-          Sair
-        </Button>
-      </MenuItem>
-    </Menu>
+    <div className="sidebar-navigation">
+      <p className="sidebar-navigation__label">Navegação</p>
+      <Menu label="Navegação administrativa">
+        {items
+          .filter(({ visible }) => visible)
+          .map(({ href, label, icon: Icon }) => (
+            <MenuItem key={href}>
+              <Link
+                href={href}
+                aria-current={
+                  href === "/"
+                    ? pathname === href
+                      ? "page"
+                      : undefined
+                    : pathname.startsWith(href)
+                      ? "page"
+                      : undefined
+                }
+              >
+                <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
+                <span>{label}</span>
+              </Link>
+            </MenuItem>
+          ))}
+        <MenuItem>
+          <Button className="sidebar-logout" intent="ghost" onClick={logout}>
+            <LogOut size={19} strokeWidth={1.8} aria-hidden="true" />
+            <span>Sair</span>
+          </Button>
+        </MenuItem>
+      </Menu>
+    </div>
   );
 }
