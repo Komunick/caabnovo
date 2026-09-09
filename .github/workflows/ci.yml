@@ -23,6 +23,9 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
+      - name: Test branch protection tooling
+        shell: pwsh
+        run: ./infra/github/test-rulesets.ps1
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test:unit

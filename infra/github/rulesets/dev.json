@@ -21,7 +21,11 @@
       "parameters": {
         "strict_required_status_checks_policy": true,
         "do_not_enforce_on_create": true,
-        "required_status_checks": [{ "context": "quality" }, { "context": "security" }]
+        "required_status_checks": [
+          { "context": "quality", "integration_id": 15368 },
+          { "context": "browser", "integration_id": 15368 },
+          { "context": "security", "integration_id": 15368 }
+        ]
       }
     }
   ],
