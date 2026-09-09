@@ -37,6 +37,17 @@ test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page 
   await page.setViewportSize({ width: 1280, height: 800 });
   await signIn(page, syntheticUsers.accessManager);
 
+  const administrativeNavigation = page.getByRole("navigation", {
+    name: "Navegação administrativa",
+  });
+  await expect(
+    administrativeNavigation.getByRole("link", { name: "Auditoria", exact: true }),
+  ).toHaveCount(1);
+  await expect(
+    administrativeNavigation.getByRole("link", { name: "Operações", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator(".module-card").filter({ hasText: "Auditoria" })).toHaveCount(1);
+
   const shell = page.locator(".admin-shell");
   await page.getByRole("button", { name: "Recolher menu lateral" }).click();
   await expect(shell).toHaveClass(/admin-shell--collapsed/);
@@ -46,6 +57,9 @@ test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page 
   await page.getByRole("button", { name: "Buscar área", exact: true }).click();
   const quickNavigation = page.getByRole("dialog", { name: "Navegação rápida" });
   await expect(quickNavigation).toBeVisible();
+  await quickNavigation.getByLabel("Buscar área").fill("operações");
+  await expect(quickNavigation.getByRole("link")).toHaveCount(1);
+  await expect(quickNavigation.getByRole("link", { name: /Auditoria/ })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(quickNavigation).toBeHidden();
   const menuButton = page.getByRole("button", { name: "Abrir menu de navegação" });

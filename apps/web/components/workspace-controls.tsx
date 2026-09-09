@@ -2,19 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  Activity,
-  Command,
-  FileClock,
-  House,
-  MonitorCog,
-  Moon,
-  Search,
-  Sun,
-  UsersRound,
-} from "lucide-react";
+import { Command, Moon, Search, Sun } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { PERMISSIONS } from "@/modules/auth/permissions";
+import { getWorkspaceAreas } from "@/modules/workspace/areas";
 
 type Theme = "light" | "dark";
 
@@ -23,46 +13,12 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<Theme>("light");
   const searchRef = useRef<HTMLInputElement>(null);
-  const allowed = useMemo(() => new Set(permissions), [permissions]);
-  const items = useMemo(
-    () =>
-      [
-        { href: "/", label: "Visão geral", hint: "Dashboard", icon: House, visible: true },
-        {
-          href: "/users",
-          label: "Usuários",
-          hint: "Contas e permissões",
-          icon: UsersRound,
-          visible: allowed.has(PERMISSIONS.usersRead),
-        },
-        {
-          href: "/audit",
-          label: "Auditoria",
-          hint: "Eventos e exportações",
-          icon: FileClock,
-          visible: allowed.has(PERMISSIONS.auditRead),
-        },
-        {
-          href: "/operations/jobs",
-          label: "Operações",
-          hint: "Jobs e processamento",
-          icon: Activity,
-          visible: allowed.has(PERMISSIONS.jobsRead),
-        },
-        {
-          href: "/sessions",
-          label: "Sessões",
-          hint: "Identidade e segurança",
-          icon: MonitorCog,
-          visible: true,
-        },
-      ].filter(({ visible }) => visible),
-    [allowed],
-  );
+  const items = useMemo(() => getWorkspaceAreas(permissions), [permissions]);
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
   const results = items.filter(
-    ({ label, hint }) =>
-      !normalizedQuery || `${label} ${hint}`.toLocaleLowerCase("pt-BR").includes(normalizedQuery),
+    ({ label, description, keywords }) =>
+      !normalizedQuery ||
+      `${label} ${description} ${keywords}`.toLocaleLowerCase("pt-BR").includes(normalizedQuery),
   );
 
   useEffect(() => {
@@ -138,14 +94,14 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
           </div>
           <div className="command-results" aria-live="polite">
             {results.length ? (
-              results.map(({ href, label, hint, icon: Icon }) => (
+              results.map(({ href, label, description, icon: Icon }) => (
                 <Link href={href} key={href} onClick={() => setOpen(false)}>
                   <span className="command-result__icon" aria-hidden="true">
                     <Icon size={18} />
                   </span>
                   <span>
                     <strong>{label}</strong>
-                    <small>{hint}</small>
+                    <small>{description}</small>
                   </span>
                   <kbd>↵</kbd>
                 </Link>

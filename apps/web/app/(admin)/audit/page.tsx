@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { auditListQuerySchema } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { PERMISSIONS } from "@/modules/auth/permissions";
@@ -22,6 +23,7 @@ export default async function AuditPage({
     new Request("http://caab.internal/audit", { headers: requestHeaders }),
   );
   if (!actor?.permissions.has(PERMISSIONS.auditRead)) {
+    if (actor?.permissions.has(PERMISSIONS.jobsRead)) redirect("/audit/jobs");
     return <p role="alert">Você não tem permissão para acessar a auditoria.</p>;
   }
   const raw = await searchParams;

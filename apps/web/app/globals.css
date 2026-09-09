@@ -1112,6 +1112,23 @@ progress {
   align-items: center;
 }
 
+.audit-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.audit-navigation a {
+  padding: 0.65rem 1rem;
+  border-bottom: 3px solid transparent;
+}
+
+.audit-navigation a[aria-current="page"] {
+  border-bottom-color: currentColor;
+  font-weight: 700;
+}
+
 .audit-metadata {
   display: grid;
   grid-template-columns: max-content 1fr;

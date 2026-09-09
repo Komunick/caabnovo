@@ -18,6 +18,11 @@ test("auditor searches combined filters and starts an authorized export", async 
     .getByRole("link", { name: "Auditoria", exact: true })
     .click();
   await expect(page.getByRole("heading", { name: "Auditoria" })).toBeVisible();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Áreas de auditoria" })
+      .getByRole("link", { name: "Processamentos", exact: true }),
+  ).toHaveCount(0);
   await expectWcag22AA(page);
 
   await page.getByLabel("Ação", { exact: true }).fill("user.updated");
@@ -53,4 +58,18 @@ test("ordinary user cannot access audit search or export", async ({ page }) => {
     },
   });
   expect(response.status()).toBe(403);
+  await page.goto("/audit/jobs");
+  await expect(page.getByText("Você não tem permissão para acessar processamentos.")).toBeVisible();
+});
+
+test("auditor cannot inspect processing data through the consolidated routes", async ({ page }) => {
+  await signIn(page, syntheticUsers.auditor.email, syntheticUsers.auditor.password);
+  await page.goto("/audit/jobs");
+  await expect(page.getByText("Você não tem permissão para acessar processamentos.")).toBeVisible();
+  const jobId = crypto.randomUUID();
+  await page.goto(`/audit/jobs/${jobId}`);
+  await expect(
+    page.getByText("Você não tem permissão para acessar este processamento."),
+  ).toBeVisible();
+  expect((await page.request.get(`/api/v1/jobs/${jobId}`)).status()).toBe(403);
 });

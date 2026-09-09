@@ -75,6 +75,7 @@ export default async function globalSetup() {
     await ensureUser(syntheticUsers.ordinary, "Usuário Sintético");
     await ensureUser(syntheticUsers.accessManager, "Gestor de Acesso Sintético");
     await ensureUser(syntheticUsers.auditor, "Auditor Sintético");
+    await ensureUser(syntheticUsers.operator, "Operador Sintético");
     const adminState = await ensureUser(syntheticUsers.administrator, "Administrador Sintético");
     if (adminState !== true) {
       const cookie =
@@ -107,6 +108,7 @@ export default async function globalSetup() {
         [
           syntheticUsers.accessManager.email,
           syntheticUsers.auditor.email,
+          syntheticUsers.operator.email,
           syntheticUsers.administrator.email,
         ],
       ],
@@ -141,6 +143,13 @@ export default async function globalSetup() {
       permissionIds.set(permission, inserted.rows[0]!.id);
     }
     const roleDefinitions = [
+      {
+        code: "synthetic-job-reader",
+        name: "Consulta de processamentos",
+        administrative: false,
+        permissions: ["jobs:read"],
+        userId: userIds.get(syntheticUsers.operator.email),
+      },
       {
         code: "access-manager",
         name: "Gestor de acesso",

@@ -14,9 +14,18 @@ Nunca realizar commits ou pushes diretos em `dev` ou `main`.
 
 - Toda alteração entra por Pull Request.
 - PRs de trabalho apontam para `dev`.
-- Abrir um único PR por funcionalidade pronta, reunindo implementação, testes e documentação.
-  Não dividir a mesma entrega em PRs de documentação, preliminar e final; corrigir CI e revisão
-  no próprio PR.
+- Cada funcionalidade nova deve ter um spec próprio em `specs/`, com plano, tarefas e critérios de
+  aceite antes de sua implementação. O plano geral organiza dependências; não substitui esses specs.
+- Correções, melhorias e mudanças de uma função existente atualizam seu spec, plano e tarefas; não
+  criam outro spec. Antes de abrir um spec, conferir se já existe um responsável pela função.
+- Antes de implementar uma função nova ou evoluí-la, analisar práticas atuais do mercado em fontes
+  oficiais e registrar data, referências, decisões e limites da pesquisa no `research.md` existente.
+- Separar PRs por funcionalidade/spec concluído, conforme orientação de 09/09/2026. Reunir
+  implementação, testes e documentação de cada função no mesmo PR; incluir contexto do programa
+  quando necessário para compreender a entrega.
+- Abrir um único PR por funcionalidade pronta, reunindo implementação, testes e documentação. Não
+  dividir a mesma entrega em PRs de documentação, preliminar e final; corrigir CI e revisão no
+  próprio PR.
 - Produção recebe apenas PR de promoção `dev` → `main`.
 - Merge em `main` é exclusivamente humano.
 - Não contornar CI, reviews ou proteções de branch.
@@ -117,6 +126,7 @@ A IA não pode:
 ## Por que
 
 ## Princípios aplicados
+
 - KISS / DRY / YAGNI e trade-offs relevantes
 
 ## Como testar em DEV
@@ -128,6 +138,7 @@ A IA não pode:
 ## Segurança e privacidade
 
 ## Evidências de UI
+
 - Screenshots ou vídeo, quando aplicável
 
 ## Riscos e rollback
