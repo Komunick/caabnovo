@@ -1,7 +1,12 @@
 import "server-only";
 import type { Pool, PoolClient } from "pg";
 import type { Db, PgBoss } from "pg-boss";
-import type { AuditExportJobPayload, FileScanJobPayload, Job } from "@caab/contracts";
+import type {
+  AuditExportJobPayload,
+  FileScanJobPayload,
+  NewsActionJobPayload,
+  Job,
+} from "@caab/contracts";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { findJobExecution, redriveJobExecution } from "@caab/db/repositories/job-execution";
@@ -154,8 +159,24 @@ async function rebuildPayload(
     request_id: string | null;
     aggregate_id: string | null;
   },
-): Promise<FileScanJobPayload | AuditExportJobPayload> {
+): Promise<FileScanJobPayload | AuditExportJobPayload | NewsActionJobPayload> {
   if (!job.request_id) throw operationError("REDRIVE_PAYLOAD_UNAVAILABLE", 409);
+  if (job.job_type === "news-publication" && job.aggregate_id) {
+    const action = (
+      await client.query<{ id: string }>(
+        "SELECT id FROM news_action WHERE job_id=$1::uuid AND news_id=$2::uuid AND status='pending'",
+        [job.id, job.aggregate_id],
+      )
+    ).rows[0];
+    if (!action) throw operationError("REDRIVE_PAYLOAD_UNAVAILABLE", 409);
+    return {
+      jobId: job.id,
+      actionId: action.id,
+      newsId: job.aggregate_id,
+      requestId: job.request_id,
+      correlationId: job.correlation_id,
+    };
+  }
   if (job.job_type === "file-scan" && job.aggregate_id) {
     return {
       schemaVersion: 1,

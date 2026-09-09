@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 
+# Drizzle and Better Auth share a Vitest peer context; keep its transformer on Vite 8's range.
+overrides:
+  "drizzle-kit>esbuild": "0.28.2"
+
 allowBuilds:
   cpu-features: false
   esbuild: true

@@ -20,7 +20,7 @@ export function getJobQueue(): Promise<PgBoss> {
         useListenNotify: false,
       });
       await boss.start();
-      for (const name of [AUDIT_EXPORT_QUEUE, FILE_SCAN_QUEUE]) {
+      for (const name of [AUDIT_EXPORT_QUEUE, FILE_SCAN_QUEUE, "news-publication"]) {
         await boss.createQueue(name, {
           policy: "standard",
           retryLimit: 4,

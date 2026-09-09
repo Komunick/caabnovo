@@ -1,4 +1,4 @@
-import { FileClock, House, MonitorCog, UsersRound, type LucideIcon } from "lucide-react";
+import { FileClock, House, MonitorCog, Newspaper, UsersRound, type LucideIcon } from "lucide-react";
 import { PERMISSIONS } from "../auth/permissions";
 
 export type WorkspaceArea = {
@@ -22,6 +22,16 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       keywords: "dashboard visão geral",
       icon: House,
       paths: ["/"],
+    },
+    {
+      id: "news",
+      href: "/news",
+      label: "Notícias",
+      description: "Crie, publique e programe notícias e destaques para site e aplicativo.",
+      keywords:
+        "comunicação conteúdo editorial notícias rascunhos destaques publicação agenda aplicativo",
+      icon: Newspaper,
+      paths: ["/news"],
     },
   ];
   if (allowed.has(PERMISSIONS.usersRead)) {

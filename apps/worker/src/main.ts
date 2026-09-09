@@ -13,6 +13,8 @@ import { runFileScan } from "./jobs/scan-file.js";
 import { promoteFile, purgeRejectedFile } from "./jobs/promote-file.js";
 import { reconcileFiles } from "./jobs/reconcile-files.js";
 import { startQueueMetrics } from "./metrics.js";
+import { runScheduledNews, closeScheduledNews } from "./jobs/publish-news.js";
+import { newsActionJobPayloadSchema } from "@caab/contracts";
 
 loadWorkspaceEnv();
 const env = loadServerEnv();
@@ -27,6 +29,24 @@ const s3 = new S3Client({
 });
 const fileStorage = new S3WorkerObjectStorage(s3, env.S3_QUARANTINE_BUCKET, env.S3_PRIVATE_BUCKET);
 const antivirus = new ClamAvScanner(env.CLAMAV_HOST, env.CLAMAV_PORT);
+
+await boss.work(QUEUES.newsPublication, async (jobs) => {
+  const data = jobs[0]?.data;
+  if (!data) return;
+  const payload = newsActionJobPayloadSchema.parse(data);
+  await executeTrackedJob(
+    database.pool,
+    {
+      id: payload.jobId,
+      correlationId: payload.correlationId,
+      requestId: payload.requestId,
+      jobType: QUEUES.newsPublication,
+    },
+    async () => {
+      await runScheduledNews(payload);
+    },
+  );
+});
 
 await boss.work(QUEUES.auditExport, async (jobs) => {
   const job = jobs[0];
@@ -96,6 +116,7 @@ async function shutdown(): Promise<void> {
   stopQueueMetrics();
   await health.stop();
   await boss.stop({ graceful: true, timeout: 30_000 });
+  await closeScheduledNews();
   await database.close();
 }
 

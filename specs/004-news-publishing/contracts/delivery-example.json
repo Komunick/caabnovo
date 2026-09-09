@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "9a84725b-2c67-457d-a1e8-9e4f2c8b7a31",
+  "revision": 4,
+  "channel": "app",
+  "publishedAt": "2026-09-09T12:00:00.000Z",
+  "title": "Notícia sintética para o aplicativo",
+  "summary": "Exemplo de contrato; não representa uma entrega real.",
+  "slug": "noticia-sintetica",
+  "category": "Institucional",
+  "tags": [],
+  "cover": null,
+  "body": {
+    "root": {
+      "type": "root",
+      "version": 1,
+      "children": [
+        {
+          "type": "paragraph",
+          "version": 1,
+          "children": [
+            {
+              "type": "text",
+              "version": 1,
+              "text": "Conteúdo de demonstração.",
+              "format": 0
+            }
+          ]
+        },
+        {
+          "type": "news-image",
+          "version": 1,
+          "fileId": "4e8ac317-94d2-4ad0-a950-63f8d4c2b657",
+          "alt": "Imagem sintética de demonstração",
+          "caption": "Legenda de exemplo"
+        }
+      ]
+    }
+  },
+  "highlight": {
+    "order": 1
+  }
+}

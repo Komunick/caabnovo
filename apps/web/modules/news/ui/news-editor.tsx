@@ -1,0 +1,570 @@
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import {
+  emptyNewsBody,
+  newsDraftMetadataSchema,
+  updateNewsDraftRequestSchema,
+  type NewsDraftMetadata,
+} from "@caab/contracts";
+import type { NewsRecord, listNewsVersions } from "../news-service";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { RichTextEditor } from "./rich-text-editor";
+import { NewsCover } from "./news-cover";
+import { NewsPublishing } from "./news-publishing";
+import { newsFieldErrors, focusNewsError, type NewsFieldErrors } from "./field-errors";
+import { newsSlugFromTitle } from "./news-slug";
+
+type History = Awaited<ReturnType<typeof listNewsVersions>>;
+const date = (value: string) =>
+  new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "America/Sao_Paulo",
+  }).format(new Date(value));
+
+async function responseError(response: Response, onFields?: (fields: NewsFieldErrors) => void) {
+  const data = (await response.json().catch(() => ({}))) as {
+    code?: string;
+    fields?: { path: string; code: string }[];
+  };
+  if (data.fields) onFields?.(newsFieldErrors(data.fields));
+  if (response.status === 401) return "Sua sessão expirou. Entre novamente antes de salvar.";
+  if (data.code === "NEWS_VERSION_CONFLICT")
+    return "Outra alteração foi salva. Seu texto continua no editor. Abra a versão atual em outra aba e compare antes de tentar novamente.";
+  if (response.status === 422)
+    return "Confira os campos e a formatação do conteúdo antes de salvar.";
+  if (response.status === 413) return "O conteúdo ultrapassa o limite permitido.";
+  return "Não foi possível concluir. Seu texto continua no editor; tente novamente.";
+}
+
+export function NewsEditor({
+  initial,
+  initialHistory,
+  canReadMedia = false,
+  canUploadMedia = false,
+}: Readonly<{
+  initial?: NewsRecord;
+  initialHistory?: History;
+  canReadMedia?: boolean;
+  canUploadMedia?: boolean;
+}>) {
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  const [record, setRecord] = useState(initial);
+  const [customSlug, setCustomSlug] = useState(false);
+  const slugSeed = useRef(initial?.id ?? "");
+  const [metadata, setMetadata] = useState(initial?.metadata ?? newsDraftMetadataSchema.parse({}));
+  const [body, setBody] = useState<unknown>(initial?.body ?? emptyNewsBody);
+  const [history, setHistory] = useState<History>(
+    initialHistory ?? { items: [], page: 1, totalPages: 1 },
+  );
+  const [editorKey, setEditorKey] = useState(0);
+  const [dirty, setDirty] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [mediaUploading, setMediaUploading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<NewsFieldErrors>({});
+  const [confirm, setConfirm] = useState<{ action: "archive" | "restore"; versionId?: string }>();
+  const retry = useRef<{ input: string; key: string } | undefined>(undefined);
+  const busy = useRef(false);
+  const bodyChanged = useCallback((value: unknown) => {
+    setBody(value);
+    setDirty(true);
+    setFieldErrors((old) => ({ ...old, body: undefined }));
+  }, []);
+  useEffect(() => {
+    if (!dirty && !mediaUploading) return;
+    const prevent = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", prevent);
+    return () => window.removeEventListener("beforeunload", prevent);
+  }, [dirty, mediaUploading]);
+  function change<K extends keyof NewsDraftMetadata>(key: K, value: NewsDraftMetadata[K]) {
+    if (key === "slug") setCustomSlug(true);
+    if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
+    setMetadata((old) => ({
+      ...old,
+      [key]: value,
+      ...(key === "title" && !customSlug && !record?.metadata.slug
+        ? { slug: newsSlugFromTitle(String(value), slugSeed.current) }
+        : {}),
+    }));
+    setDirty(true);
+    setMessage("");
+    setFieldErrors((old) => ({
+      ...old,
+      [key]: undefined,
+      ...(key === "cover" ? { coverAlt: undefined } : {}),
+    }));
+  }
+  async function loadHistory(page = 1) {
+    if (!record) return;
+    try {
+      const response = await fetch(`/api/v1/news/${record.id}/versions?page=${page}`, {
+        cache: "no-store",
+      });
+      if (!response.ok) throw new Error(await responseError(response));
+      setHistory((await response.json()) as History);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Não foi possível carregar o histórico.");
+    }
+  }
+  async function save(
+    event?: FormEvent,
+    preview = false,
+    silent = false,
+  ): Promise<NewsRecord | undefined> {
+    event?.preventDefault();
+    if (busy.current || (mediaUploading && !silent)) return;
+    if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
+    const parsed = updateNewsDraftRequestSchema.safeParse({
+      expectedVersion: record?.revision ?? 1,
+      metadata: {
+        ...metadata,
+        slug: metadata.slug || newsSlugFromTitle(metadata.title, slugSeed.current),
+      },
+      body,
+    });
+    if (!parsed.success) {
+      setFieldErrors(newsFieldErrors(parsed.error.issues));
+      focusNewsError();
+      setError(
+        "Confira título, endereço, tags e conteúdo. Use somente a formatação disponível no editor.",
+      );
+      return;
+    }
+    const input = JSON.stringify(
+      record ? parsed.data : { metadata: parsed.data.metadata, body: parsed.data.body },
+    );
+    if (retry.current?.input !== input) retry.current = { input, key: crypto.randomUUID() };
+    busy.current = true;
+    setPending(true);
+    setError("");
+    setFieldErrors({});
+    setMessage("");
+    try {
+      const response = await fetch(record ? `/api/v1/news/${record.id}` : "/api/v1/news", {
+        method: record ? "PUT" : "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-csrf-token": crypto.randomUUID(),
+          "idempotency-key": retry.current.key,
+        },
+        body: input,
+      });
+      if (!response.ok) throw new Error(await responseError(response, setFieldErrors));
+      const saved = (await response.json()) as NewsRecord;
+      setDirty(false);
+      setRecord(saved);
+      setMetadata(saved.metadata);
+      retry.current = undefined;
+      if (silent) return saved;
+      setMessage(`Rascunho salvo. Revisão ${saved.revision}.`);
+      if (preview) router.push(`/news/${saved.id}/preview`);
+      else if (!initial) router.replace(`/news/${saved.id}`);
+      else await loadHistory();
+      return saved;
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Falha de conexão. Seu texto continua no editor.",
+      );
+    } finally {
+      busy.current = false;
+      setPending(false);
+      focusNewsError();
+    }
+  }
+  async function ensureNewsId() {
+    return record?.id ?? (await save(undefined, false, true))?.id;
+  }
+  async function command(action: "duplicate" | "archive" | "restore", versionId?: string) {
+    if (!record || busy.current || mediaUploading || dirty) return;
+    busy.current = true;
+    setPending(true);
+    setError("");
+    const input = JSON.stringify({
+      expectedVersion: record.revision,
+      ...(versionId ? { versionId } : {}),
+    });
+    const fingerprint = `${action}:${record.id}:${input}`;
+    if (retry.current?.input !== fingerprint)
+      retry.current = { input: fingerprint, key: crypto.randomUUID() };
+    try {
+      const response = await fetch(`/api/v1/news/${record.id}/${action}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-csrf-token": crypto.randomUUID(),
+          "idempotency-key": retry.current.key,
+        },
+        body: input,
+      });
+      if (!response.ok) throw new Error(await responseError(response));
+      const saved = (await response.json()) as NewsRecord;
+      retry.current = undefined;
+      setConfirm(undefined);
+      if (action === "duplicate") {
+        router.push(`/news/${saved.id}`);
+        return;
+      }
+      setRecord(saved);
+      setMetadata(saved.metadata);
+      setBody(saved.body);
+      setEditorKey((key) => key + 1);
+      setDirty(false);
+      setMessage(
+        action === "archive"
+          ? "Notícia arquivada. O histórico foi preservado."
+          : "Versão recuperada como novo rascunho.",
+      );
+      await loadHistory();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Não foi possível concluir a ação.");
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
+  }
+  return (
+    <div className="news-workspace">
+      <section className="news-editor-panel" aria-labelledby="news-editor-title">
+        <h2 id="news-editor-title">
+          {record?.archived ? "Notícia arquivada" : "Conteúdo editorial"}
+        </h2>
+        <p>
+          {record
+            ? `Revisão ${record.revision} · ${date(record.updatedAt)} (Brasília)`
+            : "Você pode salvar mesmo sem preencher todos os campos."}
+        </p>
+        <p role="status">
+          {dirty
+            ? "Alterações ainda não salvas."
+            : message || "Salvar rascunho mantém a publicação atual."}
+        </p>
+        {error ? (
+          <p role="alert">
+            {error}{" "}
+            {record ? (
+              <a
+                className={buttonVariants({ size: "compact" })}
+                href={`/news/${record.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Abrir versão atual em outra aba
+              </a>
+            ) : null}
+          </p>
+        ) : null}
+        <div className="news-command-bar">
+          <span>Escreva, revise e depois publique.</span>
+          <div className="news-command-actions">
+            {record && !dirty && !pending && !mediaUploading ? (
+              <Link className={buttonVariants()} href={`/news/${record.id}/preview`}>
+                Prévia privada
+              </Link>
+            ) : (
+              <Button
+                disabled={!ready || pending || mediaUploading || !!record?.archived}
+                onClick={(event) => void save(event, true)}
+              >
+                Salvar e visualizar
+              </Button>
+            )}
+            <Button
+              form="news-draft-form"
+              type="submit"
+              intent="primary"
+              disabled={!ready || pending || mediaUploading || !!record?.archived}
+            >
+              {pending ? "Salvando…" : "Salvar rascunho"}
+            </Button>
+          </div>
+        </div>
+        <form id="news-draft-form" onSubmit={save} noValidate>
+          <fieldset
+            disabled={!ready || pending || mediaUploading || record?.archived}
+            className="news-fields"
+          >
+            <legend className="sr-only">Dados da notícia</legend>
+            <div className="news-editor-layout">
+              <section className="news-writing-card" aria-label="Texto da notícia">
+                <FormField id="news-title" label="Título" error={fieldErrors.title}>
+                  <input
+                    value={metadata.title}
+                    maxLength={200}
+                    onChange={(e) => change("title", e.target.value)}
+                  />
+                </FormField>
+                <FormField id="news-summary" label="Resumo" error={fieldErrors.summary}>
+                  <textarea
+                    value={metadata.summary}
+                    maxLength={500}
+                    rows={3}
+                    onChange={(e) => change("summary", e.target.value)}
+                  />
+                </FormField>
+                <div className="form-field">
+                  <label htmlFor="news-body">Conteúdo da notícia</label>
+                  <p id="news-body-hint" className="field-hint">
+                    Texto, títulos, listas e imagens. Confira o resultado na prévia.
+                  </p>
+                  <RichTextEditor
+                    error={fieldErrors.body}
+                    key={editorKey}
+                    initialBody={record?.body ?? emptyNewsBody}
+                    disabled={!ready || pending || mediaUploading || !!record?.archived}
+                    onChange={bodyChanged}
+                    newsId={record?.id}
+                    onEnsureNewsId={ensureNewsId}
+                    canReadMedia={canReadMedia}
+                    canUploadMedia={canUploadMedia}
+                    onUploadingChange={setMediaUploading}
+                  />
+                  {fieldErrors.body ? (
+                    <p id="news-body-error" className="field-error" role="alert">
+                      {fieldErrors.body}
+                    </p>
+                  ) : null}
+                </div>
+              </section>
+              <aside className="news-editor-sidebar" aria-label="Capa e configurações">
+                <section className="news-editor-card">
+                  <NewsCover
+                    fieldError={fieldErrors.cover}
+                    altError={fieldErrors.coverAlt}
+                    newsId={record?.id}
+                    onEnsureNewsId={ensureNewsId}
+                    cover={metadata.cover}
+                    canRead={canReadMedia}
+                    canUpload={canUploadMedia}
+                    disabled={!ready || pending || mediaUploading || !!record?.archived}
+                    onChange={(cover) => change("cover", cover)}
+                    onUploadingChange={setMediaUploading}
+                  />
+                </section>
+                <section className="news-editor-card">
+                  <h3>Organização e destinos</h3>
+                  <details className="news-address-options">
+                    <summary>Quer personalizar o endereço?</summary>
+                    <p className="field-hint">
+                      Opcional. O endereço é criado automaticamente a partir do título.
+                    </p>
+                    <FormField
+                      id="news-slug"
+                      error={fieldErrors.slug}
+                      label="Endereço legível"
+                      hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
+                    >
+                      <input
+                        value={metadata.slug}
+                        maxLength={180}
+                        onChange={(e) => change("slug", e.target.value)}
+                      />
+                    </FormField>
+                  </details>
+                  <div className="news-meta-grid">
+                    <FormField id="news-category" label="Categoria" error={fieldErrors.category}>
+                      <input
+                        value={metadata.category}
+                        maxLength={80}
+                        onChange={(e) => change("category", e.target.value)}
+                      />
+                    </FormField>
+                    <FormField
+                      id="news-tags"
+                      label="Tags"
+                      hint="Separe por vírgulas; até 20 tags."
+                      error={fieldErrors.tags}
+                    >
+                      <input
+                        value={metadata.tags.join(",")}
+                        onChange={(e) =>
+                          change("tags", e.target.value ? e.target.value.split(",") : [])
+                        }
+                      />
+                    </FormField>
+                  </div>
+                  <label className="checkbox-field">
+                    <input
+                      type="checkbox"
+                      checked={!!metadata.highlight}
+                      onChange={(event) =>
+                        change("highlight", event.target.checked ? { order: 1 } : null)
+                      }
+                    />
+                    Destacar notícia
+                  </label>
+                  {metadata.highlight ? (
+                    <FormField
+                      id="news-highlight-order"
+                      error={fieldErrors.highlight}
+                      label="Ordem do destaque"
+                      hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
+                    >
+                      <input
+                        type="number"
+                        min={1}
+                        max={100}
+                        value={metadata.highlight.order}
+                        onChange={(event) =>
+                          change("highlight", { order: Number(event.target.value) })
+                        }
+                      />
+                    </FormField>
+                  ) : null}
+                  <p>
+                    O destaque usa esta mesma notícia, capa e destinos. Alterações aparecem após
+                    publicar.
+                  </p>
+                  <fieldset>
+                    <legend>Destinos previstos</legend>
+                    {(["site", "app"] as const).map((channel) => (
+                      <label key={channel} className="checkbox-field">
+                        <input
+                          type="checkbox"
+                          checked={metadata.channels.includes(channel)}
+                          onChange={(e) =>
+                            change(
+                              "channels",
+                              e.target.checked
+                                ? [...metadata.channels, channel]
+                                : metadata.channels.filter((item) => item !== channel),
+                            )
+                          }
+                        />
+                        {channel === "site" ? "Site" : "Aplicativo"}
+                      </label>
+                    ))}
+                  </fieldset>
+                </section>
+              </aside>
+            </div>
+          </fieldset>
+        </form>
+        {record ? (
+          <div className="news-actions">
+            <Button
+              disabled={pending || mediaUploading || dirty}
+              onClick={() => void command("duplicate")}
+            >
+              Duplicar
+            </Button>
+            <span className="field-hint">
+              A cópia preserva o texto e remove imagens e destinos.
+            </span>
+            {!record.archived ? (
+              <Button
+                disabled={pending || mediaUploading || dirty}
+                onClick={() => setConfirm({ action: "archive" })}
+              >
+                Arquivar
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+      </section>
+      <NewsPublishing
+        onFieldErrors={(fields) => {
+          setFieldErrors(fields);
+          focusNewsError();
+        }}
+        record={record}
+        onPrepare={() => save(undefined, false, true)}
+        dirty={dirty}
+        disabled={!ready || pending || mediaUploading}
+        onBusyChange={setMediaUploading}
+        onSaved={(saved) => {
+          setRecord(saved);
+          setMetadata(saved.metadata);
+          setBody(saved.body);
+          setEditorKey((key) => key + 1);
+          setDirty(false);
+          if (!initial) router.replace(`/news/${saved.id}`);
+          else void loadHistory();
+        }}
+      />
+      {record ? (
+        <section className="panel" aria-labelledby="news-history-title">
+          <h2 id="news-history-title">Histórico de versões</h2>
+          <p>Recuperar uma versão cria outro rascunho. A publicação exige uma ação própria.</p>
+          {history.items.length === 0 ? (
+            <p>Nenhuma versão disponível.</p>
+          ) : (
+            <ol className="news-history">
+              {history.items.map((version) => (
+                <li key={version.id}>
+                  <strong>Revisão {version.revision}</strong>
+                  <p>
+                    {version.title || "Sem título"}
+                    <br />
+                    {date(version.createdAt)} (Brasília){version.archived ? " · Arquivada" : ""}
+                  </p>
+                  <Button
+                    size="compact"
+                    disabled={pending || mediaUploading || dirty}
+                    onClick={() => setConfirm({ action: "restore", versionId: version.id })}
+                  >
+                    Recuperar revisão {version.revision}
+                  </Button>
+                </li>
+              ))}
+            </ol>
+          )}
+          <div className="news-actions">
+            <Button
+              disabled={history.page <= 1 || pending}
+              onClick={() => void loadHistory(history.page - 1)}
+            >
+              Versões anteriores na lista
+            </Button>
+            <span>
+              Página {history.page} de {Math.max(1, history.totalPages)}
+            </span>
+            <Button
+              disabled={history.page >= history.totalPages || pending}
+              onClick={() => void loadHistory(history.page + 1)}
+            >
+              Mais versões
+            </Button>
+          </div>
+        </section>
+      ) : null}
+      <Dialog
+        open={!!confirm}
+        onOpenChange={(open) => {
+          if (!open && !pending) setConfirm(undefined);
+        }}
+      >
+        <DialogContent
+          title={confirm?.action === "archive" ? "Arquivar notícia" : "Recuperar versão"}
+          description={
+            confirm?.action === "archive"
+              ? "A notícia ficará arquivada e seu histórico será preservado."
+              : "O conteúdo escolhido será salvo como uma nova revisão de rascunho."
+          }
+        >
+          {error ? <p role="alert">{error}</p> : null}
+          <div className="news-actions">
+            <DialogClose asChild>
+              <Button disabled={pending}>Cancelar</Button>
+            </DialogClose>
+            <Button
+              intent="primary"
+              disabled={pending}
+              onClick={() => confirm && void command(confirm.action, confirm.versionId)}
+            >
+              Confirmar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

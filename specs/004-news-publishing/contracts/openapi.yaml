@@ -1,0 +1,2620 @@
+openapi: 3.1.1
+info:
+  title: CAAB News API
+  version: 1.0.0
+  description: Editorial management using the existing panel session. Published content is publicly
+    readable by explicit user decision on 2026-09-09; drafts and history remain private. Delivery is
+    pull-based and does not imply consumer acknowledgement or push notification.
+servers:
+  - url: /api/v1
+security:
+  - sessionCookie: []
+paths:
+  /news:
+    get:
+      operationId: listNewsDrafts
+      summary: List latest editorial versions with combined filters and sorting
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100000
+            default: 1
+        - name: state
+          in: query
+          schema:
+            enum:
+              - active
+              - archived
+              - all
+            default: active
+        - name: search
+          in: query
+          schema:
+            type: string
+            maxLength: 200
+        - name: collection
+          in: query
+          description: Published means any publication in history; drafts have never been published.
+          schema:
+            enum: [all, published, drafts]
+            default: all
+        - name: category
+          in: query
+          schema:
+            type: string
+            maxLength: 80
+        - name: channel
+          in: query
+          description: Intended destination of the latest editorial revision.
+          schema:
+            enum: [all, app, site]
+            default: all
+        - name: highlight
+          in: query
+          schema:
+            enum: [all, "yes", "no"]
+            default: all
+        - name: cover
+          in: query
+          schema:
+            enum: [all, "yes", "no"]
+            default: all
+        - name: updatedWithin
+          in: query
+          schema:
+            enum: [all, "7", "30", "90"]
+            default: all
+        - name: sort
+          in: query
+          schema:
+            enum: [updated-desc, updated-asc, created-desc, created-asc, title-asc, title-desc]
+            default: updated-desc
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsPage"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createNewsDraft
+      summary: Create an incomplete draft; omitted body is empty
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            maxLength: 128
+            minLength: 16
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDraft"
+      responses:
+        "201":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: Save the first draft before attaching cover or body images; nonempty image references
+        are rejected on creation.
+  /news/{newsId}:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getNewsDraft
+      summary: Read latest draft, including archived content
+      parameters: []
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: updateNewsDraft
+      summary: Replace complete draft metadata and body under expected revision
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDraft"
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: Body image and cover references must belong to this news item. Adding a new file
+        reference requires the existing files:read permission. Pending media can be saved in drafts
+        but cannot be previewed or published.
+  /news/{newsId}/versions:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: listNewsVersions
+      summary: Read paginated history for one news item
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100000
+            default: 1
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevisionPage"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/duplicate:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: duplicateNewsDraft
+      summary: Duplicate text into an independent draft without slug, media, highlights, channels or
+        schedules
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            maxLength: 128
+            minLength: 16
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VersionCommand"
+      responses:
+        "201":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/archive:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: archiveNews
+      summary: Archive, withdraw all public channels and cancel pending actions atomically, preserving
+        history
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VersionCommand"
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/restore:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: restoreNewsRevision
+      summary: Copy a historical version into a new draft without publishing
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestoreRevision"
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/media:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: listNewsMedia
+      summary: List files owned by this news item; existing files:read required
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100000
+            default: 1
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaPage"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/media/{fileId}:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: downloadNewsMedia
+      summary: Redirect to a temporary private download for an available, clean PNG/JPEG owned by this
+        news item; existing files:read required
+      parameters: []
+      responses:
+        "307":
+          description: Temporary private download; no response body
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+            Location:
+              schema:
+                type: string
+                format: uri
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: "NEWS_MEDIA_UNAVAILABLE: file has not been released for use"
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/publish:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: publishNews
+      summary: Publish the selected revision to the complete selected channel set
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            maxLength: 128
+            minLength: 16
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishNews"
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/unpublish:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: unpublishNews
+      summary: Withdraw only selected channels, retaining other destinations and the latest draft
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            maxLength: 128
+            minLength: 16
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishNews"
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/schedule:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: scheduleNews
+      summary: Schedule an immutable revision; future time within 365 days, Brasília timezone
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            maxLength: 128
+            minLength: 16
+      requestBody:
+        required: true
+        description: UTF-8 JSON, at most 1048576 bytes including streamed requests.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleNews"
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsAction"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "413":
+          description: Request body exceeds limit
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/publication:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getNewsPublication
+      summary: Read publication availability and latest 100 scheduled action states
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicationState"
+        "401":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/actions/{actionId}/cancel:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: actionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: cancelNewsAction
+      summary: Cancel a pending action idempotently
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsAction"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /news/{newsId}/actions/{actionId}/retry:
+    parameters:
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: actionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: retryNewsAction
+      summary: Retry a failed pending action through the existing job execution, within its attempt limit
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          description: Must match the request origin.
+          schema:
+            type: string
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 32
+      responses:
+        "200":
+          description: Success
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RetryResult"
+        "401":
+          description: Active panel session required
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Request denied
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: News or revision not found
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Version or idempotency conflict
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Invalid input
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Unexpected error; no internal details
+          headers:
+            Cache-Control:
+              schema:
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /content/{channel}/news:
+    parameters:
+      - name: channel
+        in: path
+        required: true
+        schema:
+          enum:
+            - site
+            - app
+    get:
+      operationId: listPublicNews
+      security: []
+      responses:
+        "200":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeliveryPage"
+        "404":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      summary: List published news for this channel, ordered by highlight then latest publication
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100000
+            default: 1
+        - name: search
+          in: query
+          schema:
+            type: string
+            maxLength: 200
+  /content/{channel}/news/{newsId}:
+    parameters:
+      - name: channel
+        in: path
+        required: true
+        schema:
+          enum:
+            - site
+            - app
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: readPublicNews
+      security: []
+      responses:
+        "200":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Delivery"
+        "404":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      summary: Read only the published revision; draft, archive and unselected channel return 404
+  /content/{channel}/news/{newsId}/media/{fileId}:
+    parameters:
+      - name: channel
+        in: path
+        required: true
+        schema:
+          enum:
+            - site
+            - app
+      - name: newsId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: readPublicNewsMedia
+      security: []
+      responses:
+        "307":
+          description: Temporary download of a clean available image referenced by this published revision;
+            grant expires within 300 seconds
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+            Location:
+              schema:
+                type: string
+                format: uri
+        "404":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Public response; no session required
+          headers:
+            Cache-Control:
+              schema:
+                const: no-store
+            Access-Control-Allow-Origin:
+              schema:
+                const: "*"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: caab.session
+  schemas:
+    Metadata:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        summary:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          maxLength: 180
+          pattern: ^(?:[a-z0-9]+(?:-[a-z0-9]+)*)?$
+        category:
+          type: string
+          maxLength: 80
+        tags:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+            maxLength: 80
+            minLength: 1
+        channels:
+          type: array
+          maxItems: 2
+          uniqueItems: true
+          items:
+            enum:
+              - site
+              - app
+        cover:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                fileId:
+                  type: string
+                  format: uuid
+                alt:
+                  type: string
+                  maxLength: 500
+              required:
+                - fileId
+        highlight:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                order:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+              required:
+                - order
+      required: []
+    Body:
+      type: object
+      additionalProperties: false
+      properties:
+        root:
+          $ref: "#/components/schemas/BodyNode"
+      required:
+        - root
+    BodyNode:
+      type: object
+      description: "Canonical Lexical tree: root contains paragraphs, h2/h3 headings, lists or news-image
+        blocks. An image requires a UUID fileId owned by this news item; alt and caption are plain
+        text, max 500 characters. URLs and executable attributes are never stored. Alt may be empty
+        in drafts but is required for publication. Images are top-level only. Max 2000 nodes, depth
+        12, 100000 text characters."
+      required:
+        - type
+        - version
+      properties:
+        type:
+          enum:
+            - root
+            - paragraph
+            - heading
+            - list
+            - listitem
+            - text
+            - linebreak
+            - news-image
+        version:
+          const: 1
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/BodyNode"
+        text:
+          type: string
+          maxLength: 100000
+        format:
+          anyOf:
+            - type: integer
+              minimum: 0
+              maximum: 15
+            - enum:
+                - ""
+                - left
+                - right
+                - center
+                - justify
+                - start
+                - end
+        tag:
+          enum:
+            - h2
+            - h3
+            - ul
+            - ol
+        listType:
+          enum:
+            - bullet
+            - number
+        direction:
+          enum:
+            - ltr
+            - rtl
+            - null
+        indent:
+          type: integer
+          minimum: 0
+          maximum: 8
+        fileId:
+          type: string
+          format: uuid
+        alt:
+          type: string
+          maxLength: 500
+        caption:
+          type: string
+          maxLength: 500
+    CreateDraft:
+      type: object
+      additionalProperties: false
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        body:
+          $ref: "#/components/schemas/Body"
+      required:
+        - metadata
+    UpdateDraft:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        body:
+          $ref: "#/components/schemas/Body"
+      required:
+        - expectedVersion
+        - metadata
+        - body
+    VersionCommand:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+      required:
+        - expectedVersion
+    RestoreRevision:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        versionId:
+          type: string
+          format: uuid
+      required:
+        - expectedVersion
+        - versionId
+    News:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        body:
+          $ref: "#/components/schemas/Body"
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        archived:
+          type: boolean
+        editorUserId:
+          type: string
+          format: uuid
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - metadata
+        - body
+        - revision
+        - archived
+        - editorUserId
+        - updatedAt
+    Revision:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        title:
+          type: string
+          maxLength: 200
+        editorUserId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        archived:
+          type: boolean
+      required:
+        - id
+        - revision
+        - title
+        - editorUserId
+        - createdAt
+        - archived
+    Error:
+      type: object
+      required:
+        - code
+        - message
+        - requestId
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string
+          format: uuid
+        fields:
+          type: array
+          items:
+            type: object
+    NewsPage:
+      type: object
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/News"
+        page:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        totalPages:
+          type: integer
+          minimum: 0
+      required:
+        - items
+        - page
+        - totalPages
+    RevisionPage:
+      type: object
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Revision"
+        page:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        totalPages:
+          type: integer
+          minimum: 0
+      required:
+        - items
+        - page
+        - totalPages
+    Media:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          enum:
+            - initiated
+            - uploaded
+            - scanning
+            - available
+            - rejected
+            - scan_error
+            - deleted
+        mime:
+          type: string
+        usable:
+          type: boolean
+      required:
+        - id
+        - name
+        - status
+        - mime
+        - usable
+    MediaPage:
+      type: object
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          maxItems: 25
+          items:
+            $ref: "#/components/schemas/Media"
+        page:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        hasNextPage:
+          type: boolean
+      required:
+        - items
+        - page
+        - hasNextPage
+    PublishNews:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        channels:
+          type: array
+          minItems: 1
+          maxItems: 2
+          uniqueItems: true
+          items:
+            enum:
+              - site
+              - app
+      required:
+        - expectedVersion
+        - channels
+    ScheduleNews:
+      type: object
+      additionalProperties: false
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        channels:
+          type: array
+          minItems: 1
+          maxItems: 2
+          uniqueItems: true
+          items:
+            enum:
+              - site
+              - app
+        action:
+          enum:
+            - publish
+            - unpublish
+        runAt:
+          type: string
+          format: date-time
+        timezone:
+          const: America/Sao_Paulo
+          default: America/Sao_Paulo
+      required:
+        - expectedVersion
+        - channels
+        - action
+        - runAt
+    NewsAction:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        newsId:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        action:
+          enum:
+            - publish
+            - unpublish
+        channels:
+          type: array
+          minItems: 1
+          maxItems: 2
+          uniqueItems: true
+          items:
+            enum:
+              - site
+              - app
+        runAt:
+          type: string
+          format: date-time
+        timezone:
+          const: America/Sao_Paulo
+        status:
+          enum:
+            - pending
+            - succeeded
+            - cancelled
+        jobId:
+          type: string
+          format: uuid
+        resultRevision:
+          anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 9007199254740991
+            - type: "null"
+        jobStatus:
+          enum:
+            - queued
+            - running
+            - succeeded
+            - failed
+        attemptCount:
+          type: integer
+          minimum: 0
+        attemptLimit:
+          type: integer
+          minimum: 1
+        errorCode:
+          type:
+            - string
+            - "null"
+      required:
+        - id
+        - newsId
+        - revision
+        - action
+        - channels
+        - runAt
+        - timezone
+        - status
+        - jobId
+        - resultRevision
+        - jobStatus
+        - attemptCount
+        - attemptLimit
+        - errorCode
+    PublicationState:
+      type: object
+      additionalProperties: false
+      properties:
+        publication:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                revision:
+                  type: integer
+                  minimum: 1
+                  maximum: 9007199254740991
+                channels:
+                  type: array
+                  minItems: 1
+                  maxItems: 2
+                  uniqueItems: true
+                  items:
+                    enum:
+                      - site
+                      - app
+                publishedAt:
+                  type: string
+                  format: date-time
+              required:
+                - revision
+                - channels
+                - publishedAt
+        actions:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/NewsAction"
+      required:
+        - publication
+        - actions
+    RetryResult:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          enum:
+            - queued
+            - running
+      required:
+        - id
+        - status
+    Delivery:
+      type: object
+      additionalProperties: false
+      properties:
+        schemaVersion:
+          const: 1
+        id:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        channel:
+          enum:
+            - site
+            - app
+        publishedAt:
+          type: string
+          format: date-time
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        summary:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 180
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        category:
+          type: string
+          maxLength: 80
+        tags:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+            maxLength: 80
+            minLength: 1
+        highlight:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                order:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+              required:
+                - order
+        cover:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                fileId:
+                  type: string
+                  format: uuid
+                alt:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+              required:
+                - fileId
+                - alt
+        body:
+          $ref: "#/components/schemas/Body"
+      required:
+        - schemaVersion
+        - id
+        - revision
+        - channel
+        - publishedAt
+        - title
+        - summary
+        - slug
+        - category
+        - tags
+        - highlight
+        - cover
+        - body
+    DeliverySummary:
+      type: object
+      additionalProperties: false
+      properties:
+        schemaVersion:
+          const: 1
+        id:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        channel:
+          enum:
+            - site
+            - app
+        publishedAt:
+          type: string
+          format: date-time
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        summary:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 180
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        category:
+          type: string
+          maxLength: 80
+        tags:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+            maxLength: 80
+            minLength: 1
+        highlight:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                order:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+              required:
+                - order
+        cover:
+          anyOf:
+            - type: "null"
+            - type: object
+              additionalProperties: false
+              properties:
+                fileId:
+                  type: string
+                  format: uuid
+                alt:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+              required:
+                - fileId
+                - alt
+      required:
+        - schemaVersion
+        - id
+        - revision
+        - channel
+        - publishedAt
+        - title
+        - summary
+        - slug
+        - category
+        - tags
+        - highlight
+        - cover
+    DeliveryPage:
+      type: object
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          maxItems: 25
+          items:
+            $ref: "#/components/schemas/DeliverySummary"
+        page:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        hasNextPage:
+          type: boolean
+      required:
+        - items
+        - page
+        - hasNextPage
