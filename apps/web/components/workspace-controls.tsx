@@ -95,7 +95,12 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
 
   return (
     <div className="workspace-controls">
-      <button className="command-trigger" type="button" onClick={() => setOpen(true)}>
+      <button
+        className="command-trigger"
+        type="button"
+        aria-label="Buscar área"
+        onClick={() => setOpen(true)}
+      >
         <Search size={17} aria-hidden="true" />
         <span>Buscar área...</span>
         <kbd>

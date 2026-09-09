@@ -20,6 +20,7 @@ test("theme preference persists and quick navigation respects permissions", asyn
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.getByRole("button", { name: "Ativar tema claro" })).toBeVisible();
 
   await page.keyboard.press("Control+k");
   const dialog = page.getByRole("dialog", { name: "Navegação rápida" });
@@ -42,6 +43,11 @@ test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page 
   await expect(page.getByRole("button", { name: "Expandir menu lateral" })).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Buscar área", exact: true }).click();
+  const quickNavigation = page.getByRole("dialog", { name: "Navegação rápida" });
+  await expect(quickNavigation).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(quickNavigation).toBeHidden();
   const menuButton = page.getByRole("button", { name: "Abrir menu de navegação" });
   await menuButton.click();
   await expect(menuButton).toHaveAttribute("aria-expanded", "true");
