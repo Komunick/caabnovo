@@ -106,9 +106,9 @@ test("manager can reach accounts beyond the first hundred and recover from inval
 
     for (const query of ["cursor=invalid", "cursor=invalid&cursor=also-invalid"]) {
       await page.goto(`/users?${query}`);
-      await expect(page.getByRole("alert")).toHaveText(
-        "A página solicitada é inválida. Exibindo a primeira página.",
-      );
+      await expect(
+        page.getByRole("region", { name: "Contas cadastradas" }).getByRole("alert"),
+      ).toHaveText("A página solicitada é inválida. Exibindo a primeira página.");
       await expect(links).toHaveText(firstPageNames);
     }
   } finally {

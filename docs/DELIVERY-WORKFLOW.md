@@ -14,6 +14,9 @@ Nunca realizar commits ou pushes diretos em `dev` ou `main`.
 
 - Toda alteração entra por Pull Request.
 - PRs de trabalho apontam para `dev`.
+- Abrir um único PR por funcionalidade pronta, reunindo implementação, testes e documentação.
+  Não dividir a mesma entrega em PRs de documentação, preliminar e final; corrigir CI e revisão
+  no próprio PR.
 - Produção recebe apenas PR de promoção `dev` → `main`.
 - Merge em `main` é exclusivamente humano.
 - Não contornar CI, reviews ou proteções de branch.
@@ -149,4 +152,3 @@ O PR `dev` → `main` deve conter:
 - Não apagar dados para simplificar rollback.
 - Registrar incidente, decisão e ações executadas.
 - Após estabilização, produzir correção por novo PR.
-
