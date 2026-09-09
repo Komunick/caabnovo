@@ -2,7 +2,7 @@
 
 Date: 2026-09-09
 
-Status: DEV PREPARED; REMOTE APPLICATION PENDING. MAIN OUT OF SCOPE.
+Status: DEV RULESET ACTIVE AND VERIFIED. MAIN OUT OF SCOPE.
 
 ## Authorized scope
 
@@ -50,7 +50,23 @@ gh api repos/Komunick/caabnovo/rulesets
 gh api repos/Komunick/caabnovo/rules/branches/dev
 ```
 
-After application, record the ruleset ID and effective DEV checks. Do not use a direct-push probe as
-part of this delivery: the project's delivery policy prohibits direct pushes to `dev`, and an attempted
-write could succeed if protections are misconfigured. A dry-run push is not server-enforcement evidence.
-A separate, explicitly scoped validation is needed for that remaining T095 criterion.
+## Applied remote state
+
+- [PR #8](https://github.com/Komunick/caabnovo/pull/8) merged into `dev` as `e3249d5` on
+  2026-09-09 at 11:33:20 UTC, after `quality`, `browser` and `security` passed on both branch and PR
+  executions for candidate `e5a1405`.
+- The authorized application created [Protect dev](https://github.com/Komunick/caabnovo/rules/22635784),
+  ruleset ID `22635784`, at 11:33:39 UTC. The script reported `Applied: True`.
+- Read-back of that ID confirms active enforcement, the sole target `refs/heads/dev`, no exclusions,
+  no bypass actors and `current_user_can_bypass: never`.
+- The effective branch-rules endpoint confirms deletion and force-push protection, PR required with
+  zero approving reviews, stale-review dismissal, resolved conversations and strict required checks
+  `quality`, `browser`, `security`, each bound to GitHub Actions App ID `15368`.
+- A subsequent read-only script invocation identified that same ID and planned `PUT`, with
+  `Applied: False`; it neither created a duplicate ruleset nor changed any remote setting.
+- No `main` settings, files relative to the PR base, refs or promotion workflows were modified.
+
+The configured DEV rules have been verified through the API. No direct-push probe was performed:
+the project's delivery policy prohibits direct pushes to `dev`, and an attempted write could succeed
+if protections are misconfigured. A dry-run push is not server-enforcement evidence. That probe and
+the excluded `main`/promotion criteria remain open in the original T095 scope.
