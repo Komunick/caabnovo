@@ -2,7 +2,10 @@
 
 ## 1. Contexto
 
-Esta arquitetura atende ao sistema interno da CAAB. O aplicativo e o site externo permanecem fora do escopo de implementação inicial e consomem notícias por APIs controladas.
+Esta arquitetura atende ao novo painel CAAB e ao portal do parceiro. O desenho contempla contratos
+para app/site; alterar esses consumidores ou conectar serviços externos depende de escopo e contrato
+autorizados. Todos os módulos constam da [entrega integrada](MODULES.md), sem consultar código ou
+telas do legado. A fundação atual deve ser reutilizada, com uma fonte de verdade por domínio.
 
 Módulos principais:
 
@@ -13,6 +16,11 @@ Módulos principais:
 - Parceiros e serviços parceiros.
 - Colaboradores.
 - Usuários, permissões e auditoria.
+- Dependentes, documentação, credencial e elegibilidade em Pessoas.
+- Campanhas, segmentos e modelos de mensagens em Comunicação.
+- Caassh e extrato em Créditos; portal restrito usando os mesmos cadastros de parceiros.
+- Avaliações contextuais e relatórios dos domínios.
+- Operações incorporadas à navegação de Auditoria como Processamentos.
 
 ## 2. Arquitetura
 
@@ -27,14 +35,16 @@ Fluxos principais:
 - App/site → API versionada → somente conteúdo publicado para o respectivo canal.
 - BFF → fila durável → worker → publicação, mídia, notificações e integrações.
 
-Usar um monólito modular. Separar serviços somente quando carga, segurança, implantação ou responsabilidade operacional demonstrarem uma fronteira real.
+Usar um monólito modular. Separar serviços somente quando carga, segurança, implantação ou
+responsabilidade operacional demonstrarem uma fronteira real.
 
 ## 3. Linguagens
 
 - **TypeScript:** aplicação, APIs, componentes, CMS, worker e testes.
 - **SQL:** migrations, constraints, índices, views e políticas do banco.
 - **CSS via Tailwind:** apresentação baseada em design tokens.
-- **Python opcional:** somente para processamento isolado que tenha biblioteca claramente superior, como OCR ou análise de arquivos.
+- **Python opcional:** somente para processamento isolado que tenha biblioteca claramente superior,
+  como OCR ou análise de arquivos.
 
 Não adicionar outra linguagem ao núcleo sem justificativa concreta.
 
@@ -47,7 +57,8 @@ Não adicionar outra linguagem ao núcleo sem justificativa concreta.
 - Client Components apenas para superfícies interativas.
 - Route Handlers ou camada de serviço server-side como BFF.
 
-O navegador não acessa diretamente tabelas sensíveis. O BFF aplica autenticação, autorização, validação, auditoria e regras de negócio.
+O navegador não acessa diretamente tabelas sensíveis. O BFF aplica autenticação, autorização,
+validação, auditoria e regras de negócio.
 
 ## 5. Notícias e CMS
 
@@ -69,13 +80,18 @@ Motivos:
 
 ### 5.2 Limites do CMS
 
-Payload é responsável por conteúdo editorial, mídia e cadastros adequados. Ele não deve se tornar a autoridade das regras de agenda, bloqueio de associados ou permissões críticas sem uma camada explícita de domínio.
+Payload é responsável por conteúdo editorial, mídia e cadastros adequados. Ele não deve se tornar a
+autoridade das regras de agenda, bloqueio de associados ou permissões críticas sem uma camada
+explícita de domínio.
 
 ### 5.3 Editor
 
-Lexical é o padrão porque já possui integração oficial com Payload. Se o sistema legado exigir editor independente fora do CMS, Tiptap é a alternativa preferencial.
+Lexical permanece a escolha prevista para o editor com Payload. Qualquer alternativa deve ser
+justificada pelas necessidades do projeto novo e pela compatibilidade com a fundação; o legado não é
+fonte de requisito nem de implementação.
 
-Persistir conteúdo estruturado. HTML renderizado deve ser sanitizado e não pode aceitar scripts ou embeds arbitrários.
+Persistir conteúdo estruturado. HTML renderizado deve ser sanitizado e não pode aceitar scripts ou
+embeds arbitrários.
 
 ## 6. Interface e design system
 
@@ -104,7 +120,8 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 
 ### 7.1 Decisão
 
-O núcleo de agendamentos será implementado no domínio CAAB. Cal.com não será a fonte de verdade inicial.
+O núcleo de agendamentos será implementado no domínio CAAB. Cal.com não será a fonte de verdade
+inicial.
 
 Cal.com poderá ser integrado no futuro para:
 
@@ -140,11 +157,13 @@ FullCalendar é apenas a camada visual; nunca decide disponibilidade final.
 - Valores financeiros futuros em unidade monetária mínima e moeda explícita.
 - Exclusão lógica em entidades auditáveis.
 
-ORM recomendado: Drizzle ORM ou o adaptador exigido pelo Payload. Evitar manter dois modelos concorrentes das mesmas tabelas. SQL explícito é aceitável para constraints e consultas críticas.
+ORM recomendado: Drizzle ORM ou o adaptador exigido pelo Payload. Evitar manter dois modelos
+concorrentes das mesmas tabelas. SQL explícito é aceitável para constraints e consultas críticas.
 
 ## 9. Autenticação e autorização
 
-A escolha final do provedor depende do sistema existente. Requisitos independentes do provedor:
+A fundação do projeto novo já utiliza Better Auth, sessões e autorização no domínio. Reutilizar essa
+implementação, sem criar provedores ou tabelas de autenticação por módulo. Requisitos:
 
 - Cookies de sessão `HttpOnly`, `Secure` e `SameSite` apropriado.
 - MFA para administradores.
@@ -171,7 +190,8 @@ O usuário autenticado nunca fornece o próprio papel ou escopo como fonte confi
 - Imagens processadas em worker com biblioteca atualizada.
 - Vídeos grandes processados fora do request web.
 
-Não guardar binários no PostgreSQL e não servir uploads diretamente de uma pasta executável da aplicação.
+Não guardar binários no PostgreSQL e não servir uploads diretamente de uma pasta executável da
+aplicação.
 
 ## 11. Validação e APIs
 
@@ -184,7 +204,8 @@ Não guardar binários no PostgreSQL e não servir uploads diretamente de uma pa
 - Idempotência em publicação, agendamento e integrações.
 - Webhooks assinados, com proteção contra replay.
 
-Conteúdo externo deve retornar apenas registros publicados, vigentes e destinados ao canal solicitante.
+Conteúdo externo deve retornar apenas registros publicados, vigentes e destinados ao canal
+solicitante.
 
 ## 12. Verificação da OAB
 
@@ -211,7 +232,8 @@ Usar worker Node.js separado para:
 - Notificações futuras.
 - Sincronizações autorizadas.
 
-Fila recomendada para a primeira versão: fila PostgreSQL compatível com o runtime escolhido, evitando Redis sem necessidade comprovada.
+Reutilizar a fila pg-boss, o worker e os registros de execução/idempotência já implementados sobre
+PostgreSQL. Cada módulo acrescenta seus handlers; não criar filas ou centrais concorrentes.
 
 Princípios:
 
@@ -238,9 +260,14 @@ Tabela append-only com:
 
 ### 14.2 Logs técnicos
 
-Logs estruturados para erros, latência, falhas de job e integrações. Nunca registrar senhas, tokens, cookies, arquivos completos ou dados pessoais sem necessidade operacional aprovada.
+Logs estruturados para erros, latência, falhas de job e integrações. Nunca registrar senhas, tokens,
+cookies, arquivos completos ou dados pessoais sem necessidade operacional aprovada.
 
 Auditoria de negócio e logs técnicos possuem finalidades e retenções distintas.
+
+A experiência reúne Eventos e Processamentos na área Auditoria. A fusão não mistura tabelas nem
+permissões: `audit:read`, `audit:export`, `jobs:read` e `jobs:redrive` continuam independentes. URLs
+existentes podem permanecer compatíveis. Jobs e exportações reutilizam os serviços atuais.
 
 ## 15. Segurança
 
@@ -309,7 +336,8 @@ infra/
 docs/
 ```
 
-Começar com poucos packages. Criar nova separação apenas quando houver fronteira real de reutilização ou implantação.
+Começar com poucos packages. Criar nova separação apenas quando houver fronteira real de
+reutilização ou implantação.
 
 ## 18. Infraestrutura
 
@@ -322,7 +350,8 @@ Modelo inicial:
 - Ambientes separados: local, DEV e PROD.
 - Banco e credenciais separados por ambiente.
 
-Self-hosting só deve ir para produção com backup, monitoramento, atualização e restauração sob responsabilidade definida.
+Self-hosting só deve ir para produção com backup, monitoramento, atualização e restauração sob
+responsabilidade definida.
 
 ## 19. Observabilidade e operação
 
@@ -356,4 +385,3 @@ Self-hosting só deve ir para produção com backup, monitoramento, atualizaçã
 - Object storage S3-compatible.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.
-

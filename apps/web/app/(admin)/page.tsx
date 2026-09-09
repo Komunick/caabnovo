@@ -1,63 +1,23 @@
 import Link from "next/link";
 import { headers } from "next/headers";
-import {
-  Activity,
-  ArrowUpRight,
-  BadgeCheck,
-  FileClock,
-  KeyRound,
-  Layers3,
-  MonitorCog,
-  ShieldCheck,
-  Sparkles,
-  UsersRound,
-} from "lucide-react";
+import { ArrowUpRight, BadgeCheck, KeyRound, Layers3, ShieldCheck, Sparkles } from "lucide-react";
 import { resolveCurrentUser } from "@/modules/auth/current-user";
-import { PERMISSIONS } from "@/modules/auth/permissions";
+import { getWorkspaceAreas } from "@/modules/workspace/areas";
 
 export default async function AdminHomePage() {
   const requestHeaders = await headers();
   const identity = await resolveCurrentUser(
     new Request("http://caab.internal/api/v1/me", { headers: requestHeaders }),
   );
-  const allowed = new Set(identity?.permissions ?? []);
   const firstName = identity?.name.trim().split(/\s+/)[0] ?? "";
-  const areas = [
-    {
-      href: "/users",
-      title: "Usuários",
-      description: "Gerencie contas, estados e funções de acesso.",
-      icon: UsersRound,
-      visible: allowed.has(PERMISSIONS.usersRead),
-    },
-    {
-      href: "/audit",
-      title: "Auditoria",
-      description: "Consulte eventos críticos e trilhas de atividade.",
-      icon: FileClock,
-      visible: allowed.has(PERMISSIONS.auditRead),
-    },
-    {
-      href: "/operations/jobs",
-      title: "Operações",
-      description: "Acompanhe processamentos, filas e ocorrências.",
-      icon: Activity,
-      visible: allowed.has(PERMISSIONS.jobsRead),
-    },
-    {
-      href: "/sessions",
-      title: "Sessões",
-      description: "Confira como sua sessão e identidade são protegidas.",
-      icon: MonitorCog,
-      visible: true,
-    },
-  ];
-  const visibleAreas = areas.filter(({ visible }) => visible);
+  const visibleAreas = getWorkspaceAreas(identity?.permissions ?? []).filter(
+    ({ id }) => id !== "home",
+  );
   const stats = [
     {
       label: "Áreas habilitadas",
       value: String(visibleAreas.length),
-      detail: `de ${areas.length} módulos disponíveis`,
+      detail: "áreas disponíveis para seu perfil",
       icon: Layers3,
       tone: "blue",
     },
@@ -147,13 +107,13 @@ export default async function AdminHomePage() {
           <p>{visibleAreas.length} acessos habilitados</p>
         </div>
         <div className="module-grid">
-          {visibleAreas.map(({ href, title, description, icon: Icon }) => (
+          {visibleAreas.map(({ href, label, description, icon: Icon }) => (
             <Link className="module-card" href={href} key={href}>
               <span className="module-card__icon" aria-hidden="true">
                 <Icon size={23} strokeWidth={1.7} />
               </span>
               <span className="module-card__content">
-                <strong>{title}</strong>
+                <strong>{label}</strong>
                 <span>{description}</span>
               </span>
               <ArrowUpRight className="module-card__arrow" size={20} aria-hidden="true" />

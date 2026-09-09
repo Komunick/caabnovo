@@ -8,7 +8,7 @@ import { cn } from "@/components/ui/utils";
 function sectionTitle(pathname: string): string {
   if (pathname.startsWith("/users")) return "Usuários";
   if (pathname.startsWith("/audit")) return "Auditoria";
-  if (pathname.startsWith("/operations")) return "Operações";
+  if (pathname.startsWith("/operations")) return "Auditoria";
   if (pathname.startsWith("/sessions")) return "Sessões";
   return "Visão geral";
 }

@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import { expectWcag22AA } from "./accessibility";
 import { expect, syntheticUsers, test } from "./fixtures";
 
 const adminUrl =
@@ -34,12 +35,19 @@ test("operator follows progress, sees safe failure and performs an authorized re
     await signIn(page);
     await page
       .getByRole("navigation", { name: "Navegação administrativa" })
-      .getByRole("link", { name: "Operações", exact: true })
+      .getByRole("link", { name: "Auditoria", exact: true })
+      .click();
+    await page
+      .getByRole("navigation", { name: "Áreas de auditoria" })
+      .getByRole("link", { name: "Processamentos", exact: true })
       .click();
     await expect(page.getByRole("heading", { name: "Processamentos" })).toBeVisible({
       timeout: 15_000,
     });
-    await page.locator(`a[href="/operations/jobs/${jobId}"]`).click();
+    await page.locator(`a[href="/audit/jobs/${jobId}"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/audit/jobs/${jobId}$`));
+    await page.goto(`/operations/jobs/${jobId}`);
+    await expect(page).toHaveURL(new RegExp(`/audit/jobs/${jobId}$`));
     await expect(page.getByRole("heading", { name: "Estado: Falhou" })).toBeVisible();
     await expect(page.getByText("45% concluído")).toBeVisible();
     await expect(page.getByText("The operation could not be completed")).toBeVisible();
@@ -68,6 +76,35 @@ test("operator follows progress, sees safe failure and performs an authorized re
   } finally {
     await database.end();
   }
+});
+
+test("job-only operator uses the consolidated area without gaining audit access", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill(syntheticUsers.operator.email);
+  await page.getByLabel("Senha").fill(syntheticUsers.operator.password);
+  await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  const navigation = page.getByRole("navigation", { name: "Navegação administrativa" });
+  await expect(navigation.getByRole("link", { name: "Operações", exact: true })).toHaveCount(0);
+  const audit = navigation.getByRole("link", { name: "Auditoria", exact: true });
+  await expect(audit).toHaveAttribute("href", "/audit/jobs");
+  await audit.click();
+  await expect(page.getByRole("heading", { name: "Processamentos", exact: true })).toBeVisible();
+  const sections = page.getByRole("navigation", { name: "Áreas de auditoria" });
+  await expect(sections.getByRole("link", { name: "Eventos", exact: true })).toHaveCount(0);
+  await expect(sections.getByRole("link", { name: "Processamentos", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expectWcag22AA(page);
+  expect((await page.request.get("/api/v1/audit-events")).status()).toBe(403);
+  await page.goto("/audit");
+  await expect(page).toHaveURL(/\/audit\/jobs$/);
+  await page.goto("/operations/jobs");
+  await expect(page).toHaveURL(/\/audit\/jobs$/);
+  await expect(page.getByRole("button", { name: "Reenviar processamento" })).toHaveCount(0);
 });
 
 test("quarantined upload remains private and unavailable for download", async ({ page }) => {

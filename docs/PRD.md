@@ -2,22 +2,44 @@
 
 ## 1. Controle do documento
 
-**Produto:** CAAB — Sistema Interno de Gestão  
-**Tipo:** Product Requirements Document (PRD)  
-**Versão:** 0.1  
-**Status:** Rascunho para validação  
-**Data:** 04/09/2026  
-**Escopo desta versão:** sistema administrativo interno  
+**Produto:** CAAB — Sistema Interno de Gestão
 
-O aplicativo e o site externo não serão alterados nesta fase. Eles serão tratados somente como canais consumidores das notícias publicadas pelo sistema interno.
+**Tipo:** Product Requirements Document (PRD)
+
+**Versão:** 0.2
+
+**Status:** Escopo integrado confirmado; regras institucionais em definição
+
+**Data:** 09/09/2026
+
+**Escopo desta versão:** todos os módulos do painel e portal do parceiro
+
+O aplicativo e o site externo participam do desenho dos contratos de conteúdo, benefícios, cadastro,
+credencial, agenda e mensagens. Alterações nesses consumidores, contratação de serviços e migração
+de dados exigem escopo próprio. A implementação desta entrega concentra-se no novo painel e portal.
+
+O [mapa de módulos](MODULES.md) compara capacidades existentes e novas e define responsabilidades
+para evitar duplicatas. Todos os módulos integram o mesmo escopo; a sequência interna de construção
+respeita dependências. O [plano integrado](../specs/002-integrated-modules/plan.md) substitui a
+proposta anterior de entregar somente Notícias primeiro. Refinamentos posteriores não dispensam
+persistência, autorização, acessibilidade ou integridade na primeira versão funcional.
+
+O laudo de 09/09/2026 é inventário funcional, não modelo visual ou técnico. Não consultar código,
+telas, capturas ou vídeos do painel antigo ou de refações anteriores. Contratos devem ser novos ou
+formalmente fornecidos; regras institucionais não podem ser inferidas do legado ou do mercado.
 
 ## 2. Resumo executivo
 
-A CAAB precisa modernizar seu sistema interno e consolidar, em uma única plataforma segura, a gestão de notícias, agendamentos, associados, serviços parceiros, colaboradores e logs de alterações.
+A CAAB precisa modernizar seu sistema interno e consolidar, em uma única plataforma segura, a gestão
+de notícias, agendamentos, associados, serviços parceiros, colaboradores e logs de alterações.
 
-O sistema deve reduzir cadastros duplicados, operações manuais, conflitos de agenda e alterações sem rastreabilidade. A experiência deve ser moderna, rápida, acessível e adequada ao trabalho administrativo diário.
+O sistema deve reduzir cadastros duplicados, operações manuais, conflitos de agenda e alterações sem
+rastreabilidade. A experiência deve ser moderna, rápida, acessível e adequada ao trabalho
+administrativo diário.
 
-A solução será construída como um monólito modular: uma aplicação única, com módulos de domínio claramente separados. Notícias poderão ser distribuídas ao aplicativo, ao site externo ou a ambos por contratos de API versionados.
+A solução será construída como um monólito modular: uma aplicação única, com módulos de domínio
+claramente separados. Notícias poderão ser distribuídas ao aplicativo, ao site externo ou a ambos
+por contratos de API versionados.
 
 ## 3. Problemas a resolver
 
@@ -67,15 +89,18 @@ A solução será construída como um monólito modular: uma aplicação única,
 
 ### 6.1 Administrador
 
-Gerencia usuários, permissões, configurações, cadastros e auditoria. Pode executar ações sensíveis mediante confirmação e justificativa.
+Gerencia usuários, permissões, configurações, cadastros e auditoria. Pode executar ações sensíveis
+mediante confirmação e justificativa.
 
 ### 6.2 Comunicação
 
-Cria, edita, revisa, agenda e publica notícias. Gerencia categorias, mídias e canais de distribuição.
+Cria, edita, revisa, agenda e publica notícias. Gerencia categorias, mídias e canais de
+distribuição.
 
 ### 6.3 Atendimento
 
-Consulta associados, unidades, serviços e agendas. Cria, remarca e cancela agendamentos conforme permissão.
+Consulta associados, unidades, serviços e agendas. Cria, remarca e cancela agendamentos conforme
+permissão.
 
 ### 6.4 Coordenação de serviços
 
@@ -91,13 +116,15 @@ Mantém serviços parceiros, vigências, documentos, unidades atendidas e situa�
 
 ### 6.7 Recursos humanos
 
-Mantém os dados administrativos dos colaboradores. Acesso a dados sensíveis deve ser mínimo e explicitamente autorizado.
+Mantém os dados administrativos dos colaboradores. Acesso a dados sensíveis deve ser mínimo e
+explicitamente autorizado.
 
 ### 6.8 Auditor
 
 Possui acesso somente leitura aos logs, históricos, versões e relatórios autorizados.
 
-As funções podem ser acumuladas. O sistema deve conceder permissões concretas, e não acesso amplo apenas pelo nome do cargo.
+As funções podem ser acumuladas. O sistema deve conceder permissões concretas, e não acesso amplo
+apenas pelo nome do cargo.
 
 ## 7. Escopo funcional
 
@@ -117,7 +144,7 @@ As funções podem ser acumuladas. O sistema deve conceder permissões concretas
 - Logs de alterações e histórico dos registros críticos.
 - Pesquisa, filtros, paginação e exportação autorizada.
 
-### 7.2 Pós-MVP
+### 7.2 Integrações previstas no planejamento completo
 
 - Sincronização de agendas externas.
 - Lembretes por e-mail, SMS ou WhatsApp.
@@ -126,6 +153,23 @@ As funções podem ser acumuladas. O sistema deve conceder permissões concretas
 - Relatórios analíticos avançados.
 - Alterações no aplicativo e no site externo.
 - Integração com sistemas de RH, ERP ou atendimento.
+
+A presença no planejamento não autoriza contratar serviços ou alterar consumidores externos.
+Integrações reais dependem de contrato e responsável. Os módulos adicionais abaixo fazem parte da
+entrega integrada, inclusive os anteriormente ausentes ou adiados:
+
+- Pessoas: dependentes, análise documental, correções, credencial e elegibilidade por finalidade.
+- Atendimentos: avaliações e acompanhamento de qualidade, além de oferta e agenda.
+- Benefícios: condições, contratos, ofertas e avaliações de parceiros.
+- Comunicação: notícias/destaques, públicos, campanhas e modelos automáticos com acompanhamento.
+- Créditos: Caassh, configuração do programa, concessões individuais/em lote, extrato e correções.
+- Portal do parceiro: acesso por organização, solicitações avulsas ou identificadas por QR.
+- Equipe e acesso: colaboradores associados às contas e permissões existentes, sem duplicá-las.
+- Auditoria: Eventos e Processamentos reunidos, preservando autorizações independentes.
+- Relatórios: consultas e exportações dos mesmos registros dos domínios.
+
+Os rótulos MVP dos requisitos abaixo representam a primeira versão funcional desta entrega. Pós-MVP
+nos itens de integração indica dependência de contrato externo, não exclusão do planejamento.
 
 ## 8. Fluxos principais
 
@@ -142,11 +186,12 @@ As funções podem ser acumuladas. O sistema deve conceder permissões concretas
 
 ### 8.2 Agendamento
 
-1. Usuário seleciona uma unidade ativa.
-2. Sistema apresenta somente os serviços oferecidos nessa unidade.
-3. Usuário seleciona o serviço.
-4. Sistema identifica as profissões e os profissionais habilitados.
-5. Sistema considera jornada, intervalos, bloqueios, afastamentos, duração do serviço e compromissos existentes.
+1. Usuário identifica o beneficiário e procura o serviço necessário.
+2. Sistema permite filtrar unidade, data e profissional e comparar as próximas vagas permitidas.
+3. Sistema apresenta a oferta e explica restrições ou indisponibilidade.
+4. Sistema identifica os profissionais e recursos habilitados para a oferta.
+5. Sistema considera jornada, intervalos, bloqueios, afastamentos, duração do serviço e compromissos
+   existentes.
 6. Usuário escolhe um horário disponível.
 7. Servidor revalida a disponibilidade dentro de uma transação.
 8. Agendamento é confirmado e registrado no histórico.
@@ -180,109 +225,138 @@ As funções podem ser acumuladas. O sistema deve conceder permissões concretas
 
 ### 9.1 Notícias
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| NOT-001 | Criar, editar, duplicar e arquivar notícias. | MVP |
-| NOT-002 | Manter rascunhos e histórico de versões. | MVP |
-| NOT-003 | Suportar texto rico, imagens, vídeos, links e anexos permitidos. | MVP |
-| NOT-004 | Definir capa, resumo, categoria, tags, autor e revisor. | MVP |
-| NOT-005 | Publicar no aplicativo, site externo ou ambos. | MVP |
-| NOT-006 | Agendar publicação e despublicação. | MVP |
-| NOT-007 | Exibir prévia antes da publicação. | MVP |
-| NOT-008 | Registrar falhas de distribuição e permitir nova tentativa idempotente. | MVP |
-| NOT-009 | Permitir aprovação editorial antes da publicação. | Pós-MVP |
+| ID      | Requisito                                                                                                                                               | Prioridade |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| NOT-001 | Criar, editar, duplicar e arquivar notícias.                                                                                                            | MVP        |
+| NOT-002 | Manter rascunhos e histórico de versões.                                                                                                                | MVP        |
+| NOT-003 | Suportar texto rico, imagens, vídeos, links e anexos permitidos.                                                                                        | MVP        |
+| NOT-004 | Definir capa, resumo, categoria, tags, autor e responsável pela publicação.                                                                             | MVP        |
+| NOT-005 | Publicar no aplicativo, site externo ou ambos.                                                                                                          | MVP        |
+| NOT-006 | Agendar publicação e despublicação.                                                                                                                     | MVP        |
+| NOT-007 | Exibir prévia antes da publicação.                                                                                                                      | MVP        |
+| NOT-008 | Registrar falhas de distribuição e permitir nova tentativa idempotente.                                                                                 | MVP        |
+| NOT-009 | Permitir publicação direta a quem já tem acesso autorizado ao painel, sem permissão adicional de Notícias ou segunda aprovação (decisão de 09/09/2026). | MVP        |
 
 ### 9.2 Unidades, serviços e profissionais
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| CAD-001 | Criar e manter unidades com endereço, contatos e status. | MVP |
-| CAD-002 | Criar e manter serviços, duração e regras de atendimento. | MVP |
-| CAD-003 | Relacionar serviços às unidades em que são oferecidos. | MVP |
-| CAD-004 | Criar e manter profissões. | MVP |
-| CAD-005 | Criar e manter profissionais e suas profissões. | MVP |
-| CAD-006 | Relacionar profissional a unidades e serviços habilitados. | MVP |
-| CAD-007 | Impedir novos agendamentos com registros inativos. | MVP |
+| ID      | Requisito                                                  | Prioridade |
+| ------- | ---------------------------------------------------------- | ---------- |
+| CAD-001 | Criar e manter unidades com endereço, contatos e status.   | MVP        |
+| CAD-002 | Criar e manter serviços, duração e regras de atendimento.  | MVP        |
+| CAD-003 | Relacionar serviços às unidades em que são oferecidos.     | MVP        |
+| CAD-004 | Criar e manter profissões.                                 | MVP        |
+| CAD-005 | Criar e manter profissionais e suas profissões.            | MVP        |
+| CAD-006 | Relacionar profissional a unidades e serviços habilitados. | MVP        |
+| CAD-007 | Impedir novos agendamentos com registros inativos.         | MVP        |
 
 ### 9.3 Agenda e disponibilidade
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| AGE-001 | Configurar jornada recorrente por profissional e unidade. | MVP |
-| AGE-002 | Configurar intervalos, bloqueios e indisponibilidades. | MVP |
-| AGE-003 | Calcular horários usando a duração do serviço. | MVP |
-| AGE-004 | Impedir sobreposição de agendamentos confirmados. | MVP |
-| AGE-005 | Criar, confirmar, concluir, cancelar e remarcar agendamentos. | MVP |
-| AGE-006 | Registrar motivo de cancelamento e remarcação. | MVP |
-| AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional. | MVP |
-| AGE-008 | Manter histórico das transições. | MVP |
-| AGE-009 | Integrar calendários externos. | Pós-MVP |
+| ID      | Requisito                                                       | Prioridade |
+| ------- | --------------------------------------------------------------- | ---------- |
+| AGE-001 | Configurar jornada recorrente por profissional e unidade.       | MVP        |
+| AGE-002 | Configurar intervalos, bloqueios e indisponibilidades.          | MVP        |
+| AGE-003 | Calcular horários usando a duração do serviço.                  | MVP        |
+| AGE-004 | Impedir sobreposição de agendamentos confirmados.               | MVP        |
+| AGE-005 | Criar, confirmar, concluir, cancelar e remarcar agendamentos.   | MVP        |
+| AGE-006 | Registrar motivo de cancelamento e remarcação.                  | MVP        |
+| AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional. | MVP        |
+| AGE-008 | Manter histórico das transições.                                | MVP        |
+| AGE-009 | Integrar calendários externos.                                  | Pós-MVP    |
 
-Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não compareceu` e `Cancelado`.
+Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não compareceu` e
+`Cancelado`.
 
-Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é terminal; correções administrativas exigem permissão especial e justificativa.
+Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é
+terminal; correções administrativas exigem permissão especial e justificativa.
 
 ### 9.4 Associados
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| ASS-001 | Criar, visualizar e atualizar associados. | MVP |
-| ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional. | MVP |
-| ASS-003 | Ativar, bloquear e desbloquear com justificativa. | MVP |
-| ASS-004 | Registrar situação, fonte e data da verificação da OAB. | MVP |
-| ASS-005 | Manter histórico cadastral e de bloqueios. | MVP |
-| ASS-006 | Evitar duplicidade por identificadores definidos. | MVP |
-| ASS-007 | Automatizar consulta somente por integração oficial autorizada. | Pós-MVP |
+| ID      | Requisito                                                       | Prioridade |
+| ------- | --------------------------------------------------------------- | ---------- |
+| ASS-001 | Criar, visualizar e atualizar associados.                       | MVP        |
+| ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional.      | MVP        |
+| ASS-003 | Ativar, bloquear e desbloquear com justificativa.               | MVP        |
+| ASS-004 | Registrar situação, fonte e data da verificação da OAB.         | MVP        |
+| ASS-005 | Manter histórico cadastral e de bloqueios.                      | MVP        |
+| ASS-006 | Evitar duplicidade por identificadores definidos.               | MVP        |
+| ASS-007 | Automatizar consulta somente por integração oficial autorizada. | Pós-MVP    |
 
 ### 9.5 Parceiros
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| PAR-001 | Cadastrar parceiro, contatos, categoria e status. | MVP |
-| PAR-002 | Cadastrar serviços, benefícios e condições oferecidas. | MVP |
-| PAR-003 | Relacionar parceiro a unidades e regiões atendidas. | MVP |
-| PAR-004 | Controlar vigência e documentos administrativos. | MVP |
-| PAR-005 | Publicar dados selecionados para os canais externos. | Pós-MVP |
+| ID      | Requisito                                                                 | Prioridade |
+| ------- | ------------------------------------------------------------------------- | ---------- |
+| PAR-001 | Cadastrar parceiro, contatos, categoria e status.                         | MVP        |
+| PAR-002 | Cadastrar serviços, benefícios e condições oferecidas.                    | MVP        |
+| PAR-003 | Relacionar parceiro a unidades e regiões atendidas.                       | MVP        |
+| PAR-004 | Controlar vigência e documentos administrativos.                          | MVP        |
+| PAR-005 | Publicar dados selecionados para canais externos por contrato autorizado. | MVP        |
 
 ### 9.6 Colaboradores
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| COL-001 | Cadastrar colaborador e situação funcional administrativa. | MVP |
-| COL-002 | Relacionar colaborador a unidade, setor e função. | MVP |
-| COL-003 | Separar colaborador de conta de acesso ao sistema. | MVP |
-| COL-004 | Restringir campos sensíveis por permissão. | MVP |
-| COL-005 | Integrar com sistema oficial de RH. | Pós-MVP |
+| ID      | Requisito                                                  | Prioridade |
+| ------- | ---------------------------------------------------------- | ---------- |
+| COL-001 | Cadastrar colaborador e situação funcional administrativa. | MVP        |
+| COL-002 | Relacionar colaborador a unidade, setor e função.          | MVP        |
+| COL-003 | Separar colaborador de conta de acesso ao sistema.         | MVP        |
+| COL-004 | Restringir campos sensíveis por permissão.                 | MVP        |
+| COL-005 | Integrar com sistema oficial de RH.                        | Pós-MVP    |
 
 ### 9.7 Usuários e permissões
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| SEG-001 | Autenticar usuários e permitir desativação imediata. | MVP |
-| SEG-002 | Aplicar autorização no servidor em todas as ações. | MVP |
-| SEG-003 | Permitir múltiplas funções por usuário. | MVP |
-| SEG-004 | Exigir MFA de administradores. | MVP |
-| SEG-005 | Testar automaticamente a matriz de permissões. | MVP |
-| SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis. | MVP |
+| ID      | Requisito                                                  | Prioridade |
+| ------- | ---------------------------------------------------------- | ---------- |
+| SEG-001 | Autenticar usuários e permitir desativação imediata.       | MVP        |
+| SEG-002 | Aplicar autorização no servidor em todas as ações.         | MVP        |
+| SEG-003 | Permitir múltiplas funções por usuário.                    | MVP        |
+| SEG-004 | Exigir MFA de administradores.                             | MVP        |
+| SEG-005 | Testar automaticamente a matriz de permissões.             | MVP        |
+| SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis. | MVP        |
 
 ### 9.8 Auditoria
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| AUD-001 | Registrar ator, ação, entidade, registro e horário. | MVP |
-| AUD-002 | Registrar valores anteriores e posteriores quando permitido. | MVP |
-| AUD-003 | Registrar origem e identificador da requisição. | MVP |
-| AUD-004 | Impedir edição de eventos de auditoria pela aplicação. | MVP |
-| AUD-005 | Permitir busca por período, usuário, ação e entidade. | MVP |
-| AUD-006 | Proteger segredos e dados excessivos contra gravação em logs. | MVP |
-| AUD-007 | Exportar logs somente para usuários autorizados. | MVP |
+| ID      | Requisito                                                                             | Prioridade |
+| ------- | ------------------------------------------------------------------------------------- | ---------- |
+| AUD-001 | Registrar ator, ação, entidade, registro e horário.                                   | MVP        |
+| AUD-002 | Registrar valores anteriores e posteriores quando permitido.                          | MVP        |
+| AUD-003 | Registrar origem e identificador da requisição.                                       | MVP        |
+| AUD-004 | Impedir edição de eventos de auditoria pela aplicação.                                | MVP        |
+| AUD-005 | Permitir busca por período, usuário, ação e entidade.                                 | MVP        |
+| AUD-006 | Proteger segredos e dados excessivos contra gravação em logs.                         | MVP        |
+| AUD-007 | Exportar logs somente para usuários autorizados.                                      | MVP        |
+| AUD-008 | Reunir Eventos e Processamentos em Auditoria, sem segunda entrada Operações.          | MVP        |
+| AUD-009 | Preservar permissões independentes de eventos, exportação, leitura de jobs e reenvio. | MVP        |
+| AUD-010 | Apresentar histórico contextual usando a trilha de auditoria existente.               | MVP        |
+
+### 9.9 Requisitos adicionais da entrega integrada
+
+| ID      | Requisito                                                                                                            | Dependência institucional                  |
+| ------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| PES-001 | Cadastrar dependentes e vínculos, com histórico.                                                                     | Tipos de vínculo aceitos.                  |
+| PES-002 | Analisar documentação, registrar decisão e solicitar correções pontuais.                                             | Campos, documentos mínimos e responsáveis. |
+| PES-003 | Separar aprovação cadastral, vínculo, regularidade OAB, situação financeira, credencial e restrições por finalidade. | Matriz de consequências.                   |
+| PES-004 | Exibir fonte/data das verificações; sem política, não decidir elegibilidade automaticamente.                         | Fonte autorizada e política.               |
+| AVA-001 | Vincular avaliações a atendimento ou benefício e moderar com motivo, preservando nota/opinião original.              | Acesso e critérios de moderação.           |
+| COM-001 | Preparar públicos com critérios legíveis, prévia e exclusões.                                                        | Preferências e política de envio.          |
+| COM-002 | Preparar, revisar, enviar/programar mensagens e manter modelos transacionais.                                        | Responsáveis, canais e contratos.          |
+| COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                 | Evidência suportada por canal.             |
+| COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                              | Política de composição do público.         |
+| CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                    | Regras aprovadas de Caassh.                |
+| CRE-002 | Conceder individualmente/em lote com prévia, justificativa e idempotência.                                           | Autoridade e limites de concessão.         |
+| CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                | Regras de utilização e correção.           |
+| POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                   | Tarefas delegáveis.                        |
+| POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                | Estados e responsáveis da operação.        |
+| POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                     | Cadastro autoritativo único.               |
+| REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                              | Público e uso esperado.                    |
+| REL-002 | Reutilizar arquivos/jobs para exportação e produzir PDF somente quando houver finalidade documental.                 | Retenção e formato.                        |
 
 ## 10. Modelo conceitual de dados
 
 ### 10.1 Conteúdo
 
-- **Notícia:** título, slug, resumo, conteúdo estruturado, capa, categoria, tags, autor, revisor, status, canais, publicação e expiração.
-- **Mídia:** tipo, localização, nome original, nome seguro, MIME detectado, tamanho, dimensões, checksum, estado de verificação e texto alternativo.
+- **Notícia:** título, slug, resumo, conteúdo estruturado, capa, categoria, tags, autor, publicador,
+  status, canais, publicação e expiração.
+- **Mídia:** tipo, localização, nome original, nome seguro, MIME detectado, tamanho, dimensões,
+  checksum, estado de verificação e texto alternativo.
 - **Versão da notícia:** notícia, conteúdo completo, autor da mudança, data e estado editorial.
 - **Distribuição:** notícia, canal, versão, status, tentativas, última resposta e data.
 
@@ -443,29 +517,24 @@ Transições não previstas devem ser recusadas pelo servidor. Um agendamento ca
 
 ## 16. Plano de entrega
 
-### Fase 1 — Fundação
+### Fundação existente — reaproveitar
 
 - Autenticação, usuários, funções e permissões.
 - Design system e layout administrativo.
 - Banco, auditoria, storage, worker e observabilidade.
 
-### Fase 2 — Notícias
+### Entrega integrada — todos os módulos
 
-- CMS, editor, mídia, versões, prévia e agendamento.
-- Contratos de distribuição para app e site sem alterá-los.
+O [planejamento geral](../specs/002-integrated-modules/plan.md) inclui Conteúdo, Pessoas,
+Atendimentos, Benefícios, Equipe, Comunicação, Créditos, Portal e Relatórios. Começar pela
+consolidação da fundação em [Auditoria e Processamentos](../specs/003-audit-operations/spec.md),
+seguida das dependências internas.
 
-### Fase 3 — Cadastros e agenda
-
-- Unidades, serviços, profissões e profissionais.
-- Disponibilidade, bloqueios e agendamentos.
-
-### Fase 4 — Associados
-
-- Cadastro, consulta, verificação registrada, bloqueio e histórico.
-
-### Fase 5 — Parceiros, colaboradores e hardening
-
-- Módulos restantes, relatórios, testes de segurança e homologação.
+Cada funcionalidade nova terá seu próprio spec, plano e tarefas antes de implementar. Correções,
+melhorias e mudanças atualizam os artefatos da função existente, sem criar outro spec. A pesquisa de
+mercado atual fundamenta cada implementação e evolução e fica registrada no respectivo research.md.
+PRs separados acompanham as funcionalidades/specs concluídos e validados, conforme orientação de
+09/09/2026. O escopo continua integrado; documentação e testes acompanham a implementação da função.
 
 ## 17. Critérios de aceite do MVP
 
@@ -478,47 +547,53 @@ Transições não previstas devem ser recusadas pelo servidor. Um agendamento ca
 - Agendamentos mantêm histórico de remarcações e cancelamentos.
 - Associados podem ser cadastrados, verificados, bloqueados e desbloqueados com histórico.
 - Parceiros e colaboradores podem ser administrados por usuários autorizados.
+- Dependentes, correções documentais e situações de elegibilidade seguem regras definidas e têm
+  histórico.
+- Caassh mantém concessão/lote/correção sem saldo duplicado, sob política explícita.
+- Mensagens respeitam público/preferências e apresentam estados conforme evidência do canal.
+- Portal impede acesso entre parceiros, inclusive em solicitações, arquivos e exportações.
+- Avaliações preservam opinião original; relatórios usam dados/filtros/escopos dos domínios.
+- Auditoria reúne Eventos e Processamentos sem ampliar permissões nem duplicar entradas.
 - Toda ação crítica aparece na auditoria.
 - Lint, typecheck, testes e build passam no CI.
 
 ## 18. Riscos e mitigação
 
-| Risco | Mitigação |
-|---|---|
-| API atual do app/site desconhecida | Inventariar contratos antes de alterar publicação. |
-| Integração oficial da OAB indisponível | Fluxo manual rastreável; não usar scraping. |
-| Regras de agenda incompletas | Workshops com atendimento e coordenação antes da Fase 3. |
-| Dados pessoais excessivos | Inventário LGPD e minimização por campo. |
-| Upload malicioso | Validação em camadas, storage isolado e antivírus. |
-| Permissões se tornarem inconsistentes | Matriz central e testes automatizados de autorização. |
-| Dependência excessiva do CMS | Limitar Payload ao conteúdo e cadastros adequados; regras críticas ficam no domínio. |
-| Cal.com duplicar a fonte de verdade | Não adotá-lo como núcleo nesta fase; avaliar integração posterior. |
+| Risco                                  | Mitigação                                                                                                              |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| API atual do app/site desconhecida     | Solicitar documentação formal ou definir contrato novo; não investigar código/telas do legado.                         |
+| Integração oficial da OAB indisponível | Fluxo manual rastreável; não usar scraping.                                                                            |
+| Regras de agenda incompletas           | Definir política com atendimento/coordenação antes das operações dependentes, sem bloquear a consolidação da fundação. |
+| Dados pessoais excessivos              | Inventário LGPD e minimização por campo.                                                                               |
+| Upload malicioso                       | Validação em camadas, storage isolado e antivírus.                                                                     |
+| Permissões se tornarem inconsistentes  | Matriz central e testes automatizados de autorização.                                                                  |
+| Dependência excessiva do CMS           | Limitar Payload ao conteúdo e cadastros adequados; regras críticas ficam no domínio.                                   |
+| Cal.com duplicar a fonte de verdade    | Não adotá-lo como núcleo nesta fase; avaliar integração posterior.                                                     |
 
 ## 19. Entradas necessárias antes da construção
 
-| # | Informação | Fonte | Bloqueia |
-|---|---|---|---|
-| 1 | Código e arquitetura do sistema interno atual | Tecnologia | Fundação |
-| 2 | Contratos/API atuais usados pelo app e site | Tecnologia | Notícias |
-| 3 | Perfis reais e matriz de permissões | Gestores | Fundação |
-| 4 | Fluxo editorial e responsáveis por aprovação | Comunicação | Notícias |
-| 5 | Formatos, limites e provedores de vídeo permitidos | Comunicação/TI | Notícias |
-| 6 | Lista de unidades, serviços, durações e regras | Operação | Agenda |
-| 7 | Jornada, bloqueios e vínculo dos profissionais | Operação | Agenda |
-| 8 | Políticas de cancelamento, atraso e não comparecimento | Operação | Agenda |
-| 9 | Campos mínimos e regras de bloqueio de associados | Cadastro/Jurídico | Associados |
-| 10 | Canal oficial para integração com CNA/OAB | OAB/TI/Jurídico | Automação OAB |
-| 11 | Política de retenção e classificação de dados | Jurídico/DPO | Produção |
-| 12 | Infraestrutura e requisitos de disponibilidade | TI | Produção |
+| #   | Informação                                                                           | Fonte                     | Bloqueia                         |
+| --- | ------------------------------------------------------------------------------------ | ------------------------- | -------------------------------- |
+| 1   | Necessidades atuais e decisões do projeto novo, sem consultar código/telas do legado | Responsáveis pelo produto | Especificação do domínio         |
+| 2   | Contratos novos ou documentação vigente formalmente fornecida de app/site            | Tecnologia                | Integração real com consumidores |
+| 3   | Perfis reais e matriz de permissões                                                  | Gestores                  | Fundação                         |
+| 4   | Acesso editorial confirmado: pessoas autorizadas ao painel publicam diretamente      | Usuário, 09/09/2026       | Resolvido; ver spec 004          |
+| 5   | Formatos, limites e provedores de vídeo permitidos                                   | Comunicação/TI            | Notícias                         |
+| 6   | Lista de unidades, serviços, durações e regras                                       | Operação                  | Agenda                           |
+| 7   | Jornada, bloqueios e vínculo dos profissionais                                       | Operação                  | Agenda                           |
+| 8   | Políticas de cancelamento, atraso e não comparecimento                               | Operação                  | Agenda                           |
+| 9   | Campos mínimos e regras de bloqueio de associados                                    | Cadastro/Jurídico         | Associados                       |
+| 10  | Canal oficial para integração com CNA/OAB                                            | OAB/TI/Jurídico           | Automação OAB                    |
+| 11  | Política de retenção e classificação de dados                                        | Jurídico/DPO              | Produção                         |
+| 12  | Infraestrutura e requisitos de disponibilidade                                       | TI                        | Produção                         |
 
 ## 20. Decisões iniciais
 
 - O trabalho inicial limita-se ao sistema interno.
-- TypeScript será a linguagem principal, condicionado à compatibilidade com o legado.
+- TypeScript é a linguagem do projeto novo, sem condicionamento à implementação do legado.
 - Lucide React será a biblioteca padrão de ícones.
 - Payload CMS e Lexical são a escolha inicial para notícias.
 - PostgreSQL será a fonte de verdade dos domínios operacionais.
 - Agendamentos serão domínio próprio; Cal.com permanece como opção de integração futura.
 - Consulta à OAB será manual até existir integração oficial autorizada.
 - O sistema será um monólito modular com worker, não um conjunto prematuro de microserviços.
-
