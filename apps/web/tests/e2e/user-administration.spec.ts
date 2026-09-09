@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { Client } from "pg";
 import { expectWcag22AA } from "./accessibility";
 import { expect, syntheticUsers, test } from "./fixtures";
 
@@ -63,4 +64,55 @@ test("ordinary user cannot open user administration", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Usuários", exact: true })).toHaveCount(0);
   await page.goto("/users");
   await expect(page.getByText("Você não tem permissão para acessar usuários.")).toBeVisible();
+});
+
+test("manager can reach accounts beyond the first hundred and recover from invalid cursors", async ({
+  page,
+}) => {
+  const database = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
+  await database.connect();
+  const suffix = randomUUID();
+  let insertedIds: string[] = [];
+  try {
+    const inserted = await database.query<{ id: string }>(
+      `INSERT INTO "user" (name, email)
+       SELECT 'Pagination fixture', 'pagination-' || $1 || '-' || n || '@example.test'
+       FROM generate_series(1, 101) AS n RETURNING id`,
+      [suffix],
+    );
+    insertedIds = inserted.rows.map(({ id }) => id);
+    await signIn(page, syntheticUsers.accessManager.email, syntheticUsers.accessManager.password);
+    await page.goto("/users");
+    const accounts = page.getByRole("table", { name: "Contas cadastradas" });
+    const links = accounts.getByRole("link");
+    await expect(links).toHaveCount(100);
+    const firstPageNames = await links.allTextContents();
+    const firstPageHrefs = await links.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("href")),
+    );
+    await page.getByRole("link", { name: "Próxima", exact: true }).click();
+    await expect(page).toHaveURL(/\/users\?cursor=/);
+    await expect(links.first()).toBeVisible();
+    const secondPageHrefs = await links.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("href")),
+    );
+    expect(secondPageHrefs.some((href) => firstPageHrefs.includes(href))).toBe(false);
+    await page.getByRole("link", { name: "Primeira página" }).click();
+    await expect(page).toHaveURL(/\/users$/);
+    await expect(links).toHaveText(firstPageNames);
+
+    for (const query of ["cursor=invalid", "cursor=invalid&cursor=also-invalid"]) {
+      await page.goto(`/users?${query}`);
+      await expect(
+        page.getByRole("region", { name: "Contas cadastradas" }).getByRole("alert"),
+      ).toHaveText("A página solicitada é inválida. Exibindo a primeira página.");
+      await expect(links).toHaveText(firstPageNames);
+    }
+  } finally {
+    await database.query('DELETE FROM "user" WHERE id = ANY($1::uuid[])', [insertedIds]);
+    await database.end();
+  }
 });

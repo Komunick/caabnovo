@@ -728,14 +728,6 @@ h2 {
   border-bottom: 1px solid var(--color-border);
 }
 
-.dashboard-hero > div:first-child > p:last-child {
-  max-width: 42rem;
-  margin-bottom: 0;
-  color: var(--color-muted);
-  font-size: 1.02rem;
-  line-height: 1.65;
-}
-
 .dashboard-trust {
   display: flex;
   align-items: center;

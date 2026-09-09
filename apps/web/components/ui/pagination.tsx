@@ -2,12 +2,18 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Pagination({
+  firstHref,
   previousHref,
   nextHref,
-}: Readonly<{ previousHref?: string; nextHref?: string }>) {
-  if (!previousHref && !nextHref) return null;
+}: Readonly<{ firstHref?: string; previousHref?: string; nextHref?: string }>) {
+  if (!firstHref && !previousHref && !nextHref) return null;
   return (
     <nav aria-label="Paginação" className="pagination">
+      {firstHref ? (
+        <Link href={firstHref}>
+          <ChevronLeft aria-hidden="true" size={18} /> Primeira página
+        </Link>
+      ) : null}
       {previousHref ? (
         <Link href={previousHref} rel="prev">
           <ChevronLeft aria-hidden="true" size={18} /> Anterior
