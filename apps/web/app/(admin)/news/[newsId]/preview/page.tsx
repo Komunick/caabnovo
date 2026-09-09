@@ -7,7 +7,7 @@ import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { getNewsDraft } from "@/modules/news/news-service";
 import { getNewsPayload } from "@/modules/news/payload/runtime";
 import { NewsPolicyError } from "@/modules/news/errors";
-import { NewsBodyView } from "@/modules/news/ui/news-body";
+import { NewsPreview } from "@/modules/news/ui/news-preview";
 import { getUsableNewsMediaIds } from "@/modules/news/media-service";
 import { PERMISSIONS } from "@/modules/auth/permissions";
 
@@ -29,8 +29,6 @@ export default async function NewsPreviewPage({
           ...(draft.metadata.cover ? [draft.metadata.cover.fileId] : []),
         ])
       : [];
-    const coverAvailable =
-      !!draft.metadata.cover && availableFileIds.includes(draft.metadata.cover.fileId);
     return (
       <div className="page-stack news-module">
         <header className="page-header">
@@ -46,22 +44,7 @@ export default async function NewsPreviewPage({
               .join(", ") || "Ainda não escolhidos"}
           </p>
         </header>
-        <article className="panel news-preview">
-          <h2>{draft.metadata.title || "Sem título"}</h2>
-          {draft.metadata.cover ? (
-            coverAvailable ? (
-              <img
-                className="news-cover-image"
-                src={`/api/v1/news/${draft.id}/media/${draft.metadata.cover.fileId}`}
-                alt={draft.metadata.cover.alt || "Capa sem descrição; complete antes de publicar"}
-              />
-            ) : (
-              <p role="status">A capa ainda não está disponível para visualização.</p>
-            )
-          ) : null}
-          {draft.metadata.summary ? <p>{draft.metadata.summary}</p> : null}
-          <NewsBodyView body={draft.body} newsId={draft.id} availableFileIds={availableFileIds} />
-        </article>
+        <NewsPreview draft={draft} availableFileIds={availableFileIds} />
       </div>
     );
   } catch (error) {

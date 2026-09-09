@@ -17,6 +17,7 @@ import { RichTextEditor } from "./rich-text-editor";
 import { NewsCover } from "./news-cover";
 import { NewsPublishing } from "./news-publishing";
 import { newsFieldErrors, focusNewsError, type NewsFieldErrors } from "./field-errors";
+import { newsSlugFromTitle } from "./news-slug";
 
 type History = Awaited<ReturnType<typeof listNewsVersions>>;
 const date = (value: string) =>
@@ -56,6 +57,8 @@ export function NewsEditor({
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   const [record, setRecord] = useState(initial);
+  const [customSlug, setCustomSlug] = useState(false);
+  const slugSeed = useRef(initial?.id ?? "");
   const [metadata, setMetadata] = useState(initial?.metadata ?? newsDraftMetadataSchema.parse({}));
   const [body, setBody] = useState<unknown>(initial?.body ?? emptyNewsBody);
   const [history, setHistory] = useState<History>(
@@ -77,13 +80,21 @@ export function NewsEditor({
     setFieldErrors((old) => ({ ...old, body: undefined }));
   }, []);
   useEffect(() => {
-    if (!dirty) return;
+    if (!dirty && !mediaUploading) return;
     const prevent = (event: BeforeUnloadEvent) => event.preventDefault();
     window.addEventListener("beforeunload", prevent);
     return () => window.removeEventListener("beforeunload", prevent);
-  }, [dirty]);
+  }, [dirty, mediaUploading]);
   function change<K extends keyof NewsDraftMetadata>(key: K, value: NewsDraftMetadata[K]) {
-    setMetadata((old) => ({ ...old, [key]: value }));
+    if (key === "slug") setCustomSlug(true);
+    if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
+    setMetadata((old) => ({
+      ...old,
+      [key]: value,
+      ...(key === "title" && !customSlug && !record?.metadata.slug
+        ? { slug: newsSlugFromTitle(String(value), slugSeed.current) }
+        : {}),
+    }));
     setDirty(true);
     setMessage("");
     setFieldErrors((old) => ({
@@ -104,12 +115,20 @@ export function NewsEditor({
       setError(error instanceof Error ? error.message : "Não foi possível carregar o histórico.");
     }
   }
-  async function save(event: FormEvent) {
-    event.preventDefault();
-    if (busy.current || mediaUploading) return;
+  async function save(
+    event?: FormEvent,
+    preview = false,
+    silent = false,
+  ): Promise<NewsRecord | undefined> {
+    event?.preventDefault();
+    if (busy.current || (mediaUploading && !silent)) return;
+    if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
     const parsed = updateNewsDraftRequestSchema.safeParse({
       expectedVersion: record?.revision ?? 1,
-      metadata,
+      metadata: {
+        ...metadata,
+        slug: metadata.slug || newsSlugFromTitle(metadata.title, slugSeed.current),
+      },
       body,
     });
     if (!parsed.success) {
@@ -143,10 +162,14 @@ export function NewsEditor({
       const saved = (await response.json()) as NewsRecord;
       setDirty(false);
       setRecord(saved);
+      setMetadata(saved.metadata);
       retry.current = undefined;
+      if (silent) return saved;
       setMessage(`Rascunho salvo. Revisão ${saved.revision}.`);
-      if (!record) router.replace(`/news/${saved.id}`);
+      if (preview) router.push(`/news/${saved.id}/preview`);
+      else if (!initial) router.replace(`/news/${saved.id}`);
       else await loadHistory();
+      return saved;
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Falha de conexão. Seu texto continua no editor.",
@@ -156,6 +179,9 @@ export function NewsEditor({
       setPending(false);
       focusNewsError();
     }
+  }
+  async function ensureNewsId() {
+    return record?.id ?? (await save(undefined, false, true))?.id;
   }
   async function command(action: "duplicate" | "archive" | "restore", versionId?: string) {
     if (!record || busy.current || mediaUploading || dirty) return;
@@ -207,9 +233,9 @@ export function NewsEditor({
   }
   return (
     <div className="news-workspace">
-      <section className="panel" aria-labelledby="news-editor-title">
+      <section className="news-editor-panel" aria-labelledby="news-editor-title">
         <h2 id="news-editor-title">
-          {record?.archived ? "Notícia arquivada" : "Rascunho editorial"}
+          {record?.archived ? "Notícia arquivada" : "Conteúdo editorial"}
         </h2>
         <p>
           {record
@@ -236,159 +262,194 @@ export function NewsEditor({
             ) : null}
           </p>
         ) : null}
-        <form onSubmit={save} noValidate>
+        <div className="news-command-bar">
+          <span>Escreva, revise e depois publique.</span>
+          <div className="news-command-actions">
+            {record && !dirty && !pending && !mediaUploading ? (
+              <Link className={buttonVariants()} href={`/news/${record.id}/preview`}>
+                Prévia privada
+              </Link>
+            ) : (
+              <Button
+                disabled={!ready || pending || mediaUploading || !!record?.archived}
+                onClick={(event) => void save(event, true)}
+              >
+                Salvar e visualizar
+              </Button>
+            )}
+            <Button
+              form="news-draft-form"
+              type="submit"
+              intent="primary"
+              disabled={!ready || pending || mediaUploading || !!record?.archived}
+            >
+              {pending ? "Salvando…" : "Salvar rascunho"}
+            </Button>
+          </div>
+        </div>
+        <form id="news-draft-form" onSubmit={save} noValidate>
           <fieldset
             disabled={!ready || pending || mediaUploading || record?.archived}
             className="news-fields"
           >
             <legend className="sr-only">Dados da notícia</legend>
-            <FormField id="news-title" label="Título" error={fieldErrors.title}>
-              <input
-                value={metadata.title}
-                maxLength={200}
-                onChange={(e) => change("title", e.target.value)}
-              />
-            </FormField>
-            <FormField id="news-summary" label="Resumo" error={fieldErrors.summary}>
-              <textarea
-                value={metadata.summary}
-                maxLength={500}
-                rows={3}
-                onChange={(e) => change("summary", e.target.value)}
-              />
-            </FormField>
-            <FormField
-              id="news-slug"
-              error={fieldErrors.slug}
-              label="Endereço legível"
-              hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
-            >
-              <input
-                value={metadata.slug}
-                maxLength={180}
-                onChange={(e) => change("slug", e.target.value)}
-              />
-            </FormField>
-            <div className="news-meta-grid">
-              <FormField id="news-category" label="Categoria" error={fieldErrors.category}>
-                <input
-                  value={metadata.category}
-                  maxLength={80}
-                  onChange={(e) => change("category", e.target.value)}
-                />
-              </FormField>
-              <FormField
-                id="news-tags"
-                label="Tags"
-                hint="Separe por vírgulas; até 20 tags."
-                error={fieldErrors.tags}
-              >
-                <input
-                  value={metadata.tags.join(",")}
-                  onChange={(e) => change("tags", e.target.value ? e.target.value.split(",") : [])}
-                />
-              </FormField>
-            </div>
-            <label className="checkbox-field">
-              <input
-                type="checkbox"
-                checked={!!metadata.highlight}
-                onChange={(event) =>
-                  change("highlight", event.target.checked ? { order: 1 } : null)
-                }
-              />
-              Destacar notícia
-            </label>
-            {metadata.highlight ? (
-              <FormField
-                id="news-highlight-order"
-                error={fieldErrors.highlight}
-                label="Ordem do destaque"
-                hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
-              >
-                <input
-                  type="number"
-                  min={1}
-                  max={100}
-                  value={metadata.highlight.order}
-                  onChange={(event) => change("highlight", { order: Number(event.target.value) })}
-                />
-              </FormField>
-            ) : null}
-            <p>
-              O destaque usa esta mesma notícia, capa e destinos. Alterações aparecem após publicar.
-            </p>
-            <fieldset>
-              <legend>Destinos previstos</legend>
-              {(["site", "app"] as const).map((channel) => (
-                <label key={channel} className="checkbox-field">
+            <div className="news-editor-layout">
+              <section className="news-writing-card" aria-label="Texto da notícia">
+                <FormField id="news-title" label="Título" error={fieldErrors.title}>
                   <input
-                    type="checkbox"
-                    checked={metadata.channels.includes(channel)}
-                    onChange={(e) =>
-                      change(
-                        "channels",
-                        e.target.checked
-                          ? [...metadata.channels, channel]
-                          : metadata.channels.filter((item) => item !== channel),
-                      )
-                    }
+                    value={metadata.title}
+                    maxLength={200}
+                    onChange={(e) => change("title", e.target.value)}
                   />
-                  {channel === "site" ? "Site" : "Aplicativo"}
-                </label>
-              ))}
-            </fieldset>
-            <div className="form-field">
-              <label htmlFor="news-body">Conteúdo da notícia</label>
-              <p id="news-body-hint" className="field-hint">
-                Texto, títulos, listas e imagens. Salve antes de abrir a prévia.
-              </p>
-              <RichTextEditor
-                error={fieldErrors.body}
-                key={editorKey}
-                initialBody={record?.body ?? emptyNewsBody}
-                disabled={pending || mediaUploading || !!record?.archived}
-                onChange={bodyChanged}
-                newsId={record?.id}
-                canReadMedia={canReadMedia}
-                canUploadMedia={canUploadMedia}
-                onUploadingChange={setMediaUploading}
-              />
-              {fieldErrors.body ? (
-                <p id="news-body-error" className="field-error" role="alert">
-                  {fieldErrors.body}
-                </p>
-              ) : null}
+                </FormField>
+                <FormField id="news-summary" label="Resumo" error={fieldErrors.summary}>
+                  <textarea
+                    value={metadata.summary}
+                    maxLength={500}
+                    rows={3}
+                    onChange={(e) => change("summary", e.target.value)}
+                  />
+                </FormField>
+                <div className="form-field">
+                  <label htmlFor="news-body">Conteúdo da notícia</label>
+                  <p id="news-body-hint" className="field-hint">
+                    Texto, títulos, listas e imagens. Confira o resultado na prévia.
+                  </p>
+                  <RichTextEditor
+                    error={fieldErrors.body}
+                    key={editorKey}
+                    initialBody={record?.body ?? emptyNewsBody}
+                    disabled={!ready || pending || mediaUploading || !!record?.archived}
+                    onChange={bodyChanged}
+                    newsId={record?.id}
+                    onEnsureNewsId={ensureNewsId}
+                    canReadMedia={canReadMedia}
+                    canUploadMedia={canUploadMedia}
+                    onUploadingChange={setMediaUploading}
+                  />
+                  {fieldErrors.body ? (
+                    <p id="news-body-error" className="field-error" role="alert">
+                      {fieldErrors.body}
+                    </p>
+                  ) : null}
+                </div>
+              </section>
+              <aside className="news-editor-sidebar" aria-label="Capa e configurações">
+                <section className="news-editor-card">
+                  <NewsCover
+                    fieldError={fieldErrors.cover}
+                    altError={fieldErrors.coverAlt}
+                    newsId={record?.id}
+                    onEnsureNewsId={ensureNewsId}
+                    cover={metadata.cover}
+                    canRead={canReadMedia}
+                    canUpload={canUploadMedia}
+                    disabled={!ready || pending || mediaUploading || !!record?.archived}
+                    onChange={(cover) => change("cover", cover)}
+                    onUploadingChange={setMediaUploading}
+                  />
+                </section>
+                <section className="news-editor-card">
+                  <h3>Organização e destinos</h3>
+                  <details className="news-address-options">
+                    <summary>Quer personalizar o endereço?</summary>
+                    <p className="field-hint">
+                      Opcional. O endereço é criado automaticamente a partir do título.
+                    </p>
+                    <FormField
+                      id="news-slug"
+                      error={fieldErrors.slug}
+                      label="Endereço legível"
+                      hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
+                    >
+                      <input
+                        value={metadata.slug}
+                        maxLength={180}
+                        onChange={(e) => change("slug", e.target.value)}
+                      />
+                    </FormField>
+                  </details>
+                  <div className="news-meta-grid">
+                    <FormField id="news-category" label="Categoria" error={fieldErrors.category}>
+                      <input
+                        value={metadata.category}
+                        maxLength={80}
+                        onChange={(e) => change("category", e.target.value)}
+                      />
+                    </FormField>
+                    <FormField
+                      id="news-tags"
+                      label="Tags"
+                      hint="Separe por vírgulas; até 20 tags."
+                      error={fieldErrors.tags}
+                    >
+                      <input
+                        value={metadata.tags.join(",")}
+                        onChange={(e) =>
+                          change("tags", e.target.value ? e.target.value.split(",") : [])
+                        }
+                      />
+                    </FormField>
+                  </div>
+                  <label className="checkbox-field">
+                    <input
+                      type="checkbox"
+                      checked={!!metadata.highlight}
+                      onChange={(event) =>
+                        change("highlight", event.target.checked ? { order: 1 } : null)
+                      }
+                    />
+                    Destacar notícia
+                  </label>
+                  {metadata.highlight ? (
+                    <FormField
+                      id="news-highlight-order"
+                      error={fieldErrors.highlight}
+                      label="Ordem do destaque"
+                      hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
+                    >
+                      <input
+                        type="number"
+                        min={1}
+                        max={100}
+                        value={metadata.highlight.order}
+                        onChange={(event) =>
+                          change("highlight", { order: Number(event.target.value) })
+                        }
+                      />
+                    </FormField>
+                  ) : null}
+                  <p>
+                    O destaque usa esta mesma notícia, capa e destinos. Alterações aparecem após
+                    publicar.
+                  </p>
+                  <fieldset>
+                    <legend>Destinos previstos</legend>
+                    {(["site", "app"] as const).map((channel) => (
+                      <label key={channel} className="checkbox-field">
+                        <input
+                          type="checkbox"
+                          checked={metadata.channels.includes(channel)}
+                          onChange={(e) =>
+                            change(
+                              "channels",
+                              e.target.checked
+                                ? [...metadata.channels, channel]
+                                : metadata.channels.filter((item) => item !== channel),
+                            )
+                          }
+                        />
+                        {channel === "site" ? "Site" : "Aplicativo"}
+                      </label>
+                    ))}
+                  </fieldset>
+                </section>
+              </aside>
             </div>
-            {record ? (
-              <NewsCover
-                fieldError={fieldErrors.cover}
-                altError={fieldErrors.coverAlt}
-                newsId={record.id}
-                cover={metadata.cover}
-                canRead={canReadMedia}
-                canUpload={canUploadMedia}
-                disabled={pending || !!record.archived}
-                onChange={(cover) => change("cover", cover)}
-                onUploadingChange={setMediaUploading}
-              />
-            ) : (
-              <p>Salve o primeiro rascunho para adicionar uma capa.</p>
-            )}
-            <Button type="submit" intent="primary" disabled={pending || mediaUploading}>
-              {pending ? "Salvando…" : "Salvar rascunho"}
-            </Button>
           </fieldset>
         </form>
         {record ? (
           <div className="news-actions">
-            {!dirty ? (
-              <Link className={buttonVariants()} href={`/news/${record.id}/preview`}>
-                Prévia privada
-              </Link>
-            ) : (
-              <span>Salve para atualizar a prévia.</span>
-            )}
             <Button
               disabled={pending || mediaUploading || dirty}
               onClick={() => void command("duplicate")}
@@ -409,26 +470,26 @@ export function NewsEditor({
           </div>
         ) : null}
       </section>
-      {record ? (
-        <NewsPublishing
-          onFieldErrors={(fields) => {
-            setFieldErrors(fields);
-            focusNewsError();
-          }}
-          record={record}
-          dirty={dirty}
-          disabled={pending || mediaUploading}
-          onBusyChange={setMediaUploading}
-          onSaved={(saved) => {
-            setRecord(saved);
-            setMetadata(saved.metadata);
-            setBody(saved.body);
-            setEditorKey((key) => key + 1);
-            setDirty(false);
-            void loadHistory();
-          }}
-        />
-      ) : null}
+      <NewsPublishing
+        onFieldErrors={(fields) => {
+          setFieldErrors(fields);
+          focusNewsError();
+        }}
+        record={record}
+        onPrepare={() => save(undefined, false, true)}
+        dirty={dirty}
+        disabled={!ready || pending || mediaUploading}
+        onBusyChange={setMediaUploading}
+        onSaved={(saved) => {
+          setRecord(saved);
+          setMetadata(saved.metadata);
+          setBody(saved.body);
+          setEditorKey((key) => key + 1);
+          setDirty(false);
+          if (!initial) router.replace(`/news/${saved.id}`);
+          else void loadHistory();
+        }}
+      />
       {record ? (
         <section className="panel" aria-labelledby="news-history-title">
           <h2 id="news-history-title">Histórico de versões</h2>

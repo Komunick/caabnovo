@@ -52,6 +52,20 @@ news-publication.spec.ts inicia/encerra worker para verificar antivírus e horá
 levar até três minutos. Os outros cenários cobrem edição, conflito, histórico, capa e imagens,
 teclado, Axe e tela móvel. Evidência em test-results e [evidence.md](evidence.md).
 
+## Editor e publicação direta
+
+Em Nova notícia, envie uma capa ou use Imagem na barra do corpo, mesmo antes do título.
+Descreva a imagem, escreva e escolha os destinos em Publicação e agenda. Publicar agora salva
+o conteúdo e publica após confirmação; Salvar rascunho é opcional. A verificação da imagem deve
+terminar antes da publicação. Salvar e visualizar abre a prévia com Site, Mobile e Lado a lado.
+O endereço é automático; a pergunta de personalização abre a configuração opcional.
+
+`news-direct-publish.spec.ts` cobre capa/corpo antes do título e publicação sem salvar manualmente,
+além de publicação direta sem imagens. `news-editor-experience.spec.ts` cobre estilos, endereço e
+prévia responsiva. No localhost existente, usar configuração local sem global setup/seed/reset.
+Manter o worker ativo para liberar as imagens. O refinamento integra o mesmo PR de Notícias,
+com destino dev e merge manual após os checks; não há PR de documentação separado.
+
 ## Consumo mobile/site
 
 Consultar /api/v1/content/app/news ou /api/v1/content/site/news sem login, em seguida /{id} e

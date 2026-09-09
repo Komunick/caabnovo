@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
+import { PERMISSIONS } from "@/modules/auth/permissions";
 import { NewsEditor } from "@/modules/news/ui/news-editor";
 
 export const metadata = { title: "Nova notícia", robots: { index: false, follow: false } };
@@ -18,9 +19,12 @@ export default async function NewNewsPage() {
           Notícias
         </Link>
         <h1>Nova notícia</h1>
-        <p>Comece pelo rascunho e desenvolva o conteúdo no seu ritmo.</p>
+        <p>Escreva, adicione imagens e publique quando estiver pronto.</p>
       </header>
-      <NewsEditor />
+      <NewsEditor
+        canReadMedia={actor.permissions.has(PERMISSIONS.filesRead)}
+        canUploadMedia={actor.permissions.has(PERMISSIONS.filesCreate)}
+      />
     </div>
   );
 }

@@ -68,7 +68,13 @@ export function newsFieldErrors(issues: readonly Issue[]): NewsFieldErrors {
 }
 
 export function focusNewsError() {
-  requestAnimationFrame(() =>
-    document.querySelector<HTMLElement>('.news-workspace [aria-invalid="true"]')?.focus(),
-  );
+  requestAnimationFrame(() => {
+    const field = document.querySelector<HTMLElement>('.news-workspace [aria-invalid="true"]');
+    let parent = field?.parentElement;
+    while (parent) {
+      if (parent instanceof HTMLDetailsElement) parent.open = true;
+      parent = parent.parentElement;
+    }
+    field?.focus();
+  });
 }

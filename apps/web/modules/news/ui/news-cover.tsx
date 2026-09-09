@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MAX_UPLOAD_SIZE_BYTES, uploadIntentSchema, type NewsDraftMetadata } from "@caab/contracts";
 import type { listNewsMedia } from "../media-service";
 import { Button } from "@/components/ui/button";
+import { ImagePlus, Check, ImageOff, UploadCloud } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 
 type MediaPage = Awaited<ReturnType<typeof listNewsMedia>>;
@@ -28,6 +29,7 @@ export function NewsCover({
   fieldError,
   altError,
   newsId,
+  onEnsureNewsId,
   cover,
   canRead,
   canUpload,
@@ -38,7 +40,8 @@ export function NewsCover({
 }: Readonly<{
   fieldError?: string;
   altError?: string;
-  newsId: string;
+  newsId?: string;
+  onEnsureNewsId?(): Promise<string | undefined>;
   cover: NewsDraftMetadata["cover"];
   canRead: boolean;
   canUpload: boolean;
@@ -54,14 +57,22 @@ export function NewsCover({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
+  const [localPreview, setLocalPreview] = useState<{ fileId: string; url: string }>();
+  const selected = media.items.find((file) => file.id === cover?.fileId);
+  useEffect(
+    () => () => {
+      if (localPreview) URL.revokeObjectURL(localPreview.url);
+    },
+    [localPreview],
+  );
   const retry = useRef<{ checksum: string; key: string } | undefined>(undefined);
   const pendingScan = media.items.some((file) =>
     ["initiated", "uploaded", "scanning"].includes(file.status),
   );
   const refresh = useCallback(
-    async (signal?: AbortSignal) => {
-      if (!canRead) return;
-      const response = await fetch(`/api/v1/news/${newsId}/media?page=${page}`, {
+    async (signal?: AbortSignal, ownerId = newsId) => {
+      if (!canRead || !ownerId) return;
+      const response = await fetch(`/api/v1/news/${ownerId}/media?page=${page}`, {
         cache: "no-store",
         signal,
       });
@@ -90,7 +101,7 @@ export function NewsCover({
       clearTimeout(timer);
     };
   }, [refresh, pendingScan]);
-  useEffect(() => setImageFailed(false), [cover?.fileId]);
+  useEffect(() => setImageFailed(false), [cover?.fileId, selected?.usable]);
 
   async function upload(file?: File) {
     if (!file || uploading) return;
@@ -107,6 +118,11 @@ export function NewsCover({
     setUploading(true);
     onUploadingChange(true);
     try {
+      const ownerId = newsId ?? (await onEnsureNewsId?.());
+      if (!ownerId)
+        throw new Error(
+          "Não foi possível preparar a notícia. Confira os campos e tente enviar a imagem novamente.",
+        );
       const checksum = Array.from(
         new Uint8Array(await crypto.subtle.digest("SHA-256", await file.arrayBuffer())),
         (byte) => byte.toString(16).padStart(2, "0"),
@@ -123,7 +139,7 @@ export function NewsCover({
           sizeBytes: file.size,
           checksumSha256: checksum,
           ownerType: "news",
-          ownerId: newsId,
+          ownerId,
         }),
       });
       if (!intentResponse.ok) throw new Error("Não foi possível iniciar o envio da imagem.");
@@ -145,13 +161,14 @@ export function NewsCover({
           "A imagem foi enviada, mas não foi possível iniciar sua verificação. Tente novamente.",
         );
       retry.current = undefined;
+      setLocalPreview({ fileId: intent.fileId, url: URL.createObjectURL(file) });
       onChange({ fileId: intent.fileId, alt: "" });
       setMessage(
         purpose === "cover"
-          ? "Imagem enviada para verificação. Descreva a capa e salve o rascunho."
+          ? "Imagem enviada para verificação. Descreva a capa antes de publicar."
           : "Imagem enviada para verificação. Descreva a imagem antes de inseri-la.",
       );
-      await refresh();
+      await refresh(undefined, ownerId);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Falha de conexão durante o envio.");
     } finally {
@@ -159,80 +176,153 @@ export function NewsCover({
       onUploadingChange(false);
     }
   }
-  const selected = media.items.find((file) => file.id === cover?.fileId);
   return (
     <section className="news-cover" aria-labelledby={`${prefix}-title`}>
       <h3 id={`${prefix}-title`}>
         {purpose === "cover" ? "Imagem de capa" : "Imagem no conteúdo"}
       </h3>
       {canUpload && canRead ? (
-        <FormField
-          id={`${prefix}-file`}
-          error={error || undefined}
-          label="Enviar imagem"
-          hint="PNG ou JPEG, até 25 MB. A imagem passa por verificação antes de ficar disponível."
+        <div
+          className="news-upload-zone"
+          onDragOver={(event) => {
+            event.preventDefault();
+          }}
+          onDrop={(event) => {
+            event.preventDefault();
+            if (!disabled && !uploading) void upload(event.dataTransfer.files[0]);
+          }}
         >
-          <input
-            type="file"
-            accept="image/png,image/jpeg"
-            disabled={disabled || uploading}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              void upload(file);
-              event.target.value = "";
-            }}
-          />
-        </FormField>
+          <UploadCloud size={28} aria-hidden="true" />
+          <p>
+            <strong>{cover ? "Trocar imagem" : "Adicionar imagem"}</strong>
+            <br />
+            Arraste aqui ou escolha um arquivo.
+          </p>
+          <FormField
+            id={`${prefix}-file`}
+            error={error || fieldError || undefined}
+            label="Enviar imagem"
+            hint="PNG ou JPEG, até 25 MB. A imagem passa por verificação antes de ficar disponível."
+          >
+            <input
+              type="file"
+              className="news-file-input"
+              accept="image/png,image/jpeg"
+              disabled={disabled || uploading}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                void upload(file);
+                event.target.value = "";
+              }}
+            />
+          </FormField>
+        </div>
       ) : null}
       {!canRead ? (
         <p>Seu acesso atual não inclui a consulta de arquivos.</p>
       ) : (
         <>
-          <FormField id={`${prefix}-select`} label="Imagens desta notícia" error={fieldError}>
-            <select
-              value={cover?.fileId ?? ""}
-              disabled={disabled || uploading}
-              onChange={(event) =>
-                onChange(event.target.value ? { fileId: event.target.value, alt: "" } : null)
-              }
-            >
-              <option value="">{purpose === "cover" ? "Sem capa" : "Escolha uma imagem"}</option>
-              {cover && !selected ? (
-                <option value={cover.fileId}>Imagem selecionada em outra página</option>
-              ) : null}
-              {media.items
-                .filter((file) => ["image/png", "image/jpeg"].includes(file.mime))
-                .map((file) => (
-                  <option key={file.id} value={file.id}>
-                    {file.name} —{" "}
-                    {file.status === "available" && !file.usable
-                      ? "Indisponível"
-                      : (labels[file.status] ?? "Indisponível")}
-                  </option>
-                ))}
-            </select>
-          </FormField>
-          <div className="news-actions">
-            <Button
-              size="compact"
-              disabled={page === 1}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              Imagens anteriores
-            </Button>
-            <span>Página {page}</span>
-            <Button
-              size="compact"
-              disabled={!media.hasNextPage}
-              onClick={() => setPage((value) => value + 1)}
-            >
-              Mais imagens
-            </Button>
-          </div>
+          {media.items.length > 0 && (
+            <details className="news-media-library" open={!cover}>
+              <summary>
+                <ImagePlus size={18} aria-hidden="true" /> Biblioteca desta notícia (
+                {media.items.length})
+              </summary>
+              <div className="news-media-grid" role="group" aria-label="Imagens desta notícia">
+                {media.items
+                  .filter((file) => ["image/png", "image/jpeg"].includes(file.mime))
+                  .map((file) => (
+                    <button
+                      type="button"
+                      key={file.id}
+                      className="news-media-choice"
+                      data-file-id={file.id}
+                      disabled={
+                        disabled || uploading || ["rejected", "deleted"].includes(file.status)
+                      }
+                      aria-pressed={cover?.fileId === file.id}
+                      onClick={() =>
+                        onChange({
+                          fileId: file.id,
+                          alt: cover?.fileId === file.id ? cover.alt : "",
+                        })
+                      }
+                    >
+                      {file.usable ? (
+                        <img
+                          src={`/api/v1/news/${newsId}/media/${file.id}`}
+                          alt=""
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="news-media-placeholder">
+                          <ImageOff size={24} aria-hidden="true" />
+                        </span>
+                      )}
+                      <span className="news-media-filename">{file.name}</span>
+                      <span className="news-media-status">
+                        {labels[file.status] ?? "Indisponível"}
+                      </span>
+                      {cover?.fileId === file.id && (
+                        <Check className="news-media-check" size={19} aria-hidden="true" />
+                      )}
+                    </button>
+                  ))}
+              </div>
+            </details>
+          )}
+          {fieldError && (
+            <p className="field-error" role="alert">
+              {fieldError}
+            </p>
+          )}
+          {(page > 1 || media.hasNextPage) && (
+            <div className="news-actions">
+              <Button
+                size="compact"
+                disabled={page === 1}
+                onClick={() => setPage((value) => value - 1)}
+              >
+                Imagens anteriores
+              </Button>
+              <span>Página {page}</span>
+              <Button
+                size="compact"
+                disabled={!media.hasNextPage}
+                onClick={() => setPage((value) => value + 1)}
+              >
+                Mais imagens
+              </Button>
+            </div>
+          )}
         </>
       )}
       {cover ? (
         <>
+          <p className="news-selected-image" role="status">
+            <Check size={17} aria-hidden="true" /> {selected?.name || "Imagem selecionada"}{" "}
+            <span>{selected?.usable ? "Disponível" : labels[selected?.status ?? "uploaded"]}</span>
+          </p>
+          {canRead &&
+          (selected?.usable || localPreview?.fileId === cover.fileId) &&
+          !imageFailed ? (
+            <img
+              className="news-cover-image"
+              src={
+                selected?.usable
+                  ? `/api/v1/news/${newsId}/media/${cover.fileId}`
+                  : localPreview?.url
+              }
+              alt={cover.alt || "Prévia da imagem selecionada"}
+              onError={() => setImageFailed(true)}
+            />
+          ) : (
+            <p>
+              {selected && !selected.usable
+                ? "A imagem ainda não está liberada para exibição."
+                : "A prévia da imagem não está disponível nesta página."}
+            </p>
+          )}
           <FormField
             id={`${prefix}-alt`}
             error={altError}
@@ -247,20 +337,6 @@ export function NewsCover({
               onChange={(event) => onChange({ ...cover, alt: event.target.value })}
             />
           </FormField>
-          {canRead && selected?.usable && !imageFailed ? (
-            <img
-              className="news-cover-image"
-              src={`/api/v1/news/${newsId}/media/${cover.fileId}`}
-              alt={cover.alt || "Prévia da imagem selecionada"}
-              onError={() => setImageFailed(true)}
-            />
-          ) : (
-            <p>
-              {selected && !selected.usable
-                ? "A imagem ainda não está liberada para exibição."
-                : "A prévia da imagem não está disponível nesta página."}
-            </p>
-          )}
           <Button disabled={disabled || uploading} onClick={() => onChange(null)}>
             {purpose === "cover" ? "Remover capa do rascunho" : "Limpar seleção"}
           </Button>

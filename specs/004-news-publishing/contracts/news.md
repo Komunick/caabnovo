@@ -99,6 +99,25 @@ este contrato em seus próprios repositórios; isso não é uma credencial pende
 Não existem adaptadores fictícios de push, webhooks de recebimento nem tabela paralela de entrega.
 # Consulta administrativa
 
+## Texto e apresentação nos consumidores
+
+O corpo canônico admite estilos combinados em `text.format`: bit 1 negrito, 2 itálico,
+4 tachado e 8 sublinhado, valores de 0 a 15. Os consumidores site/mobile devem combinar os
+bits; HTML, estilos arbitrários, scripts, embeds e demais formatos continuam recusados.
+Alinhamento é armazenado no bloco (`left`, `center`, `right`, `justify`). A prévia e a página
+pública deste projeto compartilham o renderer; a prévia Mobile simula leitura responsiva,
+sem afirmar equivalência com uma implementação nativa externa.
+
+O painel gera endereços de até 80 caracteres a partir do título, com sufixo curto; endereços
+existentes e personalizados mantêm o contrato de até 180 caracteres para compatibilidade.
+Salvar e visualizar grava uma revisão privada; não publica nem muda destinos.
+
+O editor pode criar a revisão privada automaticamente antes do primeiro upload para obter o
+ownerId existente no contrato de arquivos. Não exige salvamento manual nem navega durante o
+envio. Publicar/agendar grava alterações pendentes e usa a revisão retornada como expectedVersion;
+se essa gravação falhar, não envia a ação de publicação. A disponibilidade pública continua
+dependendo da confirmação explícita e das validações, incluindo liberação das imagens.
+
 `GET /api/v1/news` mantém `page`, `search` e `state=active|archived|all`. Acrescenta:
 `collection=all|published|drafts`, `category` (trecho, até 80 caracteres), `channel=all|app|site`
 (destino previsto da revisão), `highlight=all|yes|no`, `cover=all|yes|no`,

@@ -63,6 +63,16 @@ describe("news rich text boundary", () => {
     expect(text.style).toBe("");
     expect(text).not.toHaveProperty("onclick");
   });
+  it("accepts combined basic text styles but rejects unsupported formatting bits", () => {
+    for (const format of [4, 8, 15])
+      expect(
+        newsBodySchema.safeParse(body({ type: "text", version: 1, text: "Texto", format })).success,
+      ).toBe(true);
+    for (const format of [16, 32, 255, -1])
+      expect(
+        newsBodySchema.safeParse(body({ type: "text", version: 1, text: "Texto", format })).success,
+      ).toBe(false);
+  });
   it.each(["html", "script", "iframe", "upload", "link"])(
     "rejects unsupported %s nodes",
     (type) => {

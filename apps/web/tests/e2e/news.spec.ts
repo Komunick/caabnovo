@@ -133,6 +133,7 @@ test("invalid news fields have red borders, specific hints and keyboard focus", 
   await signIn(page);
   await page.goto("/news/new");
   const slug = page.getByLabel("Endereço legível", { exact: true });
+  await page.getByText("Quer personalizar o endereço?", { exact: true }).click();
   const tags = page.getByLabel("Tags", { exact: true });
   await slug.fill("Endereço com espaços");
   await tags.fill("uma,,outra");

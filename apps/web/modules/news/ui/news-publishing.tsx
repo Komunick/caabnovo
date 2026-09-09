@@ -38,13 +38,15 @@ const date = (value: string) =>
   }).format(new Date(value));
 export function NewsPublishing({
   record,
+  onPrepare,
   dirty,
   disabled,
   onSaved,
   onBusyChange,
   onFieldErrors,
 }: Readonly<{
-  record: NewsRecord;
+  record?: NewsRecord;
+  onPrepare(): Promise<NewsRecord | undefined>;
   dirty: boolean;
   disabled: boolean;
   onSaved(record: NewsRecord): void;
@@ -52,7 +54,7 @@ export function NewsPublishing({
   onFieldErrors(errors: NewsFieldErrors): void;
 }>) {
   const [state, setState] = useState<PublicationState>({ publication: null, actions: [] });
-  const [channels, setChannels] = useState<string[]>(record.metadata.channels);
+  const [channels, setChannels] = useState<string[]>(record?.metadata.channels ?? []);
   const [runAt, setRunAt] = useState("");
   const [scheduleAction, setScheduleAction] = useState("publish");
   const [pending, setPending] = useState(false);
@@ -62,14 +64,18 @@ export function NewsPublishing({
   const [message, setMessage] = useState("");
   const retry = useRef<{ fingerprint: string; key: string } | undefined>(undefined);
   const busy = useRef(false);
-  const reload = useCallback(async () => {
-    const response = await fetch(`/api/v1/news/${record.id}/publication`, { cache: "no-store" });
-    if (!response.ok) throw new Error("Não foi possível consultar a publicação.");
-    setState((await response.json()) as PublicationState);
-  }, [record.id]);
+  const reload = useCallback(
+    async (newsId = record?.id) => {
+      if (!newsId) return;
+      const response = await fetch(`/api/v1/news/${newsId}/publication`, { cache: "no-store" });
+      if (!response.ok) throw new Error("Não foi possível consultar a publicação.");
+      setState((await response.json()) as PublicationState);
+    },
+    [record?.id],
+  );
   useEffect(() => {
     void reload().catch((error: Error) => setError(error.message));
-  }, [reload, record.revision]);
+  }, [reload, record?.revision]);
   const hasPending = state.actions.some((action) => action.status === "pending");
   useEffect(() => {
     if (!hasPending) return;
@@ -86,7 +92,7 @@ export function NewsPublishing({
     setError("");
     setMessage("");
     setFieldErrors({});
-    let input: Record<string, unknown> = { expectedVersion: record.revision, channels };
+    let input: Record<string, unknown> = { channels };
     if (action === "schedule") {
       // The form explicitly uses Brasília time; the current supported window is the next year.
       const parsed = new Date(`${runAt}:00-03:00`);
@@ -109,16 +115,25 @@ export function NewsPublishing({
         timezone: "America/Sao_Paulo",
       };
     }
-    const body = JSON.stringify(input),
-      fingerprint = `${action}:${actionId ?? ""}:${body}`;
-    if (retry.current?.fingerprint !== fingerprint)
-      retry.current = { fingerprint, key: crypto.randomUUID() };
     busy.current = true;
     setPending(true);
     onBusyChange(true);
     try {
+      const prepared =
+        (action === "publish" || action === "schedule") && (!record || dirty)
+          ? await onPrepare()
+          : record;
+      if (!prepared) {
+        setConfirm(undefined);
+        return;
+      }
+      input = { ...input, expectedVersion: prepared.revision };
+      const body = JSON.stringify(input),
+        fingerprint = `${action}:${actionId ?? ""}:${body}`;
+      if (retry.current?.fingerprint !== fingerprint)
+        retry.current = { fingerprint, key: crypto.randomUUID() };
       const response = await fetch(
-        `/api/v1/news/${record.id}/${action === "cancel" || action === "retry" ? `actions/${actionId}/${action}` : action}`,
+        `/api/v1/news/${prepared.id}/${action === "cancel" || action === "retry" ? `actions/${actionId}/${action}` : action}`,
         {
           method: "POST",
           headers: {
@@ -157,7 +172,7 @@ export function NewsPublishing({
         onSaved((await response.json()) as NewsRecord);
       retry.current = undefined;
       setConfirm(undefined);
-      await reload();
+      await reload(prepared.id);
       setMessage(
         action === "publish"
           ? "Notícia publicada nos destinos escolhidos."
@@ -201,7 +216,7 @@ export function NewsPublishing({
           {state.publication.channels.map((channel) => (
             <a
               key={channel}
-              href={`/content/${channel}/news/${record.id}`}
+              href={`/content/${channel}/news/${record?.id}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -217,7 +232,7 @@ export function NewsPublishing({
         pelo aplicativo depende da integração dele.
       </p>
       <fieldset
-        disabled={disabled || pending || record.archived}
+        disabled={disabled || pending || record?.archived}
         className="news-fields"
         aria-invalid={!!fieldErrors.channels}
         aria-describedby={fieldErrors.channels ? "news-action-channels-error" : undefined}
@@ -245,11 +260,11 @@ export function NewsPublishing({
             {fieldErrors.channels}
           </p>
         ) : null}
-        {dirty ? <p>Salve as alterações antes de publicar ou agendar.</p> : null}
+        {dirty || !record ? <p>Suas alterações serão salvas ao publicar ou agendar.</p> : null}
         <div className="news-actions">
           <Button
             intent="primary"
-            disabled={dirty || !channels.length}
+            disabled={!channels.length}
             onClick={() => setConfirm("publish")}
           >
             Publicar agora
@@ -266,7 +281,7 @@ export function NewsPublishing({
             value={scheduleAction}
             onChange={(event) => setScheduleAction(event.target.value)}
           >
-            <option value="publish">Publicar a revisão {record.revision}</option>
+            <option value="publish">Publicar o conteúdo atual</option>
             <option value="unpublish">Retirar a publicação atual</option>
           </select>
         </FormField>
@@ -289,10 +304,7 @@ export function NewsPublishing({
           Uma edição posterior não altera a revisão agendada. Se houver nova publicação, a retirada
           antiga será cancelada.
         </p>
-        <Button
-          disabled={dirty || !channels.length || !runAt}
-          onClick={() => setConfirm("schedule")}
-        >
+        <Button disabled={!channels.length || !runAt} onClick={() => setConfirm("schedule")}>
           Agendar
         </Button>
       </fieldset>
@@ -373,7 +385,7 @@ export function NewsPublishing({
           description={
             confirm === "unpublish" || (confirm === "schedule" && scheduleAction === "unpublish")
               ? `A publicação deixará de aparecer nos destinos escolhidos${confirm === "schedule" ? " no horário informado" : ""}; o histórico será preservado.`
-              : `A revisão ${record.revision} será disponibilizada para leitura pública nos destinos escolhidos${confirm === "schedule" ? " no horário informado" : ""}.`
+              : `O conteúdo atual será disponibilizado para leitura pública nos destinos escolhidos${confirm === "schedule" ? " no horário informado" : ""}.`
           }
         >
           {error ? <p role="alert">{error}</p> : null}

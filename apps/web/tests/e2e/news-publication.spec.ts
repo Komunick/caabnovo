@@ -1,7 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
-import { expect, syntheticUsers, test } from "./fixtures";
+import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
+
+// Match the editor journeys when localhost compiles a route on its first request.
+const expect = baseExpect.configure({ timeout: 15000 });
 
 async function prepare(page: import("@playwright/test").Page, media = false) {
   await page.goto("/login");
@@ -12,7 +15,6 @@ async function prepare(page: import("@playwright/test").Page, media = false) {
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/news/new");
   await page.getByLabel("Título", { exact: true }).fill("Notícia pública sintética");
-  await page.getByLabel("Endereço legível").fill(`publica-${crypto.randomUUID()}`);
   await page
     .getByRole("textbox", { name: "Conteúdo da notícia", exact: true })
     .fill("Conteúdo público <script>texto seguro</script>");
@@ -26,7 +28,7 @@ async function confirm(page: import("@playwright/test").Page) {
   const button = page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true });
   await button.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("dialog")).toBeHidden({ timeout: 20000 });
+  await expect(page.getByRole("dialog")).toBeHidden({ timeout: 60000 });
 }
 
 test("the worker releases a real image and publishes the scheduled revision for anonymous readers", async ({
@@ -53,7 +55,7 @@ test("the worker releases a real image and publishes the scheduled revision for 
       page.getByRole("status").filter({ hasText: "Imagem enviada para verificação" }),
     ).toBeVisible({ timeout: 20000 });
     await page.getByLabel("Descrição da capa", { exact: true }).fill("Capa pública sintética");
-    const fileId = await page.getByLabel("Imagens desta notícia").inputValue();
+    const fileId = (await (await page.request.get(`/api/v1/news/${id}/media`)).json()).items[0].id;
     await expect
       .poll(
         async () => {
@@ -163,7 +165,7 @@ test("publishes publicly, keeps edits private, schedules, cancels and withdraws 
   await reader.screenshot({ path: testInfo.outputPath("news-public-mobile.png"), fullPage: true });
   await anonymous.close();
   await page.getByLabel("Título", { exact: true }).fill("Edição privada posterior");
-  await expect(page.getByRole("button", { name: "Publicar agora", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Publicar agora", exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 3." }),

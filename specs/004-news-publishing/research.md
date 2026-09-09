@@ -3,6 +3,17 @@
 Data: 09/09/2026. Evidência documental oficial atual; não houve teste de demos nem consulta ao
 legado.
 
+## Refinamento do editor
+
+Referências oficiais consultadas: [formatação de mensagens no Outlook](https://support.microsoft.com/en-us/outlook/customize-your-email-message)
+e [prévia no Sanity](https://www.sanity.io/docs/user-guides/preview-and-page-building).
+Decisão: adotar convenções de edição familiares (grupos, estilos, estados ativos e histórico)
+com interface própria e ícones já usados pelo projeto. Nenhuma reprodução de marcas, assets
+ou interface da Microsoft. A prévia compartilha o renderer público deste repositório e oferece
+larguras desktop/mobile; não representa uma implementação nativa externa ainda não integrada.
+O envio inicial cria o vínculo privado automaticamente, evitando impor ao redator um passo de
+infraestrutura. Publicação continua sendo uma ação explícita e validada.
+
 ## Mercado atual
 
 ### Refinamento da listagem em 09/09/2026

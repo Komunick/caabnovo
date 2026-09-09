@@ -50,7 +50,7 @@ describe("news preview renderer", () => {
                     type: "text",
                     version: 1,
                     text: '<img src=x onerror="alert(1)">',
-                    format: 3,
+                    format: 15,
                     style: "background:url(javascript:alert(1))",
                   },
                 ],
@@ -62,6 +62,7 @@ describe("news preview renderer", () => {
     );
     expect(html).toContain("&lt;img");
     expect(html).toContain("<strong><em>");
+    expect(html).toContain("<s><u>");
     expect(html).not.toContain("<img");
     expect(html).not.toContain("javascript:");
   });

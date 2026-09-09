@@ -65,5 +65,15 @@ Playwright/Axe. CI sobe storage e antivírus locais para executar os mesmos cen�
 o cenário de agenda inicia e encerra o worker real. Não repetir manualmente a validação de Auditoria.
 Evidência final e limites em [evidence.md](evidence.md). Checklist de requisitos: 16/16 aprovada.
 
+Refinamento editorial local: manter Lexical integrado ao Payload, com toolbar própria em grupos,
+seleção preservada, formatação segura até bitmask 15 e renderer compartilhado para leitura/prévia.
+Prévia oferece Site/Mobile/Lado a lado; endereço automático usa título e sufixo curto, com
+personalização opcional. Biblioteca de imagens passa a usar miniaturas e envio por arrastar.
+O primeiro upload cria o vínculo privado em segundo plano sem navegar nem desmontar o editor.
+Publicar/agendar persiste alterações antes da ação usando a revisão retornada; falha de gravação
+interrompe a ação. Edição fica bloqueada durante a operação para preservar o conteúdo enviado.
+Não há migration nem novo endpoint neste refinamento. Após validar no localhost, o usuário
+autorizou finalizar o build e atualizar o PR único de Notícias para dev, com merge manual.
+
 Constituição: conforme. Não houve nova autoridade, serviço externo, conta, storage, revisor ou
 permissão de Notícias. Mudança de política pública registrada na spec por orientação do usuário.

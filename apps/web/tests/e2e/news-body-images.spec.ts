@@ -45,6 +45,7 @@ test("body images can be uploaded, described, moved and restored without losing 
   await expect(dialog).toBeHidden();
   const block = page.getByRole("region", { name: "Imagem no corpo", exact: true });
   await expect(block).toBeVisible();
+  await block.getByText("Descrição e legenda", { exact: true }).click();
   await block.getByLabel("Legenda da imagem").fill("Legenda <script>inofensiva</script>");
   await block.getByRole("button", { name: "Mover imagem para cima" }).click();
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
@@ -52,6 +53,7 @@ test("body images can be uploaded, described, moved and restored without losing 
     page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 2" }),
   ).toBeVisible();
   await page.reload();
+  await block.getByText("Descrição e legenda", { exact: true }).click();
   await expect(block.getByLabel("Descrição da imagem no corpo")).toHaveValue(
     "Imagem sintética no corpo",
   );
@@ -93,6 +95,7 @@ test("body images can be uploaded, described, moved and restored without losing 
   await page.getByRole("button", { name: "Recuperar revisão 2", exact: true }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
+  await block.getByText("Descrição e legenda", { exact: true }).click();
   await expect(block.getByLabel("Descrição da imagem no corpo")).toHaveValue(
     "Imagem sintética no corpo",
   );

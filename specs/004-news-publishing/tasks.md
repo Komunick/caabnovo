@@ -76,6 +76,19 @@ Teste independente: cancelar impede publicação e três execuções produzem um
 
 ## Dependencies & Execution Order
 
+### Experiência de edição — concluída e validada localmente
+
+- [x] T020 Reorganizar escrita/configurações e implementar barra familiar de formatação com
+      desenho próprio, incluindo sublinhado/tachado seguros e estilos ativos.
+- [x] T021 Substituir seleção textual de imagens por biblioteca visual, envio por arrastar,
+      prévia local identificada e inserção no ponto de edição.
+- [x] T022 Compartilhar renderer com a leitura pública e oferecer Site/Mobile/Lado a lado.
+- [x] T023 Automatizar endereço curto do título com personalização opcional e links estáveis.
+- [x] T025 Permitir imagens desde a criação e salvar automaticamente ao publicar/agendar,
+      preservando edição, vínculo privado dos arquivos e validações existentes.
+- [x] T024 Validar editor, imagens, publicação, prévia responsiva e documentação no localhost.
+      Fechamento do PR único de Notícias autorizado após o aceite; destino dev e merge manual.
+
 ### Refinamento solicitado em 09/09/2026
 
 - [x] T017 Atualizar a mesma spec com miniaturas, resumo em duas linhas, filtros automáticos,

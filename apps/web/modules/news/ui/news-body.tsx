@@ -34,6 +34,8 @@ function renderNode(
     );
   if (node.type === "text") {
     let text: ReactNode = node.text;
+    if (Number(node.format) & 8) text = <u>{text}</u>;
+    if (Number(node.format) & 4) text = <s>{text}</s>;
     if (Number(node.format) & 2) text = <em>{text}</em>;
     if (Number(node.format) & 1) text = <strong>{text}</strong>;
     return text;

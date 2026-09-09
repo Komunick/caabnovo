@@ -125,6 +125,35 @@ do consumidor.
   visíveis; filtros adicionais e ordenação ficam em uma área expansível, sem botão de aplicação.
   A primeira linha deve começar antes de 450px no desktop de teste, sem rolagem horizontal no celular.
 
+Refinamento editorial solicitado em 09/09/2026:
+
+- **FR-019**: Separar visualmente escrita, capa e configurações; manter salvar e prévia em
+  posição clara. Ações de publicação e histórico recebem áreas próprias, sem competir com o corpo.
+  Campos de texto, incluindo o corpo, devem ter fundo distinto e bordas visíveis em ambos os
+  temas; preservar o foco e o contorno vermelho de erro. Não depender de reticências para indicar edição.
+- **FR-020**: Barra de texto compacta com ícones, nomes acessíveis, atalhos, estilos ativos,
+  parágrafo/títulos, listas, alinhamento, desfazer/refazer e limpeza de formatação. Preservar
+  seleção, texto, histórico e a gramática segura existente; tipografia deve ser consistente na leitura.
+  Usar convenções familiares de Word/Outlook com desenho próprio: negrito, itálico, sublinhado,
+  tachado e grupos de ferramentas. Não reproduzir interface, marcas ou recursos gráficos desses produtos.
+- **FR-021**: Inserir imagens por envio/arrastar ou biblioteca visual com miniaturas, seleção
+  evidente, estado de verificação e descrição. Inserção no ponto de edição, preservando o texto;
+  capa e imagens do corpo têm propósitos claros. Não substituir a verificação do antivírus.
+- **FR-022**: Prévia privada moderna com Site, Mobile e Lado a lado por botões acessíveis.
+  Compartilhar a apresentação da notícia com a página pública deste projeto. Exibir título,
+  resumo, capa, corpo e legendas responsivos. Salvar e visualizar deve incluir a última edição,
+  sem publicar. A simulação mobile não presume a implementação de um app nativo externo.
+- **FR-023**: Gerar endereço automaticamente do título, normalizado e limitado a 80 caracteres,
+  com sufixo curto para diferenciar títulos iguais. Preservar o endereço de notícias já salvas.
+  Personalização é opcional atrás da pergunta “Quer personalizar o endereço?”. Erros nesse campo
+  abrem a opção e recebem foco. Não exigir preenchimento manual para salvar/publicar.
+
+- **FR-024**: Permitir enviar capa e inserir imagens no corpo desde a criação, inclusive antes
+  do título, sem exigir clique em Salvar rascunho. Registrar a notícia privada em segundo plano
+  quando o envio precisar de vínculo, preservando texto e seleção sem navegar durante o upload.
+  Publicar/agendar salva o conteúdo atual no mesmo fluxo, inclusive em notícia nova. Falha de
+  gravação impede a publicação e mantém a edição; imagens continuam sujeitas à verificação.
+
 ### Key Entities
 
 Notícia; revisão editorial; referência de mídia; destaque na revisão; ação agendada; disponibilidade por canal. Contas,

@@ -127,3 +127,46 @@ Operação do localhost: a capa de teste ficou em `uploaded/pending` porque o wo
 parado; PostgreSQL, storage e ClamAV estavam saudáveis. Worker reativado em 09/09/2026 e
 estado confirmado como `available/clean`, sem reenviar imagem ou ignorar a verificação.
 Manter web e worker ativos durante testes de imagens e agenda.
+
+## Refinamento editorial e criação direta — 09/09/2026
+
+Interface própria com escrita e configurações separadas, toolbar em grupos com estados ativos,
+estilos, alinhamento, sublinhado/tachado e histórico; biblioteca visual de imagens e inserção no
+ponto de edição. Renderer compartilhado para leitura pública e prévia Site/Mobile/Lado a lado.
+Endereço gerado do título (até 80 caracteres), personalização opcional e preservação de links.
+O primeiro upload registra a notícia privada em segundo plano, sem salvar manualmente nem
+desmontar o editor. Publicar/agendar persiste a edição atual antes de enviar a ação. O editor
+só aceita digitação após estar pronto, evitando perda de entrada durante a hidratação.
+
+Verificações estáticas: typecheck web, lint do escopo, Prettier e 44 testes unitários/contratuais
+passaram. Nenhuma migration ou dependência nova. A publicação continua validando as imagens
+liberadas pelo antivírus, sem expor rascunhos ao leitor anônimo.
+
+Durante o refinamento, o PR permaneceu pausado por instrução do usuário. As validações são locais,
+com contas sintéticas e sem reset do banco. Nenhuma alteração na main.
+
+Oito jornadas distintas de navegador passaram em execuções selecionadas: imagens no corpo com
+histórico/restauração, capa, criação direta com capa, com imagem no corpo e sem imagem, editor
+com estilos/endereço/prévia, publicação/agenda/retirada por destino e validação de campos.
+A criação direta verifica imagens antes do título, vínculo privado antes de publicar, entrega
+pública da imagem liberada e conservação do texto. Falha 503 ao gravar impede a publicação e
+permite nova tentativa sem perder os campos. Axe passou nas jornadas responsivas aplicáveis.
+O localhost precisou de reinício por timeouts de conexão durante HMR; rotas compiladas pela
+primeira vez levaram até 21 segundos. As jornadas passaram após a compilação, com tempos de
+espera adequados ao DEV. Não é uma medição de desempenho de produção.
+
+Refinamento visual adicional: fundo dos campos de texto mistura 9% da cor de texto com a
+superfície e usa bordas mais visíveis, incluindo o corpo da notícia. Verificação visual e de
+estilos nos temas claro/escuro confirma distinção do cartão, Axe sem violações no editor e
+contorno vermelho preservado após erro. Capturas locais: `.cache/news-fields-light.png` e
+`.cache/news-fields-dark.png`. Requisito incorporado ao FR-019 da mesma spec.
+
+## Fechamento autorizado do PR — 09/09/2026
+
+Após o aceite da experiência, o usuário autorizou finalizar e atualizar o PR único de Notícias
+para dev, mantendo o merge manual. Build otimizado do Next.js passou, incluindo TypeScript e
+geração das páginas. Typecheck de todos os pacotes, lint completo, formatação completa e os
+114 testes unitários/contratuais (27 arquivos) passaram. As jornadas de navegador acima já
+cobrem a implementação final; não foram repetidas para preparar o PR. Arquivos gerados pelo
+localhost (`next-env.d.ts` e reformatação de `AGENTS.md`) ficam fora do commit de funcionalidade.
+Os checks remotos do commit enviado devem confirmar integração, build, navegador e segurança.

@@ -30,7 +30,12 @@ test("editor uploads a cover through the existing file flow and preserves its de
   await expect(page.getByLabel("Descrição da capa", { exact: true })).toHaveValue(
     "Imagem sintética de teste",
   );
-  await expect(page.getByLabel("Imagens desta notícia")).not.toHaveValue("");
+  await page.getByText(/Biblioteca desta notícia/).click();
+  await expect(
+    page
+      .getByRole("group", { name: "Imagens desta notícia" })
+      .getByRole("button", { name: /capa-sintetica.png/ }),
+  ).toHaveAttribute("aria-pressed", "true");
   expect(
     (
       await new AxeBuilder({ page })
@@ -42,11 +47,11 @@ test("editor uploads a cover through the existing file flow and preserves its de
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Rascunho salvo" })).toBeVisible();
   await page.reload();
-  await expect(page.getByLabel("Imagens desta notícia")).toHaveValue("");
+  await expect(page.locator('.news-media-choice[aria-pressed="true"]')).toHaveCount(0);
   await expect(
     page
-      .getByLabel("Imagens desta notícia")
-      .getByRole("option")
+      .getByRole("group", { name: "Imagens desta notícia" })
+      .getByRole("button")
       .filter({ hasText: "capa-sintetica.png" }),
   ).toHaveCount(1);
 });

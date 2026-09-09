@@ -74,7 +74,7 @@ export const newsBodySchema = z.unknown().transform((input, context): NewsBody =
     if (type === "text") {
       if (typeof raw.text !== "string" || (textLength += raw.text.length) > 100_000) return fail();
       const format = raw.format ?? 0;
-      if (typeof format !== "number" || !Number.isInteger(format) || format < 0 || format > 3)
+      if (typeof format !== "number" || !Number.isInteger(format) || format < 0 || format > 15)
         return fail();
       return { type, version: 1, text: raw.text, format, detail: 0, mode: "normal", style: "" };
     }

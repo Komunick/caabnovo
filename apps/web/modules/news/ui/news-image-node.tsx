@@ -14,6 +14,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
+import { ArrowUp, ArrowDown, Trash2, Settings2 } from "lucide-react";
 
 export const NewsImageContext = createContext({ newsId: "", canRead: false, showErrors: false });
 type ImageData = { fileId: string; alt: string; caption: string };
@@ -65,36 +66,46 @@ function ImageBlock({ nodeKey, fileId, alt, caption }: ImageData & { nodeKey: No
           Atualizar prévia da imagem
         </Button>
       ) : null}
-      <FormField
-        id={`image-alt-${nodeKey}`}
-        label="Descrição da imagem no corpo"
-        hint="Obrigatória antes de publicar."
-        error={showErrors && !alt.trim() ? "Descreva esta imagem antes de publicar." : undefined}
-      >
-        <textarea
-          rows={2}
-          maxLength={500}
-          disabled={!editable}
-          value={alt}
-          onChange={(event) => change("alt", event.target.value)}
-        />
-      </FormField>
-      <FormField id={`image-caption-${nodeKey}`} label="Legenda da imagem">
-        <input
-          maxLength={500}
-          disabled={!editable}
-          value={caption}
-          onChange={(event) => change("caption", event.target.value)}
-        />
-      </FormField>
+      <details className="news-image-details" open={showErrors && !alt.trim()}>
+        <summary>
+          <Settings2 size={16} aria-hidden="true" />
+          Descrição e legenda
+        </summary>
+        <FormField
+          id={`image-alt-${nodeKey}`}
+          label="Descrição da imagem no corpo"
+          hint="Obrigatória antes de publicar."
+          error={showErrors && !alt.trim() ? "Descreva esta imagem antes de publicar." : undefined}
+        >
+          <textarea
+            rows={2}
+            maxLength={500}
+            disabled={!editable}
+            value={alt}
+            onChange={(event) => change("alt", event.target.value)}
+          />
+        </FormField>
+        <FormField id={`image-caption-${nodeKey}`} label="Legenda da imagem">
+          <input
+            maxLength={500}
+            disabled={!editable}
+            value={caption}
+            onChange={(event) => change("caption", event.target.value)}
+          />
+        </FormField>
+      </details>
+      {caption && <p className="news-image-caption">{caption}</p>}
       <div className="news-actions">
         <Button size="compact" disabled={!editable} onClick={() => move("up")}>
+          <ArrowUp size={17} aria-hidden="true" />
           Mover imagem para cima
         </Button>
         <Button size="compact" disabled={!editable} onClick={() => move("down")}>
+          <ArrowDown size={17} aria-hidden="true" />
           Mover imagem para baixo
         </Button>
         <Button size="compact" disabled={!editable} onClick={() => move("remove")}>
+          <Trash2 size={17} aria-hidden="true" />
           Remover imagem do corpo
         </Button>
       </div>
