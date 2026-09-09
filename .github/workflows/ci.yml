@@ -69,6 +69,13 @@ jobs:
           cache: pnpm
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
+      - name: Disable unused Google Chrome package source
+        # Playwright downloads its own Chromium. A stale Google APT index must not
+        # prevent installation of the Ubuntu libraries that browser needs.
+        run: |
+          if [ -f /etc/apt/sources.list.d/google-chrome.list ]; then
+            sudo mv /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.list.disabled
+          fi
       - run: pnpm exec playwright install --with-deps chromium
       - name: Start storage and antivirus for editorial media
         run: |

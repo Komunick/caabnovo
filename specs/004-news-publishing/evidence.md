@@ -69,6 +69,15 @@ Capturas/relatórios locais em test-results e playwright-report; dados exclusiva
 
 ## Implantação e rollback
 
+### Correção do CI no PR #12 — 09/09/2026
+
+As execuções 34385106875 (push) e 34385576315 (pull_request) passaram quality/security,
+mas browser parou antes dos testes: apt-get retornou Hash Sum mismatch no índice
+dl.google.com/linux/chrome-stable/deb. O runner agora desabilita somente a fonte APT
+google-chrome.list, desnecessária para o Chromium baixado pelo próprio Playwright.
+Mantidos --with-deps, verificação de integridade dos pacotes e todos os testes/gates.
+A validação desta correção depende da nova execução remota, registrada após conclusão.
+
 Aplicar migrations 0007–0009 pelo executor existente antes de iniciar web/worker atualizados.
 Storage privado, antivírus e worker devem estar ativos para imagens e agenda. CI provisiona
 storage/antivírus e usa contas/dados sintéticos. Para rollback, retornar web/worker ao commit
