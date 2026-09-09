@@ -170,3 +170,6 @@ geração das páginas. Typecheck de todos os pacotes, lint completo, formataç�
 cobrem a implementação final; não foram repetidas para preparar o PR. Arquivos gerados pelo
 localhost (`next-env.d.ts` e reformatação de `AGENTS.md`) ficam fora do commit de funcionalidade.
 Os checks remotos do commit enviado devem confirmar integração, build, navegador e segurança.
+Os novos cenários de publicação direta iniciam e encerram seu próprio worker de testes para
+verificar as imagens também em CI, sem depender do worker já ativo no localhost ou da ordem
+dos outros arquivos de teste.

@@ -1,6 +1,36 @@
+import { spawn, type ChildProcess } from "node:child_process";
+import { resolve } from "node:path";
 import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
 
 const expect = baseExpect.configure({ timeout: 15000 });
+let worker: ChildProcess | undefined;
+
+// These scenarios require verified images before the publication-worker journey runs.
+test.beforeAll(() => {
+  worker = spawn(process.execPath, ["--import", "tsx", "apps/worker/src/main.ts"], {
+    cwd: resolve(process.cwd()),
+    env: process.env,
+    windowsHide: true,
+    stdio: "ignore",
+  });
+});
+
+test.afterAll(async () => {
+  const processToStop = worker;
+  if (!processToStop || processToStop.exitCode !== null || processToStop.signalCode !== null)
+    return;
+  await new Promise<void>((done) => {
+    const timer = setTimeout(() => {
+      processToStop.kill("SIGKILL");
+      done();
+    }, 5000);
+    processToStop.once("exit", () => {
+      clearTimeout(timer);
+      done();
+    });
+    processToStop.kill("SIGTERM");
+  });
+});
 
 for (const media of ["cover", "body", "none"] as const) {
   test(`creates and publishes directly with ${media}, without manually saving a draft`, async ({
