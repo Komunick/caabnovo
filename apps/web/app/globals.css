@@ -389,6 +389,16 @@ h2 {
   font-weight: 700;
 }
 
+/* Keep validation visible next to the control, including the rich-text editor. */
+.news-workspace .form-field input[aria-invalid="true"],
+.news-workspace .form-field select[aria-invalid="true"],
+.news-workspace .form-field textarea[aria-invalid="true"],
+.news-workspace .news-editor-content[aria-invalid="true"],
+.news-workspace fieldset[aria-invalid="true"] {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 1px var(--color-danger);
+}
+
 .button {
   display: inline-flex;
   align-items: center;

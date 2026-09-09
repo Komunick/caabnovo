@@ -4,6 +4,7 @@ import type { NewsRecord } from "../news-service";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { newsFieldErrors, focusNewsError, type NewsFieldErrors } from "./field-errors";
 
 type PublicationState = {
   publication: { revision: number; channels: string[]; publishedAt: string } | null;
@@ -41,12 +42,14 @@ export function NewsPublishing({
   disabled,
   onSaved,
   onBusyChange,
+  onFieldErrors,
 }: Readonly<{
   record: NewsRecord;
   dirty: boolean;
   disabled: boolean;
   onSaved(record: NewsRecord): void;
   onBusyChange(busy: boolean): void;
+  onFieldErrors(errors: NewsFieldErrors): void;
 }>) {
   const [state, setState] = useState<PublicationState>({ publication: null, actions: [] });
   const [channels, setChannels] = useState<string[]>(record.metadata.channels);
@@ -55,6 +58,7 @@ export function NewsPublishing({
   const [pending, setPending] = useState(false);
   const [confirm, setConfirm] = useState<"publish" | "unpublish" | "schedule">();
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<NewsFieldErrors>({});
   const [message, setMessage] = useState("");
   const retry = useRef<{ fingerprint: string; key: string } | undefined>(undefined);
   const busy = useRef(false);
@@ -81,12 +85,21 @@ export function NewsPublishing({
     if (busy.current) return;
     setError("");
     setMessage("");
+    setFieldErrors({});
     let input: Record<string, unknown> = { expectedVersion: record.revision, channels };
     if (action === "schedule") {
       // The form explicitly uses Brasília time; the current supported window is the next year.
       const parsed = new Date(`${runAt}:00-03:00`);
-      if (!runAt || !Number.isFinite(parsed.getTime())) {
-        setError("Informe a data e o horário de Brasília.");
+      if (
+        !runAt ||
+        !Number.isFinite(parsed.getTime()) ||
+        parsed.getTime() <= Date.now() ||
+        parsed.getTime() > Date.now() + 365 * 86400000
+      ) {
+        setFieldErrors(newsFieldErrors([{ path: "runAt" }]));
+        setError("Confira a data e o horário indicados abaixo.");
+        setConfirm(undefined);
+        focusNewsError();
         return;
       }
       input = {
@@ -117,7 +130,19 @@ export function NewsPublishing({
         },
       );
       if (!response.ok) {
-        const data = (await response.json()) as { code?: string };
+        const data = (await response.json()) as {
+          code?: string;
+          fields?: { path: string; code: string }[];
+        };
+        const fields = newsFieldErrors(
+          data.fields ??
+            (data.code === "NEWS_SLUG_CONFLICT" ? [{ path: "slug", code: data.code }] : []),
+        );
+        if (Object.keys(fields).length) {
+          setFieldErrors(fields);
+          onFieldErrors(fields);
+          setConfirm(undefined);
+        }
         throw new Error(
           data.code === "NEWS_SLUG_CONFLICT"
             ? "Esse endereço já está publicado em outra notícia."
@@ -150,6 +175,7 @@ export function NewsPublishing({
       busy.current = false;
       setPending(false);
       onBusyChange(false);
+      focusNewsError();
     }
   }
   return (
@@ -190,24 +216,35 @@ export function NewsPublishing({
         {state.publication?.channels.includes("app") ? "disponível" : "não publicado"}. A consulta
         pelo aplicativo depende da integração dele.
       </p>
-      <fieldset disabled={disabled || pending || record.archived} className="news-fields">
+      <fieldset
+        disabled={disabled || pending || record.archived}
+        className="news-fields"
+        aria-invalid={!!fieldErrors.channels}
+        aria-describedby={fieldErrors.channels ? "news-action-channels-error" : undefined}
+      >
         <legend>Destinos da ação</legend>
         {(["site", "app"] as const).map((channel) => (
           <label key={channel} className="checkbox-field">
             <input
               type="checkbox"
               checked={channels.includes(channel)}
-              onChange={(event) =>
+              onChange={(event) => {
+                setFieldErrors((old) => ({ ...old, channels: undefined }));
                 setChannels(
                   event.target.checked
                     ? [...channels, channel]
                     : channels.filter((value) => value !== channel),
-                )
-              }
+                );
+              }}
             />
             {channel === "app" ? "Aplicativo" : "Site"}
           </label>
         ))}
+        {fieldErrors.channels ? (
+          <p id="news-action-channels-error" className="field-error" role="alert">
+            {fieldErrors.channels}
+          </p>
+        ) : null}
         {dirty ? <p>Salve as alterações antes de publicar ou agendar.</p> : null}
         <div className="news-actions">
           <Button
@@ -235,13 +272,17 @@ export function NewsPublishing({
         </FormField>
         <FormField
           id="news-run-at"
+          error={fieldErrors.runAt}
           label="Data e horário de Brasília"
           hint="Horário de Brasília (UTC−03:00), nos próximos 12 meses."
         >
           <input
             type="datetime-local"
             value={runAt}
-            onChange={(event) => setRunAt(event.target.value)}
+            onChange={(event) => {
+              setRunAt(event.target.value);
+              setFieldErrors((old) => ({ ...old, runAt: undefined }));
+            }}
           />
         </FormField>
         <p>

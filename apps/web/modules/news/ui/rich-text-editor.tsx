@@ -210,6 +210,7 @@ function EditorControls({ disabled }: Readonly<{ disabled: boolean }>) {
 }
 
 export function RichTextEditor({
+  error,
   initialBody,
   disabled,
   onChange,
@@ -218,6 +219,7 @@ export function RichTextEditor({
   canUploadMedia,
   onUploadingChange,
 }: Readonly<{
+  error?: string;
   initialBody: NewsBody;
   disabled: boolean;
   onChange(body: unknown): void;
@@ -240,7 +242,9 @@ export function RichTextEditor({
     }),
   );
   return (
-    <NewsImageContext.Provider value={{ newsId: newsId ?? "", canRead: canReadMedia }}>
+    <NewsImageContext.Provider
+      value={{ newsId: newsId ?? "", canRead: canReadMedia, showErrors: !!error }}
+    >
       <LexicalExtensionComposer extension={extension} contentEditable={null}>
         <EditorControls disabled={disabled} />
         <InsertImage
@@ -253,7 +257,8 @@ export function RichTextEditor({
         <ContentEditable
           id="news-body"
           aria-label="Conteúdo da notícia"
-          aria-describedby="news-body-hint"
+          aria-describedby={error ? "news-body-hint news-body-error" : "news-body-hint"}
+          aria-invalid={!!error}
           className="news-editor-content news-prose"
         />
         <EditorHistory />

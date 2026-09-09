@@ -94,6 +94,11 @@ do consumidor.
   não declarar recebimento pelo consumidor nem criar entrega fictícia por canal.
 - **FR-010**: Impedir sobrescrita concorrente, duplicação por retry e acesso público a rascunhos.
 - **FR-011**: Editor e gestão funcionam por teclado, com foco, mensagens e nomes acessíveis.
+- **FR-012**: Erros de preenchimento/formatação aparecem junto do campo correspondente, com
+  contorno vermelho, dica específica em português e associação acessível. A tentativa de salvar,
+  publicar ou agendar leva o foco ao primeiro campo inválido; corrigir o campo remove sua indicação.
+  O resumo geral não substitui mensagens locais. Erros do servidor seguem a mesma apresentação;
+  conflito de versão e falha de conexão preservam o texto sem marcar campos válidos como inválidos.
 
 ### Key Entities
 

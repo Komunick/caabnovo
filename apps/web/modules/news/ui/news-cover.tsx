@@ -25,6 +25,8 @@ function mutationHeaders(key?: string) {
 }
 
 export function NewsCover({
+  fieldError,
+  altError,
   newsId,
   cover,
   canRead,
@@ -34,6 +36,8 @@ export function NewsCover({
   onUploadingChange,
   purpose = "cover",
 }: Readonly<{
+  fieldError?: string;
+  altError?: string;
   newsId: string;
   cover: NewsDraftMetadata["cover"];
   canRead: boolean;
@@ -164,6 +168,7 @@ export function NewsCover({
       {canUpload && canRead ? (
         <FormField
           id={`${prefix}-file`}
+          error={error || undefined}
           label="Enviar imagem"
           hint="PNG ou JPEG, até 25 MB. A imagem passa por verificação antes de ficar disponível."
         >
@@ -183,7 +188,7 @@ export function NewsCover({
         <p>Seu acesso atual não inclui a consulta de arquivos.</p>
       ) : (
         <>
-          <FormField id={`${prefix}-select`} label="Imagens desta notícia">
+          <FormField id={`${prefix}-select`} label="Imagens desta notícia" error={fieldError}>
             <select
               value={cover?.fileId ?? ""}
               disabled={disabled || uploading}
@@ -230,6 +235,7 @@ export function NewsCover({
         <>
           <FormField
             id={`${prefix}-alt`}
+            error={altError}
             label={purpose === "cover" ? "Descrição da capa" : "Descrição da imagem"}
             hint="Descreva o que a imagem comunica. Obrigatória antes de publicar."
           >

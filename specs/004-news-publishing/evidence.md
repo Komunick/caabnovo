@@ -76,7 +76,18 @@ mas browser parou antes dos testes: apt-get retornou Hash Sum mismatch no índic
 dl.google.com/linux/chrome-stable/deb. O runner agora desabilita somente a fonte APT
 google-chrome.list, desnecessária para o Chromium baixado pelo próprio Playwright.
 Mantidos --with-deps, verificação de integridade dos pacotes e todos os testes/gates.
-A validação desta correção depende da nova execução remota, registrada após conclusão.
+Correção confirmada no commit 6488cac: execuções 34388475476 e 34388480631 passaram
+browser, quality e security (todos os seis checks verdes).
+
+### Validação por campo — solicitação de 09/09/2026
+
+FR-012 adicionada à mesma spec. Campos inválidos recebem aria-invalid, contorno vermelho,
+mensagem específica em português e aria-describedby. Foco no primeiro erro; erros de publicação
+retornam paths/codes seguros pela API para marcar título, endereço, corpo e mídia. Agenda indica
+horário inválido no controle; digitação limpa a indicação anterior. Texto preservado em falhas.
+Typecheck web, lint do escopo e 12 testes unitários passaram localmente. Novo E2E verifica
+erros simultâneos em endereço/tags/ordem, borda computada, foco, correção, erros de publicação
+vindos do servidor e axe em 390px. Resultado remoto desta ampliação deve ser consultado no PR.
 
 Aplicar migrations 0007–0009 pelo executor existente antes de iniciar web/worker atualizados.
 Storage privado, antivírus e worker devem estar ativos para imagens e agenda. CI provisiona

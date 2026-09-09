@@ -15,14 +15,14 @@ import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 
-export const NewsImageContext = createContext({ newsId: "", canRead: false });
+export const NewsImageContext = createContext({ newsId: "", canRead: false, showErrors: false });
 type ImageData = { fileId: string; alt: string; caption: string };
 type SerializedNewsImage = SerializedLexicalNode & ImageData;
 
 function ImageBlock({ nodeKey, fileId, alt, caption }: ImageData & { nodeKey: NodeKey }) {
   const [editor] = useLexicalComposerContext();
   const editable = useLexicalEditable();
-  const { newsId, canRead } = useContext(NewsImageContext);
+  const { newsId, canRead, showErrors } = useContext(NewsImageContext);
   const [failed, setFailed] = useState(false);
   function change(field: "alt" | "caption", value: string) {
     editor.update(() => {
@@ -69,6 +69,7 @@ function ImageBlock({ nodeKey, fileId, alt, caption }: ImageData & { nodeKey: No
         id={`image-alt-${nodeKey}`}
         label="Descrição da imagem no corpo"
         hint="Obrigatória antes de publicar."
+        error={showErrors && !alt.trim() ? "Descreva esta imagem antes de publicar." : undefined}
       >
         <textarea
           rows={2}

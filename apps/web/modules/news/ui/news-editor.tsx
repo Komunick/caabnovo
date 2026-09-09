@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { RichTextEditor } from "./rich-text-editor";
 import { NewsCover } from "./news-cover";
 import { NewsPublishing } from "./news-publishing";
+import { newsFieldErrors, focusNewsError, type NewsFieldErrors } from "./field-errors";
 
 type History = Awaited<ReturnType<typeof listNewsVersions>>;
 const date = (value: string) =>
@@ -25,8 +26,12 @@ const date = (value: string) =>
     timeZone: "America/Sao_Paulo",
   }).format(new Date(value));
 
-async function responseError(response: Response) {
-  const data = (await response.json().catch(() => ({}))) as { code?: string };
+async function responseError(response: Response, onFields?: (fields: NewsFieldErrors) => void) {
+  const data = (await response.json().catch(() => ({}))) as {
+    code?: string;
+    fields?: { path: string; code: string }[];
+  };
+  if (data.fields) onFields?.(newsFieldErrors(data.fields));
   if (response.status === 401) return "Sua sessão expirou. Entre novamente antes de salvar.";
   if (data.code === "NEWS_VERSION_CONFLICT")
     return "Outra alteração foi salva. Seu texto continua no editor. Abra a versão atual em outra aba e compare antes de tentar novamente.";
@@ -60,12 +65,14 @@ export function NewsEditor({
   const [mediaUploading, setMediaUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<NewsFieldErrors>({});
   const [confirm, setConfirm] = useState<{ action: "archive" | "restore"; versionId?: string }>();
   const retry = useRef<{ input: string; key: string } | undefined>(undefined);
   const busy = useRef(false);
   const bodyChanged = useCallback((value: unknown) => {
     setBody(value);
     setDirty(true);
+    setFieldErrors((old) => ({ ...old, body: undefined }));
   }, []);
   useEffect(() => {
     if (!dirty) return;
@@ -77,6 +84,11 @@ export function NewsEditor({
     setMetadata((old) => ({ ...old, [key]: value }));
     setDirty(true);
     setMessage("");
+    setFieldErrors((old) => ({
+      ...old,
+      [key]: undefined,
+      ...(key === "cover" ? { coverAlt: undefined } : {}),
+    }));
   }
   async function loadHistory(page = 1) {
     if (!record) return;
@@ -99,6 +111,8 @@ export function NewsEditor({
       body,
     });
     if (!parsed.success) {
+      setFieldErrors(newsFieldErrors(parsed.error.issues));
+      focusNewsError();
       setError(
         "Confira título, endereço, tags e conteúdo. Use somente a formatação disponível no editor.",
       );
@@ -111,6 +125,7 @@ export function NewsEditor({
     busy.current = true;
     setPending(true);
     setError("");
+    setFieldErrors({});
     setMessage("");
     try {
       const response = await fetch(record ? `/api/v1/news/${record.id}` : "/api/v1/news", {
@@ -122,7 +137,7 @@ export function NewsEditor({
         },
         body: input,
       });
-      if (!response.ok) throw new Error(await responseError(response));
+      if (!response.ok) throw new Error(await responseError(response, setFieldErrors));
       const saved = (await response.json()) as NewsRecord;
       setDirty(false);
       setRecord(saved);
@@ -137,6 +152,7 @@ export function NewsEditor({
     } finally {
       busy.current = false;
       setPending(false);
+      focusNewsError();
     }
   }
   async function command(action: "duplicate" | "archive" | "restore", versionId?: string) {
@@ -213,20 +229,20 @@ export function NewsEditor({
             ) : null}
           </p>
         ) : null}
-        <form onSubmit={save}>
+        <form onSubmit={save} noValidate>
           <fieldset
             disabled={pending || mediaUploading || record?.archived}
             className="news-fields"
           >
             <legend className="sr-only">Dados da notícia</legend>
-            <FormField id="news-title" label="Título">
+            <FormField id="news-title" label="Título" error={fieldErrors.title}>
               <input
                 value={metadata.title}
                 maxLength={200}
                 onChange={(e) => change("title", e.target.value)}
               />
             </FormField>
-            <FormField id="news-summary" label="Resumo">
+            <FormField id="news-summary" label="Resumo" error={fieldErrors.summary}>
               <textarea
                 value={metadata.summary}
                 maxLength={500}
@@ -236,6 +252,7 @@ export function NewsEditor({
             </FormField>
             <FormField
               id="news-slug"
+              error={fieldErrors.slug}
               label="Endereço legível"
               hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
             >
@@ -246,14 +263,19 @@ export function NewsEditor({
               />
             </FormField>
             <div className="news-meta-grid">
-              <FormField id="news-category" label="Categoria">
+              <FormField id="news-category" label="Categoria" error={fieldErrors.category}>
                 <input
                   value={metadata.category}
                   maxLength={80}
                   onChange={(e) => change("category", e.target.value)}
                 />
               </FormField>
-              <FormField id="news-tags" label="Tags" hint="Separe por vírgulas; até 20 tags.">
+              <FormField
+                id="news-tags"
+                label="Tags"
+                hint="Separe por vírgulas; até 20 tags."
+                error={fieldErrors.tags}
+              >
                 <input
                   value={metadata.tags.join(",")}
                   onChange={(e) => change("tags", e.target.value ? e.target.value.split(",") : [])}
@@ -273,6 +295,7 @@ export function NewsEditor({
             {metadata.highlight ? (
               <FormField
                 id="news-highlight-order"
+                error={fieldErrors.highlight}
                 label="Ordem do destaque"
                 hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
               >
@@ -314,6 +337,7 @@ export function NewsEditor({
                 Texto, títulos, listas e imagens. Salve antes de abrir a prévia.
               </p>
               <RichTextEditor
+                error={fieldErrors.body}
                 key={editorKey}
                 initialBody={record?.body ?? emptyNewsBody}
                 disabled={pending || mediaUploading || !!record?.archived}
@@ -323,9 +347,16 @@ export function NewsEditor({
                 canUploadMedia={canUploadMedia}
                 onUploadingChange={setMediaUploading}
               />
+              {fieldErrors.body ? (
+                <p id="news-body-error" className="field-error" role="alert">
+                  {fieldErrors.body}
+                </p>
+              ) : null}
             </div>
             {record ? (
               <NewsCover
+                fieldError={fieldErrors.cover}
+                altError={fieldErrors.coverAlt}
                 newsId={record.id}
                 cover={metadata.cover}
                 canRead={canReadMedia}
@@ -371,6 +402,10 @@ export function NewsEditor({
       </section>
       {record ? (
         <NewsPublishing
+          onFieldErrors={(fields) => {
+            setFieldErrors(fields);
+            focusNewsError();
+          }}
           record={record}
           dirty={dirty}
           disabled={pending || mediaUploading}

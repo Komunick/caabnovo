@@ -97,3 +97,9 @@ o painel mostra disponibilidade, não confirmação de recebimento. Falha de con
 despublica o app. Consumidores repetem GET com segurança. Os apps externos precisam integrar
 este contrato em seus próprios repositórios; isso não é uma credencial pendente do painel.
 Não existem adaptadores fictícios de push, webhooks de recebimento nem tabela paralela de entrega.
+# Erros por campo
+
+Falhas de validação e pré-requisitos editoriais retornam `fields: [{ path, code }]` além do erro
+geral. `path` identifica o controle (`metadata.slug`, `title`, `cover.alt`, `content`, etc.).
+Conflito de endereço publicado retorna 409 com campo `metadata.slug`. Mensagens internas e dados
+de exceção não são expostos; a interface traduz os códigos e mantém o texto editado.

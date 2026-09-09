@@ -24,6 +24,7 @@ import type {
   listNewsVersions,
 } from "../news-service";
 import type { listNewsMedia } from "../media-service";
+import { NewsPolicyError } from "../errors";
 
 interface NewsRouteDependencies {
   resolveActor(request: Request): Promise<RequestActor | null>;
@@ -118,7 +119,19 @@ export function createNewsRoutes(deps: NewsRouteDependencies) {
               ),
               { status: error.status },
             )
-          : routeErrorResponse(error, id);
+          : error instanceof NewsPolicyError &&
+              (error.issues.length > 0 || error.code === "NEWS_SLUG_CONFLICT")
+            ? Response.json(
+                {
+                  ...apiError(error.code, "Confira os campos indicados.", id),
+                  fields:
+                    error.code === "NEWS_SLUG_CONFLICT"
+                      ? [{ path: "metadata.slug", code: error.code }]
+                      : error.issues.map(({ field, code }) => ({ path: field, code })),
+                },
+                { status: error.status },
+              )
+            : routeErrorResponse(error, id);
     }
     response.headers.set("cache-control", "private, no-store");
     response.headers.set("x-robots-tag", "noindex, nofollow");

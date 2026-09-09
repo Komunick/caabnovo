@@ -12,6 +12,70 @@ async function signIn(page: import("@playwright/test").Page) {
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
 }
 
+test("invalid news fields have red borders, specific hints and keyboard focus", async ({
+  page,
+}, testInfo) => {
+  await signIn(page);
+  await page.goto("/news/new");
+  const slug = page.getByLabel("Endereço legível", { exact: true });
+  const tags = page.getByLabel("Tags", { exact: true });
+  await slug.fill("Endereço com espaços");
+  await tags.fill("uma,,outra");
+  await page.getByLabel("Destacar notícia").check();
+  const order = page.getByLabel("Ordem do destaque", { exact: true });
+  await order.fill("101");
+  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  await expect(slug).toBeFocused();
+  for (const field of [slug, tags, order])
+    await expect(field).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#news-slug-error")).toContainText("sem espaços ou acentos");
+  await expect(page.locator("#news-tags-error")).toContainText("vírgulas");
+  await expect(page.locator("#news-highlight-order-error")).toContainText("1 a 100");
+  const red = await slug.evaluate((el) =>
+    getComputedStyle(el).getPropertyValue("--color-danger").trim(),
+  );
+  // Resolve the theme token through a detached element rather than hard-code one theme's RGB.
+  const expectedBorder = await page.evaluate((color) => {
+    const el = document.createElement("span");
+    el.style.color = color;
+    document.body.append(el);
+    const resolved = getComputedStyle(el).color;
+    el.remove();
+    return resolved;
+  }, red);
+  await expect(slug).toHaveCSS("border-color", expectedBorder);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: testInfo.outputPath("news-field-errors-mobile.png"),
+    fullPage: true,
+  });
+  await slug.fill("endereco-corrigido");
+  await tags.fill("uma,outra");
+  await order.fill("10");
+  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
+  await expect(slug).not.toHaveAttribute("aria-invalid", "true");
+  const publication = page.getByRole("region", { name: "Publicação e agenda" });
+  await publication.getByLabel("Aplicativo", { exact: true }).check();
+  await publication.getByRole("button", { name: "Publicar agora", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#news-title-error")).toContainText("Informe um título");
+  await expect(
+    page.getByRole("textbox", { name: "Conteúdo da notícia", exact: true }),
+  ).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#news-body-error")).toContainText("Escreva o conteúdo");
+  await expect(page.getByLabel("Título", { exact: true })).toBeFocused();
+});
+
 test("panel user creates, previews, restores, duplicates and archives news", async ({
   page,
 }, testInfo) => {

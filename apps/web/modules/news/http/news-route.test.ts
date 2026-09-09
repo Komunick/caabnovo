@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { emptyNewsBody, newsDraftMetadataSchema } from "@caab/contracts";
 import { createNewsRoutes } from "./news-route";
 import type { RequestActor } from "../../shared/request-context";
+import { NewsPolicyError } from "../errors";
 
 const actor: RequestActor = {
   userId: crypto.randomUUID(),
@@ -61,6 +62,39 @@ function mutation(body: unknown, headers: Record<string, string> = {}) {
 }
 
 describe("news HTTP boundary", () => {
+  it("returns safe field paths for publication validation and duplicate addresses", async () => {
+    const { routes, service } = setup();
+    service.publish.mockRejectedValue(
+      new NewsPolicyError("NEWS_NOT_READY", 422, "Internal details", [
+        { field: "title", code: "TITLE_REQUIRED" },
+        { field: "cover.alt", code: "COVER_ALT_REQUIRED" },
+      ]),
+    );
+    const response = await routes.publish(
+      mutation({ expectedVersion: 1, channels: ["app"] }),
+      newsId,
+      "publish",
+    );
+    expect(response.status).toBe(422);
+    const data = await response.json();
+    expect(data.fields).toEqual([
+      { path: "title", code: "TITLE_REQUIRED" },
+      { path: "cover.alt", code: "COVER_ALT_REQUIRED" },
+    ]);
+    expect(JSON.stringify(data)).not.toContain("Internal details");
+    service.publish.mockRejectedValue(new NewsPolicyError("NEWS_SLUG_CONFLICT", 409, "Duplicate"));
+    expect(
+      (
+        await (
+          await routes.publish(
+            mutation({ expectedVersion: 1, channels: ["app"] }),
+            newsId,
+            "publish",
+          )
+        ).json()
+      ).fields,
+    ).toEqual([{ path: "metadata.slug", code: "NEWS_SLUG_CONFLICT" }]);
+  });
   it("protects publication and schedule commands with CSRF and idempotency", async () => {
     const { routes, service } = setup();
     for (const action of ["publish", "unpublish", "schedule"] as const) {
