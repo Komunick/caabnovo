@@ -98,3 +98,32 @@ durante manutenção. Reativar worker após corrigir causa e usar retry/cancelam
 
 Checklist de qualidade da spec: 16/16; marcadores preservados. Sem .specify/extensions.yml,
 portanto não há hooks de pós-implementação registrados.
+
+### Listagem, rascunhos, filtros e botões — 09/09/2026
+
+FR-013–FR-018 implementadas na mesma spec/PR: miniatura privada com fallback, resumo de duas
+linhas, revisão no detalhe, busca automática de 350ms e filtros combináveis com ordenação.
+`/news/drafts` contém notícias nunca publicadas; `/news` contém as com publicação no histórico,
+sem duplicar edições posteriores. Cabeçalho compacto e filtros adicionais expansíveis permitem
+ver a primeira linha antes de 450px no viewport desktop testado. Botões maiores, preenchidos e
+com borda marcada; contraste verificado nos temas claro e escuro. Campos esperam a interface
+estar interativa antes de permitir digitação, corrigindo perda de entrada anterior à hidratação.
+
+Validação local deste incremento: 50 testes unitários/contratuais e 25 testes de integração
+PostgreSQL passaram. Cobrem consulta JSONB, filtros combinados, ordenação entre páginas,
+período, separação das coleções e conservação de histórico após editar/arquivar publicação.
+Typecheck web, lint do escopo, Prettier e diff check passaram.
+
+Jornada Playwright executada no localhost em execução, sem seed/reset do banco: criou um
+rascunho sintético, verificou exclusão da lista principal, busca/foco/URL, resumo, opções
+combinadas, persistência após reload, falha 503/retry, limpeza e arquivamento. Axe sem violações
+em 390px, nos temas claro e escuro; sem rolagem horizontal. Capturas `news-list-desktop.png`,
+`news-list-mobile.png` e `news-list-dark.png` no diretório de resultados local. O E2E de publicação
+também passa a conferir a miniatura real liberada pelo antivírus; sua execução é parte do CI.
+Os checks remotos do novo commit devem ser consultados no PR, sem confundir com os checks
+verdes dos commits anteriores citados acima. Nenhuma migration adicional neste incremento.
+
+Operação do localhost: a capa de teste ficou em `uploaded/pending` porque o worker estava
+parado; PostgreSQL, storage e ClamAV estavam saudáveis. Worker reativado em 09/09/2026 e
+estado confirmado como `available/clean`, sem reenviar imagem ou ignorar a verificação.
+Manter web e worker ativos durante testes de imagens e agenda.

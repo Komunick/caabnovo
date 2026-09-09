@@ -12,6 +12,121 @@ async function signIn(page: import("@playwright/test").Page) {
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
 }
 
+test("news list previews summaries and filters automatically with clear actions", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(90_000);
+  await signIn(page);
+  await page.goto("/news/new");
+  const title = `Lista sintética ${crypto.randomUUID()}`;
+  const summary =
+    "Resumo da notícia para verificar a apresentação em duas linhas e facilitar a leitura na listagem. ".repeat(
+      4,
+    );
+  await page.getByLabel("Título", { exact: true }).fill(title);
+  await page.getByLabel("Resumo", { exact: true }).fill(summary);
+  await page.getByLabel("Categoria", { exact: true }).fill("Atendimento");
+  await page
+    .getByRole("group", { name: "Destinos previstos" })
+    .getByLabel("Aplicativo", { exact: true })
+    .check();
+  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
+  const editorUrl = page.url();
+  await expect(page.getByRole("link", { name: "Prévia privada" })).toHaveClass(/button--secondary/);
+  await page.getByRole("link", { name: "Notícias", exact: true }).last().click();
+  await expect(page.getByRole("link", { name: title, exact: true })).toHaveCount(0);
+  await page.getByRole("link", { name: "Rascunhos", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Rascunhos de notícias", exact: true }),
+  ).toBeVisible();
+  const search = page.getByRole("searchbox", { name: "Buscar notícias pelo título" });
+  await search.fill(title);
+  const item = page.getByRole("list", { name: "Lista de notícias" }).getByRole("listitem");
+  await expect(item).toHaveCount(1);
+  await expect(item).toContainText(title);
+  await expect(search).toBeFocused();
+  await expect(page).toHaveURL(
+    new RegExp(`search=${encodeURIComponent(title).replaceAll("%20", "\\+")}`),
+  );
+  await expect(page.getByRole("button", { name: "Filtrar", exact: true })).toHaveCount(0);
+  await expect(item).toContainText("Sem capa");
+  await expect(item).not.toContainText(/revisão/i);
+  const excerpt = item.locator("p").filter({ hasText: "Resumo da notícia" });
+  await expect(excerpt).toHaveCSS("-webkit-line-clamp", "2");
+  const firstRow = await item.boundingBox();
+  expect(firstRow!.y).toBeLessThan(450);
+  await page.screenshot({ path: testInfo.outputPath("news-list-desktop.png"), fullPage: true });
+  await page.getByText("Mais filtros e ordenação", { exact: true }).click();
+  await page.getByLabel("Categoria", { exact: true }).fill("Atend");
+  await page.getByRole("combobox", { name: "Destino previsto", exact: true }).selectOption("app");
+  await page.getByRole("combobox", { name: "Destaque", exact: true }).selectOption("no");
+  await page.getByRole("combobox", { name: "Imagem de capa", exact: true }).selectOption("no");
+  await page.getByRole("combobox", { name: "Atualização", exact: true }).selectOption("7");
+  await page.getByRole("combobox", { name: "Ordenar por", exact: true }).selectOption("title-asc");
+  await expect(
+    page.getByRole("status").filter({ hasText: "1 notícia nesta página" }),
+  ).toBeVisible();
+  await expect(item).toContainText(title);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.screenshot({ path: testInfo.outputPath("news-list-mobile.png"), fullPage: true });
+  await page.getByRole("button", { name: "Ativar tema escuro" }).click();
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .include(".news-module")
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.screenshot({ path: testInfo.outputPath("news-list-dark.png"), fullPage: true });
+  await page.getByRole("button", { name: "Ativar tema claro" }).click();
+  await page.getByRole("button", { name: "Arquivadas", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Nenhuma notícia encontrada" })).toBeVisible();
+  await page.getByRole("button", { name: "Todas", exact: true }).click();
+  await expect(item).toHaveCount(1);
+  await page.reload();
+  await expect(search).toHaveValue(title);
+  await expect(page.getByRole("button", { name: "Todas", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  // A failed filter retains the last results and offers a working retry.
+  await page.route("**/api/v1/news?*", (route) => route.fulfill({ status: 503, body: "{}" }));
+  await search.fill("indisponível");
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Não foi possível atualizar" }),
+  ).toBeVisible();
+  await expect(item).toContainText(title);
+  await page.unroute("**/api/v1/news?*");
+  await page.getByRole("button", { name: "Tentar novamente" }).click();
+  await expect(page.getByRole("heading", { name: "Nenhuma notícia encontrada" })).toBeVisible();
+  await page.getByRole("button", { name: "Limpar filtros", exact: true }).click();
+  await expect(search).toHaveValue("");
+  await expect(page.getByRole("button", { name: "Não arquivadas", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.goto(editorUrl);
+  await page.getByRole("button", { name: "Arquivar", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Notícia arquivada" })).toBeVisible();
+  await page.goto("/news/drafts");
+  await search.fill(title);
+  await page.getByRole("button", { name: "Arquivadas", exact: true }).click();
+  await expect(item).toHaveCount(1);
+  await expect(item).toContainText(title);
+  await expect(item).toContainText("Arquivada");
+});
+
 test("invalid news fields have red borders, specific hints and keyboard focus", async ({
   page,
 }, testInfo) => {

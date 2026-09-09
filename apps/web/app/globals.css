@@ -2558,6 +2558,76 @@ tbody tr:hover {
   display: grid;
   gap: var(--space-5);
 }
+.admin-content:has(.news-module) {
+  padding-top: 1.25rem;
+}
+.news-module.page-stack {
+  gap: 1rem;
+}
+.news-module.page-stack > .news-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: none;
+}
+.news-list-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.8rem;
+}
+.news-list-header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+.news-list-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+@media (max-width: 700px) {
+  .news-module.page-stack > .news-list-header {
+    flex-wrap: wrap;
+  }
+}
+.news-module .button {
+  min-height: 3.1rem;
+  padding-inline: 1.25rem;
+  font-size: 0.95rem;
+  border-width: 1.5px;
+  border-radius: 0.65rem;
+  text-decoration: none;
+}
+.news-module {
+  --news-control-bg: color-mix(in srgb, var(--color-action) 12%, var(--color-surface));
+  --news-control-border: color-mix(in srgb, var(--color-muted-strong) 72%, var(--color-surface));
+}
+.news-module .button--compact {
+  min-height: 2.85rem;
+}
+.news-module .button--primary {
+  color: var(--color-surface);
+}
+.news-module .button--secondary,
+.news-module .button--ghost {
+  color: var(--color-text);
+  background: var(--news-control-bg);
+  border-color: var(--news-control-border);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 10%);
+}
+.news-module .button--secondary:hover:not(:disabled),
+.news-module .button--ghost:hover:not(:disabled) {
+  background: var(--color-action-soft);
+  border-color: var(--color-action);
+  color: var(--color-action-hover);
+}
+.news-module .button:disabled {
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.news-module .button:active:not(:disabled) {
+  transform: translateY(1px);
+}
 .news-fields {
   min-width: 0;
   margin: 0;

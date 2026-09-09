@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
@@ -11,9 +12,11 @@ export default async function NewNewsPage() {
   );
   if (!actor) redirect("/login");
   return (
-    <div className="page-stack">
+    <div className="page-stack news-module">
       <header className="page-header">
-        <Link href="/news">Notícias</Link>
+        <Link className={buttonVariants({ size: "compact" })} href="/news">
+          Notícias
+        </Link>
         <h1>Nova notícia</h1>
         <p>Comece pelo rascunho e desenvolva o conteúdo no seu ritmo.</p>
       </header>

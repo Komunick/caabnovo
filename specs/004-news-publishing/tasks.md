@@ -76,6 +76,16 @@ Teste independente: cancelar impede publicação e três execuções produzem um
 
 ## Dependencies & Execution Order
 
+### Refinamento solicitado em 09/09/2026
+
+- [x] T017 Atualizar a mesma spec com miniaturas, resumo em duas linhas, filtros automáticos,
+      botões visíveis, mais opções de filtro/ordenação e subpágina de rascunhos.
+- [x] T018 Implementar listagem compacta, `/news/drafts`, contratos e consulta paginada com
+      filtros combináveis, mantendo acesso e histórico existentes.
+- [x] T019 Validar integração, contratos, navegador/Axe em desktop e celular e atualizar o
+      PR existente da função com evidências finais.
+
+
 T001/T002 → T003/T004 → T005/T006 → T007/T008/T009 para US1. T010/T011 dependem só dos contratos e
 do acesso definido; podem avançar enquanto T007 é preparado. T012/T013 exigem T007/T008/T011. T014
 antecede consumidores reais; T015 depende de T013/T014. T016 encerra a função após todas as

@@ -1,6 +1,7 @@
 import "server-only";
+import { queryNewsList } from "./list-query";
 import { createHash } from "node:crypto";
-import type { Payload, PayloadRequest, Where } from "payload";
+import type { Payload, PayloadRequest } from "payload";
 import {
   idSchema,
   newsBodySchema,
@@ -163,26 +164,9 @@ export async function listNewsDrafts(
   input: unknown = {},
 ) {
   const query = newsListQuerySchema.parse(input);
-  const filters: Where[] = [];
-  if (query.state !== "all") filters.push({ archived: { equals: query.state === "archived" } });
-  if (query.search) filters.push({ "metadata.title": { contains: query.search } });
-  return newsTransaction(payload, actor, async ({ req }) => {
-    const result = await payload.find({
-      collection: "news",
-      req,
-      overrideAccess: false,
-      draft: true,
-      depth: 0,
-      sort: ["-updatedAt", "-id"],
-      page: query.page,
-      limit: 25,
-      where: { and: filters },
-    });
-    return {
-      items: result.docs.map(serialize),
-      page: result.page ?? 1,
-      totalPages: result.totalPages,
-    };
+  return newsTransaction(payload, actor, async ({ db }) => {
+    const result = await queryNewsList(db, query);
+    return { items: result.docs.map(serialize), page: query.page, totalPages: result.totalPages };
   });
 }
 

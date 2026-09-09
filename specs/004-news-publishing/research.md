@@ -5,6 +5,24 @@ legado.
 
 ## Mercado atual
 
+### Refinamento da listagem em 09/09/2026
+
+[Contentful Content search](https://www.contentful.com/help/content-and-entries/content-search/)
+documenta atualização automática da busca durante a digitação. Adotamos pausa de 350ms,
+cancelamento de requisições anteriores e filtros de seleção imediatos. A orientação de
+[Nielsen Norman Group sobre aplicação de filtros](https://www.nngroup.com/articles/applying-filters/)
+embasa preservar contexto e dar retorno do carregamento. A decisão de miniaturas, resumo em
+duas linhas, botões visíveis e subpágina de rascunhos vem da solicitação explícita do usuário.
+
+[Payload Queries](https://payloadcms.com/docs/queries/overview) oferece filtros e ordenação.
+O teste com PostgreSQL da versão instalada revelou falha do `contains` escalar em JSONB e
+resultados incorretos para existência em JSON nulo. A leitura administrativa usa consulta
+parametrizada da última revisão na transação autenticada existente, com operadores JSONB,
+ordenação em lista fechada e paginação no banco. Não há migration nem nova fonte de dados.
+Histórico de publicação separa rascunhos de notícias já publicadas, mesmo quando a versão
+editorial mais recente é um rascunho; a política pública e a escrita via Payload permanecem.
+
+
 | Referência                                                                               | Prática documentada                                                                       | Decisão CAAB                                                              |
 | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | [Payload Drafts](https://payloadcms.com/docs/versions/drafts)                            | Rascunho e publicado coexistem, com histórico e agendamento                               | Salvar não publica; restaurar produz rascunho                             |

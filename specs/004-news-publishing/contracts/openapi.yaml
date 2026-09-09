@@ -13,7 +13,7 @@ paths:
   /news:
     get:
       operationId: listNewsDrafts
-      summary: List latest drafts, with state and title filters
+      summary: List latest editorial versions with combined filters and sorting
       parameters:
         - name: page
           in: query
@@ -35,6 +35,43 @@ paths:
           schema:
             type: string
             maxLength: 200
+        - name: collection
+          in: query
+          description: Published means any publication in history; drafts have never been published.
+          schema:
+            enum: [all, published, drafts]
+            default: all
+        - name: category
+          in: query
+          schema:
+            type: string
+            maxLength: 80
+        - name: channel
+          in: query
+          description: Intended destination of the latest editorial revision.
+          schema:
+            enum: [all, app, site]
+            default: all
+        - name: highlight
+          in: query
+          schema:
+            enum: [all, "yes", "no"]
+            default: all
+        - name: cover
+          in: query
+          schema:
+            enum: [all, "yes", "no"]
+            default: all
+        - name: updatedWithin
+          in: query
+          schema:
+            enum: [all, "7", "30", "90"]
+            default: all
+        - name: sort
+          in: query
+          schema:
+            enum: [updated-desc, updated-asc, created-desc, created-asc, title-asc, title-desc]
+            default: updated-desc
       responses:
         "200":
           description: Success

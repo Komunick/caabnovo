@@ -45,6 +45,16 @@ em UTC, interface Brasília, futuro até 365 dias. Destaques usam a própria rev
 
 ## Compatibilidade e gates
 
+Refinamento FR-013–FR-018: `NewsIndex` compartilha a composição das rotas `/news` e
+`/news/drafts`; `NewsList` aplica filtros automaticamente com AbortController, debounce de
+350ms e URL persistida. Controles adicionais são expansíveis para reduzir a altura inicial.
+Miniatura usa o endpoint privado existente; erro/ausência têm placeholder. Resumo usa clamp
+de duas linhas; revisão continua no detalhe. Links de ação usam Button variants e estilo
+restrito ao módulo. `list-query.ts` lê a última versão e usa histórico publicado para separar
+as listas. Filtros JSONB, ordenação e contagem/paginação compartilham uma consulta parametrizada
+na transação com sessão ativa. Nenhuma alteração de schema, API pública ou permissões.
+
+
 Adapter Payload retém conexão inicial: pool dedicado registra/libera no encerramento. Tipos pg
 alinhados em 8.20.0. esbuild do Drizzle alinhado em 0.28.2 por override específico para eliminar
 peer incompatível de Vite no contexto Better Auth; peers e geração de migration offline validados.

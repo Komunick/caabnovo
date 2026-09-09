@@ -10,7 +10,7 @@ import {
   type NewsDraftMetadata,
 } from "@caab/contracts";
 import type { NewsRecord, listNewsVersions } from "../news-service";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { RichTextEditor } from "./rich-text-editor";
@@ -53,6 +53,8 @@ export function NewsEditor({
   canUploadMedia?: boolean;
 }>) {
   const router = useRouter();
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [record, setRecord] = useState(initial);
   const [metadata, setMetadata] = useState(initial?.metadata ?? newsDraftMetadataSchema.parse({}));
   const [body, setBody] = useState<unknown>(initial?.body ?? emptyNewsBody);
@@ -223,7 +225,12 @@ export function NewsEditor({
           <p role="alert">
             {error}{" "}
             {record ? (
-              <a href={`/news/${record.id}`} target="_blank" rel="noopener noreferrer">
+              <a
+                className={buttonVariants({ size: "compact" })}
+                href={`/news/${record.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Abrir versão atual em outra aba
               </a>
             ) : null}
@@ -231,7 +238,7 @@ export function NewsEditor({
         ) : null}
         <form onSubmit={save} noValidate>
           <fieldset
-            disabled={pending || mediaUploading || record?.archived}
+            disabled={!ready || pending || mediaUploading || record?.archived}
             className="news-fields"
           >
             <legend className="sr-only">Dados da notícia</legend>
@@ -376,7 +383,9 @@ export function NewsEditor({
         {record ? (
           <div className="news-actions">
             {!dirty ? (
-              <Link href={`/news/${record.id}/preview`}>Prévia privada</Link>
+              <Link className={buttonVariants()} href={`/news/${record.id}/preview`}>
+                Prévia privada
+              </Link>
             ) : (
               <span>Salve para atualizar a prévia.</span>
             )}

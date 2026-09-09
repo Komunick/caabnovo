@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { idSchema, newsBodyImages } from "@caab/contracts";
@@ -31,9 +32,11 @@ export default async function NewsPreviewPage({
     const coverAvailable =
       !!draft.metadata.cover && availableFileIds.includes(draft.metadata.cover.fileId);
     return (
-      <div className="page-stack">
+      <div className="page-stack news-module">
         <header className="page-header">
-          <Link href={`/news/${draft.id}`}>Voltar ao editor</Link>
+          <Link className={buttonVariants({ size: "compact" })} href={`/news/${draft.id}`}>
+            Voltar ao editor
+          </Link>
           <h1>Prévia privada</h1>
           <p>Rascunho · revisão {draft.revision}. Esta visualização não publica o conteúdo.</p>
           <p>

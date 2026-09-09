@@ -99,6 +99,15 @@ test("the worker releases a real image and publishes the scheduled revision for 
       "Rascunho posterior ao agendamento",
     );
     await expect(page.getByText(/Concluído/)).toBeVisible();
+    await page.goto("/news");
+    const thumbnail = page.locator(`a[href="/news/${id}"] img`);
+    await expect(thumbnail).toBeVisible();
+    await expect
+      .poll(() =>
+        thumbnail.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+      )
+      .toBe(true);
+    await page.goto(`/news/${id}`);
     await page.getByRole("button", { name: "Arquivar", exact: true }).click();
     await confirm(page);
     expect((await request.get(`/api/v1/content/app/news/${id}/media/${fileId}`)).status()).toBe(

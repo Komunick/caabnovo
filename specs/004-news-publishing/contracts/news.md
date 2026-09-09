@@ -97,6 +97,19 @@ o painel mostra disponibilidade, não confirmação de recebimento. Falha de con
 despublica o app. Consumidores repetem GET com segurança. Os apps externos precisam integrar
 este contrato em seus próprios repositórios; isso não é uma credencial pendente do painel.
 Não existem adaptadores fictícios de push, webhooks de recebimento nem tabela paralela de entrega.
+# Consulta administrativa
+
+`GET /api/v1/news` mantém `page`, `search` e `state=active|archived|all`. Acrescenta:
+`collection=all|published|drafts`, `category` (trecho, até 80 caracteres), `channel=all|app|site`
+(destino previsto da revisão), `highlight=all|yes|no`, `cover=all|yes|no`,
+`updatedWithin=all|7|30|90` e `sort=updated-desc|updated-asc|created-desc|created-asc|title-asc|title-desc`.
+Valores padrão: página 1, não arquivadas, todas as coleções, demais filtros vazios/`all`,
+atualização decrescente. Ordenação ocorre antes da paginação de 25 itens com desempate por ID.
+`published` significa publicação existente no histórico; novas edições/retiradas não movem
+essas notícias para rascunhos. `drafts` nunca teve publicação, incluindo agendamentos pendentes.
+As páginas fixam suas coleções mesmo se a query string pedir outra. API privada, sessão ativa,
+`private, no-store`; parâmetros inválidos retornam 422. API pública mantém apenas page/search.
+
 # Erros por campo
 
 Falhas de validação e pré-requisitos editoriais retornam `fields: [{ path, code }]` além do erro

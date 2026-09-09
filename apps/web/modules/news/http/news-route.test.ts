@@ -243,6 +243,13 @@ describe("news HTTP boundary", () => {
       state: "archived",
       search: "teste",
       page: 1,
+      category: "",
+      channel: "all",
+      collection: "all",
+      cover: "all",
+      highlight: "all",
+      sort: "updated-desc",
+      updatedWithin: "all",
     });
   });
 

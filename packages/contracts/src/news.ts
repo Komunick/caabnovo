@@ -57,9 +57,18 @@ export const restoreNewsRevisionRequestSchema = z.strictObject({
 export const newsListQuerySchema = z.strictObject({
   page: z.coerce.number().int().min(1).max(100000).default(1),
   state: z.enum(["active", "archived", "all"]).default("active"),
+  collection: z.enum(["all", "published", "drafts"]).default("all"),
   search: z.string().trim().max(200).default(""),
+  category: z.string().trim().max(80).default(""),
+  channel: z.enum(["all", "app", "site"]).default("all"),
+  highlight: z.enum(["all", "yes", "no"]).default("all"),
+  cover: z.enum(["all", "yes", "no"]).default("all"),
+  updatedWithin: z.enum(["all", "7", "30", "90"]).default("all"),
+  sort: z
+    .enum(["updated-desc", "updated-asc", "created-desc", "created-asc", "title-asc", "title-desc"])
+    .default("updated-desc"),
 });
-export const publicNewsQuerySchema = newsListQuerySchema.omit({ state: true });
+export const publicNewsQuerySchema = newsListQuerySchema.pick({ page: true, search: true });
 
 export const publishNewsRequestSchema = z.strictObject({
   expectedVersion: versionSchema,

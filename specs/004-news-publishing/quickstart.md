@@ -3,6 +3,12 @@
 Node 24, pnpm e Docker. Dependências: PostgreSQL, MinIO e ClamAV do compose existente.
 Configurar .env conforme .env.example, sem usar credenciais de produção.
 
+Na listagem, `/news` reúne notícias com publicação no histórico; o botão Rascunhos abre
+`/news/drafts` com conteúdos ainda não publicados. Digite para buscar automaticamente e
+abra Mais filtros e ordenação para combinar categoria, destino previsto, destaque, capa,
+período e ordenação. Nenhum botão Filtrar é necessário. Ao publicar pela primeira vez,
+a notícia passa para a lista principal; edições posteriores não duplicam seu cadastro.
+
 1. Instalar com corepack pnpm install --frozen-lockfile.
 2. Subir docker compose up -d; executar corepack pnpm db:migrate e o seed DEV autorizado.
 3. Executar corepack pnpm dev e corepack pnpm dev:worker em terminais separados.

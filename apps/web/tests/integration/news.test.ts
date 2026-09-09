@@ -76,6 +76,73 @@ afterAll(async () => {
 });
 
 describe.sequential("news persistence with Payload", () => {
+  it("combines editorial filters and applies deterministic sorting before pagination", async () => {
+    const prefix = crypto.randomUUID();
+    const a = await createNewsDraft(payload, context, {
+      metadata: {
+        title: `${prefix} A`,
+        category: "Atendimento",
+        channels: ["app"],
+        highlight: { order: 1 },
+      },
+    });
+    const b = await createNewsDraft(payload, context, {
+      metadata: { title: `${prefix} B`, category: "Eventos", channels: ["site"] },
+    });
+    const ids = async (query: Record<string, unknown>) =>
+      (await listNewsDrafts(payload, context.actor, { search: prefix, ...query })).items.map(
+        (item) => item.id,
+      );
+    expect(await ids({ sort: "title-asc" })).toEqual([a.id, b.id]);
+    expect(await ids({ sort: "title-desc" })).toEqual([b.id, a.id]);
+    expect(
+      await ids({
+        category: "Atend",
+        channel: "app",
+        highlight: "yes",
+        cover: "no",
+        updatedWithin: "7",
+      }),
+    ).toEqual([a.id]);
+    expect(await ids({ channel: "site", highlight: "no" })).toEqual([b.id]);
+    expect(await ids({ cover: "yes" })).toEqual([]);
+    expect(await ids({ category: "inexistente" })).toEqual([]);
+    await archiveNews(payload, context, a.id, { expectedVersion: 1 });
+    expect(await ids({ state: "archived", highlight: "yes" })).toEqual([a.id]);
+    expect(await ids({ state: "active" })).toEqual([b.id]);
+    expect(await ids({ collection: "drafts", state: "all" })).toHaveLength(2);
+    expect(await ids({ collection: "published", state: "all" })).toEqual([]);
+    await admin.query(
+      "UPDATE _news_v SET version_updated_at = now() - interval '100 days' WHERE parent_id = $1 AND latest = true",
+      [b.id],
+    );
+    expect(await ids({ updatedWithin: "90" })).toEqual([]);
+  });
+
+  it("sorts matching records across page boundaries", async () => {
+    const prefix = crypto.randomUUID();
+    for (let index = 26; index >= 1; index--) {
+      await createNewsDraft(payload, context, {
+        metadata: { title: `${prefix} ${String(index).padStart(2, "0")}` },
+      });
+    }
+    const first = await listNewsDrafts(payload, context.actor, {
+      search: prefix,
+      sort: "title-asc",
+      collection: "drafts",
+    });
+    const second = await listNewsDrafts(payload, context.actor, {
+      search: prefix,
+      sort: "title-asc",
+      collection: "drafts",
+      page: 2,
+    });
+    expect(first.totalPages).toBe(2);
+    expect(first.items).toHaveLength(25);
+    expect(first.items[0]!.metadata.title).toBe(`${prefix} 01`);
+    expect(second.items.map((item) => item.metadata.title)).toEqual([`${prefix} 26`]);
+  });
+
   it("reuses the identity table and does not configure another login, upload or queue", () => {
     expect(payload.config.collections.filter((c) => c.auth).map((c) => c.dbName)).toEqual(["user"]);
     expect(payload.config.collections.find((c) => c.slug === "panel-users")?.auth).toMatchObject({
@@ -464,7 +531,28 @@ describe.sequential("news persistence with Payload", () => {
     });
     expect(snapshot).not.toHaveProperty("editorUserId");
     expect(snapshot).not.toHaveProperty("metadata");
+    expect(
+      (
+        await listNewsDrafts(payload, context.actor, {
+          collection: "published",
+          search: "Rascunho privado",
+        })
+      ).items.map((item) => item.id),
+    ).toContain(created.id);
+    expect(
+      (
+        await listNewsDrafts(payload, context.actor, {
+          collection: "drafts",
+          search: "Rascunho privado",
+        })
+      ).items,
+    ).toEqual([]);
     await archiveNews(payload, context, created.id, { expectedVersion: 3 });
+    expect(
+      (
+        await listNewsDrafts(payload, context.actor, { collection: "published", state: "archived" })
+      ).items.map((item) => item.id),
+    ).toContain(created.id);
     await expect(
       getNewsDeliverySnapshot(payload, context.actor, created.id, "app"),
     ).rejects.toMatchObject({ status: 404 });

@@ -100,6 +100,31 @@ do consumidor.
   O resumo geral não substitui mensagens locais. Erros do servidor seguem a mesma apresentação;
   conflito de versão e falha de conexão preservam o texto sem marcar campos válidos como inválidos.
 
+- **FR-013**: A listagem mostra miniatura da capa (ou indicação de ausência/indisponibilidade),
+  título e resumo com no máximo duas linhas. O número de revisão fica no editor/histórico e na
+  prévia, sem coluna na listagem. Miniaturas respeitam o acesso privado de mídia existente.
+- **FR-014**: Busca por título aplica automaticamente após breve pausa na digitação; filtros
+  de arquivamento aplicam imediatamente, sem botão Filtrar. Mudanças reiniciam a paginação,
+  preservam foco e sincronizam a URL. Permitir limpar filtros e tentar novamente em falhas,
+  evitando que respostas antigas substituam resultados da busca mais recente.
+- **FR-015**: Ações em todas as telas de Notícias têm aparência de botão, incluindo os links
+  de retorno e prévia: fundo/contorno visível, foco, hover e estado desabilitado distinguíveis.
+  Ações principais, secundárias e destrutivas mantêm hierarquia visual; layout funciona no celular.
+  Botões têm preenchimento distinto do fundo, borda marcada e altura mínima de 44px, com contraste
+  verificado nos temas claro e escuro. O editor aguarda estar interativo antes de liberar os campos,
+  evitando perder a primeira digitação durante o carregamento inicial.
+- **FR-016**: Busca e arquivamento são mantidos. Acrescentar categoria, destino previsto
+  (app/site), destaque, presença de capa, atualização nos últimos 7/30/90 dias e ordenação
+  por atualização/criação crescente ou decrescente e título A–Z/Z–A. Combinar filtros no banco
+  antes de paginar; URL, limpeza e indicação de carregamento preservam o conjunto selecionado.
+- **FR-017**: Rascunhos ainda não publicados ficam em `/news/drafts`, acessível por botão em
+  `/news`. Notícias com publicação no histórico permanecem na lista principal, inclusive após
+  retirada ou arquivamento; editar uma publicação não duplica seu cadastro na lista de rascunhos.
+  Agendados ainda não publicados continuam nos rascunhos até a execução da publicação.
+- **FR-018**: Compactar espaçamento superior e cabeçalho. Busca e arquivamento permanecem
+  visíveis; filtros adicionais e ordenação ficam em uma área expansível, sem botão de aplicação.
+  A primeira linha deve começar antes de 450px no desktop de teste, sem rolagem horizontal no celular.
+
 ### Key Entities
 
 Notícia; revisão editorial; referência de mídia; destaque na revisão; ação agendada; disponibilidade por canal. Contas,

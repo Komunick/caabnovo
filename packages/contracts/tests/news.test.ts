@@ -5,9 +5,20 @@ import {
   newsDraftMetadataSchema,
   publishNewsRequestSchema,
   updateNewsDraftRequestSchema,
+  newsListQuerySchema,
+  publicNewsQuerySchema,
 } from "../src/news";
 
 describe("news contracts", () => {
+  it("limits administrative filters without expanding the public API", () => {
+    expect(newsListQuerySchema.safeParse({ sort: "arbitrary SQL" }).success).toBe(false);
+    expect(newsListQuerySchema.safeParse({ updatedWithin: "-1" }).success).toBe(false);
+    expect(newsListQuerySchema.safeParse({ category: "a".repeat(81) }).success).toBe(false);
+    expect(
+      newsListQuerySchema.parse({ collection: "drafts", channel: "app", cover: "yes" }),
+    ).toMatchObject({ collection: "drafts", channel: "app", cover: "yes", page: 1 });
+    expect(publicNewsQuerySchema.safeParse({ collection: "drafts" }).success).toBe(false);
+  });
   it("allows an incomplete draft without pretending it is publishable", () => {
     expect(createNewsDraftRequestSchema.parse({ metadata: {} })).toEqual({
       body: emptyNewsBody,

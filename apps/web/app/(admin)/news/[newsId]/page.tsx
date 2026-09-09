@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { idSchema } from "@caab/contracts";
@@ -24,9 +25,11 @@ export default async function EditNewsPage({
     const draft = await getNewsDraft(payload, actor, id.data);
     const history = await listNewsVersions(payload, actor, id.data);
     return (
-      <div className="page-stack">
+      <div className="page-stack news-module">
         <header className="page-header">
-          <Link href="/news">Notícias</Link>
+          <Link className={buttonVariants({ size: "compact" })} href="/news">
+            Notícias
+          </Link>
           <h1>Editar notícia</h1>
           <p>Salve, confira o conteúdo e consulte as versões anteriores.</p>
         </header>
