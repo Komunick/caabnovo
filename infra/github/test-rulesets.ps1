@@ -20,7 +20,8 @@ function gh {
       $global:LASTEXITCODE = 1
       return '{"message":"Forbidden"}'
     }
-    return $global:RulesetTestState.List
+    if ($arguments -contains "--slurp") { return $global:RulesetTestState.List }
+    return $global:RulesetTestState.Existing
   }
   if ($global:RulesetTestState.FailWrite) {
     $global:LASTEXITCODE = 1
@@ -28,7 +29,10 @@ function gh {
   }
   $path = $arguments[[Array]::IndexOf($arguments, "--input") + 1]
   Assert-True (Test-Path -LiteralPath $path) "The request must use a versioned JSON file."
-  return Get-Content -LiteralPath $path -Raw -Encoding utf8
+  $payload = Get-Content -LiteralPath $path -Raw -Encoding utf8
+  $target = $payload | ConvertFrom-Json
+  Assert-True ($target.conditions.ref_name.include.Count -eq 1 -and $target.conditions.ref_name.include[0] -eq "refs/heads/dev") "Writes must target dev exclusively."
+  return $payload
 }
 
 function Reset-TestState {
@@ -37,6 +41,7 @@ function Reset-TestState {
     List = '[[]]'
     FailRead = $false
     FailWrite = $false
+    Existing = '{"target":"branch","conditions":{"ref_name":{"include":["refs/heads/dev"],"exclude":[]}}}'
   }
 }
 
@@ -50,23 +55,23 @@ try {
   Reset-TestState
   $preview = @(& $applyScript)
   Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Preview must make only one list request."
-  Assert-True ($preview.Count -eq 2) "Preview must describe both branches."
+  Assert-True ($preview.Count -eq 1 -and $preview[0].Branch -eq "dev") "Preview must describe only dev."
   Assert-True ($preview[0].Applied -eq $false) "Preview must not apply a ruleset."
   Write-Host "PASS: default invocation is read-only"
 
   Reset-TestState
   $created = @(& $applyScript -Apply)
-  Assert-True ($global:RulesetTestState.Calls.Count -eq 3) "Apply must list once and create twice."
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "Apply must list once and create only dev."
   Assert-True ($global:RulesetTestState.Calls[1] -contains "POST") "Missing ruleset must use POST."
-  Assert-True ($created[0].Applied -and $created[1].Applied) "Both creations must report success."
+  Assert-True ($created.Count -eq 1 -and $created[0].Applied) "Only dev creation must report success."
   Write-Host "PASS: absent rulesets are created"
 
   Reset-TestState
-  $global:RulesetTestState.List = '[[{"id":11,"name":"Protect dev"}],[{"id":22,"name":"Protect main"}]]'
+  $global:RulesetTestState.List = '[[{"id":22,"name":"Protect main"}],[{"id":11,"name":"Protect dev"}]]'
   & $applyScript -Apply | Out-Null
-  Assert-True ($global:RulesetTestState.Calls[1] -contains "PUT") "Existing ruleset must use PUT."
-  Assert-True ($global:RulesetTestState.Calls[1] -contains "repos/Komunick/caabnovo/rulesets/11") "Wrong dev ruleset ID."
-  Assert-True ($global:RulesetTestState.Calls[2] -contains "repos/Komunick/caabnovo/rulesets/22") "Pagination lost main ruleset."
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 3) "Update must list, inspect dev and write once."
+  Assert-True ($global:RulesetTestState.Calls[2] -contains "PUT") "Existing ruleset must use PUT."
+  Assert-True ($global:RulesetTestState.Calls[2] -contains "repos/Komunick/caabnovo/rulesets/11") "Wrong dev ruleset ID."
   Write-Host "PASS: paginated existing rulesets are updated by ID"
 
   Reset-TestState
@@ -83,32 +88,38 @@ try {
   Reset-TestState
   $global:RulesetTestState.FailWrite = $true
   Assert-Failure { & $applyScript -Apply } "GitHub API failed"
-  Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "Failed dev write must stop before main."
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "Failed dev write must stop execution."
   Write-Host "PASS: failed write stops subsequent changes"
 
   Reset-TestState
-  $global:RulesetTestState.List = '[[{"id":11,"name":"Protect dev"},{"id":22,"name":"Protect main"},{"id":33,"name":"Protect main"}]]'
+  $global:RulesetTestState.List = '[[{"id":11,"name":"Protect dev"},{"id":33,"name":"Protect dev"}]]'
   Assert-Failure { & $applyScript -Apply } "Multiple repository rulesets"
-  Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Ambiguous main must block dev write too."
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Ambiguous dev must block writes."
   Write-Host "PASS: ambiguous rulesets block the entire application"
 
   $ci = Get-Content (Join-Path $PSScriptRoot "../../.github/workflows/ci.yml") -Raw
-  $promotion = Get-Content (Join-Path $PSScriptRoot "../../.github/workflows/promotion.yml") -Raw
-  foreach ($branch in @("dev", "main")) {
+  foreach ($branch in @("dev")) {
     $ruleset = Get-Content (Join-Path $PSScriptRoot "rulesets/$branch.json") -Raw | ConvertFrom-Json
     $checks = @(($ruleset.rules | Where-Object type -eq "required_status_checks").parameters.required_status_checks)
     $expected = @("quality", "browser", "security")
-    if ($branch -eq "main") { $expected += "validate-source" }
     Assert-True (-not (Compare-Object $expected @($checks.context))) "$branch is missing mandatory CI gates."
     foreach ($check in $checks) {
       Assert-True ($check.integration_id -eq 15368) "Checks must originate from GitHub Actions."
-      $workflow = if ($check.context -eq "validate-source") { $promotion } else { $ci }
-      Assert-True ($workflow -match "(?m)^  $([regex]::Escape($check.context)):") "Required check has no workflow job."
+      Assert-True ($ci -match "(?m)^  $([regex]::Escape($check.context)):") "Required check has no workflow job."
     }
     Assert-True ($ruleset.bypass_actors.Count -eq 0) "Rules must not allow bypass."
     Assert-True ($ruleset.enforcement -eq "active") "Rules must be active."
   }
   Write-Host "PASS: required gates match workflows and trusted check provider"
+
+  foreach ($include in @('["refs/heads/main"]', '["refs/heads/dev","refs/heads/main"]', '["~ALL"]')) {
+    Reset-TestState
+    $global:RulesetTestState.List = '[[{"id":11,"name":"Protect dev"}]]'
+    $global:RulesetTestState.Existing = '{"target":"branch","conditions":{"ref_name":{"include":' + $include + ',"exclude":[]}}}'
+    Assert-Failure { & $applyScript -Apply } "must target only refs/heads/dev"
+    Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "An existing ruleset affecting another branch must never be overwritten."
+  }
+  Write-Host "PASS: existing main, mixed and wildcard targets are rejected"
 } finally {
   Remove-Variable RulesetTestState -Scope Global -ErrorAction SilentlyContinue
 }

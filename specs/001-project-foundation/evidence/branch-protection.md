@@ -2,53 +2,44 @@
 
 Date: 2026-09-09
 
-Status: PENDING RULESET APPLICATION AND DESTRUCTIVE-PROBE APPROVAL.
+Status: DEV PREPARED; REMOTE APPLICATION PENDING. MAIN OUT OF SCOPE.
 
-## Current remote state (read-only verification)
+## Authorized scope
 
-- Repository rulesets: none (`GET /repos/Komunick/caabnovo/rulesets` returned `[]`).
-- Legacy `dev` protection: PR required, zero approving reviews, stale reviews dismissed, conversations
-  resolved, administrators included, force-push/deletion disabled. No required status checks were
-  reported.
-- Legacy `main` protection: PR required, one approving review, last-push approval, stale reviews
-  dismissed, conversations resolved, administrators included, force-push/deletion disabled. No
-  required status checks were reported.
+The repository owner limited this delivery to `dev` and authorized its PR integration, ruleset
+application and verification. `main` is excluded: its versioned ruleset is restored to the PR base,
+its remote settings will not be changed and no production promotion will be opened or merged.
+T095 remains partially open because its original scope also includes `main` and promotion probes.
 
-The versioned target for `dev` was aligned with the repository owner's explicit decision: pull request
-is mandatory, but a separate approving reviewer is not. The `main` target retains one human review.
+## Remote baseline
 
-## Prepared controls and local validation
+Read-only inspection on 2026-09-09 returned no repository rulesets. Legacy `dev` protection requires a
+PR, zero approving reviews, stale-review dismissal and resolved conversations, includes administrators,
+and blocks force-push/deletion. It has no required status checks.
 
-The read-only API inspection was repeated on 2026-09-09: no repository rulesets exist and the legacy
-protections above remain active. The checks on commit `8eaff64` confirm `quality`, `browser` and
-`security`, all successful and emitted by GitHub Actions (App ID `15368`).
+Checks on commit `8eaff64` confirmed `quality`, `browser` and `security`, all successful and emitted by
+GitHub Actions (App ID `15368`). These three checks are required by the prepared `dev` ruleset, with
+strict up-to-date checking and no bypass actors. Existing legacy protection is preserved.
 
-- Both versioned rulesets now require `quality`, `browser` and `security` from that App ID.
-- `main` additionally requires `validate-source`, the job in `promotion.yml` that rejects a source
-  other than `dev` and blocks promotion while privacy approval is pending. This job name is checked
-  against the workflow locally; it has not yet been demonstrated on a promotion PR.
-- `apply-rulesets.ps1` now defaults to a read-only preview. Remote writes require `-Apply`; `-WhatIf`
-  remains read-only even with that switch. Existing legacy protections are not removed.
-- The script resolves all pages of repository-owned rulesets and parses both payloads before writing.
-  Duplicate names stop the plan; failed API calls stop execution instead of reporting success.
-- JSON is passed through `--input` using the versioned file, avoiding PowerShell quoting and stdin
-  encoding issues. If a later write fails, an earlier successful write remains applied; rerunning
-  updates existing IDs rather than creating duplicate rulesets.
+## Implementation and validation
 
-`powershell -NoProfile -ExecutionPolicy Bypass -File infra/github/test-rulesets.ps1`: PASS, eight
-scenarios covering preview, creation, paginated updates, WhatIf, read failure, write failure,
-ambiguity and required workflow/provider gates. The test replaces `gh` inside the test process and
-never contacts GitHub. It is also included in the CI `quality` job using PowerShell Core.
-
-The real read-only preview passed and reported `POST` for both branches, with `Applied: False` and
-the expected required checks. No rulesets or branch protections were changed by this validation.
+- `apply-rulesets.ps1` defaults to a read-only preview and accepts `-Apply` for the single `dev` write.
+  `-Apply -WhatIf` is also read-only. There is no option to select another branch.
+- It resolves paginated repository-owned rulesets, rejects duplicate names, inspects an existing
+  target before updating and rejects targets other than exactly `refs/heads/dev` without exclusions.
+- API failures stop execution. Versioned JSON is sent with `--input`, without shell-built JSON or stdin
+  encoding conversion. Rerunning after successful application updates the existing ID.
+- The test replaces `gh` only inside its process and never contacts GitHub. It covers preview,
+  creation, paginated update, WhatIf, API read/write failures, duplicate names, required checks and
+  rejection of existing main/mixed/wildcard targets. It runs in CI's `quality` job under PowerShell Core.
+- Local Windows PowerShell test: PASS, nine scenario groups (including three disallowed target cases).
 
 API reference: [GitHub repository rulesets](https://docs.github.com/en/rest/repos/rules).
 
-## Remaining validation
+## DEV maintenance commands
 
-T095 stays open. After review, a maintainer can run these commands from the repository root
-(`powershell -ExecutionPolicy Bypass -File` can replace `pwsh -File` on Windows PowerShell):
+Run from the repository root. On Windows PowerShell, replace `pwsh -File` with
+`powershell -NoProfile -ExecutionPolicy Bypass -File`.
 
 ```powershell
 pwsh -File infra/github/test-rulesets.ps1
@@ -57,14 +48,9 @@ pwsh -File infra/github/apply-rulesets.ps1 -Apply -WhatIf
 pwsh -File infra/github/apply-rulesets.ps1 -Apply
 gh api repos/Komunick/caabnovo/rulesets
 gh api repos/Komunick/caabnovo/rules/branches/dev
-gh api repos/Komunick/caabnovo/rules/branches/main
 ```
 
-Before application, review the exact JSON files and ensure a second eligible human can approve
-production promotions: `main` requires a code-owner review and approval of the most recent push.
-Do not add bypass actors or remove legacy protections to make a check pass.
-
-After application, record the returned ruleset IDs and effective rules, demonstrate blocked direct
-pushes and rejection of a non-`dev` promotion in an explicitly authorized probe, and confirm the
-required `validate-source` check actually reports on a promotion PR. Do not merge into `main` as part
-of these probes. A dry-run push is not evidence that GitHub enforces server-side rules.
+After application, record the ruleset ID and effective DEV checks. Do not use a direct-push probe as
+part of this delivery: the project's delivery policy prohibits direct pushes to `dev`, and an attempted
+write could succeed if protections are misconfigured. A dry-run push is not server-enforcement evidence.
+A separate, explicitly scoped validation is needed for that remaining T095 criterion.
