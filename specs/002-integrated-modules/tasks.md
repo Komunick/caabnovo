@@ -1,14 +1,15 @@
-# Tasks: Módulos integrados CAAB
+﻿# Tasks: Módulos integrados CAAB
 
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
-Obrigatórios por risco conforme especificação. Todos os módulos na mesma entrega. **Status**:
-Planejamento completo; fusão US1 validada e contratos/validações US2 iniciados, sem PR preliminar.
+Obrigatórios por risco conforme especificação. Todos os módulos no escopo, com PR por função pronta.
+**Status**: Planejamento completo; fusão US1 no PR #11 com CI aprovado. Notícias com editor,
+imagens e versões validados; publicação/agenda/distribuição em andamento, sem PR preliminar.
 
 Este arquivo acompanha o programa. A execução detalhada de cada funcionalidade ocorre no seu spec
 próprio; [003-audit-operations/tasks.md](../003-audit-operations/tasks.md) é o primeiro. Antes de
 iniciar uma função nova, criar seu spec/plano/tasks e vincular aqui. Mudanças de funções existentes
-atualizam seus artefatos: T009/T010 pertencem ao spec 003. Notícias inicia no spec 004 (em
-desenvolvimento separado), sem duplicar infraestrutura da fundação.
+atualizam seus artefatos: T009/T010 pertencem ao spec 003. Notícias inicia no
+[spec 004](../004-news-publishing/tasks.md), sem duplicar infraestrutura da fundação.
 
 ## Phase 1 — Setup
 
@@ -56,20 +57,23 @@ anteriores, exportação e reenvio autorizado.
 Objetivo: jornada editorial completa. Teste independente: rascunho/prévia/publicação/agendamento,
 versão pública preservada, canal autorizado e retry sem duplicação.
 
-- [ ] T012 [US2] Concluir integrações de mídia/canais e instalação do CMS em
+- [x] T012 [US2] Concluir integrações de mídia/canais e instalação do CMS em
       `specs/004-news-publishing/contracts/news.md` e `research.md`; acesso editorial confirmado
-      pelo usuário, pesquisa e compatibilidade declarada concluídas. Provedores/consumidores ainda
-      pendentes.
-- [ ] T013 [US2] Modelar conteúdo/versões/destaques/publicação e contratos em
+      pelo usuário. CMS, imagens, destaques e API pública por canal concluídos; leitura aberta
+      confirmada. Consumidores externos integram o contrato v1; nenhum embed habilitado.
+- [x] T013 [US2] Modelar conteúdo/versões/destaques/publicação e contratos em
       `packages/db/migrations/`, `packages/contracts/src/news.ts` e `apps/web/modules/news/`.
-- [ ] T014 [US2] Testar publicação, XSS, acesso a rascunhos e arquivos em `apps/web/modules/news/`,
+- [x] T014 [US2] Testar publicação, XSS, acesso a rascunhos e arquivos em `apps/web/modules/news/`,
       `apps/web/tests/integration/news.test.ts` e `packages/contracts/tests/news.test.ts`; contratos
-      e precondições iniciados no spec 004.
-- [ ] T015 [US2] Implementar editor, mídia, prévia e gestão de versões em
+      e precondições, persistência/concorrência, APIs pública/privada, conteúdo/mídia e worker
+      validados. Evidência completa no spec 004.
+- [x] T015 [US2] Implementar editor, mídia, prévia e gestão de versões em
       `apps/web/app/(admin)/news/` e `apps/web/modules/news/ui/` sem duplicar usuários/storage.
-- [ ] T016 [US2] Implementar distribuição/agendamento idempotente em
+      Concluído no spec 004: imagens com descrição/legenda/ordenação, histórico, recuperação e
+      Desfazer. E2E novo passou, incluindo acessibilidade mobile.
+- [x] T016 [US2] Implementar distribuição/agendamento idempotente em
       `apps/worker/src/jobs/publish-news.ts` e `apps/web/app/api/v1/news/`; validar consumidor
-      contratual em `apps/web/tests/e2e/news.spec.ts`.
+      contratual em `apps/web/tests/e2e/news-publication.spec.ts`; 7 E2E de Notícias passaram.
 
 ## Phase 5 — US3 Pessoas (P1)
 

@@ -7,9 +7,9 @@ planejamento e começar implementação cedo.
 
 **Organização atualizada**: Este documento é o escopo geral do programa. Cada funcionalidade nova
 ganha spec próprio antes da implementação. A primeira é
-[003 — Auditoria e Processamentos](../003-audit-operations/spec.md). Notícias inicia em 004 —
-Notícias e publicação (em desenvolvimento separado). Correções e mudanças de funções existentes
-atualizam seus próprios specs; não criam novas especificações.
+[003 — Auditoria e Processamentos](../003-audit-operations/spec.md). Notícias inicia em
+[004 — Notícias e publicação](../004-news-publishing/spec.md). Correções e mudanças de funções
+existentes atualizam seus próprios specs; não criam novas especificações.
 
 ## User Scenarios & Testing
 
@@ -59,6 +59,10 @@ autorização, integridade, contratos e acessibilidade são obrigatórios confor
 - **FR-009**: Validar autorização, integridade, teclado, nomes acessíveis e responsividade nos
   fluxos alterados.
 - **FR-010**: Separar cadastro, vínculo, OAB, finanças, credencial e elegibilidade por finalidade.
+- **FR-011**: Prever o aplicativo mobile como consumidor das funções destinadas a ele. Cada spec
+  deve indicar destinos, dados expostos, contrato e autorização do consumidor. Site e app são
+  canais independentes; disponibilizar conteúdo não implica enviar notificação push. Reutilizar os
+  registros do domínio, sem criar cadastros paralelos para o mobile.
 
 ### Key Entities
 

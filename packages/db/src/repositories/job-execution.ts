@@ -140,7 +140,10 @@ export async function findJobExecution(
     : null;
 }
 
-export async function redriveJobExecution(db: Queryable, id: string): Promise<boolean> {
+export async function redriveJobExecution(
+  db: { query(text: string, values: unknown[]): Promise<{ rowCount: number | null }> },
+  id: string,
+): Promise<boolean> {
   const result = await db.query(
     `UPDATE job_execution SET status = 'queued', finished_at = NULL,
       safe_error_code = NULL, safe_error_message = NULL, heartbeat_at = NULL

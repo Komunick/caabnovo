@@ -6,4 +6,7 @@ export * from "./roles";
 export * from "./audit";
 export * from "./files";
 export * from "./jobs";
+export * from "./news";
+export * from "./news-body";
+export * from "./news-delivery";
 export * from "./openapi";

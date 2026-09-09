@@ -31,6 +31,9 @@ describe("database foundation migrations", () => {
       "0004_runtime_privileges.sql",
       "0005_operations.sql",
       "0006_pgboss.sql",
+      "0007_news.sql",
+      "0008_news_actions.sql",
+      "0009_news_highlights.sql",
     ]);
   });
 

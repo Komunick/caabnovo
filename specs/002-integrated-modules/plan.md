@@ -6,9 +6,8 @@
 ## Summary
 
 Escopo integrado em monólito modular. PRs acompanham funções/specs concluídos, conforme orientação
-de 09/09/2026. Começar pela fusão de navegação Auditoria/Processamentos, sem migração nem ampliação
-de permissões. Demais domínios seguem dependências e regras institucionais definidas, nunca
-inventadas.
+de 09/09/2026. Começar pela fusão de navegação Auditoria/Processamentos, sem migração nem ampliação de
+permissões. Demais domínios seguem dependências e regras institucionais definidas, nunca inventadas.
 
 ## Technical Context
 
@@ -72,7 +71,7 @@ Cada funcionalidade possui spec próprio, plano e tarefas antes do código. Este
 dependências, não um spec único para todas as implementações. A fusão inicia em
 [003-audit-operations](../003-audit-operations/plan.md). Correções e melhorias, inclusive
 paginação/filtros de jobs e pré-condição de reenvio, atualizam o spec existente da função. Notícias
-é uma função nova, detalhada em 004-news-publishing (em desenvolvimento separado).
+é uma função nova, detalhada em [004-news-publishing](../004-news-publishing/plan.md).
 
 1. Consolidar escopo/reaproveitamento e iniciar US1: catálogo, subnavegação, rotas canônicas de
    jobs, compatibilidade e testes. Serviços e APIs existentes mantidos.
@@ -82,8 +81,7 @@ paginação/filtros de jobs e pré-condição de reenvio, atualizam o spec exist
 4. US4: Oferta/disponibilidade e operação de atendimentos sobre Pessoas; concorrência em banco real.
 5. US7, US8 e US9: Mensagens, Créditos e Portal sobre cadastros e políticas confirmados.
 6. US10: Pendências e relatórios dos registros reais dos domínios.
-7. Validar cada função antes do seu PR; concluir validação cruzada de US1–US10 antes de liberar o
-   conjunto.
+7. Validar cada função antes do seu PR; concluir validação cruzada de US1–US10 antes de liberar o conjunto.
 
 Cada história segue contrato/modelo → testes de invariantes → serviço → UI → integração → evidência.
 O usuário autorizou começar a implementação enquanto o plano completo é mantido, sem aguardar regras

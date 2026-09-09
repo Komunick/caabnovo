@@ -1,4 +1,3 @@
-import type { PoolClient } from "pg";
 import { redactSensitive } from "@caab/config/redaction";
 
 export interface AuditEventInput {
@@ -16,8 +15,11 @@ export interface AuditEventInput {
   ipHash?: string;
 }
 
-export async function writeAuditEvent(client: PoolClient, event: AuditEventInput): Promise<string> {
-  const result = await client.query<{ id: string }>(
+export async function writeAuditEvent(
+  client: { query(text: string, values: unknown[]): Promise<{ rows: { id: string }[] }> },
+  event: AuditEventInput,
+): Promise<string> {
+  const result = await client.query(
     `INSERT INTO audit_event (
       actor_user_id, effective_identity, action, entity_type, entity_id, before, after,
       reason, origin, request_id, correlation_id, ip_hash

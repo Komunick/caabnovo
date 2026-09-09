@@ -20,7 +20,7 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
-    "@types/pg": "8.16.0",
+    "@types/pg": "8.20.0",
     "drizzle-kit": "0.31.10",
     "typescript": "6.0.3"
   }

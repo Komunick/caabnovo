@@ -3,17 +3,21 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { normalizeOpenApi, validateOpenApi } from "../src/openapi.js";
 
-const contractPath = resolve(process.cwd(), "specs/001-project-foundation/contracts/openapi.yaml");
-
 describe("CAAB OpenAPI contract", () => {
-  it("is valid, versioned and deterministic", async () => {
-    const source = await readFile(contractPath, "utf8");
-    const first = normalizeOpenApi(source);
-    const second = normalizeOpenApi(first);
+  it.each(["001-project-foundation", "004-news-publishing"])(
+    "%s is valid, versioned and deterministic",
+    async (feature) => {
+      const source = await readFile(
+        resolve(process.cwd(), `specs/${feature}/contracts/openapi.yaml`),
+        "utf8",
+      );
+      const first = normalizeOpenApi(source);
+      const second = normalizeOpenApi(first);
 
-    expect(validateOpenApi(first)).toEqual([]);
-    expect(second).toBe(first);
-  });
+      expect(validateOpenApi(first)).toEqual([]);
+      expect(second).toBe(first);
+    },
+  );
 
   it("rejects an unversioned public server", () => {
     const invalid =

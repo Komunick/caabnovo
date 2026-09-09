@@ -18,6 +18,7 @@ describe("consolidated workspace navigation", () => {
   it("does not treat export or redrive permission as permission to read the area", () => {
     expect(getWorkspaceAreas(["audit:export", "jobs:redrive"]).map(({ id }) => id)).toEqual([
       "home",
+      "news",
       "sessions",
     ]);
   });

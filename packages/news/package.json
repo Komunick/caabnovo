@@ -1,0 +1,25 @@
+{
+  "name": "@caab/news",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@caab/contracts": "workspace:*",
+    "@caab/db": "workspace:*",
+    "@payloadcms/db-postgres": "3.88.0",
+    "@payloadcms/richtext-lexical": "3.88.0",
+    "payload": "3.88.0",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.20.0",
+    "typescript": "6.0.3"
+  }
+}

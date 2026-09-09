@@ -5,6 +5,7 @@ export const QUEUES = {
   filePromotion: "file-promotion",
   fileReconciliation: "file-reconciliation",
   auditExport: "audit-export",
+  newsPublication: "news-publication",
   retention: "retention",
   deadLetter: "caab-dead-letter",
 } as const;
