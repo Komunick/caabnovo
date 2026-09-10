@@ -41,6 +41,20 @@ uma garantia de ausência de defeitos em todos os caminhos, nem a uma auditoria 
 Não foram adicionadas dependências nem migrations. Better Auth já pertence à fundação;
 a correção de origem não depende de uma nova funcionalidade de conta.
 
+### Conferência do Better Auth antes do PR
+
+A nova consulta a `origin/dev` confirmou a mesma base `951c103`. Better Auth **não foi
+removido**: `apps/web/package.json` mantém `better-auth@1.7.2`,
+`apps/web/modules/auth/auth-factory.ts` chama `betterAuth()` e
+`apps/web/app/api/auth/[...all]/route.ts` expõe o handler com `toNextJsHandler()`.
+Esses três arquivos não são alterados por esta correção. Login por e-mail/senha e sessões
+continuam usando a biblioteca.
+
+O PR #13 removeu o autenticador de dois fatores (MFA/TOTP), seus desafios e códigos,
+conforme [a decisão registrada](../specs/006-account-settings/authenticator-removal.md).
+Essa remoção não retirou Better Auth. A variável `BETTER_AUTH_URL` continua necessária
+para autenticação e para a validação de origem corrigida aqui.
+
 ## Configuração necessária para implantar esta versão
 
 As variáveis devem ser definidas na configuração dos serviços da hospedagem. Arquivos `.env`
@@ -154,7 +168,8 @@ e `MAIL_MODE=smtp`; não enviou e-mails externos nem acessou esse domínio.
 Na revisão final, a identificação de loopback também foi restringida a endereços IPv4
 completos e IPv6/local explícitos: um domínio como `127.attacker.test` não ativa recursos
 locais. Os 68 testes diretamente afetados e a verificação de tipos foram repetidos após
-esse ajuste; os testes de navegador e build acima antecedem apenas esse refinamento.
+esse ajuste. Na preparação do PR, lint e build de todos os pacotes também passaram
+novamente no código final; os testes de navegador acima antecedem apenas esse refinamento.
 
 Ainda é necessário revisar e implantar a branch pelo fluxo do projeto, configurar os endpoints
 reais e repetir o smoke no domínio DEV. A mudança de domínio/repositório em si não foi executada.
