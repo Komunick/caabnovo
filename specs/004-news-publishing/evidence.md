@@ -173,3 +173,22 @@ Os checks remotos do commit enviado devem confirmar integração, build, navegad
 Os novos cenários de publicação direta iniciam e encerram seu próprio worker de testes para
 verificar as imagens também em CI, sem depender do worker já ativo no localhost ou da ordem
 dos outros arquivos de teste.
+
+## Correção de gravação atrás de proxy — 10/09/2026
+
+No ambiente DEV remoto, o navegador reproduziu a mensagem genérica ao salvar um rascunho
+novo; o usuário forneceu o status POST 403 e depois confirmou `ORIGIN_DENIED` na resposta.
+A listagem funcionou. Isso confirma o bloqueio de origem; os logs, o endereço interno exato
+e as variáveis do servidor não foram inspecionados.
+
+Em teste local, os três validadores recusaram a origem pública quando a URL interna era
+diferente. Os testes de regressão falharam antes da alteração e passaram com BETTER_AUTH_URL
+como origem confiável. O cenário HTTP de Notícias verifica POST 201 e PUT 200; os demais
+casos verificam origens externas/internas indevidas, cabeçalhos forjados, CSRF, idempotência
+e configuração inválida. Passaram 103 testes unitários, typecheck do web, lint e formatação
+dos arquivos alterados e build de produção web. Nenhum conteúdo foi publicado e nenhuma
+migration foi necessária. Validação remota após implantação continua pendente (T027).
+
+Por instrução do usuário, a branch local `fix/news-draft-proxy-origin` permanece em STANDBY,
+sem push, PR, merge ou implantação. O rascunho já preparado fica preservado para revisão
+posterior; só retomar mediante nova instrução. Registro: [standby-origin-fix.md](standby-origin-fix.md).

@@ -77,3 +77,8 @@ autorizou finalizar o build e atualizar o PR único de Notícias para dev, com m
 
 Constituição: conforme. Não houve nova autoridade, serviço externo, conta, storage, revisor ou
 permissão de Notícias. Mudança de política pública registrada na spec por orientação do usuário.
+
+Correção de proxy (10/09/2026): centralizar a comparação de origem em
+`modules/shared/mutation-origin.ts`, usando a mesma URL pública da autenticação. Aplicar aos
+validadores de Notícias/Usuários, Arquivos e Auditoria. Cobrir criação/edição de rascunhos com
+URL interna e rejeição de origens externas, preservando CSRF e idempotência. Sem migration.
