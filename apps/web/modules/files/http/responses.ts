@@ -1,5 +1,6 @@
 import { ZodError } from "zod";
 import { apiError } from "@caab/contracts";
+import { hasTrustedMutationOrigin } from "../../shared/mutation-origin";
 
 export function requestId(request: Request): string {
   const supplied = request.headers.get("x-request-id");
@@ -15,7 +16,7 @@ export function validateMutation(
   request: Request,
   needsIdempotencyKey: boolean,
 ): string | undefined {
-  if (request.headers.get("origin") !== new URL(request.url).origin) {
+  if (!hasTrustedMutationOrigin(request)) {
     throw Object.assign(new Error("Request origin denied"), { code: "ORIGIN_DENIED", status: 403 });
   }
   const csrf = request.headers.get("x-csrf-token");

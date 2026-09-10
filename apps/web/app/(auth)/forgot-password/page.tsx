@@ -1,12 +1,14 @@
 import { AuthScreen } from "@/components/auth-screen";
 import { PasswordRecovery } from "@/modules/auth/ui/password-recovery";
+import { isLocalAppURL, loadWorkspaceEnv } from "@caab/config";
+
+// Mail mode is a runtime setting: do not bake a local Mailpit link into a build
+// that can later be started on the public site with SMTP configured.
+export const dynamic = "force-dynamic";
 
 export default function ForgotPasswordPage() {
-  const localMail =
-    process.env.MAIL_MODE === "local" &&
-    ["localhost", "127.0.0.1", "[::1]"].includes(
-      new URL(process.env.BETTER_AUTH_URL ?? "http://localhost:3000").hostname,
-    );
+  loadWorkspaceEnv();
+  const localMail = process.env.MAIL_MODE === "local" && isLocalAppURL(process.env.BETTER_AUTH_URL);
   return (
     <AuthScreen
       eyebrow="Recuperar acesso"

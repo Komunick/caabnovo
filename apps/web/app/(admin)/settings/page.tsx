@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolveCurrentUser } from "@/modules/auth/current-user";
 import { AccountSettingsForm } from "@/modules/auth/ui/account-settings-form";
+import { isLocalAppURL } from "@caab/config";
 
 export default async function SettingsPage() {
   const identity = await resolveCurrentUser(
@@ -20,12 +21,7 @@ export default async function SettingsPage() {
         name={identity.name}
         email={identity.email}
         version={identity.version}
-        localMail={
-          process.env.MAIL_MODE === "local" &&
-          ["localhost", "127.0.0.1", "[::1]"].includes(
-            new URL(process.env.BETTER_AUTH_URL ?? "http://localhost:3000").hostname,
-          )
-        }
+        localMail={process.env.MAIL_MODE === "local" && isLocalAppURL(process.env.BETTER_AUTH_URL)}
       />
     </div>
   );

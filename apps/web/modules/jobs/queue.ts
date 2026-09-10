@@ -1,6 +1,7 @@
 import "server-only";
 import { PgBoss } from "pg-boss";
 import { loadServerEnv } from "@caab/config";
+import { logger } from "../shared/logger";
 
 export const AUDIT_EXPORT_QUEUE = "audit-export";
 export const FILE_SCAN_QUEUE = "file-scan";
@@ -18,6 +19,12 @@ export function getJobQueue(): Promise<PgBoss> {
         createSchema: false,
         supervise: false,
         useListenNotify: false,
+      });
+      boss.on("error", () => {
+        logger.error(
+          { event: "queue.error", errorCode: "QUEUE_CONNECTION_ERROR" },
+          "Queue connection failed",
+        );
       });
       await boss.start();
       for (const name of [AUDIT_EXPORT_QUEUE, FILE_SCAN_QUEUE, "news-publication"]) {

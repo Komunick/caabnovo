@@ -53,14 +53,19 @@ function Assert-Failure([scriptblock]$Action, [string]$Expected) {
 
 try {
   Reset-TestState
-  $preview = @(& $applyScript)
+  Assert-Failure { & $applyScript } "Specify -Repository"
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 0) "An unspecified repository must not reach GitHub."
+  Write-Host "PASS: repository must be selected explicitly"
+
+  Reset-TestState
+  $preview = @(& $applyScript -Repository "Example/project")
   Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Preview must make only one list request."
   Assert-True ($preview.Count -eq 1 -and $preview[0].Branch -eq "dev") "Preview must describe only dev."
   Assert-True ($preview[0].Applied -eq $false) "Preview must not apply a ruleset."
   Write-Host "PASS: default invocation is read-only"
 
   Reset-TestState
-  $created = @(& $applyScript -Apply)
+  $created = @(& $applyScript -Repository "Example/project" -Apply)
   Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "Apply must list once and create only dev."
   Assert-True ($global:RulesetTestState.Calls[1] -contains "POST") "Missing ruleset must use POST."
   Assert-True ($created.Count -eq 1 -and $created[0].Applied) "Only dev creation must report success."
@@ -68,32 +73,32 @@ try {
 
   Reset-TestState
   $global:RulesetTestState.List = '[[{"id":22,"name":"Protect main"}],[{"id":11,"name":"Protect dev"}]]'
-  & $applyScript -Apply | Out-Null
+  & $applyScript -Repository "Example/project" -Apply | Out-Null
   Assert-True ($global:RulesetTestState.Calls.Count -eq 3) "Update must list, inspect dev and write once."
   Assert-True ($global:RulesetTestState.Calls[2] -contains "PUT") "Existing ruleset must use PUT."
-  Assert-True ($global:RulesetTestState.Calls[2] -contains "repos/Komunick/caabnovo/rulesets/11") "Wrong dev ruleset ID."
+  Assert-True ($global:RulesetTestState.Calls[2] -contains "repos/Example/project/rulesets/11") "Wrong repository or dev ruleset ID."
   Write-Host "PASS: paginated existing rulesets are updated by ID"
 
   Reset-TestState
-  & $applyScript -Apply -WhatIf | Out-Null
+  & $applyScript -Repository "Example/project" -Apply -WhatIf | Out-Null
   Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "WhatIf must not write."
   Write-Host "PASS: WhatIf does not mutate GitHub"
 
   Reset-TestState
   $global:RulesetTestState.FailRead = $true
-  Assert-Failure { & $applyScript -Apply } "GitHub API failed"
+  Assert-Failure { & $applyScript -Repository "Example/project" -Apply } "GitHub API failed"
   Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Failed listing must block writes."
   Write-Host "PASS: failed listing blocks all writes"
 
   Reset-TestState
   $global:RulesetTestState.FailWrite = $true
-  Assert-Failure { & $applyScript -Apply } "GitHub API failed"
+  Assert-Failure { & $applyScript -Repository "Example/project" -Apply } "GitHub API failed"
   Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "Failed dev write must stop execution."
   Write-Host "PASS: failed write stops subsequent changes"
 
   Reset-TestState
   $global:RulesetTestState.List = '[[{"id":11,"name":"Protect dev"},{"id":33,"name":"Protect dev"}]]'
-  Assert-Failure { & $applyScript -Apply } "Multiple repository rulesets"
+  Assert-Failure { & $applyScript -Repository "Example/project" -Apply } "Multiple repository rulesets"
   Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Ambiguous dev must block writes."
   Write-Host "PASS: ambiguous rulesets block the entire application"
 
@@ -116,7 +121,7 @@ try {
     Reset-TestState
     $global:RulesetTestState.List = '[[{"id":11,"name":"Protect dev"}]]'
     $global:RulesetTestState.Existing = '{"target":"branch","conditions":{"ref_name":{"include":' + $include + ',"exclude":[]}}}'
-    Assert-Failure { & $applyScript -Apply } "must target only refs/heads/dev"
+    Assert-Failure { & $applyScript -Repository "Example/project" -Apply } "must target only refs/heads/dev"
     Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "An existing ruleset affecting another branch must never be overwritten."
   }
   Write-Host "PASS: existing main, mixed and wildcard targets are rejected"

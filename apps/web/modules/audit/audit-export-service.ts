@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { createStorageClient } from "../shared/storage-client";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { Pool, PoolClient } from "pg";
 import type { Db, PgBoss } from "pg-boss";
@@ -173,12 +174,7 @@ export async function findAuditExport(pool: Pool, actor: RequestActor, jobId: st
 
 export async function auditExportDownloadUrl(objectKey: string): Promise<string> {
   const env = loadServerEnv();
-  const client = new S3Client({
-    endpoint: env.S3_ENDPOINT,
-    region: env.S3_REGION,
-    forcePathStyle: true,
-    credentials: { accessKeyId: env.S3_ACCESS_KEY, secretAccessKey: env.S3_SECRET_KEY },
-  });
+  const client = createStorageClient(env, true);
   return getSignedUrl(
     client,
     new GetObjectCommand({ Bucket: env.S3_PRIVATE_BUCKET, Key: objectKey }),

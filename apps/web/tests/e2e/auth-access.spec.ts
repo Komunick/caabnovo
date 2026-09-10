@@ -45,7 +45,9 @@ test("a revoked session is rejected on the next protected navigation", async ({ 
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/);
 
-  const response = await page.request.post("/api/test/revoke-current-session");
+  const response = await page.request.post("/api/test/revoke-current-session", {
+    headers: { origin: new URL(page.url()).origin },
+  });
   expect(response.ok()).toBe(true);
   await page.reload();
   await expect(page).toHaveURL(/\/login$/);

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { emptyNewsBody, newsDraftMetadataSchema } from "@caab/contracts";
 import { createNewsRoutes } from "./news-route";
 import type { RequestActor } from "../../shared/request-context";
@@ -61,7 +61,29 @@ function mutation(body: unknown, headers: Record<string, string> = {}) {
   });
 }
 
+afterEach(() => vi.unstubAllEnvs());
+
 describe("news HTTP boundary", () => {
+  it("creates and updates drafts from the configured public origin behind a proxy", async () => {
+    const { routes, service } = setup();
+    vi.stubEnv("BETTER_AUTH_URL", "https://panel.example.test");
+    const create = await routes.POST(
+      mutation({ metadata: {} }, { origin: "https://panel.example.test" }),
+    );
+    expect(create.status).toBe(201);
+    expect(service.create).toHaveBeenCalledOnce();
+
+    const update = await routes.PUT(
+      mutation(
+        { expectedVersion: 1, metadata: {}, body: emptyNewsBody },
+        { origin: "https://panel.example.test" },
+      ),
+      newsId,
+    );
+    expect(update.status).toBe(200);
+    expect(service.update).toHaveBeenCalledOnce();
+  });
+
   it("returns safe field paths for publication validation and duplicate addresses", async () => {
     const { routes, service } = setup();
     service.publish.mockRejectedValue(

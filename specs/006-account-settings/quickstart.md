@@ -23,6 +23,11 @@ BETTER_AUTH_URL=http://localhost:3105
 
 ## Obrigatório antes de sair do local
 
+Guia transversal atualizado: [domínio, SMTP, storage e repositório](../../docs/DEPLOYMENT-CONFIG-AUDIT.md).
+A URL pública deve ser explícita, HTTPS e sem caminho/query/fragmento; a configuração de
+e-mail não assume mais localhost quando BETTER_AUTH_URL está ausente. A página de recuperação
+lê o modo de e-mail durante a requisição, sem preservar a configuração local do build.
+
 - Substituir `MAIL_MODE=local` por `MAIL_MODE=smtp`.
 - Definir `SMTP_HOST`, `SMTP_PORT` (587 com STARTTLS ou 465 com TLS), `SMTP_USER`, `SMTP_PASSWORD` e `MAIL_FROM` por configuração de implantação/segredos.
 - Definir `BETTER_AUTH_URL` com a URL pública HTTPS correta.
