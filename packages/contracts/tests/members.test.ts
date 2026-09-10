@@ -1,7 +1,32 @@
 import { describe, expect, it } from "vitest";
-import { createMemberSchema, memberCommandSchema, isValidCpf } from "../src/members";
+import {
+  createMemberSchema,
+  memberCommandSchema,
+  memberListSchema,
+  isValidCpf,
+} from "../src/members";
 
 describe("member contracts", () => {
+  it("accepts only known OAB sections and combines them with list filters", () => {
+    expect(
+      memberListSchema.parse({
+        q: "Pessoa",
+        oabState: "BA",
+        page: "2",
+        archived: "all",
+        registrationStatus: "pending",
+      }),
+    ).toEqual({
+      q: "Pessoa",
+      oabState: "BA",
+      page: 2,
+      archived: "all",
+      registrationStatus: "pending",
+    });
+    expect(memberListSchema.parse({}).oabState).toBeUndefined();
+    for (const oabState of ["XX", "ba", ["BA", "SP"]])
+      expect(memberListSchema.safeParse({ oabState }).success).toBe(false);
+  });
   it("validates CPF digits and normalizes formatting", () => {
     expect(isValidCpf("52998224725")).toBe(true);
     for (const cpf of ["11111111111", "52998224726", "123", "abcdef"])

@@ -102,6 +102,45 @@ async function file(memberId: string, status = "available") {
   return id;
 }
 describe.sequential("member persistence", () => {
+  it("combines OAB section, search, status and archive filters across pages", async () => {
+    const prefix = `Seccional ${crypto.randomUUID()}`;
+    const people = [];
+    for (let index = 0; index < 26; index++) {
+      people.push(
+        await create(`${prefix} BA ${String(index).padStart(2, "0")}`, {
+          oab: { state: "BA", number: `F${index}${Date.now()}`, type: "lawyer" },
+        }),
+      );
+    }
+    await create(`${prefix} RJ`, {
+      oab: { state: "RJ", number: `F${Date.now()}`, type: "lawyer" },
+    });
+    await create(`${prefix} sem inscrição`);
+    const filters = { q: prefix, oabState: "BA", registrationStatus: "unknown" };
+    const first = await listMembers(pool, context.actor, filters);
+    const second = await listMembers(pool, context.actor, { ...filters, page: 2 });
+    expect(first.items.map((person) => person.id)).toEqual(
+      people.slice(0, 25).map((person) => person.id),
+    );
+    expect(first.hasNextPage).toBe(true);
+    expect(second.items.map((person) => person.id)).toEqual([people[25]!.id]);
+    expect(second.hasNextPage).toBe(false);
+    const person = people[0]!;
+    await command(person.id, person.version, { action: "archive" });
+    expect(
+      (await listMembers(pool, context.actor, { ...filters, archived: "archived" })).items.map(
+        (item) => item.id,
+      ),
+    ).toEqual([person.id]);
+    expect((await listMembers(pool, context.actor, filters)).hasNextPage).toBe(false);
+    expect(
+      (await listMembers(pool, context.actor, { ...filters, archived: "all" })).hasNextPage,
+    ).toBe(true);
+    expect(
+      (await listMembers(pool, context.actor, { ...filters, registrationStatus: "approved" }))
+        .items,
+    ).toEqual([]);
+  });
   it("persists identity without login and gives consumers a minimal stable summary", async () => {
     const before = await admin.query('SELECT count(*)::int total FROM "user"');
     const person = await create("Cadastro sem conta");
@@ -369,13 +408,14 @@ describe.sequential("member persistence", () => {
       );
     }
   });
-  it("requires MFA for an administrative grant and honors expired assignments", async () => {
+  it("allows an authorized administrator without MFA and honors expired assignments", async () => {
     const person = await create();
     await admin.query("UPDATE role SET is_administrative=true WHERE code='members-test'");
     try {
-      await expect(getMember(pool, context.actor, person.id)).rejects.toMatchObject({
-        status: 403,
-      });
+      expect((await getMember(pool, context.actor, person.id)).id).toBe(person.id);
+      expect((await create("Administrador sem autenticador")).profile.name).toBe(
+        "Administrador sem autenticador",
+      );
     } finally {
       await admin.query("UPDATE role SET is_administrative=false WHERE code='members-test'");
     }

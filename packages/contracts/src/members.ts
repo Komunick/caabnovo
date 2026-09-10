@@ -143,6 +143,7 @@ export const memberListSchema = z.strictObject({
   page: z.coerce.number().int().min(1).max(10000).default(1),
   archived: z.enum(["active", "archived", "all"]).default("active"),
   registrationStatus: z.enum(memberDimensions.registration).optional(),
+  oabState: memberProfileSchema.shape.oab.unwrap().unwrap().shape.state.optional(),
 });
 export type MemberProfile = z.infer<typeof memberProfileSchema>;
 export type MemberCommand = z.infer<typeof memberCommandSchema>;

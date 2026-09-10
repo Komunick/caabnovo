@@ -24,4 +24,4 @@ Desenho revisado em 10/09: cinco tabelas, autenticação/arquivos/auditoria reut
 
 ## Sequência e dependências
 
-US1 cadastro/vínculos → US2 documentos → US3 avaliações → US4 consumidores/navegação → gates/PR. Caassh segue o [handoff](contracts/caassh-handoff.md), sem presumir outra instância ativa. Base atualizada para origin/dev 74d7bd0 em 10/09/2026, com Notícias integrada. PR final contém Associados e os ajustes necessários da fundação para proteger seus arquivos.
+US1 cadastro/vínculos → US2 documentos → US3 avaliações → US4 consumidores/navegação → gates/PR. Caassh segue o [handoff](contracts/caassh-handoff.md), sem presumir outra instância ativa. Base atualizada para origin/dev be46efa em 10/09/2026, com Notícias, Configurações, remoção do autenticador e correção de URLs públicas atrás de proxy. PR final contém Associados e os ajustes necessários da fundação para proteger seus arquivos; permanece suspenso até conclusão e revisão funcional solicitada pelo usuário.

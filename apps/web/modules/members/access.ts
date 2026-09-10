@@ -10,8 +10,8 @@ export async function authorizeMemberAccess(
   permission: Permission = PERMISSIONS.membersRead,
   filePermission?: Permission,
 ) {
-  const session = await client.query<{ two_factor_enabled: boolean }>(
-    `SELECT u.two_factor_enabled FROM "user" u JOIN session s ON s.user_id=u.id
+  const session = await client.query(
+    `SELECT u.id FROM "user" u JOIN session s ON s.user_id=u.id
      WHERE u.id=$1 AND s.id=$2 AND u.status='active' AND s.revoked_at IS NULL
        AND s.expires_at>now() FOR SHARE OF u,s`,
     [actor.userId, actor.sessionId],
@@ -21,8 +21,8 @@ export async function authorizeMemberAccess(
       code: "AUTHENTICATION_REQUIRED",
       status: 401,
     });
-  const grants = await client.query<{ permission: string; administrative: boolean }>(
-    `SELECT p.resource || ':' || p.action AS permission,r.is_administrative AS administrative
+  const grants = await client.query<{ permission: string }>(
+    `SELECT p.resource || ':' || p.action AS permission
      FROM user_role ur JOIN role r ON r.id=ur.role_id
      JOIN role_permission rp ON rp.role_id=r.id JOIN permission p ON p.id=rp.permission_id
      WHERE ur.user_id=$1 AND ur.revoked_at IS NULL AND ur.valid_from<=now()
@@ -34,8 +34,7 @@ export async function authorizeMemberAccess(
   if (
     !allowed.has(PERMISSIONS.membersRead) ||
     !allowed.has(permission) ||
-    (filePermission && !allowed.has(filePermission)) ||
-    (grants.rows.some((row) => row.administrative) && !session.rows[0].two_factor_enabled)
+    (filePermission && !allowed.has(filePermission))
   ) {
     throw Object.assign(new Error("PERMISSION_DENIED"), { code: "PERMISSION_DENIED", status: 403 });
   }

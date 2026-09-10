@@ -65,8 +65,21 @@ T014/T015 complementam T004–T010 e precedem a validação final T011/T012. Emi
 
 ### Pontos para reconciliação de escopo antes da entrega
 
-O PRD cita pesquisa por seccional (ASS-002) e ativação/bloqueio/desbloqueio com histórico
-(ASS-003/005). O incremento atual pesquisa nome/CPF/número OAB e possui arquivamento/restauração
-e avaliações independentes; não equiparar essas ações a bloqueio institucional por finalidade.
-Esses pontos devem ser reconciliados com as definições P02 e com a revisão funcional do usuário,
-sem presumir regras de bloqueio ou declarar cobertura integral do PRD.
+O PRD cita pesquisa por seccional (ASS-002), coberta na retomada T020, e
+ativação/bloqueio/desbloqueio com histórico (ASS-003/005). O incremento possui
+arquivamento/restauração e avaliações independentes; não equiparar essas ações a bloqueio
+institucional por finalidade. O bloqueio deve ser reconciliado com as definições P02 e com a
+revisão funcional do usuário, sem presumir regras ou declarar cobertura integral do PRD.
+
+## Retomada após PRs #13 e #14 — 10/09/2026
+
+- [x] T018 Preservar o trabalho pausado e integrar origin/dev be46efa, incluindo Configurações e URLs públicas atrás de proxy; resolver conflitos sem retirar Associados ou outras áreas.
+- [x] T019 Retirar a exigência remanescente de MFA no autorizador de Associados e nos testes; manter sessão ativa, permissões revalidadas, validade e revogação de concessões (FR-009; decisão da spec 006).
+- [x] T020 Implementar filtro por seccional OAB com validação, combinação com os demais filtros e preservação na paginação; testar no servidor e no navegador (FR-001, PRD ASS-002).
+- [x] T021 Completar a jornada de cadastro, vínculo, avaliação e consulta somente por teclado em 390px, usando o login atual sem autenticador; revalidar documentos e regressões da base (FR-011, SC-004).
+- [x] T022 Atualizar o contrato para Caassh, retirando as reservas obsoletas da spec 006 e migrations 0011/0012; registrar gates e limites da retomada sem abrir PR (FR-008/010).
+
+T018–T022 concluídas com 208 testes unitários/contratos, 90 de integração e 16 jornadas de
+navegador aprovados; detalhes e limites em [evidence.md](evidence.md). T012/T017 continuam pendentes,
+assim como as extensões que dependem de P01–P04/D02. A pedido do usuário, somente o preview
+`http://localhost:3106/members` permanece ativo. Nenhum PR ou deploy de Associados foi realizado.

@@ -97,6 +97,7 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
        WHERE ($1='' OR m.name ILIKE $2 ESCAPE '\\' OR m.social_name ILIKE $2 ESCAPE '\\' OR m.cpf=$3 OR m.oab_number=$4)
        AND ($5='all' OR ($5='active' AND m.archived_at IS NULL) OR ($5='archived' AND m.archived_at IS NOT NULL))
        AND ($6::text IS NULL OR COALESCE(a.result,'unknown')=$6)
+       AND ($8::text IS NULL OR m.oab_state=$8)
        ORDER BY lower(m.name),m.id LIMIT 26 OFFSET $7`,
       [
         input.q,
@@ -106,6 +107,7 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
         input.archived,
         input.registrationStatus ?? null,
         (input.page - 1) * 25,
+        input.oabState ?? null,
       ],
     );
     return {

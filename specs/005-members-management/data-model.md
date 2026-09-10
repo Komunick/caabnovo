@@ -10,5 +10,6 @@ Comandos usam versão do agregado, idempotency_record por ator/ação/pessoa, fi
 
 Permissões reutilizam permission/role_permission/user_role: members:read/write/review, com leitura
 prévia às demais ações. A migration associa somente o administrador já existente. Sessão, vigência
-das concessões e MFA administrativo são revalidados no banco. Documentos incluem todas as revisões,
+das concessões e permissões são revalidados no banco. Não há exigência de MFA, conforme sua remoção
+do painel na spec 006. Documentos incluem todas as revisões,
 e o histórico de vínculos é consultável tanto pelo titular quanto pelo dependente.

@@ -1,10 +1,10 @@
 # API administrativa v1
 
-Sessão ativa e `members:read` em todas as rotas; `members:write` para criar, editar, arquivar, restaurar, vincular e anexar; `members:review` para avaliações e revisões. Arquivos exigem também `files:read`; upload e finalização exigem `members:write` e `files:create`. As concessões são revalidadas no banco, e o administrador exige MFA. Cache private/no-store. Mutações JSON <=64 KiB, Origin exata, x-csrf-token e Idempotency-Key (16–128), expectedVersion em registros existentes. Erros seguros 401/403/404/409/413/422, sem SQL/CPF.
+Sessão ativa e `members:read` em todas as rotas; `members:write` para criar, editar, arquivar, restaurar, vincular e anexar; `members:review` para avaliações e revisões. Arquivos exigem também `files:read`; upload e finalização exigem `members:write` e `files:create`. As concessões são revalidadas no banco; não há MFA, conforme remoção do autenticador na spec 006. Cache private/no-store. Mutações JSON <=64 KiB, Origin pública configurada em BETTER_AUTH_URL, x-csrf-token e Idempotency-Key (16–128), expectedVersion em registros existentes. Erros seguros 401/403/404/409/413/422, sem SQL/CPF.
 
 | Rota | Contrato |
 | --- | --- |
-| GET /api/v1/members | q/page/archived/registrationStatus, 25 itens sem CPF |
+| GET /api/v1/members | q/page/archived/registrationStatus/oabState, 25 itens sem CPF; oabState opcional, sigla de UF válida em maiúsculas; filtros combinados e preservados na paginação |
 | POST /api/v1/members | perfil e justificativa |
 | GET /api/v1/members/{id} | perfil, relações, documentos e avaliações |
 | POST /api/v1/members/{id}/commands | action: update/archive/restore/link/unlink/document/review/assess |

@@ -58,7 +58,7 @@ CPF inválido/duplicado, inscrição OAB duplicada, dependência circular, vínc
 
 ### Functional Requirements
 
-- **FR-001**: Manter nome, nome social opcional, CPF opcional validado, nascimento opcional, contato e inscrição OAB opcional com UF e tipo; pesquisar e paginar sem expor CPF em listagens.
+- **FR-001**: Manter nome, nome social opcional, CPF opcional validado, nascimento opcional, contato e inscrição OAB opcional com UF e tipo; pesquisar por nome/CPF/número OAB e filtrar por seccional OAB, análise cadastral e arquivamento, preservando filtros na paginação e sem expor CPF em listagens.
 - **FR-002**: Arquivar/restaurar com motivo; não excluir referências nem conta de login.
 - **FR-003**: Registrar dependência entre pessoas existentes, tipo declarado, início e encerramento; impedir ciclos e duplicação ativa do mesmo par.
 - **FR-004**: Reutilizar arquivos privados existentes; disponibilizar upload, consulta segura, análise e substituição documental sem apagar evidência válida.

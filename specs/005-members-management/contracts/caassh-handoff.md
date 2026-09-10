@@ -1,9 +1,12 @@
 # Contrato de colaboração: Associados → Caassh
 
-09/09/2026. Associados: branch `feature/members-management`, worktree `.cache/pr-members`, spec 005.
-Caassh: spec 006 e branch/worktree próprios. Não usar a pasta desta instância.
+Atualizado em 10/09/2026 após PRs #13/#14. Associados: branch `feature/members-management`, worktree `.cache/pr-members`, spec 005.
+Caassh: spec, branch e worktree próprios. A spec 006 já pertence a Configurações; alocar o próximo
+identificador disponível a partir da base atualizada. Não usar a pasta desta instância.
 
-- Associados reserva somente `packages/db/migrations/0010_members.sql`. Caassh começa em 0011.
+- Associados reserva somente `packages/db/migrations/0010_members.sql`. As migrations 0011 e 0012
+  já pertencem a Configurações/remoção do autenticador; Caassh deve verificar o próximo número livre
+  na base atualizada antes de criar sua migration. Não renumerar migrations já aplicadas.
 - A tabela `member` possui `id uuid PRIMARY KEY` estável e `archived_at timestamptz NULL`.
 - Caassh usa FK para `member(id)` sem CASCADE DELETE; não cria beneficiário, CPF, nome ou tabela de login duplicados.
 - O cadastro não é uma conta de acesso. Não usar `user.id` como identificador de associado.
