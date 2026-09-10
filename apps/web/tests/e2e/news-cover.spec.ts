@@ -7,7 +7,7 @@ test("editor uploads a cover through the existing file flow and preserves its de
   test.setTimeout(90_000);
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.accessManager.email);
-  await page.getByLabel("Senha").fill(syntheticUsers.accessManager.password);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.accessManager.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
   await page.goto("/news/new");

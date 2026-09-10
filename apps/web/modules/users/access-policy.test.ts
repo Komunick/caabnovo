@@ -67,7 +67,7 @@ describe("access policy", () => {
     ).toThrowError(expect.objectContaining({ code: "GRANT_BEYOND_AUTHORITY" }));
   });
 
-  it("requires verified MFA for administrative grants", () => {
+  it("allows authorized administrative grants without an authenticator", () => {
     expect(() =>
       validateRoleGrant({
         actor: { ...actor, mfaVerified: false },
@@ -77,7 +77,7 @@ describe("access policy", () => {
         justification: "Acesso administrativo",
         now,
       }),
-    ).toThrowError(expect.objectContaining({ code: "MFA_REQUIRED" }));
+    ).not.toThrow();
   });
 
   it("requires revocation authority and a non-empty reason", () => {

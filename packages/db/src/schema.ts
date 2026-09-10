@@ -84,4 +84,5 @@ export const twoFactor = pgTable("two_factor", {
   lockedUntil: timestamp("locked_until", { withTimezone: true }),
 });
 
-export const authSchema = { user, session, account, verification, twoFactor };
+// Legacy MFA columns/table remain solely for migration compatibility.
+export const authSchema = { user, session, account, verification };

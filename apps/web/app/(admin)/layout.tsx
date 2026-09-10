@@ -6,6 +6,7 @@ import { AuthorizedNav } from "@/modules/auth/ui/authorized-nav";
 import { AppShell } from "@/components/app-shell";
 import { Brand } from "@/components/brand";
 import { WorkspaceControls } from "@/components/workspace-controls";
+import { AccountMenu } from "@/modules/auth/ui/account-menu";
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
   const requestHeaders = await headers();
@@ -24,15 +25,11 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
           <p className="sidebar-footer">
             <span aria-hidden="true" /> Ambiente seguro
           </p>
-          <div className="sidebar-profile">
-            <span className="sidebar-profile__avatar" aria-hidden="true">
-              {identity.name.trim().charAt(0).toLocaleUpperCase("pt-BR")}
-            </span>
-            <span className="sidebar-profile__copy">
-              <strong>{identity.name}</strong>
-              <span>{identity.roles[0]?.name ?? "Usuário interno"}</span>
-            </span>
-          </div>
+          <AccountMenu
+            name={identity.name}
+            email={identity.email}
+            role={identity.roles[0]?.name ?? "Usuário interno"}
+          />
         </div>
       }
     >

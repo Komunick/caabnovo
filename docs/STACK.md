@@ -166,7 +166,7 @@ A fundação do projeto novo já utiliza Better Auth, sessões e autorização n
 implementação, sem criar provedores ou tabelas de autenticação por módulo. Requisitos:
 
 - Cookies de sessão `HttpOnly`, `Secure` e `SameSite` apropriado.
-- MFA para administradores.
+- E-mail e senha para administradores, com permissões e auditoria. Autenticador removido por decisão do produto em 10/09/2026; ver `specs/006-account-settings/authenticator-removal.md`.
 - Expiração e revogação de sessões.
 - Desativação imediata de usuário.
 - RBAC com permissões concretas por ação.

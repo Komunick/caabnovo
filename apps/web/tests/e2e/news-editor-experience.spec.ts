@@ -8,7 +8,7 @@ test("familiar text tools preserve formatting and preview both devices with an a
   test.setTimeout(120000);
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.ordinary.email);
-  await page.getByLabel("Senha").fill(syntheticUsers.ordinary.password);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.ordinary.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/news/new");

@@ -13,10 +13,8 @@ export class PermissionDeniedError extends Error {
 export function requirePermission(
   actor: RequestActor | undefined,
   permission: Permission,
-  requireMfa = false,
 ): RequestActor {
   if (!actor) throw new AuthenticationRequiredError("Authentication required");
   if (!actor.permissions.has(permission)) throw new PermissionDeniedError("Permission denied");
-  if (requireMfa && !actor.mfaVerified) throw new PermissionDeniedError("Verified MFA required");
   return actor;
 }
