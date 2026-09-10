@@ -1,4 +1,6 @@
 :root {
+  --color-control-bg: color-mix(in srgb, var(--color-action) 12%, var(--color-surface));
+  --color-control-border: color-mix(in srgb, var(--color-muted-strong) 72%, var(--color-surface));
   font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-canvas);
@@ -428,48 +430,56 @@ h2 {
   box-shadow: 0 0 0 1px var(--color-danger);
 }
 
-.button {
+.button,
+.primary-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 2.8rem;
-  padding-inline: var(--space-4);
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  min-height: 3.1rem;
+  padding: 0.6rem 1.25rem;
+  border: 1.5px solid transparent;
+  border-radius: 0.65rem;
+  font-size: 0.95rem;
   font-weight: 750;
+  text-decoration: none;
   cursor: pointer;
+  /* Change foreground and background together to preserve contrast during interaction. */
   transition:
-    color 160ms ease,
     border-color 160ms ease,
-    background 160ms ease,
     transform 160ms ease;
 }
 
-.button:disabled {
+.button:disabled,
+.primary-button:disabled {
   opacity: 0.65;
-  cursor: wait;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-.button--primary {
-  color: white;
+.button--primary,
+.primary-button {
+  color: var(--color-surface);
   background: var(--color-action);
   box-shadow: 0 0.45rem 1rem rgb(23 101 68 / 18%);
 }
 
-.button--primary:hover:not(:disabled) {
+.button--primary:hover:not(:disabled),
+.primary-button:hover:not(:disabled) {
   background: var(--color-action-hover);
   transform: translateY(-1px);
 }
 
-.button--secondary {
+.button--secondary,
+.button--ghost {
   color: var(--color-text);
-  border-color: var(--color-border-strong);
-  background: var(--color-surface);
+  border-color: var(--color-control-border);
+  background: var(--color-control-bg);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 10%);
 }
 
-.button--secondary:hover:not(:disabled) {
+.button--secondary:hover:not(:disabled),
+.button--ghost:hover:not(:disabled) {
   border-color: var(--color-action);
   color: var(--color-action-hover);
   background: var(--color-action-soft);
@@ -480,28 +490,18 @@ h2 {
   background: var(--color-danger);
 }
 
-.button--ghost {
-  color: inherit;
-  background: transparent;
+.button:active:not(:disabled),
+.primary-button:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
-.button--compact {
-  min-height: 2.5rem;
+.button--compact,
+.primary-button.compact-button {
+  min-height: 2.85rem;
 }
 
 .primary-button {
   width: 100%;
-  min-height: 2.8rem;
-  border: 0;
-  border-radius: var(--radius-sm);
-  color: white;
-  background: var(--color-action);
-  cursor: pointer;
-}
-
-.primary-button:disabled {
-  opacity: 0.65;
-  cursor: wait;
 }
 
 [role="alert"] {
@@ -729,7 +729,6 @@ h2 {
 
 .compact-button {
   width: auto;
-  padding-inline: var(--space-4);
 }
 
 .checkbox-field {
@@ -1128,6 +1127,7 @@ progress {
 
 .pagination {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: var(--space-4);
 }
@@ -2596,17 +2596,9 @@ tbody tr:hover {
     flex-wrap: wrap;
   }
 }
-.news-module .button {
-  min-height: 3.1rem;
-  padding-inline: 1.25rem;
-  font-size: 0.95rem;
-  border-width: 1.5px;
-  border-radius: 0.65rem;
-  text-decoration: none;
-}
 .news-module {
-  --news-control-bg: color-mix(in srgb, var(--color-action) 12%, var(--color-surface));
-  --news-control-border: color-mix(in srgb, var(--color-muted-strong) 72%, var(--color-surface));
+  --news-control-bg: var(--color-control-bg);
+  --news-control-border: var(--color-control-border);
   --news-field-bg: color-mix(in srgb, var(--color-text) 9%, var(--color-surface));
 }
 :root
@@ -2628,38 +2620,6 @@ tbody tr:hover {
     .news-editor-content
   ):not([aria-invalid="true"]) {
   border-color: var(--news-control-border);
-}
-.news-module .button--compact {
-  min-height: 2.85rem;
-}
-.news-module .button {
-  /* Switch foreground and background together: interpolating both crosses low contrast. */
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease;
-}
-.news-module .button--primary {
-  color: var(--color-surface);
-}
-.news-module .button--secondary,
-.news-module .button--ghost {
-  color: var(--color-text);
-  background: var(--news-control-bg);
-  border-color: var(--news-control-border);
-  box-shadow: 0 2px 3px rgb(0 0 0 / 10%);
-}
-.news-module .button--secondary:hover:not(:disabled),
-.news-module .button--ghost:hover:not(:disabled) {
-  background: var(--color-action-soft);
-  border-color: var(--color-action);
-  color: var(--color-action-hover);
-}
-.news-module .button:disabled {
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.news-module .button:active:not(:disabled) {
-  transform: translateY(1px);
 }
 .news-fields {
   min-width: 0;
