@@ -10,3 +10,4 @@ export * from "./news";
 export * from "./news-body";
 export * from "./news-delivery";
 export * from "./openapi";
+export * from "./members";

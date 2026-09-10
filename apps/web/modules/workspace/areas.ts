@@ -34,6 +34,17 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       paths: ["/news"],
     },
   ];
+  if (allowed.has(PERMISSIONS.membersRead)) {
+    areas.splice(1, 0, {
+      id: "members",
+      href: "/members",
+      label: "Associados",
+      description: "Mantenha pessoas, dependentes, documentos e situações cadastrais.",
+      keywords: "pessoas associados dependentes documentos OAB credencial elegibilidade",
+      icon: UsersRound,
+      paths: ["/members"],
+    });
+  }
   if (allowed.has(PERMISSIONS.usersRead)) {
     areas.push({
       id: "users",

@@ -16,6 +16,7 @@ import { createJobExecution } from "@caab/db/repositories/job-execution";
 import { requirePermission } from "../auth/authorize";
 import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
+import { authorizeMemberAccess } from "../members/access";
 import { FILE_SCAN_QUEUE } from "../jobs/queue";
 import type { WebObjectStorage } from "./object-storage";
 
@@ -86,6 +87,19 @@ export async function createUploadIntent(
   requirePermission(command.actor, PERMISSIONS.filesCreate);
   const requestFingerprint = uploadFingerprint(command);
   const file = await withTransaction(pool, async (client) => {
+    if (command.ownerType === "member") {
+      await authorizeMemberAccess(
+        client,
+        command.actor,
+        PERMISSIONS.membersWrite,
+        PERMISSIONS.filesCreate,
+      );
+      const owner = await client.query(
+        "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+        [command.ownerId],
+      );
+      if (!owner.rowCount) throw operationError("MEMBER_NOT_FOUND", 404);
+    }
     const claimed = await client.query(
       `INSERT INTO idempotency_record (scope, key, request_fingerprint, expires_at)
        VALUES ('file:upload-intent', $1, $2, now() + interval '24 hours')
@@ -184,13 +198,30 @@ export async function finalizeUpload(
     quarantine_key: string;
     size_bytes: string;
     checksum_sha256: string;
+    owner_type: string;
+    owner_id: string;
   }>(
-    `SELECT id, quarantine_key, size_bytes::text, checksum_sha256
+    `SELECT id, quarantine_key, size_bytes::text, checksum_sha256, owner_type, owner_id
      FROM stored_file WHERE id = $1 AND uploaded_by = $2`,
     [command.fileId, command.actor.userId],
   );
   const file = fileResult.rows[0];
   if (!file) throw operationError("NOT_FOUND", 404);
+  if (file.owner_type === "member") {
+    await withTransaction(pool, async (client) => {
+      await authorizeMemberAccess(
+        client,
+        command.actor,
+        PERMISSIONS.membersWrite,
+        PERMISSIONS.filesCreate,
+      );
+      const owner = await client.query(
+        "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+        [file.owner_id],
+      );
+      if (!owner.rowCount) throw operationError("MEMBER_NOT_FOUND", 404);
+    });
+  }
   if (file.checksum_sha256 !== command.checksumSha256) {
     throw operationError("CHECKSUM_MISMATCH", 409);
   }
@@ -205,6 +236,19 @@ export async function finalizeUpload(
   }
 
   return withTransaction(pool, async (client) => {
+    if (file.owner_type === "member") {
+      await authorizeMemberAccess(
+        client,
+        command.actor,
+        PERMISSIONS.membersWrite,
+        PERMISSIONS.filesCreate,
+      );
+      const owner = await client.query(
+        "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+        [file.owner_id],
+      );
+      if (!owner.rowCount) throw operationError("MEMBER_NOT_FOUND", 404);
+    }
     const locked = await client.query<{ status: string }>(
       "SELECT status::text FROM stored_file WHERE id = $1 FOR UPDATE",
       [command.fileId],
@@ -272,12 +316,23 @@ export async function createDownloadGrant(
   fileId: string,
 ): Promise<{ url: string; expiresAt: string }> {
   requirePermission(actor, PERMISSIONS.filesRead);
-  const result = await pool.query<{ object_key: string; status: string; visibility: string }>(
-    "SELECT object_key, status::text, visibility::text FROM stored_file WHERE id = $1",
+  const result = await pool.query<{
+    object_key: string;
+    status: string;
+    visibility: string;
+    owner_type: string;
+    owner_id: string;
+  }>(
+    "SELECT object_key, status::text, visibility::text,owner_type,owner_id FROM stored_file WHERE id = $1 AND deleted_at IS NULL",
     [fileId],
   );
   const file = result.rows[0];
   if (!file) throw operationError("NOT_FOUND", 404);
+  if (file.owner_type === "member") {
+    const { memberDownload } = await import("../members/member-service");
+    const grant = await memberDownload(pool, actor, file.owner_id, fileId, storage);
+    return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };
+  }
   if (file.status !== "available") throw operationError("FILE_NOT_AVAILABLE", 409);
   if (file.visibility !== "private") throw operationError("VISIBILITY_UNSUPPORTED", 409);
   const grant = await storage.createPrivateDownload(file.object_key);

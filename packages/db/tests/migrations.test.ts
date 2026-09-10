@@ -34,6 +34,7 @@ describe("database foundation migrations", () => {
       "0007_news.sql",
       "0008_news_actions.sql",
       "0009_news_highlights.sql",
+      "0010_members.sql",
     ]);
   });
 

@@ -1,8 +1,9 @@
 import { PgBoss } from "pg-boss";
 import { queueDefinitions } from "./queues.js";
+import { logger } from "./logger.js";
 
 export function createQueue(connectionString: string): PgBoss {
-  return new PgBoss({
+  const boss = new PgBoss({
     connectionString,
     schema: "pgboss",
     application_name: "caab-worker",
@@ -11,6 +12,15 @@ export function createQueue(connectionString: string): PgBoss {
     supervise: true,
     useListenNotify: true,
   });
+  // PgBoss retries polling failures. An unhandled EventEmitter error would kill the worker
+  // before it can recover; never include the database error payload in application logs.
+  boss.on("error", () => {
+    logger.error(
+      { event: "queue.error", errorCode: "QUEUE_ERROR", outcome: "failure" },
+      "Queue operation failed",
+    );
+  });
+  return boss;
 }
 
 export async function startQueue(boss: PgBoss): Promise<PgBoss> {

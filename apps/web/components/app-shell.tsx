@@ -6,6 +6,7 @@ import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "@/components/ui/utils";
 
 function sectionTitle(pathname: string): string {
+  if (pathname === "/members" || pathname.startsWith("/members/")) return "Associados";
   if (pathname.startsWith("/users")) return "Usuários";
   if (pathname.startsWith("/audit")) return "Auditoria";
   if (pathname.startsWith("/operations")) return "Auditoria";

@@ -1,0 +1,62 @@
+import { describe, expect, it } from "vitest";
+import { createMemberSchema, memberCommandSchema, isValidCpf } from "../src/members";
+
+describe("member contracts", () => {
+  it("validates CPF digits and normalizes formatting", () => {
+    expect(isValidCpf("52998224725")).toBe(true);
+    for (const cpf of ["11111111111", "52998224726", "123", "abcdef"])
+      expect(isValidCpf(cpf)).toBe(false);
+    expect(
+      createMemberSchema.parse({
+        profile: { name: "Pessoa sintética", cpf: "529.982.247-25" },
+        justification: "Cadastro de teste",
+      }).profile.cpf,
+    ).toBe("52998224725");
+  });
+  it("does not accept login roles or financial balances as profile fields", () => {
+    for (const extra of [{ password: "irrelevant" }, { roleIds: [] }, { balance: 1 }])
+      expect(
+        createMemberSchema.safeParse({
+          profile: { name: "Teste", ...extra },
+          justification: "Teste",
+        }).success,
+      ).toBe(false);
+  });
+  it("requires source, matching dimension and credential expiry", () => {
+    const input = {
+      action: "assess",
+      expectedVersion: 1,
+      justification: "Análise manual",
+      dimension: "credential",
+      result: "valid",
+      source: "Política sintética",
+      observedAt: "2026-01-01T00:00:00Z",
+    };
+    expect(memberCommandSchema.safeParse(input).success).toBe(false);
+    expect(
+      memberCommandSchema.safeParse({ ...input, validUntil: "2027-01-01T00:00:00Z" }).success,
+    ).toBe(true);
+    expect(
+      memberCommandSchema.safeParse({ ...input, dimension: "oab", result: "approved" }).success,
+    ).toBe(false);
+  });
+  it("rejects future birth and self-invented state values", () => {
+    expect(
+      createMemberSchema.safeParse({
+        profile: { name: "Teste", birthDate: "2999-01-01" },
+        justification: "Teste",
+      }).success,
+    ).toBe(false);
+    expect(
+      memberCommandSchema.safeParse({
+        action: "assess",
+        expectedVersion: 1,
+        justification: "Teste",
+        dimension: "eligibility",
+        result: "automatic",
+        source: "Teste",
+        observedAt: "2026-01-01T00:00:00Z",
+      }).success,
+    ).toBe(false);
+  });
+});

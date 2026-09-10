@@ -114,6 +114,7 @@ export default async function globalSetup() {
       ],
     );
     const userIds = new Map(users.rows.map(({ email, id }) => [email, id]));
+    const memberPermissions = ["members:read", "members:write", "members:review"];
     const permissions = [
       "users:read",
       "users:create",
@@ -131,7 +132,7 @@ export default async function globalSetup() {
       "jobs:redrive",
     ];
     const permissionIds = new Map<string, string>();
-    for (const permission of permissions) {
+    for (const permission of [...permissions, ...memberPermissions]) {
       const [resource, action] = permission.split(":");
       const inserted = await admin.query<{ id: string }>(
         `INSERT INTO permission (resource, action, description, sensitive)
@@ -168,7 +169,7 @@ export default async function globalSetup() {
         code: "administrator",
         name: "Administrador",
         administrative: true,
-        permissions,
+        permissions: [...permissions, ...memberPermissions],
         userId: userIds.get(syntheticUsers.administrator.email),
       },
       {

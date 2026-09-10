@@ -114,3 +114,40 @@ continuam privados. App/site externos integram o contrato de consulta nos seus r
 Não é necessário fornecer credencial para esta leitura; publicação não envia push.
 Ver [contrato](../specs/004-news-publishing/contracts/news.md) e
 [evidência](../specs/004-news-publishing/evidence.md) para gates e limites.
+
+## Associados — implementação administrativa (spec 005)
+
+Retomada em 10/09/2026 sobre `dev` com Notícias integrada. Cadastro único, dependências históricas,
+documentos privados com revisão/substituição, avaliações manuais independentes, histórico e contrato
+de leitura para Caassh implementados em `/members`. O usuário confirmou permissões próprias de
+consulta, edição e análise com concessão inicial apenas ao administrador existente. Cadastro de
+beneficiário não cria conta de acesso. Credencial registra situação e validade; emissão verificável,
+políticas institucionais e identidade mobile permanecem dependências explícitas da mesma spec.
+Ver [spec](../specs/005-members-management/spec.md) e [evidências](../specs/005-members-management/evidence.md).
+
+## Revisão de sobreposição: Usuários e Colaboradores — 10/09/2026
+
+Solicitada pelo usuário durante a retomada de Associados. No código atual existem `modules/users`,
+`user`, `role`, `user_role` e `session`; não existem módulo, rotas ou migration de Colaboradores.
+Portanto, não foi encontrada duplicação implementada. US6 ainda é planejamento.
+
+| Responsabilidade | Fonte de verdade | Limite da outra área |
+| --- | --- | --- |
+| Conta, e-mail de login, MFA, sessões, recuperação e status do acesso | Usuários / autenticação existentes | Colaboradores referencia a conta, sem outro login ou senha. |
+| Funções de acesso, concessões e permissões efetivas | Usuários e RBAC existentes | Cargo funcional não concede função de acesso automaticamente. |
+| Unidade, setor, cargo e situação do vínculo funcional | Futuro domínio Colaboradores | Esses campos não devem virar campos da conta de login. |
+| Associação entre colaborador e conta | Vínculo explícito entre os registros | Colaborador pode existir sem login; conta pode existir sem colaborador. Não vincular por coincidência de nome/e-mail. |
+
+O risco de sobreposição está em implementar duas telas independentes para criar contas ou conceder
+permissões. A área de navegação prevista, **Equipe e acesso**, deve reunir as jornadas de Colaboradores
+e Contas e acesso; a gestão de acesso continua usando os serviços e identificadores atuais.
+Não criar um segundo catálogo de papéis, uma segunda política de MFA ou um novo cadastro de login.
+
+Nome e contato precisam ter finalidade e proprietário explícitos no desenho de US6: dados da conta
+são consultados pelo vínculo; e-mail profissional não altera automaticamente o identificador de
+login. O desligamento deve remover concessões derivadas do vínculo encerrado, preservando a decisão
+sobre outros vínculos; desativar a conta inteira exige autorização e regra próprias.
+
+Pendências para a spec funcional de Colaboradores: campos administrativos necessários, cardinalidade
+do vínculo, matriz por unidade/setor e efeitos do desligamento. Esta revisão delimita responsabilidades;
+não implementa Colaboradores nem altera o funcionamento de Usuários.
