@@ -1,8 +1,12 @@
 import { getAuth } from "@/modules/auth/auth";
 import { getDatabase } from "@/modules/shared/database";
+import { isLocalTestMode, loadWorkspaceEnv } from "@caab/config";
+import { hasTrustedMutationOrigin } from "@/modules/shared/mutation-origin";
 
 export async function POST(request: Request) {
-  if (process.env.E2E_TEST_MODE !== "1") return new Response(null, { status: 404 });
+  loadWorkspaceEnv();
+  if (!isLocalTestMode(process.env)) return new Response(null, { status: 404 });
+  if (!hasTrustedMutationOrigin(request)) return new Response(null, { status: 403 });
   const session = await getAuth().api.getSession({ headers: request.headers });
   if (!session) return new Response(null, { status: 401 });
   await getDatabase().pool.query(

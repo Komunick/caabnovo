@@ -192,3 +192,10 @@ migration foi necessária. Validação remota após implantação continua pende
 Por instrução do usuário, a branch local `fix/news-draft-proxy-origin` permanece em STANDBY,
 sem push, PR, merge ou implantação. O rascunho já preparado fica preservado para revisão
 posterior; só retomar mediante nova instrução. Registro: [standby-origin-fix.md](standby-origin-fix.md).
+
+### Retomada e revisão ampliada
+
+O usuário posteriormente autorizou nova conferência da dev, correções e relatório de mudança
+de domínio/repositório. A dev `951c103` foi integrada à branch; a comparação de origem ainda
+não havia sido alterada nela. O status atual e os resultados da revisão ampliada estão em
+[DEPLOYMENT-CONFIG-AUDIT.md](../../docs/DEPLOYMENT-CONFIG-AUDIT.md). A pausa acima é histórica.

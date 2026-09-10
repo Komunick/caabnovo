@@ -115,11 +115,15 @@ com banco/editor; validações isoladas são apenas início de implementação.
 
 ## Correção de proxy — 10/09/2026
 
-**STANDBY por solicitação do usuário.** Branch `fix/news-draft-proxy-origin`.
-Rascunho local preservado; não retomar, enviar ou implantar sem nova instrução.
+**RETOMADO por solicitação do usuário.** Branch `fix/news-draft-proxy-origin`, base atual `951c103`.
+Revisão ampliada e correções locais autorizadas. Implantação no ambiente remoto ainda pendente.
 Contexto e plano de retomada: [standby-origin-fix.md](standby-origin-fix.md).
 
 - [x] T026 Preparar rascunho local de origem confiável usando BETTER_AUTH_URL nos validadores
       compartilhados e testar gravação por proxy, origens externas, CSRF e idempotência.
 - [ ] T027 Após retomada autorizada, revisão e implantação em DEV, salvar e reabrir rascunho pelo domínio público,
       confirmando POST 201 e PUT 200 no navegador.
+
+- [x] T028 Revisar a dev atual, configuração pública, links/storage, e-mail, modo de teste,
+      conexões e referências ao repositório; corrigir problemas confirmados e registrar o
+      roteiro de mudança em `docs/DEPLOYMENT-CONFIG-AUDIT.md`.

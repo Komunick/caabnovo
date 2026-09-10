@@ -1,10 +1,15 @@
 import "server-only";
 import nodemailer from "nodemailer";
+import { publicAppUrlSchema, isLoopbackHostname } from "@caab/config";
 
 export function accountMailConfig(env: Record<string, string | undefined>) {
-  const baseURL = new URL(env.BETTER_AUTH_URL ?? "http://localhost:3000");
-  const localHost = (value: string) => ["localhost", "127.0.0.1", "[::1]", "::1"].includes(value);
+  const baseURL = new URL(publicAppUrlSchema.parse(env.BETTER_AUTH_URL));
+  const localHost = isLoopbackHostname;
   const local = env.MAIL_MODE === "local";
+  const port = Number(env.SMTP_PORT ?? (local ? 1025 : 587));
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error("SMTP_PORT must be an integer from 1 to 65535");
+  }
   if (local) {
     if (!localHost(baseURL.hostname) || !localHost(env.SMTP_HOST ?? "127.0.0.1")) {
       throw new Error("Local mail is restricted to loopback addresses");
@@ -14,7 +19,7 @@ export function accountMailConfig(env: Record<string, string | undefined>) {
       baseURL,
       from: "CAAB Local <caab@example.test>",
       host: env.SMTP_HOST ?? "127.0.0.1",
-      port: Number(env.SMTP_PORT ?? 1025),
+      port,
       secure: false,
       requireTLS: false,
       auth: undefined,
@@ -37,8 +42,8 @@ export function accountMailConfig(env: Record<string, string | undefined>) {
     baseURL,
     from: env.MAIL_FROM,
     host: env.SMTP_HOST,
-    port: Number(env.SMTP_PORT ?? 587),
-    secure: env.SMTP_PORT === "465",
+    port,
+    secure: port === 465,
     requireTLS: true,
     auth: { user: env.SMTP_USER, pass: env.SMTP_PASSWORD },
   };

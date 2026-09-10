@@ -1,17 +1,19 @@
-# Correção de origem ao salvar notícias — em espera
+# Correção de origem ao salvar notícias — retomada
 
-Registro de 10/09/2026, por solicitação do usuário.
+Registro original de espera e retomada em 10/09/2026, por solicitação do usuário.
+Relatório atual: [revisão de ambiente e mudança de domínio/repositório](../../docs/DEPLOYMENT-CONFIG-AUDIT.md).
 
 ## Branch e estado
 
-- **Status: STANDBY. Aguardar instrução explícita para retomar.**
+- **Status: RETOMADO.** O usuário autorizou conferir novamente a dev, ampliar a revisão,
+  corrigir os erros encontrados e documentar mudanças de domínio/repositório.
 - Branch local: `fix/news-draft-proxy-origin`.
-- Base: `origin/dev`, commit `74d7bd0cbddd10f21f299fc0c9c3ef60a65c78d2`.
+- Base original: `74d7bd0`. Base atual integrada: `origin/dev`, commit
+  `951c1039efb854cbc2a1fe827ef2a34a178b6f46`.
 - Worktree: `.cache/check-dev-draft`, relativo à raiz do repositório principal.
 - Spec responsável: `004-news-publishing`.
-- Destino eventual: PR para `dev`, somente após retomada autorizada.
-- O rascunho de código e testes já preparado fica preservado localmente. Isso não constitui
-  autorização para continuar a implementação, fazer push, abrir PR, merge ou implantação.
+- Destino eventual: PR para `dev`. A correção e a revisão ampliada permanecem locais;
+  nenhum push, PR, merge em dev ou implantação foi realizado.
 - O ambiente remoto permanece sem esta correção.
 
 ## Problema constatado
@@ -27,8 +29,8 @@ do proxy. O endereço interno exato e as variáveis do servidor remoto não fora
 
 Better Auth já integra o login da fundação. A orientação para trocar BETTER_AUTH_URL por uma
 URL pública HTTPS também existe no quickstart da spec `006-account-settings`, no worktree
-local `.cache/pr-account-settings`; esses artefatos ainda não estão na dev. Isso não alterou
-a validação de gravação e a correção não depende da entrega de Configurações da Conta.
+local `.cache/pr-account-settings`. Esses artefatos não estavam na dev na investigação inicial;
+entraram depois pelo PR #13 (`951c103`), sem alterar a validação de gravação.
 
 ## Alteração proposta para revisão posterior
 
@@ -48,10 +50,10 @@ arquivos alterados e build de produção web. Os testes verificam POST 201/PUT 2
 rejeição de origens externas, CSRF e idempotência. Esses resultados não comprovam implantação
 nem sucesso de gravação no ambiente remoto. Detalhes em [evidence.md](evidence.md).
 
-## Retomada, somente quando solicitada
+## Pendências de entrega após a revisão local
 
-1. Conferir a dev atual e reconciliar esta branch preservando trabalhos em outros worktrees.
-2. Revisar o rascunho e confirmar no ambiente de destino
+1. A dev atual foi conferida e integrada nesta branch, preservando outros worktrees.
+2. Revisar as alterações e confirmar no ambiente de destino
    `BETTER_AUTH_URL=https://caabv2dev.komunick.com`.
 3. Validar os testes aplicáveis e submeter a correção ao fluxo de revisão para dev.
 4. Após implantação autorizada, criar, reabrir e editar um rascunho pelo domínio público,

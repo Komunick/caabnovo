@@ -8,6 +8,7 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { loadServerEnv } from "@caab/config";
 import { recordStorageError, withServerSpan } from "../shared/metrics";
+import { createStorageClient } from "../shared/storage-client";
 
 const SIGNED_URL_TTL_SECONDS = 300;
 
@@ -37,6 +38,7 @@ export class S3WebObjectStorage implements WebObjectStorage {
     private readonly client: S3Client,
     private readonly quarantineBucket: string,
     private readonly privateBucket: string,
+    private readonly signingClient: S3Client = client,
   ) {}
 
   async createQuarantineUpload(
@@ -51,7 +53,7 @@ export class S3WebObjectStorage implements WebObjectStorage {
         ContentType: input.contentType,
         ChecksumSHA256: checksumBase64,
       });
-      const uploadUrl = await getSignedUrl(this.client, command, {
+      const uploadUrl = await getSignedUrl(this.signingClient, command, {
         expiresIn: SIGNED_URL_TTL_SECONDS,
       });
       return {
@@ -90,7 +92,7 @@ export class S3WebObjectStorage implements WebObjectStorage {
   async createPrivateDownload(key: string): Promise<{ url: string; expiresAt: Date }> {
     return storageOperation("presign_download", async () => {
       const url = await getSignedUrl(
-        this.client,
+        this.signingClient,
         new GetObjectCommand({ Bucket: this.privateBucket, Key: key }),
         { expiresIn: SIGNED_URL_TTL_SECONDS },
       );
@@ -120,14 +122,10 @@ export function getObjectStorage(): WebObjectStorage {
   if (storage) return storage;
   const env = loadServerEnv();
   storage = new S3WebObjectStorage(
-    new S3Client({
-      endpoint: env.S3_ENDPOINT,
-      region: env.S3_REGION,
-      forcePathStyle: true,
-      credentials: { accessKeyId: env.S3_ACCESS_KEY, secretAccessKey: env.S3_SECRET_KEY },
-    }),
+    createStorageClient(env),
     env.S3_QUARANTINE_BUCKET,
     env.S3_PRIVATE_BUCKET,
+    createStorageClient(env, true),
   );
   return storage;
 }

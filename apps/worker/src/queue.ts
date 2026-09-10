@@ -1,8 +1,9 @@
 import { PgBoss } from "pg-boss";
 import { queueDefinitions } from "./queues.js";
+import { logger } from "./logger.js";
 
 export function createQueue(connectionString: string): PgBoss {
-  return new PgBoss({
+  const boss = new PgBoss({
     connectionString,
     schema: "pgboss",
     application_name: "caab-worker",
@@ -11,6 +12,13 @@ export function createQueue(connectionString: string): PgBoss {
     supervise: true,
     useListenNotify: true,
   });
+  boss.on("error", () => {
+    logger.error(
+      { event: "queue.error", errorCode: "QUEUE_CONNECTION_ERROR" },
+      "Queue connection failed",
+    );
+  });
+  return boss;
 }
 
 export async function startQueue(boss: PgBoss): Promise<PgBoss> {
