@@ -10,7 +10,7 @@ async function prepare(page: import("@playwright/test").Page, media = false) {
   await page.goto("/login");
   const user = media ? syntheticUsers.accessManager : syntheticUsers.ordinary;
   await page.getByLabel("E-mail").fill(user.email);
-  await page.getByLabel("Senha").fill(user.password);
+  await page.getByLabel("Senha", { exact: true }).fill(user.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/news/new");

@@ -335,6 +335,35 @@ h2 {
 }
 
 /* Form controls */
+.password-input {
+  position: relative;
+}
+
+.form-field .password-input input {
+  padding-right: 3.25rem;
+}
+
+.password-input-toggle {
+  position: absolute;
+  right: 0.15rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted-strong);
+  background: transparent;
+  cursor: pointer;
+}
+
+.password-input-toggle:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
 .form-field {
   display: grid;
   gap: 0.45rem;
@@ -518,20 +547,6 @@ h2 {
   padding: var(--space-4) 0;
   border-top: 1px solid rgb(255 255 255 / 10%);
   border-bottom: 1px solid rgb(255 255 255 / 10%);
-}
-
-.sidebar-profile__avatar {
-  display: grid;
-  place-items: center;
-  width: 2.45rem;
-  height: 2.45rem;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  color: #f8e9c5;
-  background: rgb(199 163 90 / 19%);
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
 }
 
 .sidebar-profile__copy {
@@ -1470,15 +1485,6 @@ body {
 .sidebar-profile:hover {
   border-color: rgb(79 140 255 / 30%);
   background: rgb(79 140 255 / 8%);
-}
-
-.sidebar-profile__avatar {
-  border: 1px solid rgb(255 255 255 / 12%);
-  color: #fff;
-  background: linear-gradient(145deg, #3b82f6, #7c3aed);
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  box-shadow: 0 0.4rem 1rem rgb(37 99 235 / 24%);
 }
 
 .sidebar-footer {
@@ -2626,6 +2632,12 @@ tbody tr:hover {
 .news-module .button--compact {
   min-height: 2.85rem;
 }
+.news-module .button {
+  /* Switch foreground and background together: interpolating both crosses low contrast. */
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
+}
 .news-module .button--primary {
   color: var(--color-surface);
 }
@@ -3137,4 +3149,130 @@ tbody tr:hover {
   width: min(100% - 2rem, 56rem);
   margin: 2rem auto;
   overflow-wrap: anywhere;
+}
+
+.account-menu {
+  position: relative;
+}
+
+.admin-shell--collapsed .account-menu {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.account-menu-collapsed-label {
+  display: none;
+}
+.admin-shell--collapsed .account-menu-collapsed-label {
+  display: inline;
+  color: #f8fafc;
+  font-size: 0.65rem;
+}
+@media (max-width: 760px) {
+  .admin-shell--collapsed .account-menu-collapsed-label {
+    display: none;
+  }
+}
+
+.account-menu-trigger {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-menu-chevron {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #b8c5d9;
+}
+
+.account-menu-panel {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  width: min(19rem, calc(100vw - 3rem));
+  padding: 0.65rem;
+  border: 1px solid #41516c;
+  border-radius: 0.85rem;
+  color: #f8fafc;
+  background: #16243a;
+  box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 25%);
+}
+
+.account-menu-identity {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.account-menu-identity small {
+  color: #c0cde0;
+}
+
+.account-menu-panel .account-menu-logout,
+.admin-sidebar .account-menu-panel a {
+  display: flex;
+  width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding: 0.65rem;
+  border: 0;
+  border-radius: 0.4rem;
+  color: #f8fafc;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-menu-panel .account-menu-logout:hover,
+.admin-sidebar .account-menu-panel a:hover {
+  background: #293c59;
+}
+
+.admin-shell--collapsed .account-menu-chevron {
+  display: none;
+}
+
+.admin-shell--collapsed .account-menu-panel a span {
+  display: inline;
+}
+
+.brand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.brand__logo {
+  position: relative;
+  display: block;
+  width: 9rem;
+  height: 3.15rem;
+  overflow: hidden;
+  border-radius: 0.4rem;
+  background: #fff;
+}
+
+.brand__logo img {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: auto;
+  transform: translateY(-50%);
+}
+
+.admin-shell--collapsed .brand__logo {
+  width: 3.15rem;
+  height: 2rem;
+}
+
+@media (max-width: 760px) {
+  .admin-shell--collapsed .brand__logo {
+    width: 9rem;
+    height: 3.15rem;
+  }
 }

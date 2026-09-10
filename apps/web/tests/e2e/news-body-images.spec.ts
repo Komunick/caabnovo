@@ -9,7 +9,7 @@ test("body images can be uploaded, described, moved and restored without losing 
   test.setTimeout(120_000);
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.accessManager.email);
-  await page.getByLabel("Senha").fill(syntheticUsers.accessManager.password);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.accessManager.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/news/new");

@@ -9,7 +9,7 @@ const origin = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 async function signIn(page: import("@playwright/test").Page) {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.accessManager.email);
-  await page.getByLabel("Senha").fill(syntheticUsers.accessManager.password);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.accessManager.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/);
 }
@@ -83,7 +83,7 @@ test("job-only operator uses the consolidated area without gaining audit access"
 }) => {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.operator.email);
-  await page.getByLabel("Senha").fill(syntheticUsers.operator.password);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.operator.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/);
   const navigation = page.getByRole("navigation", { name: "Navegação administrativa" });

@@ -36,9 +36,9 @@ export default async function AdminHomePage() {
       tone: "cyan",
     },
     {
-      label: "Proteção MFA",
-      value: identity?.twoFactorEnabled ? "Ativa" : "Padrão",
-      detail: identity?.twoFactorEnabled ? "segundo fator habilitado" : "sessão monitorada",
+      label: "Sessão",
+      value: "Ativa",
+      detail: "acesso autenticado",
       icon: ShieldCheck,
       tone: "green",
     },

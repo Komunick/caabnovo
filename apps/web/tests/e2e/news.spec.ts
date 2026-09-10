@@ -7,7 +7,7 @@ const expect = baseExpect.configure({ timeout: 15000 });
 async function signIn(page: import("@playwright/test").Page) {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.ordinary.email);
-  await page.getByLabel("Senha").fill(syntheticUsers.ordinary.password);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.ordinary.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
 }
