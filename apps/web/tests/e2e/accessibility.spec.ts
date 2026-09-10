@@ -6,7 +6,7 @@ async function signIn(page: import("@playwright/test").Page, email: string, pass
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Senha", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page).toHaveURL(/(?:\/|\/mfa)$/);
+  await expect(page).toHaveURL(/\/$/);
 }
 
 test("login page meets the automated WCAG 2.2 AA baseline", async ({ page }) => {
@@ -21,9 +21,13 @@ test("authenticated shell meets the automated WCAG 2.2 AA baseline", async ({ pa
   await expectWcag22AA(page);
 });
 
-test("MFA challenge meets the automated WCAG 2.2 AA baseline", async ({ page }) => {
+test("administrator account settings without MFA meet the automated WCAG 2.2 AA baseline", async ({
+  page,
+}) => {
   await signIn(page, syntheticUsers.administrator.email, syntheticUsers.administrator.password);
-  await expect(page).toHaveURL(/\/mfa$/);
+  await page.goto("/settings");
+  await expect(page.getByRole("heading", { name: "Configurações", exact: true })).toBeVisible();
+  await expect(page.getByText(/MFA|autenticador|códigos de recuperação/i)).toHaveCount(0);
   await expectWcag22AA(page);
 });
 

@@ -56,6 +56,8 @@ FR-018 foi solicitado após esta revisão e implementado na mesma branch. Os oit
 
 ## Resolução posterior — 10/09/2026
 
+**Correção após CI do PR #13:** a suíte geral de acessibilidade ainda continha uma expectativa de redirecionamento para `/mfa`, fora da seleção local anterior de sete testes de Configurações. As execuções por push e por PR falharam nesse teste; ambas aprovaram quality/security. A expectativa foi substituída por acesso direto e verificação de acessibilidade de Configurações administrativas sem autenticador. A CI também revelou contraste transitório insuficiente no botão Nova notícia durante a troca de tema; suas cores agora mudam juntas, preservando as transições de borda e movimento.
+
 | Item | Resolução e verificação |
 | --- | --- |
 | R01 | Plugin/rotas MFA removidos; chamadas retornam 404. Leitura nativa de sessão rejeita sessão revogada, expirada e conta desativada; criação de sessão exige conta ativa. Regressões em PostgreSQL. |

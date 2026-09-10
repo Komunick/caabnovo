@@ -2634,6 +2634,10 @@ tbody tr:hover {
 }
 .news-module .button--primary {
   color: var(--color-surface);
+  /* Switch foreground and background together: interpolating both crosses low contrast. */
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 .news-module .button--secondary,
 .news-module .button--ghost {

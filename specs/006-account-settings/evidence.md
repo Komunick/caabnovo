@@ -74,3 +74,10 @@ O usuário autorizou explicitamente abrir o PR após os testes. A branch continu
 - Auditoria de dependências passou o gate high: zero high/critical; três low e cinco moderate conhecidos permanecem.
 - Gitleaks no diff preparado para publicação: nenhum segredo encontrado. A varredura da árvore completa apontou três falsos positivos em arquivos inalterados, todos referências à variável `env.S3_SECRET_KEY`, sem credenciais literais.
 - Capturas atuais com dados sintéticos: [Configurações em 390px](evidence/configuracoes-mobile.png), [menu móvel](evidence/menu-conta-mobile.png), [Conta recolhida](evidence/conta-menu-recolhido.png).
+
+## Correção dos jobs browser do PR #13
+
+- As execuções iniciais por push e pull_request reprovaram o teste geral de acessibilidade que ainda esperava `/mfa`; quality e security passaram. Esse arquivo não estava na seleção local anterior de sete jornadas. Agora verifica acesso direto e acessibilidade de Configurações administrativas sem autenticador, preservando o gate axe.
+- A execução por PR também registrou contraste transitório insuficiente em Nova notícia ao mudar para tema escuro (4,17:1 numa tentativa). Reprodução local quadro a quadro encontrou mínimo de 1,03:1 durante a interpolação. Ao trocar texto e fundo simultaneamente, o mínimo medido foi 5,17:1, com zero amostras abaixo de 4,5:1.
+- Treze testes Chromium de acessibilidade, autenticação e Notícias passaram juntos contra o build de produção local (48,1s), incluindo os temas claro/escuro. Build, TypeScript incorporado ao build, lint e formatação dos arquivos afetados passaram.
+- Um ensaio anterior contra o servidor de desenvolvimento teve dez aprovações e três timeouts de navegação/ação em Notícias. Os mesmos treze cenários passaram em produção local, modo utilizado pela CI, sem alteração da lógica editorial nem aumento de limites dos testes.
