@@ -57,13 +57,7 @@ export async function grantRole(
       if (!role || role.status !== "active") {
         throw new UserAccessError("ROLE_NOT_FOUND", 404, "Role not found");
       }
-      if (role.administrative && !target.twoFactorEnabled) {
-        throw new UserAccessError(
-          "TARGET_MFA_REQUIRED",
-          409,
-          "The target user must confirm MFA before receiving an administrative role",
-        );
-      }
+
       const policy = validateRoleGrant({
         actor: command.actor,
         targetUserId: target.id,

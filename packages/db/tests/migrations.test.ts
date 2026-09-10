@@ -35,6 +35,8 @@ describe("database foundation migrations", () => {
       "0008_news_actions.sql",
       "0009_news_highlights.sql",
       "0010_members.sql",
+      "0011_account_email_change.sql",
+      "0012_remove_authenticator.sql",
     ]);
   });
 

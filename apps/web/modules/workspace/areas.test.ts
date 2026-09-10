@@ -26,6 +26,7 @@ describe("consolidated workspace navigation", () => {
       "home",
       "news",
       "sessions",
+      "settings",
     ]);
   });
 

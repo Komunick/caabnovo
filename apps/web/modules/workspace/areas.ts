@@ -1,4 +1,12 @@
-import { FileClock, House, MonitorCog, Newspaper, UsersRound, type LucideIcon } from "lucide-react";
+import {
+  FileClock,
+  House,
+  MonitorCog,
+  Newspaper,
+  Settings,
+  UsersRound,
+  type LucideIcon,
+} from "lucide-react";
 import { PERMISSIONS } from "../auth/permissions";
 
 export type WorkspaceArea = {
@@ -82,6 +90,15 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
     keywords: "identidade segurança",
     icon: MonitorCog,
     paths: ["/sessions"],
+  });
+  areas.push({
+    id: "settings",
+    href: "/settings",
+    label: "Configurações",
+    description: "Atualize seu perfil, e-mail, senha e segurança da conta.",
+    keywords: "perfil nome email senha segurança minha conta configurações",
+    icon: Settings,
+    paths: ["/settings"],
   });
   return areas;
 }

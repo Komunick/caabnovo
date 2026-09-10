@@ -12,12 +12,10 @@ export function createQueue(connectionString: string): PgBoss {
     supervise: true,
     useListenNotify: true,
   });
-  // PgBoss retries polling failures. An unhandled EventEmitter error would kill the worker
-  // before it can recover; never include the database error payload in application logs.
   boss.on("error", () => {
     logger.error(
-      { event: "queue.error", errorCode: "QUEUE_ERROR", outcome: "failure" },
-      "Queue operation failed",
+      { event: "queue.error", errorCode: "QUEUE_CONNECTION_ERROR" },
+      "Queue connection failed",
     );
   });
   return boss;

@@ -2,6 +2,7 @@ import { ZodError } from "zod";
 import { apiError } from "@caab/contracts";
 import { AuthenticationRequiredError, PermissionDeniedError } from "../../auth/authorize";
 import { UserAccessError } from "../errors";
+import { hasTrustedMutationOrigin } from "../../shared/mutation-origin";
 
 export function requestId(request: Request): string {
   const supplied = request.headers.get("x-request-id");
@@ -24,8 +25,7 @@ export class RequestValidationError extends Error {
 }
 
 export function validateMutationRequest(request: Request, options: { idempotency?: boolean } = {}) {
-  const origin = request.headers.get("origin");
-  if (!origin || origin !== new URL(request.url).origin) {
+  if (!hasTrustedMutationOrigin(request)) {
     throw new RequestValidationError("ORIGIN_DENIED", 403, "Request origin denied");
   }
   const csrfToken = request.headers.get("x-csrf-token");

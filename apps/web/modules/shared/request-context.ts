@@ -5,7 +5,8 @@ export interface RequestActor {
   userId: string;
   sessionId: string;
   permissions: ReadonlySet<string>;
-  mfaVerified: boolean;
+  /** Deprecated compatibility field; authorization no longer uses MFA. */
+  mfaVerified?: boolean;
 }
 
 export interface RequestContext {

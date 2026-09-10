@@ -3,6 +3,10 @@
 Este guia descreve a validação esperada depois da implementação. Os comandos são contratos do plano;
 eles serão materializados pelas tarefas de implementação.
 
+Para implantação fora do localhost e mudanças de domínio/repositório, consultar
+[configuração de implantação e revisão de ambiente](../../docs/DEPLOYMENT-CONFIG-AUDIT.md).
+O compose e os endereços locais deste guia não representam a configuração do site publicado.
+
 ## Prerequisites
 
 - Git repository with protected `dev` and `main` branches.

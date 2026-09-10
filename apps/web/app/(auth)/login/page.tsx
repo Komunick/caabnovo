@@ -9,7 +9,7 @@ export default function LoginPage() {
       description="Use suas credenciais institucionais para continuar."
       titleId="login-title"
     >
-      <AuthForm mode="login" />
+      <AuthForm />
     </AuthScreen>
   );
 }

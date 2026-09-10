@@ -132,13 +132,7 @@ export async function createUser(
           roleAdministrative: role.administrative,
           justification: reason,
         });
-        if (role.administrative) {
-          throw new UserAccessError(
-            "TARGET_MFA_REQUIRED",
-            409,
-            "MFA enrollment is required before administrative assignment",
-          );
-        }
+
         await insertUserRole(client, {
           userId: created.id,
           roleId,

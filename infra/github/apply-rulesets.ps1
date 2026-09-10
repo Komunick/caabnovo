@@ -1,11 +1,15 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
   [ValidatePattern('^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')]
-  [string]$Repository = "Komunick/caabnovo",
+  [string]$Repository,
   [switch]$Apply
 )
 
 $ErrorActionPreference = "Stop"
+
+if ([string]::IsNullOrWhiteSpace($Repository)) {
+  throw "Specify -Repository owner/name explicitly. No repository is selected by default."
+}
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
   throw "GitHub CLI (gh) is required."

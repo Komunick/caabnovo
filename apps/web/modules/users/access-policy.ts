@@ -11,7 +11,8 @@ export class AccessPolicyError extends UserAccessError {
 interface PolicyActor {
   userId: string;
   permissions: ReadonlySet<string>;
-  mfaVerified: boolean;
+  /** Deprecated compatibility field; ignored by the permission policy. */
+  mfaVerified?: boolean;
 }
 
 export function validateRoleGrant(input: {
@@ -40,9 +41,7 @@ export function validateRoleGrant(input: {
       "The actor cannot grant permissions outside their authority",
     );
   }
-  if (input.roleAdministrative && !input.actor.mfaVerified) {
-    throw new AccessPolicyError("MFA_REQUIRED", 403, "Verified MFA is required");
-  }
+
   const justification = input.justification.trim();
   if (!justification) {
     throw new AccessPolicyError("JUSTIFICATION_REQUIRED", 422, "Justification is required");

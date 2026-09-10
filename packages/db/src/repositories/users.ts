@@ -40,7 +40,7 @@ function mapUser(row: UserRow): UserRecord {
     email: row.email,
     name: row.name,
     status: row.status,
-    twoFactorEnabled: row.two_factor_enabled,
+    twoFactorEnabled: false,
     roles: row.roles ?? [],
     version: row.version,
     createdAt: row.created_at,

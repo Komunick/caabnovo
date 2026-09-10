@@ -20,6 +20,17 @@ export function createDatabaseClient(
     connectionTimeoutMillis: 5_000,
     ...options,
   });
+  // An idle connection can fail between requests (restart/network interruption).
+  // Without an error listener, pg emits an uncaught EventEmitter error.
+  pool.on("error", () => {
+    console.error(
+      JSON.stringify({
+        service: "caab-db",
+        event: "database.idle_connection_failed",
+        errorCode: "DATABASE_CONNECTION_ERROR",
+      }),
+    );
+  });
 
   return {
     db: drizzle(pool),

@@ -3,6 +3,12 @@
 Node 24, pnpm e Docker. Dependências: PostgreSQL, MinIO e ClamAV do compose existente.
 Configurar .env conforme .env.example, sem usar credenciais de produção.
 
+Atrás de proxy, `BETTER_AUTH_URL` deve conter a URL pública do painel (esquema, domínio e
+porta pública, quando houver), e não o endereço interno do contêiner. A origem da gravação
+é conferida contra essa configuração. Após implantar, criar um rascunho, reabrir e editar:
+esperar POST `/api/v1/news` com 201 e PUT com 200. Um 403 `ORIGIN_DENIED` exige conferir
+essa configuração; não liberar origens arbitrárias nem remover a proteção CSRF.
+
 Na listagem, `/news` reúne notícias com publicação no histórico; o botão Rascunhos abre
 `/news/drafts` com conteúdos ainda não publicados. Digite para buscar automaticamente e
 abra Mais filtros e ordenação para combinar categoria, destino previsto, destaque, capa,

@@ -192,3 +192,10 @@ sessões, arquivos e eventos de auditoria continuam pertencendo à fundação ex
   consultas revalidam publicação e disponibilidade.
 - Limites técnicos iniciais de tamanho e fuso seguem plano, revisáveis neste mesmo spec.
 - Mudanças de Notícias atualizam estes artefatos; função nova de outro domínio recebe outro spec.
+
+## Correção de origem atrás de proxy — 10/09/2026
+
+Salvar rascunhos e enviar imagens deve aceitar a origem pública configurada em
+`BETTER_AUTH_URL`, mesmo quando o proxy entrega uma URL interna ao Next.js. Outras origens,
+origem ausente e tokens CSRF ausentes continuam bloqueados. Cabeçalhos Host/Forwarded não
+definem a origem confiável; em produção, configuração pública ausente ou inválida bloqueia a ação.
