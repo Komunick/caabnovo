@@ -60,7 +60,7 @@ export async function loadCurrentUser(
     email: row.email,
     name: row.name,
     status: row.status,
-    twoFactorEnabled: row.two_factor_enabled,
+    twoFactorEnabled: false,
     roles: row.roles ?? [],
     permissions: permissions.rows.map(({ permission }) => permission),
     version: row.version,

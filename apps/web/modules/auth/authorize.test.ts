@@ -31,13 +31,10 @@ describe("requirePermission", () => {
     );
   });
 
-  it("requires a verified factor when the protected action requests MFA", () => {
+  it("authorizes administrative actions by permission without an authenticator", () => {
     const permissions = new Set([PERMISSIONS.rolesGrant]);
 
-    expect(() => requirePermission(actor(permissions), PERMISSIONS.rolesGrant, true)).toThrow(
-      PermissionDeniedError,
-    );
-    expect(requirePermission(actor(permissions, true), PERMISSIONS.rolesGrant, true)).toBeTruthy();
+    expect(requirePermission(actor(permissions), PERMISSIONS.rolesGrant)).toBeTruthy();
   });
 });
 

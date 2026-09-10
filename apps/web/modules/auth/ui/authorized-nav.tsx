@@ -1,27 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import { getWorkspaceAreas, isAreaActive } from "@/modules/workspace/areas";
 
 export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly string[] }>) {
-  const router = useRouter();
   const pathname = usePathname();
-  const items = getWorkspaceAreas(permissions);
-
-  async function logout() {
-    const response = await fetch("/api/auth/sign-out", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: "{}",
-    });
-    if (!response.ok) return;
-    router.replace("/login");
-    router.refresh();
-  }
+  const items = getWorkspaceAreas(permissions).filter(
+    (area) => area.id !== "sessions" && area.id !== "settings",
+  );
 
   return (
     <div className="sidebar-navigation">
@@ -38,12 +26,6 @@ export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly 
             </MenuItem>
           );
         })}
-        <MenuItem>
-          <Button className="sidebar-logout" intent="ghost" onClick={logout}>
-            <LogOut size={19} strokeWidth={1.8} aria-hidden="true" />
-            <span>Sair</span>
-          </Button>
-        </MenuItem>
       </Menu>
     </div>
   );

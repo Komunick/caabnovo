@@ -1,8 +1,8 @@
-import { createHmac } from "node:crypto";
 import { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
+import { resetIdentifier } from "../../modules/auth/password-recovery-service";
 import { createAuth } from "../../modules/auth/auth-factory";
 import { loadActiveSession } from "../../modules/auth/session-dal";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
@@ -16,6 +16,7 @@ let handler: (request: Request) => Promise<Response>;
 let cookie = "";
 let userId = "";
 let persistedToken = "";
+let resetToken = "";
 
 function authRequest(path: string, body?: unknown, sessionCookie = cookie): Request {
   return new Request(`${origin}/api/auth${path}`, {
@@ -35,28 +36,6 @@ function sessionCookie(response: Response): string {
   return match[1];
 }
 
-function totpCode(uri: string): string {
-  const secret = new URL(uri).searchParams.get("secret");
-  if (!secret) throw new Error("TOTP URI has no secret");
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  let bits = "";
-  for (const char of secret.replace(/=+$/, "").toUpperCase()) {
-    const index = alphabet.indexOf(char);
-    if (index < 0) throw new Error("Invalid base32 secret");
-    bits += index.toString(2).padStart(5, "0");
-  }
-  const bytes = Buffer.alloc(Math.floor(bits.length / 8));
-  for (let index = 0; index < bytes.length; index += 1) {
-    bytes[index] = Number.parseInt(bits.slice(index * 8, index * 8 + 8), 2);
-  }
-  const counter = Buffer.alloc(8);
-  counter.writeBigUInt64BE(BigInt(Math.floor(Date.now() / 30_000)));
-  const digest = createHmac("sha1", bytes).update(counter).digest();
-  const offset = (digest.at(-1) ?? 0) & 0x0f;
-  const binary = (digest.readUInt32BE(offset) & 0x7fffffff) % 1_000_000;
-  return binary.toString().padStart(6, "0");
-}
-
 beforeAll(async () => {
   container = await startPostgres();
   await runMigrations(container.getConnectionUri());
@@ -65,8 +44,13 @@ beforeAll(async () => {
   database = createDatabaseClient(container.getConnectionUri());
   const auth = createAuth({
     database: database.db,
+    pool: database.pool,
     baseURL: origin,
     secret: "test-only-secret-with-at-least-32-characters",
+    disableRateLimit: true,
+    sendResetPassword: async ({ token }) => {
+      resetToken = token;
+    },
   });
   handler = auth.handler;
 }, 120_000);
@@ -106,35 +90,6 @@ describe.sequential("Better Auth PostgreSQL sessions", () => {
     expect(cookie).toContain(encodeURIComponent(persistedToken));
   });
 
-  it("enrolls TOTP only after confirmation and never enables trusted-device bypass", async () => {
-    const enable = await handler(
-      authRequest("/two-factor/enable", { password, method: "totp", issuer: "CAAB" }),
-    );
-    expect(enable.status).toBe(200);
-    const enrollment = (await enable.json()) as { totpURI: string; backupCodes: string[] };
-    expect(enrollment.backupCodes.length).toBeGreaterThan(0);
-
-    const pending = await admin.query<{ verified: boolean }>(
-      "SELECT verified FROM two_factor WHERE user_id = $1",
-      [userId],
-    );
-    expect(pending.rows[0]?.verified).toBe(false);
-
-    const verify = await handler(
-      authRequest("/two-factor/verify-totp", {
-        code: totpCode(enrollment.totpURI),
-        trustDevice: false,
-      }),
-    );
-    expect(verify.status).toBe(200);
-    const enabled = await admin.query<{ two_factor_enabled: boolean; verified: boolean }>(
-      `SELECT u.two_factor_enabled, tf.verified
-       FROM "user" u JOIN two_factor tf ON tf.user_id = u.id WHERE u.id = $1`,
-      [userId],
-    );
-    expect(enabled.rows[0]).toEqual({ two_factor_enabled: true, verified: true });
-  });
-
   it("observes session revocation on the next protected lookup", async () => {
     const current = await admin.query<{ token: string }>(
       "SELECT token FROM session WHERE user_id = $1 AND revoked_at IS NULL ORDER BY created_at DESC LIMIT 1",
@@ -145,6 +100,49 @@ describe.sequential("Better Auth PostgreSQL sessions", () => {
     expect(await loadActiveSession(database.pool, persistedToken)).not.toBeNull();
     await admin.query("UPDATE session SET revoked_at = now() WHERE token = $1", [persistedToken]);
     expect(await loadActiveSession(database.pool, persistedToken)).toBeNull();
+  });
+
+  it("resets with a single-use expiring link, rejects weak passwords, revokes sessions", async () => {
+    const requestReset = () =>
+      handler(authRequest("/request-password-reset", { email: "ordinary@example.test" }, ""));
+    expect((await requestReset()).status).toBe(200);
+    expect(resetToken).not.toBe("");
+    const expiredToken = resetToken;
+    await admin.query(
+      "UPDATE verification SET expires_at = now() - interval '1 minute' WHERE identifier = $1",
+      [resetIdentifier(expiredToken)],
+    );
+    const reset = (token: string, newPassword: string) =>
+      handler(authRequest("/reset-password", { token, newPassword }, ""));
+    const newPassword = "NewSyntheticPassword2026";
+    expect((await reset(expiredToken, newPassword)).status).toBe(400);
+    expect((await requestReset()).status).toBe(200);
+    const validToken = resetToken;
+    for (const invalid of ["weakpassword2026", "Aa1" + "a".repeat(70)]) {
+      expect((await reset(validToken, invalid)).status).toBe(400);
+    }
+    expect((await reset(validToken, newPassword)).status).toBe(200);
+    expect((await reset(validToken, newPassword)).status).toBe(400);
+    expect(
+      (await admin.query("SELECT id FROM session WHERE user_id = $1", [userId])).rows,
+    ).toHaveLength(0);
+    expect(
+      (
+        await handler(
+          authRequest("/sign-in/email", { email: "ordinary@example.test", password }, ""),
+        )
+      ).status,
+    ).toBe(401);
+    const login = await handler(
+      authRequest("/sign-in/email", { email: "ordinary@example.test", password: newPassword }, ""),
+    );
+    expect(login.status).toBe(200);
+    expect(await login.json()).not.toHaveProperty("twoFactorRedirect");
+    const unknown = await handler(
+      authRequest("/request-password-reset", { email: "unknown@example.test" }, ""),
+    );
+    expect(unknown.status).toBe(200);
+    expect(resetToken).toBe(validToken);
   });
 
   it("denies an inactive user even when a persisted session has not expired", async () => {

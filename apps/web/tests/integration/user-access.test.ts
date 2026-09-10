@@ -89,6 +89,25 @@ beforeEach(async () => {
 });
 
 describe.sequential("user access transactions", () => {
+  it("grants an administrative role to an active user without an authenticator", async () => {
+    const actorId = await seedUser("manager@example.test");
+    const targetId = await seedUser("target@example.test");
+    const roleId = await seedRole("administrator", true);
+    await grantRole(database.pool, {
+      ...context(actorId),
+      targetUserId: targetId,
+      roleId,
+      justification: "Concessão administrativa autorizada",
+    });
+    expect(
+      (
+        await admin.query(
+          "SELECT id FROM user_role WHERE user_id=$1 AND role_id=$2 AND revoked_at IS NULL",
+          [targetId, roleId],
+        )
+      ).rowCount,
+    ).toBe(1);
+  });
   it("keeps a single active assignment when the same grant is repeated", async () => {
     const actorId = await seedUser("manager@example.test", true);
     const targetId = await seedUser("target@example.test");

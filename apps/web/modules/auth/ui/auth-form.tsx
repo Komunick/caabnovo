@@ -6,9 +6,11 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
-export function AuthForm({ mode }: Readonly<{ mode: "login" | "mfa" }>) {
+export function AuthForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -21,25 +23,22 @@ export function AuthForm({ mode }: Readonly<{ mode: "login" | "mfa" }>) {
     setError("");
     setPending(true);
     const data = new FormData(event.currentTarget);
-    const endpoint =
-      mode === "login" ? "/api/auth/sign-in/email" : "/api/auth/two-factor/verify-totp";
-    const body =
-      mode === "login"
-        ? { email: data.get("email"), password: data.get("password") }
-        : { code: data.get("code"), trustDevice: false };
+    const endpoint = "/api/auth/sign-in/email";
+    const body = { email: data.get("email"), password: data.get("password") };
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
-      const payload = (await response.json().catch(() => ({}))) as { twoFactorRedirect?: boolean };
       if (!response.ok) {
-        setError(mode === "mfa" ? "Código inválido. Tente novamente." : "Credenciais inválidas.");
+        setError("Credenciais inválidas.");
         return;
       }
-      router.replace(payload.twoFactorRedirect ? "/mfa" : "/");
+      router.replace("/");
       router.refresh();
+    } catch {
+      setError("Não foi possível conectar ao servidor. Tente novamente.");
     } finally {
       setPending(false);
     }
@@ -47,37 +46,21 @@ export function AuthForm({ mode }: Readonly<{ mode: "login" | "mfa" }>) {
 
   return (
     <form method="post" onSubmit={submit} noValidate>
-      {mode === "login" ? (
-        <>
-          <FormField id="email" label="E-mail">
-            <Input name="email" type="email" autoComplete="username" required />
-          </FormField>
-          <FormField id="password" label="Senha">
-            <Input name="password" type="password" autoComplete="current-password" required />
-          </FormField>
-        </>
-      ) : (
-        <FormField id="code" label="Código de verificação">
-          <Input
-            name="code"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            pattern="[0-9]{6}"
-            maxLength={6}
-            required
-          />
-        </FormField>
-      )}
+      <FormField id="email" label="E-mail">
+        <Input name="email" type="email" autoComplete="username" required />
+      </FormField>
+      <FormField id="password" label="Senha">
+        <PasswordInput name="password" autoComplete="current-password" required />
+      </FormField>
+      <Link href="/forgot-password">Esqueci minha senha</Link>
       {error ? <Alert>{error}</Alert> : null}
       <Button intent="primary" type="submit" disabled={pending || !hydrated}>
         {pending || !hydrated ? (
           <>
             <Spinner label="Autenticando" /> Aguarde…
           </>
-        ) : mode === "login" ? (
-          "Entrar"
         ) : (
-          "Verificar"
+          "Entrar"
         )}
       </Button>
     </form>

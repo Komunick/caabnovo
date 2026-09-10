@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Role, RoleReference } from "@caab/contracts";
 import { SensitiveActionDialog } from "./sensitive-action-dialog";
+import { roleGrantError } from "./role-grant-error";
 
 function headers() {
   return { "content-type": "application/json", "x-csrf-token": crypto.randomUUID() };
@@ -37,14 +38,21 @@ export function RoleAssignmentForm({
     setError("");
     const data = new FormData(event.currentTarget);
     const roleId = String(data.get("roleId") ?? "");
-    const response = await fetch(`/api/v1/users/${userId}/roles/${roleId}`, {
-      method: "PUT",
-      headers: headers(),
-      body: JSON.stringify({ justification: data.get("justification") }),
-    });
-    if (!response.ok) setError("Não foi possível conceder a função.");
-    else router.refresh();
-    setPending(false);
+    try {
+      const response = await fetch(`/api/v1/users/${userId}/roles/${roleId}`, {
+        method: "PUT",
+        headers: headers(),
+        body: JSON.stringify({ justification: data.get("justification") }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        setError(roleGrantError(body?.code));
+      } else router.refresh();
+    } catch {
+      setError("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.");
+    } finally {
+      setPending(false);
+    }
   }
 
   async function revoke(roleId: string, reason: string) {

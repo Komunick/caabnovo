@@ -24,7 +24,7 @@ export async function revokeUserSessions(
   justification: string,
   metadata: { requestId: string; correlationId: string },
 ): Promise<number> {
-  requirePermission(actor, PERMISSIONS.rolesRevoke, true);
+  requirePermission(actor, PERMISSIONS.rolesRevoke);
   if (!justification.trim()) throw new Error("A justification is required");
 
   return withTransaction(pool, async (client) => {
