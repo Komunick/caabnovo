@@ -2,7 +2,7 @@
 
 **Feature Branch**: `feature/members-management`
 **Created**: 2026-09-09
-**Status**: Especificado para implementação
+**Status**: Em implementação e validação funcional — não está pronto para PR
 **Input**: Implementar Associados; outra instância implementará Caassh.
 
 ## User Scenarios & Testing

@@ -1,5 +1,8 @@
 # Evidências — Associados
 
+**Situação**: testes do incremento atual aprovados; módulo ainda em implementação e validação
+funcional, conforme orientação do usuário. Este documento não declara Associados pronto para PR.
+
 10/09/2026. Branch `feature/members-management`, baseada em `origin/dev` `74d7bd0`.
 Somente dados sintéticos; nenhum consumidor externo, política institucional ou ambiente de produção
 foi alterado. Código parcial preservado e atualizado para a base com Notícias integrada.

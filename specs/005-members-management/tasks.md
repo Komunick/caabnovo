@@ -1,5 +1,11 @@
 # Tasks: Associados
 
+**Status em 10/09/2026**: em implementação e validação funcional. O usuário esclareceu que
+Associados ainda não está pronto. Testes aprovados cobrem o incremento atual e não autorizam PR.
+Revisar lacunas e concluir a função antes de executar T012. Nenhum push ou PR foi realizado.
+O usuário informou que ainda fará o teste funcional. Aguardar seu retorno antes de declarar a
+função pronta; não tratar essa espera como autorização de publicação.
+
 ## Setup
 
 - [x] T001 Especificar e pesquisar em specs/005-members-management/spec.md e research.md; registrar contrato Caassh em contracts/caassh-handoff.md.
@@ -36,7 +42,9 @@ Critério independente: resumo estável sem CPF/contas e nenhuma listagem públi
 
 - [x] T010 Verificar jornada completa, teclado/390px/axe em apps/web/tests/e2e/members.spec.ts.
 - [x] T011 Executar gates e registrar resultados em specs/005-members-management/evidence.md; atualizar escopo geral existente.
-- [ ] T012 Abrir um PR completo para dev após Notícias integrada; documentação/testes/código juntos, sem merge automático.
+- [ ] T012 Somente após Associados estar funcionalmente pronto, abrir um PR completo para dev;
+  documentação/testes/código juntos, sem merge automático. Aguardar conclusão das pendências e
+  revisão funcional; não executar com base apenas nos testes do incremento atual.
 
 Dependências: T001→T002/T003→T004→T005/T006→T007→T008→T009→T010→T011→T012. Preparação de contratos e migration pode ocorrer em arquivos separados; implementação local sequencial. Caassh pode progredir em worktree separado com o contrato publicado, sem editar estes arquivos. Primeiro incremento US1; entrega inclui todas as histórias.
 
@@ -51,3 +59,14 @@ T014/T015 complementam T004–T010 e precedem a validação final T011/T012. Emi
 - [x] T016 Tratar o evento de erro transitório da fila no worker, preservando o retry e registrando
   somente campos seguros; adicionar regressão em `apps/worker/src/queue.test.ts` e iniciar o worker
   no CI de navegador para validar uploads reais.
+
+- [ ] T017 Receber a validação funcional do usuário no localhost e registrar os ajustes solicitados;
+  implementar e verificar esses ajustes antes de considerar T012 disponível.
+
+### Pontos para reconciliação de escopo antes da entrega
+
+O PRD cita pesquisa por seccional (ASS-002) e ativação/bloqueio/desbloqueio com histórico
+(ASS-003/005). O incremento atual pesquisa nome/CPF/número OAB e possui arquivamento/restauração
+e avaliações independentes; não equiparar essas ações a bloqueio institucional por finalidade.
+Esses pontos devem ser reconciliados com as definições P02 e com a revisão funcional do usuário,
+sem presumir regras de bloqueio ou declarar cobertura integral do PRD.

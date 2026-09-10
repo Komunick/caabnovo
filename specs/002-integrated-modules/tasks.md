@@ -2,8 +2,9 @@
 
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
 Obrigatórios por risco conforme especificação. Todos os módulos no escopo, com PR por função pronta.
-**Status**: US1 integrada pelo PR #11 e Notícias pelo PR #12. Associados (spec 005) implementado e
-validado localmente em 10/09/2026; entrega por PR próprio. Regras institucionais e emissão de
+**Status**: US1 integrada pelo PR #11 e Notícias pelo PR #12. Associados (spec 005) possui incremento
+implementado com testes locais, mas ainda não está funcionalmente pronto nem autorizado para PR.
+Regras institucionais e emissão de
 credencial verificável continuam dependências explícitas. US6 ainda não foi implementada.
 
 Este arquivo acompanha o programa. A execução detalhada de cada funcionalidade ocorre no seu spec

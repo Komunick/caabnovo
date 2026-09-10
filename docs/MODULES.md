@@ -115,7 +115,7 @@ Não é necessário fornecer credencial para esta leitura; publicação não env
 Ver [contrato](../specs/004-news-publishing/contracts/news.md) e
 [evidência](../specs/004-news-publishing/evidence.md) para gates e limites.
 
-## Associados — implementação administrativa (spec 005)
+## Associados — incremento administrativo em validação (spec 005)
 
 Retomada em 10/09/2026 sobre `dev` com Notícias integrada. Cadastro único, dependências históricas,
 documentos privados com revisão/substituição, avaliações manuais independentes, histórico e contrato
@@ -124,6 +124,8 @@ consulta, edição e análise com concessão inicial apenas ao administrador exi
 beneficiário não cria conta de acesso. Credencial registra situação e validade; emissão verificável,
 políticas institucionais e identidade mobile permanecem dependências explícitas da mesma spec.
 Ver [spec](../specs/005-members-management/spec.md) e [evidências](../specs/005-members-management/evidence.md).
+O usuário esclareceu em 10/09/2026 que o módulo ainda não está pronto. As verificações acima
+cobrem o incremento existente; a conclusão funcional deve preceder qualquer PR.
 
 ## Revisão de sobreposição: Usuários e Colaboradores — 10/09/2026
 
