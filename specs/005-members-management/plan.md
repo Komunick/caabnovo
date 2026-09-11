@@ -81,3 +81,7 @@ credenciais. `/members/oab` reutiliza os componentes e o padrão visual de Assoc
 Credenciais vigentes e teste com inscrição autorizada são necessários para homologar a conexão.
 
 US1 cadastro/vínculos → US2 documentos → US3 avaliações → US4 consumidores/navegação → gates/PR. Caassh segue o [handoff](contracts/caassh-handoff.md), sem presumir outra instância ativa. Base atualizada para origin/dev be46efa em 10/09/2026, com Notícias, Configurações, remoção do autenticador e correção de URLs públicas atrás de proxy. PR final contém Associados e os ajustes necessários da fundação para proteger seus arquivos; permanece suspenso até conclusão e revisão funcional solicitada pelo usuário.
+
+Campos comuns (11/09/2026): consumir MaskedContactInput/ValidatedTextField e contratos
+compartilhados de telefone/e-mail; preservar o componente de nascimento e o seletor
+válido de UF da OAB. Validação/entrega transversal pelas tarefas CF01–CF03 da fundação.

@@ -4,6 +4,8 @@ import { Plus } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Role, User } from "@caab/contracts";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
 import { SensitiveActionDialog } from "./sensitive-action-dialog";
 
 type UserFormProps =
@@ -110,10 +112,16 @@ export function UserForm(props: Readonly<UserFormProps>) {
         </div>
         {props.mode === "create" ? (
           <>
-            <div className="form-field">
-              <label htmlFor="create-email">E-mail</label>
-              <input id="create-email" name="email" type="email" required />
-            </div>
+            <ValidatedTextField
+              id="create-email"
+              label="E-mail"
+              name="email"
+              type="email"
+              required
+              maxLength={254}
+              schema={requiredEmailSchema}
+              message={contactFieldMessages.email}
+            />
             {props.roles.length ? (
               <fieldset className="user-role-options">
                 <legend>Funções iniciais</legend>

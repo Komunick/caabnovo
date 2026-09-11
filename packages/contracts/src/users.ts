@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { requiredEmailSchema } from "./brazilian-contact";
 import { idSchema, nonEmptyReasonSchema, pageSchema, paginationQuerySchema } from "./common";
 import { currentUserSchema, userStatusSchema } from "./auth";
 
@@ -13,7 +14,7 @@ export const userListQuerySchema = paginationQuerySchema.extend({
 
 export const createUserRequestSchema = z
   .object({
-    email: z.email(),
+    email: requiredEmailSchema,
     name: z.string().trim().min(1).max(160),
     roleIds: z.array(idSchema),
     justification: nonEmptyReasonSchema,

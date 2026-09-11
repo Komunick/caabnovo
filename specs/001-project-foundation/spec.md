@@ -340,3 +340,14 @@ após uma permissão individual removida.
 Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
 auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
 inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reais para mutações.
+
+## Padrão de campos comuns — revisão de 11/09/2026
+
+Máscaras e avisos de CPF/CNPJ, telefone brasileiro, CEP, UF, e-mail e site são
+componentes/contratos compartilhados. Aplicar nos campos equivalentes existentes;
+buscas textuais e links de conteúdo editorial não recebem máscara de contato.
+Validar no preenchimento/saída e antes do envio, com erro associado ao campo,
+valor preservado e limite explícito. Telefone tem DDD + oito/nove dígitos; CNPJ
+mantém compatibilidade alfanumérica. Servidor usa o mesmo contrato nas mutações.
+CEP permite consulta pontual automática, falha recuperável e correção manual,
+sem transmitir dados da conta. Não reescrever dados persistidos em lote.

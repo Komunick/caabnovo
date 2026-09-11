@@ -137,3 +137,5 @@ O retorno do usuário iniciou T017. O módulo permanece em revisão funcional, s
 
 
 T025 concluída localmente em 10/09/2026; T028 reaberta na revisão após o esclarecimento do usuário. O resultado da consulta real foi removido a pedido do usuário; não conservar número, situação ou capturas nem reutilizar essa inscrição em testes. Limite de seis dígitos aplicado no campo e no servidor. Não houve configuração da hospedagem ou PR.
+
+- [ ] CF-M Padronizar máscara e validação acessível de CPF/telefone/e-mail, conforme CF01–CF03 da fundação, e validar persistência/edição.

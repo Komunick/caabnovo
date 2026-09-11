@@ -13,5 +13,6 @@ export * from "./news-body";
 export * from "./news-delivery";
 export * from "./openapi";
 export * from "./members";
+export * from "./brazilian-contact";
 export * from "./oab-lookup";
 export * from "./user-access";
