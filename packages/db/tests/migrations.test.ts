@@ -39,6 +39,7 @@ describe("database foundation migrations", () => {
       "0012_remove_authenticator.sql",
       "0013_member_administrative_status.sql",
       "0014_user_access.sql",
+      "0015_member_profile_photo.sql",
     ]);
   });
 

@@ -1,5 +1,10 @@
 # Modelo
 
+Incremento 0015: `member.photo_file_id` nullable, FK para `stored_file`, sem backfill.
+Serviço exige arquivo privado do associado, JPEG/PNG de até 5 MB, available/clean e não
+excluído. Alterar foto incrementa somente version; auditoria registra IDs anterior/novo,
+sem imagem, nome ou URL assinada. Remoção não exclui fisicamente o arquivo.
+
 Migration aditiva 0013: member.administrative_status (inactive/active/blocked),
 administrative_reason, administrative_changed_at e administrative_changed_by (FK user).
 Registros anteriores e novos recebem inactive sem decisão presumida; CHECK exige metadados

@@ -12,6 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { ProfileForm } from "./profile-form";
 import { MemberDocuments } from "./member-documents";
+import { MemberAvatar, MemberPhoto } from "./member-photo";
 import { MemberAdministrativeStatus } from "./member-administrative-status";
 import { memberRequest, mutationHeaders } from "./client";
 import {
@@ -53,7 +54,9 @@ export function MemberEditor({
 }) {
   const [member, setMember] = useState(initial);
   const [tab, setTab] = useState("Situações");
-  const [busy, setBusy] = useState(false);
+  const [commandBusy, setBusy] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const busy = commandBusy || photoBusy;
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [dimension, setDimension] = useState<MemberDimension>("registration");
@@ -97,7 +100,16 @@ export function MemberEditor({
     <div className={styles.root}>
       <header className="page-header">
         <p className="eyebrow">Pessoas</p>
-        <h1>{member.profile.socialName || member.profile.name}</h1>
+        <h1 className={styles.profileHeading}>
+          <MemberAvatar
+            src={
+              canReadFiles && member.photoFileId
+                ? `/api/v1/members/${member.id}/files/${member.photoFileId}`
+                : undefined
+            }
+          />
+          <span>{member.profile.socialName || member.profile.name}</span>
+        </h1>
         <p>
           {member.archivedAt ? "Cadastro arquivado" : "Cadastro de associado ou dependente"} ·
           atualizado em {formatMemberDate(member.updatedAt)}
@@ -132,6 +144,7 @@ export function MemberEditor({
         {["Situações", "Cadastro", "Dependentes", "Documentos", "Histórico"].map((label) => (
           <Button
             key={label}
+            disabled={photoBusy}
             aria-pressed={tab === label}
             intent={tab === label ? "primary" : "secondary"}
             onClick={() => {
@@ -146,6 +159,14 @@ export function MemberEditor({
       {tab === "Cadastro" && (
         <section className="panel">
           <h2>Cadastro</h2>
+          <MemberPhoto
+            member={member}
+            canRead={canReadFiles}
+            canUpload={canUpload && canWrite}
+            disabled={commandBusy || !!member.archivedAt || !canWrite}
+            command={command}
+            onBusyChange={setPhotoBusy}
+          />
           <ProfileForm
             key={member.version}
             profile={member.profile}

@@ -1,5 +1,22 @@
 # API administrativa v1
 
+## Foto de perfil (11/09/2026)
+
+No formulário de criação, a seleção é local até o envio do cadastro. Após receber o ID,
+a UI envia e vincula a foto pelo mesmo contrato abaixo. Falha na foto não repete a criação:
+o cadastro permanece salvo, com opção de retomar a foto ou abrir o perfil.
+
+GET do cadastro passa a retornar `photoFileId: UUID | null`; sem `files:read`, retorna null.
+O comando `photo` aceita `{ action: "photo", fileId: UUID | null, expectedVersion, justification }`.
+Exige `members:read`, `members:write` e `files:read`. UUID vincula imagem privada JPEG/PNG de
+até 5 MB do próprio associado, available/clean e não excluída; null remove o vínculo.
+Reutiliza idempotência e controle de versão; preserva profile_version, avaliações e documentos.
+
+`GET /api/v1/members/{id}/files/{fileId}/status` retorna metadados seguros e estado de um
+arquivo próprio para acompanhar verificação; exige `members:read` e `files:read`, no-store.
+Upload/finalize permanecem nas rotas existentes com `ownerType: "member"` e `ownerId: id`.
+Imagem exibida usa download privado existente, nunca URL pública persistida.
+
 Sessão ativa e `members:read` em todas as rotas; `members:write` para criar, editar, arquivar, restaurar, vincular e anexar; `members:review` para avaliações e revisões. Arquivos exigem também `files:read`; upload e finalização exigem `members:write` e `files:create`. As concessões são revalidadas no banco; não há MFA, conforme remoção do autenticador na spec 006. Cache private/no-store. Mutações JSON <=64 KiB, Origin pública configurada em BETTER_AUTH_URL, x-csrf-token e Idempotency-Key (16–128), expectedVersion em registros existentes. Erros seguros 401/403/404/409/413/422, sem SQL/CPF.
 
 | Rota | Contrato |

@@ -4,6 +4,26 @@ Branch `feature/members-management` · 2026-09-09 · [Spec](spec.md)
 
 ## Summary
 
+## Incremento: foto de perfil — 11/09/2026
+
+Branch `feature/member-profile-photo`, baseada em dev após #16. Migration aditiva 0015:
+`member.photo_file_id` opcional com FK para stored_file. Comando `photo` com fileId/null
+reutiliza versão, idempotência, autorização e auditoria transacional. Revalidar proprietário,
+privacidade, MIME real, tamanho e liberação. Preservar profile_version e avaliações.
+
+Reutilizar upload-intent, storage, finalize e worker. Consultar estado do arquivo por ID
+autorizado; a UI só vincula após liberação. Cabeçalho com avatar circular privado e fallback;
+aba Cadastro com seletor, prévia, justificativa e salvar/remover com feedback acessível.
+No novo cadastro, selecionar e visualizar a foto antes de salvar. Criar o registro de forma
+idempotente e executar o mesmo envio privado usando seu ID e motivo do cadastro. Em falha,
+preservar o associado criado e oferecer repetir a foto ou abrir o cadastro sem duplicação.
+
+Validar contrato, negações, concorrência, idempotência e rollback em banco descartável.
+E2E com imagem sintética e storage isolado, substituição/remoção, temas e 390 px.
+PR único para dev com gates; sem seed compartilhado, consulta OAB ou merge automático.
+
+## Plano original
+
 Cadastro único, dependências históricas, documentos privados e avaliações manuais independentes. Reutilizar fundação, sem login adicional, CMS ou saldo de créditos.
 
 ## Technical Context

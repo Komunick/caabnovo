@@ -1,5 +1,14 @@
 # Tasks: Associados
 
+## Incremento: foto de perfil — branch feature/member-profile-photo
+
+- [x] T034 Atualizar spec, pesquisa oficial, plano e modelo antes da implementação.
+- [x] T035 Adicionar referência opcional e comando privado, versionado e auditado para foto.
+- [x] T036 Implementar envio seguro, prévia no novo cadastro, substituição/remoção e avatar.
+- [x] T037 Validar arquivos inválidos, autorização, concorrência, idempotência e rollback.
+- [ ] T038 Conferir visualmente temas e 390 px; validar E2E, acessibilidade e build.
+- [ ] T039 Abrir PR único para dev e concluir gates, sem executar merge.
+
 **Status em 11/09/2026**: o usuário confirmou “associados considere pronto” e autorizou
 preparar os PRs do trabalho concluído que ainda não entrou em dev. T017 concluída por essa
 confirmação explícita. T012 concluída com o [PR #15](https://github.com/Komunick/caabnovo/pull/15);
