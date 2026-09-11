@@ -382,3 +382,9 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - [x] Corrigir cores do login e centralizar Gestão Interna abaixo da logo, preservando a imagem original.
 - [x] Concluir inspeção do painel autenticado nos dois temas.
 - [ ] Atualizar o PR #16 e registrar resultados finais do CI do navegador.
+
+## Campos comuns — revisão de 11/09/2026
+
+- [ ] CF01 Inventariar formulários existentes e extrair máscaras/contratos/avisos compartilhados.
+- [ ] CF02 Aplicar aos campos de Associados, Colaboradores, login, recuperação e Configurações; preservar autorização e dados.
+- [ ] CF03 Testar telefone fixo/celular, CPF/CNPJ, CEP/falhas/concorrência, e-mail/site inválidos e teclado; concluir gates e PR próprio.

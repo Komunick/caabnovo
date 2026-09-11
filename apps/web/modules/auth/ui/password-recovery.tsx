@@ -1,6 +1,8 @@
 "use client";
 
 import { PasswordInput } from "@/components/ui/password-input";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -123,17 +125,17 @@ export function PasswordRecovery({
               {ready && !token ? <p>Abra o link recebido no e-mail ou solicite outro.</p> : null}
             </>
           ) : (
-            <div className="form-field">
-              <label htmlFor="recovery-email">E-mail da conta</label>
-              <input
-                id="recovery-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                maxLength={254}
-              />
-            </div>
+            <ValidatedTextField
+              id="recovery-email"
+              label="E-mail da conta"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              maxLength={254}
+              schema={requiredEmailSchema}
+              message={contactFieldMessages.email}
+            />
           )}
           <button
             className="primary-button"

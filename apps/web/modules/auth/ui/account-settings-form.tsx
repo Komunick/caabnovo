@@ -1,6 +1,8 @@
 "use client";
 
 import { PasswordInput } from "@/components/ui/password-input";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -172,17 +174,17 @@ export function AccountSettingsForm({
           </p>
         ) : null}
         <form onSubmit={(event) => submit(event, "request-email")}>
-          <div className="form-field">
-            <label htmlFor="settings-email">Novo e-mail</label>
-            <input
-              id="settings-email"
-              name="newEmail"
-              type="email"
-              autoComplete="email"
-              maxLength={254}
-              required
-            />
-          </div>
+          <ValidatedTextField
+            id="settings-email"
+            label="Novo e-mail"
+            name="newEmail"
+            type="email"
+            autoComplete="email"
+            maxLength={254}
+            required
+            schema={requiredEmailSchema}
+            message={contactFieldMessages.email}
+          />
           <div className="form-field">
             <label htmlFor="email-password">Senha atual para trocar e-mail</label>
             <PasswordInput

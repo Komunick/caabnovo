@@ -28,3 +28,8 @@ Branch: `feature/account-settings`, base `origin/dev`. Status: implementação e
 ## Entrega
 
 Branch e spec independentes de Associados. Publicar a branch e abrir PR para dev após concluir os testes, conforme autorização explícita do usuário em 10/09/2026. Preservar revisão humana específica de autenticação/permissões e CI antes de merge; homologação em DEV ocorre no fluxo de entrega.
+
+Campos comuns (11/09/2026): consumir ValidatedTextField/requiredEmailSchema em
+login, recuperação e solicitação de novo e-mail. Manter senha, confirmação e
+política de envio; validar entrada inválida sem chamada HTTP e fluxos já aceitos.
+Entrega transversal nas tarefas CF01–CF03 da fundação.

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { requiredEmailSchema } from "./brazilian-contact";
 import { newPasswordSchema, PASSWORD_MAX_LENGTH } from "./password-policy";
 
 const version = z.number().int().positive();
@@ -20,10 +21,7 @@ export const accountSettingsRequestSchema = z.discriminatedUnion("action", [
     .object({
       action: z.literal("request-email"),
       currentPassword,
-      newEmail: z
-        .email()
-        .max(254)
-        .transform((value) => value.toLowerCase()),
+      newEmail: requiredEmailSchema.transform((value) => value.toLowerCase()),
       version,
     })
     .strict(),

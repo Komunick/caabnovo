@@ -190,3 +190,17 @@ após uma permissão individual removida.
 Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
 auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
 inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reais para mutações.
+
+## Plano dos campos comuns — 11/09/2026
+
+Branch fix/common-field-validation, PR próprio para dev. Extrair a máscara já
+usada por Associados para components/ui/masked-contact-input; reutilizar CPF e
+telefone e acrescentar CNPJ/CEP. ValidatedTextField compartilha FormField, contrato,
+limites, validade nativa e aviso acessível. BrazilianAddressFields cuida de consulta
+pontual ao ViaCEP com timeout/cancelamento e proteção de alterações manuais.
+Contratos de contato em packages/contracts/src/brazilian-contact.ts; usados em
+Associados, Colaboradores e Configurações. Login/recuperação mantêm autorização e
+não enviam dados malformados. Revisar os campos existentes sem acrescentar endereço
+onde o domínio não o possui. Parceiros consome esta branch em composição local;
+seu endereço/formulário específico fica no PR 18. Validar contratos, máscara/edição,
+E2E dos formulários afetados, integração, build, acessibilidade e CI.

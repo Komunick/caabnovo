@@ -232,3 +232,14 @@ após uma permissão individual removida.
 Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
 auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
 inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reais para mutações.
+
+## Campos comuns — 11/09/2026
+
+Fontes oficiais: https://www.w3.org/WAI/tutorials/forms/notifications/ e
+https://www.w3.org/WAI/tutorials/forms/grouping/ (consultadas em 11/09/2026), e
+https://viacep.com.br/ (consultada em 11/09/2026). Usar avisos junto aos campos,
+associação acessível e alternativa de preenchimento manual para falha de CEP.
+Consulta ao ViaCEP envia somente oito dígitos, sem credenciais/referrer, sem lote.
+Máscaras auxiliam digitação e não comprovam identidade, contato ou titularidade.
+Reutilização exigida pelo usuário: padrões existentes de Associados são extraídos
+para componentes comuns, sem introduzir biblioteca nova ou alterar dados em lote.
