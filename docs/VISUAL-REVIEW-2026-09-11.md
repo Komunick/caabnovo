@@ -109,3 +109,25 @@ Validação local desta revisão:
 Nenhum seed/reset do banco compartilhado, consulta externa OAB ou envio de formulário real
 foi usado nesta verificação. Build e E2E completos serão verificados no ambiente isolado do
 CI dos PRs; resultados serão registrados após sua execução.
+
+## Acessos individuais e revisão autenticada da marca
+
+Revisão interativa no Chrome, em localhost:3106, após o usuário entrar em sua conta:
+
+- Inicial nos temas claro e escuro: marca sem fundo e Gestão Interna centralizado abaixo dela.
+- Lista de Notícias e perfil de colaborador de teste nos dois temas: ações, busca e campos alinhados.
+- Matriz de acessos com módulos e ações em grupos, caixas de seleção legíveis e justificativa separada.
+- Removidos os tons rosados dos destaques escuros. O vermelho passa a #ff3b30; superfícies
+  permanecem azul-escuras. No tema claro, painéis são brancos e os destaques usam #c62828.
+- Conferência visual final da inicial escura com o novo vermelho no menu e nas categorias.
+
+Nenhum formulário de conta ou de permissões foi salvo nesta inspeção. A senha não foi
+consultada nem redefinida. Esta rodada adicional foi feita em desktop; a revisão de 390 px
+registrada acima se refere à harmonização anterior, sem a nova matriz de acessos.
+
+Validação do incremento: 269 testes unitários/de contrato em 42 arquivos e 115 integrações
+em 14 arquivos passaram. A execução direcionada posterior de Notícias e acessos passou
+33 testes, incluindo revogação efetiva; os seis testes de acessos passaram novamente após
+o ajuste final da proteção do último administrador. Lint, typecheck e formatação passaram.
+Os ajustes finais de CSS passaram em Prettier e git diff --check. Build e navegador do
+novo commit serão registrados após o CI do PR #16.

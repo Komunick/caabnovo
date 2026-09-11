@@ -99,6 +99,10 @@ export async function lockAndCountActiveAdministrators(client: PoolClient): Prom
      JOIN "user" u ON u.id = ur.user_id
      WHERE r.is_administrative AND r.status = 'active' AND r.deleted_at IS NULL
        AND u.status = 'active'
+       AND NOT EXISTS (
+         SELECT 1 FROM user_access a WHERE a.user_id=u.id
+         AND NOT a.permissions @> ARRAY['users:read','users:create','users:update','users:disable','roles:read','roles:grant','roles:revoke']::text[]
+       )
        AND ur.revoked_at IS NULL AND ur.valid_from <= now()
        AND (ur.valid_until IS NULL OR ur.valid_until > now())`,
   );

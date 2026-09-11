@@ -77,6 +77,54 @@ afterAll(async () => {
 });
 
 describe.sequential("news persistence with Payload", () => {
+  it("enforces individual read, edit and publish permissions even with a stale actor", async () => {
+    const article = await createNewsDraft(payload, context, {
+      metadata: { title: "Consulta restrita", slug: `access-${crypto.randomUUID()}` },
+      body: emptyNewsBody,
+    });
+    const id = context.actor!.userId;
+    try {
+      await admin.query(
+        "INSERT INTO user_access(user_id,permissions,updated_by) VALUES ($1,ARRAY['news:read'],$1)",
+        [id],
+      );
+      expect((await getNewsDraft(payload, context.actor, article.id)).id).toBe(article.id);
+      await expect(
+        createNewsDraft(payload, context, {
+          metadata: { title: "Forbidden" },
+          body: emptyNewsBody,
+        }),
+      ).rejects.toMatchObject({ status: 403 });
+      await expect(
+        archiveNews(payload, context, article.id, { expectedVersion: article.revision }),
+      ).rejects.toMatchObject({ status: 403 });
+      await admin.query(
+        "UPDATE user_access SET permissions=ARRAY['news:read','news:write'] WHERE user_id=$1",
+        [id],
+      );
+      await expect(
+        createNewsDraft(payload, context, {
+          metadata: { title: "Allowed draft" },
+          body: emptyNewsBody,
+        }),
+      ).resolves.toHaveProperty("id");
+      await expect(
+        publishNews(payload, context, article.id, {
+          expectedVersion: article.revision,
+          channels: ["site"],
+        }),
+      ).rejects.toMatchObject({ status: 403 });
+      await admin.query("UPDATE user_access SET permissions='{}' WHERE user_id=$1", [id]);
+      await expect(getNewsDraft(payload, context.actor, article.id)).rejects.toMatchObject({
+        status: 403,
+      });
+      await expect(listNewsDrafts(payload, context.actor, {})).rejects.toMatchObject({
+        status: 403,
+      });
+    } finally {
+      await admin.query("DELETE FROM user_access WHERE user_id=$1", [id]);
+    }
+  });
   it("shows only the four latest live publications on home across channels", async () => {
     const body = {
       root: {

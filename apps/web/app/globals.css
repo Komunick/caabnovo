@@ -257,7 +257,7 @@ h2 {
 
 .auth-benefits svg {
   width: 1.15rem;
-  color: #ffb5bf;
+  color: #ff3b30;
 }
 
 .auth-story__footer {
@@ -713,7 +713,7 @@ h2 {
 }
 
 .eyebrow--inverse {
-  color: #ffb5bf;
+  color: #ff3b30;
 }
 
 .panel {
@@ -3229,8 +3229,14 @@ tbody tr:hover {
 
 .brand {
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
   gap: 0.4rem;
+}
+
+.brand__copy {
+  text-align: center;
 }
 
 .brand__logo {
@@ -3248,7 +3254,10 @@ tbody tr:hover {
 .brand__logo img {
   position: absolute;
   top: 50%;
-  width: 100%;
+  /* The original 500px image has 25px of transparent padding on each side. */
+  left: -5.5556%;
+  width: 111.1112%;
+  max-width: none;
   height: auto;
   transform: translateY(-50%);
   filter: var(--brand-logo-filter);
@@ -3271,7 +3280,28 @@ tbody tr:hover {
   filter: brightness(0) invert(1);
 }
 .auth-story .brand__copy span {
-  color: var(--color-inverse-muted);
+  color: #ffffff;
+}
+
+.auth-story {
+  --color-inverse: #ffffff;
+  --color-inverse-muted: #ffffff;
+}
+.auth-story__content > p.auth-story__title {
+  color: #ffffff;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1.08;
+}
+.auth-story .eyebrow--inverse {
+  color: #ffffff;
+  border-left: 3px solid #e3262d;
+  padding-left: 0.65rem;
+}
+.auth-benefits svg {
+  color: #ff3b30;
+}
+:root:not([data-theme="dark"]) .auth-panel {
+  background: #ffffff;
 }
 
 .user-role-options {
@@ -4133,5 +4163,60 @@ thead th {
   }
   .home-card-actions .button {
     flex: 1 1 auto;
+  }
+}
+
+.access-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.access-group {
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+.access-group legend {
+  padding: 0 0.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.access-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0.55rem 0;
+  min-height: 44px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.access-option input[type="checkbox"] {
+  flex: 0 0 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  min-height: 0;
+  margin: 0.1rem 0 0;
+  accent-color: var(--color-action);
+}
+.access-option:has(input:disabled) {
+  color: var(--color-muted);
+}
+.access-save {
+  margin-top: 1.25rem;
+}
+.access-save .form-field {
+  max-width: 48rem;
+}
+@media (max-width: 1100px) {
+  .access-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .access-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

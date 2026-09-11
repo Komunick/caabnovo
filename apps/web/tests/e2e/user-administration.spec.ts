@@ -53,6 +53,25 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await page.getByLabel("Motivo da revogação").fill("Atividade concluída");
   await page.getByRole("button", { name: "Confirmar revogação" }).click();
 
+  const accesses = page.getByRole("region", { name: "Acessos do colaborador" });
+  await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).uncheck();
+  await expect(
+    accesses.getByRole("checkbox", { name: "Publicar, programar e arquivar notícias" }),
+  ).not.toBeChecked();
+  await accesses
+    .getByLabel("Justificativa dos acessos")
+    .fill("Acesso somente de consulta para teste");
+  await accesses.getByRole("button", { name: "Salvar acessos" }).click();
+  await expect(accesses.getByRole("status")).toHaveText("Acessos atualizados.");
+  await page.reload();
+  await expect(
+    accesses.getByRole("checkbox", { name: "Consultar notícias e rascunhos" }),
+  ).toBeChecked();
+  await expect(
+    accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }),
+  ).not.toBeChecked();
+  await expectWcag22AA(page);
+
   await page.getByRole("button", { name: "Desativar colaborador" }).click();
   await page.getByLabel("Justificativa da desativação").fill("Conta sintética concluída");
   await page.getByRole("button", { name: "Confirmar desativação" }).click();

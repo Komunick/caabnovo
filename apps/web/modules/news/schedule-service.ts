@@ -5,7 +5,7 @@ import type { PgBoss } from "pg-boss";
 import { idSchema, scheduleNewsRequestSchema, type NewsActionJobPayload } from "@caab/contracts";
 import { preparePublication } from "@caab/news/publication";
 import type { NewsDatabase } from "@caab/news/database";
-import { newsTransaction } from "./payload/transaction";
+import { newsTransaction, newsPublishTransaction } from "./payload/transaction";
 import { NewsPolicyError } from "./errors";
 import type { NewsCommandContext } from "./news-service";
 import type { RequestActor } from "../shared/request-context";
@@ -69,7 +69,7 @@ export async function scheduleNews(
   const fingerprint = createHash("sha256")
     .update(JSON.stringify({ id, ...command }))
     .digest("hex");
-  return newsTransaction(payload, context.actor, async ({ db, req, lockNews, audit }) => {
+  return newsPublishTransaction(payload, context.actor, async ({ db, req, lockNews, audit }) => {
     await db.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [
       `news:action:${context.actor!.userId}:${context.idempotencyKey}`,
     ]);
@@ -218,7 +218,7 @@ export async function retryNewsAction(
 ) {
   idSchema.parse(id);
   idSchema.parse(actionId);
-  return newsTransaction(payload, context.actor, async ({ db, lockNews, audit }) => {
+  return newsPublishTransaction(payload, context.actor, async ({ db, lockNews, audit }) => {
     await lockNews(id);
     const action = (
       await db.query(
@@ -274,7 +274,7 @@ export async function cancelNewsAction(
 ) {
   idSchema.parse(id);
   idSchema.parse(actionId);
-  return newsTransaction(payload, context.actor, async ({ db, lockNews, audit }) => {
+  return newsPublishTransaction(payload, context.actor, async ({ db, lockNews, audit }) => {
     await lockNews(id);
     const row = (
       await db.query(

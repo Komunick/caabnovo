@@ -47,11 +47,13 @@ export function NewsEditor({
   initialHistory,
   canReadMedia = false,
   canUploadMedia = false,
+  canPublish = false,
 }: Readonly<{
   initial?: NewsRecord;
   initialHistory?: History;
   canReadMedia?: boolean;
   canUploadMedia?: boolean;
+  canPublish?: boolean;
 }>) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -459,7 +461,7 @@ export function NewsEditor({
             <span className="field-hint">
               A cópia preserva o texto e remove imagens e destinos.
             </span>
-            {!record.archived ? (
+            {!record.archived && canPublish ? (
               <Button
                 disabled={pending || mediaUploading || dirty}
                 onClick={() => setConfirm({ action: "archive" })}
@@ -470,26 +472,28 @@ export function NewsEditor({
           </div>
         ) : null}
       </section>
-      <NewsPublishing
-        onFieldErrors={(fields) => {
-          setFieldErrors(fields);
-          focusNewsError();
-        }}
-        record={record}
-        onPrepare={() => save(undefined, false, true)}
-        dirty={dirty}
-        disabled={!ready || pending || mediaUploading}
-        onBusyChange={setMediaUploading}
-        onSaved={(saved) => {
-          setRecord(saved);
-          setMetadata(saved.metadata);
-          setBody(saved.body);
-          setEditorKey((key) => key + 1);
-          setDirty(false);
-          if (!initial) router.replace(`/news/${saved.id}`);
-          else void loadHistory();
-        }}
-      />
+      {canPublish && (
+        <NewsPublishing
+          onFieldErrors={(fields) => {
+            setFieldErrors(fields);
+            focusNewsError();
+          }}
+          record={record}
+          onPrepare={() => save(undefined, false, true)}
+          dirty={dirty}
+          disabled={!ready || pending || mediaUploading}
+          onBusyChange={setMediaUploading}
+          onSaved={(saved) => {
+            setRecord(saved);
+            setMetadata(saved.metadata);
+            setBody(saved.body);
+            setEditorKey((key) => key + 1);
+            setDirty(false);
+            if (!initial) router.replace(`/news/${saved.id}`);
+            else void loadHistory();
+          }}
+        />
+      )}
       {record ? (
         <section className="panel" aria-labelledby="news-history-title">
           <h2 id="news-history-title">Histórico de versões</h2>

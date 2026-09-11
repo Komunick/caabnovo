@@ -67,7 +67,7 @@ test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page 
   await expect(menuButton).toHaveAttribute("aria-expanded", "true");
   await expect(shell).toHaveClass(/admin-shell--mobile-open/);
 
-  await page.getByRole("link", { name: "Auditoria", exact: true }).click();
+  await administrativeNavigation.getByRole("link", { name: "Auditoria", exact: true }).click();
   await expect(page).toHaveURL(/\/audit$/);
   await expect(shell).not.toHaveClass(/admin-shell--mobile-open/);
 });

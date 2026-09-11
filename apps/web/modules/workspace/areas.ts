@@ -32,7 +32,9 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       icon: House,
       paths: ["/"],
     },
-    {
+  ];
+  if (allowed.has(PERMISSIONS.newsRead)) {
+    areas.push({
       id: "news",
       href: "/news",
       label: "Notícias",
@@ -41,8 +43,8 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
         "comunicação conteúdo editorial notícias rascunhos destaques publicação agenda aplicativo",
       icon: Newspaper,
       paths: ["/news"],
-    },
-  ];
+    });
+  }
   if (allowed.has(PERMISSIONS.membersRead)) {
     areas.push({
       id: "members",

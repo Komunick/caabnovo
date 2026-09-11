@@ -10,6 +10,8 @@ import { getDatabase } from "@/modules/shared/database";
 import { serializeUser } from "@/modules/users/user-service";
 import { RoleAssignmentForm } from "@/modules/users/ui/role-assignment-form";
 import { UserForm } from "@/modules/users/ui/user-form";
+import { UserAccessForm } from "@/modules/users/ui/user-access-form";
+import { readUserAccess } from "@caab/db/repositories/user-access";
 
 export default async function UserDetailPage({
   params,
@@ -23,9 +25,10 @@ export default async function UserDetailPage({
     return <p role="alert">Você não tem permissão para acessar colaboradores.</p>;
   }
   const database = getDatabase();
-  const [record, roleRecords] = await Promise.all([
+  const [record, roleRecords, access] = await Promise.all([
     findUserById(database.pool, userId),
     listActiveRoles(database.pool),
+    readUserAccess(database.pool, userId),
   ]);
   if (!record) return <p role="alert">Colaborador não encontrado.</p>;
   const user = userSchema.parse(serializeUser(record));
@@ -59,13 +62,22 @@ export default async function UserDetailPage({
           canDisable={actor.permissions.has(PERMISSIONS.usersDisable)}
         />
       ) : null}
-      <RoleAssignmentForm
+      <UserAccessForm
         userId={user.id}
-        roles={roles}
-        assignedRoles={user.roles}
-        canGrant={actor.permissions.has(PERMISSIONS.rolesGrant)}
-        canRevoke={actor.permissions.has(PERMISSIONS.rolesRevoke)}
+        initial={access}
+        authority={[...actor.permissions]}
+        self={actor.userId === user.id}
+        active={user.status === "active"}
       />
+      {access.version === 0 ? (
+        <RoleAssignmentForm
+          userId={user.id}
+          roles={roles}
+          assignedRoles={user.roles}
+          canGrant={actor.permissions.has(PERMISSIONS.rolesGrant)}
+          canRevoke={actor.permissions.has(PERMISSIONS.rolesRevoke)}
+        />
+      ) : null}
     </div>
   );
 }

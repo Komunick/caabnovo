@@ -12,6 +12,8 @@ export default async function NewNewsPage() {
     new Request("http://caab.internal/news/new", { headers: await headers() }),
   );
   if (!actor) redirect("/login");
+  if (!actor.permissions.has(PERMISSIONS.newsWrite))
+    return <p role="alert">Você não tem permissão para criar notícias.</p>;
   return (
     <div className="page-stack news-module">
       <header className="page-header">
@@ -22,6 +24,7 @@ export default async function NewNewsPage() {
         <p>Escreva, adicione imagens e publique quando estiver pronto.</p>
       </header>
       <NewsEditor
+        canPublish={actor.permissions.has(PERMISSIONS.newsPublish)}
         canReadMedia={actor.permissions.has(PERMISSIONS.filesRead)}
         canUploadMedia={actor.permissions.has(PERMISSIONS.filesCreate)}
       />

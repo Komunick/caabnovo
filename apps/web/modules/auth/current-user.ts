@@ -1,5 +1,6 @@
 import "server-only";
 import type { Pool } from "pg";
+import { readUserPermissions } from "@caab/db/repositories/user-access";
 import { apiError, currentUserSchema, type CurrentUser } from "@caab/contracts";
 import { getAuth } from "./auth";
 import { loadActiveSession } from "./session-dal";
@@ -43,17 +44,7 @@ export async function loadCurrentUser(
   const row = result.rows[0];
   if (!row) return null;
 
-  const permissions = await pool.query<{ permission: string }>(
-    `SELECT DISTINCT p.resource || ':' || p.action AS permission
-     FROM user_role ur
-     JOIN role r ON r.id = ur.role_id AND r.status = 'active' AND r.deleted_at IS NULL
-     JOIN role_permission rp ON rp.role_id = r.id
-     JOIN permission p ON p.id = rp.permission_id
-     WHERE ur.user_id = $1 AND ur.revoked_at IS NULL AND ur.valid_from <= now()
-       AND (ur.valid_until IS NULL OR ur.valid_until > now())
-     ORDER BY permission`,
-    [userId],
-  );
+  const permissions = await readUserPermissions(pool, userId);
 
   return currentUserSchema.parse({
     id: row.id,
@@ -62,7 +53,7 @@ export async function loadCurrentUser(
     status: row.status,
     twoFactorEnabled: false,
     roles: row.roles ?? [],
-    permissions: permissions.rows.map(({ permission }) => permission),
+    permissions,
     version: row.version,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at?.toISOString() ?? null,

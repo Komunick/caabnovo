@@ -2,7 +2,7 @@ import "server-only";
 import { writeAuditEvent, type AuditEventInput } from "@caab/db/repositories/audit-writer";
 import type { Payload } from "payload";
 import type { RequestActor } from "../../shared/request-context";
-import { AuthenticationRequiredError } from "../../auth/authorize";
+import { AuthenticationRequiredError, PermissionDeniedError } from "../../auth/authorize";
 import { withNewsDatabase, type NewsDatabase, type NewsRequest } from "@caab/news/database";
 import { readNewsMedia, newsMediaRow, type NewsMediaFile } from "@caab/news/media";
 export type { NewsMediaFile } from "@caab/news/media";
@@ -20,6 +20,7 @@ export async function newsTransaction<T>(
     mediaFiles(ids: string[]): Promise<NewsMediaFile[]>;
     listMedia(newsId: string, page: number): Promise<NewsMediaFile[]>;
   }) => Promise<T>,
+  permission: "news:read" | "news:write" | "news:publish" = "news:read",
 ): Promise<T> {
   if (!actor) throw new AuthenticationRequiredError("Authentication required");
   return withNewsDatabase(payload, async (db, req) => {
@@ -28,6 +29,13 @@ export async function newsTransaction<T>(
       [actor.sessionId, actor.userId],
     );
     if (session.rows.length !== 1) throw new AuthenticationRequiredError("Authentication required");
+    const grants = await db.query(
+      "SELECT permission FROM effective_user_permission WHERE user_id=$1",
+      [actor.userId],
+    );
+    const allowed = new Set(grants.rows.map((row) => row.permission));
+    if (!allowed.has("news:read") || !allowed.has(permission))
+      throw new PermissionDeniedError("Permission denied");
     const scope = "news:create:" + actor.userId;
     return operation({
       req,
@@ -70,4 +78,19 @@ export async function newsTransaction<T>(
       audit: (event) => writeAuditEvent(db, event),
     });
   });
+}
+
+export function newsWriteTransaction<T>(
+  payload: Payload,
+  actor: RequestActor | undefined,
+  operation: Parameters<typeof newsTransaction<T>>[2],
+) {
+  return newsTransaction(payload, actor, operation, "news:write");
+}
+export function newsPublishTransaction<T>(
+  payload: Payload,
+  actor: RequestActor | undefined,
+  operation: Parameters<typeof newsTransaction<T>>[2],
+) {
+  return newsTransaction(payload, actor, operation, "news:publish");
 }

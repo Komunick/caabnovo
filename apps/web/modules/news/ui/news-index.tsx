@@ -21,6 +21,8 @@ export async function NewsIndex({
     new Request("http://caab.internal/news", { headers: await headers() }),
   );
   if (!actor) redirect("/login");
+  if (!actor.permissions.has("news:read"))
+    return <p role="alert">Você não tem permissão para acessar notícias.</p>;
   const parsed = newsListQuerySchema.safeParse({
     ...(await searchParams),
     collection: drafts ? "drafts" : "published",
@@ -39,9 +41,11 @@ export async function NewsIndex({
             ? "Conteúdos em preparação, ainda não publicados."
             : "Gerencie as notícias publicadas e seu histórico."}
         </p>
-        <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/news/new">
-          <Plus aria-hidden="true" /> Nova notícia
-        </Link>
+        {actor.permissions.has("news:write") && (
+          <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/news/new">
+            <Plus aria-hidden="true" /> Nova notícia
+          </Link>
+        )}
       </header>
       <ModuleNavigation
         label="Áreas de notícias"

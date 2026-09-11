@@ -310,3 +310,33 @@ Implementação: componentes `ModuleNavigation`, `SearchField` e `FilterToggle` 
 Validação: inspeção nos temas claro/escuro e 390 px, testes de navegação/autorização,
 integração da seleção de notícias e gates do repositório. Evidências e limites em
 `docs/VISUAL-REVIEW-2026-09-11.md`.
+
+## Acessos individuais de Colaboradores — 11/09/2026
+
+Solicitação confirmada: selecionar módulos e ações individualmente no perfil do colaborador,
+incluindo consultar Associados e editar Notícias; atualizar o PR #16 existente.
+
+Critérios: matriz agrupada por módulo com rótulos simples, justificativa e confirmação de
+salvamento; seleção efetiva após recarregar; negativa também em rotas/serviços e navegação;
+preservar acessos das contas existentes até edição explícita; nenhuma autoelevação, concessão
+além da autoridade do operador ou remoção do último administrador capaz de gerir acessos.
+
+Plano: migration aditiva `user_access` com conjunto explícito e versão. Sem configuração
+individual, manter RBAC existente e acesso editorial anterior. Uma view de permissões efetivas
+unifica leitura da sessão, identidade e serviços; com seleção individual, apenas as ações
+selecionadas são concedidas. Perfis legados permanecem para histórico e compatibilidade.
+Notícias passa a distinguir leitura, edição e publicação, com revalidação transacional.
+Serviço de atualização bloqueia conta/concorrência, revalida o operador, valida dependências,
+grava conjunto e auditoria na mesma transação e protege o último administrador.
+
+Pesquisa: OWASP Authorization Cheat Sheet, consultada em 11/09/2026:
+https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+Aplicar menor privilégio, negação por padrão para a seleção explícita e checagem no servidor
+em cada requisição. UI isolada não autoriza. Alternativas rejeitadas: esconder somente menu;
+criar um perfil compartilhado por combinação; alterar permissões de um perfil que afeta outras
+contas. Compatibilidade editorial é limitada às contas sem seleção explícita, nunca um fallback
+após uma permissão individual removida.
+
+Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
+auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
+inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reais para mutações.
