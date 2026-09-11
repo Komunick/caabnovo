@@ -5,6 +5,7 @@ import {
   MonitorCog,
   Newspaper,
   Settings,
+  Store,
   UsersRound,
   type LucideIcon,
 } from "lucide-react";
@@ -54,6 +55,17 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       keywords: "pessoas associados dependentes documentos OAB credencial elegibilidade",
       icon: UsersRound,
       paths: ["/members"],
+    });
+  }
+  if (allowed.has(PERMISSIONS.partnersRead)) {
+    areas.push({
+      id: "partners",
+      href: "/partners",
+      label: "Parceiros",
+      description: "Gerencie estabelecimentos, contratos e benefícios.",
+      keywords: "parceiros estabelecimentos convênios unidades contratos benefícios ofertas",
+      icon: Store,
+      paths: ["/partners"],
     });
   }
   if (allowed.has(PERMISSIONS.usersRead)) {

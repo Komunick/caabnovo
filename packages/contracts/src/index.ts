@@ -15,3 +15,4 @@ export * from "./openapi";
 export * from "./members";
 export * from "./oab-lookup";
 export * from "./user-access";
+export * from "./partners";

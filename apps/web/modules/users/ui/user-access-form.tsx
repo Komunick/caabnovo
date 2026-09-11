@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 
 const groups: { name: string; actions: [AccessPermission, string][] }[] = [
   {
+    name: "Parceiros",
+    actions: [
+      ["partners:read", "Consultar parceiros, contratos e benefícios"],
+      ["partners:write", "Cadastrar e editar parceiros e ofertas"],
+      ["partners:publish", "Aprovar contratos e publicar benefícios"],
+    ],
+  },
+  {
     name: "Notícias",
     actions: [
       ["news:read", "Consultar notícias e rascunhos"],

@@ -1,0 +1,110 @@
+.root {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 88rem;
+  margin-inline: auto;
+}
+.root > [role="status"]:empty {
+  position: absolute;
+  margin: 0;
+}
+.root > h2,
+.root > p {
+  margin: 0;
+}
+.root > :global(.panel) {
+  min-width: 0;
+}
+.root fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.root legend {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.root textarea {
+  min-height: 5rem;
+}
+.root select,
+.root input,
+.root textarea {
+  max-width: 100%;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.root form .grid > :global(.form-field) {
+  margin-block: 0;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block: 1rem;
+}
+.list {
+  display: grid;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+.card {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.card h3 {
+  margin-top: 0;
+}
+.card p {
+  margin-block: 0.5rem;
+}
+.notice {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-action);
+  border-radius: 0.5rem;
+}
+.muted {
+  color: var(--color-muted);
+}
+.table {
+  min-width: 34rem;
+}
+.table th,
+.table td {
+  overflow-wrap: normal;
+}
+.prose {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.preview {
+  border-left: 4px solid var(--color-action);
+}
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  margin-block: 1rem;
+}
+.checks label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

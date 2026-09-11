@@ -11,6 +11,24 @@ trabalho; não cria PRs preliminares ou um PR apenas de documentação.
 
 ## Comparação com a implementação atual
 
+### Parceiros — implementação em branch própria (spec 007)
+
+O módulo administrativo de estabelecimentos externos é detalhado na
+[spec 007](../specs/007-partners-management/spec.md), no
+[plano](../specs/007-partners-management/plan.md) e nas
+[tarefas](../specs/007-partners-management/tasks.md). Possui quatro páginas: lista de
+parceiros, novo parceiro, detalhe com Cadastro/Unidades/Contratos/Benefícios/Histórico e
+lista geral de benefícios. O [mapa de interface](../specs/007-partners-management/interface.md)
+registra suas funções e a harmonização com Associados e Notícias.
+
+Permissões individuais distinguem consulta, edição e aprovação/publicação. Documentos
+permanecem privados; a API pública v1 entrega apenas ofertas publicadas e vigentes por
+canal, revalidando parceiro, unidade e contrato em cada leitura. Portal, contas de
+parceiro, QR/resgates, créditos e coleta de avaliações não integram esta implementação.
+Consulte as evidências da spec para o estado da validação e do PR.
+
+### Inventário histórico da base inicial
+
 Inventário do projeto novo em `dev` após o PR #10 (`284f867`), obtido de rotas, módulos e migrations
 deste repositório. Não foram consultados código, telas ou contratos do sistema antigo.
 
