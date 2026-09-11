@@ -106,7 +106,7 @@ test("new member accepts a photo before creation and retries upload without dupl
     { times: 1 },
   );
   await page.getByRole("button", { name: "Criar cadastro" }).click();
-  await expect(page.getByRole("alert")).toContainText(
+  await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "O cadastro foi criado, mas a foto não foi salva.",
   );
   await expect(page.getByRole("button", { name: "Criar cadastro" })).toHaveCount(0);
