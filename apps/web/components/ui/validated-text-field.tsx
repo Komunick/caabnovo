@@ -48,9 +48,20 @@ export function ValidatedTextField({
   return (
     <FormField id={id} label={label} hint={hint} error={error}>
       {mask ? (
-        <MaskedContactInput {...props} {...events} ref={inputRef} kind={mask} onValueChange={change} />
+        <MaskedContactInput
+          {...props}
+          {...events}
+          ref={inputRef}
+          kind={mask}
+          onValueChange={change}
+        />
       ) : (
-        <input {...props} {...events} ref={inputRef} onChange={(event) => change(event.currentTarget)} />
+        <input
+          {...props}
+          {...events}
+          ref={inputRef}
+          onChange={(event) => change(event.currentTarget)}
+        />
       )}
     </FormField>
   );
