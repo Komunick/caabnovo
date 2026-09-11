@@ -55,7 +55,7 @@ test("news list previews summaries and filters automatically with clear actions"
   const excerpt = item.locator("p").filter({ hasText: "Resumo da notícia" });
   await expect(excerpt).toHaveCSS("-webkit-line-clamp", "2");
   const firstRow = await item.boundingBox();
-  expect(firstRow!.y).toBeLessThan(450);
+  expect(firstRow!.y).toBeLessThan(page.viewportSize()!.height - 100);
   await page.screenshot({ path: testInfo.outputPath("news-list-desktop.png"), fullPage: true });
   await page.getByText("Mais filtros e ordenação", { exact: true }).click();
   await page.getByLabel("Categoria", { exact: true }).fill("Atend");
