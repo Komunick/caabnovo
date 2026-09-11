@@ -138,6 +138,38 @@ independentes. Regras de impedimento de benefícios por finalidade permanecem em
   mensagem junto ao campo e impede envio. Correção remove o erro. Usar a mesma regra
   sintática do contrato do servidor, sem presumir existência ou propriedade do endereço.
 
+## Foto de perfil — incremento de 11/09/2026
+
+**Status: pronto, com aceite do usuário em 11/09/2026.** A foto é a mesma foto de perfil
+que o próprio associado colocará no app. Painel e app devem utilizar a referência única
+do cadastro de Associados; não haverá uma foto exclusiva do painel nem cópia independente
+por canal. A entrega administrativa está concluída. O envio pelo app será integrado no
+escopo do app, sem presumir que esse fluxo já esteja implementado neste PR.
+
+- **FR-025**: Associados permite adicionar, substituir e remover uma foto opcional na aba
+  Cadastro e selecionar a foto já no formulário de novo associado. Exibir no cabeçalho com
+  avatar neutro quando ausente. Se o envio falhar após criar o cadastro, informar que ele foi
+  salvo e permitir repetir somente a etapa da foto, sem duplicar o associado.
+  Não alterar Colaboradores, login, avaliações nem a lista de documentos.
+- **FR-026**: Aceitar JPEG/PNG de até 5 MB, prévia antes de salvar e progresso de envio e
+  verificação. Falhas preservam a foto anterior. Recusar arquivo inválido, de outra pessoa,
+  excluído ou ainda não liberado pela verificação de segurança.
+- **FR-027**: Foto privada. No painel, consultar exige leitura de Associados e Arquivos; enviar exige
+  também edição de Associados e envio de Arquivos. Substituir/remover exige edição,
+  leitura de Arquivos e justificativa. Bloquear cadastro arquivado e conflitos concorrentes.
+- **FR-028**: Remover desvincula a foto e preserva arquivo e auditoria segundo a retenção
+  existente. Sem publicação externa, reconhecimento facial, câmera ou editor de recorte.
+- **FR-029**: O app deverá permitir ao associado autenticado enviar e atualizar a própria
+  foto, reutilizando a mesma referência `member.photo_file_id` exibida no painel. A
+  integração deverá validar no servidor o vínculo entre a conta do app e o associado,
+  manter o upload privado e sua verificação, e registrar a autoria real da alteração.
+  Acesso ao próprio perfil no app não concede permissões administrativas nem acesso a
+  fotos de outros associados. Esta decisão documenta a integração futura do app.
+
+Aceite: salvar, reabrir, visualizar, substituir e remover; recusar PDF, mais de 5 MB,
+arquivo pendente/rejeitado ou de outro associado; preservar dados e foto anterior em falha;
+conferir teclado, 390 px e ambos os temas.
+
 ## Assumptions
 
 - Primeira versão administrativa com decisões manuais documentadas; nenhuma regra institucional presumida.

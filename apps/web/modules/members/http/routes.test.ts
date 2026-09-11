@@ -14,6 +14,7 @@ function setup(authenticated = true, permissions = actor.permissions) {
     command: vi.fn(),
     history: vi.fn(),
     files: vi.fn(),
+    fileStatus: vi.fn(),
     download: vi.fn(),
   };
   return {
@@ -25,6 +26,50 @@ function setup(authenticated = true, permissions = actor.permissions) {
   };
 }
 describe("member private HTTP boundary", () => {
+  it("requires file read access for photo commands and file status", async () => {
+    const { route, service } = setup();
+    const response = await route(
+      new Request("http://localhost/api/v1/members", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+          "x-csrf-token": crypto.randomUUID(),
+          "idempotency-key": crypto.randomUUID(),
+        },
+        body: JSON.stringify({
+          action: "photo",
+          fileId: null,
+          expectedVersion: 1,
+          justification: "Teste de foto",
+        }),
+      }),
+      [actor.userId, "commands"],
+    );
+    expect(response.status).toBe(403);
+    expect(service.command).not.toHaveBeenCalled();
+    expect(
+      (
+        await route(new Request("http://localhost/api/v1/members"), [
+          actor.userId,
+          "files",
+          actor.userId,
+          "status",
+        ])
+      ).status,
+    ).toBe(403);
+    expect(service.fileStatus).not.toHaveBeenCalled();
+    const allowed = setup(true, new Set(["members:read", "files:read"]));
+    allowed.service.fileStatus.mockResolvedValue({ status: "scanning" });
+    const read = await allowed.route(new Request("http://localhost/api/v1/members"), [
+      actor.userId,
+      "files",
+      actor.userId,
+      "status",
+    ]);
+    expect(read.status).toBe(200);
+    expect(read.headers.get("cache-control")).toBe("private, no-store");
+  });
   it("treats empty optional filters from the UI URL as unselected", async () => {
     const { route, service } = setup();
     service.list.mockResolvedValue({ items: [] });
@@ -72,6 +117,7 @@ describe("member private HTTP boundary", () => {
       [actor.userId, "history"],
       [actor.userId, "files"],
       [actor.userId, "files", actor.userId],
+      [actor.userId, "files", actor.userId, "status"],
     ].map((path) => ({ path })),
   )("rejects anonymous reads %j", async ({ path }) => {
     const { route, service } = setup(false);

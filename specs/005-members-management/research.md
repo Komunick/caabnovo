@@ -2,6 +2,18 @@
 
 Pesquisa documental oficial, sem teste de interfaces comerciais nem acesso ao legado.
 
+## Foto de perfil — pesquisa de 11/09/2026
+
+- [OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html):
+  restringir tipos e tamanho, verificar conteúdo, autorizar acesso e verificar segurança.
+  Reutilizar o fluxo privado; vincular somente JPEG/PNG liberado de até 5 MB.
+- [MDN input file](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file):
+  os tipos sugeridos pelo seletor não substituem validação no servidor. Adotar seletor nativo
+  rotulado e prévia local, sem câmera ou biblioteca de recorte.
+
+Pesquisa documental, sem dados pessoais ou reconhecimento facial. Os 5 MB são limite técnico
+inicial, não regra institucional; foto não determina identidade, situações ou benefícios.
+
 - [CiviCRM users/contacts](https://docs.civicrm.org/user/en/latest/initial-set-up/users-contacts/): contatos existem sem login. Decisão: member separado de user. Rejeitada ampliação da tabela de login com CPF/OAB.
 - [CiviCRM memberships](https://docs.civicrm.org/user/en/latest/membership/defining-memberships/): vínculo e transação financeira são distintos. Decisão: situações independentes; não copiar transições financeiras desse produto como regra CAAB.
 - [CiviCRM relationships](https://docs.civicrm.org/user/en/latest/organising-your-data/relationships/): relações tipadas entre registros individuais. Decisão: dependente próprio com relação histórica, sem campos repetidos no titular.

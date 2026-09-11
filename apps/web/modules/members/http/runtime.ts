@@ -9,6 +9,7 @@ import {
   listMembers,
   memberDownload,
   memberFiles,
+  memberFileStatus,
   memberHistory,
 } from "../member-service";
 import { createMemberRoute } from "./routes";
@@ -22,6 +23,7 @@ export const memberRoute = createMemberRoute({
     command: (context, id, input) => commandMember(getDatabase().pool, context, id, input),
     history: (actor, id, page) => memberHistory(getDatabase().pool, actor, id, page),
     files: (actor, id, page) => memberFiles(getDatabase().pool, actor, id, page),
+    fileStatus: (actor, id, fileId) => memberFileStatus(getDatabase().pool, actor, id, fileId),
     download: (actor, id, fileId) =>
       memberDownload(getDatabase().pool, actor, id, fileId, getObjectStorage()),
   },

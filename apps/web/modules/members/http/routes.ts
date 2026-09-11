@@ -25,6 +25,7 @@ interface Dependencies {
     command(context: MemberContext, id: string, input: unknown): Promise<unknown>;
     history(actor: RequestActor, id: string, page: number): Promise<unknown>;
     files(actor: RequestActor, id: string, page: number): Promise<unknown>;
+    fileStatus(actor: RequestActor, id: string, fileId: string): Promise<unknown>;
     download(actor: RequestActor, id: string, fileId: string): Promise<{ url: string }>;
   };
 }
@@ -77,7 +78,12 @@ export function createMemberRoute(deps: Dependencies) {
           response = Response.json(await deps.service.history(actor, id, page));
         else if (path.length === 2 && path[1] === "files")
           response = Response.json(await deps.service.files(actor, id, page));
-        else if (path.length === 3 && path[1] === "files")
+        else if (path.length === 4 && path[1] === "files" && path[3] === "status") {
+          requirePermission(actor, PERMISSIONS.filesRead);
+          response = Response.json(
+            await deps.service.fileStatus(actor, id, idSchema.parse(path[2])),
+          );
+        } else if (path.length === 3 && path[1] === "files")
           response = new Response(null, {
             status: 307,
             headers: {
@@ -101,6 +107,7 @@ export function createMemberRoute(deps: Dependencies) {
           );
         } else if (path.length === 2 && path[1] === "commands") {
           const input = memberCommandSchema.parse(await readJson(request));
+          if (input.action === "photo") requirePermission(actor, PERMISSIONS.filesRead);
           requirePermission(
             actor,
             ["assess", "review", "activate", "block", "unblock"].includes(input.action)

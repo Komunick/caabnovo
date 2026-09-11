@@ -12,6 +12,7 @@ import {
   type MemberProfile,
   type MemberListItem,
   type MemberFile,
+  MAX_MEMBER_PHOTO_BYTES,
 } from "@caab/contracts";
 import type { RequestActor } from "../shared/request-context";
 import type { WebObjectStorage } from "../files/object-storage";
@@ -50,7 +51,7 @@ async function authorized<T>(
       "documents" in result &&
       !grants.has(PERMISSIONS.filesRead)
     ) {
-      return { ...result, documents: [] };
+      return { ...result, documents: [], photoFileId: null };
     }
     return result;
   });
@@ -58,7 +59,7 @@ async function authorized<T>(
 
 const memberSelect = `SELECT jsonb_build_object(
  'id',m.id,'version',m.version,'archivedAt',m.archived_at,'createdAt',m.created_at,'updatedAt',m.updated_at,
- 'administrativeStatus',m.administrative_status,
+ 'administrativeStatus',m.administrative_status,'photoFileId',m.photo_file_id,
  'administrativeDecision',CASE WHEN m.administrative_changed_at IS NULL THEN NULL ELSE jsonb_build_object(
  'reason',m.administrative_reason,'changedAt',m.administrative_changed_at,
  'actorName',(SELECT name FROM "user" WHERE id=m.administrative_changed_by)) END,
@@ -236,8 +237,9 @@ async function safeFile(client: PoolClient, memberId: string, fileId: string) {
     scan_result: string;
     visibility: string;
     detected_mime: string;
+    size_bytes: string;
   }>(
-    `SELECT object_key,status,scan_result,visibility,detected_mime FROM stored_file
+    `SELECT object_key,status,scan_result,visibility,detected_mime,size_bytes FROM stored_file
      WHERE id=$1 AND owner_type='member' AND owner_id=$2 AND deleted_at IS NULL FOR SHARE`,
     [fileId, memberId],
   );
@@ -270,8 +272,9 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
           profile_version: number;
           archived_at: Date | null;
           administrative_status: string;
+          photo_file_id: string | null;
         }>(
-          "SELECT version,profile_version,archived_at,administrative_status FROM member WHERE id=$1 FOR UPDATE",
+          "SELECT version,profile_version,archived_at,administrative_status,photo_file_id FROM member WHERE id=$1 FOR UPDATE",
           [id],
         );
         const row = locked.rows[0];
@@ -280,6 +283,24 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
         if (row.archived_at && input.action !== "restore") throw new MemberError("MEMBER_ARCHIVED");
         const after: Record<string, unknown> = { version: row.version + 1 };
         switch (input.action) {
+          case "photo": {
+            if (input.fileId) {
+              const photo = await safeFile(client, id, input.fileId);
+              if (
+                !["image/jpeg", "image/png"].includes(photo.detected_mime) ||
+                Number(photo.size_bytes) > MAX_MEMBER_PHOTO_BYTES ||
+                Number(photo.size_bytes) < 1
+              )
+                throw new MemberError("MEMBER_PHOTO_INVALID", 422);
+            }
+            await client.query("UPDATE member SET photo_file_id=$2 WHERE id=$1", [
+              id,
+              input.fileId,
+            ]);
+            after.previousPhotoFileId = row.photo_file_id;
+            after.photoFileId = input.fileId;
+            break;
+          }
           case "activate":
           case "block":
           case "unblock": {
@@ -414,7 +435,7 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
       ["assess", "review", "activate", "block", "unblock"].includes(input.action)
         ? PERMISSIONS.membersReview
         : PERMISSIONS.membersWrite,
-      input.action === "document" || input.action === "review" ? PERMISSIONS.filesRead : undefined,
+      ["document", "review", "photo"].includes(input.action) ? PERMISSIONS.filesRead : undefined,
     );
   } catch (error) {
     conflict(error);
@@ -478,6 +499,32 @@ export async function memberDownload(
       await record(client, id);
       const file = await safeFile(client, id, fileId);
       return storage.createPrivateDownload(file.object_key);
+    },
+    PERMISSIONS.membersRead,
+    PERMISSIONS.filesRead,
+  );
+}
+export async function memberFileStatus(
+  pool: Pool,
+  actor: RequestActor,
+  id: string,
+  fileId: string,
+) {
+  requirePermission(actor, PERMISSIONS.filesRead);
+  idSchema.parse(id);
+  idSchema.parse(fileId);
+  return authorized(
+    pool,
+    actor,
+    async (client) => {
+      await record(client, id);
+      const result = await client.query<MemberFile>(
+        `SELECT id,original_name AS name,status,scan_result AS "scanStatus",size_bytes::int AS "sizeBytes"
+         FROM stored_file WHERE id=$1 AND owner_type='member' AND owner_id=$2 AND deleted_at IS NULL`,
+        [fileId, id],
+      );
+      if (!result.rows[0]) throw new MemberError("MEMBER_FILE_NOT_FOUND", 404);
+      return result.rows[0];
     },
     PERMISSIONS.membersRead,
     PERMISSIONS.filesRead,

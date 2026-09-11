@@ -7,6 +7,18 @@ import {
 } from "../src/members";
 
 describe("member contracts", () => {
+  it("accepts explicit photo removal or a file ID with version and justification", () => {
+    const base = { action: "photo", expectedVersion: 1, justification: "Foto atualizada" };
+    for (const fileId of [null, crypto.randomUUID()])
+      expect(memberCommandSchema.safeParse({ ...base, fileId }).success).toBe(true);
+    for (const extra of [
+      {},
+      { fileId: "https://example.test/photo.jpg" },
+      { fileId: null, expectedVersion: 0 },
+      { fileId: null, justification: "" },
+    ])
+      expect(memberCommandSchema.safeParse({ ...base, ...extra }).success).toBe(false);
+  });
   it.each(["activate", "block", "unblock"])(
     "requires justification and version for %s",
     (action) => {

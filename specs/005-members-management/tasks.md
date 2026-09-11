@@ -1,5 +1,22 @@
 # Tasks: Associados
 
+## Incremento: foto de perfil — branch feature/member-profile-photo
+
+**Status: PRONTO — aceite explícito do usuário em 11/09/2026.** A foto pertence ao
+associado e será a mesma enviada por ele no app. A integração de envio pelo app está
+documentada como escopo do app; não bloqueia o aceite desta entrega administrativa.
+
+- [x] T040 Registrar a origem da foto no app, referência compartilhada com o painel,
+  limites da integração futura e aceite da entrega (FR-029).
+
+- [x] T034 Atualizar spec, pesquisa oficial, plano e modelo antes da implementação.
+- [x] T035 Adicionar referência opcional e comando privado, versionado e auditado para foto.
+- [x] T036 Implementar envio seguro, prévia no novo cadastro, substituição/remoção e avatar.
+- [x] T037 Validar arquivos inválidos, autorização, concorrência, idempotência e rollback.
+- [x] T038 Conferir visualmente temas e 390 px; validar E2E, acessibilidade e build.
+- [x] T039 Abrir [PR #17](https://github.com/Komunick/caabnovo/pull/17) para dev e concluir
+  gates, sem executar merge. Evidências em [photo-validation.md](photo-validation.md).
+
 **Status em 11/09/2026**: o usuário confirmou “associados considere pronto” e autorizou
 preparar os PRs do trabalho concluído que ainda não entrou em dev. T017 concluída por essa
 confirmação explícita. T012 concluída com o [PR #15](https://github.com/Komunick/caabnovo/pull/15);

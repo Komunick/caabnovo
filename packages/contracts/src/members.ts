@@ -14,6 +14,7 @@ const optionalText = (max: number) => z.string().trim().max(max).default("");
 const date = z.iso.date();
 const reason = z.string().trim().min(3).max(1000);
 const uuid = z.uuid();
+export const MAX_MEMBER_PHOTO_BYTES = 5 * 1024 * 1024;
 export const memberProfileSchema = z.strictObject({
   name: z.string().trim().min(2).max(160),
   socialName: optionalText(160),
@@ -90,6 +91,7 @@ export type MemberAdministrativeStatus = z.infer<typeof memberAdministrativeStat
 export const memberCommandSchema = z
   .discriminatedUnion("action", [
     z.strictObject({ ...base, action: z.literal("update"), profile: memberProfileSchema }),
+    z.strictObject({ ...base, action: z.literal("photo"), fileId: uuid.nullable() }),
     z.strictObject({ ...base, action: z.literal("archive") }),
     z.strictObject({ ...base, action: z.literal("restore") }),
     z.strictObject({ ...base, action: z.literal("activate") }),
@@ -189,6 +191,7 @@ export interface MemberRelationship {
   endedAt: string | null;
 }
 export interface MemberRecord {
+  photoFileId: string | null;
   administrativeStatus: MemberAdministrativeStatus;
   administrativeDecision: { reason: string; changedAt: string; actorName: string } | null;
   id: string;
