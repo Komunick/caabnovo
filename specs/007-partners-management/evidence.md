@@ -62,3 +62,10 @@ continua obrigatório antes da integração.
 destino `dev`, sem merge. Resultados atuais de `quality`, `browser` e `security` estão
 na [aba de verificações do PR](https://github.com/Komunick/caabnovo/pull/18/checks).
 O job remoto de segurança passou para a implementação `8544e33`, incluindo Gitleaks.
+
+CI completo da implementação `8544e33`: [execução 34625463387](https://github.com/Komunick/caabnovo/actions/runs/34625463387)
+concluída com sucesso em `quality`, `browser` e `security`. Inclui a suíte completa
+de integração, builds, E2E Chromium e acessibilidade do projeto. Commits posteriores
+apenas registram links/resultados nesta documentação e a conclusão das tarefas.
+As verificações automáticas desses registros documentais podem repetir no PR;
+nenhuma proteção foi dispensada e nenhum merge foi realizado.

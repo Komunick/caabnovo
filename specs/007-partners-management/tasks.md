@@ -52,7 +52,7 @@ Objetivo/teste independente: conta sem acesso recusada; consulta/edição/public
 
 - [x] T020 Conferir quatro páginas, claro/escuro e 390 px; registrar evidências em specs/007-partners-management/evidence.md.
 - [x] T021 Executar gates e vincular a entrega ao programa em specs/002-integrated-modules/tasks.md e docs/MODULES.md.
-- [ ] T022 Preparar PR único para dev e corrigir CI, registrando resultado em specs/007-partners-management/evidence.md, sem merge.
+- [x] T022 Preparar PR único para dev e corrigir CI, registrando resultado em specs/007-partners-management/evidence.md, sem merge.
 
 ## Dependências e estratégia
 
