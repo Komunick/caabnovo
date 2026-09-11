@@ -1,5 +1,26 @@
 # Contratos v1 de Parceiros
 
+## Diretório, configuração e avaliações
+
+| Rota | Contrato e permissão |
+| --- | --- |
+| GET /api/v1/partners/units | partners:read; q/status/page, 25 unidades por página, parceiro e link contextual |
+| GET /api/v1/partners/categories | partners:read; categorias, versões e contagem de parceiros não arquivados |
+| POST /api/v1/partners/categories | partners:write; nome, ativa, motivo; id/expectedVersion para editar |
+| GET /api/v1/partners/settings | partners:read; configuração atual e categorias |
+| POST /api/v1/partners/settings | partners:publish; expectedVersion, mode all/selected, categoryIds únicos e motivo |
+| GET /api/v1/partners/{id}/reviews | partners:read; status/page, 25 opiniões, total e média incluindo ocultas; sem referência privada do autor |
+| POST /api/v1/partners/{id}/reviews/{reviewId} | partners:publish; expectedVersion, status published/hidden, motivo; nota/texto/autoria são recusados |
+| GET /api/v1/benefits/app/categories | Público, no-store; IDs/nomes de categorias ativas permitidas com parceiro ativo não arquivado |
+
+As mutações do diretório exigem também partners:read, Origin/CSRF e Idempotency-Key,
+limite de corpo de 64 KiB e auditoria transacional. Conflitos retornam 409, referências
+selecionadas inválidas retornam 422. Repetição retorna estado atual sem duplicar ações.
+GET /api/v1/benefits/app aplica a seleção salva mesmo com filtro textual direto;
+GET /api/v1/benefits/site permanece independente da seleção. O contrato legado de
+categoria textual continua aceito; criação resolve/cria categoria ativa e normaliza
+seu nome. Não há conexão de recebimento de avaliações do aplicativo nesta entrega.
+
 Privadas: sessão ativa; partners:read em todas as leituras, partners:write para cadastro/unidades/contratos/rascunhos, partners:publish para aprovar/encerrar contrato e publicar/ocultar benefício. Publicar também precisa de consulta. Arquivos exigem files:read; envio/finalize exige files:create + partners:write. Concessões atuais revalidadas no banco. Administrador recebe novas permissões; demais perfis somente concessão explícita.
 
 | Rota | Contrato |

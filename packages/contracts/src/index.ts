@@ -16,3 +16,4 @@ export * from "./members";
 export * from "./oab-lookup";
 export * from "./user-access";
 export * from "./partners";
+export * from "./partner-directory";

@@ -5,6 +5,13 @@ function setup(
   permissions: string[] | null = ["partners:read", "partners:write", "partners:publish"],
 ) {
   const service = {
+    units: vi.fn().mockResolvedValue({ items: [] }),
+    categories: vi.fn().mockResolvedValue({ items: [] }),
+    settings: vi.fn().mockResolvedValue({}),
+    saveCategory: vi.fn().mockResolvedValue({}),
+    saveSettings: vi.fn().mockResolvedValue({}),
+    reviews: vi.fn().mockResolvedValue({ items: [] }),
+    moderateReview: vi.fn().mockResolvedValue({}),
     list: vi.fn().mockResolvedValue({ items: [] }),
     benefits: vi.fn().mockResolvedValue({ items: [] }),
     get: vi.fn().mockResolvedValue({}),
@@ -38,7 +45,18 @@ function post(body: unknown, headers: Record<string, string> = {}) {
 }
 describe("partner private HTTP boundary", () => {
   it.each(
-    [[], ["benefits"], [id], [id, "history"], [id, "files"], [id, "files", id]].map((path) => ({
+    [
+      [],
+      ["benefits"],
+      ["units"],
+      ["categories"],
+      ["settings"],
+      [id, "reviews"],
+      [id],
+      [id, "history"],
+      [id, "files"],
+      [id, "files", id],
+    ].map((path) => ({
       path,
     })),
   )("rejects anonymous and unauthorized reads $path", async ({ path }) => {
@@ -62,8 +80,36 @@ describe("partner private HTTP boundary", () => {
         ])
       ).status,
     ).toBe(200);
-    expect(service.benefits).toHaveBeenCalledWith(expect.anything(), { channel: "site" });
+    expect(service.benefits).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ channel: "site" }),
+    );
     expect((await route(new Request("http://localhost/api/v1/partners?page=0"))).status).toBe(422);
+  });
+  it.each([
+    { path: ["categories"], permission: "partners:write", method: "saveCategory" as const },
+    { path: ["settings"], permission: "partners:publish", method: "saveSettings" as const },
+    {
+      path: [id, "reviews", id],
+      permission: "partners:publish",
+      method: "moderateReview" as const,
+    },
+  ])("protects directory mutation $method", async ({ path, permission, method }) => {
+    for (const permissions of [["partners:read"], [permission], ["partners:read", permission]]) {
+      const { route, service } = setup(permissions);
+      const allowed = permissions.includes("partners:read") && permissions.includes(permission);
+      expect((await route(post({}), path)).status).toBe(allowed ? 200 : 403);
+      expect(service[method]).toHaveBeenCalledTimes(allowed ? 1 : 0);
+    }
+    for (const [headers, status] of [
+      [{ origin: "https://foreign.example.test" }, 403],
+      [{ "x-csrf-token": "" }, 403],
+      [{ "idempotency-key": "" }, 422],
+    ] as [Record<string, string>, number][]) {
+      const { route, service } = setup();
+      expect((await route(post({}, headers), path)).status).toBe(status);
+      expect(service[method]).not.toHaveBeenCalled();
+    }
   });
   it.each(["publish", "hide"])("requires publication permission for %s", async (action) => {
     for (const [permissions, status] of [

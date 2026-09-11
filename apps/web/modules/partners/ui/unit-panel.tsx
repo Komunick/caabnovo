@@ -112,7 +112,7 @@ export function UnitPanel({
       {!partner.units.length && !editing && <p>Nenhuma unidade cadastrada.</p>}
       <ul className={styles.list}>
         {partner.units.map((item) => (
-          <li key={item.id} className={styles.card}>
+          <li key={item.id} id={`unit-${item.id}`} className={styles.card}>
             <h3>{item.profile.name}</h3>
             <p>
               {item.active ? "Ativa" : "Inativa"} ·{" "}

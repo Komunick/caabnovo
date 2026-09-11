@@ -2,7 +2,7 @@
 
 **Feature Branch**: `feature/partners-management`
 **Created**: 2026-09-11
-**Status**: Especificado para implementação
+**Status**: Em complementação após revisão do usuário
 **Input**: Implementar Parceiros em nova branch e spec própria, com plano/tarefas e interface harmonizada com Associados e Notícias.
 
 ## User Scenarios & Testing
@@ -57,13 +57,40 @@ O administrador concede consulta, edição e publicação individualmente em Col
 1. Toda operação privada exige sessão e permissão atuais. Edição e publicação dependem de consulta; arquivos usam também suas permissões próprias.
 2. Ações simultâneas não sobrescrevem silenciosamente. Repetir o mesmo envio não cria outro registro.
 3. Histórico mostra autor, ação em linguagem simples, data e motivo, sem documentos completos, contatos privados ou segredos.
-4. As quatro páginas e cinco abas descritas em [interface.md](interface.md) preservam layout, botões, filtros, foco e temas das telas de referência.
+4. As sete páginas e seis abas descritas em [interface.md](interface.md) preservam layout, botões, filtros, foco e temas das telas de referência.
 
 ### Edge Cases
 
 CNPJ com zeros/letras, caracteres inválidos e duplicidade; nomes longos; datas-limite locais; contrato futuro/vencido/encerrado; unidade de outro parceiro; rascunho alterado após publicação; arquivo em quarentena; permissão revogada; parceiro arquivado; concorrência e falha da auditoria; listas vazias, paginação e celular.
 
 ## Requirements
+
+### Correção de escopo solicitada em 11/09/2026
+
+A entrega inicial não cobre todo o pedido. Este detalhamento substitui o limite de
+quatro páginas e a exclusão da consulta administrativa de avaliações: acrescentar
+página geral de Unidades dos parceiros, página dedicada a Categorias, aba Avaliações
+no detalhe e página Configurações para escolher categorias exibidas no app.
+Não considerar o módulo concluído até validar esses caminhos no preview 3107.
+
+- **FR-013**: Listar unidades de todos os parceiros com busca por nome/parceiro/localidade,
+  filtro ativo/inativo e acesso direto à aba de unidades do parceiro responsável.
+- **FR-014**: Manter categorias em página própria, com nome único, situação, contagem
+  de parceiros e cadastro/edição; preservar e vincular as categorias dos dados existentes.
+- **FR-015**: Configurar exibição no app com opção de todas as categorias ativas ou
+  seleção explícita, incluindo seleção vazia. Persistência e efeito no contrato de
+  leitura do app são obrigatórios; o canal site permanece independente.
+- **FR-016**: Exibir avaliações no detalhe do parceiro com nota/opinião original,
+  data e estado; moderação exige motivo e preserva nota/texto/autoria. Não inventar
+  avaliações nem declarar conexão ao app que ainda não exista.
+- **FR-017**: Consulta usa partners:read; categorias usam partners:write; configuração
+  do app e moderação usam partners:publish. Todas as alterações têm versão,
+  idempotência, autorização atual e auditoria; erros preservam campos preenchidos.
+
+Aceite adicional: categorias criadas sem parceiro aparecem em sua página; renomear
+preserva vínculos. Uma categoria desmarcada não aparece no catálogo de categorias
+nem nas ofertas do app, inclusive via filtro direto; site mantém suas publicações.
+Desativação não apaga categorias, parceiros, unidades ou avaliações.
 
 ### Functional Requirements
 
@@ -76,7 +103,7 @@ CNPJ com zeros/letras, caracteres inválidos e duplicidade; nomes longos; datas-
 - **FR-007**: Fornecer consulta externa versionada apenas de dados selecionados dos benefícios exibíveis. Contatos administrativos, CNPJ, contratos, documentos e auditoria não são públicos.
 - **FR-008**: Permissões distintas de consultar, editar e publicar; administrador existente recebe concessões iniciais. Demais contas dependem de concessão individual explícita, sem novo papel automático.
 - **FR-009**: Toda mutação exige versão/idempotência proporcionais e auditoria transacional. Conflito ou falha mantém os dados preenchidos e orienta o operador.
-- **FR-010**: Oferecer quatro páginas principais e cinco abas de detalhe conforme interface.md; usar padrões compartilhados de Associados e Notícias, incluindo filtros e botões de adicionar com +.
+- **FR-010**: Oferecer sete páginas principais e seis abas de detalhe conforme interface.md; usar padrões compartilhados de Associados e Notícias, incluindo filtros e botões de adicionar com +.
 - **FR-011**: Histórico contextual explica ações em português simples. Arquivamento/desativação preserva registros, relacionamentos e documentos.
 - **FR-012**: Validar teclado, contraste e semântica acessível, temas claro/escuro e largura de 390 px sem rolagem horizontal da página.
 
@@ -95,12 +122,12 @@ Parceiro (estabelecimento), unidade (local/abrangência), contrato (condições 
 - **SC-001**: Operador cadastra parceiro, unidade e contrato, publica benefício e consegue encontrá-lo e retirá-lo nos testes de ponta a ponta.
 - **SC-002**: Todos os cenários de vigência e autorização recusam exibição/alteração indevida, inclusive acesso entre parceiros a arquivos.
 - **SC-003**: Repetição não duplica registros e conflito não sobrescreve outra edição; falha de auditoria impede efeito parcial.
-- **SC-004**: Quatro páginas testadas nos dois temas; interface principal acessível por teclado e sem overflow em 390 px.
+- **SC-004**: Sete páginas e a aba Avaliações testadas nos dois temas; interface principal acessível por teclado e sem overflow em 390 px.
 - **SC-005**: Cada mudança relevante pode ser atribuída a um autor e motivo no histórico.
 
 ## Assumptions
 
-- A entrega é o módulo administrativo de Parceiros previsto em PAR-001–005 do PRD. Portal externo, login do parceiro, resgate/QR, Caassh e coleta/moderação de avaliações são integrações próprias, dependentes das políticas correspondentes.
+- A entrega é o módulo administrativo de Parceiros previsto em PAR-001–005 do PRD. Portal externo, login do parceiro, resgate/QR, Caassh e coleta de avaliações são integrações próprias, dependentes das políticas correspondentes.
 - Não presumir percentual de desconto, renovação, documentos institucionais obrigatórios ou público elegível. O operador registra condições específicas do contrato/oferta e aprova explicitamente a publicação; nenhum dado real é publicado durante testes.
 - Datas de vigência incluem início/fim no fuso America/Bahia. Estado editorial e vigência têm significados distintos.
 - Contrato mínimo externo de consulta será entregue, sem refazer o aplicativo ou site. Arquivos administrativos permanecem privados.

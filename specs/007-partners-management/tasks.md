@@ -56,11 +56,22 @@ Objetivo/teste independente: conta sem acesso recusada; consulta/edição/public
 
 ## Dependências e estratégia
 
+## Complemento de escopo — revisão do usuário em 11/09/2026
+
+- [x] T023 Atualizar spec/plano/interface/pesquisa para unidades gerais, categorias, avaliações e configuração do app.
+- [x] T024 Criar contratos e migration 0017 com backfill de categorias, configurações e avaliações preservadas.
+- [x] T025 Implementar categorias, unidades gerais e configuração com autorização, auditoria, idempotência e testes.
+- [x] T026 Aplicar a seleção de categorias na API do app e oferecer catálogo público de categorias com testes de exclusão e canal site independente.
+- [x] T027 Implementar páginas Unidades/Categorias/Configurações e navegação harmonizada.
+- [x] T028 Implementar aba Avaliações e moderação preservando opinião original; explicitar integração externa disponível/pendente.
+- [ ] T029 Validar novos fluxos, falhas, permissões, persistência, teclado e dois temas em desktop/390 px.
+- [ ] T030 Atualizar evidências e PR 18, corrigir CI e publicar a composição atual no preview 3107 preservando seu banco.
+
 T001–T005 → US1 → US2 → US3 → US4 → T020–T022. Primeiro incremento testável: cadastro/unidades;
 a entrega solicitada abrange as quatro histórias no mesmo PR. Contratos e testes podem ser
 preparados separadamente após o desenho; implementação sequencial para evitar disputa nos
 arquivos de serviço/UI. A pesquisa independente exigida pelo workflow de planejamento foi
 delegada; isso não cria autorização para agentes de implementação adicionais.
 
-22 tarefas, IDs únicos; US1 4, US2 4, US3 3, US4 3, setup/fundação/acabamento 8.
+30 tarefas, IDs únicos; 22 da entrega inicial e 8 do complemento solicitado.
 Hooks before/after ausentes. Nenhum deploy/merge ou seed sobre banco compartilhado.

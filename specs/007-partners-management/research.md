@@ -37,6 +37,18 @@ outra paleta, biblioteca de ícones ou estilo de filtros.
 
 ## Limites institucionais
 
+### Complemento de interface em 11/09/2026
+
+[WAI, agrupamento de controles](https://www.w3.org/WAI/tutorials/forms/grouping/) e
+[notificações](https://www.w3.org/WAI/tutorials/forms/notifications/), consultados nesta
+data: agrupar opções relacionadas semanticamente e orientar recuperação dos erros.
+Aplicação: seleção de categorias por controles nativos agrupados; mensagens de
+salvamento/conflito na própria tela. IDs estáveis, filtro no servidor e seleção vazia
+explícita são decisões do projeto para preservar vínculos e impedir diferenças entre
+configuração salva e catálogo do app. Nenhuma nova biblioteca ou serviço externo.
+Consulta/moderação administrativa de avaliações entra por pedido do usuário; autoria
+e integração de entrada do app dependem do contrato real, sem simular dados no preview.
+
 Reconsulta em 11/09/2026: [WAI, notificações](https://www.w3.org/WAI/tutorials/forms/notifications/)
 orienta mensagens claras e instruções para resolver erros. Aplicação nesta retomada:
 falhas do histórico ficam na própria seção, com nova tentativa e fim do carregamento;

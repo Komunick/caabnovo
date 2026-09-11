@@ -13,6 +13,23 @@ como páginas adicionais.
 
 ## Abas do detalhe
 
+## Complemento solicitado em 11/09/2026 (substitui o limite inicial)
+
+| Página | Endereço | Função |
+| --- | --- | --- |
+| Unidades | `/partners/units` | Consulta geral das unidades, busca/localidade/situação e link para manutenção no parceiro. |
+| Categorias | `/partners/categories` | Somente categorias: busca, nome, situação, quantidade de parceiros e cadastro/edição. |
+| Configurações | `/partners/settings` | Selecionar quais categorias aparecem na página de parceiros do app; salvar com confirmação e justificativa. |
+
+Navegação do módulo: Cadastros, Unidades, Categorias, Benefícios e Configurações.
+Acrescentar aba **Avaliações** no detalhe, com estado vazio explícito, notas/textos
+originais e moderação justificada. Preservar a aba Unidades no contexto do parceiro.
+Controles de configuração agrupados com fieldset/legend e seleção por checkbox;
+resultado salvo e conflito apresentados na própria página. Validar os novos caminhos
+em desktop/390 px, claro/escuro, teclado e Axe.
+
+## Abas existentes do detalhe
+
 - **Cadastro:** nome, razão social, CNPJ opcional, categoria, contatos e situação; arquivar/restaurar.
 - **Unidades:** locais e regiões atendidas, endereço, contato, disponibilidade presencial/remota e situação.
 - **Contratos:** referência, condições, datas, documento privado, confirmação de aprovação e encerramento com motivo; preserva versões anteriores.

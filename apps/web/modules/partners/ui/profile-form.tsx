@@ -1,10 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { partnerProfileSchema, type PartnerProfile } from "@caab/contracts";
 import { FormField } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
 import styles from "./partners.module.css";
+import { partnerRequest } from "./client";
+import type { PartnerCategory } from "@caab/contracts";
 export function ProfileForm({
   profile,
   disabled,
@@ -15,6 +17,16 @@ export function ProfileForm({
   onSave: (profile: PartnerProfile, justification: string) => Promise<void>;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [categories, setCategories] = useState<PartnerCategory[]>([]);
+  useEffect(() => {
+    const controller = new AbortController();
+    void partnerRequest<{ items: PartnerCategory[] }>("/api/v1/partners/categories", {
+      signal: controller.signal,
+    })
+      .then((result) => setCategories(result.items))
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
   const fields = [
     { name: "name", label: "Nome do parceiro", required: true, max: 160 },
     { name: "category", label: "Categoria", required: true, max: 80 },
@@ -64,6 +76,7 @@ export function ProfileForm({
             >
               <input
                 name={field.name}
+                list={field.name === "category" ? "partner-category-options" : undefined}
                 type={field.type ?? "text"}
                 required={field.required}
                 minLength={field.required ? 2 : undefined}
@@ -73,6 +86,13 @@ export function ProfileForm({
             </FormField>
           ))}
         </div>
+        <datalist id="partner-category-options">
+          {categories
+            .filter((category) => category.active)
+            .map((category) => (
+              <option key={category.id} value={category.name} />
+            ))}
+        </datalist>
         <FormField id="partner-description" label="Descrição (opcional)">
           <textarea name="description" maxLength={3000} defaultValue={profile?.description ?? ""} />
         </FormField>

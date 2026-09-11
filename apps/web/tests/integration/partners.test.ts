@@ -21,6 +21,16 @@ import {
   type PartnerContext,
 } from "../../modules/partners/partner-service";
 import type { PartnerRecord } from "@caab/contracts";
+import {
+  listPartnerCategories,
+  savePartnerCategory,
+  getPartnerAppSettings,
+  savePartnerAppSettings,
+  listPartnerUnits,
+  publicPartnerCategories,
+  listPartnerReviews,
+  moderatePartnerReview,
+} from "../../modules/partners/directory-service";
 
 let container: StartedPostgreSqlContainer;
 let admin: Client;
@@ -134,6 +144,253 @@ async function ready() {
   return p;
 }
 describe.sequential("partner persistence", () => {
+  it("maintains category links, versions and existing inactive-category profiles", async () => {
+    const ctx = next();
+    const input = { name: "Categoria diretório", justification: "Cadastro sintético" };
+    const result = await savePartnerCategory(pool, ctx, input);
+    const category = result.items.find((c) => c.name === input.name)!;
+    expect(category.partnerCount).toBe(0);
+    expect(
+      (await savePartnerCategory(pool, ctx, input)).items.filter((c) => c.id === category.id),
+    ).toHaveLength(1);
+    await expect(
+      savePartnerCategory(pool, next(), { ...input, name: "CATEGORIA DIRETÓRIO" }),
+    ).rejects.toMatchObject({ code: "PARTNER_CATEGORY_DUPLICATE" });
+    const p = await create({ category: input.name });
+    const renamed = await savePartnerCategory(pool, next(), {
+      ...input,
+      id: category.id,
+      expectedVersion: category.version,
+      name: "Categoria renomeada",
+      active: false,
+    });
+    const current = renamed.items.find((c) => c.id === category.id)!;
+    expect(current.partnerCount).toBe(1);
+    const updated = await getPartner(pool, context.actor, p.id);
+    expect(updated.profile.category).toBe("Categoria renomeada");
+    expect(updated.version).toBe(p.version + 1);
+    await expect(command(p, { action: "update", profile: p.profile })).rejects.toMatchObject({
+      code: "PARTNER_VERSION_CONFLICT",
+    });
+    await expect(create({ category: current.name })).rejects.toMatchObject({
+      code: "PARTNER_CATEGORY_INACTIVE",
+    });
+    expect(
+      (
+        await command(updated, {
+          action: "update",
+          profile: { ...updated.profile, name: "Contato atualizado" },
+        })
+      ).profile.category,
+    ).toBe(current.name);
+    await expect(
+      savePartnerCategory(pool, next(), { ...input, id: category.id, expectedVersion: 1 }),
+    ).rejects.toMatchObject({ code: "PARTNER_CATEGORY_CONFLICT" });
+  });
+  it("enforces persisted app selection even with direct filters while keeping site independent", async () => {
+    let p = await ready();
+    const benefitId = p.benefits[0]!.id;
+    p = await command(p, {
+      action: "benefit",
+      benefitId,
+      draft: { ...p.benefits[0]!.draft, channels: ["app", "site"] },
+    });
+    p = await command(p, { action: "publish", benefitId });
+    const category = (await listPartnerCategories(pool, context.actor)).items.find(
+      (c) => c.name === p.profile.category,
+    )!;
+    const initial = await getPartnerAppSettings(pool, context.actor);
+    const ctx = next();
+    const selection = {
+      expectedVersion: initial.settings.version,
+      mode: "selected",
+      categoryIds: [],
+      justification: "Seleção vazia sintética",
+    };
+    const empty = await savePartnerAppSettings(pool, ctx, selection);
+    expect((await savePartnerAppSettings(pool, ctx, selection)).settings.version).toBe(
+      empty.settings.version,
+    );
+    expect(
+      (await publicBenefits(pool, "app", { category: p.profile.category })).items,
+    ).toHaveLength(0);
+    expect((await publicPartnerCategories(pool)).items).toHaveLength(0);
+    expect((await publicBenefits(pool, "site", {})).items.some((b) => b.id === benefitId)).toBe(
+      true,
+    );
+    await expect(savePartnerAppSettings(pool, next(), selection)).rejects.toMatchObject({
+      code: "PARTNER_SETTINGS_CONFLICT",
+    });
+    await expect(
+      savePartnerAppSettings(pool, next(), {
+        ...selection,
+        expectedVersion: empty.settings.version,
+        categoryIds: [crypto.randomUUID()],
+      }),
+    ).rejects.toMatchObject({ code: "PARTNER_CATEGORY_INVALID" });
+    const selected = await savePartnerAppSettings(pool, next(), {
+      ...selection,
+      expectedVersion: empty.settings.version,
+      categoryIds: [category.id],
+    });
+    expect((await publicPartnerCategories(pool)).items.map((c) => c.id)).toContain(category.id);
+    expect((await publicBenefits(pool, "app", {})).items.some((b) => b.id === benefitId)).toBe(
+      true,
+    );
+    await savePartnerCategory(pool, next(), {
+      id: category.id,
+      expectedVersion: category.version,
+      name: category.name,
+      active: false,
+      justification: "Desativação sintética",
+    });
+    expect((await publicBenefits(pool, "app", {})).items).toHaveLength(0);
+    expect((await publicPartnerCategories(pool)).items).toHaveLength(0);
+    expect((await publicBenefits(pool, "site", {})).items.some((b) => b.id === benefitId)).toBe(
+      true,
+    );
+    await savePartnerCategory(pool, next(), {
+      id: category.id,
+      expectedVersion: category.version + 1,
+      name: category.name,
+      active: true,
+      justification: "Reativação sintética",
+    });
+    await savePartnerAppSettings(pool, next(), {
+      ...selection,
+      expectedVersion: selected.settings.version,
+      mode: "all",
+    });
+  });
+  it("lists units across partners with literal search and status filters", async () => {
+    let p = await ready();
+    const unit = p.units[0]!;
+    expect(
+      (await listPartnerUnits(pool, context.actor, { q: "Salvador", status: "active" })).items.map(
+        (u) => u.id,
+      ),
+    ).toContain(unit.id);
+    expect((await listPartnerUnits(pool, context.actor, { q: "%" })).items).toHaveLength(0);
+    p = await command(p, { action: "unit", unitId: unit.id, profile: unit.profile, active: false });
+    expect(
+      (await listPartnerUnits(pool, context.actor, { status: "inactive" })).items.map((u) => u.id),
+    ).toContain(unit.id);
+    expect(
+      (await listPartnerUnits(pool, context.actor, { status: "active" })).items.map((u) => u.id),
+    ).not.toContain(unit.id);
+  });
+  it("moderates with original content immutable, ownership, conflict and audit guarantees", async () => {
+    const p = await create();
+    const other = await create();
+    const reviewId = crypto.randomUUID();
+    await admin.query(
+      `INSERT INTO partner_review(id,source_id,partner_id,author_reference,author_label,rating,comment,submitted_at) VALUES($1::uuid,$1::text,$2,'synthetic-private-reference','Autor sintético',2,'Opinião original',now())`,
+      [reviewId, p.id],
+    );
+    const input = { expectedVersion: 1, status: "hidden", justification: "Moderação sintética" };
+    const ctx = next();
+    await expect(moderatePartnerReview(pool, ctx, other.id, reviewId, input)).rejects.toMatchObject(
+      { code: "PARTNER_REVIEW_CONFLICT" },
+    );
+    await moderatePartnerReview(pool, ctx, p.id, reviewId, input);
+    await moderatePartnerReview(pool, ctx, p.id, reviewId, input);
+    await expect(moderatePartnerReview(pool, next(), p.id, reviewId, input)).rejects.toMatchObject({
+      code: "PARTNER_REVIEW_CONFLICT",
+    });
+    const reviews = await listPartnerReviews(pool, context.actor, p.id, { status: "hidden" });
+    expect(reviews.items[0]).toMatchObject({
+      rating: 2,
+      comment: "Opinião original",
+      authorLabel: "Autor sintético",
+      status: "hidden",
+      version: 2,
+    });
+    expect(JSON.stringify(reviews)).not.toContain("synthetic-private-reference");
+    expect(reviews.summary).toEqual({ count: 1, average: 2 });
+    await expect(
+      pool.query("UPDATE partner_review SET comment='Reescrita' WHERE id=$1", [reviewId]),
+    ).rejects.toMatchObject({ code: "42501" });
+    await expect(
+      pool.query("DELETE FROM partner_review WHERE id=$1", [reviewId]),
+    ).rejects.toMatchObject({ code: "42501" });
+    expect(
+      (await partnerHistory(pool, context.actor, p.id)).items.filter(
+        (e) => e.action === "partner.review-moderated",
+      ),
+    ).toHaveLength(1);
+    await expect(
+      moderatePartnerReview(pool, { ...next(), requestId: "invalid-uuid" }, p.id, reviewId, {
+        ...input,
+        expectedVersion: 2,
+        status: "published",
+      }),
+    ).rejects.toBeDefined();
+    expect((await listPartnerReviews(pool, context.actor, p.id, {})).items[0]!.status).toBe(
+      "hidden",
+    );
+  });
+  it("rechecks revoked directory permissions and rolls back failed audit writes", async () => {
+    await expect(
+      savePartnerCategory(
+        pool,
+        { ...next(), requestId: "invalid-uuid" },
+        { name: "Categoria rollback", justification: "Teste sintético" },
+      ),
+    ).rejects.toBeDefined();
+    expect(
+      (await listPartnerCategories(pool, context.actor)).items.some(
+        (c) => c.name === "Categoria rollback",
+      ),
+    ).toBe(false);
+    const p = await create();
+    const settings = (await getPartnerAppSettings(pool, context.actor)).settings;
+    for (const action of ["publish", "write", "read"]) {
+      await admin.query(
+        "DELETE FROM role_permission WHERE role_id IN (SELECT id FROM role WHERE code='partners-test') AND permission_id IN (SELECT id FROM permission WHERE resource='partners' AND action=$1)",
+        [action],
+      );
+      try {
+        const operations =
+          action === "publish"
+            ? [
+                () =>
+                  savePartnerAppSettings(pool, next(), {
+                    expectedVersion: settings.version,
+                    mode: "all",
+                    categoryIds: [],
+                    justification: "Teste sintético",
+                  }),
+                () =>
+                  moderatePartnerReview(pool, next(), p.id, crypto.randomUUID(), {
+                    expectedVersion: 1,
+                    status: "hidden",
+                    justification: "Teste sintético",
+                  }),
+              ]
+            : action === "write"
+              ? [
+                  () =>
+                    savePartnerCategory(pool, next(), {
+                      name: "Proibida",
+                      justification: "Teste sintético",
+                    }),
+                ]
+              : [
+                  () => listPartnerCategories(pool, context.actor),
+                  () => getPartnerAppSettings(pool, context.actor),
+                  () => listPartnerUnits(pool, context.actor, {}),
+                  () => listPartnerReviews(pool, context.actor, p.id, {}),
+                ];
+        for (const operation of operations)
+          await expect(operation()).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
+      } finally {
+        await admin.query(
+          "INSERT INTO role_permission(role_id,permission_id) SELECT r.id,p.id FROM role r CROSS JOIN permission p WHERE r.code='partners-test' AND p.resource='partners' AND p.action=$1",
+          [action],
+        );
+      }
+    }
+  });
   it("preserves idempotency, uniqueness, version and private audit", async () => {
     const ctx = next();
     const input = {

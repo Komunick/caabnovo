@@ -1,14 +1,14 @@
 # Implementation Plan: Parceiros e benefícios
 
 **Branch**: `feature/partners-management` | **Date**: 2026-09-11 | **Spec**: [spec.md](spec.md)
-**Base**: origin/dev ab0ad89. Próxima spec existente: 007. Migration 0016, preservando 0015
+**Base**: origin/dev 9b5bfd3 (integração local em 516b655). Próxima spec existente: 007. Migration 0016, preservando 0015
 reservada pela foto de Associados no PR #17.
 
 ## Summary
 
 Implementar cadastro administrativo de estabelecimentos, unidades, contratos e benefícios,
 com consulta externa mínima por canal. Reutilizar sessão/RBAC, arquivos privados, transação,
-idempotência, auditoria e componentes de Associados/Notícias. Quatro páginas e cinco abas
+idempotência, auditoria e componentes de Associados/Notícias. Sete páginas e seis abas
 conforme [interface.md](interface.md); nenhum cadastro duplicado de portal ou login.
 
 ## Technical Context
@@ -41,6 +41,24 @@ conversão ou política de avaliação. Revisão humana sensível no PR, sem mer
 
 ## Implementation Sequence
 
+### Complemento de 11/09/2026
+
+Reutilizar a worktree/PR 18. Migration 0017 aditiva: categorias normalizadas e vínculo
+com parceiro (backfill das categorias existentes), configuração única do app e seleção
+por ID estável, avaliações com conteúdo original imutável e estado de moderação.
+Manter compatibilidade do profile.category: entradas textuais resolvem a categoria;
+renomear atualiza o nome nos perfis sem perder vínculo. A consulta app aplica a
+configuração no servidor; default todas preserva comportamento atual, seleção vazia
+exibe nenhuma. Nova API de categorias públicas retorna somente categorias elegíveis.
+Leituras/escritas administrativas reutilizam autorização transacional, idempotência
+e auditoria do módulo; unidades reaproveitam manutenção já existente no detalhe.
+Consulta/moderação de avaliações não equivale a implementar o app externo.
+
+Gates: contratos, testes de integração de backfill/vínculos/visibilidade/negações,
+E2E de navegação e configuração com efeito real no app, builds e revisão visual.
+Atualizar preview composto somente após validar em banco descartável; backup antes
+da migration local, sem seed de testes no banco 3107.
+
 1. Spec/pesquisa/checklist e contrato/modelo/tarefas antes do código.
 2. Schema/DDL/permissões com testes de CNPJ, limites e banco descartável.
 3. Serviço transacional e HTTP; validar sessão atual, propriedade, idempotência e auditoria.
@@ -53,7 +71,7 @@ conversão ou política de avaliação. Revisão humana sensível no PR, sem mer
 
 Retomada de 11/09/2026: concluir estados de consulta do histórico e a distinção visual
 entre rascunho e publicação, dentro de T015/T018; cobrir recuperação de falha e edição
-privada na jornada T019. Não atualizar o preview principal nesta etapa, a pedido do usuário.
+privada na jornada T019. O pedido atual autoriza atualizar o preview principal após validação local.
 
 Sem exceções arquiteturais. Quatro entidades próprias; arquivos, histórico e identidade
 reutilizados. Estado publicado guarda somente snapshot dos dados da oferta; nenhuma fila

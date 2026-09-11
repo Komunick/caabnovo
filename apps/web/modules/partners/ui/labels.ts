@@ -34,10 +34,22 @@ export function historyDescription(event: PartnerHistoryItem) {
       : "atualizou o rascunho de um benefício",
     "partner.publish": "publicou um benefício",
     "partner.hide": "retirou um benefício de exibição",
+    "partner.review-moderated": "moderou uma avaliação preservando a opinião original",
   };
   return `${event.actorName || "Operador"} ${actions[event.action] || "registrou uma alteração no parceiro"}.`;
 }
 export const partnerErrors: Record<string, string> = {
+  PARTNER_CATEGORY_INACTIVE:
+    "Esta categoria está inativa. Escolha uma categoria ativa ou reative-a na página Categorias.",
+  PARTNER_CATEGORY_CONFLICT:
+    "A categoria foi alterada por outra pessoa. Atualize as categorias, revise os campos e salve novamente.",
+  PARTNER_CATEGORY_DUPLICATE: "Já existe uma categoria com esse nome.",
+  PARTNER_CATEGORY_INVALID:
+    "Uma categoria selecionada está inativa ou não existe. Atualize a configuração e revise sua seleção.",
+  PARTNER_SETTINGS_CONFLICT:
+    "Outra pessoa alterou a configuração do app. Atualize a versão e revise sua seleção antes de salvar.",
+  PARTNER_REVIEW_CONFLICT:
+    "Esta avaliação foi alterada ou não pertence ao parceiro. Atualize as avaliações antes de moderar.",
   PARTNER_DUPLICATE:
     "Já existe um parceiro com este CNPJ. Confira os cadastros, inclusive os arquivados.",
   PARTNER_VERSION_CONFLICT:

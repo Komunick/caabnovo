@@ -9,6 +9,8 @@ import { ProfileForm } from "./profile-form";
 import { UnitPanel } from "./unit-panel";
 import { ContractPanel } from "./contract-panel";
 import { BenefitPanel } from "./benefit-panel";
+import { ReviewPanel } from "./review-panel";
+import { PartnerNavigation } from "./partner-navigation";
 import { partnerRequest, mutationHeaders } from "./client";
 import { formatDate, historyDescription, statusLabels } from "./labels";
 import styles from "./partners.module.css";
@@ -29,7 +31,14 @@ export function PartnerEditor({
   const searchParams = useSearchParams();
   const [partner, setPartner] = useState(initial);
   const [tab, setTab] = useState(
-    searchParams.get("tab") === "benefits" ? "Benefícios" : "Cadastro",
+    (
+      {
+        units: "Unidades",
+        benefits: "Benefícios",
+        reviews: "Avaliações",
+        contracts: "Contratos",
+      } as Record<string, string>
+    )[searchParams.get("tab") ?? ""] ?? "Cadastro",
   );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -118,21 +127,24 @@ export function PartnerEditor({
         {message}
       </p>
       <nav className="module-tabs" aria-label="Seções do parceiro">
-        {["Cadastro", "Unidades", "Contratos", "Benefícios", "Histórico"].map((label) => (
-          <Button
-            key={label}
-            aria-pressed={tab === label}
-            intent={tab === label ? "primary" : "secondary"}
-            disabled={busy}
-            onClick={() => {
-              setTab(label);
-              if (label === "Histórico") void loadHistory();
-            }}
-          >
-            {label}
-          </Button>
-        ))}
+        {["Cadastro", "Unidades", "Contratos", "Benefícios", "Avaliações", "Histórico"].map(
+          (label) => (
+            <Button
+              key={label}
+              aria-pressed={tab === label}
+              intent={tab === label ? "primary" : "secondary"}
+              disabled={busy}
+              onClick={() => {
+                setTab(label);
+                if (label === "Histórico") void loadHistory();
+              }}
+            >
+              {label}
+            </Button>
+          ),
+        )}
       </nav>
+      <PartnerNavigation active="partners" />
       <div hidden={tab !== "Cadastro"}>
         <section className="panel">
           <h2>Cadastro</h2>
@@ -215,6 +227,7 @@ export function PartnerEditor({
           command={command}
         />
       </div>
+      {tab === "Avaliações" && <ReviewPanel partnerId={partner.id} canModerate={canPublish} />}
       {tab === "Histórico" && (
         <section className="panel">
           <h2>Histórico</h2>

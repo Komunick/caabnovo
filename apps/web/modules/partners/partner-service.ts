@@ -46,7 +46,7 @@ const visible = `COALESCE(b.published IS NOT NULL AND p.status='active' AND p.ar
 const benefitJoins = `JOIN partner p ON p.id=b.partner_id
  LEFT JOIN partner_unit u ON u.id=b.published_unit_id AND u.partner_id=p.id
  LEFT JOIN partner_contract c ON c.id=b.published_contract_id AND c.partner_id=p.id`;
-async function authorized<T>(
+export async function authorized<T>(
   pool: Pool,
   actor: RequestActor,
   operation: (client: PoolClient) => Promise<T>,
@@ -86,7 +86,37 @@ export async function getPartner(pool: Pool, actor: RequestActor, id: string) {
   idSchema.parse(id);
   return authorized(pool, actor, (client) => record(client, id));
 }
-const pattern = (value: string) => `%${value.replace(/[\\%_]/g, "\\$&")}%`;
+export const pattern = (value: string) => `%${value.replace(/[\\%_]/g, "\\$&")}%`;
+export const appCategoryVisibility = `EXISTS (SELECT 1 FROM partner_category pc CROSS JOIN partner_app_settings ps
+ WHERE pc.id=p.category_id AND pc.active AND (ps.mode='all' OR EXISTS
+ (SELECT 1 FROM partner_app_category pac WHERE pac.category_id=pc.id)))`;
+
+async function resolveCategory(client: PoolClient, name: string, partnerId?: string) {
+  await client.query("SELECT id FROM partner_app_settings WHERE id=true FOR UPDATE");
+  await client.query("INSERT INTO partner_category(name) VALUES($1) ON CONFLICT DO NOTHING", [
+    name,
+  ]);
+  const category = (
+    await client.query<{ id: string; name: string; active: boolean }>(
+      "SELECT id,name,active FROM partner_category WHERE lower(trim(name))=lower(trim($1))",
+      [name],
+    )
+  ).rows[0]!;
+  if (
+    !category.active &&
+    !(
+      partnerId &&
+      (
+        await client.query("SELECT id FROM partner WHERE id=$1 AND category_id=$2", [
+          partnerId,
+          category.id,
+        ])
+      ).rowCount
+    )
+  )
+    throw new PartnerError("PARTNER_CATEGORY_INACTIVE");
+  return category;
+}
 export async function listPartners(pool: Pool, actor: RequestActor, raw: unknown) {
   const input = partnerListSchema.parse(raw);
   return authorized(pool, actor, async (client) => {
@@ -116,7 +146,12 @@ export async function listPartners(pool: Pool, actor: RequestActor, raw: unknown
     };
   });
 }
-async function claim(client: PoolClient, context: PartnerContext, action: string, input: unknown) {
+export async function claim(
+  client: PoolClient,
+  context: PartnerContext,
+  action: string,
+  input: unknown,
+) {
   if (context.idempotencyKey.length < 16 || context.idempotencyKey.length > 128)
     throw new PartnerError("IDEMPOTENCY_KEY_REQUIRED", 422);
   const scope = `partners:${context.actor.userId}:${action}`;
@@ -182,9 +217,10 @@ export async function createPartner(pool: Pool, context: PartnerContext, raw: un
       async (client) => {
         const pending = await claim(client, context, "create", input);
         if (pending.prior) return record(client, pending.prior);
+        const category = await resolveCategory(client, input.profile.category);
         const result = await client.query<{ id: string }>(
-          "INSERT INTO partner(profile) VALUES($1) RETURNING id",
-          [input.profile],
+          "INSERT INTO partner(profile,category_id) VALUES($1,$2) RETURNING id",
+          [{ ...input.profile, category: category.name }, category.id],
         );
         return finish(
           client,
@@ -240,6 +276,10 @@ export async function commandPartner(
       async (client) => {
         const pending = await claim(client, context, `${id}:${input.action}`, input);
         if (pending.prior) return record(client, pending.prior);
+        const category =
+          input.action === "update"
+            ? await resolveCategory(client, input.profile.category, id)
+            : null;
         const lock = await client.query<{
           version: number;
           archived_at: string | null;
@@ -254,7 +294,11 @@ export async function commandPartner(
         const after: Record<string, unknown> = { version: row.version + 1 };
         switch (input.action) {
           case "update":
-            await client.query("UPDATE partner SET profile=$2 WHERE id=$1", [id, input.profile]);
+            await client.query("UPDATE partner SET profile=$2,category_id=$3 WHERE id=$1", [
+              id,
+              { ...input.profile, category: category!.name },
+              category!.id,
+            ]);
             break;
           case "status":
             if (row.status === input.status) throw new PartnerError("PARTNER_STATE_UNCHANGED");
@@ -442,6 +486,7 @@ export async function publicBenefits(pool: Pool, channel: string, raw: unknown) 
     'partner',jsonb_build_object('name',p.profile->>'name','category',p.profile->>'category'),
     'unit',jsonb_build_object('name',u.profile->>'name','mode',u.profile->>'mode','city',u.profile->>'city','state',u.profile->>'state','address',u.profile->>'address','region',u.profile->>'region')) data
     FROM partner_benefit b ${benefitJoins} WHERE ${visible} AND b.published->'channels' ? $1
+    AND ($1<>'app' OR ${appCategoryVisibility})
     AND ($2='' OR b.published->>'title' ILIKE $3 ESCAPE '\\' OR p.profile->>'name' ILIKE $3 ESCAPE '\\') AND ($4='' OR p.profile->>'category'=$4)
     ORDER BY lower(b.published->>'title'),b.id LIMIT 26 OFFSET $5`,
     [channel, input.q, pattern(input.q), input.category, (input.page - 1) * 25],

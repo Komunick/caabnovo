@@ -28,6 +28,18 @@ interface Dependencies {
     history(actor: RequestActor, id: string, page: number): Promise<unknown>;
     files(actor: RequestActor, id: string, page: number): Promise<unknown>;
     download(actor: RequestActor, id: string, fileId: string): Promise<{ url: string }>;
+    units(actor: RequestActor, input: unknown): Promise<unknown>;
+    categories(actor: RequestActor): Promise<unknown>;
+    settings(actor: RequestActor): Promise<unknown>;
+    saveCategory(context: PartnerContext, input: unknown): Promise<unknown>;
+    saveSettings(context: PartnerContext, input: unknown): Promise<unknown>;
+    reviews(actor: RequestActor, id: string, input: unknown): Promise<unknown>;
+    moderateReview(
+      context: PartnerContext,
+      id: string,
+      reviewId: string,
+      input: unknown,
+    ): Promise<unknown>;
   };
 }
 export async function readJson(request: Request) {
@@ -68,11 +80,25 @@ export function createPartnerRoute(deps: Dependencies) {
       if (!actor) throw { code: "AUTHENTICATION_REQUIRED", status: 401 };
       requirePermission(actor, PERMISSIONS.partnersRead);
       const isBenefits = path.length === 1 && path[0] === "benefits";
-      const id = path[0] && !isBenefits ? idSchema.parse(path[0]) : undefined;
+      const directory =
+        path.length === 1 && ["units", "categories", "settings"].includes(path[0]!)
+          ? path[0]
+          : undefined;
+      const id = path[0] && !isBenefits && !directory ? idSchema.parse(path[0]) : undefined;
       if (request.method === "GET") {
         const query = Object.fromEntries(new URL(request.url).searchParams);
-        const page = (isBenefits ? benefitListSchema : partnerListSchema).parse(query).page;
-        if (isBenefits) response = Response.json(await deps.service.benefits(actor, query));
+        const page = partnerListSchema.parse({ page: query.page }).page;
+        if (directory === "units") response = Response.json(await deps.service.units(actor, query));
+        else if (directory === "categories")
+          response = Response.json(await deps.service.categories(actor));
+        else if (directory === "settings")
+          response = Response.json(await deps.service.settings(actor));
+        else if (id && path.length === 2 && path[1] === "reviews")
+          response = Response.json(await deps.service.reviews(actor, id, query));
+        else if (isBenefits)
+          response = Response.json(
+            await deps.service.benefits(actor, benefitListSchema.parse(query)),
+          );
         else if (!id) response = Response.json(await deps.service.list(actor, query));
         else if (path.length === 1) response = Response.json(await deps.service.get(actor, id));
         else if (path.length === 2 && path[1] === "history")
@@ -95,7 +121,27 @@ export function createPartnerRoute(deps: Dependencies) {
           correlationId: correlationId(request),
           idempotencyKey: idempotencyKey!,
         };
-        if (!path.length) {
+        if (directory === "categories") {
+          requirePermission(actor, PERMISSIONS.partnersWrite);
+          response = Response.json(
+            await deps.service.saveCategory(context, await readJson(request)),
+          );
+        } else if (directory === "settings") {
+          requirePermission(actor, PERMISSIONS.partnersPublish);
+          response = Response.json(
+            await deps.service.saveSettings(context, await readJson(request)),
+          );
+        } else if (id && path.length === 3 && path[1] === "reviews") {
+          requirePermission(actor, PERMISSIONS.partnersPublish);
+          response = Response.json(
+            await deps.service.moderateReview(
+              context,
+              id,
+              idSchema.parse(path[2]),
+              await readJson(request),
+            ),
+          );
+        } else if (!path.length) {
           requirePermission(actor, PERMISSIONS.partnersWrite);
           response = Response.json(
             await deps.service.create(context, createPartnerSchema.parse(await readJson(request))),

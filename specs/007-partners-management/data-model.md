@@ -1,5 +1,27 @@
 # Modelo de dados
 
+## Complemento de diretório — migration 0017
+
+- `partner_category`: UUID estável, nome único sem distinguir maiúsculas ou espaços
+  externos, situação, versão e timestamps. Backfill agrupa os textos existentes e
+  normaliza `partner.profile.category`; `partner.category_id` é FK obrigatória.
+  Renomear preserva o vínculo e incrementa as versões dos parceiros afetados.
+  Inativar impede novas associações, mas permite manter o cadastro já vinculado.
+- `partner_app_settings`: singleton com modo `all`/`selected`, versão e timestamp;
+  `partner_app_category` contém os IDs selecionados. Modo `selected` sem IDs é vazio
+  intencional. A seleção e a situação ativa são verificadas no servidor em cada
+  leitura pública do app; site mantém critérios e canais próprios.
+- `partner_review`: fonte/id externo único, parceiro, benefício opcional pertencente
+  ao mesmo parceiro, referência privada e rótulo do autor, nota 1–5, opinião original,
+  data recebida, estado pending/published/hidden e versão. Moderação exige motivo,
+  data e ator. O runtime só pode atualizar colunas de moderação; não pode alterar
+  opinião, nota, autoria ou excluir avaliações. Não há endpoint anônimo de ingestão.
+
+Categorias e configurações usam lock do singleton para serializar alterações de
+vínculos e seleção; avaliações usam comparação de versão na atualização. Todos os
+comandos têm autorização atual, idempotência e auditoria na mesma transação. A
+migration não cria avaliações nem remove dados existentes.
+
 Migration aditiva 0016; sem backfill/seed compartilhado e sem reescrever migrations aplicadas.
 
 - `partner`: id UUID, profile JSONB validado (name/legalName/cnpj/category/description/contactName/email/phone/website), status active/suspended, archived_at, version e timestamps. Índice único parcial no CNPJ normalizado não vazio; nomes/categorias pesquisáveis. Arquivamento não apaga dados.
