@@ -2,11 +2,142 @@
   display: grid;
   gap: 1.25rem;
   min-width: 0;
+  width: 100%;
+  max-width: 88rem;
+  margin-inline: auto;
+}
+.filterToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.65rem;
+}
+.root > [role="status"]:empty {
+  position: absolute;
+  margin: 0;
+}
+.root form .grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.root form .grid > :global(.form-field) {
+  margin-bottom: 0;
+}
+.root > h2,
+.root > p {
+  margin: 0;
+}
+@media (max-width: 1100px) {
+  .root form .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .root form .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.memberTable {
+  min-width: 36rem;
+}
+.memberTable th,
+.memberTable td {
+  overflow-wrap: normal;
+}
+.filterSearch {
+  flex: 1 1 18rem;
+  min-width: 0;
+  margin: 0;
+}
+.filterOptions > div {
+  margin: 0;
+}
+.filterOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+.filterOptions[hidden] {
+  display: none;
+}
+.filterOptions label {
+  font-size: 0.875rem;
+}
+.filterOptions select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.85rem;
+  padding-block: 0.5rem;
+}
+@media (min-width: 960px) {
+  .filterOptions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
   gap: 1rem;
+}
+.birthDateField {
+  position: relative;
+}
+.birthDateField input {
+  width: 100%;
+  padding-inline-end: 3.25rem;
+}
+.birthDateField input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.birthCalendar {
+  width: min(26rem, calc(100vw - 2rem));
+}
+.calendarControls {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 0.75rem;
+}
+.calendarControls label {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.calendarControls input,
+.calendarControls select {
+  width: 100%;
+  min-width: 0;
+}
+.calendarTable {
+  width: 100%;
+  table-layout: fixed;
+  margin-block: 1rem;
+}
+.calendarTable th,
+.calendarTable td {
+  padding: 0.1rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+.calendarTable button {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0.35rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+.calendarTable button:hover:not(:disabled) {
+  background: var(--color-action-soft);
+}
+.calendarTable button[aria-pressed="true"] {
+  color: white;
+  background: var(--color-action);
+}
+.calendarTable button:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 .actions {
   display: flex;

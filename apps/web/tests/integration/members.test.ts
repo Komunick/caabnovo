@@ -102,6 +102,166 @@ async function file(memberId: string, status = "available") {
   return id;
 }
 describe.sequential("member persistence", () => {
+  it("tracks manual activation/block/unblock without changing assessments, identity or dependents", async () => {
+    let person = await create("Situação administrativa sintética");
+    const dependent = await create("Dependente independente");
+    person = await command(person.id, person.version, {
+      action: "link",
+      dependentId: dependent.id,
+      relationship: "Teste",
+      startsOn: "2020-01-01",
+    });
+    person = await command(person.id, person.version, {
+      action: "assess",
+      dimension: "oab",
+      result: "irregular",
+      source: "Fonte sintética",
+      observedAt: "2020-01-01T00:00:00Z",
+    });
+    const original = person;
+    const originalDependent = await getMember(pool, context.actor, dependent.id);
+    expect(person.administrativeStatus).toBe("inactive");
+    expect(person.administrativeDecision).toBeNull();
+    for (const [action, status] of [
+      ["activate", "active"],
+      ["block", "blocked"],
+      ["unblock", "active"],
+    ] as const) {
+      person = await command(person.id, person.version, {
+        action,
+        justification: `Teste ${action}`,
+      });
+      expect(person.administrativeStatus).toBe(status);
+      expect(person.administrativeDecision).toMatchObject({
+        reason: `Teste ${action}`,
+        actorName: "Operador sintético",
+      });
+      expect(person.administrativeDecision?.changedAt).toBeTruthy();
+      expect(person.assessments).toEqual(original.assessments);
+      expect(person.profile).toEqual(original.profile);
+      expect(person.relationships).toEqual(original.relationships);
+      expect(await findMemberSummary(pool, person.id)).toMatchObject({
+        administrativeStatus: status,
+      });
+      expect(
+        (
+          await listMembers(pool, context.actor, {
+            q: person.profile.name,
+            administrativeStatus: status,
+          })
+        ).items.map((m) => m.id),
+      ).toContain(person.id);
+    }
+    expect(await getMember(pool, context.actor, dependent.id)).toEqual(originalDependent);
+    const events = (await memberHistory(pool, context.actor, person.id)).items.filter((e) =>
+      ["member.activate", "member.block", "member.unblock"].includes(e.action),
+    );
+    expect(events).toHaveLength(3);
+    expect(
+      events.map((e) => [e.after.previousAdministrativeStatus, e.after.administrativeStatus]),
+    ).toEqual([
+      ["blocked", "active"],
+      ["active", "blocked"],
+      ["inactive", "active"],
+    ]);
+  });
+  it("rejects invalid transitions and preserves blocked status across corrections and archive/restore", async () => {
+    let person = await create();
+    for (const action of ["block", "unblock"])
+      await expect(command(person.id, person.version, { action })).rejects.toMatchObject({
+        code: "MEMBER_INVALID_STATUS_TRANSITION",
+      });
+    person = await command(person.id, person.version, { action: "activate" });
+    await expect(command(person.id, person.version, { action: "activate" })).rejects.toMatchObject({
+      code: "MEMBER_INVALID_STATUS_TRANSITION",
+    });
+    person = await command(person.id, person.version, { action: "block" });
+    for (const action of ["activate", "block"])
+      await expect(command(person.id, person.version, { action })).rejects.toMatchObject({
+        code: "MEMBER_INVALID_STATUS_TRANSITION",
+      });
+    person = await command(person.id, person.version, {
+      action: "update",
+      profile: { name: "Correção durante bloqueio" },
+    });
+    const clean = await file(person.id);
+    person = await command(person.id, person.version, {
+      action: "document",
+      fileId: clean,
+      category: "Regularização",
+    });
+    expect(person.documents).toHaveLength(1);
+    expect(person.administrativeStatus).toBe("blocked");
+    person = await command(person.id, person.version, { action: "archive" });
+    for (const action of ["activate", "block", "unblock"])
+      await expect(command(person.id, person.version, { action })).rejects.toMatchObject({
+        code: "MEMBER_ARCHIVED",
+      });
+    person = await command(person.id, person.version, { action: "restore" });
+    expect(person.administrativeStatus).toBe("blocked");
+  });
+  it("serializes status transitions, replays idempotently and rolls back on missing audit", async () => {
+    let person = await create();
+    const ctx = nextContext();
+    const input = {
+      action: "activate",
+      expectedVersion: person.version,
+      justification: "Ativação sintética",
+    };
+    const results = await Promise.all([
+      commandMember(pool, ctx, person.id, input),
+      commandMember(pool, ctx, person.id, input),
+    ]);
+    expect(results[0]).toEqual(results[1]);
+    person = results[0]!;
+    expect(
+      (await memberHistory(pool, context.actor, person.id)).items.filter(
+        (e) => e.action === "member.activate",
+      ),
+    ).toHaveLength(1);
+    const race = await Promise.allSettled([
+      command(person.id, person.version, { action: "block" }),
+      command(person.id, person.version, { action: "block" }),
+    ]);
+    expect(race.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect(race.find((r) => r.status === "rejected")).toMatchObject({
+      reason: { code: "MEMBER_VERSION_CONFLICT" },
+    });
+    person = await getMember(pool, context.actor, person.id);
+    await admin.query("REVOKE INSERT ON audit_event FROM caab_runtime");
+    try {
+      await expect(command(person.id, person.version, { action: "unblock" })).rejects.toThrow();
+    } finally {
+      await admin.query("GRANT INSERT ON audit_event TO caab_runtime");
+    }
+    expect(await getMember(pool, context.actor, person.id)).toEqual(person);
+  });
+  it("revalidates review permission and prevents direct invalid database states", async () => {
+    const person = await create();
+    const role = (await admin.query("SELECT id FROM role WHERE code='members-test'")).rows[0].id;
+    await admin.query(
+      "DELETE FROM role_permission WHERE role_id=$1 AND permission_id IN (SELECT id FROM permission WHERE resource='members' AND action='review')",
+      [role],
+    );
+    try {
+      for (const action of ["activate", "block", "unblock"])
+        await expect(command(person.id, person.version, { action })).rejects.toMatchObject({
+          status: 403,
+        });
+    } finally {
+      await admin.query(
+        "INSERT INTO role_permission(role_id,permission_id) SELECT $1,id FROM permission WHERE resource='members' AND action='review'",
+        [role],
+      );
+    }
+    await expect(
+      admin.query("UPDATE member SET administrative_status='invented' WHERE id=$1", [person.id]),
+    ).rejects.toMatchObject({ code: "23514" });
+    await expect(
+      admin.query("UPDATE member SET administrative_status='active' WHERE id=$1", [person.id]),
+    ).rejects.toMatchObject({ code: "23514" });
+    expect(await getMember(pool, context.actor, person.id)).toEqual(person);
+  });
   it("combines OAB section, search, status and archive filters across pages", async () => {
     const prefix = `Seccional ${crypto.randomUUID()}`;
     const people = [];
@@ -149,6 +309,7 @@ describe.sequential("member persistence", () => {
       id: person.id,
       name: "Cadastro sem conta",
       archivedAt: null,
+      administrativeStatus: "inactive",
     });
     expect((await admin.query('SELECT count(*)::int total FROM "user"')).rows).toEqual(before.rows);
     expect((await memberHistory(pool, context.actor, person.id)).items[0]?.action).toBe(

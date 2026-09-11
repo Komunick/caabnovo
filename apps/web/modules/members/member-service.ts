@@ -58,6 +58,10 @@ async function authorized<T>(
 
 const memberSelect = `SELECT jsonb_build_object(
  'id',m.id,'version',m.version,'archivedAt',m.archived_at,'createdAt',m.created_at,'updatedAt',m.updated_at,
+ 'administrativeStatus',m.administrative_status,
+ 'administrativeDecision',CASE WHEN m.administrative_changed_at IS NULL THEN NULL ELSE jsonb_build_object(
+ 'reason',m.administrative_reason,'changedAt',m.administrative_changed_at,
+ 'actorName',(SELECT name FROM "user" WHERE id=m.administrative_changed_by)) END,
  'profile',jsonb_build_object('name',m.name,'socialName',m.social_name,'cpf',COALESCE(m.cpf,''),
  'birthDate',m.birth_date,'email',m.email,'phone',m.phone,'oab',CASE WHEN m.oab_number IS NULL THEN NULL ELSE
  jsonb_build_object('number',m.oab_number,'state',m.oab_state,'type',m.oab_type) END),
@@ -91,13 +95,14 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
   const input = memberListSchema.parse(query);
   return authorized(pool, actor, async (client) => {
     const result = await client.query<MemberListItem>(
-      `SELECT m.id,m.name,m.archived_at AS "archivedAt",COALESCE(a.result,'unknown') AS "registrationStatus"
+      `SELECT m.id,m.name,m.administrative_status AS "administrativeStatus",m.archived_at AS "archivedAt",COALESCE(a.result,'unknown') AS "registrationStatus"
        FROM member m LEFT JOIN LATERAL (SELECT result FROM member_assessment WHERE member_id=m.id AND dimension='registration'
        ORDER BY created_at DESC,id LIMIT 1) a ON true
        WHERE ($1='' OR m.name ILIKE $2 ESCAPE '\\' OR m.social_name ILIKE $2 ESCAPE '\\' OR m.cpf=$3 OR m.oab_number=$4)
        AND ($5='all' OR ($5='active' AND m.archived_at IS NULL) OR ($5='archived' AND m.archived_at IS NOT NULL))
        AND ($6::text IS NULL OR COALESCE(a.result,'unknown')=$6)
        AND ($8::text IS NULL OR m.oab_state=$8)
+       AND ($9::text IS NULL OR m.administrative_status=$9)
        ORDER BY lower(m.name),m.id LIMIT 26 OFFSET $7`,
       [
         input.q,
@@ -108,6 +113,7 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
         input.registrationStatus ?? null,
         (input.page - 1) * 25,
         input.oabState ?? null,
+        input.administrativeStatus ?? null,
       ],
     );
     return {
@@ -263,13 +269,35 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
           version: number;
           profile_version: number;
           archived_at: Date | null;
-        }>("SELECT version,profile_version,archived_at FROM member WHERE id=$1 FOR UPDATE", [id]);
+          administrative_status: string;
+        }>(
+          "SELECT version,profile_version,archived_at,administrative_status FROM member WHERE id=$1 FOR UPDATE",
+          [id],
+        );
         const row = locked.rows[0];
         if (!row) throw new MemberError("MEMBER_NOT_FOUND", 404);
         if (row.version !== input.expectedVersion) throw new MemberError("MEMBER_VERSION_CONFLICT");
         if (row.archived_at && input.action !== "restore") throw new MemberError("MEMBER_ARCHIVED");
         const after: Record<string, unknown> = { version: row.version + 1 };
         switch (input.action) {
+          case "activate":
+          case "block":
+          case "unblock": {
+            const expected = { activate: "inactive", block: "active", unblock: "blocked" }[
+              input.action
+            ];
+            if (row.administrative_status !== expected)
+              throw new MemberError("MEMBER_INVALID_STATUS_TRANSITION");
+            const next = input.action === "block" ? "blocked" : "active";
+            await client.query(
+              `UPDATE member SET administrative_status=$2,administrative_reason=$3,
+               administrative_changed_at=now(),administrative_changed_by=$4 WHERE id=$1`,
+              [id, next, input.justification, context.actor.userId],
+            );
+            after.previousAdministrativeStatus = row.administrative_status;
+            after.administrativeStatus = next;
+            break;
+          }
           case "update": {
             const old = (await record(client, id)).profile;
             const identity = (p: MemberProfile) =>
@@ -383,7 +411,7 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
         ]);
         return finish(client, context, claim.scope, id, input.action, input.justification, after);
       },
-      input.action === "assess" || input.action === "review"
+      ["assess", "review", "activate", "block", "unblock"].includes(input.action)
         ? PERMISSIONS.membersReview
         : PERMISSIONS.membersWrite,
       input.action === "document" || input.action === "review" ? PERMISSIONS.filesRead : undefined,

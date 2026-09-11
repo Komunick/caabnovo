@@ -28,7 +28,7 @@ interface Dependencies {
     download(actor: RequestActor, id: string, fileId: string): Promise<{ url: string }>;
   };
 }
-async function readJson(request: Request) {
+export async function readJson(request: Request) {
   if (
     request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json" ||
     !request.body
@@ -68,6 +68,8 @@ export function createMemberRoute(deps: Dependencies) {
       const id = path[0] ? idSchema.parse(path[0]) : undefined;
       if (request.method === "GET") {
         const query = Object.fromEntries(new URL(request.url).searchParams);
+        for (const key of ["registrationStatus", "oabState", "administrativeStatus"])
+          if (query[key] === "") delete query[key];
         const page = memberListSchema.parse(query).page;
         if (!id) response = Response.json(await deps.service.list(actor, query));
         else if (path.length === 1) response = Response.json(await deps.service.get(actor, id));
@@ -101,7 +103,7 @@ export function createMemberRoute(deps: Dependencies) {
           const input = memberCommandSchema.parse(await readJson(request));
           requirePermission(
             actor,
-            input.action === "assess" || input.action === "review"
+            ["assess", "review", "activate", "block", "unblock"].includes(input.action)
               ? PERMISSIONS.membersReview
               : PERMISSIONS.membersWrite,
           );

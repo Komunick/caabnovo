@@ -25,6 +25,46 @@ function setup(authenticated = true, permissions = actor.permissions) {
   };
 }
 describe("member private HTTP boundary", () => {
+  it("treats empty optional filters from the UI URL as unselected", async () => {
+    const { route, service } = setup();
+    service.list.mockResolvedValue({ items: [] });
+    const response = await route(
+      new Request(
+        "http://localhost/api/v1/members?q=Teste&oabState=BA&registrationStatus=&administrativeStatus=&archived=all",
+      ),
+    );
+    expect(response.status).toBe(200);
+    expect(service.list).toHaveBeenCalledWith(expect.anything(), {
+      q: "Teste",
+      oabState: "BA",
+      archived: "all",
+    });
+  });
+  it.each(["activate", "block", "unblock"])("requires review permission for %s", async (action) => {
+    for (const [permissions, status] of [
+      [[], 403],
+      [["members:read", "members:write"], 403],
+      [["members:read", "members:review"], 200],
+    ] as const) {
+      const { route, service } = setup(true, new Set(permissions));
+      service.command.mockResolvedValue({});
+      const response = await route(
+        new Request("http://localhost/api/v1/members", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            origin: "http://localhost",
+            "x-csrf-token": crypto.randomUUID(),
+            "idempotency-key": crypto.randomUUID(),
+          },
+          body: JSON.stringify({ action, expectedVersion: 1, justification: "Decisão sintética" }),
+        }),
+        [actor.userId, "commands"],
+      );
+      expect(response.status).toBe(status);
+      expect(service.command).toHaveBeenCalledTimes(status === 200 ? 1 : 0);
+    }
+  });
   it.each(
     [
       [],

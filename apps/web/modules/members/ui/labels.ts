@@ -25,6 +25,9 @@ export const resultLabels: Record<string, string> = {
   correction_requested: "Correção solicitada",
 };
 export const actionLabels: Record<string, string> = {
+  activate: "Associado ativado",
+  block: "Associado bloqueado",
+  unblock: "Associado desbloqueado",
   created: "Cadastro criado",
   update: "Cadastro corrigido",
   archive: "Cadastro arquivado",
@@ -34,6 +37,9 @@ export const actionLabels: Record<string, string> = {
   document: "Documento anexado",
   review: "Documento analisado",
   assess: "Situação avaliada",
+  oab_query_started: "Consulta OAB iniciada",
+  oab_queried: "Consulta OAB concluída",
+  oab_query_failed: "Consulta OAB não concluída",
 };
 export function formatMemberDate(value: string | null, dateOnly = false) {
   if (!value) return "Não informada";
@@ -44,6 +50,23 @@ export function formatMemberDate(value: string | null, dateOnly = false) {
   }).format(new Date(value));
 }
 export const memberErrors: Record<string, string> = {
+  MEMBER_INVALID_STATUS_TRANSITION:
+    "Esta ação não é permitida para a situação atual. Recarregue o cadastro e confira a ação disponível.",
+  OAB_NOT_CONFIGURED:
+    "A conexão com a OAB-BA ainda não foi ativada neste ambiente. A consulta depende da configuração das credenciais do serviço no servidor.",
+  OAB_CREDENTIALS_REJECTED:
+    "A OAB-BA recusou as credenciais do serviço. É necessário revisar a configuração da integração.",
+  OAB_UNAVAILABLE:
+    "O serviço da OAB-BA está indisponível no momento. Tente novamente em instantes.",
+  OAB_TIMEOUT: "A OAB-BA não respondeu dentro do prazo. Tente novamente em instantes.",
+  OAB_INVALID_RESPONSE:
+    "O serviço da OAB-BA retornou uma resposta que não pôde ser confirmada. Nenhuma situação foi atribuída.",
+  OAB_RATE_LIMITED:
+    "Foram feitas muitas consultas em sequência. Aguarde um minuto antes de tentar novamente.",
+  OAB_UNSUPPORTED_REGISTRATION:
+    "A consulta integrada atende somente números de advogados da OAB/BA. Confira o estado e o tipo da inscrição.",
+  OAB_MEMBER_CHANGED:
+    "O cadastro mudou durante a consulta. Volte ao associado e confira a inscrição antes de tentar novamente.",
   MEMBER_DUPLICATE:
     "CPF, inscrição OAB, arquivo ou vínculo já cadastrado. Consulte os registros existentes, incluindo arquivados.",
   MEMBER_VERSION_CONFLICT:
@@ -53,7 +76,12 @@ export const memberErrors: Record<string, string> = {
   MEMBER_FILE_UNAVAILABLE: "O arquivo ainda não foi liberado para uso.",
   MEMBER_DOCUMENT_REPLACED: "Este documento já foi substituído. Analise a evidência atual.",
   AUTHENTICATION_REQUIRED: "Sua sessão terminou. Entre novamente.",
-  PERMISSION_DENIED: "Sua conta não possui acesso a esta operação de arquivos.",
+  PERMISSION_DENIED: "Sua conta não possui permissão para esta operação em Associados.",
   VALIDATION_FAILED: "Confira os campos, CPF, datas, fonte e justificativa.",
   IDEMPOTENCY_CONFLICT: "Esta tentativa difere da anterior. Recarregue o cadastro.",
 };
+export const administrativeStatusLabels = {
+  inactive: "Não ativado",
+  active: "Ativo",
+  blocked: "Bloqueado",
+} as const;

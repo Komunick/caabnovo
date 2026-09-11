@@ -41,6 +41,40 @@ async function create(page: Page, name: string) {
   return page.url();
 }
 
+test("birth calendar and contact masks work without saving a member", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/members/new");
+  const trigger = page.getByRole("button", { name: "Abrir calendário de nascimento" });
+  await trigger.click();
+  const calendar = page.getByRole("dialog", { name: "Data de nascimento" });
+  await calendar.getByLabel("Ano", { exact: true }).fill("2000");
+  await calendar.getByLabel("Mês", { exact: true }).selectOption("1");
+  await calendar.getByRole("button", { name: "29 de Fevereiro de 2000", exact: true }).click();
+  await expect(page.getByLabel("Nascimento (opcional)")).toHaveValue("2000-02-29");
+  await expect(trigger).toBeFocused();
+  await trigger.press("Enter");
+  await expect(calendar).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(calendar).toBeHidden();
+  const cpf = page.getByLabel("CPF (opcional)");
+  await cpf.pressSequentially("abc1234567890123");
+  await expect(cpf).toHaveValue("123.456.789-01");
+  await cpf.fill("");
+  const phone = page.getByLabel("Telefone (opcional)");
+  await phone.pressSequentially("abc7191234567890");
+  await expect(phone).toHaveValue("(71) 91234-5678");
+  await phone.fill("(71) 3456-7890");
+  await expect(phone).toHaveValue("(71) 3456-7890");
+  const email = page.getByLabel("E-mail de contato (opcional)");
+  await email.fill("invalido@dominio");
+  await email.press("Tab");
+  await expect(email).toHaveAttribute("aria-invalid", "true");
+  expect(await email.evaluate((element: HTMLInputElement) => element.checkValidity())).toBe(false);
+  await email.fill("pessoa@example.test");
+  await expect(page.locator("#member-email-error")).toHaveCount(0);
+  expect(await email.evaluate((element: HTMLInputElement) => element.checkValidity())).toBe(true);
+});
+
 test("administrator manages people, relationships, independent assessments and archive by keyboard at 390px", async ({
   page,
 }, testInfo) => {
@@ -52,6 +86,25 @@ test("administrator manages people, relationships, independent assessments and a
   await create(page, dependent);
   const name = `Associado ${suffix}`;
   const holderUrl = await create(page, name);
+  const administrative = page.getByRole("region", { name: "Situação administrativa", exact: true });
+  await expect(administrative).toContainText("Não ativado");
+  for (const [action, confirm, status] of [
+    ["Ativar associado", "Confirmar ativação", "Ativo"],
+    ["Bloquear associado", "Confirmar bloqueio", "Bloqueado"],
+    ["Desbloquear associado", "Confirmar desbloqueio", "Ativo"],
+  ] as const) {
+    await keyboardActivate(page, administrative.getByRole("button", { name: action, exact: true }));
+    await keyboardType(
+      page,
+      page.getByLabel("Justificativa da mudança de situação"),
+      `Decisão sintética: ${action}`,
+    );
+    await keyboardActivate(
+      page,
+      administrative.getByRole("button", { name: confirm, exact: true }),
+    );
+    await expect(administrative.getByText(status, { exact: true })).toBeVisible();
+  }
   await expectWcag22AA(page);
   await keyboardActivate(page, page.getByRole("button", { name: "Dependentes", exact: true }));
   await keyboardType(page, page.getByLabel("Buscar pessoa pelo nome"), dependent);
@@ -116,7 +169,10 @@ test("administrator manages people, relationships, independent assessments and a
   await page.goto(holderUrl);
 });
 
-test("OAB section filter preserves search and pagination", async ({ page, browserName }) => {
+test("selection filters apply immediately and preserve search, pagination and history", async ({
+  page,
+  browserName,
+}) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 390, height: 844 });
   await signIn(page);
@@ -146,8 +202,9 @@ test("OAB section filter preserves search and pagination", async ({ page, browse
   }
   await page.goto("/members");
   await keyboardType(page, page.getByLabel("Nome, CPF ou inscrição OAB"), prefix);
-  await keyboardSelect(page, page.getByLabel("Seccional OAB", { exact: true }), "BA");
-  await keyboardActivate(page, page.getByRole("button", { name: "Filtrar cadastros" }));
+  await keyboardActivate(page, page.getByRole("button", { name: "Filtros", exact: true }));
+  await page.getByLabel("Estado da OAB", { exact: true }).selectOption("BA");
+  await expect(page).toHaveURL(/oabState=BA/);
   await expect(page.getByRole("table").getByRole("link")).toHaveCount(25);
   await expect(page.getByRole("link", { name: `${prefix} RJ 26` })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Próxima página" })).toHaveAttribute(
@@ -161,12 +218,35 @@ test("OAB section filter preserves search and pagination", async ({ page, browse
   else await keyboardActivate(page, nextPage);
   await expect(page.getByRole("table").getByRole("link")).toHaveCount(1);
   await expect(page.getByRole("link", { name: `${prefix} BA 25` })).toBeVisible();
-  await expect(page.getByLabel("Seccional OAB", { exact: true })).toHaveValue("BA");
+  await expect(page.getByLabel("Estado da OAB", { exact: true })).toHaveValue("BA");
   await expect(page.getByLabel("Nome, CPF ou inscrição OAB")).toHaveValue(prefix);
-  await keyboardSelect(page, page.getByLabel("Seccional OAB", { exact: true }), "RJ");
-  await keyboardActivate(page, page.getByRole("button", { name: "Filtrar cadastros" }));
+  await page.getByLabel("Estado da OAB", { exact: true }).selectOption("RJ");
+  await expect(page).toHaveURL(/oabState=RJ/);
   await expect(page.getByRole("link", { name: `${prefix} RJ 26` })).toBeVisible();
   await expect(page.getByText("Página 1", { exact: true })).toBeVisible();
+  await page.goBack();
+  await expect(page.getByLabel("Estado da OAB", { exact: true })).toHaveValue("BA");
+  await expect(page.getByText("Página 2", { exact: true })).toBeVisible();
+  await page.getByLabel("Análise cadastral", { exact: true }).selectOption("approved");
+  await expect(page).toHaveURL(/registrationStatus=approved/);
+  await expect(page.getByText("Página 1", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Nenhum cadastro encontrado. Ajuste a busca ou crie uma pessoa."),
+  ).toBeVisible();
+  await page.getByLabel("Exibir", { exact: true }).selectOption("archived");
+  await expect(page).toHaveURL(/archived=archived/);
+  await page.getByRole("button", { name: "Limpar filtros" }).click();
+  await expect(page.getByLabel("Nome, CPF ou inscrição OAB")).toHaveValue("");
+  await expect(page.getByLabel("Estado da OAB", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Análise cadastral", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Exibir", { exact: true })).toHaveValue("active");
+  await page.getByLabel("Nome, CPF ou inscrição OAB").fill(prefix);
+  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(page.getByRole("table").getByRole("link")).toHaveCount(25);
+  await page.getByLabel("Estado da OAB", { exact: true }).focus();
+  await page.keyboard.press("End");
+  await expect(page).toHaveURL(/oabState=TO/);
+  await expect(page.getByLabel("Estado da OAB", { exact: true })).toBeFocused();
   await expectWcag22AA(page);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,

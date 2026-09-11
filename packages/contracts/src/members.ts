@@ -85,11 +85,16 @@ export const memberDimensions = {
 } as const;
 export type MemberDimension = keyof typeof memberDimensions;
 const base = { expectedVersion: z.number().int().positive(), justification: reason };
+export const memberAdministrativeStatusSchema = z.enum(["inactive", "active", "blocked"]);
+export type MemberAdministrativeStatus = z.infer<typeof memberAdministrativeStatusSchema>;
 export const memberCommandSchema = z
   .discriminatedUnion("action", [
     z.strictObject({ ...base, action: z.literal("update"), profile: memberProfileSchema }),
     z.strictObject({ ...base, action: z.literal("archive") }),
     z.strictObject({ ...base, action: z.literal("restore") }),
+    z.strictObject({ ...base, action: z.literal("activate") }),
+    z.strictObject({ ...base, action: z.literal("block") }),
+    z.strictObject({ ...base, action: z.literal("unblock") }),
     z.strictObject({
       ...base,
       action: z.literal("link"),
@@ -144,6 +149,7 @@ export const memberListSchema = z.strictObject({
   archived: z.enum(["active", "archived", "all"]).default("active"),
   registrationStatus: z.enum(memberDimensions.registration).optional(),
   oabState: memberProfileSchema.shape.oab.unwrap().unwrap().shape.state.optional(),
+  administrativeStatus: memberAdministrativeStatusSchema.optional(),
 });
 export type MemberProfile = z.infer<typeof memberProfileSchema>;
 export type MemberCommand = z.infer<typeof memberCommandSchema>;
@@ -183,6 +189,8 @@ export interface MemberRelationship {
   endedAt: string | null;
 }
 export interface MemberRecord {
+  administrativeStatus: MemberAdministrativeStatus;
+  administrativeDecision: { reason: string; changedAt: string; actorName: string } | null;
   id: string;
   profile: MemberProfile;
   version: number;
@@ -194,6 +202,7 @@ export interface MemberRecord {
   relationships: MemberRelationship[];
 }
 export interface MemberListItem {
+  administrativeStatus: MemberAdministrativeStatus;
   id: string;
   name: string;
   registrationStatus: string;

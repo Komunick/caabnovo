@@ -2,7 +2,7 @@
 
 **Feature Branch**: `feature/members-management`
 **Created**: 2026-09-09
-**Status**: Em implementação e validação funcional — não está pronto para PR
+**Status**: Pronto conforme confirmação do usuário em 11/09/2026; preparação do PR autorizada.
 **Input**: Implementar Associados; outra instância implementará Caassh.
 
 ## User Scenarios & Testing
@@ -35,7 +35,7 @@ Operador registra separadamente análise cadastral, vínculo institucional, veri
 **Independent Test**: aprovar cadastro, registrar consulta OAB manual e verificar que finanças/elegibilidade não mudaram.
 **Acceptance Scenarios**:
 1. Toda decisão registra responsável, instante, fonte/referência e motivo; desconhecido não significa aprovado.
-2. OAB é consulta manual com data, fonte e resultado, sem automação do portal.
+2. A avaliação OAB pode ser registrada manualmente; a consulta integrada OAB-BA é acionada pelo operador e mostra fonte, horário e regularidade, sem alterar automaticamente qualquer avaliação ou automatizar o portal nacional.
 3. Validade da credencial e de avaliações é exibida como vencida quando o prazo termina, sem apagar a decisão.
 4. Alteração de identificação sinaliza decisões anteriores para revisão, sem apagar documentos nem bloquear dependentes automaticamente.
 5. Elegibilidade exige decisão explícita e referência à regra aplicada; aprovação cadastral não concede créditos.
@@ -58,7 +58,7 @@ CPF inválido/duplicado, inscrição OAB duplicada, dependência circular, vínc
 
 ### Functional Requirements
 
-- **FR-001**: Manter nome, nome social opcional, CPF opcional validado, nascimento opcional, contato e inscrição OAB opcional com UF e tipo; pesquisar por nome/CPF/número OAB e filtrar por seccional OAB, análise cadastral e arquivamento, preservando filtros na paginação e sem expor CPF em listagens.
+- **FR-001**: Manter nome, nome social opcional, CPF opcional validado, nascimento opcional, contato e inscrição OAB opcional com UF e tipo; pesquisar por nome/CPF/número OAB e filtrar por estado da OAB, análise cadastral e arquivamento, preservando filtros na paginação e sem expor CPF em listagens. Usar “Estado da OAB” e “Todos os estados” na interface. Selecionar um filtro atualiza a lista imediatamente, mantém os demais campos e volta à primeira página, sem exigir clique na busca ou Enter. A pesquisa por texto aceita Enter e uma lupa dentro do campo, à direita, com nome acessível “Buscar”; “Limpar filtros” restaura os padrões. Voltar/avançar do navegador mantém controles e resultados sincronizados, sem perder o foco ao selecionar.
 - **FR-002**: Arquivar/restaurar com motivo; não excluir referências nem conta de login.
 - **FR-003**: Registrar dependência entre pessoas existentes, tipo declarado, início e encerramento; impedir ciclos e duplicação ativa do mesmo par.
 - **FR-004**: Reutilizar arquivos privados existentes; disponibilizar upload, consulta segura, análise e substituição documental sem apagar evidência válida.
@@ -71,6 +71,40 @@ CPF inválido/duplicado, inscrição OAB duplicada, dependência circular, vínc
 - **FR-011**: Validar jornada com teclado, largura reduzida, autorização negativa, integridade concorrente e banco descartável.
 - **FR-012**: Exibir todas as revisões documentais anteriores com autor, data e motivo. Substituição não herda aprovação. Histórico contextual inclui mudanças de vínculos vistas tanto pelo titular quanto pelo dependente.
 - **FR-013**: Credencial nesta entrega registra situação e validade de evidência apresentada. Não emite cartão, QR ou prova de autenticidade. Emissão verificável permanece extensão da mesma spec, dependente de definição institucional de emissor, campos, prazo e revogação.
+- **FR-014**: Oferecer a aba Consulta OAB dentro de Associados, acessível com permissão de consulta, para buscar uma inscrição avulsa sem criar pessoa; permitir acesso à mesma consulta pelo cadastro, usando a inscrição armazenada. A integração cobre somente números de advogados da OAB/BA, com 1–6 dígitos e valor maior que zero; validar no campo e no servidor. Inscrição ausente, de outra UF, de estagiário, suplementar ou com letras deve receber orientação explícita de conferência manual, sem consulta a uma identidade presumida.
+- **FR-015**: Distinguir regular, irregular, situação desconhecida e inscrição não encontrada. Mostrar fonte e data da consulta; não exibir CPF, informações financeiras ou resposta bruta. Falta de configuração, recusa de credenciais, indisponibilidade, demora e resposta inválida recebem mensagens próprias e permitem nova tentativa. Nenhuma falha equivale a inscrição irregular.
+- **FR-016**: Proteger a consulta no servidor, registrar início e conclusão/falha sem copiar dados desnecessários, limitar consultas repetidas e revalidar sessão, permissão e identificação após a espera. Não entregar resultados se o acesso foi revogado ou a identificação mudou. A consulta não altera cadastro, avaliações, elegibilidade nem créditos; esses continuam exigindo sua decisão própria.
+
+### Ativação e bloqueio administrativo — 10/09/2026
+
+Pedido do usuário: implementar ASS-003/005. Neste incremento o efeito é administrativo;
+benefícios/créditos não recebem regras novas presumidas. Desbloqueio manual e integração
+futura com Agenda confirmados pelo usuário. Pesquisa comparativa do legado registrada em
+LEG-002; não há cópia de código, notificações ou expiração automática.
+
+- **FR-017**: Situação administrativa própria: Não ativado, Ativo ou Bloqueado. Cadastros
+  novos e anteriores sem decisão explícita começam Não ativado; não inferir ativação de OAB,
+  aprovação cadastral, vínculo ou ausência de arquivamento.
+- **FR-018**: Ativar muda Não ativado para Ativo; bloquear muda Ativo para Bloqueado;
+  desbloquear muda Bloqueado para Ativo. Exigir consulta e análise (`members:review`),
+  justificativa, confirmação explícita, versão atual e idempotência. Recusar transição inválida.
+- **FR-019**: Bloqueio permite leitura, correção cadastral, documentos e análises para
+  regularização, conforme permissões existentes. Não altera dependentes, OAB, finanças,
+  avaliações ou contas de acesso. Cadastro arquivado não aceita mudanças de situação;
+  restaurar preserva o estado anterior, inclusive bloqueio.
+- **FR-020**: Exibir situação na lista e no cadastro; filtrar imediatamente por situação,
+  preservando pesquisa e paginação. Mostrar última justificativa, autor e data; histórico
+  registra estado anterior e posterior. Consumidores recebem a situação no resumo compartilhado,
+  sem concessão ou revogação financeira automática.
+- **FR-021**: Manter a busca visível e reunir os quatro filtros adicionais no controle
+  Filtros, recolhido inicialmente, com contagem dos filtros ativos. Abrir/fechar não limpa
+  critérios. Usar grade compacta em duas colunas no celular e quatro em telas largas,
+  preservar seleção imediata, teclado, histórico e Limpar filtros.
+
+Aceite: Não ativado → Ativo → Bloqueado → Ativo, com histórico preservado; impedir ativação
+como atalho para desbloquear, alteração por conta sem análise, repetição e edição concorrente.
+Arquivar/restaurar associado bloqueado mantém bloqueio. Documentos e avaliações continuam
+independentes. Regras de impedimento de benefícios por finalidade permanecem em P02.
 
 ### Key Entities
 
@@ -90,12 +124,29 @@ CPF inválido/duplicado, inscrição OAB duplicada, dependência circular, vínc
 - **SC-004**: Jornada cadastrar → vincular → analisar → consultar situação funciona por teclado e em 390px, sem perda de ações.
 - **SC-005**: Mudança de uma dimensão não altera outra; Caassh referencia a mesma pessoa sem duplicação cadastral.
 
+## Ajustes do formulário confirmados em 10/09/2026
+
+- **FR-022**: O ícone de calendário em Nascimento abre um seletor do painel com mês,
+  ano e dia, utilizável por teclado, preservando digitação manual, data opcional e limite
+  de nascimento não futuro. Selecionar fecha o calendário e devolve o foco ao ícone;
+  Escape cancela sem alterar o valor. Tratar corretamente anos bissextos.
+- **FR-023**: CPF e telefone aceitam dígitos e aplicam máscara durante digitação/colagem,
+  limitados a onze dígitos: `000.000.000-00` e `(00) 00000-0000`. Telefone fixo com dez
+  dígitos usa `(00) 0000-0000`. Permitir apagar e corrigir no meio do valor. Preservar
+  a validação de CPF existente no servidor.
+- **FR-024**: E-mail opcional vazio é permitido; endereço preenchido inválido apresenta
+  mensagem junto ao campo e impede envio. Correção remove o erro. Usar a mesma regra
+  sintática do contrato do servidor, sem presumir existência ou propriedade do endereço.
+
 ## Assumptions
 
 - Primeira versão administrativa com decisões manuais documentadas; nenhuma regra institucional presumida.
 - CPF, documentos e inscrição são opcionais ao iniciar cadastro; quem analisa registra a base para aprovar ou pedir correção. Documento solicitado é definido no caso, não uma lista institucional inventada.
-- Consulta OAB manual; sem contrato autorizado de integração automática.
+- Em 10/09/2026 foi localizada a documentação da integração OAB-BA/Implanta no legado. A consulta integrada é preparada conforme [contracts/oab-legacy.md](contracts/oab-legacy.md), mantendo a conferência manual nacional. A conexão fica desativada até configurar credenciais vigentes e validar o retorno; respostas simuladas existem somente nos testes.
 - Sem provisionamento de contas mobile, importação de dados reais, biometria/selfie obrigatória ou envio de mensagens. O reenvio é uma pendência registrada, não uma notificação entregue.
 - Caassh implementado separadamente; nenhum saldo, conversão ou concessão pertence a esta função.
 - Alterações posteriores atualizam esta spec. Um PR completo após validação; merge manual pelo usuário.
 - Retomada em 10/09/2026: decisões P01–P04 permanecem pendentes em [open-decisions.md](open-decisions.md). Nenhuma avaliação manual equivale a homologação institucional; validação utiliza pessoas e regras sintéticas. Datas são exibidas em America/Bahia.
+
+
+Integração ativada somente no localhost em 10/09/2026. Não conservar nem reutilizar o resultado da inscrição real usada no teste, conforme correção do usuário. Rastreabilidade em [LEG-001](../../docs/LEGACY-REUSE.md).

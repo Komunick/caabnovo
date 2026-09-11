@@ -1,5 +1,12 @@
 # Modelo
 
+Migration aditiva 0013: member.administrative_status (inactive/active/blocked),
+administrative_reason, administrative_changed_at e administrative_changed_by (FK user).
+Registros anteriores e novos recebem inactive sem decisão presumida; CHECK exige metadados
+completos para active/blocked. Versão do agregado muda; profile_version não muda. Auditoria
+registra activate/block/unblock, previousAdministrativeStatus e administrativeStatus na mesma
+transação. Arquivamento/restauração preserva esses campos. Não há expiração automática.
+
 - member: UUID, name/social_name, CPF opcional único, birth_date, email/phone, inscrição OAB opcional única (número/UF/tipo), version/profile_version, archived_at e timestamps. Sem senha/papel/saldo.
 - member_relationship: titular/dependente FKs, tipo declarado, início/fim, ator. Par ativo único; sem autorrelação/ciclo. Escritas serializadas com advisory lock e busca recursiva.
 - member_document: member/file FKs, categoria, documento anterior da mesma pessoa opcional. Arquivo privado seguro revalidado ao anexar, baixar e revisar.
@@ -13,3 +20,12 @@ prévia às demais ações. A migration associa somente o administrador já exis
 das concessões e permissões são revalidados no banco. Não há exigência de MFA, conforme sua remoção
 do painel na spec 006. Documentos incluem todas as revisões,
 e o histórico de vínculos é consultável tanto pelo titular quanto pelo dependente.
+
+Consultas OAB reutilizam `audit_event`: ações `member.oab_query_started`, `member.oab_queried`
+e `member.oab_query_failed`, com operador, lookupId, inscrição/UF, fonte, instante e
+resultado/código seguro. Consultas pelo cadastro usam entity_type `member` e seu ID,
+aparecendo no histórico contextual; consultas avulsas usam `oab_lookup` e lookupId.
+Nome retornado, CPF, detalhes financeiros, credenciais e JSON bruto não são persistidos.
+Falha final de autenticação/autorização deixa somente o início e impede a entrega do resultado.
+Ausência de configuração falha antes de iniciar a consulta e não produz resultado fictício.
+Nenhum registro em `member_assessment` é inserido ou atualizado por uma consulta integrada.

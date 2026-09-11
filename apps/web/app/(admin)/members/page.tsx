@@ -1,13 +1,16 @@
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { memberListSchema, memberDimensions } from "@caab/contracts";
+import { memberListSchema } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { getDatabase } from "@/modules/shared/database";
 import { listMembers } from "@/modules/members/member-service";
-import { resultLabels } from "@/modules/members/ui/labels";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { administrativeStatusLabels, resultLabels } from "@/modules/members/ui/labels";
+import { buttonVariants } from "@/components/ui/button";
+import { MemberNavigation } from "@/modules/members/ui/member-navigation";
 import { Table, TableContainer } from "@/components/ui/table";
+import { MemberFilters } from "@/modules/members/ui/member-filters";
 import styles from "@/modules/members/ui/members.module.css";
 export const metadata = { title: "Associados", robots: { index: false, follow: false } };
 export default async function MembersPage({
@@ -26,11 +29,12 @@ export default async function MembersPage({
     ...raw,
     ...(raw.registrationStatus === "" ? { registrationStatus: undefined } : {}),
     ...(raw.oabState === "" ? { oabState: undefined } : {}),
+    ...(raw.administrativeStatus === "" ? { administrativeStatus: undefined } : {}),
   });
   const query = parsed.success ? parsed.data : memberListSchema.parse({});
   const result = await listMembers(getDatabase().pool, actor, query);
   const pageLink = (page: number) =>
-    `/members?${new URLSearchParams({ q: query.q, archived: query.archived, registrationStatus: query.registrationStatus ?? "", oabState: query.oabState ?? "", page: String(page) })}`;
+    `/members?${new URLSearchParams({ q: query.q, archived: query.archived, registrationStatus: query.registrationStatus ?? "", oabState: query.oabState ?? "", administrativeStatus: query.administrativeStatus ?? "", page: String(page) })}`;
   return (
     <div className={`page-stack ${styles.root}`}>
       <header className="page-header">
@@ -38,76 +42,42 @@ export default async function MembersPage({
         <h1>Associados</h1>
         <p>Cadastros, dependentes e análises em um só lugar.</p>
         {actor.permissions.has("members:write") && (
-          <Link className={buttonVariants({ intent: "primary" })} href="/members/new">
-            Novo associado
+          <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/members/new">
+            <Plus aria-hidden="true" /> Novo associado
           </Link>
         )}
       </header>
+      <MemberNavigation active="members" />
       <section className="panel">
         <h2>Encontrar cadastro</h2>
         {!parsed.success && <p role="alert">Filtros inválidos. Exibindo a primeira página.</p>}
-        <form action="/members">
-          <div className={styles.grid}>
-            <div className="form-field">
-              <label htmlFor="member-search">Nome, CPF ou inscrição OAB</label>
-              <input id="member-search" name="q" maxLength={160} defaultValue={query.q} />
-            </div>
-            <div className="form-field">
-              <label htmlFor="member-oab-filter">Seccional OAB</label>
-              <select id="member-oab-filter" name="oabState" defaultValue={query.oabState ?? ""}>
-                <option value="">Todas as seccionais</option>
-                {memberListSchema.shape.oabState.unwrap().options.map((uf) => (
-                  <option key={uf} value={uf}>
-                    {uf}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-field">
-              <label htmlFor="member-filter">Análise cadastral</label>
-              <select
-                id="member-filter"
-                name="registrationStatus"
-                defaultValue={query.registrationStatus ?? ""}
-              >
-                <option value="">Todas as situações</option>
-                {memberDimensions.registration.map((r) => (
-                  <option key={r} value={r}>
-                    {resultLabels[r]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-field">
-              <label htmlFor="member-archived">Exibir</label>
-              <select id="member-archived" name="archived" defaultValue={query.archived}>
-                <option value="active">Não arquivados</option>
-                <option value="archived">Arquivados</option>
-                <option value="all">Todos</option>
-              </select>
-            </div>
-          </div>
-          <Button type="submit">Filtrar cadastros</Button>
-        </form>
+        <MemberFilters query={query} />
         {!result.items.length ? (
           <p>Nenhum cadastro encontrado. Ajuste a busca ou crie uma pessoa.</p>
         ) : (
           <TableContainer aria-label="Lista de associados">
-            <Table caption="Pessoas e análise cadastral">
+            <Table
+              className={styles.memberTable}
+              caption="Pessoas, análise e situação administrativa"
+            >
               <thead>
                 <tr>
                   <th scope="col">Nome</th>
                   <th scope="col">Análise</th>
+                  <th scope="col">Situação administrativa</th>
                   <th scope="col">Cadastro</th>
                 </tr>
               </thead>
               <tbody>
                 {result.items.map((m) => (
-                  <tr key={m.id}>
+                  <tr key={m.id} className="linked-table-row">
                     <td>
-                      <Link href={`/members/${m.id}`}>{m.name}</Link>
+                      <Link className="linked-table-row__link" href={`/members/${m.id}`}>
+                        {m.name}
+                      </Link>
                     </td>
                     <td>{resultLabels[m.registrationStatus]}</td>
+                    <td>{administrativeStatusLabels[m.administrativeStatus]}</td>
                     <td>{m.archivedAt ? "Arquivado" : "Não arquivado"}</td>
                   </tr>
                 ))}
@@ -116,9 +86,17 @@ export default async function MembersPage({
           </TableContainer>
         )}
         <nav className={styles.actions} aria-label="Paginação de associados">
-          {result.page > 1 && <Link href={pageLink(result.page - 1)}>Página anterior</Link>}
+          {result.page > 1 && (
+            <Link className={buttonVariants()} href={pageLink(result.page - 1)}>
+              Página anterior
+            </Link>
+          )}
           <span>Página {result.page}</span>
-          {result.hasNextPage && <Link href={pageLink(result.page + 1)}>Próxima página</Link>}
+          {result.hasNextPage && (
+            <Link className={buttonVariants()} href={pageLink(result.page + 1)}>
+              Próxima página
+            </Link>
+          )}
         </nav>
       </section>
     </div>

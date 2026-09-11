@@ -1,4 +1,5 @@
 "use client";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import {
@@ -7,16 +8,33 @@ import {
   type MemberDimension,
   type MemberListItem,
 } from "@caab/contracts";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { ProfileForm } from "./profile-form";
 import { MemberDocuments } from "./member-documents";
+import { MemberAdministrativeStatus } from "./member-administrative-status";
 import { memberRequest, mutationHeaders } from "./client";
-import { actionLabels, dimensionLabels, formatMemberDate, resultLabels } from "./labels";
+import {
+  actionLabels,
+  administrativeStatusLabels,
+  dimensionLabels,
+  formatMemberDate,
+  resultLabels,
+} from "./labels";
 import styles from "./members.module.css";
 
 type HistoryPage = {
-  items: { id: string; action: string; reason: string; createdAt: string; actorName: string }[];
+  items: {
+    id: string;
+    action: string;
+    reason: string;
+    createdAt: string;
+    actorName: string;
+    after?: {
+      previousAdministrativeStatus?: MemberRecord["administrativeStatus"];
+      administrativeStatus?: MemberRecord["administrativeStatus"];
+    };
+  }[];
   page: number;
   hasNextPage: boolean;
 };
@@ -84,7 +102,9 @@ export function MemberEditor({
           {member.archivedAt ? "Cadastro arquivado" : "Cadastro de associado ou dependente"} ·
           atualizado em {formatMemberDate(member.updatedAt)}
         </p>
-        <Link href="/members">Voltar à lista</Link>
+        <Link className={buttonVariants({ size: "compact" })} href="/members">
+          Voltar à lista
+        </Link>
       </header>
       {error && (
         <div className={styles.notice} role="alert">
@@ -108,7 +128,7 @@ export function MemberEditor({
       <p role="status" aria-live="polite">
         {message}
       </p>
-      <nav className={styles.tabs} aria-label="Seções do cadastro">
+      <nav className="module-tabs" aria-label="Seções do cadastro">
         {["Situações", "Cadastro", "Dependentes", "Documentos", "Histórico"].map((label) => (
           <Button
             key={label}
@@ -159,6 +179,13 @@ export function MemberEditor({
       )}
       {tab === "Situações" && (
         <>
+          <MemberAdministrativeStatus
+            key={member.version}
+            member={member}
+            busy={busy}
+            canReview={canReview}
+            command={command}
+          />
           <section className="panel">
             <h2>Situações independentes</h2>
             <p>
@@ -178,6 +205,16 @@ export function MemberEditor({
                       </p>
                     )}
                     <strong>{current ? resultLabels[current.result] : "Não avaliada"}</strong>
+                    {key === "oab" && (
+                      <p>
+                        <Link
+                          className={buttonVariants({ size: "compact" })}
+                          href={`/members/oab?memberId=${member.id}`}
+                        >
+                          Consultar OAB do associado
+                        </Link>
+                      </p>
+                    )}
                     {current && (
                       <>
                         <p>{current.reason}</p>
@@ -408,7 +445,10 @@ export function MemberEditor({
                 <FormField id="dependent-reason" label="Justificativa do vínculo">
                   <textarea name="reason" required minLength={3} maxLength={1000} />
                 </FormField>
-                <Button type="submit">Vincular dependente</Button>
+                <Button type="submit" intent="primary" size="add">
+                  <Plus size={20} aria-hidden="true" />
+                  Vincular dependente
+                </Button>
               </fieldset>
             </form>
           )}
@@ -440,6 +480,13 @@ export function MemberEditor({
                       {actionLabels[item.action.replace("member.", "")] ?? "Alteração registrada"}
                     </strong>
                     <p>{item.reason}</p>
+                    {item.after?.previousAdministrativeStatus &&
+                      item.after.administrativeStatus && (
+                        <p>
+                          {administrativeStatusLabels[item.after.previousAdministrativeStatus]} →{" "}
+                          {administrativeStatusLabels[item.after.administrativeStatus]}
+                        </p>
+                      )}
                     <p>
                       {item.actorName} · {formatMemberDate(item.createdAt)}
                     </p>

@@ -7,6 +7,26 @@ import {
 } from "../src/members";
 
 describe("member contracts", () => {
+  it.each(["activate", "block", "unblock"])(
+    "requires justification and version for %s",
+    (action) => {
+      const input = { action, expectedVersion: 1, justification: "Decisão administrativa" };
+      expect(memberCommandSchema.safeParse(input).success).toBe(true);
+      for (const extra of [
+        { justification: " " },
+        { expectedVersion: 0 },
+        { administrativeStatus: "active" },
+      ])
+        expect(memberCommandSchema.safeParse({ ...input, ...extra }).success).toBe(false);
+    },
+  );
+  it("validates the independent administrative filter", () => {
+    for (const administrativeStatus of ["inactive", "active", "blocked"])
+      expect(memberListSchema.parse({ administrativeStatus }).administrativeStatus).toBe(
+        administrativeStatus,
+      );
+    expect(memberListSchema.safeParse({ administrativeStatus: "approved" }).success).toBe(false);
+  });
   it("accepts only known OAB sections and combines them with list filters", () => {
     expect(
       memberListSchema.parse({

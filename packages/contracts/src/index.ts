@@ -13,3 +13,4 @@ export * from "./news-body";
 export * from "./news-delivery";
 export * from "./openapi";
 export * from "./members";
+export * from "./oab-lookup";

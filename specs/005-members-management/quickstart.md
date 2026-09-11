@@ -27,4 +27,17 @@ Usar banco descartável próprio, dependências do lockfile, migrations, web/sto
 6. Arquivar/restaurar, consultar histórico, testar sessão revogada e arquivo alheio.
 7. Testar teclado/390px/axe, contratos, autorização, integração, lint, typecheck e build.
 
+## Situação administrativa
+
+No cadastro, aba Situações, a seção Situação administrativa oferece Ativar associado,
+Bloquear associado ou Desbloquear associado conforme o estado. Abrir a ação, preencher
+justificativa e confirmar. Cancelar não grava. Somente conta com permissão de análise
+altera esse estado. A lista inclui filtro Situação administrativa com aplicação imediata.
+Cadastro sem decisão começa Não ativado; arquivar/restaurar preserva bloqueio. Desbloqueio
+é manual. Agenda receberá a integração documentada separadamente; não existe prazo automático.
+
+Na automação local, usar respostas interceptadas para essas alterações e banco descartável
+para o serviço. Não criar/remover fixtures do banco compartilhado nem consultar pessoas reais
+na OAB para validar este fluxo.
+
 Este roteiro não declara gates aprovados. Evidências serão preenchidas após execução real.

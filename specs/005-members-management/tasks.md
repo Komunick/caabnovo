@@ -1,12 +1,27 @@
 # Tasks: Associados
 
-**Status em 10/09/2026**: em implementação e validação funcional. O usuário esclareceu que
-Associados ainda não está pronto. Testes aprovados cobrem o incremento atual e não autorizam PR.
-Revisar lacunas e concluir a função antes de executar T012. Nenhum push ou PR foi realizado.
-O usuário informou que ainda fará o teste funcional. Aguardar seu retorno antes de declarar a
-função pronta; não tratar essa espera como autorização de publicação.
+**Status em 11/09/2026**: o usuário confirmou “associados considere pronto” e autorizou
+preparar os PRs do trabalho concluído que ainda não entrou em dev. T017 concluída por essa
+confirmação explícita. T012 em preparação; a homologação externa OAB (T028) continua separada,
+sem consulta real autorizada nesta revisão.
+
+## Ativação e bloqueio administrativo — 10/09/2026
+
+- [x] T029 Especificar e implementar estados/transições com migration aditiva, contrato,
+  permissão de análise, justificativa, versão/idempotência e auditoria na mesma transação.
+- [x] T030 Exibir situação, última decisão e confirmação de ações no cadastro; acrescentar
+  coluna/filtro imediato na lista e situação no resumo para consumidores.
+- [x] T031 Validar contrato, autorização, transições, concorrência, rollback de auditoria,
+  independência das avaliações e arquivamento/restauração em banco descartável; conferir UI
+  com dados simulados, acessibilidade e atualizar localhost sem reset/seed ou PR.
+- [x] T032 Compactar filtros a pedido do usuário: busca sempre visível, painel recolhível,
+  contador de filtros ativos e grade compacta; verificar navegação, teclado e acessibilidade.
 
 ## Setup
+
+- [x] T033 Corrigir abertura do calendário de nascimento e aplicar máscaras numéricas de
+  CPF/telefone e erro de e-mail junto ao campo; validar calendário, teclado, colagem,
+  limites, correção e acessibilidade em Chromium, Firefox e WebKit sem salvar cadastros.
 
 - [x] T001 Especificar e pesquisar em specs/005-members-management/spec.md e research.md; registrar contrato Caassh em contracts/caassh-handoff.md.
 - [x] T002 Criar schemas e testes de entradas em packages/contracts/src/members.ts e tests/members.test.ts.
@@ -60,16 +75,15 @@ T014/T015 complementam T004–T010 e precedem a validação final T011/T012. Emi
   somente campos seguros; adicionar regressão em `apps/worker/src/queue.test.ts` e iniciar o worker
   no CI de navegador para validar uploads reais.
 
-- [ ] T017 Receber a validação funcional do usuário no localhost e registrar os ajustes solicitados;
+- [x] T017 Receber a validação funcional do usuário no localhost e registrar os ajustes solicitados;
   implementar e verificar esses ajustes antes de considerar T012 disponível.
 
 ### Pontos para reconciliação de escopo antes da entrega
 
 O PRD cita pesquisa por seccional (ASS-002), coberta na retomada T020, e
-ativação/bloqueio/desbloqueio com histórico (ASS-003/005). O incremento possui
-arquivamento/restauração e avaliações independentes; não equiparar essas ações a bloqueio
-institucional por finalidade. O bloqueio deve ser reconciliado com as definições P02 e com a
-revisão funcional do usuário, sem presumir regras ou declarar cobertura integral do PRD.
+ativação/bloqueio/desbloqueio com histórico (ASS-003/005), tratados por T029–T031.
+O usuário confirmou desbloqueio manual e registro da futura integração com Agenda para
+associado/dependentes. Regras financeiras e demais finalidades continuam em P02.
 
 ## Retomada após PRs #13 e #14 — 10/09/2026
 
@@ -83,3 +97,25 @@ T018–T022 concluídas com 208 testes unitários/contratos, 90 de integração 
 navegador aprovados; detalhes e limites em [evidence.md](evidence.md). T012/T017 continuam pendentes,
 assim como as extensões que dependem de P01–P04/D02. A pedido do usuário, somente o preview
 `http://localhost:3106/members` permanece ativo. Nenhum PR ou deploy de Associados foi realizado.
+
+## Revisão funcional — filtros e integração OAB, 10/09/2026
+
+- [x] T023 Substituir “Seccional OAB”/“Todas as seccionais” por “Estado da OAB”/“Todos os estados”; aplicar filtros de seleção imediatamente, preservar combinação e histórico, reiniciar paginação, oferecer lupa dentro do campo de pesquisa à direita, Enter e Limpar filtros; validar em navegadores sem recriar o banco local. Evidências em evidence.md.
+- [x] T024 Investigar registros e implementação do painel anterior: localizar guia, serviço OAB-BA/Implanta e tela avulsa; corrigir a premissa de ausência de API e documentar contrato e diferenças de situação em contracts/oab-legacy.md.
+- [x] T025 Incorporar a consulta OAB-BA avulsa e pelo cadastro usando o contrato recuperado, com configuração isolada no servidor, resposta validada, permissões revalidadas, estados de falha e auditoria. Validar com respostas simuladas e banco descartável; não converter regularidade em bloqueio, aprovação ou crédito. Homologação real separada em T028.
+
+O retorno do usuário iniciou T017. O módulo permanece em revisão funcional, sem autorização de PR.
+
+## Padronização visual e navegação — 10/09/2026
+
+- [x] T026 Aplicar o padrão compartilhado de botões de Notícias em Associados, incluindo
+  ações, links de retorno, paginação e lupa dentro do campo; validar temas claro/escuro,
+  telas pequenas e foco/acessibilidade. Estilos compartilhados pertencem à branch
+  `feature/button-style-standardization`; ajustes de Associados permanecem nesta branch.
+- [x] T027 Posicionar Associados imediatamente após Notícias no menu administrativo,
+  preservando as permissões existentes e a mesma ordem na navegação do workspace.
+
+- [ ] T028 Homologar a API OAB-BA com dados de teste autorizados pela instituição e confirmar a configuração no ambiente de entrega. A conexão local foi ativada, mas o teste real foi descartado após o esclarecimento do usuário sobre falta de autorização. Não reutilizar aquela inscrição, conservar seus resultados ou apresentar testes simulados como homologação institucional.
+
+
+T025 concluída localmente em 10/09/2026; T028 reaberta na revisão após o esclarecimento do usuário. O resultado da consulta real foi removido a pedido do usuário; não conservar número, situação ou capturas nem reutilizar essa inscrição em testes. Limite de seis dígitos aplicado no campo e no servidor. Não houve configuração da hospedagem ou PR.
