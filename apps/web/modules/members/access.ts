@@ -22,12 +22,7 @@ export async function authorizeMemberAccess(
       status: 401,
     });
   const grants = await client.query<{ permission: string }>(
-    `SELECT p.resource || ':' || p.action AS permission
-     FROM user_role ur JOIN role r ON r.id=ur.role_id
-     JOIN role_permission rp ON rp.role_id=r.id JOIN permission p ON p.id=rp.permission_id
-     WHERE ur.user_id=$1 AND ur.revoked_at IS NULL AND ur.valid_from<=now()
-       AND (ur.valid_until IS NULL OR ur.valid_until>now()) AND r.status='active'
-       AND r.deleted_at IS NULL FOR SHARE OF ur,r,rp,p`,
+    "SELECT permission FROM effective_user_permission WHERE user_id=$1",
     [actor.userId],
   );
   const allowed = new Set(grants.rows.map((row) => row.permission));

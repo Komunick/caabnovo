@@ -57,7 +57,7 @@ test("news list previews summaries and filters automatically with clear actions"
   const firstRow = await item.boundingBox();
   expect(firstRow!.y).toBeLessThan(page.viewportSize()!.height - 100);
   await page.screenshot({ path: testInfo.outputPath("news-list-desktop.png"), fullPage: true });
-  await page.getByText("Mais filtros e ordenação", { exact: true }).click();
+  await page.getByRole("button", { name: /^Filtros/ }).click();
   await page.getByLabel("Categoria", { exact: true }).fill("Atend");
   await page.getByRole("combobox", { name: "Destino previsto", exact: true }).selectOption("app");
   await page.getByRole("combobox", { name: "Destaque", exact: true }).selectOption("no");
@@ -89,16 +89,18 @@ test("news list previews summaries and filters automatically with clear actions"
   ).toEqual([]);
   await page.screenshot({ path: testInfo.outputPath("news-list-dark.png"), fullPage: true });
   await page.getByRole("button", { name: "Ativar tema claro" }).click();
-  await page.getByRole("button", { name: "Arquivadas", exact: true }).click();
+  if (
+    (await page.getByRole("button", { name: /^Filtros/ }).getAttribute("aria-expanded")) === "false"
+  )
+    await page.getByRole("button", { name: /^Filtros/ }).click();
+  await page.getByRole("combobox", { name: "Exibir", exact: true }).selectOption("archived");
   await expect(page.getByRole("heading", { name: "Nenhuma notícia encontrada" })).toBeVisible();
-  await page.getByRole("button", { name: "Todas", exact: true }).click();
+  await page.getByRole("combobox", { name: "Exibir", exact: true }).selectOption("all");
   await expect(item).toHaveCount(1);
   await page.reload();
   await expect(search).toHaveValue(title);
-  await expect(page.getByRole("button", { name: "Todas", exact: true })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await page.getByRole("button", { name: /^Filtros/ }).click();
+  await expect(page.getByRole("combobox", { name: "Exibir", exact: true })).toHaveValue("all");
   // A failed filter retains the last results and offers a working retry.
   await page.route("**/api/v1/news?*", (route) => route.fulfill({ status: 503, body: "{}" }));
   await search.fill("indisponível");
@@ -111,17 +113,18 @@ test("news list previews summaries and filters automatically with clear actions"
   await expect(page.getByRole("heading", { name: "Nenhuma notícia encontrada" })).toBeVisible();
   await page.getByRole("button", { name: "Limpar filtros", exact: true }).click();
   await expect(search).toHaveValue("");
-  await expect(page.getByRole("button", { name: "Não arquivadas", exact: true })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expect(page.getByRole("combobox", { name: "Exibir", exact: true })).toHaveValue("active");
   await page.goto(editorUrl);
   await page.getByRole("button", { name: "Arquivar", exact: true }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Notícia arquivada" })).toBeVisible();
   await page.goto("/news/drafts");
   await search.fill(title);
-  await page.getByRole("button", { name: "Arquivadas", exact: true }).click();
+  if (
+    (await page.getByRole("button", { name: /^Filtros/ }).getAttribute("aria-expanded")) === "false"
+  )
+    await page.getByRole("button", { name: /^Filtros/ }).click();
+  await page.getByRole("combobox", { name: "Exibir", exact: true }).selectOption("archived");
   await expect(item).toHaveCount(1);
   await expect(item).toContainText(title);
   await expect(item).toContainText("Arquivada");

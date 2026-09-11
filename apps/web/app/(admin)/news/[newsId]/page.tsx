@@ -18,8 +18,11 @@ export default async function EditNewsPage({
     new Request("http://caab.internal/news", { headers: await headers() }),
   );
   if (!actor) redirect("/login");
+  if (!actor.permissions.has(PERMISSIONS.newsRead))
+    return <p role="alert">Você não tem permissão para acessar notícias.</p>;
   const id = idSchema.safeParse((await params).newsId);
   if (!id.success) notFound();
+  if (!actor.permissions.has(PERMISSIONS.newsWrite)) redirect(`/news/${id.data}/preview`);
   try {
     const payload = await getNewsPayload();
     const draft = await getNewsDraft(payload, actor, id.data);
@@ -34,6 +37,7 @@ export default async function EditNewsPage({
           <p>Salve, confira o conteúdo e consulte as versões anteriores.</p>
         </header>
         <NewsEditor
+          canPublish={actor.permissions.has(PERMISSIONS.newsPublish)}
           key={draft.id}
           initial={draft}
           initialHistory={history}

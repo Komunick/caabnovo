@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { AuditNavigation } from "@/modules/audit/ui/audit-navigation";
+import { buttonVariants } from "@/components/ui/button";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { idSchema } from "@caab/contracts";
@@ -38,10 +40,14 @@ export default async function JobPage({
       <header>
         <p className="eyebrow">Detalhe operacional</p>
         <h1>{job.jobType}</h1>
-        <p>
-          <Link href="/audit/jobs">Voltar aos processamentos</Link>
-        </p>
+        <Link className={buttonVariants()} href="/audit/jobs">
+          Voltar aos processamentos
+        </Link>
       </header>
+      <AuditNavigation
+        events={actor.permissions.has(PERMISSIONS.auditRead)}
+        jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
+      />
       <section className="panel" aria-labelledby="job-status-title">
         <h2 id="job-status-title">Estado: {statusLabel[job.status]}</h2>
         <label htmlFor="job-progress">Progresso</label>

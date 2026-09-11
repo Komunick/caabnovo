@@ -26,7 +26,7 @@ test("theme preference persists and quick navigation respects permissions", asyn
   const dialog = page.getByRole("dialog", { name: "Navegação rápida" });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole("link", { name: /Sessões/ })).toBeVisible();
-  await expect(dialog.getByRole("link", { name: /Usuários/ })).toHaveCount(0);
+  await expect(dialog.getByRole("link", { name: /Colaboradores/ })).toHaveCount(0);
 
   await dialog.getByLabel("Buscar área").fill("sessões");
   await dialog.getByRole("link", { name: /Sessões/ }).click();
@@ -67,7 +67,7 @@ test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page 
   await expect(menuButton).toHaveAttribute("aria-expanded", "true");
   await expect(shell).toHaveClass(/admin-shell--mobile-open/);
 
-  await page.getByRole("link", { name: "Auditoria", exact: true }).click();
+  await administrativeNavigation.getByRole("link", { name: "Auditoria", exact: true }).click();
   await expect(page).toHaveURL(/\/audit$/);
   await expect(shell).not.toHaveClass(/admin-shell--mobile-open/);
 });

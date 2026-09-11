@@ -1,4 +1,5 @@
 import {
+  ContactRound,
   FileClock,
   House,
   MonitorCog,
@@ -31,7 +32,9 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       icon: House,
       paths: ["/"],
     },
-    {
+  ];
+  if (allowed.has(PERMISSIONS.newsRead)) {
+    areas.push({
       id: "news",
       href: "/news",
       label: "Notícias",
@@ -40,10 +43,10 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
         "comunicação conteúdo editorial notícias rascunhos destaques publicação agenda aplicativo",
       icon: Newspaper,
       paths: ["/news"],
-    },
-  ];
+    });
+  }
   if (allowed.has(PERMISSIONS.membersRead)) {
-    areas.splice(1, 0, {
+    areas.push({
       id: "members",
       href: "/members",
       label: "Associados",
@@ -57,10 +60,10 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
     areas.push({
       id: "users",
       href: "/users",
-      label: "Usuários",
+      label: "Colaboradores",
       description: "Gerencie contas, estados e funções de acesso.",
-      keywords: "contas permissões equipe",
-      icon: UsersRound,
+      keywords: "colaboradores usuários usuarios contas permissões equipe",
+      icon: ContactRound,
       paths: ["/users"],
     });
   }

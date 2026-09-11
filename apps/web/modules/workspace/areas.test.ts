@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { getWorkspaceAreas, isAreaActive } from "./areas";
 
 describe("consolidated workspace navigation", () => {
+  it("requires read access for private news navigation", () => {
+    expect(getWorkspaceAreas([]).some((area) => area.id === "news")).toBe(false);
+    expect(getWorkspaceAreas(["news:read"]).some((area) => area.id === "news")).toBe(true);
+  });
   it("only shows Associados with explicit read permission", () => {
     expect(
       getWorkspaceAreas(["members:write", "members:review"]).some((a) => a.id === "members"),
@@ -24,7 +28,6 @@ describe("consolidated workspace navigation", () => {
   it("does not treat export or redrive permission as permission to read the area", () => {
     expect(getWorkspaceAreas(["audit:export", "jobs:redrive"]).map(({ id }) => id)).toEqual([
       "home",
-      "news",
       "sessions",
       "settings",
     ]);

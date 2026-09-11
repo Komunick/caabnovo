@@ -1,4 +1,7 @@
 export const PERMISSIONS = {
+  newsRead: "news:read",
+  newsWrite: "news:write",
+  newsPublish: "news:publish",
   membersRead: "members:read",
   membersWrite: "members:write",
   membersReview: "members:review",

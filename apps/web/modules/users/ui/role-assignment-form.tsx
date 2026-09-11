@@ -1,4 +1,5 @@
 "use client";
+import { Plus } from "lucide-react";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -107,10 +108,11 @@ export function RoleAssignmentForm({
           </div>
           {error ? <p role="alert">{error}</p> : null}
           <button
-            className="primary-button compact-button"
+            className="primary-button button--add"
             type="submit"
             disabled={!hydrated || pending}
           >
+            <Plus size={20} aria-hidden="true" />
             {pending ? "Aguarde…" : "Conceder função"}
           </button>
         </form>

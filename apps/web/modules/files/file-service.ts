@@ -17,6 +17,7 @@ import { requirePermission } from "../auth/authorize";
 import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
 import { authorizeMemberAccess } from "../members/access";
+import { authorizeNewsFileAccess } from "../news/access";
 import { FILE_SCAN_QUEUE } from "../jobs/queue";
 import type { WebObjectStorage } from "./object-storage";
 
@@ -87,6 +88,7 @@ export async function createUploadIntent(
   requirePermission(command.actor, PERMISSIONS.filesCreate);
   const requestFingerprint = uploadFingerprint(command);
   const file = await withTransaction(pool, async (client) => {
+    if (command.ownerType === "news") await authorizeNewsFileAccess(client, command.actor, true);
     if (command.ownerType === "member") {
       await authorizeMemberAccess(
         client,
@@ -236,6 +238,7 @@ export async function finalizeUpload(
   }
 
   return withTransaction(pool, async (client) => {
+    if (file.owner_type === "news") await authorizeNewsFileAccess(client, command.actor, true);
     if (file.owner_type === "member") {
       await authorizeMemberAccess(
         client,
@@ -335,8 +338,11 @@ export async function createDownloadGrant(
   }
   if (file.status !== "available") throw operationError("FILE_NOT_AVAILABLE", 409);
   if (file.visibility !== "private") throw operationError("VISIBILITY_UNSUPPORTED", 409);
-  const grant = await storage.createPrivateDownload(file.object_key);
-  return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };
+  return withTransaction(pool, async (client) => {
+    if (file.owner_type === "news") await authorizeNewsFileAccess(client, actor, false);
+    const grant = await storage.createPrivateDownload(file.object_key);
+    return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };
+  });
 }
 
 function operationError(code: string, status: number): Error {

@@ -362,3 +362,23 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - Testes de banco usam PostgreSQL real; mocks não comprovam constraints, privilégios ou concorrência.
 - Nunca usar dados pessoais reais, segredos ou credenciais de PROD em local/CI/evidências.
 - Cada tarefa ou grupo coeso deve resultar em diff pequeno e revisável para PR em `dev`.
+
+## Harmonização administrativa — 11/09/2026
+
+- [x] Padronizar temas, cabeçalhos, abas, buscas, filtros e ações de adicionar.
+- [x] Atualizar início com dados autorizados e notícias publicadas; preservar rascunhos privados.
+- [x] Adotar Colaboradores para a gestão de contas existente e remover proposta de RH.
+- [x] Conferir visualmente desktop/390 px, teclado e temas claro/escuro.
+- [x] Abrir [PR #16](https://github.com/Komunick/caabnovo/pull/16), dependente de Associados #15.
+- [ ] Registrar resultado final dos gates isolados de CI.
+
+## Seleção individual de acessos e ajustes da marca — 11/09/2026
+
+- [x] Confirmar seleção de módulos e ações individualmente e registrar plano/pesquisa no spec existente.
+- [x] Implementar conjunto individual versionado, permissões efetivas, rota protegida e auditoria atômica.
+- [x] Revalidar permissões em Associados e distinguir consulta, edição/publicação e mídia em Notícias.
+- [x] Implementar matriz no perfil com dependências, justificativa, limites de autoridade e retorno de salvamento.
+- [x] Validar contrato, rota, revogação, concorrência, rollback de auditoria e último administrador em banco descartável.
+- [x] Corrigir cores do login e centralizar Gestão Interna abaixo da logo, preservando a imagem original.
+- [x] Concluir inspeção do painel autenticado nos dois temas.
+- [ ] Atualizar o PR #16 e registrar resultados finais do CI do navegador.

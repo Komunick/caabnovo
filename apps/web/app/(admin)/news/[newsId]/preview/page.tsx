@@ -19,6 +19,8 @@ export default async function NewsPreviewPage({
     new Request("http://caab.internal/news/preview", { headers: await headers() }),
   );
   if (!actor) redirect("/login");
+  if (!actor.permissions.has(PERMISSIONS.newsRead))
+    return <p role="alert">Você não tem permissão para acessar notícias.</p>;
   const id = idSchema.safeParse((await params).newsId);
   if (!id.success) notFound();
   try {
@@ -32,8 +34,13 @@ export default async function NewsPreviewPage({
     return (
       <div className="page-stack news-module">
         <header className="page-header">
-          <Link className={buttonVariants({ size: "compact" })} href={`/news/${draft.id}`}>
-            Voltar ao editor
+          <Link
+            className={buttonVariants({ size: "compact" })}
+            href={actor.permissions.has(PERMISSIONS.newsWrite) ? `/news/${draft.id}` : "/news"}
+          >
+            {actor.permissions.has(PERMISSIONS.newsWrite)
+              ? "Voltar ao editor"
+              : "Voltar para notícias"}
           </Link>
           <h1>Prévia privada</h1>
           <p>Rascunho · revisão {draft.revision}. Esta visualização não publica o conteúdo.</p>

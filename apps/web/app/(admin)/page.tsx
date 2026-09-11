@@ -1,136 +1,290 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { headers } from "next/headers";
-import { ArrowUpRight, BadgeCheck, KeyRound, Layers3, ShieldCheck, Sparkles } from "lucide-react";
+import { redirect } from "next/navigation";
+import {
+  ArrowRight,
+  CalendarDays,
+  Handshake,
+  WalletCards,
+  MessageSquare,
+  ChartNoAxesCombined,
+  Plus,
+  FilePenLine,
+  UsersRound,
+} from "lucide-react";
 import { resolveCurrentUser } from "@/modules/auth/current-user";
+import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { getWorkspaceAreas } from "@/modules/workspace/areas";
+import { listMembers } from "@/modules/members/member-service";
+import { listNewsDrafts } from "@/modules/news/news-service";
+import { listLatestPublicNews } from "@/modules/news/public-service";
+import { getNewsPayload } from "@/modules/news/payload/runtime";
+import { getDatabase } from "@/modules/shared/database";
+import { buttonVariants } from "@/components/ui/button";
+import { NewsThumbnail } from "@/modules/workspace/ui/news-thumbnail";
+
+const upcoming = [
+  {
+    name: "Atendimentos",
+    description: "Agenda, reservas e próximos atendimentos.",
+    icon: CalendarDays,
+  },
+  { name: "Parceiros", description: "Estabelecimentos, convênios e benefícios.", icon: Handshake },
+  { name: "Caassh", description: "Movimentações e acompanhamento de créditos.", icon: WalletCards },
+  {
+    name: "Mensagens",
+    description: "Campanhas e comunicações aos associados.",
+    icon: MessageSquare,
+  },
+  {
+    name: "Relatórios",
+    description: "Indicadores e resultados de cada área.",
+    icon: ChartNoAxesCombined,
+  },
+];
+const date = (value: string) =>
+  new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "America/Bahia",
+  }).format(new Date(value));
 
 export default async function AdminHomePage() {
-  const requestHeaders = await headers();
-  const identity = await resolveCurrentUser(
-    new Request("http://caab.internal/api/v1/me", { headers: requestHeaders }),
+  const request = new Request("http://caab.internal/", { headers: await headers() });
+  const [identity, actor] = await Promise.all([
+    resolveCurrentUser(request),
+    resolveRequestActor(request),
+  ]);
+  if (!identity || !actor) redirect("/login");
+  const areas = getWorkspaceAreas(identity.permissions).filter(
+    ({ id }) => !["home", "sessions", "settings"].includes(id),
   );
-  const firstName = identity?.name.trim().split(/\s+/)[0] ?? "";
-  const visibleAreas = getWorkspaceAreas(identity?.permissions ?? []).filter(
-    ({ id }) => id !== "home",
-  );
-  const stats = [
-    {
-      label: "Áreas habilitadas",
-      value: String(visibleAreas.length),
-      detail: "áreas disponíveis para seu perfil",
-      icon: Layers3,
-      tone: "blue",
-    },
-    {
-      label: "Permissões efetivas",
-      value: String(identity?.permissions.length ?? 0),
-      detail: "sincronizadas nesta sessão",
-      icon: KeyRound,
-      tone: "violet",
-    },
-    {
-      label: "Funções atribuídas",
-      value: String(identity?.roles.length ?? 0),
-      detail: identity?.roles[0]?.name ?? "perfil interno",
-      icon: BadgeCheck,
-      tone: "cyan",
-    },
-    {
-      label: "Sessão",
-      value: "Ativa",
-      detail: "acesso autenticado",
-      icon: ShieldCheck,
-      tone: "green",
-    },
-  ];
-
+  const canReadMembers = actor.permissions.has("members:read");
+  const canReadNews = actor.permissions.has("news:read");
+  const canWriteNews = actor.permissions.has("news:write");
+  const [published, drafts, members] = await Promise.allSettled([
+    getNewsPayload().then(listLatestPublicNews),
+    canReadNews
+      ? getNewsPayload().then((payload) =>
+          listNewsDrafts(payload, actor, {
+            collection: "drafts",
+            state: "active",
+            sort: "updated-desc",
+          }),
+        )
+      : Promise.resolve(null),
+    canReadMembers
+      ? listMembers(getDatabase().pool, actor, {
+          registrationStatus: "unknown",
+          archived: "active",
+        })
+      : Promise.resolve(null),
+  ]);
   return (
-    <div className="page-stack dashboard-page">
-      <header className="dashboard-hero">
-        <div className="dashboard-hero__copy">
-          <span className="dashboard-kicker">
-            <Sparkles size={14} aria-hidden="true" /> Workspace inteligente
-          </span>
-          <h1>{firstName ? `Olá, ${firstName}.` : "Visão geral"}</h1>
-          <p>
-            Tudo o que você precisa para administrar o ambiente com clareza, segurança e agilidade.
-          </p>
+    <div className="page-stack home-page">
+      <header className="home-header">
+        <div>
+          <p className="eyebrow">PAINEL CAAB</p>
+          <h1>Bom trabalho, {identity.name.trim().split(/\s+/)[0]}.</h1>
+          <p>Acompanhe as publicações e continue o trabalho da sua equipe.</p>
         </div>
-        <div className="dashboard-orbit" aria-label="Acesso verificado e monitorado">
-          <span className="dashboard-orbit__ring" aria-hidden="true" />
-          <span className="dashboard-orbit__core" aria-hidden="true">
-            <ShieldCheck size={30} strokeWidth={1.65} />
-          </span>
-          <span className="dashboard-orbit__copy">
-            <small>Status do ambiente</small>
-            <strong>Seguro e monitorado</strong>
-          </span>
-        </div>
+        <span className="home-date">
+          <CalendarDays size={17} aria-hidden="true" />
+          {date(new Date().toISOString())}
+        </span>
       </header>
 
-      <section className="dashboard-summary" aria-labelledby="dashboard-summary-title">
-        <h2 className="sr-only" id="dashboard-summary-title">
-          Resumo do seu acesso
-        </h2>
-        <div className="metric-grid">
-          {stats.map(({ label, value, detail, icon: Icon, tone }, index) => (
-            <article className={`metric-card metric-card--${tone}`} key={label}>
-              <span className="metric-card__icon" aria-hidden="true">
-                <Icon size={20} strokeWidth={1.8} />
-              </span>
-              <span className="metric-card__content">
-                <small>{label}</small>
-                <strong>{value}</strong>
-                <span>{detail}</span>
-              </span>
-              <span className="metric-card__spark" aria-hidden="true">
-                {[35, 58, 44, 76, 62, 92].map((height, barIndex) => (
-                  <i
-                    key={`${label}-${height}`}
-                    style={{
-                      height: `${Math.max(20, height - index * 4 + barIndex * 2)}%`,
-                    }}
-                  />
-                ))}
-              </span>
+      <nav className="home-shortcuts" aria-label="Atalhos de trabalho">
+        {areas.map(({ id, href, label, icon: Icon }) => (
+          <Link key={id} href={href} className="home-shortcut module-card">
+            <Icon size={21} aria-hidden="true" />
+            <span>{label}</span>
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
+
+      <section className="home-section" aria-labelledby="latest-news-title">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">COMUNICAÇÃO</p>
+            <h2 id="latest-news-title">Últimas notícias publicadas</h2>
+          </div>
+          {canReadNews && (
+            <Link className={buttonVariants({ size: "compact" })} href="/news">
+              Ver notícias <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          )}
+        </div>
+        {published.status === "rejected" ? (
+          <p className="home-empty" role="status">
+            Não foi possível carregar as publicações. Acesse Notícias para tentar novamente.
+          </p>
+        ) : published.value.length ? (
+          <div className="home-news-grid">
+            {published.value.map((item) => (
+              <Link
+                key={item.id}
+                className="home-news-card"
+                href={`/content/${item.channel}/news/${item.id}`}
+              >
+                <NewsThumbnail
+                  src={
+                    item.cover
+                      ? `/api/v1/content/${item.channel}/news/${item.id}/media/${item.cover.fileId}`
+                      : undefined
+                  }
+                />
+                <div className="home-news-copy">
+                  <div className="home-news-meta">
+                    <span>{item.category || "Notícia"}</span>
+                    <time dateTime={item.publishedAt}>{date(item.publishedAt)}</time>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                  <span className="home-news-read">
+                    Ler notícia <ArrowRight size={15} aria-hidden="true" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="home-empty">
+            <p>Ainda não há notícias publicadas.</p>
+            {canWriteNews && <Link href="/news/new">Preparar a primeira notícia</Link>}
+          </div>
+        )}
+      </section>
+
+      {(canReadNews || canReadMembers) && (
+        <section className="home-section" aria-labelledby="continue-title">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">TRABALHO EM ANDAMENTO</p>
+              <h2 id="continue-title">Para continuar</h2>
+            </div>
+          </div>
+          <div className="home-work-grid">
+            {canReadNews && (
+              <article className="panel home-work-card">
+                <div className="home-card-heading">
+                  <span className="home-card-icon">
+                    <FilePenLine size={21} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3>Notícias em preparação</h3>
+                    <p>Rascunhos atualizados mais recentemente.</p>
+                  </div>
+                </div>
+                {drafts.status === "rejected" ? (
+                  <p className="home-empty" role="status">
+                    Rascunhos indisponíveis no momento.
+                  </p>
+                ) : drafts.value?.items.length ? (
+                  <ul className="home-work-list">
+                    {drafts.value.items.slice(0, 4).map((item) => (
+                      <li key={item.id}>
+                        <Link href={`/news/${item.id}`}>
+                          <span>
+                            <strong>{item.metadata.title || "Notícia sem título"}</strong>
+                            <small>Atualizada em {date(item.updatedAt)}</small>
+                          </span>
+                          <ArrowRight size={16} aria-hidden="true" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="home-empty">Nenhum rascunho em preparação.</p>
+                )}
+                <div className="home-card-actions">
+                  <Link className={buttonVariants({ size: "compact" })} href="/news/drafts">
+                    Ver rascunhos
+                  </Link>
+                  {canWriteNews && (
+                    <Link
+                      className={buttonVariants({ intent: "primary", size: "add" })}
+                      href="/news/new"
+                    >
+                      <Plus size={16} aria-hidden="true" /> Nova notícia
+                    </Link>
+                  )}
+                </div>
+              </article>
+            )}
+            {canReadMembers && (
+              <article className="panel home-work-card">
+                <div className="home-card-heading">
+                  <span className="home-card-icon">
+                    <UsersRound size={21} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3>Cadastros sem análise</h3>
+                    <p>Associados com análise cadastral não avaliada.</p>
+                  </div>
+                </div>
+                {members.status === "rejected" ? (
+                  <p className="home-empty" role="status">
+                    Cadastros indisponíveis no momento.
+                  </p>
+                ) : members.value?.items.length ? (
+                  <ul className="home-work-list">
+                    {members.value.items.slice(0, 4).map((item) => (
+                      <li key={item.id}>
+                        <Link href={`/members/${item.id}`}>
+                          <span>
+                            <strong>{item.name}</strong>
+                            <small>Análise não avaliada</small>
+                          </span>
+                          <ArrowRight size={16} aria-hidden="true" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="home-empty">Nenhum cadastro sem análise.</p>
+                )}
+                <div className="home-card-actions">
+                  <Link
+                    className={buttonVariants({ size: "compact" })}
+                    href="/members?registrationStatus=unknown"
+                  >
+                    Ver cadastros
+                  </Link>
+                  {actor.permissions.has("members:write") && (
+                    <Link
+                      className={buttonVariants({ intent: "primary", size: "add" })}
+                      href="/members/new"
+                    >
+                      <Plus size={16} aria-hidden="true" /> Novo associado
+                    </Link>
+                  )}
+                </div>
+              </article>
+            )}
+          </div>
+        </section>
+      )}
+
+      <section className="home-section" aria-labelledby="upcoming-title">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">PRÓXIMOS MÓDULOS</p>
+            <h2 id="upcoming-title">Novas áreas de acompanhamento</h2>
+          </div>
+          <span className="planning-label">Em planejamento</span>
+        </div>
+        <div className="home-upcoming-grid">
+          {upcoming.map(({ name, description, icon: Icon }) => (
+            <article className="home-upcoming-card" key={name}>
+              <Icon size={23} strokeWidth={1.6} aria-hidden="true" />
+              <h3>{name}</h3>
+              <p>{description}</p>
             </article>
           ))}
         </div>
-      </section>
-
-      <section aria-labelledby="available-areas-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Sua área de trabalho</p>
-            <h2 id="available-areas-title">Áreas disponíveis</h2>
-          </div>
-          <p>{visibleAreas.length} acessos habilitados</p>
-        </div>
-        <div className="module-grid">
-          {visibleAreas.map(({ href, label, description, icon: Icon }) => (
-            <Link className="module-card" href={href} key={href}>
-              <span className="module-card__icon" aria-hidden="true">
-                <Icon size={23} strokeWidth={1.7} />
-              </span>
-              <span className="module-card__content">
-                <strong>{label}</strong>
-                <span>{description}</span>
-              </span>
-              <ArrowUpRight className="module-card__arrow" size={20} aria-hidden="true" />
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="dashboard-guidance" aria-labelledby="guidance-title">
-        <div>
-          <p className="eyebrow">Boas práticas</p>
-          <h2 id="guidance-title">Proteja o ambiente institucional</h2>
-        </div>
-        <p>
-          Confira os dados antes de confirmar ações sensíveis e encerre a sessão ao deixar o
-          dispositivo. Toda permissão é aplicada de acordo com sua função atual.
-        </p>
       </section>
     </div>
   );

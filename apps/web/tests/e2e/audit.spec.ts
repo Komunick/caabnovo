@@ -26,8 +26,9 @@ test("auditor searches combined filters and starts an authorized export", async 
   await expectWcag22AA(page);
 
   await page.getByLabel("Ação", { exact: true }).fill("user.updated");
+  await page.getByRole("button", { name: /^Filtros/ }).click();
   await page.getByLabel("Tipo de entidade").fill("user");
-  await page.getByRole("button", { name: "Pesquisar" }).click();
+  await page.getByRole("button", { name: "Aplicar filtros" }).click();
   await expect(page.getByText("user.updated", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: /Editar|Excluir/ })).toHaveCount(0);
 

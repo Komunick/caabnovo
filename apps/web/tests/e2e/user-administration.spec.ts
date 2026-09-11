@@ -21,12 +21,12 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await signIn(page, syntheticUsers.accessManager.email, syntheticUsers.accessManager.password);
   await page
     .getByRole("navigation", { name: "Navegação administrativa" })
-    .getByRole("link", { name: "Usuários", exact: true })
+    .getByRole("link", { name: "Colaboradores", exact: true })
     .click();
-  await expect(page.getByRole("heading", { name: "Usuários" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Colaboradores" })).toBeVisible();
   await expectWcag22AA(page);
 
-  const createButton = page.getByRole("button", { name: "Criar usuário" });
+  const createButton = page.getByRole("button", { name: "Criar colaborador" });
   await expect(createButton).toBeEnabled();
   await page.getByLabel("Nome").fill(name);
   await page.getByLabel("E-mail").fill(email);
@@ -53,7 +53,26 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await page.getByLabel("Motivo da revogação").fill("Atividade concluída");
   await page.getByRole("button", { name: "Confirmar revogação" }).click();
 
-  await page.getByRole("button", { name: "Desativar usuário" }).click();
+  const accesses = page.getByRole("region", { name: "Acessos do colaborador" });
+  await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).uncheck();
+  await expect(
+    accesses.getByRole("checkbox", { name: "Publicar, programar e arquivar notícias" }),
+  ).not.toBeChecked();
+  await accesses
+    .getByLabel("Justificativa dos acessos")
+    .fill("Acesso somente de consulta para teste");
+  await accesses.getByRole("button", { name: "Salvar acessos" }).click();
+  await expect(accesses.getByRole("status")).toHaveText("Acessos atualizados.");
+  await page.reload();
+  await expect(
+    accesses.getByRole("checkbox", { name: "Consultar notícias e rascunhos" }),
+  ).toBeChecked();
+  await expect(
+    accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }),
+  ).not.toBeChecked();
+  await expectWcag22AA(page);
+
+  await page.getByRole("button", { name: "Desativar colaborador" }).click();
   await page.getByLabel("Justificativa da desativação").fill("Conta sintética concluída");
   await page.getByRole("button", { name: "Confirmar desativação" }).click();
   await expect(page.getByText("Desativado", { exact: true })).toBeVisible();
@@ -61,9 +80,9 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
 
 test("ordinary user cannot open user administration", async ({ page }) => {
   await signIn(page, syntheticUsers.ordinary.email, syntheticUsers.ordinary.password);
-  await expect(page.getByRole("link", { name: "Usuários", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Colaboradores", exact: true })).toHaveCount(0);
   await page.goto("/users");
-  await expect(page.getByText("Você não tem permissão para acessar usuários.")).toBeVisible();
+  await expect(page.getByText("Você não tem permissão para acessar colaboradores.")).toBeVisible();
 });
 
 test("manager can reach accounts beyond the first hundred and recover from invalid cursors", async ({

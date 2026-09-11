@@ -597,3 +597,30 @@ PRs separados acompanham as funcionalidades/specs concluídos e validados, confo
 - Agendamentos serão domínio próprio; Cal.com permanece como opção de integração futura.
 - Consulta à OAB será manual até existir integração oficial autorizada.
 - O sistema será um monólito modular com worker, não um conjunto prematuro de microserviços.
+
+### Rastreabilidade de reaproveitamento — decisão de 10/09/2026
+
+Sempre que uma integração, configuração, regra, recurso visual ou trecho do sistema antigo
+for reaproveitado por solicitação autorizada, registrar origem, adaptações, validação e pontos
+que podem precisar de mudanças em [LEGACY-REUSE.md](LEGACY-REUSE.md), vinculando a spec
+correspondente. Segredos e dados pessoais não entram na documentação. A pesquisa e validação
+da integração OAB-BA, explicitamente solicitadas pelo usuário, estão registradas em LEG-001;
+as regras institucionais antigas de ativo/inativo e finanças não foram adotadas implicitamente.
+
+# Colaboradores, Usuários e Parceiros: decisão de escopo
+
+Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
+atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
+Não haverá módulo separado de equipe interna/RH.
+
+A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
+foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,
+foram retirados do escopo; não são tarefas implementadas.
+
+A interface adota **Colaboradores** na mesma gestão de contas, rotas `/users`, identificadores
+e permissões existentes. Menu, catálogo, busca, cabeçalho, página, ações e mensagens usam
+o nome Colaboradores. A busca também reconhece o termo Usuários. Não há novo cadastro,
+API ou migration para essa renomeação.
+
+Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
+002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.

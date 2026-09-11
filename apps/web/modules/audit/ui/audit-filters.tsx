@@ -1,7 +1,8 @@
 "use client";
 
-import { type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { SearchField, FilterToggle } from "@/components/ui/search-controls";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,8 @@ function localDateTime(value?: string): string {
 
 export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
   const router = useRouter();
+  const [expanded, setExpanded] = useState(false);
+  const count = [values.actorId, values.entityType, values.from, values.to].filter(Boolean).length;
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -40,25 +43,38 @@ export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
   }
 
   return (
-    <form className="filter-grid" onSubmit={submit}>
-      <FormField id="audit-actor" label="ID do ator">
-        <Input name="actorId" defaultValue={values.actorId} />
-      </FormField>
-      <FormField id="audit-action" label="Ação">
-        <Input name="action" defaultValue={values.action} />
-      </FormField>
-      <FormField id="audit-entity-type" label="Tipo de entidade">
-        <Input name="entityType" defaultValue={values.entityType} />
-      </FormField>
-      <FormField id="audit-from" label="A partir de">
-        <Input name="from" type="datetime-local" defaultValue={localDateTime(values.from)} />
-      </FormField>
-      <FormField id="audit-to" label="Até">
-        <Input name="to" type="datetime-local" defaultValue={localDateTime(values.to)} />
-      </FormField>
-      <Button intent="primary" size="compact" type="submit">
-        Pesquisar
-      </Button>
+    <form role="search" aria-label="Filtros de auditoria" onSubmit={submit}>
+      <div className="filter-toolbar">
+        <SearchField id="audit-action" label="Ação" name="action" defaultValue={values.action} />
+        <FilterToggle
+          expanded={expanded}
+          controls="audit-filter-options"
+          count={count}
+          onClick={() => setExpanded(!expanded)}
+        />
+        {(expanded || count > 0 || values.action) && (
+          <Button type="reset" onClick={() => router.push("/audit")}>
+            Limpar filtros
+          </Button>
+        )}
+      </div>
+      <div className="list-filters" id="audit-filter-options" hidden={!expanded}>
+        <FormField id="audit-actor" label="ID do ator">
+          <Input name="actorId" defaultValue={values.actorId} />
+        </FormField>
+        <FormField id="audit-entity-type" label="Tipo de entidade">
+          <Input name="entityType" defaultValue={values.entityType} />
+        </FormField>
+        <FormField id="audit-from" label="A partir de">
+          <Input name="from" type="datetime-local" defaultValue={localDateTime(values.from)} />
+        </FormField>
+        <FormField id="audit-to" label="Até">
+          <Input name="to" type="datetime-local" defaultValue={localDateTime(values.to)} />
+        </FormField>
+        <Button intent="primary" size="compact" type="submit">
+          Aplicar filtros
+        </Button>
+      </div>
     </form>
   );
 }

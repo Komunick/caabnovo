@@ -17,7 +17,11 @@ import {
 import type { RequestActor } from "../shared/request-context";
 import { prepareNewsDraft, prepareNewsDraftUpdate } from "./draft-policy";
 import { NewsPolicyError } from "./errors";
-import { newsTransaction } from "./payload/transaction";
+import {
+  newsTransaction,
+  newsWriteTransaction,
+  newsPublishTransaction,
+} from "./payload/transaction";
 import { requirePermission } from "../auth/authorize";
 import { PERMISSIONS } from "../auth/permissions";
 import { publishNewsRevision, withdrawNewsChannels } from "@caab/news/publication";
@@ -85,7 +89,7 @@ export async function createNewsDraft(
     throw new NewsPolicyError("NEWS_NOT_READY", 422, "Salve a notícia antes de anexar imagens.");
   const key = context.idempotencyKey ?? crypto.randomUUID();
   const fingerprint = createHash("sha256").update(JSON.stringify(prepared)).digest("hex");
-  return newsTransaction(
+  return newsWriteTransaction(
     payload,
     context.actor,
     async ({ req, audit, claimCreation, finishCreation }) => {
@@ -177,68 +181,72 @@ export async function updateNewsDraft(
   input: unknown,
 ) {
   idSchema.parse(id);
-  return newsTransaction(payload, context.actor, async ({ req, lockNews, audit, mediaFiles }) => {
-    await lockNews(id);
-    const before = await readDraft(payload, req, id);
-    if (before.archived) throw new NewsPolicyError("NEWS_ARCHIVED", 409, "Notícia arquivada.");
-    const prepared = prepareNewsDraftUpdate(context.actor, input, Number(before.revision));
-    const previousCover = newsDraftMetadataSchema.parse(before.metadata).cover;
-    const previousIds = new Set([
-      ...newsBodyImages(newsBodySchema.parse(before.body)).map((image) => image.fileId!),
-      ...(previousCover ? [previousCover.fileId] : []),
-    ]);
-    const fileIds = [
-      ...new Set([
-        ...newsBodyImages(prepared.body).map((image) => image.fileId!),
-        ...(prepared.metadata.cover ? [prepared.metadata.cover.fileId] : []),
-      ]),
-    ];
-    if (fileIds.some((fileId) => !previousIds.has(fileId)))
-      requirePermission(context.actor, PERMISSIONS.filesRead);
-    const files = await mediaFiles(fileIds);
-    if (
-      files.length !== fileIds.length ||
-      files.some(
-        (file) =>
-          file.ownerNewsId !== id || !["image/png", "image/jpeg"].includes(file.declaredMime),
+  return newsWriteTransaction(
+    payload,
+    context.actor,
+    async ({ req, lockNews, audit, mediaFiles }) => {
+      await lockNews(id);
+      const before = await readDraft(payload, req, id);
+      if (before.archived) throw new NewsPolicyError("NEWS_ARCHIVED", 409, "Notícia arquivada.");
+      const prepared = prepareNewsDraftUpdate(context.actor, input, Number(before.revision));
+      const previousCover = newsDraftMetadataSchema.parse(before.metadata).cover;
+      const previousIds = new Set([
+        ...newsBodyImages(newsBodySchema.parse(before.body)).map((image) => image.fileId!),
+        ...(previousCover ? [previousCover.fileId] : []),
+      ]);
+      const fileIds = [
+        ...new Set([
+          ...newsBodyImages(prepared.body).map((image) => image.fileId!),
+          ...(prepared.metadata.cover ? [prepared.metadata.cover.fileId] : []),
+        ]),
+      ];
+      if (fileIds.some((fileId) => !previousIds.has(fileId)))
+        requirePermission(context.actor, PERMISSIONS.filesRead);
+      const files = await mediaFiles(fileIds);
+      if (
+        files.length !== fileIds.length ||
+        files.some(
+          (file) =>
+            file.ownerNewsId !== id || !["image/png", "image/jpeg"].includes(file.declaredMime),
+        )
       )
-    )
-      throw new NewsPolicyError(
-        "NEWS_NOT_READY",
-        422,
-        "As imagens devem pertencer a esta notícia.",
-      );
-    const revision = prepared.expectedVersion + 1;
-    const doc = await payload.update({
-      collection: "news",
-      id,
-      req,
-      overrideAccess: false,
-      overrideLock: false,
-      draft: true,
-      depth: 0,
-      data: {
-        metadata: prepared.metadata,
-        body: prepared.body,
-        editorUserId: prepared.editorUserId,
-        revision,
-        _status: "draft",
-      },
-    });
-    await audit({
-      actorUserId: prepared.editorUserId,
-      effectiveIdentity: `user:${prepared.editorUserId}`,
-      action: "news.draft.updated",
-      entityType: "news",
-      entityId: id,
-      before: { revision: prepared.expectedVersion },
-      after: { revision },
-      origin: "web",
-      requestId: context.requestId,
-      correlationId: context.correlationId,
-    });
-    return serialize(doc);
-  });
+        throw new NewsPolicyError(
+          "NEWS_NOT_READY",
+          422,
+          "As imagens devem pertencer a esta notícia.",
+        );
+      const revision = prepared.expectedVersion + 1;
+      const doc = await payload.update({
+        collection: "news",
+        id,
+        req,
+        overrideAccess: false,
+        overrideLock: false,
+        draft: true,
+        depth: 0,
+        data: {
+          metadata: prepared.metadata,
+          body: prepared.body,
+          editorUserId: prepared.editorUserId,
+          revision,
+          _status: "draft",
+        },
+      });
+      await audit({
+        actorUserId: prepared.editorUserId,
+        effectiveIdentity: `user:${prepared.editorUserId}`,
+        action: "news.draft.updated",
+        entityType: "news",
+        entityId: id,
+        before: { revision: prepared.expectedVersion },
+        after: { revision },
+        origin: "web",
+        requestId: context.requestId,
+        correlationId: context.correlationId,
+      });
+      return serialize(doc);
+    },
+  );
 }
 
 export async function listNewsVersions(
@@ -288,7 +296,7 @@ export async function duplicateNewsDraft(
   const fingerprint = createHash("sha256")
     .update(JSON.stringify({ operation: "duplicate", id, ...command }))
     .digest("hex");
-  return newsTransaction(
+  return newsWriteTransaction(
     payload,
     context.actor,
     async ({ req, lockNews, audit, claimCreation, finishCreation }) => {
@@ -347,7 +355,7 @@ export async function archiveNews(
 ) {
   idSchema.parse(id);
   const command = newsVersionCommandSchema.parse(input);
-  return newsTransaction(payload, context.actor, async ({ req, lockNews, audit, db }) => {
+  return newsPublishTransaction(payload, context.actor, async ({ req, lockNews, audit, db }) => {
     await lockNews(id);
     const before = await readDraft(payload, req, id);
     requireVersion(before, command.expectedVersion);
@@ -399,7 +407,7 @@ export async function restoreNewsRevision(
 ) {
   idSchema.parse(id);
   const command = restoreNewsRevisionRequestSchema.parse(input);
-  return newsTransaction(payload, context.actor, async ({ req, lockNews, audit }) => {
+  return newsWriteTransaction(payload, context.actor, async ({ req, lockNews, audit }) => {
     await lockNews(id);
     const before = await readDraft(payload, req, id);
     requireVersion(before, command.expectedVersion);
@@ -454,7 +462,7 @@ export async function publishNews(
   input: unknown,
 ) {
   idSchema.parse(id);
-  return newsTransaction(
+  return newsPublishTransaction(
     payload,
     context.actor,
     async ({ req, db, lockNews, claimCreation, finishCreation }) => {
@@ -487,7 +495,7 @@ export async function unpublishNews(
 ) {
   idSchema.parse(id);
   const command = publishNewsRequestSchema.parse(input);
-  return newsTransaction(
+  return newsPublishTransaction(
     payload,
     context.actor,
     async ({ db, req, lockNews, claimCreation, finishCreation }) => {

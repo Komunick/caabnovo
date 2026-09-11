@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowUpRight, ImageOff, Search, X } from "lucide-react";
+import { ArrowUpRight, ImageOff, Search } from "lucide-react";
 import { newsListQuerySchema } from "@caab/contracts";
 import type { listNewsDrafts } from "../news-service";
+import { SearchField, FilterToggle } from "@/components/ui/search-controls";
 import { Button } from "@/components/ui/button";
 import styles from "./news-list.module.css";
 
@@ -76,6 +77,7 @@ export function NewsList({
   const defaults = newsListQuerySchema.parse({ collection: initialQuery.collection });
   const basePath = initialQuery.collection === "drafts" ? "/news/drafts" : "/news";
   const [query, setQuery] = useState(initialQuery);
+  const [expanded, setExpanded] = useState(false);
   const [search, setSearch] = useState(initialQuery.search);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -158,78 +160,60 @@ export function NewsList({
   return (
     <section className={`panel ${styles.listPanel}`} aria-labelledby="news-list-title">
       <div className={styles.toolbar}>
-        <div>
-          <h2 id="news-list-title">
-            {initialQuery.collection === "drafts" ? "Seus rascunhos" : "Suas notícias"}
-          </h2>
-        </div>
+        <h2 id="news-list-title">
+          {initialQuery.collection === "drafts" ? "Seus rascunhos" : "Suas notícias"}
+        </h2>
         <form
-          className={styles.search}
+          className="filter-toolbar"
           role="search"
+          aria-label="Filtros de notícias"
           onSubmit={(event) => {
             event.preventDefault();
             void navigate({ ...current.current, search: search.trim(), page: 1 });
           }}
         >
-          <label className="sr-only" htmlFor="news-search">
-            Buscar notícias pelo título
-          </label>
-          <Search size={20} aria-hidden="true" />
-          <input
+          <SearchField
             id="news-search"
+            label="Buscar notícias pelo título"
             disabled={!ready}
-            type="search"
             value={search}
             maxLength={200}
             placeholder="Buscar pelo título…"
             autoComplete="off"
             onChange={(event) => changeText("search", event.target.value)}
           />
-          {search && (
-            <button
-              type="button"
-              aria-label="Limpar busca"
-              onClick={() => {
-                setSearch("");
-                void navigate({ ...current.current, search: "", page: 1 });
-                document.getElementById("news-search")?.focus();
-              }}
-            >
-              <X size={18} aria-hidden="true" />
-            </button>
-          )}
+          <FilterToggle
+            expanded={expanded}
+            controls="news-filter-options"
+            disabled={!ready}
+            count={
+              Object.entries(query).filter(
+                ([key, value]) =>
+                  !["page", "search", "collection"].includes(key) &&
+                  value !== defaults[key as keyof Query],
+              ).length
+            }
+            onClick={() => setExpanded(!expanded)}
+          />
+          {(expanded || hasFilters) && <Button onClick={clear}>Limpar filtros</Button>}
         </form>
-      </div>
-      <div className={styles.filterBar}>
-        <div className={styles.states} role="group" aria-label="Filtrar por arquivamento">
-          {states.map((state) => (
-            <button
-              key={state.value}
-              disabled={!ready}
-              type="button"
-              aria-pressed={query.state === state.value}
-              onClick={() =>
-                void navigate({
-                  ...current.current,
-                  search: search.trim(),
-                  state: state.value,
-                  page: 1,
-                })
-              }
-            >
-              {state.label}
-            </button>
-          ))}
-        </div>
-        {hasFilters && (
-          <Button size="compact" intent="ghost" onClick={clear}>
-            Limpar filtros
-          </Button>
-        )}
-      </div>
-      <details className={styles.filterDetails}>
-        <summary>Mais filtros e ordenação</summary>
-        <fieldset disabled={!ready} className={styles.filters} aria-label="Filtros de notícias">
+        <fieldset
+          id="news-filter-options"
+          hidden={!expanded}
+          disabled={!ready}
+          className="list-filters"
+          aria-label="Opções de filtro de notícias"
+        >
+          <label>
+            Exibir
+            <select value={query.state} onChange={(event) => select("state", event.target.value)}>
+              {states.map((state) => (
+                <option key={state.value} value={state.value}>
+                  {state.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <label>
             Categoria
             <input
@@ -293,7 +277,7 @@ export function NewsList({
             </select>
           </label>
         </fieldset>
-      </details>
+      </div>
       <p role="status" className={styles.resultsStatus} aria-live="polite">
         {loading
           ? "Atualizando notícias…"
