@@ -116,6 +116,12 @@ exceções, remarcação/desfecho e avaliação preservada.
 
 ## Phase 7 — US5 Benefícios (P2)
 
+Implementação administrativa detalhada na [spec 007](../007-partners-management/spec.md),
+com [plano](../007-partners-management/plan.md), [tarefas](../007-partners-management/tasks.md)
+e [quatro páginas](../007-partners-management/interface.md). Parceiros são estabelecimentos
+externos. Coleta/moderação de avaliações, portal e resgate permanecem nas integrações futuras;
+essas partes das tarefas gerais abaixo não estão concluídas pela entrega administrativa.
+
 Objetivo: parceiros/contratos/ofertas confiáveis. Teste independente: vigência, ocultação e
 moderação.
 

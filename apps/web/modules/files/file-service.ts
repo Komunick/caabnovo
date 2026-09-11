@@ -18,6 +18,7 @@ import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
 import { authorizeMemberAccess } from "../members/access";
 import { authorizeNewsFileAccess } from "../news/access";
+import { authorizePartnerUpload } from "../partners/access";
 import { FILE_SCAN_QUEUE } from "../jobs/queue";
 import type { WebObjectStorage } from "./object-storage";
 
@@ -88,6 +89,8 @@ export async function createUploadIntent(
   requirePermission(command.actor, PERMISSIONS.filesCreate);
   const requestFingerprint = uploadFingerprint(command);
   const file = await withTransaction(pool, async (client) => {
+    if (command.ownerType === "partner")
+      await authorizePartnerUpload(client, command.actor, command.ownerId);
     if (command.ownerType === "news") await authorizeNewsFileAccess(client, command.actor, true);
     if (command.ownerType === "member") {
       await authorizeMemberAccess(
@@ -209,6 +212,10 @@ export async function finalizeUpload(
   );
   const file = fileResult.rows[0];
   if (!file) throw operationError("NOT_FOUND", 404);
+  if (file.owner_type === "partner")
+    await withTransaction(pool, (client) =>
+      authorizePartnerUpload(client, command.actor, file.owner_id),
+    );
   if (file.owner_type === "member") {
     await withTransaction(pool, async (client) => {
       await authorizeMemberAccess(
@@ -238,6 +245,8 @@ export async function finalizeUpload(
   }
 
   return withTransaction(pool, async (client) => {
+    if (file.owner_type === "partner")
+      await authorizePartnerUpload(client, command.actor, file.owner_id);
     if (file.owner_type === "news") await authorizeNewsFileAccess(client, command.actor, true);
     if (file.owner_type === "member") {
       await authorizeMemberAccess(
@@ -334,6 +343,11 @@ export async function createDownloadGrant(
   if (file.owner_type === "member") {
     const { memberDownload } = await import("../members/member-service");
     const grant = await memberDownload(pool, actor, file.owner_id, fileId, storage);
+    return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };
+  }
+  if (file.owner_type === "partner") {
+    const { partnerDownload } = await import("../partners/partner-service");
+    const grant = await partnerDownload(pool, actor, file.owner_id, fileId, storage);
     return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };
   }
   if (file.status !== "available") throw operationError("FILE_NOT_AVAILABLE", 409);

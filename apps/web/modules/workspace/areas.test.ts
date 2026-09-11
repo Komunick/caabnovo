@@ -2,6 +2,16 @@ import { describe, expect, it } from "vitest";
 import { getWorkspaceAreas, isAreaActive } from "./areas";
 
 describe("consolidated workspace navigation", () => {
+  it("only shows Parceiros with explicit read permission", () => {
+    expect(
+      getWorkspaceAreas(["partners:write", "partners:publish"]).some(
+        (area) => area.id === "partners",
+      ),
+    ).toBe(false);
+    const area = getWorkspaceAreas(["partners:read"]).find((area) => area.id === "partners");
+    expect(area?.href).toBe("/partners");
+    expect(isAreaActive(area!, "/partners/benefits")).toBe(true);
+  });
   it("requires read access for private news navigation", () => {
     expect(getWorkspaceAreas([]).some((area) => area.id === "news")).toBe(false);
     expect(getWorkspaceAreas(["news:read"]).some((area) => area.id === "news")).toBe(true);
