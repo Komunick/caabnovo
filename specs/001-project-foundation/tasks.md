@@ -362,3 +362,11 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - Testes de banco usam PostgreSQL real; mocks não comprovam constraints, privilégios ou concorrência.
 - Nunca usar dados pessoais reais, segredos ou credenciais de PROD em local/CI/evidências.
 - Cada tarefa ou grupo coeso deve resultar em diff pequeno e revisável para PR em `dev`.
+
+## Harmonizacao administrativa - 11/09/2026
+
+- [x] Padronizar temas, cabecalhos, abas, buscas, filtros e acoes de adicionar.
+- [x] Atualizar inicio com dados autorizados e noticias publicadas; preservar rascunhos privados.
+- [x] Adotar Colaboradores para a gestao de contas existente e remover proposta de RH.
+- [x] Conferir visualmente desktop/390 px, teclado e temas claro/escuro.
+- [ ] Registrar PR e resultado final dos gates isolados de CI.

@@ -31,6 +31,7 @@ import { runNewsAction } from "@caab/news/action-runner";
 import {
   readPublicNews,
   listPublicNews,
+  listLatestPublicNews,
   getPublicNewsMedia,
 } from "../../modules/news/public-service";
 import type { NewsActionJobPayload } from "@caab/contracts";
@@ -76,6 +77,63 @@ afterAll(async () => {
 });
 
 describe.sequential("news persistence with Payload", () => {
+  it("shows only the four latest live publications on home across channels", async () => {
+    const body = {
+      root: {
+        type: "root",
+        version: 1,
+        children: [
+          {
+            type: "paragraph",
+            version: 1,
+            children: [{ type: "text", version: 1, text: "Conteúdo publicado" }],
+          },
+        ],
+      },
+    };
+    const publishedIds: string[] = [];
+    for (let index = 0; index < 6; index++) {
+      const draft = await createNewsDraft(payload, context, {
+        metadata: {
+          title: `Publicação ${index}`,
+          slug: `inicio-${crypto.randomUUID()}`,
+          ...(index === 0 ? { highlight: { order: 1 } } : {}),
+        },
+        body,
+      });
+      await publishNews(payload, context, draft.id, {
+        expectedVersion: 1,
+        channels: index % 2 ? ["site", "app"] : ["app"],
+      });
+      await admin.query("UPDATE news SET updated_at=$2 WHERE id=$1", [
+        draft.id,
+        `2090-01-0${index + 1}T12:00:00Z`,
+      ]);
+      publishedIds.push(draft.id);
+    }
+    await updateNewsDraft(payload, context, publishedIds[4]!, {
+      expectedVersion: 2,
+      metadata: { title: "Alteração ainda privada" },
+      body,
+    });
+    await archiveNews(payload, context, publishedIds[5]!, { expectedVersion: 2 });
+    const unpublished = await createNewsDraft(payload, context, {
+      metadata: { title: "Somente rascunho" },
+    });
+    const latest = await listLatestPublicNews(payload);
+    expect(latest.map((item) => item.id)).toEqual(publishedIds.slice(1, 5).reverse());
+    expect(latest[0]).toMatchObject({ title: "Publicação 4", channel: "app" });
+    expect(latest[1]).toMatchObject({ title: "Publicação 3", channel: "site" });
+    expect(latest.every((item) => item.id !== unpublished.id)).toBe(true);
+    expect(latest[0]).not.toHaveProperty("body");
+    // Leave the sequential suite's public catalogue clean.
+    for (let index = 0; index < 5; index++) {
+      await archiveNews(payload, context, publishedIds[index]!, {
+        expectedVersion: index === 4 ? 3 : 2,
+      });
+    }
+  });
+
   it("combines editorial filters and applies deterministic sorting before pagination", async () => {
     const prefix = crypto.randomUUID();
     const a = await createNewsDraft(payload, context, {

@@ -70,6 +70,22 @@ export async function listPublicNews(payload: Payload, destination: unknown, que
     };
   });
 }
+
+/** Home shows the live published revision, in publication order, across both public channels. */
+export async function listLatestPublicNews(payload: Payload) {
+  return withNewsDatabase(payload, async (db) => {
+    const result = await db.query(
+      "SELECT * FROM news WHERE _status='published' AND archived=false AND (metadata_channels ? 'site' OR metadata_channels ? 'app') ORDER BY updated_at DESC,id DESC LIMIT 4",
+      [],
+    );
+    return result.rows.map((row) => {
+      const channels = row.metadata_channels as string[];
+      const { body: _body, ...summary } = document(row, channels.includes("site") ? "site" : "app");
+      void _body;
+      return summary;
+    });
+  });
+}
 export async function readPublicNewsPage(payload: Payload, destination: unknown, id: string) {
   const channel = newsChannelSchema.parse(destination);
   idSchema.parse(id);

@@ -1,4 +1,5 @@
 import {
+  ContactRound,
   FileClock,
   House,
   MonitorCog,
@@ -43,7 +44,7 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
     },
   ];
   if (allowed.has(PERMISSIONS.membersRead)) {
-    areas.splice(1, 0, {
+    areas.push({
       id: "members",
       href: "/members",
       label: "Associados",
@@ -57,10 +58,10 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
     areas.push({
       id: "users",
       href: "/users",
-      label: "Usuários",
+      label: "Colaboradores",
       description: "Gerencie contas, estados e funções de acesso.",
-      keywords: "contas permissões equipe",
-      icon: UsersRound,
+      keywords: "colaboradores usuários usuarios contas permissões equipe",
+      icon: ContactRound,
       paths: ["/users"],
     });
   }

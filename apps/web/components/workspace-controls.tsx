@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Command, Moon, Search, Sun } from "lucide-react";
+import { Moon, Search, Sun } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { getWorkspaceAreas } from "@/modules/workspace/areas";
 
@@ -59,9 +59,7 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
       >
         <Search size={17} aria-hidden="true" />
         <span>Buscar área...</span>
-        <kbd>
-          <Command size={12} aria-hidden="true" />K
-        </kbd>
+        <kbd>Ctrl + K</kbd>
       </button>
       <button
         className="icon-button"

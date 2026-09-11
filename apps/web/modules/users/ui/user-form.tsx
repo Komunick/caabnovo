@@ -1,4 +1,5 @@
 "use client";
+import { Plus } from "lucide-react";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -63,7 +64,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
       if (!editing) {
         const created = (await response.json()) as { id?: string };
         if (!created.id) {
-          setError("O usuário foi criado, mas não foi possível abrir o cadastro.");
+          setError("O colaborador foi criado, mas não foi possível abrir o cadastro.");
           setPending(false);
           return;
         }
@@ -94,9 +95,9 @@ export function UserForm(props: Readonly<UserFormProps>) {
   return (
     <section className="panel" aria-labelledby={`${props.mode}-user-title`}>
       <h2 id={`${props.mode}-user-title`}>
-        {props.mode === "create" ? "Criar usuário" : "Dados da conta"}
+        {props.mode === "create" ? "Criar colaborador" : "Dados da conta"}
       </h2>
-      <form onSubmit={submit}>
+      <form className={props.mode === "create" ? "user-create-form" : undefined} onSubmit={submit}>
         <div className="form-field">
           <label htmlFor={`${props.mode}-name`}>Nome</label>
           <input
@@ -114,7 +115,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
               <input id="create-email" name="email" type="email" required />
             </div>
             {props.roles.length ? (
-              <fieldset>
+              <fieldset className="user-role-options">
                 <legend>Funções iniciais</legend>
                 {props.roles.map((role) => (
                   <label className="checkbox-field" key={role.id}>
@@ -132,21 +133,28 @@ export function UserForm(props: Readonly<UserFormProps>) {
         {error ? <p role="alert">{error}</p> : null}
         {message ? <p role="status">{message}</p> : null}
         <button
-          className="primary-button compact-button"
+          className={`primary-button ${props.mode === "create" ? "button--add" : "compact-button"}`}
           type="submit"
           disabled={!hydrated || pending}
         >
-          {pending ? "Aguarde…" : props.mode === "create" ? "Criar usuário" : "Salvar alterações"}
+          {props.mode === "create" && <Plus size={20} aria-hidden="true" />}
+          {pending
+            ? "Aguarde…"
+            : props.mode === "create"
+              ? "Criar colaborador"
+              : "Salvar alterações"}
         </button>
       </form>
       {props.mode === "edit" && props.canDisable && props.user.status === "active" ? (
-        <SensitiveActionDialog
-          triggerLabel="Desativar usuário"
-          title="Desativar usuário"
-          fieldLabel="Justificativa da desativação"
-          confirmLabel="Confirmar desativação"
-          onConfirm={disable}
-        />
+        <div className="user-danger-action">
+          <SensitiveActionDialog
+            triggerLabel="Desativar colaborador"
+            title="Desativar colaborador"
+            fieldLabel="Justificativa da desativação"
+            confirmLabel="Confirmar desativação"
+            onConfirm={disable}
+          />
+        </div>
       ) : null}
     </section>
   );

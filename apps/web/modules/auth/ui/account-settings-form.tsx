@@ -133,7 +133,7 @@ export function AccountSettingsForm({
   }
   const disabled = !hydrated || pending !== null;
   return (
-    <>
+    <div className="settings-panels">
       <section className="panel" aria-labelledby="profile-title">
         <h2 id="profile-title">Perfil</h2>
         <form onSubmit={(event) => submit(event, "profile")}>
@@ -249,6 +249,6 @@ export function AccountSettingsForm({
           </button>
         </form>
       </section>
-    </>
+    </div>
   );
 }

@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { AuditNavigation } from "@/modules/audit/ui/audit-navigation";
+import { PERMISSIONS } from "@/modules/auth/permissions";
+import { buttonVariants } from "@/components/ui/button";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { idSchema } from "@caab/contracts";
@@ -32,19 +35,28 @@ export default async function AuditExportPage({
       <header>
         <p className="eyebrow">Arquivo privado temporário</p>
         <h1>Exportação de auditoria</h1>
+        <Link className={buttonVariants()} href="/audit">
+          Voltar para auditoria
+        </Link>
       </header>
+      <AuditNavigation
+        events={actor.permissions.has(PERMISSIONS.auditRead)}
+        jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
+      />
       <section className="panel" aria-labelledby="audit-export-status-title">
         <h2 id="audit-export-status-title">{labels[job.status]}</h2>
         <p>Progresso: {job.progress}%</p>
         {job.safe_error_message ? <p role="alert">{job.safe_error_message}</p> : null}
         {downloadUrl ? (
           <p>
-            <a href={downloadUrl}>Baixar exportação</a> — o endereço expira em cinco minutos.
+            <a className={buttonVariants({ intent: "primary" })} href={downloadUrl}>
+              Baixar exportação
+            </a>{" "}
+            — o endereço expira em cinco minutos.
           </p>
         ) : (
           <p>Atualize esta página para acompanhar o processamento.</p>
         )}
-        <Link href="/audit">Voltar para auditoria</Link>
       </section>
     </div>
   );

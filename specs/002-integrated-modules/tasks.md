@@ -130,24 +130,15 @@ moderação.
 - [ ] T031 [US5] Validar oferta, contrato, ocultação e opinião preservada em
       `apps/web/tests/e2e/partners.spec.ts`.
 
-## Phase 8 — US6 Equipe e acesso (P2)
+## Phase 8 — US6 Acesso existente; cadastro de equipe retirado do escopo
 
-Revisão de 10/09/2026 em `docs/MODULES.md`: não há Colaboradores implementado. Reutilizar contas,
-papéis e sessões de Usuários; separar cargo funcional de função de acesso. Uma única área de
-navegação reúne as duas jornadas, sem repetir criação de conta ou concessão de permissões.
+Decisão do usuário em 11/09/2026: Colaboradores no legado corresponde a Usuários.
+Parceiros são externos; não haverá módulo separado de equipe interna/RH.
 
-Objetivo: colaborador ligado à conta existente e escopo compreensível. Teste independente: vínculo,
-concessão/revogação restrita e recuperação segura.
-
-- [ ] T032 [US6] Definir setores/unidades/escopos/campos e recuperação em
-      `specs/002-integrated-modules/contracts/employees.md`.
-- [ ] T033 [US6] Modelar colaboradores/vínculos/escopos sem duplicar user/role em
-      `packages/db/migrations/` e `packages/contracts/src/employees.ts`.
-- [ ] T034 [US6] Implementar autorização, vínculo e testes em `apps/web/modules/employees/` e
-      `modules/auth/`.
-- [ ] T035 [US6] Integrar equipe/contas/sessões/recuperação na UI em
-      `apps/web/app/(admin)/employees/`, `app/(auth)/` e validar em
-      `apps/web/tests/e2e/employees.spec.ts`.
+- T032–T035: **canceladas por alteração de escopo**, não implementadas.
+- Contas, permissões, sessões e recuperação permanecem nos recursos existentes.
+- Dependências de US6 nas fases seguintes significam reutilizar Usuários/RBAC,
+  sem aguardar ou criar cadastro funcional, vínculo colaborador-conta ou módulo employees.
 
 ## Phase 9 — US7 Mensagens (P2)
 

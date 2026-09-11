@@ -14,7 +14,7 @@
 - [x] T004 [US1] Implementar catálogo único em `apps/web/modules/workspace/areas.ts` e integrar
       menu, busca e dashboard.
 - [x] T005 [US1] Implementar subnavegação com guardas específicas em
-      `apps/web/app/(admin)/audit/layout.tsx` e `apps/web/modules/audit/ui/audit-navigation.tsx`.
+      páginas de `apps/web/app/(admin)/audit/` e `apps/web/modules/audit/ui/audit-navigation.tsx`.
 - [x] T006 [US1] Validar quatro perfis/busca/acessibilidade em
       `apps/web/tests/e2e/operations.spec.ts`, `audit.spec.ts`, `workspace-experience.spec.ts` e
       `accessibility.spec.ts`.
@@ -48,3 +48,16 @@
 Dependências: T001–T003 → T004/T005/T007 → T006/T008 → T009. US3: T010 → T011/T012 → T013. Código e
 testes de histórias se encontram na verificação; execução local sequencial. PR próprio autorizado em
 09/09/2026 para esta função, preservando a separação por spec.
+
+## Revisão solicitada — 11/09/2026
+
+- [ ] T014 Apresentar os eventos de auditoria em linguagem simples, com quem realizou a ação,
+      o que mudou e quem foi afetado. Exemplo: “Gabriel removeu o perfil de administrador de Felipe”.
+      Substituir códigos como `role.revoked` e identificadores na leitura principal por descrições
+      em português; manter códigos e dados técnicos disponíveis nos detalhes. Resolver nomes com
+      as permissões existentes, prever registros antigos ou nomes indisponíveis sem inventar
+      informações e preservar o registro original. Validar concessão/remoção de funções,
+      criação/alteração/desativação de colaboradores e demais ações registradas; conferir
+      leitura visual, filtros e ausência de exposição de dados restritos.
+
+T014 registrada para implementação posterior, a pedido do usuário; não faz parte da harmonização visual atual.

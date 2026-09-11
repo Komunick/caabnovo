@@ -8,6 +8,7 @@ import { searchAuditEvents } from "@/modules/audit/audit-query-service";
 import { AuditTable } from "@/modules/audit/ui/audit-table";
 import { AuditExportDialog } from "@/modules/audit/ui/audit-export-dialog";
 import { AuditFilters } from "@/modules/audit/ui/audit-filters";
+import { AuditNavigation } from "@/modules/audit/ui/audit-navigation";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -57,13 +58,6 @@ export default async function AuditPage({
         <p className="eyebrow">Integridade e rastreabilidade</p>
         <h1>Auditoria</h1>
         <p>Consulte eventos críticos redigidos. Esta área é somente leitura.</p>
-      </header>
-      <section className="panel" aria-labelledby="audit-filters-title">
-        <h2 id="audit-filters-title">Filtros</h2>
-        {!parsed.success ? (
-          <p role="alert">Um ou mais filtros foram ignorados por serem inválidos.</p>
-        ) : null}
-        <AuditFilters values={values} />
         {actor.permissions.has(PERMISSIONS.auditExport) ? (
           <AuditExportDialog
             filters={{
@@ -73,6 +67,17 @@ export default async function AuditPage({
             }}
           />
         ) : null}
+      </header>
+      <AuditNavigation
+        events={actor.permissions.has(PERMISSIONS.auditRead)}
+        jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
+      />
+      <section className="panel" aria-labelledby="audit-filters-title">
+        <h2 id="audit-filters-title">Filtros</h2>
+        {!parsed.success ? (
+          <p role="alert">Um ou mais filtros foram ignorados por serem inválidos.</p>
+        ) : null}
+        <AuditFilters key={JSON.stringify(values)} values={values} />
       </section>
       <AuditTable
         events={page.items}

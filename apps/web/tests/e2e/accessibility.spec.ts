@@ -34,7 +34,7 @@ test("administrator account settings without MFA meet the automated WCAG 2.2 AA 
 test("user administration meets the automated WCAG 2.2 AA baseline", async ({ page }) => {
   await signIn(page, syntheticUsers.accessManager.email, syntheticUsers.accessManager.password);
   await page.goto("/users");
-  await expect(page.getByRole("heading", { name: "Usuários" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Colaboradores" })).toBeVisible();
   await expectWcag22AA(page);
 });
 

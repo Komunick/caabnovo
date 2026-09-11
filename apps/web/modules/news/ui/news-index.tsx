@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -7,6 +8,7 @@ import { listNewsDrafts } from "@/modules/news/news-service";
 import { getNewsPayload } from "@/modules/news/payload/runtime";
 import { buttonVariants } from "@/components/ui/button";
 import { NewsList } from "@/modules/news/ui/news-list";
+import { ModuleNavigation } from "@/components/ui/module-navigation";
 
 export async function NewsIndex({
   searchParams,
@@ -29,24 +31,25 @@ export async function NewsIndex({
   const result = await listNewsDrafts(await getNewsPayload(), actor, query);
   return (
     <div className="page-stack news-module">
-      <header className="news-list-header">
-        <div>
-          <h1>{drafts ? "Rascunhos de notícias" : "Notícias"}</h1>
-          <p>
-            {drafts
-              ? "Conteúdos em preparação, ainda não publicados."
-              : "Gerencie as notícias publicadas e seu histórico."}
-          </p>
-        </div>
-        <div className="news-list-navigation">
-          <Link className={buttonVariants()} href={drafts ? "/news" : "/news/drafts"}>
-            {drafts ? "Notícias" : "Rascunhos"}
-          </Link>
-          <Link className={buttonVariants({ intent: "primary" })} href="/news/new">
-            Nova notícia
-          </Link>
-        </div>
+      <header className="page-header">
+        <p className="eyebrow">Comunicação</p>
+        <h1>{drafts ? "Rascunhos de notícias" : "Notícias"}</h1>
+        <p>
+          {drafts
+            ? "Conteúdos em preparação, ainda não publicados."
+            : "Gerencie as notícias publicadas e seu histórico."}
+        </p>
+        <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/news/new">
+          <Plus aria-hidden="true" /> Nova notícia
+        </Link>
       </header>
+      <ModuleNavigation
+        label="Áreas de notícias"
+        items={[
+          { href: "/news", label: "Publicadas", active: !drafts },
+          { href: "/news/drafts", label: "Rascunhos", active: drafts },
+        ]}
+      />
       {!parsed.success ? <p role="alert">Filtros inválidos. Exibindo a primeira página.</p> : null}
       <NewsList
         key={JSON.stringify(query)}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuditNavigation } from "@/modules/audit/ui/audit-navigation";
 import { headers } from "next/headers";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { PERMISSIONS } from "@/modules/auth/permissions";
@@ -30,6 +31,10 @@ export default async function JobsPage() {
         <h1>Processamentos</h1>
         <p>Acompanhe filas, progresso, tentativas e falhas apresentadas de forma segura.</p>
       </header>
+      <AuditNavigation
+        events={actor.permissions.has(PERMISSIONS.auditRead)}
+        jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
+      />
       <section className="panel" aria-labelledby="job-list-title">
         <h2 id="job-list-title">Execuções recentes</h2>
         {jobs.length === 0 ? <p>Nenhum processamento foi iniciado.</p> : null}

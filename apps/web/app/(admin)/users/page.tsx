@@ -18,7 +18,7 @@ export default async function UsersPage({
     new Request("http://caab.internal/users", { headers: requestHeaders }),
   );
   if (!actor?.permissions.has(PERMISSIONS.usersRead)) {
-    return <p role="alert">Você não tem permissão para acessar usuários.</p>;
+    return <p role="alert">Você não tem permissão para acessar colaboradores.</p>;
   }
   const parsed = userListQuerySchema.safeParse({
     cursor: (await searchParams).cursor,
@@ -44,7 +44,7 @@ export default async function UsersPage({
     <div className="page-stack">
       <header>
         <p className="eyebrow">Controle de acesso</p>
-        <h1>Usuários</h1>
+        <h1>Colaboradores</h1>
         <p>Contas internas, estado atual e funções efetivas.</p>
       </header>
       {actor.permissions.has(PERMISSIONS.usersCreate) ? (
@@ -68,9 +68,11 @@ export default async function UsersPage({
             </thead>
             <tbody>
               {page.items.map((user) => (
-                <tr key={user.id}>
+                <tr key={user.id} className="linked-table-row">
                   <th scope="row">
-                    <Link href={`/users/${user.id}`}>{user.name}</Link>
+                    <Link className="linked-table-row__link" href={`/users/${user.id}`}>
+                      {user.name}
+                    </Link>
                   </th>
                   <td>{user.email}</td>
                   <td>{user.status === "active" ? "Ativo" : "Desativado"}</td>

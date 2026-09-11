@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SearchField } from "@/components/ui/search-controls";
+import { buttonVariants } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { newsChannelSchema, publicNewsQuerySchema } from "@caab/contracts";
 import { getNewsPayload } from "@/modules/news/payload/runtime";
@@ -23,10 +25,14 @@ export default async function PublicNewsList({
       <header>
         <h1>Notícias da CAAB</h1>
       </header>
-      <form className="news-actions" role="search">
-        <label htmlFor="public-search">Buscar notícias</label>
-        <input id="public-search" name="search" defaultValue={query.data.search} maxLength={200} />
-        <button type="submit">Buscar</button>
+      <form className="filter-toolbar" role="search">
+        <SearchField
+          id="public-search"
+          label="Buscar notícias"
+          name="search"
+          defaultValue={query.data.search}
+          maxLength={200}
+        />
       </form>
       {!result.items.length ? (
         <p>Nenhuma notícia encontrada.</p>
@@ -41,9 +47,17 @@ export default async function PublicNewsList({
         ))
       )}
       <nav aria-label="Páginas de notícias" className="news-actions">
-        {result.page > 1 ? <Link href={href(result.page - 1)}>Página anterior</Link> : null}
+        {result.page > 1 ? (
+          <Link className={buttonVariants()} href={href(result.page - 1)}>
+            Página anterior
+          </Link>
+        ) : null}
         <span>Página {result.page}</span>
-        {result.hasNextPage ? <Link href={href(result.page + 1)}>Próxima página</Link> : null}
+        {result.hasNextPage ? (
+          <Link className={buttonVariants()} href={href(result.page + 1)}>
+            Próxima página
+          </Link>
+        ) : null}
       </nav>
     </main>
   );

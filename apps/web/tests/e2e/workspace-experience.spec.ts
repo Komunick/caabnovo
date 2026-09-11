@@ -26,7 +26,7 @@ test("theme preference persists and quick navigation respects permissions", asyn
   const dialog = page.getByRole("dialog", { name: "Navegação rápida" });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole("link", { name: /Sessões/ })).toBeVisible();
-  await expect(dialog.getByRole("link", { name: /Usuários/ })).toHaveCount(0);
+  await expect(dialog.getByRole("link", { name: /Colaboradores/ })).toHaveCount(0);
 
   await dialog.getByLabel("Buscar área").fill("sessões");
   await dialog.getByRole("link", { name: /Sessões/ }).click();

@@ -287,3 +287,26 @@ progresso, tentativas, resultado terminal, correlação e mensagens seguras.
 - A organização disponibilizará responsáveis humanos para aprovar permissões, revisar mudanças
   sensíveis e executar merges em `main`.
 - Ambientes de desenvolvimento e produção terão dados, credenciais e integrações separados.
+
+## Harmonização administrativa — 11/09/2026
+
+A experiência administrativa existente passa a usar azul, branco e vermelho, com cores
+equivalentes no modo escuro. Cabeçalhos, abas, buscas, filtros, botões e formulários seguem
+componentes e estilos compartilhados; ações de adicionar têm ícone `+` e alvo de 48 px.
+O atalho visível da busca é `Ctrl + K`. A logo preserva a transparência original e o botão
+de recolher acompanha o menu fixo durante a rolagem.
+
+A inicial apresenta atalhos autorizados, quatro notícias publicadas mais recentes,
+rascunhos e cadastros sem análise. Próximos módulos aparecem como planejamento, sem
+indicadores fictícios. A versão pública é usada nas notícias, sem expor revisões privadas.
+
+Colaboradores é o nome da gestão de Usuários existente, conforme
+[decisão de escopo](../../docs/EMPLOYEES-BOUNDARIES.md). Não existe nova área de RH.
+Parceiros continua representando externos. Toda a linha das listas de pessoas abre o
+perfil por link nativo, inclusive por teclado.
+
+Implementação: componentes `ModuleNavigation`, `SearchField` e `FilterToggle` em
+`apps/web/components/ui`; tokens e estilos globais; integração nas páginas existentes.
+Validação: inspeção nos temas claro/escuro e 390 px, testes de navegação/autorização,
+integração da seleção de notícias e gates do repositório. Evidências e limites em
+`docs/VISUAL-REVIEW-2026-09-11.md`.
