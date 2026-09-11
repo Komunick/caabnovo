@@ -2,7 +2,8 @@
 
 **Status em 11/09/2026**: o usuário confirmou “associados considere pronto” e autorizou
 preparar os PRs do trabalho concluído que ainda não entrou em dev. T017 concluída por essa
-confirmação explícita. T012 em preparação; a homologação externa OAB (T028) continua separada,
+confirmação explícita. T012 concluída com o [PR #15](https://github.com/Komunick/caabnovo/pull/15);
+a homologação externa OAB (T028) continua separada,
 sem consulta real autorizada nesta revisão.
 
 ## Ativação e bloqueio administrativo — 10/09/2026
@@ -57,9 +58,9 @@ Critério independente: resumo estável sem CPF/contas e nenhuma listagem públi
 
 - [x] T010 Verificar jornada completa, teclado/390px/axe em apps/web/tests/e2e/members.spec.ts.
 - [x] T011 Executar gates e registrar resultados em specs/005-members-management/evidence.md; atualizar escopo geral existente.
-- [ ] T012 Somente após Associados estar funcionalmente pronto, abrir um PR completo para dev;
-  documentação/testes/código juntos, sem merge automático. Aguardar conclusão das pendências e
-  revisão funcional; não executar com base apenas nos testes do incremento atual.
+- [x] T012 Abrir um PR completo para dev com documentação, testes e código, após confirmação
+  funcional explícita do usuário em 11/09/2026: [PR #15](https://github.com/Komunick/caabnovo/pull/15).
+  Sem merge automático; acompanhar os gates e a revisão no próprio PR.
 
 Dependências: T001→T002/T003→T004→T005/T006→T007→T008→T009→T010→T011→T012. Preparação de contratos e migration pode ocorrer em arquivos separados; implementação local sequencial. Caassh pode progredir em worktree separado com o contrato publicado, sem editar estes arquivos. Primeiro incremento US1; entrega inclui todas as histórias.
 
