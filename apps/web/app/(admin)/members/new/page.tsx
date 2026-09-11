@@ -22,7 +22,9 @@ export default async function NewMemberPage() {
           Voltar à lista
         </Link>
       </header>
-      <NewMember />
+      <NewMember
+        canUpload={actor.permissions.has("files:read") && actor.permissions.has("files:create")}
+      />
     </div>
   );
 }

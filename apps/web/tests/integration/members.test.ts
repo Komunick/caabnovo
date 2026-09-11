@@ -13,6 +13,7 @@ import {
   listMembers,
   memberDownload,
   memberFiles,
+  memberFileStatus,
   memberHistory,
   type MemberContext,
 } from "../../modules/members/member-service";
@@ -102,6 +103,136 @@ async function file(memberId: string, status = "available") {
   return id;
 }
 describe.sequential("member persistence", () => {
+  it("adds, replaces and removes a private photo without changing identity or documents", async () => {
+    const person = await create();
+    expect(person.photoFileId).toBeNull();
+    const first = await file(person.id),
+      second = await file(person.id);
+    const request = nextContext();
+    const input = {
+      action: "photo",
+      fileId: first,
+      expectedVersion: 1,
+      justification: "Foto sintética",
+    };
+    const saved = await commandMember(pool, request, person.id, input);
+    expect(saved).toMatchObject({ photoFileId: first, version: 2, documents: [], assessments: [] });
+    expect(await commandMember(pool, request, person.id, input)).toMatchObject({
+      version: 2,
+      photoFileId: first,
+    });
+    expect(await memberFileStatus(pool, context.actor, person.id, first)).toMatchObject({
+      status: "available",
+      scanStatus: "clean",
+    });
+    expect(await command(person.id, 2, { action: "photo", fileId: second })).toMatchObject({
+      photoFileId: second,
+      version: 3,
+    });
+    expect(await command(person.id, 3, { action: "photo", fileId: null })).toMatchObject({
+      photoFileId: null,
+      version: 4,
+    });
+    expect(
+      (await admin.query("SELECT profile_version FROM member WHERE id=$1", [person.id])).rows[0]
+        .profile_version,
+    ).toBe(1);
+    expect(
+      (
+        await admin.query("SELECT deleted_at FROM stored_file WHERE id=ANY($1::uuid[])", [
+          [first, second],
+        ])
+      ).rows,
+    ).toEqual([{ deleted_at: null }, { deleted_at: null }]);
+    const events = (await memberHistory(pool, context.actor, person.id)).items.filter(
+      (e) => e.action === "member.photo",
+    );
+    expect(events).toHaveLength(3);
+    expect(events[0]!.after).toEqual({
+      version: 4,
+      previousPhotoFileId: second,
+      photoFileId: null,
+    });
+  });
+  it("rejects foreign, pending, rejected, deleted, non-image and oversized photos", async () => {
+    const person = await create(),
+      other = await create();
+    const original = await file(person.id);
+    await command(person.id, 1, { action: "photo", fileId: original });
+    const foreign = await file(other.id);
+    const pending = await file(person.id, "uploaded"),
+      rejected = await file(person.id, "rejected");
+    const pdf = await file(person.id),
+      large = await file(person.id),
+      deleted = await file(person.id);
+    await admin.query("UPDATE stored_file SET detected_mime='application/pdf' WHERE id=$1", [pdf]);
+    await admin.query("UPDATE stored_file SET size_bytes=5242881 WHERE id=$1", [large]);
+    await admin.query("UPDATE stored_file SET deleted_at=now() WHERE id=$1", [deleted]);
+    for (const fileId of [foreign, pending, rejected, pdf, large, deleted])
+      await expect(command(person.id, 2, { action: "photo", fileId })).rejects.toThrow();
+    await expect(memberFileStatus(pool, context.actor, person.id, foreign)).rejects.toMatchObject({
+      status: 404,
+    });
+    expect(await getMember(pool, context.actor, person.id)).toMatchObject({
+      version: 2,
+      photoFileId: original,
+    });
+    await command(person.id, 2, { action: "archive" });
+    await expect(command(person.id, 3, { action: "photo", fileId: null })).rejects.toMatchObject({
+      code: "MEMBER_ARCHIVED",
+    });
+  });
+  it("protects photo writes against concurrent edits and audit failure", async () => {
+    const person = await create();
+    const first = await file(person.id),
+      second = await file(person.id);
+    const outcomes = await Promise.allSettled(
+      [first, second].map((fileId) => command(person.id, 1, { action: "photo", fileId })),
+    );
+    expect(outcomes.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect(outcomes.find((r) => r.status === "rejected")).toMatchObject({
+      reason: { code: "MEMBER_VERSION_CONFLICT" },
+    });
+    const before = await getMember(pool, context.actor, person.id);
+    await admin.query("REVOKE INSERT ON audit_event FROM caab_runtime");
+    try {
+      await expect(command(person.id, 2, { action: "photo", fileId: null })).rejects.toThrow();
+    } finally {
+      await admin.query("GRANT INSERT ON audit_event TO caab_runtime");
+    }
+    expect(await getMember(pool, context.actor, person.id)).toEqual(before);
+  });
+  it("revalidates photo permissions and redacts photos without file access", async () => {
+    const person = await create();
+    const photo = await file(person.id);
+    await command(person.id, 1, { action: "photo", fileId: photo });
+    await admin.query("INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,$2,$1)", [
+      context.actor.userId,
+      ["members:read", "members:write"],
+    ]);
+    try {
+      expect(await getMember(pool, context.actor, person.id)).toMatchObject({ photoFileId: null });
+      await expect(command(person.id, 2, { action: "photo", fileId: null })).rejects.toMatchObject({
+        status: 403,
+      });
+      await expect(memberFileStatus(pool, context.actor, person.id, photo)).rejects.toMatchObject({
+        status: 403,
+      });
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        context.actor.userId,
+        ["members:read", "files:read"],
+      ]);
+      await expect(command(person.id, 2, { action: "photo", fileId: null })).rejects.toMatchObject({
+        status: 403,
+      });
+    } finally {
+      await admin.query("DELETE FROM user_access WHERE user_id=$1", [context.actor.userId]);
+    }
+    expect(await getMember(pool, context.actor, person.id)).toMatchObject({
+      photoFileId: photo,
+      version: 2,
+    });
+  });
   it("tracks manual activation/block/unblock without changing assessments, identity or dependents", async () => {
     let person = await create("Situação administrativa sintética");
     const dependent = await create("Dependente independente");
