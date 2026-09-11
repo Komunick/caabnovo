@@ -35,6 +35,10 @@ export function PartnerEditor({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState<HistoryPage | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+  const [historyPage, setHistoryPage] = useState(1);
+  const historyRequest = useRef(0);
   const retry = useRef({ body: "", key: "" });
   async function command(input: Record<string, unknown>) {
     setBusy(true);
@@ -61,12 +65,20 @@ export function PartnerEditor({
     }
   }
   async function loadHistory(page = 1) {
+    const request = ++historyRequest.current;
+    setHistoryLoading(true);
+    setHistoryError("");
+    setHistoryPage(page);
     try {
-      setHistory(
-        await partnerRequest<HistoryPage>(`/api/v1/partners/${partner.id}/history?page=${page}`),
+      const result = await partnerRequest<HistoryPage>(
+        `/api/v1/partners/${partner.id}/history?page=${page}`,
       );
+      if (request === historyRequest.current) setHistory(result);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao consultar histórico.");
+      if (request === historyRequest.current)
+        setHistoryError(e instanceof Error ? e.message : "Falha ao consultar histórico.");
+    } finally {
+      if (request === historyRequest.current) setHistoryLoading(false);
     }
   }
   const disabled = busy || !!partner.archivedAt;
@@ -206,10 +218,18 @@ export function PartnerEditor({
       {tab === "Histórico" && (
         <section className="panel">
           <h2>Histórico</h2>
-          {!history ? (
-            <p role="status">Carregando histórico…</p>
-          ) : (
+          <p role="status">{historyLoading ? "Carregando histórico…" : ""}</p>
+          {historyError && (
+            <div className={styles.notice}>
+              <p role="alert">Não foi possível carregar o histórico. {historyError}</p>
+              <Button disabled={historyLoading} onClick={() => void loadHistory(historyPage)}>
+                Tentar carregar histórico novamente
+              </Button>
+            </div>
+          )}
+          {history && (
             <>
+              {!history.items.length && <p>Nenhuma alteração registrada.</p>}
               <ul className={styles.list}>
                 {history.items.map((event) => (
                   <li key={event.id} className={styles.card}>
@@ -222,6 +242,7 @@ export function PartnerEditor({
               <nav className={styles.actions} aria-label="Paginação do histórico">
                 {history.page > 1 && (
                   <Button
+                    disabled={historyLoading}
                     onClick={() => {
                       void loadHistory(history.page - 1);
                     }}
@@ -232,6 +253,7 @@ export function PartnerEditor({
                 <span>Página {history.page}</span>
                 {history.hasNextPage && (
                   <Button
+                    disabled={historyLoading}
                     onClick={() => {
                       void loadHistory(history.page + 1);
                     }}

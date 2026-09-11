@@ -80,6 +80,12 @@ CNPJ com zeros/letras, caracteres inválidos e duplicidade; nomes longos; datas-
 - **FR-011**: Histórico contextual explica ações em português simples. Arquivamento/desativação preserva registros, relacionamentos e documentos.
 - **FR-012**: Validar teclado, contraste e semântica acessível, temas claro/escuro e largura de 390 px sem rolagem horizontal da página.
 
+Detalhamento de aceite em 11/09/2026: uma falha do histórico encerra a indicação de
+carregamento e permite tentar novamente sem perder campos em edição. A consulta
+administrativa identifica a vigência da publicação e oferece prévia dessa versão,
+mesmo depois de alterar título ou datas do rascunho; a consulta externa mantém o
+conteúdo publicado até uma nova publicação explícita (FR-005/006/009/011).
+
 ### Key Entities
 
 Parceiro (estabelecimento), unidade (local/abrangência), contrato (condições e vigência), benefício (oferta com rascunho e publicação), documento privado e evento histórico. Conta administrativa e associado permanecem cadastros separados.

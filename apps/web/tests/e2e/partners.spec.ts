@@ -28,6 +28,26 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await expect(page).toHaveURL(/\/partners\/[0-9a-f-]+$/);
   const detail = page.url();
   await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+  await page.getByLabel("Pessoa de contato (opcional)").fill("Contato ainda em edição");
+  await page.route("**/history?page=1", (route) =>
+    route.fulfill({ status: 503, json: { code: "UNAVAILABLE" } }),
+  );
+  await page.getByRole("button", { name: "Histórico", exact: true }).click();
+  await expect(page.getByRole("main").getByRole("alert")).toContainText(
+    "Não foi possível carregar o histórico",
+  );
+  await expect(page.getByText("Carregando histórico…", { exact: true })).toHaveCount(0);
+  await page.unroute("**/history?page=1");
+  await keyboardActivate(
+    page,
+    page.getByRole("button", { name: "Tentar carregar histórico novamente" }),
+  );
+  await expect(page.getByText(/Administrador Sintético cadastrou o parceiro/)).toBeVisible();
+  await expect(page.getByRole("main").getByRole("alert")).toHaveCount(0);
+  await page.getByRole("button", { name: "Cadastro", exact: true }).click();
+  await expect(page.getByLabel("Pessoa de contato (opcional)")).toHaveValue(
+    "Contato ainda em edição",
+  );
   await page.getByRole("button", { name: "Unidades", exact: true }).click();
   await page.getByRole("button", { name: "Adicionar unidade", exact: true }).click();
   await page.getByLabel("Nome da unidade").fill("Unidade Salvador");
@@ -118,6 +138,29 @@ test("operator creates a partner, approves a contract and publishes an offer wit
       (item: { partner: { name: string } }) => item.partner.name === name,
     ),
   ).toBe(true);
+  await page.getByRole("button", { name: "Editar benefício", exact: true }).click();
+  await page.getByLabel("Título", { exact: true }).fill("Título privado em revisão");
+  await page.getByLabel("Fim da oferta").fill("2098-12-31");
+  await page.locator("#benefit-reason").fill("Revisão privada sintética");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Título privado em revisão", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Em exibição · Vigência publicada: 01/01/2020 a 31/12/2099"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Conferir versão publicada", exact: true }).click();
+  const publication = page.getByRole("article", { name: "Prévia da versão publicada" });
+  await expect(
+    publication.getByRole("heading", { name: "Atendimento com condição especial" }),
+  ).toBeVisible();
+  await expect(publication).toContainText("31/12/2099");
+  const afterDraft = await page.request.get("/api/v1/benefits/site");
+  const publicOffer = (await afterDraft.json()).items.find(
+    (item: { partner: { name: string } }) => item.partner.name === name,
+  );
+  expect(publicOffer.title).toBe("Atendimento com condição especial");
+  expect(publicOffer.endsOn).toBe("2099-12-31");
   const routes = [
     ["cadastros", "/partners"],
     ["novo", "/partners/new"],

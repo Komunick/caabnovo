@@ -34,3 +34,12 @@ próprios contratos e dependências.
 - Nenhuma paleta, estilo de foco ou tratamento de botões exclusivo de Parceiros.
 - Estados vazio, carregamento, sucesso, erro e conflito claros; dados preenchidos preservados em falha.
 - Verificação visual em desktop e 390 px, temas claro/escuro, teclado e acessibilidade.
+
+## Acabamento da retomada — 11/09/2026
+
+- Histórico distingue carregamento, falha com tentativa novamente e ausência de eventos;
+  uma falha de consulta não exige recarregar ou perder o cadastro em edição.
+- Benefícios identificam a vigência publicada separadamente do rascunho e permitem
+  conferir a prévia da versão publicada, preservada durante alterações privadas.
+- Validação usa ambiente descartável; atualização do localhost principal suspensa
+  por orientação do usuário nesta retomada.

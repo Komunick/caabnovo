@@ -12,11 +12,24 @@ import { FormField } from "@/components/ui/form-field";
 import type { PartnerCommandHandler } from "./client";
 import { formatDate } from "./labels";
 import styles from "./partners.module.css";
-function BenefitPreview({ draft, partner }: { draft: BenefitDraft; partner: PartnerRecord }) {
+function BenefitPreview({
+  draft,
+  partner,
+  published = false,
+}: {
+  draft: BenefitDraft;
+  partner: PartnerRecord;
+  published?: boolean;
+}) {
   const unit = partner.units.find((unit) => unit.id === draft.unitId);
   return (
-    <article className={`${styles.card} ${styles.preview}`} aria-label="Prévia do benefício">
-      <p className="eyebrow">Prévia · {partner.profile.name}</p>
+    <article
+      className={`${styles.card} ${styles.preview}`}
+      aria-label={published ? "Prévia da versão publicada" : "Prévia do benefício"}
+    >
+      <p className="eyebrow">
+        {published ? "Versão publicada" : "Prévia do rascunho"} · {partner.profile.name}
+      </p>
       <h3>{draft.title || "Título do benefício"}</h3>
       <p className={styles.prose}>{draft.description || "A descrição aparecerá aqui."}</p>
       <p>
@@ -203,6 +216,7 @@ export function BenefitPanel({
 }) {
   const [editing, setEditing] = useState<PartnerBenefit | "new" | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [publishedPreview, setPublishedPreview] = useState<string | null>(null);
   const [decision, setDecision] = useState<{ id: string; action: "publish" | "hide" } | null>(null);
   return (
     <section className="panel">
@@ -238,8 +252,18 @@ export function BenefitPanel({
                 : benefit.published
                   ? "Publicado, sem exibição no momento"
                   : "Rascunho"}{" "}
-              · {formatDate(benefit.draft.startsOn)} a {formatDate(benefit.draft.endsOn)}
+              · {benefit.published ? "Vigência publicada" : "Vigência do rascunho"}:{" "}
+              {formatDate((benefit.published ?? benefit.draft).startsOn)} a{" "}
+              {formatDate((benefit.published ?? benefit.draft).endsOn)}
             </p>
+            {benefit.published && (
+              <p>
+                Canais publicados:{" "}
+                {benefit.published.channels
+                  .map((channel) => (channel === "site" ? "Site" : "Aplicativo"))
+                  .join(", ")}
+              </p>
+            )}
             {benefit.published && !benefit.visible && (
               <p>Confira a situação do parceiro, da unidade, do contrato e as datas de vigência.</p>
             )}
@@ -250,6 +274,16 @@ export function BenefitPanel({
               >
                 Prévia do rascunho
               </Button>
+              {benefit.published && (
+                <Button
+                  onClick={() =>
+                    setPublishedPreview(publishedPreview === benefit.id ? null : benefit.id)
+                  }
+                  aria-expanded={publishedPreview === benefit.id}
+                >
+                  Conferir versão publicada
+                </Button>
+              )}
               {canWrite && (
                 <Button
                   disabled={disabled || !!editing || !!decision}
@@ -279,6 +313,9 @@ export function BenefitPanel({
               )}
             </div>
             {preview === benefit.id && <BenefitPreview draft={benefit.draft} partner={partner} />}
+            {publishedPreview === benefit.id && benefit.published && (
+              <BenefitPreview draft={benefit.published} partner={partner} published />
+            )}
             {decision?.id === benefit.id && (
               <form
                 onSubmit={async (event) => {

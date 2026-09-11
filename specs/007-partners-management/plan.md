@@ -51,6 +51,10 @@ conversão ou política de avaliação. Revisão humana sensível no PR, sem mer
 
 ## Complexity Tracking
 
+Retomada de 11/09/2026: concluir estados de consulta do histórico e a distinção visual
+entre rascunho e publicação, dentro de T015/T018; cobrir recuperação de falha e edição
+privada na jornada T019. Não atualizar o preview principal nesta etapa, a pedido do usuário.
+
 Sem exceções arquiteturais. Quatro entidades próprias; arquivos, histórico e identidade
 reutilizados. Estado publicado guarda somente snapshot dos dados da oferta; nenhuma fila
 nova é necessária para expirar, pois a leitura revalida vigência no servidor.

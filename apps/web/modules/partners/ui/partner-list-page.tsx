@@ -102,7 +102,11 @@ export async function PartnerListPage({
                               : "Rascunho"}
                         </td>
                         <td>
-                          {formatDate(item.draft.startsOn)} a {formatDate(item.draft.endsOn)}
+                          {formatDate((item.published ?? item.draft).startsOn)} a{" "}
+                          {formatDate((item.published ?? item.draft).endsOn)}
+                          <span className={styles.muted}>
+                            {item.published ? " (publicada)" : " (rascunho)"}
+                          </span>
                         </td>
                       </tr>
                     );

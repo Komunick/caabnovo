@@ -37,6 +37,12 @@ outra paleta, biblioteca de ícones ou estilo de filtros.
 
 ## Limites institucionais
 
+Reconsulta em 11/09/2026: [WAI, notificações](https://www.w3.org/WAI/tutorials/forms/notifications/)
+orienta mensagens claras e instruções para resolver erros. Aplicação nesta retomada:
+falhas do histórico ficam na própria seção, com nova tentativa e fim do carregamento;
+nenhuma recarga do formulário é necessária. A distinção entre versão publicada e
+rascunho segue o contrato editorial já definido nesta spec, sem nova regra institucional.
+
 B01: aprovação explícita por contrato e publicação por operador autorizado; não existe
 habilitação automática ou garantia de direito ao benefício. B02: coleta/moderação de
 avaliações e política de autoria/escala pertencem à integração futura do app. Portal,
