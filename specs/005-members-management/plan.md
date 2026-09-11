@@ -6,6 +6,12 @@ Branch `feature/members-management` · 2026-09-09 · [Spec](spec.md)
 
 ## Incremento: foto de perfil — 11/09/2026
 
+**Pronto e aceito pelo usuário em 11/09/2026.** Foi confirmado que a foto será enviada pelo
+próprio associado no app e exibida no painel a partir da mesma referência. A implementação
+do fluxo do app deverá reutilizar a foto de Associados e autorizar somente o titular da
+conta vinculada; integra o escopo do app. Este aceite conclui o incremento administrativo,
+sem declarar o envio pelo app implementado.
+
 Branch `feature/member-profile-photo`, baseada em dev após #16. Migration aditiva 0015:
 `member.photo_file_id` opcional com FK para stored_file. Comando `photo` com fileId/null
 reutiliza versão, idempotência, autorização e auditoria transacional. Revalidar proprietário,

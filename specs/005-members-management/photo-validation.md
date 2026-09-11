@@ -4,6 +4,10 @@ Branch: `feature/member-profile-photo`, baseada em `dev` (`ab0ad89`).
 
 Entrega: [PR #17](https://github.com/Komunick/caabnovo/pull/17), sem merge automático.
 
+**Status: pronto.** Aceite explícito do usuário em 11/09/2026, com confirmação de que
+esta será a foto enviada pelo próprio associado no app e exibida no painel. Integração
+de envio pelo app documentada em FR-029; não declarada implementada nesta entrega.
+
 ## Gates
 
 [CI aprovado em a344eb2](https://github.com/Komunick/caabnovo/actions/runs/34613216815):

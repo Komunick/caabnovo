@@ -2,6 +2,14 @@
 
 ## Foto de perfil (11/09/2026)
 
+**Entrega administrativa pronta e aceita.** Esta é a foto que o próprio associado colocará
+no app, compartilhada com o painel pela referência única `member.photo_file_id`.
+As rotas abaixo continuam administrativas. Na integração do app, o servidor deverá resolver
+a identidade autenticada para o próprio associado e aplicar autorização de titularidade,
+sem conceder permissões administrativas ou aceitar um `ownerId` arbitrário do cliente.
+Reutilizar armazenamento privado, validação e referência; registrar a autoria do associado.
+O endpoint/fluxo de envio pelo app não é implementado por esta entrega.
+
 No formulário de criação, a seleção é local até o envio do cadastro. Após receber o ID,
 a UI envia e vincula a foto pelo mesmo contrato abaixo. Falha na foto não repete a criação:
 o cadastro permanece salvo, com opção de retomar a foto ou abrir o perfil.

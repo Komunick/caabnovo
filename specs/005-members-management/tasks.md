@@ -2,6 +2,13 @@
 
 ## Incremento: foto de perfil — branch feature/member-profile-photo
 
+**Status: PRONTO — aceite explícito do usuário em 11/09/2026.** A foto pertence ao
+associado e será a mesma enviada por ele no app. A integração de envio pelo app está
+documentada como escopo do app; não bloqueia o aceite desta entrega administrativa.
+
+- [x] T040 Registrar a origem da foto no app, referência compartilhada com o painel,
+  limites da integração futura e aceite da entrega (FR-029).
+
 - [x] T034 Atualizar spec, pesquisa oficial, plano e modelo antes da implementação.
 - [x] T035 Adicionar referência opcional e comando privado, versionado e auditado para foto.
 - [x] T036 Implementar envio seguro, prévia no novo cadastro, substituição/remoção e avatar.

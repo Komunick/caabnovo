@@ -5,6 +5,12 @@ Serviço exige arquivo privado do associado, JPEG/PNG de até 5 MB, available/cl
 excluído. Alterar foto incrementa somente version; auditoria registra IDs anterior/novo,
 sem imagem, nome ou URL assinada. Remoção não exclui fisicamente o arquivo.
 
+Decisão confirmada em 11/09/2026: `member.photo_file_id` é a referência única da foto que
+o associado enviará pelo app e que o painel exibirá. Não criar outro campo/cópia de foto
+por canal, nem usar a imagem da conta administrativa de Colaboradores para esse fim.
+O vínculo da identidade do app ao cadastro e a escrita pelo titular pertencem à integração
+do app; a estrutura atual não significa que esse fluxo já esteja entregue.
+
 Migration aditiva 0013: member.administrative_status (inactive/active/blocked),
 administrative_reason, administrative_changed_at e administrative_changed_by (FK user).
 Registros anteriores e novos recebem inactive sem decisão presumida; CHECK exige metadados
