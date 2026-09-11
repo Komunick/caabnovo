@@ -13,6 +13,7 @@ export const buttonVariants = cva("button", {
     size: {
       default: "button--default",
       compact: "button--compact",
+      add: "button--add",
     },
   },
   defaultVariants: { intent: "secondary", size: "default" },

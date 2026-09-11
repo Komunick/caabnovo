@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { getWorkspaceAreas, isAreaActive } from "./areas";
 
 describe("consolidated workspace navigation", () => {
+  it("only shows Associados with explicit read permission", () => {
+    expect(
+      getWorkspaceAreas(["members:write", "members:review"]).some((a) => a.id === "members"),
+    ).toBe(false);
+    expect(getWorkspaceAreas(["members:read"]).filter((a) => a.id === "members")).toHaveLength(1);
+  });
   it.each([
     [[], undefined],
     [["audit:read"], "/audit"],

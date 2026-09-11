@@ -2,8 +2,10 @@
 
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
 Obrigatórios por risco conforme especificação. Todos os módulos no escopo, com PR por função pronta.
-**Status**: Planejamento completo; fusão US1 no PR #11 com CI aprovado. Notícias com editor,
-imagens e versões validados; publicação/agenda/distribuição em andamento, sem PR preliminar.
+**Status**: US1 integrada pelo PR #11 e Notícias pelo PR #12. Associados (spec 005) possui incremento
+implementado com testes locais, mas ainda não está funcionalmente pronto nem autorizado para PR.
+Regras institucionais e emissão de
+credencial verificável continuam dependências explícitas. US6 ainda não foi implementada.
 
 Este arquivo acompanha o programa. A execução detalhada de cada funcionalidade ocorre no seu spec
 próprio; [003-audit-operations/tasks.md](../003-audit-operations/tasks.md) é o primeiro. Antes de
@@ -82,15 +84,19 @@ correção documental e avaliação conforme política sem bloqueio geral presum
 
 - [ ] T017 [US3] Definir campos/documentos/vínculos/fontes e matriz de elegibilidade em
       `specs/002-integrated-modules/contracts/members.md` com os responsáveis.
-- [ ] T018 [US3] Modelar beneficiários/vínculos/análises/verificações/credencial em
+- [x] T018 [US3] Modelar beneficiários/vínculos/análises/verificações/situação de credencial em
       `packages/db/migrations/` e `packages/contracts/src/members.ts` com identificadores e
       constraints definidos.
-- [ ] T019 [US3] Testar duplicidade, concorrência, autorização documental e efeitos de decisões em
-      `apps/web/modules/members/member-service.test.ts`.
-- [ ] T020 [US3] Implementar serviços/API/cadastro/fila documental em `apps/web/modules/members/`,
+- [x] T019 [US3] Testar duplicidade, concorrência, autorização documental e efeitos de decisões em
+      `apps/web/tests/integration/members.test.ts` e `apps/web/modules/members/http/routes.test.ts`.
+- [x] T020 [US3] Implementar serviços/API/cadastro/fila documental em `apps/web/modules/members/`,
       `app/api/v1/members/` e `app/(admin)/members/`, reutilizando files/audit.
-- [ ] T021 [US3] Validar correção pontual, vínculo e situações independentes em
+- [x] T021 [US3] Validar correção pontual, vínculo e situações independentes em
       `apps/web/tests/e2e/members.spec.ts`.
+
+Execução detalhada e evidências: [spec 005](../005-members-management/tasks.md). T017 continua
+pendente quanto às políticas institucionais; o incremento entregue registra decisões manuais com
+fonte e motivo, sem inventar a matriz. Credencial nesta entrega é situação/validade, sem emissão.
 
 ## Phase 6 — US4 Atendimentos (P2)
 
@@ -125,6 +131,10 @@ moderação.
       `apps/web/tests/e2e/partners.spec.ts`.
 
 ## Phase 8 — US6 Equipe e acesso (P2)
+
+Revisão de 10/09/2026 em `docs/MODULES.md`: não há Colaboradores implementado. Reutilizar contas,
+papéis e sessões de Usuários; separar cargo funcional de função de acesso. Uma única área de
+navegação reúne as duas jornadas, sem repetir criação de conta ou concessão de permissões.
 
 Objetivo: colaborador ligado à conta existente e escopo compreensível. Teste independente: vínculo,
 concessão/revogação restrita e recuperação segura.
