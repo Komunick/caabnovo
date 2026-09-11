@@ -54,4 +54,11 @@ da aplicação preserva tabelas, documentos e auditoria. Não houve alteração 
 A revisão automática rejeitou o scanner local em imagem Docker por considerar a
 imagem externa não confiável para receber o diff. A alternativa executada é uma
 checagem local limitada de padrões de credenciais; o Gitleaks completo do workflow
-continua obrigatório antes da integração. CI remoto e PR serão vinculados nesta seção.
+continua obrigatório antes da integração.
+
+## Pull Request
+
+[PR #18 — gestão de parceiros, contratos e benefícios](https://github.com/Komunick/caabnovo/pull/18),
+destino `dev`, sem merge. Resultados atuais de `quality`, `browser` e `security` estão
+na [aba de verificações do PR](https://github.com/Komunick/caabnovo/pull/18/checks).
+O job remoto de segurança passou para a implementação `8544e33`, incluindo Gitleaks.
