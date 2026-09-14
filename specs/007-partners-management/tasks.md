@@ -8,8 +8,10 @@ Testes obrigatórios por autorização, publicação, arquivos e persistência.
 Implementação e validação local concluídas: 308 unitários/contratos, 135 integrações,
 builds, typecheck e 55 E2E Chromium passaram. Abas, contatos, CEP e justificativas
 validados com teclado, Axe e capturas em dois temas/390 px. Evidências atualizadas.
-T030/T033/T036 aguardam fechamento do PR/CI e composição no preview 3107.
-Dependência compartilhada entregue no PR #19. Nenhum merge em dev.
+T001–T036 concluídas. Preview 3107 atualizado com banco/contas/fotos preservados;
+PR #18 atualizado e quality/browser/security aprovados no commit 775e761.
+Dependência compartilhada entregue no PR #19, também com CI aprovado. Ambos
+permanecem abertos para revisão humana. Nenhum merge em dev.
 
 ## Setup
 
@@ -73,13 +75,13 @@ Objetivo/teste independente: conta sem acesso recusada; consulta/edição/public
 - [x] T027 Implementar páginas Unidades/Categorias/Configurações e navegação harmonizada.
 - [x] T028 Implementar aba Avaliações e moderação preservando opinião original; explicitar integração externa disponível/pendente.
 - [x] T029 Validar novos fluxos, falhas, permissões, persistência, teclado e dois temas em desktop/390 px.
-- [ ] T030 Atualizar evidências e PR 18, corrigir CI e publicar a composição atual no preview 3107 preservando seu banco.
+- [x] T030 Atualizar evidências e PR 18, corrigir CI e publicar a composição atual no preview 3107 preservando seu banco.
 
 ## Ajustes de unidades — revisão de 11/09/2026
 
 - [x] T031 Atualizar contrato e formulário de unidades com CEP automático, UF digitável/lista e máscara DDD + fixo/celular.
 - [x] T032 Dispensar motivo na criação de unidade; manter validação na edição e auditoria de ambas.
-- [ ] T033 Testar preenchimento, falhas/concorrência do CEP, persistência e máscaras; atualizar preview e evidências no mesmo PR.
+- [x] T033 Testar preenchimento, falhas/concorrência do CEP, persistência e máscaras; atualizar preview e evidências no mesmo PR.
 - [x] T034 Aplicar os mesmos campos ao cadastro do parceiro, incluindo endereço, CNPJ/e-mail/site e criação sem motivo; consumir o padrão compartilhado das tarefas CF01–CF03 da fundação.
 - [x] T035 Separar navegação geral das seções do cadastro/edição: áreas do módulo apenas nas consultas, retorno à lista no cadastro e faixa interna “Dados do parceiro” com abas de texto e linha ativa; validar dois temas e celular.
 
@@ -89,7 +91,7 @@ preparados separadamente após o desenho; implementação sequencial para evitar
 arquivos de serviço/UI. A pesquisa independente exigida pelo workflow de planejamento foi
 delegada; isso não cria autorização para agentes de implementação adicionais.
 
-- [ ] T036 Aplicar criação sem motivo a categorias, contratos e benefícios; manter motivo em todas as alterações/transições, validar auditoria e atualizar evidências no PR 18.
+- [x] T036 Aplicar criação sem motivo a categorias, contratos e benefícios; manter motivo em todas as alterações/transições, validar auditoria e atualizar evidências no PR 18.
 
 36 tarefas, IDs únicos; 22 da entrega inicial e 14 dos complementos solicitados.
 Hooks before/after ausentes. Nenhum deploy/merge ou seed sobre banco compartilhado.

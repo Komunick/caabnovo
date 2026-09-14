@@ -52,9 +52,19 @@ relatório Playwright da rodada completa; somente dados sintéticos.
 
 E2E exclusivamente em localhost:3108, banco caab_partners_check/5447; integrações
 usam Testcontainers. Preview principal 3107 restaurado na composição anterior durante
-a validação. Antes de atualizar: 25 contas, 82 associados, 1 parceiro, 64 arquivos e
-4 vínculos de foto. A atualização final do preview e os checks remotos permanecem
-em acompanhamento na tarefa T030. Nenhum seed no preview nem merge de PR.
+a validação. Composição atualizada `d891f98`, build web/worker concluído. Contagens
+antes/depois idênticas: 25 contas, 82 associados, 1 parceiro, 64 arquivos e 4 vínculos
+de foto. `/readyz` confirmou banco pronto e worker ativo; login, liveness e APIs
+públicas responderam 200; rotas administrativas redirecionaram anônimos para login.
+Nenhum seed no preview nem merge de PR. Servidor/worker de testes 3108 encerrados
+após a validação; banco descartável e evidências preservados.
+
+CI da implementação 775e761 aprovado em quality, browser e security na
+[execução do PR 34843802654](https://github.com/Komunick/caabnovo/actions/runs/34843802654)
+e na execução de push 34843796618. A dependência do PR #19 também passou na
+[execução 34843665347](https://github.com/Komunick/caabnovo/actions/runs/34843665347).
+T001–T036 concluídas; os PRs permanecem abertos para revisão humana. Este fechamento
+altera somente registros documentais; checks automáticos podem repetir sem dispensa.
 
 Apenas as migrations aditivas 0016/0017 já previstas; CEP/endereço/motivo não exigem
 migration. Coleta externa das avaliações ainda depende do app; não há ingestão pública.
