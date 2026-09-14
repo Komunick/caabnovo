@@ -314,7 +314,8 @@ test("documents use real upload, scan, review, replacement and private download"
     .getAttribute("href");
   const download = await page.request.get(href!);
   expect(download.ok()).toBe(true);
-  expect(download.headers()["content-type"]).toContain("image/png");
+  expect(download.headers()["content-type"]).toContain("image/jpeg");
+  expect(await download.body()).toEqual(jpeg);
   await expectWcag22AA(page);
 });
 

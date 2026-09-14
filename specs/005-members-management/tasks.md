@@ -142,4 +142,4 @@ T025 concluída localmente em 10/09/2026; T028 reaberta na revisão após o escl
 
 ## Campos — 14/09/2026
 
-- [ ] CF-OAB Validar digitação/colagem até seis dígitos, contrato de cadastro/consulta e regressões; PR #19.
+- [x] CF-OAB Validar digitação/colagem até seis dígitos, contrato de cadastro/consulta e regressões; PR #19.

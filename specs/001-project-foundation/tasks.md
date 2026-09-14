@@ -395,9 +395,9 @@ Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common
 
 ## Ampliação autorizada do PR #19 — 14/09/2026
 
-- [ ] CF04 Inventariar todos os controles e padronizar mensagens/limites em abas, filtros e diálogos de todos os módulos.
-- [ ] CF05 Separar endereço compartilhado em rua/bairro/número/complemento, preservar legado e consulta CEP concorrente; integrar consumidores no PR #18.
-- [ ] CF06 Aplicar OAB numérica até seis caracteres em todos os campos específicos e contratos, preservando busca mista e dados existentes.
-- [ ] CF07 Validar contratos, integração, E2E por módulo, teclado/Axe, temas/responsividade e build; atualizar PRs sem merge e preview com dados preservados.
+- [x] CF04 Inventariar todos os controles e padronizar mensagens/limites em abas, filtros e diálogos de todos os módulos.
+- [x] CF05 Separar endereço compartilhado em rua/bairro/número/complemento, preservar legado e consulta CEP concorrente; integrar consumidores no PR #18.
+- [x] CF06 Aplicar OAB numérica até seis caracteres em todos os campos específicos e contratos, preservando busca mista e dados existentes.
+- [x] CF07 Validar contratos, integração, E2E por módulo, teclado/Axe, temas/responsividade e build; atualizar PRs sem merge e preview com dados preservados.
 
-- [ ] CF08 Explicitar JPG em todos os seletores e mensagens de imagens, preservar formatos existentes e validar upload real/inspeção no PR #19.
+- [x] CF08 Explicitar JPG em todos os seletores e mensagens de imagens, preservar formatos existentes e validar upload real/inspeção no PR #19.
