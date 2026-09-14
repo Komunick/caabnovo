@@ -164,7 +164,7 @@ describe("files in the application PostgreSQL", () => {
       key = `private/${id}`;
     await pool.query(
       `INSERT INTO stored_file(id,owner_type,owner_id,original_name,object_key,quarantine_key,declared_mime,size_bytes,checksum_sha256,status,scan_result,uploaded_by)
-      VALUES($1,'legacy',$1,'synthetic.jpg',$2,$3,'image/jpeg',$4,$5,'available','clean',$6)`,
+      VALUES($1::uuid,'legacy',$1::uuid::text,'synthetic.jpg',$2,$3,'image/jpeg',$4,$5,'available','clean',$6)`,
       [id, key, `quarantine/${id}`, jpeg.length, hash, actor.userId],
     );
     await expect(importLegacyFile(pool, id, key, Buffer.alloc(jpeg.length))).rejects.toThrow();
