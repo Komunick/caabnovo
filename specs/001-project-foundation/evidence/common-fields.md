@@ -50,3 +50,32 @@ Quality, browser e security passaram para a implementação 94ec9b9 na
 e na execução de push 34843661174. O job browser completou E2E e acessibilidade
 usando as imagens oficiais de Quay. Este registro final altera somente documentação;
 os checks automáticos podem repetir, sem dispensa de gates ou merge.
+
+## Ampliação em validação — 14/09/2026
+
+Inventário de controles revisado em todo o sistema:
+
+| Área | Campos e comportamento |
+| --- | --- |
+| Login/recuperação | E-mail pelo contrato comum; senhas com limites próprios, exibição preservada e erro associado |
+| Configurações | Nome, e-mail, senhas e confirmação; ações de conta mantêm contratos específicos |
+| Colaboradores | Nome/e-mail/justificativa, funções, matriz de acessos e diálogos sensíveis |
+| Associados | Identificação/contato/OAB, calendário, filtros, análise, vínculos, documentos, foto e situação administrativa |
+| Notícias | Metadados, endereço legível, tags, capa/imagens, destaque, filtros e agendamento; rascunho incompleto continua permitido |
+| Auditoria/operações | Filtros tipados, UUID do ator, datas, exportação e justificativa de reprocessamento |
+| Parceiros (consumidor no PR #18) | Cadastro, unidades, contratos, benefícios, categorias, avaliações, configuração do app e filtros |
+
+FormField centraliza aviso ao sair, na tentativa de envio e durante correção;
+valores e descrições anteriores são preservados. Componentes de senha/calendário
+encaminham atributos acessíveis ao input. Busca mista, seletores da barra de edição,
+checkboxes, radios e uploads mantêm sua semântica própria; uploads/editor rico já
+possuem validação específica e erros acessíveis, que permanecem ativos.
+
+Contratos de OAB compartilhados; novas máscaras não reescrevem números legados ao
+abrir o formulário. Endereço separado mantém legado como alternativa explícita;
+partes são formatadas pelo servidor para a projeção pública compatível. Sem novas
+dependências, migration SQL, backfill ou alteração de permissões.
+
+Resultados parciais: PR #19 passou formatação/lint/typecheck e 283 testes unitários/
+contratos. Composição com Parceiros passou 312 testes, lint e build web/worker.
+Integração e E2E ampliados em execução; não representam entrega final ainda.
