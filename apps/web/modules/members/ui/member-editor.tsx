@@ -28,7 +28,7 @@ type HistoryPage = {
   items: {
     id: string;
     action: string;
-    reason: string;
+    reason: string | null;
     createdAt: string;
     actorName: string;
     after?: {

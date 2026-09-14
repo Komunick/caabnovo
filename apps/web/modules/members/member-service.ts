@@ -450,7 +450,7 @@ export async function memberHistory(pool: Pool, actor: RequestActor, id: string,
     const result = await client.query<{
       id: string;
       action: string;
-      reason: string;
+      reason: string | null;
       createdAt: string;
       actorName: string;
       after: Record<string, unknown>;

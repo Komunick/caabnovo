@@ -2516,7 +2516,6 @@ components:
                   format: uuid
                 alt:
                   type: string
-                  minLength: 1
                   maxLength: 500
               required:
                 - fileId
@@ -2602,7 +2601,6 @@ components:
                   format: uuid
                 alt:
                   type: string
-                  minLength: 1
                   maxLength: 500
               required:
                 - fileId

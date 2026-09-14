@@ -202,7 +202,7 @@ export interface PartnerFile {
 export interface PartnerHistoryItem {
   id: string;
   action: string;
-  reason: string;
+  reason: string | null;
   actorName: string | null;
   createdAt: string;
   after: Record<string, unknown>;
