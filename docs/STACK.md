@@ -26,12 +26,12 @@ Módulos principais:
 
 Arquitetura recomendada:
 
-**Aplicação web Next.js + BFF + Payload CMS, PostgreSQL, object storage e um worker dedicado.**
+**Aplicação web Next.js + BFF + Payload CMS, PostgreSQL para dados e arquivos e um worker dedicado.**
 
 Fluxos principais:
 
 - Navegador interno → BFF Next.js → domínio/PostgreSQL.
-- Painel de notícias → Payload → PostgreSQL/object storage.
+- Painel de notícias → Payload → PostgreSQL, incluindo conteúdo binário.
 - App/site → API versionada → somente conteúdo publicado para o respectivo canal.
 - BFF → fila durável → worker → publicação, mídia, notificações e integrações.
 
@@ -177,9 +177,9 @@ O usuário autenticado nunca fornece o próprio papel ou escopo como fonte confi
 
 ## 10. Arquivos e mídia
 
-- Storage S3-compatible.
-- Metadados no PostgreSQL.
-- Buckets públicos e privados separados quando necessário.
+- Conteúdo bytea e metadados no mesmo PostgreSQL, em tabelas separadas (decisão de 14/09/2026).
+- S3-compatible permanece como adaptador para arquivos legados durante a transição.
+- Quarentena e conteúdo liberado separados por chave e estado, com autorização no painel.
 - URLs assinadas e curtas para conteúdo privado.
 - Nome físico gerado pelo sistema.
 - Allowlist de extensões.
@@ -190,8 +190,9 @@ O usuário autenticado nunca fornece o próprio papel ou escopo como fonte confi
 - Imagens processadas em worker com biblioteca atualizada.
 - Vídeos grandes processados fora do request web.
 
-Não guardar binários no PostgreSQL e não servir uploads diretamente de uma pasta executável da
-aplicação.
+Guardar binários no PostgreSQL foi autorizado pelo usuário em 14/09/2026. Não servir uploads
+de uma pasta executável. Incluir os bytes nos backups e validar restauração por checksum.
+Configuração e transição: [armazenamento no banco](DATABASE-FILE-STORAGE.md).
 
 ## 11. Validação e APIs
 
@@ -345,7 +346,7 @@ Modelo inicial:
 
 - Containers Docker para web, worker e serviços necessários.
 - PostgreSQL gerenciado ou self-hosted com operação madura.
-- Storage S3-compatible.
+- Armazenamento no PostgreSQL; S3 opcional para leitura e migração do legado.
 - Caddy como reverse proxy quando self-hosted.
 - Ambientes separados: local, DEV e PROD.
 - Banco e credenciais separados por ambiente.
@@ -355,7 +356,7 @@ responsabilidade definida.
 
 ## 19. Observabilidade e operação
 
-- Health checks de web, worker, banco e storage.
+- Health checks de web, worker, banco e antivírus; S3 enquanto houver arquivos legados.
 - Métricas de latência, erro e saturação.
 - Profundidade e idade da fila.
 - Falhas e tentativas de distribuição.
@@ -382,6 +383,6 @@ responsabilidade definida.
 - React Hook Form + Zod.
 - FullCalendar Standard para a interface da agenda.
 - Agenda própria; Cal.com apenas após prova de adequação e revisão de licença.
-- Object storage S3-compatible.
+- Conteúdo de arquivos no PostgreSQL; compatibilidade S3 para o legado.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.

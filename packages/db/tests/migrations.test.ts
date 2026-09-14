@@ -42,6 +42,7 @@ describe("database foundation migrations", () => {
       "0015_member_profile_photo.sql",
       "0016_partners.sql",
       "0017_partner_directory.sql",
+      "0018_database_file_content.sql",
     ]);
   });
 

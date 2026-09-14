@@ -15,9 +15,17 @@ test("editor uploads a cover through the existing file flow and preserves its de
   await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 15000 });
+  const uploaded = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === "/api/v1/files/content" &&
+      response.request().method() === "PUT",
+  );
   await page
     .getByLabel("Enviar imagem", { exact: true })
     .setInputFiles({ name: "capa-sintetica.jpg", mimeType: "image/jpeg", buffer: jpeg });
+  const uploadResponse = await uploaded;
+  expect(uploadResponse.status()).toBe(204);
+  expect(new URL(uploadResponse.url()).origin).toBe(new URL(page.url()).origin);
   await expect(
     page.getByRole("status").filter({ hasText: "Imagem enviada para verificação" }),
   ).toBeVisible({ timeout: 20000 });

@@ -6,6 +6,8 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { recordStorageFailure, withWorkerSpan } from "./metrics.js";
+import { DatabaseWorkerObjectStorage, isDatabaseFile } from "@caab/db/repositories/file-content";
+import type { Pool } from "pg";
 
 export interface WorkerObjectStorage {
   readQuarantine(key: string): Promise<Uint8Array>;
@@ -13,6 +15,34 @@ export interface WorkerObjectStorage {
   privateExists(key: string): Promise<boolean>;
   promoteToPrivate(quarantineKey: string, objectKey: string): Promise<void>;
   deleteQuarantine(key: string): Promise<void>;
+}
+
+export class RoutedWorkerObjectStorage implements WorkerObjectStorage {
+  private readonly database: DatabaseWorkerObjectStorage;
+  constructor(
+    pool: Pool,
+    private readonly legacy: () => WorkerObjectStorage,
+  ) {
+    this.database = new DatabaseWorkerObjectStorage(pool);
+  }
+  private forKey(key: string) {
+    return isDatabaseFile(key) ? this.database : this.legacy();
+  }
+  readQuarantine(key: string) {
+    return this.forKey(key).readQuarantine(key);
+  }
+  quarantineExists(key: string) {
+    return this.forKey(key).quarantineExists(key);
+  }
+  privateExists(key: string) {
+    return this.forKey(key).privateExists(key);
+  }
+  promoteToPrivate(key: string, target: string) {
+    return this.forKey(key).promoteToPrivate(key, target);
+  }
+  deleteQuarantine(key: string) {
+    return this.forKey(key).deleteQuarantine(key);
+  }
 }
 
 export class S3WorkerObjectStorage implements WorkerObjectStorage {

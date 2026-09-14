@@ -1,11 +1,8 @@
 import "server-only";
 import { createHash } from "node:crypto";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { createStorageClient } from "../shared/storage-client";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getObjectStorage } from "../files/object-storage";
 import type { Pool, PoolClient } from "pg";
 import type { Db, PgBoss } from "pg-boss";
-import { loadServerEnv } from "@caab/config";
 import type { AuditExportJobPayload, AuditExportRequest } from "@caab/contracts";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
@@ -173,11 +170,5 @@ export async function findAuditExport(pool: Pool, actor: RequestActor, jobId: st
 }
 
 export async function auditExportDownloadUrl(objectKey: string): Promise<string> {
-  const env = loadServerEnv();
-  const client = createStorageClient(env, true);
-  return getSignedUrl(
-    client,
-    new GetObjectCommand({ Bucket: env.S3_PRIVATE_BUCKET, Key: objectKey }),
-    { expiresIn: 300 },
-  );
+  return (await getObjectStorage().createPrivateDownload(objectKey)).url;
 }

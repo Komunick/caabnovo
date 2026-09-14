@@ -283,3 +283,14 @@ A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference
 
 A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
 Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+## Conteúdo binário no PostgreSQL — 14/09/2026
+
+Fontes oficiais: [bytea](https://www.postgresql.org/docs/18/datatype-binary.html),
+[TOAST](https://www.postgresql.org/docs/18/storage-toast.html) e
+[OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
+Decisão: bytes parametrizados em bytea, tabela própria no mesmo banco, sem base64 persistido.
+TOAST administra valores grandes; listagens seguem consultando apenas metadados. Manter
+limite de upload, assinatura/MIME e antivírus, autorização e URLs temporárias. Armazenar no
+banco simplifica a infraestrutura por decisão do usuário, mas aumenta o volume de backup/WAL;
+não foi realizado dimensionamento da VM. Backups precisam incluir a nova tabela e a restauração
+deve verificar hashes. Guia local Next consultado: route handlers aceitam Request/Response e PUT.

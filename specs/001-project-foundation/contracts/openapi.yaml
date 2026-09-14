@@ -8,6 +8,37 @@ servers:
 security:
   - sessionCookie: []
 paths:
+  /files/content:
+    parameters:
+      - in: query
+        name: grant
+        required: true
+        schema: { type: string, maxLength: 2048 }
+        description: Five-minute HMAC capability issued after authorization; bound to object and HTTP method. Never log this value.
+    put:
+      operationId: putDatabaseFileContent
+      security: []
+      summary: Store bytes in the application database quarantine using the upload capability
+      requestBody:
+        required: true
+        content:
+          image/jpeg: { schema: { type: string, format: binary } }
+          image/png: { schema: { type: string, format: binary } }
+          application/pdf: { schema: { type: string, format: binary } }
+      responses:
+        "204": { description: Exact size and SHA-256 accepted; finalization and scanning still required }
+        "403": { description: Missing, invalid or expired capability }
+        "409": { description: State, size or checksum conflict }
+        "413": { description: Body exceeds intent size or 25 MiB }
+        "422": { description: Content type differs from intent }
+    get:
+      operationId: getDatabaseFileContent
+      security: []
+      summary: Read available file bytes using the short-lived download capability
+      responses:
+        "200": { description: Binary content, no-store, nosniff; only JPEG/PNG inline }
+        "403": { description: Missing, invalid or expired capability }
+        "404": { description: File unavailable, deleted or still quarantined }
   /me:
     get:
       operationId: getCurrentUser

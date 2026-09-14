@@ -108,6 +108,8 @@ test("distinguishes unknown fields, no record and failure without stale personal
   await expect(card).toContainText("Inscrição não encontrada");
   await expect(card.locator("dl")).toHaveCount(0);
   await query.click();
-  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "O serviço da OAB-BA está indisponível" }),
+  ).toBeVisible();
   await expect(card).toHaveCount(0);
 });

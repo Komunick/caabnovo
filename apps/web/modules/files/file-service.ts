@@ -134,8 +134,8 @@ export async function createUploadIntent(
     }
 
     const id = crypto.randomUUID();
-    const quarantineKey = `quarantine/${id}`;
-    const objectKey = `private/${id}`;
+    const quarantineKey = `${storage.keyPrefix ?? ""}quarantine/${id}`;
+    const objectKey = `${storage.keyPrefix ?? ""}private/${id}`;
     await client.query(
       `INSERT INTO stored_file
         (id, owner_type, owner_id, original_name, object_key, quarantine_key, declared_mime,

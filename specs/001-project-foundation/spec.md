@@ -405,3 +405,15 @@ recusada sem mutação; alterações válidas preservam motivo e ator na auditor
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
 
 Acesso inicial do colaborador começa no instante de criação fornecido pelo banco, evitando diferença entre relógio da aplicação e relógio da transação que escondia os papéis na resposta imediata. Permissões e auditoria permanecem obrigatórias.
+# Armazenamento no banco principal — 14/09/2026
+
+Por decisão do usuário, os novos arquivos do fluxo compartilhado (imagens, documentos e
+exportações) serão persistidos como bytes no PostgreSQL da aplicação, usando DATABASE_URL.
+Uploads e downloads usam o domínio do painel; S3 deixa de ser obrigatório para novos arquivos.
+Preservar contratos de intenção/finalização, limite de 25 MiB por upload, SHA-256, inspeção de
+assinatura/MIME, antivírus, quarentena, permissões, auditoria e publicação por canal.
+URLs temporárias devem expirar e vincular método e objeto. Conteúdo em quarentena, excluído
+ou rejeitado nunca pode ser baixado. Upload finalizado não pode ser sobrescrito.
+Arquivos antigos continuam acessíveis pelo adaptador S3 enquanto uma cópia verificável,
+retomável e sem exclusão da origem os transfere para o banco. A migration é aditiva.
+Serviços locais permanecem desligados; validação com banco descartável e navegador no CI.
