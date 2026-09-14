@@ -51,7 +51,7 @@ e na execução de push 34843661174. O job browser completou E2E e acessibilidad
 usando as imagens oficiais de Quay. Este registro final altera somente documentação;
 os checks automáticos podem repetir, sem dispensa de gates ou merge.
 
-## Ampliação em validação — 14/09/2026
+## Ampliação dos campos — 14/09/2026
 
 Inventário de controles revisado em todo o sistema:
 
@@ -76,6 +76,30 @@ abrir o formulário. Endereço separado mantém legado como alternativa explíci
 partes são formatadas pelo servidor para a projeção pública compatível. Sem novas
 dependências, migration SQL, backfill ou alteração de permissões.
 
-Resultados parciais: PR #19 passou formatação/lint/typecheck e 283 testes unitários/
-contratos. Composição com Parceiros passou 312 testes, lint e build web/worker.
-Integração e E2E ampliados em execução; não representam entrega final ainda.
+PR #19 passou formatação/lint/typecheck e 283 testes unitários/contratos.
+Composição com Parceiros passou 312 testes, 136 integrações, lint e build web/worker.
+A primeira rodada Chromium teve 54/57 aprovados. Foram corrigidas a expectativa
+antiga de mensagem, a mudança de posição do botão durante a validação e a espera
+pela revogação de acesso; as regressões afetadas passaram nas repetições.
+O teste do calendário agora aguarda o retorno efetivo do foco antes da digitação,
+resolvendo a corrida de foco observada no CI. Um timeout de arquivamento sob build
+simultâneo não se repetiu após concluir a compilação.
+
+JPG explícito em fotos novas/existentes, documentos, capas e imagens do corpo de
+Notícias; contratos no PR #18 consomem a constante de documentos. PNG/JPEG e PDF
+onde aplicável continuam aceitos. Dez verificações da inspeção passaram, incluindo
+JPEG real com `.jpg`, `.JPG`, `.jpeg` e rejeição de PNG renomeado como JPG.
+Pesquisa e limites em research.md. Sem relaxamento de MIME, assinatura ou antivírus.
+
+
+Rodada final de uploads: fotos JPG no cadastro e na troca, substituição por PNG,
+calendário/máscaras, imagem PNG no corpo e capa JPG passaram. O fluxo de documentos
+passou após atualizar a expectativa de download da versão substituta para
+`image/jpeg`, com comparação dos bytes recebidos ao JPG enviado. O fluxo completo
+de Parceiros/anexo PNG também passou. Nenhuma falha funcional de upload ficou aberta.
+
+Preview 3107 recompilado e pronto, com banco e worker saudáveis. A conferência
+antes/depois do complemento JPG preservou 25 contas, 82 associados, 1 parceiro,
+65 arquivos e 4 fotos vinculadas. Um arquivo havia sido acrescentado entre as
+verificações anteriores, antes desta atualização; nenhuma contagem foi reduzida.
+Checks remotos do commit final devem ser consultados na aba Checks do PR #19.
