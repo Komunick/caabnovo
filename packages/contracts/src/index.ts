@@ -17,3 +17,5 @@ export * from "./brazilian-contact";
 export * from "./brazilian-address";
 export * from "./oab-lookup";
 export * from "./user-access";
+export * from "./partners";
+export * from "./partner-directory";

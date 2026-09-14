@@ -2,6 +2,9 @@ import { z } from "zod";
 import { nonEmptyReasonSchema } from "./common";
 
 export const accessPermissionSchema = z.enum([
+  "partners:read",
+  "partners:write",
+  "partners:publish",
   "news:read",
   "news:write",
   "news:publish",
@@ -25,6 +28,8 @@ export const accessPermissionSchema = z.enum([
 ]);
 export type AccessPermission = z.infer<typeof accessPermissionSchema>;
 export const accessPrerequisites: Partial<Record<AccessPermission, AccessPermission[]>> = {
+  "partners:write": ["partners:read"],
+  "partners:publish": ["partners:read"],
   "news:write": ["news:read"],
   "news:publish": ["news:read", "news:write"],
   "members:write": ["members:read"],
@@ -40,7 +45,7 @@ export const accessPrerequisites: Partial<Record<AccessPermission, AccessPermiss
 };
 const permissions = z
   .array(accessPermissionSchema)
-  .max(20)
+  .max(accessPermissionSchema.options.length)
   .refine((values) => new Set(values).size === values.length, "Permissões repetidas.");
 export const userAccessChangeSchema = z
   .object({

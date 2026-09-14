@@ -1,0 +1,111 @@
+# Implementation Plan: Parceiros e benefícios
+
+**Branch**: `feature/partners-management` | **Date**: 2026-09-11 | **Spec**: [spec.md](spec.md)
+**Base**: origin/dev 9b5bfd3 (integração local em 516b655). Próxima spec existente: 007. Migration 0016, preservando 0015
+reservada pela foto de Associados no PR #17.
+
+## Summary
+
+Implementar cadastro administrativo de estabelecimentos, unidades, contratos e benefícios,
+com consulta externa mínima por canal. Reutilizar sessão/RBAC, arquivos privados, transação,
+idempotência, auditoria e componentes de Associados/Notícias. Sete páginas e seis abas
+conforme [interface.md](interface.md); nenhum cadastro duplicado de portal ou login.
+
+## Technical Context
+
+TypeScript 6, Node 24, Next 16.3.4/React 19, Zod, PostgreSQL/pg e componentes compartilhados
+já instalados. Storage S3-compatible/ClamAV/worker existentes. Vitest/contratos,
+Testcontainers/PostgreSQL, Playwright e Axe. Web responsiva administrativa e API v1 de leitura.
+Paginação de 25 registros e filtros server-side; volumes de produção não presumidos.
+
+## Constitution Check
+
+Antes/depois do desenho: compatível. Sem novo serviço, CMS ou abstração CRUD universal.
+Integridade/FKs e concorrência em PostgreSQL; autorização atual em cada operação; documentos
+privados, auditoria sem contatos/arquivos completos. Autenticação atual sem MFA segue decisão
+explícita do usuário/spec 006; não reintroduzir autenticador. Sem inventar elegibilidade,
+conversão ou política de avaliação. Revisão humana sensível no PR, sem merge automático.
+
+## Project Structure
+
+- specs/007-partners-management/: spec, interface, research, plan, data-model, contracts,
+  quickstart, tasks, checklist e evidence.
+- packages/contracts/src/partners.ts e tests/partners.test.ts.
+- packages/db/migrations/0016_partners.sql e tests/migrations.test.ts.
+- apps/web/modules/partners/: access, partner-service, http/routes/runtime, ui/.
+- apps/web/app/(admin)/partners/: page, new/page, [partnerId]/page, benefits/page.
+- apps/web/app/api/v1/partners/[[...path]]/route.ts e benefits/[channel]/route.ts.
+- apps/web/modules/files/file-service.ts: guarda do proprietário partner em upload/finalize/download.
+- Navegação, matriz individual de acessos e dashboard existentes: incluir Parceiros funcional.
+- apps/web/tests/integration/partners.test.ts; tests/e2e/partners.spec.ts.
+
+## Implementation Sequence
+
+### Retomada — 14/09/2026
+
+Aplicar a regra de criação sem justificativa também às categorias, contratos e
+rascunhos de benefícios. Contratos e formulários distinguem criação de edição pelo
+ID do registro; o servidor exige motivo para edições e transições de estado.
+Auditoria de criação usa descrição automática quando não há motivo informado.
+Sem migration ou reescrita dos eventos anteriores. Cobrir rejeição de edição sem
+motivo, criação sem motivo e trilha de auditoria em contratos, integração e E2E.
+
+### Ajustes no formulário de unidade — 11/09/2026
+
+Adicionar postalCode opcional ao JSON do perfil, sem migration e sem alterar
+registros existentes. Consulta pontual ao ViaCEP pelo navegador apenas com os oito
+dígitos do CEP, sem credenciais/referrer; timeout, cancelamento e preservação de
+campos corrigidos durante a consulta. UF em input com datalist nativo; telefone
+normalizado em dígitos no contrato e formatado na interface. Justificativa opcional
+somente no comando unit sem unitId; serviço registra descrição automática da criação.
+Cobrir contratos, persistência/auditoria e E2E de fixo/celular, CEP, falha e concorrência.
+
+Aplicar também ao parceiro: endereço e CEP opcionais, CNPJ com máscara alfanumérica,
+e-mail/site validados ao sair do campo e ao enviar, criação sem motivo obrigatório.
+Usar componentes e contratos da branch fix/common-field-validation (spec 001,
+tarefas CF01–CF03), em PR separado da implementação específica de Parceiros.
+Compor ambos no preview local; não integrar branches ou PRs em dev sem autorização.
+
+### Complemento de 11/09/2026
+
+Reutilizar a worktree/PR 18. Migration 0017 aditiva: categorias normalizadas e vínculo
+com parceiro (backfill das categorias existentes), configuração única do app e seleção
+por ID estável, avaliações com conteúdo original imutável e estado de moderação.
+Manter compatibilidade do profile.category: entradas textuais resolvem a categoria;
+renomear atualiza o nome nos perfis sem perder vínculo. A consulta app aplica a
+configuração no servidor; default todas preserva comportamento atual, seleção vazia
+exibe nenhuma. Nova API de categorias públicas retorna somente categorias elegíveis.
+Leituras/escritas administrativas reutilizam autorização transacional, idempotência
+e auditoria do módulo; unidades reaproveitam manutenção já existente no detalhe.
+Consulta/moderação de avaliações não equivale a implementar o app externo.
+
+Gates: contratos, testes de integração de backfill/vínculos/visibilidade/negações,
+E2E de navegação e configuração com efeito real no app, builds e revisão visual.
+Atualizar preview composto somente após validar em banco descartável; backup antes
+da migration local, sem seed de testes no banco 3107.
+
+1. Spec/pesquisa/checklist e contrato/modelo/tarefas antes do código.
+2. Schema/DDL/permissões com testes de CNPJ, limites e banco descartável.
+3. Serviço transacional e HTTP; validar sessão atual, propriedade, idempotência e auditoria.
+4. Interface de cadastro/unidades; contratos com upload real; benefícios com prévia/publicação.
+5. Consulta externa com whitelist e filtros de vigência em cada leitura; testes de canais.
+6. Verificação visual e acessibilidade nas sete páginas e aba Avaliações; unidade/integração/E2E/build.
+7. PR único para dev com evidências e rollback, corrigindo os próprios gates.
+
+## Complexity Tracking
+
+Correção de navegação solicitada em 11/09/2026: retirar PartnerNavigation do editor,
+preservando o retorno à lista e as seções internas. Conferir a separação em criação,
+edição e consulta geral no E2E de contatos, incluindo a captura em 390 px.
+
+Retomada de 11/09/2026: concluir estados de consulta do histórico e a distinção visual
+entre rascunho e publicação, dentro de T015/T018; cobrir recuperação de falha e edição
+privada na jornada T019. O pedido atual autoriza atualizar o preview principal após validação local.
+
+Sem exceções arquiteturais. Quatro entidades próprias; arquivos, histórico e identidade
+reutilizados. Estado publicado guarda somente snapshot dos dados da oferta; nenhuma fila
+nova é necessária para expirar, pois a leitura revalida vigência no servidor.
+
+## Campos de todo o sistema — 14/09/2026
+
+Consumir a evolução do PR #19. Espalhar brazilianAddressSchema.shape nos perfis JSONB de parceiro/unidade; formatar address no contrato para preservar consumidores públicos. Formulários enviam partes independentes e listagem exibe formato compatível. Sem migration ou backfill. Atualizar os testes de contatos/persistência/legado e todos os gates afetados.

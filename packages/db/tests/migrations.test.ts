@@ -40,6 +40,8 @@ describe("database foundation migrations", () => {
       "0013_member_administrative_status.sql",
       "0014_user_access.sql",
       "0015_member_profile_photo.sql",
+      "0016_partners.sql",
+      "0017_partner_directory.sql",
     ]);
   });
 
