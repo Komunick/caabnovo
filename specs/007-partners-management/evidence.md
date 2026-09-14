@@ -163,3 +163,13 @@ PR #18 permanece dependente do #19, ambos sem merge autorizado.
 
 Repetição final: documentos com substituição JPG/download e jornada completa de
 Parceiros com contrato PNG passaram (2/2, 55,5 s).
+
+## Fechamento dos checks — 14/09/2026
+
+A implementação ffe931a passou em todos os checks remotos de PR e push:
+[execução do PR](https://github.com/Komunick/caabnovo/actions/runs/34853149126).
+O ajuste final compartilhado do teste de documentos identifica o cartão correto,
+evita selecionar texto no histórico recolhido e passou três repetições locais.
+A suíte local completa foi interrompida por solicitação do usuário com 47 aprovados;
+servidores e contêineres permanecem desligados. O CI repete a suíte completa após
+este envio; consultar o resultado final na descrição e na aba Checks do PR #18.
