@@ -402,8 +402,13 @@ export function NewsEditor({
                           );
                         }}
                         onChange={(e) => {
-                          e.target.setCustomValidity("");
-                          change("tags", e.target.value ? e.target.value.split(",") : []);
+                          const tags = e.target.value ? e.target.value.split(",") : [];
+                          e.target.setCustomValidity(
+                            newsDraftMetadataSchema.shape.tags.safeParse(tags).success
+                              ? ""
+                              : "Use até 20 tags, com até 80 caracteres cada, sem itens vazios.",
+                          );
+                          change("tags", tags);
                         }}
                       />
                     </FormField>

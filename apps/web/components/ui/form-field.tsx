@@ -105,7 +105,7 @@ export function FormField({
       className={["form-field", className].filter(Boolean).join(" ")}
       onBlur={(event) => validate(event, true)}
       onInput={(event) => validate(event, false)}
-      onChange={(event) => validate(event, false)}
+      onChange={(event) => validate(event, true)}
       onInvalidCapture={(event) => validate(event, true)}
     >
       <label htmlFor={id}>{label}</label>
