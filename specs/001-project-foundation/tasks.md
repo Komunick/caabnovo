@@ -390,3 +390,5 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - [ ] CF03 Testar telefone fixo/celular, CPF/CNPJ, CEP/falhas/concorrência, e-mail/site inválidos e teclado; concluir gates e PR próprio.
 
 Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common-fields.md).
+
+- [ ] CF-CI Corrigir pull de MinIO/mc no CI usando o registro oficial Quay com as mesmas tags; validar imagens, Compose e repetir os checks do PR 19.

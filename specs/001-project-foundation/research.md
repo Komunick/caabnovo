@@ -243,3 +243,12 @@ Consulta ao ViaCEP envia somente oito dígitos, sem credenciais/referrer, sem lo
 Máscaras auxiliam digitação e não comprovam identidade, contato ou titularidade.
 Reutilização exigida pelo usuário: padrões existentes de Associados são extraídos
 para componentes comuns, sem introduzir biblioteca nova ou alterar dados em lote.
+# Correção do registro de imagens do CI — 14/09/2026
+
+O job browser do PR #19 falhou antes dos testes: Docker Hub recusou o pull de
+minio/minio. A [documentação oficial do MinIO](https://github.com/minio/minio/blob/master/docs/docker/README.md)
+usa quay.io/minio/minio. Os manifests oficiais de MinIO RELEASE.2025-09-07T16-13-09Z
+e mc RELEASE.2025-08-13T08-35-41Z foram consultados em Quay nesta data.
+Decisão: mudar apenas o registro em compose.yaml, mantendo as versões fixadas,
+serviços, portas, volumes e testes. Sem migração de storage ou atualização de versão.
+O registro oficial evita depender de uma imagem de terceiros ou desativar o gate.

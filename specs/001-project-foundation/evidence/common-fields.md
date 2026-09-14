@@ -29,7 +29,20 @@ Sem migrations. Valores antigos fora do novo formato exigem correção ao editar
 ## Escopo e entrega
 
 CF01/CF02 implementadas; CF03, CF-M e CF-A têm a validação local acima e aguardam
-o fechamento do PR/CI. A regressão Chromium completa está em execução na composição.
+o fechamento do PR/CI. A regressão Chromium completa passou na composição: 55 testes
+em 6,4 minutos, incluindo recuperação, contas, Associados/fotos e Notícias.
 A regra futura de número OAB e a revisão geral de motivos de cadastro/edição ficam
 na lista local, fora deste PR. O PR de Parceiros depende desta extração; manter ambos
 separados e nenhuma integração automática em dev/main.
+
+## CI e registro oficial de storage
+
+[PR #19](https://github.com/Komunick/caabnovo/pull/19) aberto para dev. Quality e security
+passaram no commit b84dc86; browser parou no pull de minio/minio antes dos testes.
+Correção: Compose usa quay.io/minio/minio e quay.io/minio/mc, com as mesmas tags.
+Pull oficial e `docker compose config --quiet` passaram. Os IDs das imagens amd64
+coincidem com as cópias Docker Hub existentes: MinIO
+`sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e`
+e mc `sha256:a7fe349ef4bd8521fb8497f55c6042871b2ae640607cf99d9bede5e9bdf11727`.
+Não houve atualização de versão, recriação de serviço ou mudança de volume/bucket.
+Checks serão repetidos no mesmo PR, sem dispensar gates.

@@ -204,3 +204,8 @@ não enviam dados malformados. Revisar os campos existentes sem acrescentar ende
 onde o domínio não o possui. Parceiros consome esta branch em composição local;
 seu endereço/formulário específico fica no PR 18. Validar contratos, máscara/edição,
 E2E dos formulários afetados, integração, build, acessibilidade e CI.
+# Ajuste de infraestrutura necessário ao CI — 14/09/2026
+
+Trocar minio/minio e minio/mc pelo namespace oficial quay.io/minio, preservando
+as tags fixadas. Validar manifests/pull e sintaxe do Compose, sem recriar serviços
+ou volumes locais. Reexecutar o CI do mesmo PR; nenhum gate é dispensado.

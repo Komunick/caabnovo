@@ -351,3 +351,8 @@ valor preservado e limite explícito. Telefone tem DDD + oito/nove dígitos; CNP
 mantém compatibilidade alfanumérica. Servidor usa o mesmo contrato nas mutações.
 CEP permite consulta pontual automática, falha recuperável e correção manual,
 sem transmitir dados da conta. Não reescrever dados persistidos em lote.
+## Disponibilidade da infraestrutura de testes — revisão de 14/09/2026
+
+A infraestrutura local/CI deve usar as imagens oficiais de MinIO e mc em Quay,
+mantendo as versões fixadas e os mesmos volumes/contratos S3. O ajuste resolve
+o pull recusado pelo Docker Hub, sem substituir o storage ou dispensar testes.
