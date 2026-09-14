@@ -19,6 +19,7 @@ export function FormField({
   label,
   hint,
   error,
+  invalidMessage,
   className,
   action,
   children,
@@ -27,6 +28,7 @@ export function FormField({
   label: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
+  invalidMessage?: string;
   className?: string;
   action?: ReactNode;
   children: ReactElement<FieldControlProps>;
@@ -84,7 +86,7 @@ export function FormField({
       message = `Informe um valor igual ou anterior a ${control.getAttribute("max")}.`;
     else if (!validity.valid) message = "Confira o formato deste campo.";
     else message = "";
-    if (show || localError || !message) setLocalError(message);
+    if (show || localError || !message) setLocalError(message ? invalidMessage || message : "");
   }
   const describedBy = [
     children.props["aria-describedby"],
