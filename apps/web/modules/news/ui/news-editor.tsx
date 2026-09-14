@@ -362,6 +362,7 @@ export function NewsEditor({
                       id="news-slug"
                       error={fieldErrors.slug}
                       label="Endereço legível"
+                      invalidMessage="Use letras minúsculas, números e hífens, sem espaços ou acentos."
                       hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
                     >
                       <input
@@ -383,6 +384,7 @@ export function NewsEditor({
                     <FormField
                       id="news-tags"
                       label="Tags"
+                      invalidMessage="Separe até 20 tags por vírgulas, sem itens vazios; use até 80 caracteres por tag."
                       hint="Separe por vírgulas; até 20 tags."
                       error={fieldErrors.tags}
                     >
@@ -421,6 +423,7 @@ export function NewsEditor({
                       id="news-highlight-order"
                       error={fieldErrors.highlight}
                       label="Ordem do destaque"
+                      invalidMessage="Informe uma ordem de 1 a 100."
                       hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
                     >
                       <input
