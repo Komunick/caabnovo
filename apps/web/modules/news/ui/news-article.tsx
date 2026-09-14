@@ -45,7 +45,7 @@ export function NewsArticle({
                 ? `/api/v1/content/${channel}/news/${id}/media/${metadata.cover.fileId}`
                 : `/api/v1/news/${id}/media/${metadata.cover.fileId}`
             }
-            alt={metadata.cover.alt || "Capa sem descrição; complete antes de publicar"}
+            alt={metadata.cover.alt}
           />
         ) : (
           <p className={styles.unavailable}>A capa ainda não está disponível para visualização.</p>

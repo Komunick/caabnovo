@@ -1,4 +1,3 @@
-import { justifyNewsChange } from "./news-justification";
 import { spawn, type ChildProcess } from "node:child_process";
 import { resolve } from "node:path";
 import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
@@ -37,7 +36,7 @@ for (const media of ["cover", "body", "none"] as const) {
   test(`creates and publishes directly with ${media}, without manually saving a draft`, async ({
     page,
     request,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(120000);
     await page.goto("/login");
     await page.getByLabel("E-mail").fill(syntheticUsers.accessManager.email);
@@ -73,9 +72,11 @@ for (const media of ["cover", "body", "none"] as const) {
         picker.getByRole("status").filter({ hasText: "Imagem enviada para verificação" }),
       ).toBeVisible({ timeout: 30000 });
       await expect(page).toHaveURL(/\/news\/new$/);
-      await picker
-        .getByLabel(media === "body" ? "Descrição da imagem" : "Descrição da capa", { exact: true })
-        .fill("Imagem sintética para publicação direta");
+      if (media === "body")
+        await picker
+          .getByLabel("Descrição da imagem", { exact: true })
+          .fill("Imagem sintética para publicação direta");
+      else await expect(picker.getByLabel("Descrição da capa", { exact: true })).toHaveValue("");
       if (media === "body")
         await picker.getByRole("button", { name: "Adicionar ao conteúdo" }).click();
       await expect(content).toContainText("Texto preservado durante o envio.");
@@ -97,7 +98,12 @@ for (const media of ["cover", "body", "none"] as const) {
       .getByRole("group", { name: "Destinos da ação" })
       .getByLabel("Site", { exact: true })
       .check();
-    await justifyNewsChange(page);
+    await expect(page.locator("#news-reason, #news-publication-reason")).toHaveCount(0);
+    if (media === "cover")
+      await page.screenshot({
+        path: testInfo.outputPath("news-creation-optional-cover.png"),
+        fullPage: true,
+      });
     await page.getByRole("button", { name: "Publicar agora", exact: true }).click();
     if (media === "none") {
       let publications = 0;
@@ -110,7 +116,7 @@ for (const media of ["cover", "body", "none"] as const) {
           ? route.fulfill({ status: 503, contentType: "application/json", body: "{}" })
           : route.continue(),
       );
-      await justifyNewsChange(page);
+      await expect(page.locator("#news-reason, #news-publication-reason")).toHaveCount(0);
       await page
         .getByRole("dialog")
         .getByRole("button", { name: "Confirmar", exact: true })
@@ -122,16 +128,17 @@ for (const media of ["cover", "body", "none"] as const) {
       await expect(page.getByLabel("Título", { exact: true })).toHaveValue(title);
       expect(publications).toBe(0);
       await page.unroute("**/api/v1/news");
-      await justifyNewsChange(page);
+      await expect(page.locator("#news-reason, #news-publication-reason")).toHaveCount(0);
       await page.getByRole("button", { name: "Publicar agora", exact: true }).click();
     }
-    await justifyNewsChange(page);
+    await expect(page.locator("#news-reason, #news-publication-reason")).toHaveCount(0);
     await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
     await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 60000 });
     id = page.url().split("/").at(-1)!;
     const published = await request.get(`/api/v1/content/site/news/${id}`);
     expect(published.status()).toBe(200);
     const article = await published.json();
+    if (media === "cover") expect(article.cover).toMatchObject({ fileId, alt: "" });
     expect(article.title).toBe(title);
     expect(article.slug.length).toBeLessThanOrEqual(80);
     expect(JSON.stringify(article.body)).toContain("Texto preservado durante o envio.");

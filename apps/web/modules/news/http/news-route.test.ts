@@ -94,7 +94,7 @@ describe("news HTTP boundary", () => {
     service.publish.mockRejectedValue(
       new NewsPolicyError("NEWS_NOT_READY", 422, "Internal details", [
         { field: "title", code: "TITLE_REQUIRED" },
-        { field: "cover.alt", code: "COVER_ALT_REQUIRED" },
+        { field: "cover.fileId", code: "FILE_UNAVAILABLE" },
       ]),
     );
     const response = await routes.publish(
@@ -110,7 +110,7 @@ describe("news HTTP boundary", () => {
     const data = await response.json();
     expect(data.fields).toEqual([
       { path: "title", code: "TITLE_REQUIRED" },
-      { path: "cover.alt", code: "COVER_ALT_REQUIRED" },
+      { path: "cover.fileId", code: "FILE_UNAVAILABLE" },
     ]);
     expect(JSON.stringify(data)).not.toContain("Internal details");
     service.publish.mockRejectedValue(new NewsPolicyError("NEWS_SLUG_CONFLICT", 409, "Duplicate"));
@@ -223,9 +223,9 @@ describe("news HTTP boundary", () => {
     expect(service.create).toHaveBeenCalledTimes(1);
   });
 
-  it("rejects edits and action changes without a reason before calling the service", async () => {
+  it("rejects invalid supplied reasons before calling the service", async () => {
     const { routes, service } = setup();
-    for (const justification of [undefined, "", "   "]) {
+    for (const justification of ["", "   "]) {
       expect(
         (
           await routes.PUT(
@@ -252,6 +252,58 @@ describe("news HTTP boundary", () => {
     }
     for (const action of ["update", "publish", "unpublish", "cancel", "retry"] as const)
       expect(service[action]).not.toHaveBeenCalled();
+  });
+
+  it("delegates omitted creation and first-publication reasons to locked domain validation", async () => {
+    const { routes, service } = setup();
+    expect(
+      (
+        await routes.PUT(
+          mutation({ expectedVersion: 1, metadata: {}, body: emptyNewsBody }),
+          newsId,
+        )
+      ).status,
+    ).toBe(200);
+    expect(service.update).toHaveBeenCalled();
+    expect(
+      (
+        await routes.publish(
+          mutation({ expectedVersion: 1, channels: ["site"] }),
+          newsId,
+          "publish",
+        )
+      ).status,
+    ).toBe(200);
+    expect(service.publish).toHaveBeenCalled();
+    expect(
+      (
+        await routes.publish(
+          mutation({ expectedVersion: 1, channels: ["site"] }),
+          newsId,
+          "unpublish",
+        )
+      ).status,
+    ).toBe(422);
+    for (const action of ["cancel", "retry"] as const) {
+      expect((await routes.cancel(mutation({}), newsId, crypto.randomUUID(), action)).status).toBe(
+        422,
+      );
+      expect(service[action]).not.toHaveBeenCalled();
+    }
+    expect(service.unpublish).not.toHaveBeenCalled();
+    expect(
+      (
+        await routes.PUT(
+          mutation({
+            expectedVersion: 1,
+            metadata: {},
+            body: emptyNewsBody,
+            creationPending: true,
+          }),
+          newsId,
+        )
+      ).status,
+    ).toBe(422);
   });
 
   it("rejects cross-origin, missing CSRF and missing idempotency before writes", async () => {

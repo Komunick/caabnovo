@@ -1,5 +1,37 @@
 # Decisões e entradas por domínio
 
+## Pesquisa de mercado de Agendamentos — 14/09/2026
+
+O usuário esclareceu que o módulo permitirá aos profissionais configurar sistemas
+de reservas para áreas diversas: barbearia, medicina, futevôlei, fisioterapia,
+psicologia, spa e zumba. Restaurantes são apenas possibilidade futura. Solicitou
+**somente pesquisa e registro para revisão posterior**, sem iniciar implementação.
+
+Conclusões e fontes oficiais em
+[pesquisa-mercado-agendamentos-2026-09-14.md](pesquisa-mercado-agendamentos-2026-09-14.md).
+O relatório diferencia evidência de fornecedor, inferência e decisão ainda pendente.
+Sugere avaliar modelos individuais/coletivos e recursos físicos, com grade recorrente,
+inscrição fixa e séries de sessões como conceitos distintos. Não define arquitetura,
+regras clínicas, políticas comerciais, permissões ou primeira entrega como aprovadas.
+
+## Revisão de nomenclatura e disponibilidade — 14/09/2026
+
+Fonte de negócio: o usuário corrigiu o nome para **Agendamentos**, solicitou novo
+brainstorming para uma grande evolução e desativou CAASSH até revisão. A sugestão
+anterior de regras configuráveis sem penalidades não foi confirmada.
+
+Inspeção: CAASSH existe apenas como cartão informativo em `app/(admin)/page.tsx`;
+não existem rotas, serviços ou tabelas de créditos no código atual. A alteração
+explicita o estado textual e mantém o cartão sem ação. Não exige feature flag,
+migration ou remoção de infraestrutura.
+
+Referência oficial consultada em 14/09/2026:
+[Next.js — Pages](https://nextjs.org/docs/app/api-reference/file-conventions/page),
+com conferência da documentação instalada de Next.js 16.3.4. Manter renderização
+no servidor para estes textos estáticos, sem JavaScript ou dependência adicional.
+A pesquisa de concorrência anteriormente iniciada não determina o novo escopo;
+uma pesquisa específica acompanhará o desenho resultante do brainstorming.
+
 Data: 09/09/2026. Fontes oficiais e análise de produto em
 [direção de produto](../../docs/analise-direcao-produto-2026-09-09.md); sua ordem de entregas foi
 substituída pelo escopo integrado. Pesquisa técnica no projeto novo, documentação Next.js instalada

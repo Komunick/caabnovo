@@ -136,3 +136,12 @@ Contexto e plano de retomada: [standby-origin-fix.md](standby-origin-fix.md).
 - [x] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
 
 Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../001-project-foundation/evidence/justification-oab.md).
+
+## Correção da criação editorial — 14/09/2026
+
+- [x] CR01 Diagnosticar salvamento técnico de mídia e exigência na primeira publicação.
+- [x] CR02 Implementar estado persistente, autorização/concorrência e auditoria da conclusão.
+- [x] CR03 Corrigir formulários e contratos para criação e primeira publicação sem motivo.
+- [ ] CR04 Validar regressões de criação com mídia, edição, republicação e migrations.
+- [ ] CR05 Registrar evidências e reunir a entrega ativa em PR após os gates.
+- [ ] CR06 Tornar a descrição da capa opcional e validar publicação sem preenchimento.

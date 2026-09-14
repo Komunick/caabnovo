@@ -169,3 +169,27 @@ drizzle-kit>esbuild 0.28.2, comprovado por peers sem erros e geração offline d
 
 A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
 Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+
+## Criação inicial versus persistência técnica — 14/09/2026
+
+Fonte de negócio: correção expressa do usuário nesta data. Achado no código:
+NewsCover chama ensureNewsId, que salva silenciosamente; a existência de record passa
+a acionar justificativa de edição. NewsPublishing também exige motivo para toda publicação.
+A existência física do registro não representa conclusão da criação pelo usuário.
+
+Referências oficiais: documentação instalada de Next.js 16.3.4 sobre Route Handlers,
+https://nextjs.org/docs/app/api-reference/file-conventions/route e PostgreSQL 18,
+https://www.postgresql.org/docs/18/explicit-locking.html (consultadas nesta sessão).
+Decisão: estado verificado e encerrado sob lock no servidor, não flag de isNew confiada
+ao navegador. Primeira publicação persiste fora das versões do CMS para sobreviver
+à retirada/recuperação. Não atribuir motivo automático ao operador nem dispensar
+justificativas de alterações posteriores. Não alterar schema ou política de Agendamentos.
+## Descrição opcional da capa — pesquisa de 14/09/2026
+
+A regra de produto foi definida explicitamente pelo usuário. A orientação oficial
+[W3C WAI para imagens decorativas](https://www.w3.org/WAI/tutorials/images/decorative/)
+recomenda `alt=""` quando a imagem não acrescenta informação ao texto; omitir o
+atributo pode fazer leitores anunciarem o arquivo. Imagens informativas se beneficiam
+de descrição, portanto a ajuda recomenda seu preenchimento quando relevante.
+Decisão: campo opcional, preservação do texto fornecido e atributo vazio quando
+omitido, sem alegar que toda capa é decorativa ou gerar texto sem conhecer a imagem.

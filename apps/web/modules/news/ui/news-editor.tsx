@@ -9,6 +9,7 @@ import {
   changeJustificationSchema,
   newsDraftMetadataSchema,
   updateNewsDraftRequestSchema,
+  completeNewsCreationRequestSchema,
   type NewsDraftMetadata,
 } from "@caab/contracts";
 import type { NewsRecord, listNewsVersions } from "../news-service";
@@ -126,29 +127,37 @@ export function NewsEditor({
     preview = false,
     silent = false,
     changeReason = justification,
+    prepareForMedia = false,
   ): Promise<NewsRecord | undefined> {
     event?.preventDefault();
     if (busy.current || (mediaUploading && !silent)) return;
     if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
-    const parsed = (record ? updateNewsDraftRequestSchema : createNewsDraftRequestSchema).safeParse(
-      {
-        ...(record ? { expectedVersion: record.revision, justification: changeReason } : {}),
-        metadata: {
-          ...metadata,
-          slug: metadata.slug || newsSlugFromTitle(metadata.title, slugSeed.current),
-        },
-        body,
+    const parsed = (
+      record
+        ? record.creationPending
+          ? completeNewsCreationRequestSchema
+          : updateNewsDraftRequestSchema
+        : createNewsDraftRequestSchema
+    ).safeParse({
+      ...(record
+        ? {
+            expectedVersion: record.revision,
+            ...(record.creationPending ? {} : { justification: changeReason }),
+          }
+        : { prepareForMedia }),
+      metadata: {
+        ...metadata,
+        slug: metadata.slug || newsSlugFromTitle(metadata.title, slugSeed.current),
       },
-    );
+      body,
+    });
     if (!parsed.success) {
       setFieldErrors(newsFieldErrors(parsed.error.issues));
       focusNewsError();
-      setError("Confira os campos indicados e o motivo da alteração, quando solicitado.");
+      setError("Confira os campos indicados antes de salvar.");
       return;
     }
-    const input = JSON.stringify(
-      record ? parsed.data : { metadata: parsed.data.metadata, body: parsed.data.body },
-    );
+    const input = JSON.stringify(parsed.data);
     if (retry.current?.input !== input) retry.current = { input, key: crypto.randomUUID() };
     busy.current = true;
     setPending(true);
@@ -189,7 +198,7 @@ export function NewsEditor({
     }
   }
   async function ensureNewsId() {
-    return record?.id ?? (await save(undefined, false, true))?.id;
+    return record?.id ?? (await save(undefined, false, true, undefined, true))?.id;
   }
   async function command(action: "duplicate" | "archive" | "restore", versionId?: string) {
     if (!record || busy.current || mediaUploading || dirty) return;
@@ -302,7 +311,7 @@ export function NewsEditor({
           </div>
         </div>
         <form id="news-draft-form" onSubmit={save} noValidate>
-          {record && (
+          {record && !record.creationPending && (
             <FormField
               id="news-reason"
               label="Motivo da alteração"

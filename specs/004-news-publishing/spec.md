@@ -220,3 +220,28 @@ são alterações cadastrais. Preservar autorização, idempotência e controle 
 Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
 recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+## Correção da criação com imagem e primeira publicação — 14/09/2026
+
+O usuário relatou exigência de motivo enquanto cria uma notícia. O salvamento técnico
+para anexar imagem não conclui a criação. Sua continuação pelo mesmo autor dispensa
+justificativa até o primeiro salvamento explícito/prévia/publicação. Outros editores e
+edições após a conclusão exigem motivo; o cliente não pode reabrir a fase de criação.
+A primeira publicação dispensa motivo, mesmo após salvar rascunho. Republicação,
+retirada, recuperação, arquivamento e demais alterações continuam exigindo motivo.
+Esta decisão substitui a exigência genérica anterior para toda publicação.
+
+Aceite: criar texto com capa/imagens e publicar pela primeira vez sem campo de motivo;
+concluir rascunho com imagem sem motivo; edição posterior sem motivo recusada;
+republicar após retirada sem motivo recusado; concorrência não permite concluir criação
+duas vezes sem justificativa. Auditoria registra criação/conclusão/primeira publicação
+com ator e origem, sem inventar justificativa escrita pelo usuário. Legado preservado.
+## Descrição opcional da capa — 14/09/2026
+
+Decisão posterior do usuário: descrever a capa é opcional. Salvar, pré-visualizar,
+publicar e agendar publicação aceitam capa com descrição ausente ou vazia. Quando
+fornecida, continua limitada a 500 caracteres e é preservada na apresentação.
+A interface informa a opcionalidade e recomenda descrever informação relevante.
+Sem descrição, renderizar `alt=""`, sem inventar uma descrição ou anunciar erro.
+Esta decisão substitui a exigência anterior apenas para a capa; não altera imagens
+inseridas no corpo, verificação dos arquivos, autorização ou propriedade da mídia.

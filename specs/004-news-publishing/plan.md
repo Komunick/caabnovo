@@ -91,3 +91,25 @@ URL interna e rejeição de origens externas, preservando CSRF e idempotência. 
 4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
    navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
    regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.
+
+## Correção da fronteira criação/edição — 14/09/2026
+
+Migration aditiva 0019 registra no domínio (colunas SQL fora do conteúdo versionado)
+se a criação está pendente e a primeira publicação. Legado inicia como criação concluída;
+publicações anteriores são reconhecidas pela tabela atual, versões e auditoria.
+Somente POST preparatório de mídia abre a criação pendente. Sob lock de notícia,
+o serviço autoriza conclusão sem motivo apenas ao autor, encerra a fase no primeiro
+save e audita a conclusão. GET informa a capacidade; PUT nunca aceita flags de estado.
+Primeira publicação é verificada sob o mesmo lock e gravada permanentemente, inclusive
+via worker, sem depender da publicação estar atualmente visível.
+
+Schemas estritos existentes de alteração permanecem; contratos de entrada permitem
+omissão somente para validação posterior da condição pelo serviço. UI omite o campo
+nas ações de criação. Validar domínio, rotas, concorrência, legado e jornada E2E com mídia.
+Serviços locais permanecem desligados; integração e navegador serão executados no CI.
+## Descrição opcional da capa — 14/09/2026
+
+Retirar COVER_ALT_REQUIRED da política compartilhada de publicação imediata e
+agendada. Manter o contrato atual que já normaliza descrição ausente para vazia.
+Atualizar ajuda do seletor e apresentação da notícia. Validar a publicação direta
+com capa sem descrição no E2E existente e a política com texto vazio/ausente.

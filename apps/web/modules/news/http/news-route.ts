@@ -7,7 +7,8 @@ import {
   newsChangeCommandSchema,
   newsActionChangeSchema,
   restoreNewsRevisionRequestSchema,
-  updateNewsDraftRequestSchema,
+  completeNewsCreationRequestSchema,
+  firstPublishNewsRequestSchema,
   publishNewsRequestSchema,
   scheduleNewsRequestSchema,
 } from "@caab/contracts";
@@ -158,7 +159,11 @@ export function createNewsRoutes(deps: NewsRouteDependencies) {
       respond(request, async (context) => {
         const { idempotencyKey } = validateMutationRequest(request, { idempotency: true });
         const input = (
-          action === "schedule" ? scheduleNewsRequestSchema : publishNewsRequestSchema
+          action === "schedule"
+            ? scheduleNewsRequestSchema
+            : action === "publish"
+              ? firstPublishNewsRequestSchema
+              : publishNewsRequestSchema
         ).parse(await readJson(request));
         return Response.json(
           await deps.service[action](
@@ -224,7 +229,7 @@ export function createNewsRoutes(deps: NewsRouteDependencies) {
     PUT: (request: Request, id: string) =>
       respond(request, async (context) => {
         validateMutationRequest(request);
-        const input = updateNewsDraftRequestSchema.parse(await readJson(request));
+        const input = completeNewsCreationRequestSchema.parse(await readJson(request));
         return Response.json(await deps.service.update(context, idSchema.parse(id), input));
       }),
     versions: (request: Request, id: string) =>

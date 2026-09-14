@@ -24,18 +24,26 @@ import { NewsThumbnail } from "@/modules/workspace/ui/news-thumbnail";
 
 const upcoming = [
   {
-    name: "Atendimentos",
-    description: "Agenda, reservas e próximos atendimentos.",
+    name: "Agendamentos",
+    description: "Nova proposta de agenda e reservas em revisão.",
+    status: "Em revisão de escopo",
     icon: CalendarDays,
   },
-  { name: "Caassh", description: "Movimentações e acompanhamento de créditos.", icon: WalletCards },
+  {
+    name: "CAASSH",
+    description: "Módulo desativado até a revisão de sua proposta.",
+    status: "Desativado — pendente de revisão",
+    icon: WalletCards,
+  },
   {
     name: "Mensagens",
+    status: "Em planejamento",
     description: "Campanhas e comunicações aos associados.",
     icon: MessageSquare,
   },
   {
     name: "Relatórios",
+    status: "Em planejamento",
     description: "Indicadores e resultados de cada área.",
     icon: ChartNoAxesCombined,
   },
@@ -272,13 +280,13 @@ export default async function AdminHomePage() {
             <p className="eyebrow">PRÓXIMOS MÓDULOS</p>
             <h2 id="upcoming-title">Novas áreas de acompanhamento</h2>
           </div>
-          <span className="planning-label">Em planejamento</span>
         </div>
         <div className="home-upcoming-grid">
-          {upcoming.map(({ name, description, icon: Icon }) => (
+          {upcoming.map(({ name, description, status, icon: Icon }) => (
             <article className="home-upcoming-card" key={name}>
               <Icon size={23} strokeWidth={1.6} aria-hidden="true" />
               <h3>{name}</h3>
+              <span className="planning-label">{status}</span>
               <p>{description}</p>
             </article>
           ))}

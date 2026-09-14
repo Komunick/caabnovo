@@ -67,6 +67,26 @@ módulos já implementados. Sem packages ou tabelas genéricas para antecipar ab
 
 ## Implementation Sequence
 
+### Prioridade vigente — 14/09/2026
+
+Etapa atual limitada a pesquisa de mercado e documentação por solicitação expressa.
+Recorte: barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba;
+restaurantes somente como possibilidade futura. Consultar o relatório de pesquisa
+antes de retomar o brainstorming. Não produzir implementação durante esta etapa.
+
+Reabrir o levantamento de **Agendamentos** antes de produzir sua spec funcional ou código.
+As propostas anteriores de US4 não definem a grande evolução solicitada pelo usuário.
+Registrar fluxo atual, problemas e decisões no brainstorming deste programa; depois
+consolidar uma spec própria com plano, tarefas e critérios de aceite.
+
+**CAASSH: desativado — pendente de revisão.** Suspender US8/T041–T045 e suas
+dependências de crédito. Atualizar apenas a indicação no painel e o planejamento;
+não existem operações implementadas para desligar. Preservar o contrato de leitura
+de Associados como referência histórica. Não há migration ou exclusão de dados.
+
+As alterações permanecem na única branch ativa, ainda sem PR. Otimização da navegação
+continua registrada separadamente; o brainstorming definirá o escopo de Agendamentos.
+
 Cada funcionalidade possui spec próprio, plano e tarefas antes do código. Este é o mapa geral de
 dependências, não um spec único para todas as implementações. A fusão inicia em
 [003-audit-operations](../003-audit-operations/plan.md). Correções e melhorias, inclusive

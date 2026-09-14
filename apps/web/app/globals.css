@@ -4075,6 +4075,12 @@ thead th {
   white-space: nowrap;
 }
 
+.home-upcoming-card .planning-label {
+  display: inline-block;
+  white-space: normal;
+  margin-bottom: 0.5rem;
+}
+
 @media (max-width: 1180px) {
   .home-news-grid,
   .home-upcoming-grid {
@@ -4154,8 +4160,12 @@ thead th {
     gap: 0 0.85rem;
   }
   .home-upcoming-card svg {
-    grid-row: 1 / 3;
+    grid-row: 1 / 4;
     margin: 0;
+  }
+  .home-upcoming-card .planning-label,
+  .home-upcoming-card p {
+    grid-column: 2;
   }
   .settings-panels > section:first-child form {
     display: block;

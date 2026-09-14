@@ -96,6 +96,14 @@ jobs:
           path: apps/web/test-results/**/oab-result-*.png
           retention-days: 7
           if-no-files-found: warn
+      - name: Preserve news creation screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: news-creation-synthetic-screenshots
+          path: apps/web/test-results/**/news-creation-*.png
+          retention-days: 7
+          if-no-files-found: warn
       - run: pnpm test:a11y --project=chromium
 
   security:

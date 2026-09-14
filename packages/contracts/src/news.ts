@@ -38,6 +38,7 @@ export const newsDraftMetadataSchema = z.strictObject({
 });
 
 export const createNewsDraftRequestSchema = z.strictObject({
+  prepareForMedia: z.boolean().optional(),
   metadata: newsDraftMetadataSchema,
   body: newsBodySchema.default(emptyNewsBody),
 });
@@ -48,6 +49,11 @@ export const updateNewsDraftRequestSchema = z.strictObject({
   expectedVersion: versionSchema,
   metadata: newsDraftMetadataSchema,
   body: newsBodySchema,
+});
+
+// Omission is accepted at the HTTP boundary; the locked domain state decides eligibility.
+export const completeNewsCreationRequestSchema = updateNewsDraftRequestSchema.extend({
+  justification: changeJustificationSchema.optional(),
 });
 
 export const newsVersionCommandSchema = z.strictObject({ expectedVersion: versionSchema });
@@ -82,6 +88,10 @@ export const publishNewsRequestSchema = z.strictObject({
   channels: channelsSchema.refine((channels) => channels.length > 0, {
     message: "Selecione ao menos um canal.",
   }),
+});
+
+export const firstPublishNewsRequestSchema = publishNewsRequestSchema.extend({
+  justification: changeJustificationSchema.optional(),
 });
 
 export const scheduleNewsRequestSchema = z.strictObject({

@@ -1,5 +1,9 @@
 import "server-only";
-import { createNewsDraftRequestSchema, updateNewsDraftRequestSchema } from "@caab/contracts";
+import {
+  createNewsDraftRequestSchema,
+  updateNewsDraftRequestSchema,
+  completeNewsCreationRequestSchema,
+} from "@caab/contracts";
 import { AuthenticationRequiredError } from "../auth/authorize";
 import type { RequestActor } from "../shared/request-context";
 import { NewsPolicyError } from "./errors";
@@ -15,9 +19,12 @@ export function prepareNewsDraftUpdate(
   actor: RequestActor | undefined,
   input: unknown,
   currentVersion: number,
+  completingCreation = false,
 ) {
   if (!actor) throw new AuthenticationRequiredError("Authentication required");
-  const request = updateNewsDraftRequestSchema.parse(input);
+  const request = (
+    completingCreation ? completeNewsCreationRequestSchema : updateNewsDraftRequestSchema
+  ).parse(input);
   if (request.expectedVersion !== currentVersion) {
     throw new NewsPolicyError(
       "NEWS_VERSION_CONFLICT",

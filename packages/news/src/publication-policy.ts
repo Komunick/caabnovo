@@ -1,6 +1,7 @@
 import {
   newsDraftMetadataSchema,
   publishNewsRequestSchema,
+  firstPublishNewsRequestSchema,
   uploadMimeSchema,
   type NewsDraftMetadata,
 } from "@caab/contracts";
@@ -26,9 +27,12 @@ export function validateNewsPublication(
   actor: { userId: string } | undefined,
   input: unknown,
   snapshot: NewsPublicationSnapshot,
+  firstPublication = false,
 ) {
   if (!actor) throw Object.assign(new Error("Authentication required"), { status: 401 });
-  const request = publishNewsRequestSchema.parse(input);
+  const request = (
+    firstPublication ? firstPublishNewsRequestSchema : publishNewsRequestSchema
+  ).parse(input);
   if (request.expectedVersion !== snapshot.version) {
     throw new NewsPolicyError(
       "NEWS_VERSION_CONFLICT",
@@ -48,9 +52,6 @@ export function validateNewsPublication(
   const issues: { field: string; code: string }[] = [];
   if (!metadata.title) issues.push({ field: "title", code: "TITLE_REQUIRED" });
   if (!metadata.slug) issues.push({ field: "slug", code: "SLUG_REQUIRED" });
-  if (metadata.cover && !metadata.cover.alt) {
-    issues.push({ field: "cover.alt", code: "COVER_ALT_REQUIRED" });
-  }
   if (snapshot.content.status !== "valid") {
     issues.push({
       field: "content",

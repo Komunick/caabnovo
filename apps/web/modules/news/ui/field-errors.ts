@@ -52,10 +52,7 @@ export function newsFieldErrors(issues: readonly Issue[]): NewsFieldErrors {
       errors.runAt = "Escolha um horário futuro de Brasília, dentro dos próximos 365 dias.";
     else if (field === "cover") {
       if (path === "cover.alt")
-        errors.coverAlt =
-          issue.code === "COVER_ALT_REQUIRED"
-            ? "Descreva a capa antes de publicar."
-            : "Use uma descrição da capa de até 500 caracteres.";
+        errors.coverAlt = "Use uma descrição da capa de até 500 caracteres.";
       else
         errors.cover =
           "Escolha uma imagem PNG, JPG ou JPEG desta notícia e aguarde a liberação do arquivo.";

@@ -77,6 +77,129 @@ afterAll(async () => {
 });
 
 describe.sequential("news persistence with Payload", () => {
+  it("finishes a preparatory creation once without reason and protects later edits", async () => {
+    const draft = await createNewsDraft(payload, context, {
+      prepareForMedia: true,
+      metadata: { title: "Preparação de imagem" },
+      body: emptyNewsBody,
+    });
+    expect(draft.creationPending).toBe(true);
+    expect((await getNewsDraft(payload, context.actor, draft.id)).creationPending).toBe(true);
+    const input = {
+      expectedVersion: draft.revision,
+      metadata: { title: "Criação concluída" },
+      body: emptyNewsBody,
+    };
+    const results = await Promise.allSettled([
+      updateNewsDraft(payload, context, draft.id, input),
+      updateNewsDraft(payload, context, draft.id, input),
+    ]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
+    expect(await getNewsDraft(payload, context.actor, draft.id)).toMatchObject({
+      revision: 2,
+      creationPending: false,
+    });
+    await expect(
+      updateNewsDraft(payload, context, draft.id, { ...input, expectedVersion: 2 }),
+    ).rejects.toThrow();
+    await expect(
+      updateNewsDraft(payload, context, draft.id, {
+        ...input,
+        expectedVersion: 2,
+        prepareForMedia: true,
+      }),
+    ).rejects.toThrow();
+    const events = await admin.query(
+      "SELECT reason,actor_user_id FROM audit_event WHERE entity_id=$1 AND action='news.creation.completed'",
+      [draft.id],
+    );
+    expect(events.rows).toEqual([{ reason: null, actor_user_id: context.actor!.userId }]);
+  });
+
+  it("does not let another editor claim the creation exemption", async () => {
+    const draft = await createNewsDraft(payload, context, {
+      prepareForMedia: true,
+      metadata: {},
+      body: emptyNewsBody,
+    });
+    const otherId = crypto.randomUUID(),
+      sessionId = crypto.randomUUID();
+    await admin.query('INSERT INTO "user"(id,name,email) VALUES ($1,$2,$3)', [
+      otherId,
+      "Outro editor sintético",
+      `${otherId}@example.test`,
+    ]);
+    await admin.query(
+      "INSERT INTO session(id,token,user_id,expires_at) VALUES ($1,$1,$2,now()+interval '1 hour')",
+      [sessionId, otherId],
+    );
+    const otherContext = { ...context, actor: { ...context.actor!, userId: otherId, sessionId } };
+    expect((await getNewsDraft(payload, otherContext.actor, draft.id)).creationPending).toBe(false);
+    await expect(
+      updateNewsDraft(payload, otherContext, draft.id, {
+        expectedVersion: 1,
+        metadata: {},
+        body: emptyNewsBody,
+      }),
+    ).rejects.toThrow();
+    expect((await getNewsDraft(payload, context.actor, draft.id)).creationPending).toBe(true);
+  });
+
+  it("publishes for the first time without reason but requires one after withdrawal", async () => {
+    const draft = await createNewsDraft(payload, context, {
+      metadata: { title: "Primeira publicação", slug: `first-${crypto.randomUUID()}` },
+      body: {
+        root: {
+          type: "root",
+          version: 1,
+          children: [
+            {
+              type: "paragraph",
+              version: 1,
+              children: [{ type: "text", version: 1, text: "Notícia sintética nova" }],
+            },
+          ],
+        },
+      },
+    });
+    const published = await publishNews(payload, context, draft.id, {
+      expectedVersion: draft.revision,
+      channels: ["site"],
+    });
+    const state = (await admin.query("SELECT first_published_at FROM news WHERE id=$1", [draft.id]))
+      .rows[0];
+    expect(state.first_published_at).not.toBeNull();
+    expect(
+      (
+        await admin.query(
+          "SELECT reason FROM audit_event WHERE entity_id=$1 AND action='news.published'",
+          [draft.id],
+        )
+      ).rows,
+    ).toEqual([{ reason: null }]);
+    const withdrawn = await unpublishNews(payload, context, draft.id, {
+      expectedVersion: published.revision,
+      channels: ["site"],
+      justification: "Retirada sintética autorizada",
+    });
+    await expect(
+      publishNews(payload, context, draft.id, {
+        expectedVersion: withdrawn.revision,
+        channels: ["site"],
+      }),
+    ).rejects.toThrow();
+    const restored = await publishNews(payload, context, draft.id, {
+      expectedVersion: withdrawn.revision,
+      channels: ["site"],
+      justification: "Republicação sintética autorizada",
+    });
+    expect(restored.revision).toBeGreaterThan(withdrawn.revision);
+    expect(
+      (await admin.query("SELECT first_published_at FROM news WHERE id=$1", [draft.id])).rows[0],
+    ).toEqual(state);
+  });
+
   it("requires and atomically audits the reason for editing an existing draft", async () => {
     const draft = await createNewsDraft(payload, context, {
       metadata: { title: "Criação sem motivo" },

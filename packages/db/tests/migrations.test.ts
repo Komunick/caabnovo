@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
@@ -43,6 +44,7 @@ describe("database foundation migrations", () => {
       "0016_partners.sql",
       "0017_partner_directory.sql",
       "0018_database_file_content.sql",
+      "0019_news_creation_lifecycle.sql",
     ]);
   });
 
@@ -67,6 +69,61 @@ describe("database foundation migrations", () => {
     );
     await admin.query("RESET ROLE");
     expect(queue.rows).toEqual([{ name: "migration-test" }]);
+  });
+
+  it("backfills publication history without reopening legacy drafts", async () => {
+    const migration = await readFile(
+      new URL("../migrations/0019_news_creation_lifecycle.sql", import.meta.url),
+      "utf8",
+    );
+    await admin.query("BEGIN");
+    try {
+      // Temporary tables shadow the real schema only in this isolated connection.
+      await admin.query(`
+        CREATE TEMP TABLE news (id text PRIMARY KEY, _status text, updated_at timestamptz);
+        CREATE TEMP TABLE audit_event (
+          entity_type text, entity_id text, action text, occurred_at timestamptz
+        );
+        CREATE TEMP TABLE _news_v (
+          parent_id text, version__status text, created_at timestamptz
+        );
+        INSERT INTO news VALUES
+          ('audit', 'draft', '2026-09-14T00:00:00Z'),
+          ('version', 'draft', '2026-09-14T00:00:00Z'),
+          ('published', 'published', '2026-09-14T00:00:00Z'),
+          ('draft', 'draft', '2026-09-14T00:00:00Z');
+        INSERT INTO audit_event VALUES
+          ('news', 'audit', 'news.published', '2026-09-10T00:00:00Z'),
+          ('news', 'audit', 'news.published', '2026-09-12T00:00:00Z'),
+          ('other', 'draft', 'news.published', '2026-09-10T00:00:00Z');
+        INSERT INTO _news_v VALUES
+          ('version', 'published', '2026-09-11T00:00:00Z'),
+          ('draft', 'draft', '2026-09-11T00:00:00Z');
+      `);
+      await admin.query(migration);
+      const result = await admin.query<{
+        id: string;
+        creation_pending: boolean;
+        first_published_at: Date | null;
+      }>("SELECT id, creation_pending, first_published_at FROM news ORDER BY id");
+      expect(
+        result.rows.map((row) => ({
+          ...row,
+          first_published_at: row.first_published_at?.toISOString() ?? null,
+        })),
+      ).toEqual([
+        { id: "audit", creation_pending: false, first_published_at: "2026-09-10T00:00:00.000Z" },
+        { id: "draft", creation_pending: false, first_published_at: null },
+        {
+          id: "published",
+          creation_pending: false,
+          first_published_at: "2026-09-14T00:00:00.000Z",
+        },
+        { id: "version", creation_pending: false, first_published_at: "2026-09-11T00:00:00.000Z" },
+      ]);
+    } finally {
+      await admin.query("ROLLBACK");
+    }
   });
 
   it("prevents audit UPDATE and DELETE for the runtime role", async () => {

@@ -135,3 +135,23 @@ Falhas de validação e pré-requisitos editoriais retornam `fields: [{ path, co
 geral. `path` identifica o controle (`metadata.slug`, `title`, `cover.alt`, `content`, etc.).
 Conflito de endereço publicado retorna 409 com campo `metadata.slug`. Mensagens internas e dados
 de exceção não são expostos; a interface traduz os códigos e mantém o texto editado.
+
+## Criação editorial e capa — 14/09/2026
+
+`POST /api/v1/news` aceita `prepareForMedia?: boolean`. Quando true, cria somente
+o rascunho técnico necessário ao upload. A resposta informa `creationPending`;
+o GET individual informa true apenas ao autor responsável por concluir a criação.
+O primeiro PUT desse autor conclui a criação e dispensa justificativa. PUTs posteriores
+e alterações por outra pessoa continuam exigindo motivo; o servidor decide sob lock.
+O cliente não pode enviar `creationPending` nem o estado de publicação para alterar a regra.
+Criações normais (POST sem a flag ou false) já estão concluídas.
+
+A primeira publicação dispensa justificativa; republicações continuam exigindo.
+`GET /api/v1/news/{id}/publication` inclui `hasBeenPublished`, que permanece true
+após retirada ou restauração. Rascunhos legados não reabrem a exceção de criação.
+Auditoria registra autor, evento e revisões mesmo sem motivo. Campos opcionais de
+justificativa, quando enviados, continuam sujeitos ao limite de 3 a 1000 caracteres.
+
+`metadata.cover.alt` é opcional, aceita vazio e normaliza omissão para `""`.
+O limite de 500 caracteres permanece; publicação imediata/agendada não exige descrição
+da capa. Arquivos continuam sujeitos a autorização, propriedade e liberação existentes.

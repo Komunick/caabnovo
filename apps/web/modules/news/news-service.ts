@@ -29,6 +29,7 @@ import { publishNewsRevision, withdrawNewsChannels } from "@caab/news/publicatio
 import { newsDeliveryDocument } from "./delivery-document";
 
 export interface NewsRecord {
+  creationPending?: boolean;
   id: string;
   metadata: NewsDraftMetadata;
   body: NewsBody;
@@ -93,19 +94,25 @@ export async function createNewsDraft(
   return newsWriteTransaction(
     payload,
     context.actor,
-    async ({ req, audit, claimCreation, finishCreation }) => {
+    async ({ req, db, audit, claimCreation, finishCreation }) => {
       const previousId = await claimCreation(key, fingerprint);
       if (previousId) {
-        return serialize(
-          await payload.findByID({
-            collection: "news",
-            id: previousId,
-            req,
-            overrideAccess: false,
-            draft: true,
-            depth: 0,
-          }),
-        );
+        const state = (
+          await db.query("SELECT creation_pending FROM news WHERE id=$1::uuid", [previousId])
+        ).rows[0];
+        return {
+          ...serialize(
+            await payload.findByID({
+              collection: "news",
+              id: previousId,
+              req,
+              overrideAccess: false,
+              draft: true,
+              depth: 0,
+            }),
+          ),
+          creationPending: state?.creation_pending === true,
+        };
       }
       const doc = await payload.create({
         collection: "news",
@@ -113,8 +120,17 @@ export async function createNewsDraft(
         req,
         draft: true,
         depth: 0,
-        data: { ...prepared, revision: 1, archived: false, _status: "draft" },
+        data: {
+          metadata: prepared.metadata,
+          body: prepared.body,
+          editorUserId: prepared.editorUserId,
+          revision: 1,
+          archived: false,
+          _status: "draft",
+        },
       });
+      if (prepared.prepareForMedia)
+        await db.query("UPDATE news SET creation_pending=true WHERE id=$1::uuid", [doc.id]);
       await audit({
         actorUserId: prepared.editorUserId,
         effectiveIdentity: `user:${prepared.editorUserId}`,
@@ -127,16 +143,22 @@ export async function createNewsDraft(
         correlationId: context.correlationId,
       });
       await finishCreation(key, String(doc.id));
-      return serialize(doc);
+      return { ...serialize(doc), creationPending: prepared.prepareForMedia === true };
     },
   );
 }
 
 export async function getNewsDraft(payload: Payload, actor: RequestActor | undefined, id: string) {
   idSchema.parse(id);
-  return newsTransaction(payload, actor, async ({ req }) =>
-    serialize(await readDraft(payload, req, id)),
-  );
+  return newsTransaction(payload, actor, async ({ req, db }) => {
+    const doc = await readDraft(payload, req, id);
+    const state = (await db.query("SELECT creation_pending FROM news WHERE id=$1::uuid", [id]))
+      .rows[0];
+    return {
+      ...serialize(doc),
+      creationPending: state?.creation_pending === true && doc.editorUserId === actor?.userId,
+    };
+  });
 }
 
 // Internal bridge for the future consumer adapter. Panel session is still required here;
@@ -185,11 +207,20 @@ export async function updateNewsDraft(
   return newsWriteTransaction(
     payload,
     context.actor,
-    async ({ req, lockNews, audit, mediaFiles }) => {
+    async ({ req, db, lockNews, audit, mediaFiles }) => {
       await lockNews(id);
       const before = await readDraft(payload, req, id);
       if (before.archived) throw new NewsPolicyError("NEWS_ARCHIVED", 409, "Notícia arquivada.");
-      const prepared = prepareNewsDraftUpdate(context.actor, input, Number(before.revision));
+      const state = (await db.query("SELECT creation_pending FROM news WHERE id=$1::uuid", [id]))
+        .rows[0];
+      const completingCreation =
+        state?.creation_pending === true && before.editorUserId === context.actor?.userId;
+      const prepared = prepareNewsDraftUpdate(
+        context.actor,
+        input,
+        Number(before.revision),
+        completingCreation,
+      );
       const previousCover = newsDraftMetadataSchema.parse(before.metadata).cover;
       const previousIds = new Set([
         ...newsBodyImages(newsBodySchema.parse(before.body)).map((image) => image.fileId!),
@@ -236,7 +267,7 @@ export async function updateNewsDraft(
       await audit({
         actorUserId: prepared.editorUserId,
         effectiveIdentity: `user:${prepared.editorUserId}`,
-        action: "news.draft.updated",
+        action: completingCreation ? "news.creation.completed" : "news.draft.updated",
         reason: prepared.justification,
         entityType: "news",
         entityId: id,
@@ -246,7 +277,8 @@ export async function updateNewsDraft(
         requestId: context.requestId,
         correlationId: context.correlationId,
       });
-      return serialize(doc);
+      await db.query("UPDATE news SET creation_pending=false WHERE id=$1::uuid", [id]);
+      return { ...serialize(doc), creationPending: false };
     },
   );
 }
@@ -398,6 +430,7 @@ export async function archiveNews(
       requestId: context.requestId,
       correlationId: context.correlationId,
     });
+    await db.query("UPDATE news SET creation_pending=false WHERE id=$1::uuid", [id]);
     return serialize(doc);
   });
 }
@@ -410,7 +443,7 @@ export async function restoreNewsRevision(
 ) {
   idSchema.parse(id);
   const command = restoreNewsRevisionRequestSchema.parse(input);
-  return newsWriteTransaction(payload, context.actor, async ({ req, lockNews, audit }) => {
+  return newsWriteTransaction(payload, context.actor, async ({ req, db, lockNews, audit }) => {
     await lockNews(id);
     const before = await readDraft(payload, req, id);
     requireVersion(before, command.expectedVersion);
@@ -454,6 +487,7 @@ export async function restoreNewsRevision(
       requestId: context.requestId,
       correlationId: context.correlationId,
     });
+    await db.query("UPDATE news SET creation_pending=false WHERE id=$1::uuid", [id]);
     return serialize(doc);
   });
 }
