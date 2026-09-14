@@ -1,3 +1,4 @@
+import { jpeg } from "./jpeg-fixture";
 import { randomUUID } from "node:crypto";
 import type { Locator, Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -56,6 +57,7 @@ test("birth calendar and contact masks work without saving a member", async ({ p
   await expect(calendar).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(calendar).toBeHidden();
+  await expect(trigger).toBeFocused();
   const cpf = page.getByLabel("CPF (opcional)");
   await cpf.pressSequentially("abc1234567890123");
   await expect(cpf).toHaveValue("123.456.789-01");
@@ -192,7 +194,7 @@ test("selection filters apply immediately and preserve search, pagination and hi
           oab: {
             state,
             type: "lawyer",
-            number: randomUUID().replaceAll("-", "").slice(0, 20).toUpperCase(),
+            number: String(100000 + (Number.parseInt(randomUUID().slice(0, 6), 16) % 900000)),
           },
         },
         justification: "Filtro sintético de teste",
@@ -265,9 +267,11 @@ test("documents use real upload, scan, review, replacement and private download"
     "base64",
   );
   async function upload(name: string) {
-    await page
-      .getByLabel("Enviar arquivo privado", { exact: false })
-      .setInputFiles({ name, mimeType: "image/png", buffer: png });
+    await page.getByLabel("Enviar arquivo privado", { exact: false }).setInputFiles({
+      name,
+      mimeType: name.endsWith(".jpg") ? "image/jpeg" : "image/png",
+      buffer: name.endsWith(".jpg") ? jpeg : png,
+    });
     await expect(page.getByRole("status").filter({ hasText: "Arquivo enviado" })).toBeVisible({
       timeout: 30000,
     });
@@ -297,8 +301,12 @@ test("documents use real upload, scan, review, replacement and private download"
     .getByLabel("Motivo da análise ou correção solicitada")
     .fill("Solicitar versão legível sintética");
   await page.getByRole("button", { name: "Registrar análise do documento" }).click();
-  await expect(page.getByText("Correção solicitada", { exact: false }).first()).toBeVisible();
-  await upload("substituto.png");
+  const documentCard = page.getByRole("listitem").filter({
+    has: page.getByRole("link", { name: "Abrir documento Identificação sintética", exact: true }),
+  });
+  await expect(documentCard).toBeVisible();
+  await expect(documentCard).toContainText(/Identificação sintética\s*·\s*Correção solicitada/);
+  await upload("substituto.jpg");
   await page.getByLabel("Documento substituído (opcional)").selectOption({ index: 1 });
   await page.getByRole("button", { name: "Anexar documento", exact: true }).click();
   await expect(
@@ -310,7 +318,8 @@ test("documents use real upload, scan, review, replacement and private download"
     .getAttribute("href");
   const download = await page.request.get(href!);
   expect(download.ok()).toBe(true);
-  expect(download.headers()["content-type"]).toContain("image/png");
+  expect(download.headers()["content-type"]).toContain("image/jpeg");
+  expect(await download.body()).toEqual(jpeg);
   await expectWcag22AA(page);
 });
 

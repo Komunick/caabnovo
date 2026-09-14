@@ -52,6 +52,7 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await page.getByRole("button", { name: "Revogar Consulta de usuários" }).click();
   await page.getByLabel("Motivo da revogação").fill("Atividade concluída");
   await page.getByRole("button", { name: "Confirmar revogação" }).click();
+  await expect(page.getByRole("button", { name: "Revogar Consulta de usuários" })).toHaveCount(0);
 
   const accesses = page.getByRole("region", { name: "Acessos do colaborador" });
   await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).uncheck();

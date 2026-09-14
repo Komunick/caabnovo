@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { oabNumberSchema } from "./oab-lookup";
+import { brazilianPhoneSchema, contactEmailSchema } from "./brazilian-contact";
 
 export function isValidCpf(value: string): boolean {
   if (!/^\d{11}$/.test(value) || /^(\d)\1{10}$/.test(value)) return false;
@@ -29,15 +31,11 @@ export const memberProfileSchema = z.strictObject({
     .nullable()
     .default(null)
     .refine((s) => !s || s <= new Date().toISOString().slice(0, 10), "Nascimento futuro"),
-  email: z.union([z.email().max(254), z.literal("")]).default(""),
-  phone: optionalText(30),
+  email: contactEmailSchema,
+  phone: brazilianPhoneSchema,
   oab: z
     .strictObject({
-      number: z
-        .string()
-        .trim()
-        .toUpperCase()
-        .regex(/^[A-Z0-9-]{1,20}$/),
+      number: oabNumberSchema,
       state: z.enum([
         "AC",
         "AL",

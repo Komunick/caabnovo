@@ -31,3 +31,5 @@ Detalhes históricos e resolução em [review.md](review.md). Correções verifi
 - [x] T022 Remover autenticador de Configurações, login, endpoints e regras administrativas; migrar dados legados com auditoria; atualizar constituição, spec e testes conforme decisão explícita (FR-019).
 - [x] T023 Manter o botão Conta no rodapé quando a navegação estiver recolhida; incluir regressão no navegador (FR-001/017).
 - [x] T024 Atualizar a suíte de acessibilidade que ainda esperava o desafio MFA removido; manter cobertura de Configurações administrativas sem autenticador e corrigir contraste transitório do botão primário de Notícias ao alternar o tema, identificado na CI do PR #13.
+
+- [x] CF-A Aplicar e validar avisos comuns de e-mail em login, recuperação e Configurações, conforme CF01–CF03 da fundação.

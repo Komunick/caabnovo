@@ -1,6 +1,9 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import { PasswordInput } from "@/components/ui/password-input";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -137,8 +140,7 @@ export function AccountSettingsForm({
       <section className="panel" aria-labelledby="profile-title">
         <h2 id="profile-title">Perfil</h2>
         <form onSubmit={(event) => submit(event, "profile")}>
-          <div className="form-field">
-            <label htmlFor="settings-name">Nome</label>
+          <FormField id="settings-name" label="Nome">
             <input
               key={name}
               id="settings-name"
@@ -148,7 +150,7 @@ export function AccountSettingsForm({
               maxLength={160}
               autoComplete="name"
             />
-          </div>
+          </FormField>
           {message("profile")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "profile" ? "Salvando…" : "Salvar nome"}
@@ -172,19 +174,18 @@ export function AccountSettingsForm({
           </p>
         ) : null}
         <form onSubmit={(event) => submit(event, "request-email")}>
-          <div className="form-field">
-            <label htmlFor="settings-email">Novo e-mail</label>
-            <input
-              id="settings-email"
-              name="newEmail"
-              type="email"
-              autoComplete="email"
-              maxLength={254}
-              required
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="email-password">Senha atual para trocar e-mail</label>
+          <ValidatedTextField
+            id="settings-email"
+            label="Novo e-mail"
+            name="newEmail"
+            type="email"
+            autoComplete="email"
+            maxLength={254}
+            required
+            schema={requiredEmailSchema}
+            message={contactFieldMessages.email}
+          />
+          <FormField id="email-password" label="Senha atual para trocar e-mail">
             <PasswordInput
               id="email-password"
               name="currentPassword"
@@ -193,7 +194,7 @@ export function AccountSettingsForm({
               required
               maxLength={128}
             />
-          </div>
+          </FormField>
           {message("request-email")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "request-email" ? "Enviando…" : "Enviar confirmação"}
@@ -208,8 +209,7 @@ export function AccountSettingsForm({
           <Link href="/forgot-password">Redefinir senha por e-mail</Link>
         </p>
         <form onSubmit={(event) => submit(event, "password")}>
-          <div className="form-field">
-            <label htmlFor="password-current">Senha atual para trocar senha</label>
+          <FormField id="password-current" label="Senha atual para trocar senha">
             <PasswordInput
               id="password-current"
               name="currentPassword"
@@ -218,9 +218,8 @@ export function AccountSettingsForm({
               maxLength={128}
               required
             />
-          </div>
-          <div className="form-field">
-            <label htmlFor="password-new">Nova senha</label>
+          </FormField>
+          <FormField id="password-new" label="Nova senha">
             <PasswordInput
               id="password-new"
               name="newPassword"
@@ -230,9 +229,8 @@ export function AccountSettingsForm({
               maxLength={PASSWORD_MAX_LENGTH}
               required
             />
-          </div>
-          <div className="form-field">
-            <label htmlFor="password-confirm">Confirmar nova senha</label>
+          </FormField>
+          <FormField id="password-confirm" label="Confirmar nova senha">
             <PasswordInput
               id="password-confirm"
               name="confirmPassword"
@@ -242,7 +240,7 @@ export function AccountSettingsForm({
               maxLength={PASSWORD_MAX_LENGTH}
               required
             />
-          </div>
+          </FormField>
           {message("password")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "password" ? "Salvando…" : "Alterar senha"}

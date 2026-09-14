@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MAX_UPLOAD_SIZE_BYTES, uploadIntentSchema, type NewsDraftMetadata } from "@caab/contracts";
+import {
+  IMAGE_FILE_ACCEPT,
+  MAX_UPLOAD_SIZE_BYTES,
+  uploadIntentSchema,
+  type NewsDraftMetadata,
+} from "@caab/contracts";
 import type { listNewsMedia } from "../media-service";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, Check, ImageOff, UploadCloud } from "lucide-react";
@@ -112,7 +117,7 @@ export function NewsCover({
       file.size === 0 ||
       file.size > MAX_UPLOAD_SIZE_BYTES
     ) {
-      setError("Escolha uma imagem PNG ou JPEG de até 25 MB.");
+      setError("Escolha uma imagem PNG, JPG ou JPEG de até 25 MB.");
       return;
     }
     setUploading(true);
@@ -202,12 +207,12 @@ export function NewsCover({
             id={`${prefix}-file`}
             error={error || fieldError || undefined}
             label="Enviar imagem"
-            hint="PNG ou JPEG, até 25 MB. A imagem passa por verificação antes de ficar disponível."
+            hint="PNG, JPG ou JPEG, até 25 MB. A imagem passa por verificação antes de ficar disponível."
           >
             <input
               type="file"
               className="news-file-input"
-              accept="image/png,image/jpeg"
+              accept={IMAGE_FILE_ACCEPT}
               disabled={disabled || uploading}
               onChange={(event) => {
                 const file = event.target.files?.[0];

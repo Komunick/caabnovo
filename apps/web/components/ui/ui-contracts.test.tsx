@@ -51,4 +51,13 @@ describe("institutional UI contracts", () => {
     expect(spinner).toContain('role="status"');
     expect(spinner).toContain("Carregando usuários");
   });
+
+  it("preserves a control's existing accessible descriptions when adding field feedback", () => {
+    const markup = renderToStaticMarkup(
+      <FormField id="field" label="Campo" hint="Ajuda" error="Confira">
+        <input aria-describedby="domain-help" />
+      </FormField>,
+    );
+    expect(markup).toContain('aria-describedby="domain-help field-hint field-error"');
+  });
 });

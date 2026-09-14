@@ -1,3 +1,4 @@
+import { jpeg } from "./jpeg-fixture";
 import { randomUUID } from "node:crypto";
 import { expect, syntheticUsers, test } from "./fixtures";
 import { expectWcag22AA } from "./accessibility";
@@ -31,10 +32,17 @@ test("member photo uploads privately, persists, replaces and removes at mobile w
     mimeType: "application/pdf",
     buffer: Buffer.from("%PDF-1.4"),
   });
-  await expect(photo.getByRole("alert")).toHaveText("Escolha uma foto JPEG ou PNG de até 5 MB.");
+  await expect(photo.getByRole("alert")).toHaveText(
+    "Escolha uma foto JPG, JPEG ou PNG de até 5 MB.",
+  );
   await expect(photo.getByRole("button", { name: "Salvar foto", exact: true })).toBeDisabled();
-  for (const filename of ["foto-sintetica.png", "foto-substituta.png"]) {
-    await input.setInputFiles({ name: filename, mimeType: "image/png", buffer: image });
+  for (const filename of ["foto-sintetica.JPG", "foto-substituta.png"]) {
+    await expect(input).toHaveAttribute("accept", /\.jpg/);
+    await input.setInputFiles({
+      name: filename,
+      mimeType: filename.endsWith(".JPG") ? "image/jpeg" : "image/png",
+      buffer: filename.endsWith(".JPG") ? jpeg : image,
+    });
     await expect(photo.getByText("Prévia · ainda não salva")).toBeVisible();
     await photo.getByLabel("Motivo da alteração da foto").fill("Atualização sintética da foto");
     await photo.getByRole("button", { name: "Salvar foto", exact: true }).click();
@@ -87,7 +95,7 @@ test("new member accepts a photo before creation and retries upload without dupl
   await page.getByLabel("Motivo do cadastro ou alteração").fill("Cadastro sintético com foto");
   await page
     .getByLabel("Selecionar foto de perfil")
-    .setInputFiles({ name: "foto-inicial.png", mimeType: "image/png", buffer: image });
+    .setInputFiles({ name: "foto-inicial.jpg", mimeType: "image/jpeg", buffer: jpeg });
   await expect(page.getByRole("img", { name: "Prévia da foto de perfil" })).toBeVisible();
   await expectWcag22AA(page);
   let creates = 0;

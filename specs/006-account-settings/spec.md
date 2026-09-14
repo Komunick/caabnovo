@@ -130,3 +130,7 @@ Como titular, quero solicitar um link no meu e-mail para recuperar o acesso sem 
 - Aplicar a nova regra de senha aos cadastros e alterações; preservar a autenticação de senhas antigas. As funções existentes permanecem.
 - O usuário aprovou senha atual + link no novo endereço e caixa local para testes. A configuração deve ser substituída e validada ao sair do ambiente local; credenciais de envio reais serão fornecidas no processo de implantação, sem incluí-las no repositório.
 - Implementação e documentação ficam na branch própria, baseada em dev. O preview local pode reunir módulos, mas não determina o conteúdo de PRs. Associados continua em validação e não está autorizado para PR.
+
+Revisão transversal em 11/09/2026: e-mails em login, recuperação e alteração do e-mail
+usam o componente comum de aviso junto ao campo, com limite de 254 caracteres.
+Não mudar autenticação, confirmação de titularidade ou política de envio.

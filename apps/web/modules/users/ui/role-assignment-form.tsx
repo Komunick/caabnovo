@@ -1,4 +1,6 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
+
 import { Plus } from "lucide-react";
 
 import { useEffect, useState, type FormEvent } from "react";
@@ -89,8 +91,7 @@ export function RoleAssignmentForm({
       )}
       {canGrant && available.length ? (
         <form onSubmit={grant}>
-          <div className="form-field">
-            <label htmlFor="role-id">Função</label>
+          <FormField id="role-id" label="Função">
             <select id="role-id" name="roleId" required defaultValue="">
               <option value="" disabled>
                 Selecione
@@ -101,11 +102,10 @@ export function RoleAssignmentForm({
                 </option>
               ))}
             </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="role-justification">Justificativa da função</label>
+          </FormField>
+          <FormField id="role-justification" label="Justificativa da função">
             <textarea id="role-justification" name="justification" rows={3} required />
-          </div>
+          </FormField>
           {error ? <p role="alert">{error}</p> : null}
           <button
             className="primary-button button--add"

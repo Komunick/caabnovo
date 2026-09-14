@@ -232,3 +232,41 @@ após uma permissão individual removida.
 Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
 auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
 inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reais para mutações.
+
+## Campos comuns — 11/09/2026
+
+Fontes oficiais: https://www.w3.org/WAI/tutorials/forms/notifications/ e
+https://www.w3.org/WAI/tutorials/forms/grouping/ (consultadas em 11/09/2026), e
+https://viacep.com.br/ (consultada em 11/09/2026). Usar avisos junto aos campos,
+associação acessível e alternativa de preenchimento manual para falha de CEP.
+Consulta ao ViaCEP envia somente oito dígitos, sem credenciais/referrer, sem lote.
+Máscaras auxiliam digitação e não comprovam identidade, contato ou titularidade.
+Reutilização exigida pelo usuário: padrões existentes de Associados são extraídos
+para componentes comuns, sem introduzir biblioteca nova ou alterar dados em lote.
+# Correção do registro de imagens do CI — 14/09/2026
+
+O job browser do PR #19 falhou antes dos testes: Docker Hub recusou o pull de
+minio/minio. A [documentação oficial do MinIO](https://github.com/minio/minio/blob/master/docs/docker/README.md)
+usa quay.io/minio/minio. Os manifests oficiais de MinIO RELEASE.2025-09-07T16-13-09Z
+e mc RELEASE.2025-08-13T08-35-41Z foram consultados em Quay nesta data.
+Decisão: mudar apenas o registro em compose.yaml, mantendo as versões fixadas,
+serviços, portas, volumes e testes. Sem migração de storage ou atualização de versão.
+O registro oficial evita depender de uma imagem de terceiros ou desativar o gate.
+
+## Pesquisa da ampliação dos campos — 14/09/2026
+
+- https://www.w3.org/WAI/tutorials/forms/validation/ : controles HTML tipados,
+  required e validação no cliente complementam a validação obrigatória no servidor.
+- https://www.w3.org/WAI/tutorials/forms/notifications/ : erro textual associado
+  ao campo, foco e possibilidade de corrigir preservando os valores.
+- https://viacep.com.br/ : resposta separa logradouro, bairro, localidade e UF;
+  CEP requer oito dígitos. Complemento retornado pode descrever trecho postal
+  (ex.: lado ímpar), portanto não representa sala/apartamento do usuário.
+
+Decisão: número/complemento sempre manuais; preservar resposta tardia por campo;
+conversão de texto legado explícita, sem parsing especulativo. Não aplicar máscaras
+a texto livre, senha ou busca mista. Sem novas dependências.
+
+## JPG nos seletores — 14/09/2026
+
+A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept) recomenda combinar identificadores de extensão e MIME; o atributo orienta a seleção, sem validar conteúdo. A [propriedade Blob.type](https://developer.mozilla.org/en-US/docs/Web/API/Blob/type) depende da identificação do navegador. Decisão: listar `.jpg,.jpeg,.png` junto aos MIME existentes, explicitar JPG na interface e preservar a inspeção efetiva do servidor. JPEG já é reconhecido pelo pipeline como `image/jpeg`, com ambas as extensões; nenhum novo formato binário ou permissão é introduzido.

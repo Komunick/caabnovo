@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -29,13 +29,21 @@ export function BirthDateField({
   id,
   defaultValue,
   disabled,
+  ...aria
 }: {
   id?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean;
   defaultValue: string;
   disabled: boolean;
 }) {
   const calendarId = useId();
   const [value, setValue] = useState(defaultValue);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Calendar choices and clearing must refresh the same feedback as typing.
+  useEffect(() => {
+    inputRef.current?.dispatchEvent(new Event("input", { bubbles: true }));
+  }, [value]);
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(2000);
@@ -63,6 +71,8 @@ export function BirthDateField({
   return (
     <div className={`${styles.birthDateField} field-with-action`}>
       <input
+        {...aria}
+        ref={inputRef}
         id={id}
         name="birthDate"
         type="date"

@@ -81,7 +81,7 @@ test("edits own name, changes password, confirms email and signs out through the
     await keyboardType(page, page.getByLabel("Nome", { exact: true }), "   ");
     await keyboardActivate(page, page.getByRole("button", { name: "Salvar nome", exact: true }));
     await expect(
-      page.getByRole("alert").filter({ hasText: "Informe um nome válido" }),
+      page.locator("#settings-name-error").filter({ hasText: "Preencha este campo." }),
     ).toBeVisible();
     await expect(page.getByLabel("Novo e-mail", { exact: true })).toHaveValue(
       "preservar@example.test",

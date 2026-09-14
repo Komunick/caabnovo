@@ -1,4 +1,6 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
+
 import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -84,8 +86,7 @@ export function OabLookup({
       >
         <fieldset disabled={!hydrated || pending || !supported}>
           <div className={styles.grid}>
-            <div className="form-field">
-              <label htmlFor="oab-query-number">Número da OAB</label>
+            <FormField id="oab-query-number" label="Número da OAB">
               <input
                 id="oab-query-number"
                 value={number}
@@ -94,17 +95,30 @@ export function OabLookup({
                 pattern="[0-9]{1,6}"
                 maxLength={6}
                 required
+                onPaste={(event) => {
+                  event.preventDefault();
+                  const input = event.currentTarget;
+                  const pasted = event.clipboardData.getData("text").replace(/\D/g, "");
+                  setNumber(
+                    (
+                      number.slice(0, input.selectionStart ?? 0) +
+                      pasted +
+                      number.slice(input.selectionEnd ?? number.length)
+                    ).slice(0, 6),
+                  );
+                  setResult(null);
+                  setError("");
+                }}
                 onChange={(event) => {
-                  setNumber(event.target.value);
+                  setNumber(event.target.value.replace(/\D/g, "").slice(0, 6));
                   setResult(null);
                   setError("");
                 }}
               />
-            </div>
-            <div className="form-field">
-              <label htmlFor="oab-query-state">Estado da OAB</label>
+            </FormField>
+            <FormField id="oab-query-state" label="Estado da OAB">
               <input id="oab-query-state" value="Bahia (BA)" readOnly />
-            </div>
+            </FormField>
           </div>
           <Button type="submit" intent="primary">
             <Search size={18} aria-hidden="true" />

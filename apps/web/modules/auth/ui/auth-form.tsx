@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
@@ -45,10 +46,18 @@ export function AuthForm() {
   }
 
   return (
-    <form method="post" onSubmit={submit} noValidate>
-      <FormField id="email" label="E-mail">
-        <Input name="email" type="email" autoComplete="username" required />
-      </FormField>
+    <form method="post" onSubmit={submit}>
+      <ValidatedTextField
+        id="email"
+        label="E-mail"
+        name="email"
+        type="email"
+        autoComplete="username"
+        required
+        maxLength={254}
+        schema={requiredEmailSchema}
+        message={contactFieldMessages.email}
+      />
       <FormField id="password" label="Senha">
         <PasswordInput name="password" autoComplete="current-password" required />
       </FormField>

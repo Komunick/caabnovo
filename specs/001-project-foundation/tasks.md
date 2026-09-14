@@ -382,3 +382,22 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - [x] Corrigir cores do login e centralizar Gestão Interna abaixo da logo, preservando a imagem original.
 - [x] Concluir inspeção do painel autenticado nos dois temas.
 - [ ] Atualizar o PR #16 e registrar resultados finais do CI do navegador.
+
+## Campos comuns — revisão de 11/09/2026
+
+- [x] CF01 Inventariar formulários existentes e extrair máscaras/contratos/avisos compartilhados.
+- [x] CF02 Aplicar aos campos de Associados, Colaboradores, login, recuperação e Configurações; preservar autorização e dados.
+- [x] CF03 Testar telefone fixo/celular, CPF/CNPJ, CEP/falhas/concorrência, e-mail/site inválidos e teclado; concluir gates e PR próprio.
+
+Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common-fields.md).
+
+- [x] CF-CI Corrigir pull de MinIO/mc no CI usando o registro oficial Quay com as mesmas tags; validar imagens, Compose e repetir os checks do PR 19.
+
+## Ampliação autorizada do PR #19 — 14/09/2026
+
+- [x] CF04 Inventariar todos os controles e padronizar mensagens/limites em abas, filtros e diálogos de todos os módulos.
+- [x] CF05 Separar endereço compartilhado em rua/bairro/número/complemento, preservar legado e consulta CEP concorrente; integrar consumidores no PR #18.
+- [x] CF06 Aplicar OAB numérica até seis caracteres em todos os campos específicos e contratos, preservando busca mista e dados existentes.
+- [x] CF07 Validar contratos, integração, E2E por módulo, teclado/Axe, temas/responsividade e build; atualizar PRs sem merge e preview com dados preservados.
+
+- [x] CF08 Explicitar JPG em todos os seletores e mensagens de imagens, preservar formatos existentes e validar upload real/inspeção no PR #19.

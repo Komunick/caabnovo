@@ -182,3 +182,10 @@ conferir teclado, 390 px e ambos os temas.
 
 
 Integração ativada somente no localhost em 10/09/2026. Não conservar nem reutilizar o resultado da inscrição real usada no teste, conforme correção do usuário. Rastreabilidade em [LEG-001](../../docs/LEGACY-REUSE.md).
+
+Revisão transversal em 11/09/2026: CPF, telefone e e-mail usam os componentes comuns
+da fundação, com máscara, erro junto ao campo e validação equivalente no servidor.
+Telefone aceita DDD + oito ou nove dígitos; dados legados não são regravados em lote.
+## Campos — 14/09/2026
+
+OAB: todos os campos específicos aceitam apenas 0–9, até seis dígitos; servidor valida o mesmo formato. Busca mista preservada e registros antigos não são reescritos em lote.

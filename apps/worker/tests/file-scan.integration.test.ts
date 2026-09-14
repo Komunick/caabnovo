@@ -2,6 +2,9 @@ import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { inspectAndScanFile, type VirusScanner } from "../src/jobs/scan-file";
 
+import { readFileSync } from "node:fs";
+const jpeg = readFileSync(new URL("../../../tests/fixtures/synthetic.jpg", import.meta.url));
+
 const png = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
   "base64",
@@ -28,6 +31,32 @@ function validInput(overrides: Partial<Parameters<typeof inspectAndScanFile>[0]>
 }
 
 describe("quarantined file inspection", () => {
+  it.each(["photo.jpg", "photo.JPG", "photo.jpeg"])(
+    "promotes a real JPEG named %s",
+    async (originalName) => {
+      await expect(
+        inspectAndScanFile(
+          validInput({
+            body: jpeg,
+            originalName,
+            declaredMime: "image/jpeg",
+            expectedSizeBytes: jpeg.byteLength,
+            expectedChecksumSha256: checksum(jpeg),
+          }),
+        ),
+      ).resolves.toMatchObject({ disposition: "promote", detectedMime: "image/jpeg" });
+    },
+  );
+  it("rejects PNG content renamed as JPG before antivirus", async () => {
+    const antivirus = scanner();
+    await expect(
+      inspectAndScanFile(
+        validInput({ originalName: "fake.jpg", declaredMime: "image/jpeg", scanner: antivirus }),
+      ),
+    ).resolves.toMatchObject({ disposition: "reject", reason: "mime_mismatch" });
+    expect(antivirus.scan).not.toHaveBeenCalled();
+  });
+
   it("approves only a matching signature, MIME, size, checksum and clean scan", async () => {
     await expect(inspectAndScanFile(validInput())).resolves.toMatchObject({
       disposition: "promote",

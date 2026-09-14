@@ -1,6 +1,7 @@
 import type { InputHTMLAttributes } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "./button";
+import { FormField } from "./form-field";
 
 export function SearchField({
   label,
@@ -11,10 +12,11 @@ export function SearchField({
   label: string;
 }) {
   return (
-    <div className="form-field search-field">
-      <label htmlFor={id}>{label}</label>
-      <div className="field-with-action">
-        <input {...props} id={id} type="search" />
+    <FormField
+      id={id}
+      label={label}
+      className="search-field"
+      action={
         <Button
           type="submit"
           intent="ghost"
@@ -25,8 +27,10 @@ export function SearchField({
         >
           <Search size={20} aria-hidden="true" />
         </Button>
-      </div>
-    </div>
+      }
+    >
+      <input {...props} id={id} type="search" />
+    </FormField>
   );
 }
 

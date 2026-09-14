@@ -45,7 +45,13 @@ export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
   return (
     <form role="search" aria-label="Filtros de auditoria" onSubmit={submit}>
       <div className="filter-toolbar">
-        <SearchField id="audit-action" label="Ação" name="action" defaultValue={values.action} />
+        <SearchField
+          id="audit-action"
+          label="Ação"
+          name="action"
+          maxLength={120}
+          defaultValue={values.action}
+        />
         <FilterToggle
           expanded={expanded}
           controls="audit-filter-options"
@@ -60,10 +66,15 @@ export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
       </div>
       <div className="list-filters" id="audit-filter-options" hidden={!expanded}>
         <FormField id="audit-actor" label="ID do ator">
-          <Input name="actorId" defaultValue={values.actorId} />
+          <Input
+            name="actorId"
+            maxLength={36}
+            pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+            defaultValue={values.actorId}
+          />
         </FormField>
         <FormField id="audit-entity-type" label="Tipo de entidade">
-          <Input name="entityType" defaultValue={values.entityType} />
+          <Input name="entityType" maxLength={80} defaultValue={values.entityType} />
         </FormField>
         <FormField id="audit-from" label="A partir de">
           <Input name="from" type="datetime-local" defaultValue={localDateTime(values.from)} />

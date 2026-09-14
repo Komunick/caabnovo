@@ -340,3 +340,45 @@ após uma permissão individual removida.
 Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
 auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
 inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reais para mutações.
+
+## Padrão de campos comuns — revisão de 11/09/2026
+
+Máscaras e avisos de CPF/CNPJ, telefone brasileiro, CEP, UF, e-mail e site são
+componentes/contratos compartilhados. Aplicar nos campos equivalentes existentes;
+buscas textuais e links de conteúdo editorial não recebem máscara de contato.
+Validar no preenchimento/saída e antes do envio, com erro associado ao campo,
+valor preservado e limite explícito. Telefone tem DDD + oito/nove dígitos; CNPJ
+mantém compatibilidade alfanumérica. Servidor usa o mesmo contrato nas mutações.
+CEP permite consulta pontual automática, falha recuperável e correção manual,
+sem transmitir dados da conta. Não reescrever dados persistidos em lote.
+## Disponibilidade da infraestrutura de testes — revisão de 14/09/2026
+
+A infraestrutura local/CI deve usar as imagens oficiais de MinIO e mc em Quay,
+mantendo as versões fixadas e os mesmos volumes/contratos S3. O ajuste resolve
+o pull recusado pelo Docker Hub, sem substituir o storage ou dispensar testes.
+
+## Ampliação do PR #19 — 14/09/2026
+
+Aplicar o padrão em todo o sistema, confirmado pelo usuário: campos de todas as
+abas, filtros e diálogos usam rótulo associado, limites coerentes, indicação de
+erro junto ao controle e correção sem perder o valor. Textos, seleções, datas,
+senhas e arquivos mantêm seus contratos específicos; máscaras somente nos tipos
+aplicáveis. OAB aceita apenas dígitos, até seis posições, na digitação/colagem e
+no servidor. A busca mista por nome/CPF/OAB continua textual.
+
+Todos os endereços físicos existentes oferecem rua, bairro, número e complemento
+separados, além de CEP, cidade e UF. Número admite 12A e s/n. ViaCEP preenche
+rua/bairro/cidade/UF separadamente, preservando número/complemento e correções
+feitas durante a consulta. Texto legado permanece visível e preservado até
+conversão explícita pelo operador. Sem dedução por vírgulas ou perda de dados.
+API pública mantém endereço formatado compatível.
+
+Critérios: validar campos em cada módulo e aba, colagem e correção, datas inválidas,
+seleção obrigatória, texto vazio/espaços, CEP indisponível e corrida de respostas;
+reabrir parceiro/unidade com as quatro partes persistidas e conferir endereço
+legado sem edição. Testar teclado, Axe, claro/escuro e celular. PR #19 permanece
+aberto, sem merge. A regra geral de justificativas é tarefa própria já registrada.
+
+## Arquivos JPG — 14/09/2026
+
+Todos os seletores que aceitam imagens devem listar `.jpg`, `.jpeg` e `.png` explicitamente, preservando PDF nos documentos. Ajuda e erros devem mencionar JPG. O servidor mantém o MIME `image/jpeg`, validação de assinatura, extensão, tamanho, checksum e antivírus.

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import {
   ArrowRight,
   CalendarDays,
-  Handshake,
   WalletCards,
   MessageSquare,
   ChartNoAxesCombined,
@@ -29,7 +28,6 @@ const upcoming = [
     description: "Agenda, reservas e próximos atendimentos.",
     icon: CalendarDays,
   },
-  { name: "Parceiros", description: "Estabelecimentos, convênios e benefícios.", icon: Handshake },
   { name: "Caassh", description: "Movimentações e acompanhamento de créditos.", icon: WalletCards },
   {
     name: "Mensagens",

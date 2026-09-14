@@ -362,10 +362,12 @@ export function NewsEditor({
                       id="news-slug"
                       error={fieldErrors.slug}
                       label="Endereço legível"
+                      invalidMessage="Use letras minúsculas, números e hífens, sem espaços ou acentos."
                       hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
                     >
                       <input
                         value={metadata.slug}
+                        pattern="(?:[a-z0-9]+(?:-[a-z0-9]+)*)?"
                         maxLength={180}
                         onChange={(e) => change("slug", e.target.value)}
                       />
@@ -382,14 +384,32 @@ export function NewsEditor({
                     <FormField
                       id="news-tags"
                       label="Tags"
+                      invalidMessage="Separe até 20 tags por vírgulas, sem itens vazios; use até 80 caracteres por tag."
                       hint="Separe por vírgulas; até 20 tags."
                       error={fieldErrors.tags}
                     >
                       <input
                         value={metadata.tags.join(",")}
-                        onChange={(e) =>
-                          change("tags", e.target.value ? e.target.value.split(",") : [])
-                        }
+                        maxLength={1619}
+                        onBlur={(event) => {
+                          const valid = newsDraftMetadataSchema.shape.tags.safeParse(
+                            metadata.tags,
+                          ).success;
+                          event.currentTarget.setCustomValidity(
+                            valid
+                              ? ""
+                              : "Use até 20 tags, com até 80 caracteres cada, sem itens vazios.",
+                          );
+                        }}
+                        onChange={(e) => {
+                          const tags = e.target.value ? e.target.value.split(",") : [];
+                          e.target.setCustomValidity(
+                            newsDraftMetadataSchema.shape.tags.safeParse(tags).success
+                              ? ""
+                              : "Use até 20 tags, com até 80 caracteres cada, sem itens vazios.",
+                          );
+                          change("tags", tags);
+                        }}
                       />
                     </FormField>
                   </div>
@@ -408,6 +428,7 @@ export function NewsEditor({
                       id="news-highlight-order"
                       error={fieldErrors.highlight}
                       label="Ordem do destaque"
+                      invalidMessage="Informe uma ordem de 1 a 100."
                       hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
                     >
                       <input

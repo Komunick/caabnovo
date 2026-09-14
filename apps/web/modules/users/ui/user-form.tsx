@@ -1,9 +1,13 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
+
 import { Plus } from "lucide-react";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Role, User } from "@caab/contracts";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
 import { SensitiveActionDialog } from "./sensitive-action-dialog";
 
 type UserFormProps =
@@ -98,8 +102,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
         {props.mode === "create" ? "Criar colaborador" : "Dados da conta"}
       </h2>
       <form className={props.mode === "create" ? "user-create-form" : undefined} onSubmit={submit}>
-        <div className="form-field">
-          <label htmlFor={`${props.mode}-name`}>Nome</label>
+        <FormField id={`${props.mode}-name`} label="Nome">
           <input
             id={`${props.mode}-name`}
             name="name"
@@ -107,13 +110,19 @@ export function UserForm(props: Readonly<UserFormProps>) {
             maxLength={160}
             required
           />
-        </div>
+        </FormField>
         {props.mode === "create" ? (
           <>
-            <div className="form-field">
-              <label htmlFor="create-email">E-mail</label>
-              <input id="create-email" name="email" type="email" required />
-            </div>
+            <ValidatedTextField
+              id="create-email"
+              label="E-mail"
+              name="email"
+              type="email"
+              required
+              maxLength={254}
+              schema={requiredEmailSchema}
+              message={contactFieldMessages.email}
+            />
             {props.roles.length ? (
               <fieldset className="user-role-options">
                 <legend>Funções iniciais</legend>
@@ -126,10 +135,9 @@ export function UserForm(props: Readonly<UserFormProps>) {
             ) : null}
           </>
         ) : null}
-        <div className="form-field">
-          <label htmlFor={`${props.mode}-justification`}>Justificativa</label>
+        <FormField id={`${props.mode}-justification`} label="Justificativa">
           <textarea id={`${props.mode}-justification`} name="justification" rows={3} required />
-        </div>
+        </FormField>
         {error ? <p role="alert">{error}</p> : null}
         {message ? <p role="status">{message}</p> : null}
         <button

@@ -1,6 +1,9 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import { PasswordInput } from "@/components/ui/password-input";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
+import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -96,8 +99,7 @@ export function PasswordRecovery({
           {reset ? (
             <>
               <p>{PASSWORD_REQUIREMENTS}</p>
-              <div className="form-field">
-                <label htmlFor="reset-password">Nova senha</label>
+              <FormField id="reset-password" label="Nova senha">
                 <PasswordInput
                   id="reset-password"
                   name="newPassword"
@@ -107,9 +109,8 @@ export function PasswordRecovery({
                   maxLength={PASSWORD_MAX_LENGTH}
                   required
                 />
-              </div>
-              <div className="form-field">
-                <label htmlFor="reset-confirmation">Confirmar nova senha</label>
+              </FormField>
+              <FormField id="reset-confirmation" label="Confirmar nova senha">
                 <PasswordInput
                   id="reset-confirmation"
                   name="confirmation"
@@ -119,21 +120,21 @@ export function PasswordRecovery({
                   maxLength={PASSWORD_MAX_LENGTH}
                   required
                 />
-              </div>
+              </FormField>
               {ready && !token ? <p>Abra o link recebido no e-mail ou solicite outro.</p> : null}
             </>
           ) : (
-            <div className="form-field">
-              <label htmlFor="recovery-email">E-mail da conta</label>
-              <input
-                id="recovery-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                maxLength={254}
-              />
-            </div>
+            <ValidatedTextField
+              id="recovery-email"
+              label="E-mail da conta"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              maxLength={254}
+              schema={requiredEmailSchema}
+              message={contactFieldMessages.email}
+            />
           )}
           <button
             className="primary-button"
