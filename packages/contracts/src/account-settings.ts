@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { changeJustificationSchema } from "./common";
 import { requiredEmailSchema } from "./brazilian-contact";
 import { newPasswordSchema, PASSWORD_MAX_LENGTH } from "./password-policy";
 
@@ -6,11 +7,17 @@ const version = z.number().int().positive();
 const currentPassword = z.string().min(1).max(128);
 export const accountSettingsRequestSchema = z.discriminatedUnion("action", [
   z
-    .object({ action: z.literal("profile"), name: z.string().trim().min(1).max(160), version })
+    .object({
+      action: z.literal("profile"),
+      name: z.string().trim().min(1).max(160),
+      version,
+      justification: changeJustificationSchema,
+    })
     .strict(),
   z
     .object({
       action: z.literal("password"),
+      justification: changeJustificationSchema,
       currentPassword,
       newPassword: newPasswordSchema,
       confirmPassword: z.string().min(1).max(PASSWORD_MAX_LENGTH),
@@ -20,6 +27,7 @@ export const accountSettingsRequestSchema = z.discriminatedUnion("action", [
   z
     .object({
       action: z.literal("request-email"),
+      justification: changeJustificationSchema,
       currentPassword,
       newEmail: requiredEmailSchema.transform((value) => value.toLowerCase()),
       version,

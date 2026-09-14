@@ -16,6 +16,7 @@ export interface NewsPublicationContext {
   requestId: string;
   correlationId: string;
   origin: "web" | "worker";
+  reason?: string;
 }
 function hasText(node: NewsBodyNode): boolean {
   return !!node.text?.trim() || (node.children?.some(hasText) ?? false);
@@ -132,6 +133,7 @@ export async function publishNewsRevision(
     ...context,
     effectiveIdentity: `user:${context.actorUserId}`,
     action: "news.published",
+    reason: command.justification,
     entityType: "news",
     entityId: id,
     before: { revision: Number(latest.revision) },

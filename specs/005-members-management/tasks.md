@@ -143,3 +143,19 @@ T025 concluída localmente em 10/09/2026; T028 reaberta na revisão após o escl
 ## Campos — 14/09/2026
 
 - [x] CF-OAB Validar digitação/colagem até seis dígitos, contrato de cadastro/consulta e regressões; PR #19.
+
+## Padronização de justificativas — 14/09/2026
+
+- [x] JP01 Inventariar criação/alteração e registrar regra, pesquisa e plano.
+- [x] JP02 Implementar contrato, serviço, auditoria e formulário desta área.
+- [x] JP03 Validar criação sem motivo, edição recusada sem motivo e auditoria preservada.
+- [x] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
+
+## Resultado da consulta OAB — 14/09/2026
+
+- [x] OR01 Registrar campos retornados e seleção do usuário sem dados pessoais; atualizar spec, plano e pesquisa.
+- [x] OR02 Ampliar contrato/provedor e exibir os sete campos com ausências explícitas, sem repetir OAB.
+- [x] OR03 Validar projeção, situações independentes, privacidade da auditoria, responsividade e acessibilidade com dados sintéticos.
+- [x] OR04 Concluir CI e evidências na branch única ativa, sem consultar novamente os dados reais.
+
+Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../001-project-foundation/evidence/justification-oab.md).

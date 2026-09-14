@@ -289,3 +289,21 @@
 .muted {
   color: var(--color-muted);
 }
+
+.lookupDetails {
+  margin-block: 1rem;
+}
+.lookupDetails dt {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+.lookupDetails dd {
+  margin: 0.35rem 0 0;
+  overflow-wrap: anywhere;
+}
+.lookupName {
+  grid-column: 1 / -1;
+}
+.lookupName dd {
+  font-size: 1.2rem;
+}

@@ -30,7 +30,6 @@ const nextContext = () => ({
 const create = (name = "Pessoa sintética", extra = {}) =>
   createMember(pool, nextContext(), {
     profile: { name, ...extra },
-    justification: "Cadastro sintético",
   });
 const command = (id: string, version: number, input: Record<string, unknown>) =>
   commandMember(pool, nextContext(), id, {
@@ -103,6 +102,34 @@ async function file(memberId: string, status = "available") {
   return id;
 }
 describe.sequential("member persistence", () => {
+  it("audits creation without a reason and refuses blank edits without a mutation", async () => {
+    const person = await create();
+    expect((await memberHistory(pool, context.actor, person.id)).items[0]).toMatchObject({
+      reason: "Cadastro inicial de associado",
+    });
+    for (const justification of [undefined, "", "   "]) {
+      await expect(
+        commandMember(pool, nextContext(), person.id, {
+          action: "update",
+          profile: { name: "Tentativa recusada" },
+          expectedVersion: 1,
+          justification,
+        }),
+      ).rejects.toThrow();
+    }
+    expect(await getMember(pool, context.actor, person.id)).toMatchObject({
+      version: 1,
+      profile: { name: person.profile.name },
+    });
+    await command(person.id, 1, {
+      action: "update",
+      profile: { name: "Atualizado" },
+      justification: "Correção cadastral autorizada",
+    });
+    expect((await memberHistory(pool, context.actor, person.id)).items[0]).toMatchObject({
+      reason: "Correção cadastral autorizada",
+    });
+  });
   it("adds, replaces and removes a private photo without changing identity or documents", async () => {
     const person = await create();
     expect(person.photoFileId).toBeNull();
@@ -113,7 +140,6 @@ describe.sequential("member persistence", () => {
       action: "photo",
       fileId: first,
       expectedVersion: 1,
-      justification: "Foto sintética",
     };
     const saved = await commandMember(pool, request, person.id, input);
     expect(saved).toMatchObject({ photoFileId: first, version: 2, documents: [], assessments: [] });
@@ -124,6 +150,17 @@ describe.sequential("member persistence", () => {
     expect(await memberFileStatus(pool, context.actor, person.id, first)).toMatchObject({
       status: "available",
       scanStatus: "clean",
+    });
+    await expect(
+      commandMember(pool, nextContext(), person.id, {
+        action: "photo",
+        fileId: second,
+        expectedVersion: 2,
+      }),
+    ).rejects.toThrow();
+    expect(await getMember(pool, context.actor, person.id)).toMatchObject({
+      version: 2,
+      photoFileId: first,
     });
     expect(await command(person.id, 2, { action: "photo", fileId: second })).toMatchObject({
       photoFileId: second,

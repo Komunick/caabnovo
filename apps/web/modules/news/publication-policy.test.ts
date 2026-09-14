@@ -10,7 +10,11 @@ const actor = {
 };
 const newsId = crypto.randomUUID();
 const fileId = crypto.randomUUID();
-const command = { expectedVersion: 3, channels: ["site", "app"] };
+const command = {
+  justification: "Alteração sintética autorizada",
+  expectedVersion: 3,
+  channels: ["site", "app"],
+};
 function snapshot(): NewsPublicationSnapshot {
   return {
     id: newsId,
@@ -31,6 +35,7 @@ describe("news publication policy", () => {
     const current = snapshot();
     const before = structuredClone(current);
     expect(validateNewsPublication(actor, command, current)).toEqual({
+      justification: "Alteração sintética autorizada",
       expectedVersion: 3,
       channels: ["site", "app"],
       editorUserId: actor.userId,
@@ -46,7 +51,11 @@ describe("news publication policy", () => {
 
   it("rejects a stale or archived revision", () => {
     expect(() =>
-      validateNewsPublication(actor, { ...command, expectedVersion: 2 }, snapshot()),
+      validateNewsPublication(
+        actor,
+        { ...command, justification: "Alteração sintética autorizada", expectedVersion: 2 },
+        snapshot(),
+      ),
     ).toThrowError(expect.objectContaining({ status: 409, code: "NEWS_VERSION_CONFLICT" }));
     expect(() =>
       validateNewsPublication(actor, command, { ...snapshot(), archived: true }),

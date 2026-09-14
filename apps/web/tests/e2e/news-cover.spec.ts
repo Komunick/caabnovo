@@ -1,7 +1,7 @@
+import { justifyNewsChange } from "./news-justification";
 import { jpeg } from "./jpeg-fixture";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, syntheticUsers, test } from "./fixtures";
-
 test("editor uploads a cover through the existing file flow and preserves its description", async ({
   page,
 }) => {
@@ -12,15 +12,25 @@ test("editor uploads a cover through the existing file flow and preserves its de
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
   await page.goto("/news/new");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 15000 });
+  const uploaded = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === "/api/v1/files/content" &&
+      response.request().method() === "PUT",
+  );
   await page
     .getByLabel("Enviar imagem", { exact: true })
     .setInputFiles({ name: "capa-sintetica.jpg", mimeType: "image/jpeg", buffer: jpeg });
+  const uploadResponse = await uploaded;
+  expect(uploadResponse.status()).toBe(204);
+  expect(new URL(uploadResponse.url()).origin).toBe(new URL(page.url()).origin);
   await expect(
     page.getByRole("status").filter({ hasText: "Imagem enviada para verificação" }),
   ).toBeVisible({ timeout: 20000 });
   await page.getByLabel("Descrição da capa", { exact: true }).fill("Imagem sintética de teste");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Rascunho salvo" })).toBeVisible();
   await page.reload();
@@ -41,6 +51,7 @@ test("editor uploads a cover through the existing file flow and preserves its de
     ).violations,
   ).toEqual([]);
   await page.getByRole("button", { name: "Remover capa do rascunho" }).click();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Rascunho salvo" })).toBeVisible();
   await page.reload();

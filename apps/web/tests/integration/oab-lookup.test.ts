@@ -66,8 +66,15 @@ async function member(state = "BA", type = "lawyer", number = String(nextOabNumb
   ).rows[0];
 }
 const input = { number: "1234", state: "BA" };
+const details = {
+  cpf: "000.000.000-00",
+  delinquent: true,
+  detail: "Synthetic provider detail",
+  subsection: "Synthetic provider subsection",
+  commitmentDate: "01/02/2020",
+};
 const success = () =>
-  vi.fn(async () => ({ status: "regular" as const, name: "Synthetic provider name" }));
+  vi.fn(async () => ({ ...details, status: "regular" as const, name: "Synthetic provider name" }));
 describe.sequential("OAB lookup with real authorization and audit persistence", () => {
   it("allows an unregistered lookup and keeps names/raw payload out of audit", async () => {
     const ctx = await context();
@@ -78,6 +85,7 @@ describe.sequential("OAB lookup with real authorization and audit persistence", 
       state: "BA",
       status: "regular",
       source: "OAB-BA / Implanta",
+      ...details,
     });
     const events = (
       await admin.query(
@@ -87,6 +95,12 @@ describe.sequential("OAB lookup with real authorization and audit persistence", 
     ).rows;
     expect(events.map((e) => e.action)).toEqual(["member.oab_query_started", "member.oab_queried"]);
     expect(JSON.stringify(events)).not.toContain("Synthetic provider name");
+    for (const key of Object.keys(details)) {
+      expect(events.every((event) => !(key in event.after))).toBe(true);
+    }
+    for (const value of [details.cpf, details.detail, details.subsection, details.commitmentDate]) {
+      expect(JSON.stringify(events)).not.toContain(value);
+    }
   });
   it("uses the stored OAB and leaves the profile and every assessment unchanged", async () => {
     const ctx = await context();
@@ -152,7 +166,7 @@ describe.sequential("OAB lookup with real authorization and audit persistence", 
             "UPDATE user_role SET revoked_at=now(),revoked_by=$1,revocation_reason='Test' WHERE user_id=$1",
             [ctx.actor.userId],
           );
-        return { status: "regular" as const, name: "Should not be delivered" };
+        return { ...details, status: "regular" as const, name: "Should not be delivered" };
       };
       await expect(queryOab(pool, ctx, input, provider)).rejects.toMatchObject({
         code: kind === "session" ? "AUTHENTICATION_REQUIRED" : "PERMISSION_DENIED",
@@ -167,7 +181,7 @@ describe.sequential("OAB lookup with real authorization and audit persistence", 
         await admin.query("UPDATE member SET profile_version=profile_version+1 WHERE id=$1", [
           target.id,
         ]);
-        return { status: "regular", name: "Old identity" };
+        return { ...details, status: "regular", name: "Old identity" };
       }),
     ).rejects.toMatchObject({ code: "OAB_MEMBER_CHANGED" });
     const events = (await memberHistory(pool, ctx.actor, target.id)).items;
@@ -217,7 +231,7 @@ describe.sequential("OAB lookup with real authorization and audit persistence", 
       await expect(
         queryOab(pool, ctx, input, async () => {
           await admin.query("REVOKE INSERT ON audit_event FROM caab_runtime");
-          return { status: "regular", name: "Result without audit" };
+          return { ...details, status: "regular", name: "Result without audit" };
         }),
       ).rejects.toBeDefined();
     } finally {

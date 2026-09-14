@@ -26,7 +26,12 @@ Sucesso HTTP 200:
   "source": "OAB-BA / Implanta",
   "checkedAt": "2026-09-10T18:00:00.000Z",
   "status": "regular",
-  "name": "Pessoa sintética"
+  "name": "Pessoa sintética",
+  "cpf": null,
+  "delinquent": null,
+  "detail": null,
+  "subsection": null,
+  "commitmentDate": null
 }
 ```
 
@@ -71,3 +76,24 @@ Não remover dados, auditoria ou avaliações para trocar essa configuração.
 
 Conexão ativada somente no localhost. T028 permanece pendente: o teste real foi descartado após o usuário esclarecer a falta de autorização e não serve como homologação. Seus resultados foram removidos e não devem ser reutilizados em testes. Nenhuma avaliação, situação financeira,
 elegibilidade ou crédito é alterado pela consulta, mesmo se a resposta for regular.
+
+## Campos observados e seleção autorizada — 14/09/2026
+
+Consulta individual autorizada, HTTP 200, um registro. Nenhum valor pessoal da resposta é reproduzido nesta documentação; nomes e tipos abaixo são o inventário completo observado.
+
+| Campo do provedor | Tipo observado | Uso no resultado |
+| --- | --- | --- |
+| Nome | string | Nome em destaque |
+| OAB | string | Conferência da inscrição solicitada; não repetir no resultado |
+| CPF | string | Exibir CPF |
+| SituacaoRegular | string | Situação regular, independente da inadimplência |
+| Detalhe | string | Exibir detalhe textual |
+| Inadimplente | string | Exibir se está inadimplente |
+| PagoTotalExercicioAtual | string | Não projetar nem exibir |
+| DataInadimplencia | null | Não projetar nem exibir; formato preenchido não verificado |
+| SubSecao | string | Exibir subseção |
+| DataCompromisso | string (DD/MM/AAAA) | Exibir data de compromisso |
+
+A resposta privada acrescenta `cpf`, `detail`, `subsection` e `commitmentDate` (string ou null), e `delinquent` (boolean ou null). Campos opcionais ausentes/vazios viram null. SIM/NAO/NÃO são reconhecidos sem diferenciar caixa, espaços ou acentos; valor desconhecido não vira falso. `status` mantém o contrato anterior.
+
+Não encontrado retorna nome e os novos campos nulos. A inscrição permanece no contrato para correlação, sem repetição visual. Texto da fonte é renderizado como texto, nunca HTML. Os campos novos não entram em auditoria, banco, logs ou atualizações do associado. A auditoria normal da funcionalidade permanece; a consulta real excepcional de validação foi feita fora da aplicação e sem banco, conforme autorização específica.

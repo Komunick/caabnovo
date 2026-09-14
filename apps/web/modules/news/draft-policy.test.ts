@@ -23,7 +23,11 @@ describe("news draft policy", () => {
       expect.objectContaining({ status: 401 }),
     );
     expect(() =>
-      prepareNewsDraftUpdate(undefined, { metadata: {}, expectedVersion: 1 }, 1),
+      prepareNewsDraftUpdate(
+        undefined,
+        { justification: "Alteração sintética autorizada", metadata: {}, expectedVersion: 1 },
+        1,
+      ),
     ).toThrowError(expect.objectContaining({ status: 401 }));
   });
 
@@ -32,7 +36,16 @@ describe("news draft policy", () => {
       prepareNewsDraft(actor, { metadata: {}, editorUserId: crypto.randomUUID() }),
     ).toThrow();
     expect(() =>
-      prepareNewsDraftUpdate(actor, { metadata: {}, expectedVersion: 2, published: true }, 2),
+      prepareNewsDraftUpdate(
+        actor,
+        {
+          justification: "Alteração sintética autorizada",
+          metadata: {},
+          expectedVersion: 2,
+          published: true,
+        },
+        2,
+      ),
     ).toThrow();
   });
 
@@ -40,14 +53,24 @@ describe("news draft policy", () => {
     expect(() =>
       prepareNewsDraftUpdate(
         actor,
-        { metadata: { title: "Obsoleta" }, body: emptyNewsBody, expectedVersion: 1 },
+        {
+          justification: "Alteração sintética autorizada",
+          metadata: { title: "Obsoleta" },
+          body: emptyNewsBody,
+          expectedVersion: 1,
+        },
         2,
       ),
     ).toThrowError(expect.objectContaining({ status: 409, code: "NEWS_VERSION_CONFLICT" }));
     expect(
       prepareNewsDraftUpdate(
         actor,
-        { metadata: { title: "Atual" }, body: emptyNewsBody, expectedVersion: 2 },
+        {
+          justification: "Alteração sintética autorizada",
+          metadata: { title: "Atual" },
+          body: emptyNewsBody,
+          expectedVersion: 2,
+        },
         2,
       ),
     ).toMatchObject({

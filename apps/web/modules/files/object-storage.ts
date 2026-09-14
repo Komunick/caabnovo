@@ -9,6 +9,10 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { loadServerEnv } from "@caab/config";
 import { recordStorageError, withServerSpan } from "../shared/metrics";
 import { createStorageClient } from "../shared/storage-client";
+import { getDatabase } from "../shared/database";
+import { isDatabaseFile, inspectDatabaseContent } from "@caab/db/repositories/file-content";
+import { signContentGrant } from "./content-grant";
+import type { Pool } from "pg";
 
 const SIGNED_URL_TTL_SECONDS = 300;
 
@@ -25,6 +29,7 @@ export interface QuarantinedObjectMetadata {
 }
 
 export interface WebObjectStorage {
+  readonly keyPrefix?: string;
   createQuarantineUpload(
     key: string,
     input: { contentType: string; sizeBytes: number; checksumSha256: string },
@@ -118,14 +123,58 @@ function isNotFound(error: unknown): boolean {
 
 let storage: WebObjectStorage | undefined;
 
+export class DatabaseWebObjectStorage implements WebObjectStorage {
+  readonly keyPrefix: string;
+  constructor(
+    private readonly pool: Pool,
+    private readonly origin: string,
+    private readonly secret: string,
+    private readonly legacy: () => WebObjectStorage,
+    backend: "database" | "s3" = "database",
+  ) {
+    this.keyPrefix = backend === "database" ? "database/" : "";
+  }
+
+  async createQuarantineUpload(
+    key: string,
+    input: { contentType: string; sizeBytes: number; checksumSha256: string },
+  ): Promise<UploadGrant> {
+    if (!isDatabaseFile(key)) return this.legacy().createQuarantineUpload(key, input);
+    const grant = signContentGrant(this.secret, this.origin, key, "PUT");
+    return {
+      uploadUrl: grant.url,
+      expiresAt: grant.expiresAt,
+      requiredHeaders: { "content-type": input.contentType },
+    };
+  }
+  async inspectQuarantine(key: string) {
+    return isDatabaseFile(key)
+      ? inspectDatabaseContent(this.pool, key)
+      : this.legacy().inspectQuarantine(key);
+  }
+  async createPrivateDownload(key: string) {
+    return isDatabaseFile(key)
+      ? signContentGrant(this.secret, this.origin, key, "GET")
+      : this.legacy().createPrivateDownload(key);
+  }
+}
+
 export function getObjectStorage(): WebObjectStorage {
   if (storage) return storage;
   const env = loadServerEnv();
-  storage = new S3WebObjectStorage(
-    createStorageClient(env),
-    env.S3_QUARANTINE_BUCKET,
-    env.S3_PRIVATE_BUCKET,
-    createStorageClient(env, true),
+  const legacy = () =>
+    new S3WebObjectStorage(
+      createStorageClient(env),
+      env.S3_QUARANTINE_BUCKET,
+      env.S3_PRIVATE_BUCKET,
+      createStorageClient(env, true),
+    );
+  storage = new DatabaseWebObjectStorage(
+    getDatabase().pool,
+    env.BETTER_AUTH_URL,
+    env.BETTER_AUTH_SECRET,
+    legacy,
+    env.FILE_STORAGE_BACKEND,
   );
   return storage;
 }

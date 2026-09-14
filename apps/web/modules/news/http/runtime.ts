@@ -40,15 +40,16 @@ export const newsRoutes = createNewsRoutes({
         id,
         input,
       ),
-    cancel: async (context, id, actionId) =>
-      cancelNewsAction(await getNewsPayload(), context, id, actionId),
-    retry: async (context, id, actionId) =>
+    cancel: async (context, id, actionId, input) =>
+      cancelNewsAction(await getNewsPayload(), context, id, actionId, input),
+    retry: async (context, id, actionId, input) =>
       retryNewsAction(
         await getNewsPayload(),
         pgBossNewsActionEnqueuer(await getJobQueue()),
         context,
         id,
         actionId,
+        input,
       ),
     publication: async (actor, id) => {
       const payload = await getNewsPayload();

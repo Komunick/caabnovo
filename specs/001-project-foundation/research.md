@@ -270,3 +270,28 @@ a texto livre, senha ou busca mista. Sem novas dependências.
 ## JPG nos seletores — 14/09/2026
 
 A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept) recomenda combinar identificadores de extensão e MIME; o atributo orienta a seleção, sem validar conteúdo. A [propriedade Blob.type](https://developer.mozilla.org/en-US/docs/Web/API/Blob/type) depende da identificação do navegador. Decisão: listar `.jpg,.jpeg,.png` junto aos MIME existentes, explicitar JPG na interface e preservar a inspeção efetiva do servidor. JPEG já é reconhecido pelo pipeline como `image/jpeg`, com ambas as extensões; nenhum novo formato binário ou permissão é introduzido.
+
+## Pesquisa: justificativas e auditoria — 14/09/2026
+
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação
+  independe de texto de justificativa do operador.
+- OWASP Input Validation: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+  Validar no servidor antes da mutação, incluindo texto vazio após trim.
+- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis
+  associados aos campos necessários à ação atual.
+
+A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
+Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+
+## Conteúdo binário no PostgreSQL — 14/09/2026
+
+Fontes oficiais: [bytea](https://www.postgresql.org/docs/18/datatype-binary.html),
+[TOAST](https://www.postgresql.org/docs/18/storage-toast.html) e
+[OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
+Decisão: bytes parametrizados em bytea, tabela própria no mesmo banco, sem base64 persistido.
+TOAST administra valores grandes; listagens seguem consultando apenas metadados. Manter
+limite de upload, assinatura/MIME e antivírus, autorização e URLs temporárias. Armazenar no
+banco simplifica a infraestrutura por decisão do usuário, mas aumenta o volume de backup/WAL;
+não foi realizado dimensionamento da VM. Backups precisam incluir a nova tabela e a restauração
+deve verificar hashes. Guia local Next consultado: route handlers aceitam Request/Response e PUT.

@@ -18,4 +18,9 @@ export interface OabLookupResult {
   checkedAt: string;
   status: "regular" | "irregular" | "unknown" | "not_found";
   name: string | null;
+  cpf: string | null;
+  delinquent: boolean | null;
+  detail: string | null;
+  subsection: string | null;
+  commitmentDate: string | null;
 }

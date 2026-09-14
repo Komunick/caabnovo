@@ -687,7 +687,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/VersionCommand"
+              $ref: "#/components/schemas/ChangeCommand"
       responses:
         "200":
           description: Success
@@ -1490,6 +1490,12 @@ paths:
           schema:
             type: string
             minLength: 32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActionChange"
       responses:
         "200":
           description: Success
@@ -1591,6 +1597,12 @@ paths:
           schema:
             type: string
             minLength: 32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActionChange"
       responses:
         "200":
           description: Success
@@ -2050,6 +2062,8 @@ components:
       type: object
       additionalProperties: false
       properties:
+        justification:
+          $ref: "#/components/schemas/ChangeJustification"
         expectedVersion:
           type: integer
           minimum: 1
@@ -2059,6 +2073,7 @@ components:
         body:
           $ref: "#/components/schemas/Body"
       required:
+        - justification
         - expectedVersion
         - metadata
         - body
@@ -2076,6 +2091,8 @@ components:
       type: object
       additionalProperties: false
       properties:
+        justification:
+          $ref: "#/components/schemas/ChangeJustification"
         expectedVersion:
           type: integer
           minimum: 1
@@ -2084,6 +2101,7 @@ components:
           type: string
           format: uuid
       required:
+        - justification
         - expectedVersion
         - versionId
     News:
@@ -2253,6 +2271,8 @@ components:
       type: object
       additionalProperties: false
       properties:
+        justification:
+          $ref: "#/components/schemas/ChangeJustification"
         expectedVersion:
           type: integer
           minimum: 1
@@ -2267,6 +2287,7 @@ components:
               - site
               - app
       required:
+        - justification
         - expectedVersion
         - channels
     ScheduleNews:
@@ -2618,3 +2639,26 @@ components:
         - items
         - page
         - hasNextPage
+    ChangeJustification:
+      type: string
+      minLength: 3
+      maxLength: 1000
+      description: Operator reason, required after trimming whitespace; recorded in audit.
+    ChangeCommand:
+      type: object
+      additionalProperties: false
+      required: [expectedVersion, justification]
+      properties:
+        expectedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        justification:
+          $ref: "#/components/schemas/ChangeJustification"
+    ActionChange:
+      type: object
+      additionalProperties: false
+      required: [justification]
+      properties:
+        justification:
+          $ref: "#/components/schemas/ChangeJustification"

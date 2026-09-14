@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { loadServerEnv } from "./env";
 
 const environment = {
+  FILE_STORAGE_BACKEND: "s3",
   DATABASE_URL: "postgresql://synthetic:synthetic@database:5432/test",
   BETTER_AUTH_SECRET: "synthetic-test-secret-at-least-32-characters",
   BETTER_AUTH_URL: "https://panel.example.test",
@@ -17,6 +18,24 @@ const environment = {
 };
 
 describe("deployed environment", () => {
+  it("defaults new files to the application database without S3 configuration", () => {
+    const source = Object.fromEntries(
+      Object.entries(environment).filter(
+        ([key]) => !key.startsWith("S3_") && key !== "FILE_STORAGE_BACKEND",
+      ),
+    );
+    expect(loadServerEnv(source).FILE_STORAGE_BACKEND).toBe("database");
+    expect(() => loadServerEnv({ ...source, FILE_STORAGE_BACKEND: "s3" })).toThrow();
+  });
+  it("does not require a browser S3 host when new uploads use the panel", () => {
+    expect(
+      loadServerEnv({
+        ...environment,
+        FILE_STORAGE_BACKEND: "database",
+        S3_PUBLIC_ENDPOINT: undefined,
+      }),
+    ).toBeDefined();
+  });
   it("allows private service addresses and a separate browser storage endpoint", () => {
     expect(loadServerEnv(environment)).toMatchObject({
       S3_ENDPOINT: "http://storage:9000",

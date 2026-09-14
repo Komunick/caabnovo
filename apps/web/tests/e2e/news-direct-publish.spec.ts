@@ -1,3 +1,4 @@
+import { justifyNewsChange } from "./news-justification";
 import { spawn, type ChildProcess } from "node:child_process";
 import { resolve } from "node:path";
 import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
@@ -96,6 +97,7 @@ for (const media of ["cover", "body", "none"] as const) {
       .getByRole("group", { name: "Destinos da ação" })
       .getByLabel("Site", { exact: true })
       .check();
+    await justifyNewsChange(page);
     await page.getByRole("button", { name: "Publicar agora", exact: true }).click();
     if (media === "none") {
       let publications = 0;
@@ -108,6 +110,7 @@ for (const media of ["cover", "body", "none"] as const) {
           ? route.fulfill({ status: 503, contentType: "application/json", body: "{}" })
           : route.continue(),
       );
+      await justifyNewsChange(page);
       await page
         .getByRole("dialog")
         .getByRole("button", { name: "Confirmar", exact: true })
@@ -119,8 +122,10 @@ for (const media of ["cover", "body", "none"] as const) {
       await expect(page.getByLabel("Título", { exact: true })).toHaveValue(title);
       expect(publications).toBe(0);
       await page.unroute("**/api/v1/news");
+      await justifyNewsChange(page);
       await page.getByRole("button", { name: "Publicar agora", exact: true }).click();
     }
+    await justifyNewsChange(page);
     await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
     await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 60000 });
     id = page.url().split("/").at(-1)!;

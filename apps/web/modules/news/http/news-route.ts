@@ -4,6 +4,8 @@ import {
   idSchema,
   newsListQuerySchema,
   newsVersionCommandSchema,
+  newsChangeCommandSchema,
+  newsActionChangeSchema,
   restoreNewsRevisionRequestSchema,
   updateNewsDraftRequestSchema,
   publishNewsRequestSchema,
@@ -33,8 +35,18 @@ interface NewsRouteDependencies {
     publish(context: NewsCommandContext, id: string, input: unknown): Promise<NewsRecord>;
     unpublish(context: NewsCommandContext, id: string, input: unknown): Promise<NewsRecord>;
     schedule(context: NewsCommandContext, id: string, input: unknown): Promise<unknown>;
-    cancel(context: NewsCommandContext, id: string, actionId: string): Promise<unknown>;
-    retry(context: NewsCommandContext, id: string, actionId: string): Promise<unknown>;
+    cancel(
+      context: NewsCommandContext,
+      id: string,
+      actionId: string,
+      input: unknown,
+    ): Promise<unknown>;
+    retry(
+      context: NewsCommandContext,
+      id: string,
+      actionId: string,
+      input: unknown,
+    ): Promise<unknown>;
     create(context: NewsCommandContext, input: unknown): Promise<NewsRecord>;
     get(actor: RequestActor, id: string): Promise<NewsRecord>;
     list(actor: RequestActor, query: unknown): ReturnType<typeof listNewsDrafts>;
@@ -165,7 +177,12 @@ export function createNewsRoutes(deps: NewsRouteDependencies) {
       respond(request, async (context) => {
         validateMutationRequest(request);
         return Response.json(
-          await deps.service[action](context, idSchema.parse(id), idSchema.parse(actionId)),
+          await deps.service[action](
+            context,
+            idSchema.parse(id),
+            idSchema.parse(actionId),
+            newsActionChangeSchema.parse(await readJson(request)),
+          ),
         );
       }),
     media: (request: Request, id: string) =>
@@ -226,7 +243,9 @@ export function createNewsRoutes(deps: NewsRouteDependencies) {
         const input =
           action === "restore"
             ? restoreNewsRevisionRequestSchema.parse(body)
-            : newsVersionCommandSchema.parse(body);
+            : (action === "archive" ? newsChangeCommandSchema : newsVersionCommandSchema).parse(
+                body,
+              );
         const result = await deps.service[action](
           { ...context, idempotencyKey: idempotencyKey ?? undefined },
           idSchema.parse(id),

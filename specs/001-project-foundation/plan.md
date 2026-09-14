@@ -23,8 +23,8 @@ demais domínios fora do escopo até suas próprias especificações.
 Tailwind CSS, shadcn/ui, Radix UI, Lucide React, OpenTelemetry JS e cliente S3-compatible; versões
 patch serão fixadas pelo lockfile e atualizadas somente por PR
 
-**Storage**: PostgreSQL 18 para dados operacionais, permissões, jobs e auditoria; object storage
-S3-compatible para arquivos; bucket/prefixo privado de quarentena separado do conteúdo liberado
+**Storage**: PostgreSQL 18 para dados operacionais, permissões, jobs, auditoria e arquivos bytea;
+S3-compatible para legado; chave privada de quarentena separada do conteúdo liberado
 
 **Testing**: Vitest para unidade/integração, Testcontainers com PostgreSQL real, Playwright para E2E,
 `@axe-core/playwright` mais revisão manual WCAG, testes de contrato OpenAPI e scanners de
@@ -226,3 +226,23 @@ acessibilidade e CI; compor preview 3107 após validação isolada, sem seed rea
 ## Complemento JPG — 14/09/2026
 
 Compartilhar constantes de seleção de imagens/documentos nos contratos e aplicá-las a fotos de Associados, documentos, capas e imagens do corpo das Notícias. Anexos de contratos consomem a mesma constante no PR #18. Validar JPEG real em upload e inspeção, preservando PNG e rejeição de conteúdo incompatível.
+
+## Plano da padronização de justificativas — 14/09/2026
+
+1. Atualizar contratos de criação/alteração e registrar a distinção no serviço e auditoria.
+2. Ajustar formulários e mensagens; manter ações sensíveis, permissões e concorrência.
+3. Cobrir contratos negativos, criação sem motivo e motivo persistido em integração/E2E.
+4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
+   navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
+   regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.
+
+## Armazenamento PostgreSQL — 14/09/2026
+
+Adicionar tabela de conteúdo bytea ligada a stored_file; manter metadados separados das
+listagens. Prefixar novas chaves com database/ para selecionar o backend por arquivo,
+inclusive após troca de configuração. Implementar grants HMAC com prazo de cinco minutos,
+rota binária com leitura limitada e confirmação transacional de estado/checksum, adaptadores
+web/worker e exportação no banco. Reaproveitar autorização e inspeção existentes.
+Fornecer cópia S3 → PostgreSQL com verificação de tamanho/hash, sem apagar origem e sem
+mudar IDs/vínculos. Validar migração, concorrência, grants, uploads, publicação e downloads
+no CI sem S3 para arquivos novos; manter testes legados do adaptador S3.

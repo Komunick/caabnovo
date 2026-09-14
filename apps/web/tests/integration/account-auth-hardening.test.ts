@@ -276,6 +276,7 @@ describe.sequential("account authentication boundaries", () => {
     await changeAccountSettings(database.pool, {
       actor: { userId: user.id, sessionId: session.id, permissions: new Set(), mfaVerified: false },
       input: {
+        justification: "Alteração sintética autorizada",
         action: "password",
         currentPassword: password,
         newPassword,

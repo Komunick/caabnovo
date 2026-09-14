@@ -156,3 +156,16 @@ publicação. O executor permanece pg-boss existente; não habilitamos um segund
 
 A indicação anterior de esbuild incompatível foi resolvida com override específico de
 drizzle-kit>esbuild 0.28.2, comprovado por peers sem erros e geração offline de migration.
+
+## Pesquisa: justificativas e auditoria — 14/09/2026
+
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação
+  independe de texto de justificativa do operador.
+- OWASP Input Validation: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+  Validar no servidor antes da mutação, incluindo texto vazio após trim.
+- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis
+  associados aos campos necessários à ação atual.
+
+A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
+Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.

@@ -37,18 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      S3_SECRET_KEY: replace-me-local-only
+      FILE_STORAGE_BACKEND: database
       DATABASE_URL: postgresql://caab_runtime:change-me-runtime@127.0.0.1:5432/caab
       BETTER_AUTH_SECRET: e2e-only-secret-with-at-least-32-characters
       BETTER_AUTH_URL: http://localhost:3000
       MAIL_MODE: local
       SMTP_HOST: 127.0.0.1
       SMTP_PORT: 1025
-      S3_ENDPOINT: http://127.0.0.1:9000
-      S3_ACCESS_KEY: caab-local
-      S3_QUARANTINE_BUCKET: caab-quarantine
-      S3_PRIVATE_BUCKET: caab-private
-      S3_PUBLIC_BUCKET: caab-public
       CLAMAV_HOST: 127.0.0.1
       OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
     services:
@@ -85,15 +80,22 @@ jobs:
             sudo mv /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.list.disabled
           fi
       - run: pnpm exec playwright install --with-deps chromium
-      - name: Start storage and antivirus for editorial media
+      - name: Start antivirus for database media
         run: |
-          docker compose up -d --wait storage clamav
-          docker compose run --rm storage-init
+          docker compose up -d --wait clamav
       - name: Prepare synthetic accounts and start upload worker
         run: |
           pnpm db:seed:dev
           pnpm dev:worker > /tmp/caab-e2e-worker.log 2>&1 &
       - run: pnpm test:e2e --project=chromium
+      - name: Preserve synthetic OAB screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: oab-result-synthetic-screenshots
+          path: apps/web/test-results/**/oab-result-*.png
+          retention-days: 7
+          if-no-files-found: warn
       - run: pnpm test:a11y --project=chromium
 
   security:

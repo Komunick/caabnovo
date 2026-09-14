@@ -31,11 +31,7 @@ async function signIn(page: Page, administrator = true) {
 async function create(page: Page, name: string) {
   await page.goto("/members/new");
   await keyboardType(page, page.getByLabel("Nome completo"), name);
-  await keyboardType(
-    page,
-    page.getByLabel("Motivo do cadastro ou alteração"),
-    "Cadastro sintético de teste",
-  );
+  await expect(page.getByLabel("Motivo da alteração", { exact: true })).toHaveCount(0);
   await keyboardActivate(page, page.getByRole("button", { name: "Criar cadastro" }));
   await expect(page).toHaveURL(/\/members\/[0-9a-f-]+$/);
   await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
@@ -113,7 +109,7 @@ test("administrator manages people, relationships, independent assessments and a
   await keyboardActivate(page, page.getByRole("button", { name: "Buscar pessoa", exact: true }));
   await expect(page.getByLabel("Pessoa encontrada")).toBeVisible();
   await keyboardType(page, page.getByLabel("Relação declarada"), "Vínculo sintético");
-  await keyboardType(page, page.getByLabel("Justificativa do vínculo"), "Documento de teste");
+  await expect(page.getByLabel("Justificativa do vínculo")).toHaveCount(0);
   await keyboardActivate(page, page.getByRole("button", { name: "Vincular dependente" }));
   await expect(page.getByRole("link", { name: dependent, exact: true })).toBeVisible();
   await keyboardActivate(page, page.getByRole("button", { name: "Situações", exact: true }));
@@ -139,7 +135,7 @@ test("administrator manages people, relationships, independent assessments and a
   await keyboardType(page, page.getByLabel("Nome completo"), `${name} corrigido`);
   await keyboardType(
     page,
-    page.getByLabel("Motivo do cadastro ou alteração"),
+    page.getByLabel("Motivo da alteração"),
     "Correção de identificação sintética",
   );
   await keyboardActivate(page, page.getByRole("button", { name: "Salvar cadastro" }));
@@ -289,7 +285,7 @@ test("documents use real upload, scan, review, replacement and private download"
   }
   await upload("documento.png");
   await page.getByLabel("Categoria do documento", { exact: true }).fill("Identificação sintética");
-  await page.getByLabel("Motivo do envio ou substituição").fill("Documento de teste");
+  await expect(page.getByLabel("Motivo da substituição")).toHaveCount(0);
   await page.getByRole("button", { name: "Anexar documento", exact: true }).click();
   await expect(
     page.getByRole("link", { name: "Abrir documento Identificação sintética" }),
@@ -308,6 +304,7 @@ test("documents use real upload, scan, review, replacement and private download"
   await expect(documentCard).toContainText(/Identificação sintética\s*·\s*Correção solicitada/);
   await upload("substituto.jpg");
   await page.getByLabel("Documento substituído (opcional)").selectOption({ index: 1 });
+  await page.getByLabel("Motivo da substituição").fill("Substituição sintética autorizada");
   await page.getByRole("button", { name: "Anexar documento", exact: true }).click();
   await expect(
     page.getByRole("link", { name: "Abrir documento Identificação sintética" }),

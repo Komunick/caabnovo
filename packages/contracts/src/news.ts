@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { idSchema, isoDateTimeSchema } from "./common";
+import { idSchema, isoDateTimeSchema, changeJustificationSchema } from "./common";
 import { emptyNewsBody, newsBodySchema } from "./news-body";
 
 export const newsChannelSchema = z.enum(["site", "app"]);
@@ -44,13 +44,19 @@ export const createNewsDraftRequestSchema = z.strictObject({
 
 // Full metadata replacement, not PATCH: omitted metadata fields reset to draft defaults.
 export const updateNewsDraftRequestSchema = z.strictObject({
+  justification: changeJustificationSchema,
   expectedVersion: versionSchema,
   metadata: newsDraftMetadataSchema,
   body: newsBodySchema,
 });
 
 export const newsVersionCommandSchema = z.strictObject({ expectedVersion: versionSchema });
+export const newsChangeCommandSchema = newsVersionCommandSchema.extend({
+  justification: changeJustificationSchema,
+});
+export const newsActionChangeSchema = z.strictObject({ justification: changeJustificationSchema });
 export const restoreNewsRevisionRequestSchema = z.strictObject({
+  justification: changeJustificationSchema,
   expectedVersion: versionSchema,
   versionId: idSchema,
 });
@@ -71,6 +77,7 @@ export const newsListQuerySchema = z.strictObject({
 export const publicNewsQuerySchema = newsListQuerySchema.pick({ page: true, search: true });
 
 export const publishNewsRequestSchema = z.strictObject({
+  justification: changeJustificationSchema,
   expectedVersion: versionSchema,
   channels: channelsSchema.refine((channels) => channels.length > 0, {
     message: "Selecione ao menos um canal.",

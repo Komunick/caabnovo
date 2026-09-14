@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { requiredEmailSchema } from "./brazilian-contact";
-import { idSchema, nonEmptyReasonSchema, pageSchema, paginationQuerySchema } from "./common";
+import {
+  creationJustificationSchema,
+  idSchema,
+  nonEmptyReasonSchema,
+  pageSchema,
+  paginationQuerySchema,
+} from "./common";
 import { currentUserSchema, userStatusSchema } from "./auth";
 
 export const userSchema = currentUserSchema.omit({ permissions: true });
@@ -17,7 +23,7 @@ export const createUserRequestSchema = z
     email: requiredEmailSchema,
     name: z.string().trim().min(1).max(160),
     roleIds: z.array(idSchema),
-    justification: nonEmptyReasonSchema,
+    justification: creationJustificationSchema,
   })
   .strict()
   .refine(({ roleIds }) => new Set(roleIds).size === roleIds.length, {

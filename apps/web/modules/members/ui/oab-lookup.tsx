@@ -137,13 +137,60 @@ export function OabLookup({
       {result && (
         <section className={styles.card} aria-labelledby="oab-result-title">
           <h3 id="oab-result-title">Resultado da consulta</h3>
-          <p>
-            <strong>{statusLabels[result.status]}</strong>
-          </p>
-          {result.name && <p>{result.name}</p>}
-          <p>
-            OAB {result.number}/{result.state}
-          </p>
+          {result.status !== "not_found" ? (
+            <dl className={`${styles.grid} ${styles.lookupDetails}`}>
+              <div className={styles.lookupName}>
+                <dt>Nome</dt>
+                <dd>
+                  <strong>{result.name || "Não informado"}</strong>
+                </dd>
+              </div>
+              <div>
+                <dt>CPF</dt>
+                <dd>{result.cpf || "Não informado"}</dd>
+              </div>
+              <div>
+                <dt>Situação regular</dt>
+                <dd>
+                  <strong>
+                    {result.status === "regular"
+                      ? "Sim"
+                      : result.status === "irregular"
+                        ? "Não"
+                        : "Não informada"}
+                  </strong>
+                </dd>
+              </div>
+              <div>
+                <dt>Inadimplente</dt>
+                <dd>
+                  <strong>
+                    {result.delinquent === true
+                      ? "Sim"
+                      : result.delinquent === false
+                        ? "Não"
+                        : "Não informado"}
+                  </strong>
+                </dd>
+              </div>
+              <div>
+                <dt>Detalhe</dt>
+                <dd>{result.detail || "Não informado"}</dd>
+              </div>
+              <div>
+                <dt>Subseção</dt>
+                <dd>{result.subsection || "Não informada"}</dd>
+              </div>
+              <div>
+                <dt>Data de compromisso</dt>
+                <dd>{result.commitmentDate || "Não informada"}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p>
+              <strong>{statusLabels[result.status]}</strong>
+            </p>
+          )}
           {result.status === "not_found" && (
             <p>
               Confira o número informado. A ausência de registro não significa que a inscrição

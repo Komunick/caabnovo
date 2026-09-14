@@ -82,3 +82,12 @@ Correção de proxy (10/09/2026): centralizar a comparação de origem em
 `modules/shared/mutation-origin.ts`, usando a mesma URL pública da autenticação. Aplicar aos
 validadores de Notícias/Usuários, Arquivos e Auditoria. Cobrir criação/edição de rascunhos com
 URL interna e rejeição de origens externas, preservando CSRF e idempotência. Sem migration.
+
+## Plano da padronização de justificativas — 14/09/2026
+
+1. Atualizar contratos de criação/alteração e registrar a distinção no serviço e auditoria.
+2. Ajustar formulários e mensagens; manter ações sensíveis, permissões e concorrência.
+3. Cobrir contratos negativos, criação sem motivo e motivo persistido em integração/E2E.
+4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
+   navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
+   regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.

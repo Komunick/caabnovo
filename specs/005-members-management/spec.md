@@ -72,7 +72,7 @@ CPF inválido/duplicado, inscrição OAB duplicada, dependência circular, vínc
 - **FR-012**: Exibir todas as revisões documentais anteriores com autor, data e motivo. Substituição não herda aprovação. Histórico contextual inclui mudanças de vínculos vistas tanto pelo titular quanto pelo dependente.
 - **FR-013**: Credencial nesta entrega registra situação e validade de evidência apresentada. Não emite cartão, QR ou prova de autenticidade. Emissão verificável permanece extensão da mesma spec, dependente de definição institucional de emissor, campos, prazo e revogação.
 - **FR-014**: Oferecer a aba Consulta OAB dentro de Associados, acessível com permissão de consulta, para buscar uma inscrição avulsa sem criar pessoa; permitir acesso à mesma consulta pelo cadastro, usando a inscrição armazenada. A integração cobre somente números de advogados da OAB/BA, com 1–6 dígitos e valor maior que zero; validar no campo e no servidor. Inscrição ausente, de outra UF, de estagiário, suplementar ou com letras deve receber orientação explícita de conferência manual, sem consulta a uma identidade presumida.
-- **FR-015**: Distinguir regular, irregular, situação desconhecida e inscrição não encontrada. Mostrar fonte e data da consulta; não exibir CPF, informações financeiras ou resposta bruta. Falta de configuração, recusa de credenciais, indisponibilidade, demora e resposta inválida recebem mensagens próprias e permitem nova tentativa. Nenhuma falha equivale a inscrição irregular.
+- **FR-015**: Distinguir regular, irregular, situação desconhecida e inscrição não encontrada. Mostrar nome, CPF, situação regular, inadimplência, detalhe, subseção e data de compromisso, conforme seleção autorizada em 14/09/2026, além da fonte e data da consulta. Não repetir a OAB digitada nem exibir resposta bruta, pagamento total do exercício ou data de inadimplência. Falta de configuração, recusa de credenciais, indisponibilidade, demora e resposta inválida recebem mensagens próprias e permitem nova tentativa. Nenhuma falha equivale a inscrição irregular.
 - **FR-016**: Proteger a consulta no servidor, registrar início e conclusão/falha sem copiar dados desnecessários, limitar consultas repetidas e revalidar sessão, permissão e identificação após a espera. Não entregar resultados se o acesso foi revogado ou a identificação mudou. A consulta não altera cadastro, avaliações, elegibilidade nem créditos; esses continuam exigindo sua decisão própria.
 
 ### Ativação e bloqueio administrativo — 10/09/2026
@@ -189,3 +189,35 @@ Telefone aceita DDD + oito ou nove dígitos; dados legados não são regravados 
 ## Campos — 14/09/2026
 
 OAB: todos os campos específicos aceitam apenas 0–9, até seis dígitos; servidor valida o mesmo formato. Busca mista preservada e registros antigos não são reescritos em lote.
+
+## Justificativas de criação e alteração — 14/09/2026
+
+Decisão expressa do usuário: cadastros novos dispensam motivo; alterações de registros
+existentes exigem justificativa informada pelo operador, validada no servidor e gravada
+na auditoria na mesma transação. Criação continua auditada, identificada como criação
+pelo servidor; não atribuir ao operador uma justificativa que ele não escreveu.
+
+Abrange Colaboradores, Associados (incluindo novos vínculos/documentos e substituições),
+Notícias e Configurações. Parceiros já segue o padrão. Primeira inclusão de foto é
+criação; substituição/remoção exige motivo verificado com o estado bloqueado no banco.
+Notícia nova, duplicação e novo agendamento dispensam motivo. Edição, recuperação,
+arquivamento, publicação/retirada e cancelamento/reenvio exigem motivo. Execução
+programada registra sua origem automática. Perfil, senha e solicitação de troca de
+e-mail em Configurações exigem motivo; confirmação por token conclui a solicitação já
+auditada. Login, recuperação de senha, leitura, filtros, tema e uploads técnicos não
+são alterações cadastrais. Preservar autorização, idempotência e controle de versão.
+
+Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
+recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
+mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+## Resultado da consulta OAB — revisão de 14/09/2026
+
+Decisão do usuário após consulta individual autorizada somente para leitura:
+- Exibir nome, CPF, situação regular, inadimplência, detalhe, subseção e data de compromisso.
+- Não repetir a OAB no resultado: ela já está no formulário. Não exibir pagamento total do exercício nem data de inadimplência.
+- Nome em destaque e demais informações em pares de rótulo/valor responsivos; regularidade e inadimplência são independentes.
+- Campo ausente/vazio ou situação desconhecida deve aparecer como não informado, sem inferir resposta negativa.
+- Preservar fonte, horário, ausência de registro, erros, permissões e a auditoria existente. Nenhum novo campo pessoal do retorno é persistido ou copiado para cadastro/avaliações.
+- Documentar os dez nomes de campos efetivamente retornados, com tipos e uso, sem inscrição, nome, CPF ou demais valores pessoais da consulta real.
+- Testes automatizados usam exclusivamente dados sintéticos e um provedor simulado; não repetir a consulta real.

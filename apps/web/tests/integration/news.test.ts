@@ -77,6 +77,39 @@ afterAll(async () => {
 });
 
 describe.sequential("news persistence with Payload", () => {
+  it("requires and atomically audits the reason for editing an existing draft", async () => {
+    const draft = await createNewsDraft(payload, context, {
+      metadata: { title: "Criação sem motivo" },
+      body: emptyNewsBody,
+    });
+    for (const justification of [undefined, "", "   "]) {
+      await expect(
+        updateNewsDraft(payload, context, draft.id, {
+          metadata: { title: "Recusado" },
+          body: emptyNewsBody,
+          expectedVersion: draft.revision,
+          justification,
+        }),
+      ).rejects.toThrow();
+    }
+    expect(await getNewsDraft(payload, context.actor, draft.id)).toMatchObject({
+      revision: 1,
+      metadata: { title: "Criação sem motivo" },
+    });
+    await updateNewsDraft(payload, context, draft.id, {
+      metadata: { title: "Atualizado" },
+      body: emptyNewsBody,
+      expectedVersion: 1,
+      justification: "Correção editorial aprovada",
+    });
+    const events = await admin.query(
+      "SELECT reason,actor_user_id FROM audit_event WHERE entity_id=$1 AND action='news.draft.updated'",
+      [draft.id],
+    );
+    expect(events.rows).toEqual([
+      { reason: "Correção editorial aprovada", actor_user_id: context.actor!.userId },
+    ]);
+  });
   it("enforces individual read, edit and publish permissions even with a stale actor", async () => {
     const article = await createNewsDraft(payload, context, {
       metadata: { title: "Consulta restrita", slug: `access-${crypto.randomUUID()}` },
@@ -96,7 +129,10 @@ describe.sequential("news persistence with Payload", () => {
         }),
       ).rejects.toMatchObject({ status: 403 });
       await expect(
-        archiveNews(payload, context, article.id, { expectedVersion: article.revision }),
+        archiveNews(payload, context, article.id, {
+          justification: "Alteração sintética autorizada",
+          expectedVersion: article.revision,
+        }),
       ).rejects.toMatchObject({ status: 403 });
       await admin.query(
         "UPDATE user_access SET permissions=ARRAY['news:read','news:write'] WHERE user_id=$1",
@@ -110,6 +146,7 @@ describe.sequential("news persistence with Payload", () => {
       ).resolves.toHaveProperty("id");
       await expect(
         publishNews(payload, context, article.id, {
+          justification: "Alteração sintética autorizada",
           expectedVersion: article.revision,
           channels: ["site"],
         }),
@@ -150,6 +187,7 @@ describe.sequential("news persistence with Payload", () => {
         body,
       });
       await publishNews(payload, context, draft.id, {
+        justification: "Alteração sintética autorizada",
         expectedVersion: 1,
         channels: index % 2 ? ["site", "app"] : ["app"],
       });
@@ -160,11 +198,15 @@ describe.sequential("news persistence with Payload", () => {
       publishedIds.push(draft.id);
     }
     await updateNewsDraft(payload, context, publishedIds[4]!, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       metadata: { title: "Alteração ainda privada" },
       body,
     });
-    await archiveNews(payload, context, publishedIds[5]!, { expectedVersion: 2 });
+    await archiveNews(payload, context, publishedIds[5]!, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 2,
+    });
     const unpublished = await createNewsDraft(payload, context, {
       metadata: { title: "Somente rascunho" },
     });
@@ -177,6 +219,7 @@ describe.sequential("news persistence with Payload", () => {
     // Leave the sequential suite's public catalogue clean.
     for (let index = 0; index < 5; index++) {
       await archiveNews(payload, context, publishedIds[index]!, {
+        justification: "Alteração sintética autorizada",
         expectedVersion: index === 4 ? 3 : 2,
       });
     }
@@ -213,7 +256,10 @@ describe.sequential("news persistence with Payload", () => {
     expect(await ids({ channel: "site", highlight: "no" })).toEqual([b.id]);
     expect(await ids({ cover: "yes" })).toEqual([]);
     expect(await ids({ category: "inexistente" })).toEqual([]);
-    await archiveNews(payload, context, a.id, { expectedVersion: 1 });
+    await archiveNews(payload, context, a.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 1,
+    });
     expect(await ids({ state: "archived", highlight: "yes" })).toEqual([a.id]);
     expect(await ids({ state: "active" })).toEqual([b.id]);
     expect(await ids({ collection: "drafts", state: "all" })).toHaveLength(2);
@@ -275,6 +321,7 @@ describe.sequential("news persistence with Payload", () => {
     const result = await Promise.allSettled(
       ["Primeira", "Segunda"].map((title) =>
         updateNewsDraft(payload, context, created.id, {
+          justification: "Alteração sintética autorizada",
           expectedVersion: 1,
           metadata: { title },
           body: emptyNewsBody,
@@ -342,6 +389,7 @@ describe.sequential("news persistence with Payload", () => {
       data: { _status: "published" },
     });
     const changed = await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata: { title: "Ainda em elaboração" },
       body: emptyNewsBody,
@@ -359,6 +407,7 @@ describe.sequential("news persistence with Payload", () => {
     try {
       await expect(
         updateNewsDraft(payload, context, created.id, {
+          justification: "Alteração sintética autorizada",
           expectedVersion: 1,
           metadata: { title: "Não deve salvar" },
           body: emptyNewsBody,
@@ -407,11 +456,13 @@ describe.sequential("news persistence with Payload", () => {
       data: { _status: "published" },
     });
     await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata: { title: "Segunda" },
       body: emptyNewsBody,
     });
     const restored = await restoreNewsRevision(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       versionId: original.id,
     });
@@ -422,6 +473,7 @@ describe.sequential("news persistence with Payload", () => {
     ).toEqual({ metadata_title: "Primeira", _status: "published" });
     await expect(
       restoreNewsRevision(payload, context, created.id, {
+        justification: "Alteração sintética autorizada",
         expectedVersion: 2,
         versionId: original.id,
       }),
@@ -429,6 +481,7 @@ describe.sequential("news persistence with Payload", () => {
     const other = await createNewsDraft(payload, context, { metadata: {} });
     await expect(
       restoreNewsRevision(payload, context, other.id, {
+        justification: "Alteração sintética autorizada",
         expectedVersion: 1,
         versionId: original.id,
       }),
@@ -445,19 +498,24 @@ describe.sequential("news persistence with Payload", () => {
       context: { newsActorVerified: true },
       data: { _status: "published" },
     });
-    const archived = await archiveNews(payload, context, created.id, { expectedVersion: 1 });
+    const archived = await archiveNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 1,
+    });
     expect(archived).toMatchObject({ archived: true, revision: 2 });
     expect(
       (await admin.query("SELECT archived,_status FROM news WHERE id=$1", [created.id])).rows[0],
     ).toEqual({ archived: true, _status: "draft" });
     await expect(
       updateNewsDraft(payload, context, created.id, {
+        justification: "Alteração sintética autorizada",
         expectedVersion: 2,
         metadata: {},
         body: emptyNewsBody,
       }),
     ).rejects.toMatchObject({ code: "NEWS_ARCHIVED" });
     const restored = await restoreNewsRevision(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       versionId: original.id,
     });
@@ -475,7 +533,10 @@ describe.sequential("news persistence with Payload", () => {
     await admin.query("REVOKE INSERT ON audit_event FROM caab_runtime");
     try {
       await expect(
-        archiveNews(payload, context, created.id, { expectedVersion: 1 }),
+        archiveNews(payload, context, created.id, {
+          justification: "Alteração sintética autorizada",
+          expectedVersion: 1,
+        }),
       ).rejects.toThrow();
     } finally {
       await admin.query("GRANT INSERT ON audit_event TO caab_runtime");
@@ -490,7 +551,10 @@ describe.sequential("news persistence with Payload", () => {
     const title = `Filtro ${crypto.randomUUID()}`;
     const created = await createNewsDraft(payload, context, { metadata: { title } });
     const original = (await listNewsVersions(payload, context.actor, created.id)).items[0]!;
-    await archiveNews(payload, context, created.id, { expectedVersion: 1 });
+    await archiveNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 1,
+    });
     expect((await listNewsDrafts(payload, context.actor, { search: title })).items).toHaveLength(0);
     expect(
       (
@@ -498,6 +562,7 @@ describe.sequential("news persistence with Payload", () => {
       ).items.map((item) => item.id),
     ).toEqual([created.id]);
     await restoreNewsRevision(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       versionId: original.id,
     });
@@ -565,6 +630,7 @@ describe.sequential("news persistence with Payload", () => {
       [fileId, created.id, context.actor!.userId],
     );
     const input = {
+      justification: "Atualização editorial sintética",
       expectedVersion: 1,
       metadata: { cover: { fileId, alt: "Descrição" } },
       body: emptyNewsBody,
@@ -604,6 +670,7 @@ describe.sequential("news persistence with Payload", () => {
       body,
     });
     const published = await publishNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       channels: ["app"],
     });
@@ -612,6 +679,7 @@ describe.sequential("news persistence with Payload", () => {
       getNewsDeliverySnapshot(payload, context.actor, created.id, "site"),
     ).rejects.toMatchObject({ status: 404 });
     await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       metadata: { title: "Rascunho privado" },
       body,
@@ -653,7 +721,10 @@ describe.sequential("news persistence with Payload", () => {
         })
       ).items,
     ).toEqual([]);
-    await archiveNews(payload, context, created.id, { expectedVersion: 3 });
+    await archiveNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 3,
+    });
     expect(
       (
         await listNewsDrafts(payload, context.actor, { collection: "published", state: "archived" })
@@ -667,7 +738,11 @@ describe.sequential("news persistence with Payload", () => {
   it("refuses incomplete content and unsafe media and rolls publication back on audit failure", async () => {
     const created = await createNewsDraft(payload, context, { metadata: {} });
     await expect(
-      publishNews(payload, context, created.id, { expectedVersion: 1, channels: ["site"] }),
+      publishNews(payload, context, created.id, {
+        justification: "Alteração sintética autorizada",
+        expectedVersion: 1,
+        channels: ["site"],
+      }),
     ).rejects.toMatchObject({ code: "NEWS_NOT_READY" });
     await expect(
       getNewsDeliverySnapshot(payload, context.actor, created.id, "app"),
@@ -686,6 +761,7 @@ describe.sequential("news persistence with Payload", () => {
       },
     };
     await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata: { title: "Rollback publicação", slug: `rollback-${crypto.randomUUID()}` },
       body,
@@ -693,7 +769,11 @@ describe.sequential("news persistence with Payload", () => {
     await admin.query("REVOKE INSERT ON audit_event FROM caab_runtime");
     try {
       await expect(
-        publishNews(payload, context, created.id, { expectedVersion: 2, channels: ["site"] }),
+        publishNews(payload, context, created.id, {
+          justification: "Alteração sintética autorizada",
+          expectedVersion: 2,
+          channels: ["site"],
+        }),
       ).rejects.toThrow();
     } finally {
       await admin.query("GRANT INSERT ON audit_event TO caab_runtime");
@@ -713,6 +793,7 @@ describe.sequential("news persistence with Payload", () => {
       { ...context, actor: { ...context.actor!, permissions: new Set(["files:read"]) } },
       created.id,
       {
+        justification: "Alteração sintética autorizada",
         expectedVersion: 2,
         metadata: {
           title: "Imagem bloqueada",
@@ -724,6 +805,7 @@ describe.sequential("news persistence with Payload", () => {
     );
     await expect(
       publishNews(payload, context, created.id, {
+        justification: "Alteração sintética autorizada",
         expectedVersion: draft.revision,
         channels: ["app", "site"],
       }),
@@ -751,7 +833,12 @@ describe.sequential("news persistence with Payload", () => {
         ],
       },
     };
-    const input = { expectedVersion: 1, metadata: {}, body };
+    const input = {
+      expectedVersion: 1,
+      justification: "Atualização editorial sintética",
+      metadata: {},
+      body,
+    };
     await expect(
       createNewsDraft(payload, mediaContext, { metadata: {}, body }),
     ).rejects.toMatchObject({ status: 422 });
@@ -770,6 +857,7 @@ describe.sequential("news persistence with Payload", () => {
     });
     expect(duplicate.body.root.children).toEqual([]);
     await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       metadata: {},
       body: emptyNewsBody,
@@ -777,6 +865,7 @@ describe.sequential("news persistence with Payload", () => {
     expect(
       (
         await restoreNewsRevision(payload, context, created.id, {
+          justification: "Alteração sintética autorizada",
           expectedVersion: 3,
           versionId: historical.id,
         })
@@ -804,15 +893,25 @@ describe.sequential("news persistence with Payload", () => {
     };
     const metadata = { title: "Imagem editorial", slug: `imagem-${crypto.randomUUID()}` };
     await updateNewsDraft(payload, mediaContext, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata,
       body,
     });
     await expect(
-      publishNews(payload, context, created.id, { expectedVersion: 2, channels: ["app"] }),
+      publishNews(payload, context, created.id, {
+        justification: "Alteração sintética autorizada",
+        expectedVersion: 2,
+        channels: ["app"],
+      }),
     ).rejects.toMatchObject({ code: "NEWS_NOT_READY" });
     body.root.children[0]!.alt = "Descrição da imagem";
-    await updateNewsDraft(payload, context, created.id, { expectedVersion: 2, metadata, body });
+    await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 2,
+      metadata,
+      body,
+    });
     for (const state of [
       "scan_result='infected'",
       "scan_result='clean',deleted_at=now()",
@@ -820,13 +919,18 @@ describe.sequential("news persistence with Payload", () => {
     ]) {
       await admin.query(`UPDATE stored_file SET ${state} WHERE id=$1`, [fileId]);
       await expect(
-        publishNews(payload, context, created.id, { expectedVersion: 3, channels: ["app"] }),
+        publishNews(payload, context, created.id, {
+          justification: "Alteração sintética autorizada",
+          expectedVersion: 3,
+          channels: ["app"],
+        }),
       ).rejects.toMatchObject({ code: "NEWS_NOT_READY" });
     }
     await admin.query("UPDATE stored_file SET status='available',scan_result='clean' WHERE id=$1", [
       fileId,
     ]);
     const published = await publishNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 3,
       channels: ["app"],
     });
@@ -875,6 +979,7 @@ describe.sequential("news persistence with Payload", () => {
       }),
     ).rejects.toMatchObject({ status: 409 });
     await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata: { title: "Edição posterior", slug: `posterior-${crypto.randomUUID()}` },
       body,
@@ -907,7 +1012,9 @@ describe.sequential("news persistence with Payload", () => {
       ).rowCount,
     ).toBe(1);
     await expect(
-      cancelNewsAction(payload, context, created.id, scheduled.id),
+      cancelNewsAction(payload, context, created.id, scheduled.id, {
+        justification: "Alteração sintética autorizada",
+      }),
     ).rejects.toMatchObject({ status: 409 });
   });
 
@@ -967,8 +1074,12 @@ describe.sequential("news persistence with Payload", () => {
       created.id,
       command,
     );
-    await cancelNewsAction(payload, context, created.id, first.id);
-    await cancelNewsAction(payload, context, created.id, first.id);
+    await cancelNewsAction(payload, context, created.id, first.id, {
+      justification: "Alteração sintética autorizada",
+    });
+    await cancelNewsAction(payload, context, created.id, first.id, {
+      justification: "Alteração sintética autorizada",
+    });
     expect((await runNewsAction(payload, jobs[0]!, new Date(Date.now() + 120000))).status).toBe(
       "cancelled",
     );
@@ -979,7 +1090,10 @@ describe.sequential("news persistence with Payload", () => {
       created.id,
       command,
     );
-    await archiveNews(payload, context, created.id, { expectedVersion: 1 });
+    await archiveNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 1,
+    });
     expect((await runNewsAction(payload, jobs[1]!, new Date(Date.now() + 120000))).status).toBe(
       "cancelled",
     );
@@ -1006,6 +1120,7 @@ describe.sequential("news persistence with Payload", () => {
       body,
     });
     await publishNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       channels: ["app", "site"],
     });
@@ -1028,6 +1143,7 @@ describe.sequential("news persistence with Payload", () => {
       },
     );
     await publishNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 2,
       channels: ["app", "site"],
     });
@@ -1035,7 +1151,11 @@ describe.sequential("news persistence with Payload", () => {
       "cancelled",
     );
     expect((await readPublicNews(payload, "app", created.id)).revision).toBe(3);
-    await unpublishNews(payload, context, created.id, { expectedVersion: 3, channels: ["app"] });
+    await unpublishNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
+      expectedVersion: 3,
+      channels: ["app"],
+    });
     await expect(readPublicNews(payload, "app", created.id)).rejects.toMatchObject({ status: 404 });
     expect((await readPublicNews(payload, "site", created.id)).revision).toBe(4);
     const latest = await getNewsDraft(payload, context.actor, created.id);
@@ -1076,6 +1196,7 @@ describe.sequential("news persistence with Payload", () => {
     });
     await expect(readPublicNews(payload, "app", created.id)).rejects.toMatchObject({ status: 404 });
     const published = await publishNews(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       channels: ["app"],
     });
@@ -1093,10 +1214,12 @@ describe.sequential("news persistence with Payload", () => {
     ).rejects.toMatchObject({ status: 404 });
     const replay = { ...context, idempotencyKey: crypto.randomUUID() };
     await publishNews(payload, replay, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: published.revision,
       channels: ["app"],
     });
     await publishNews(payload, replay, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: published.revision,
       channels: ["app"],
     });

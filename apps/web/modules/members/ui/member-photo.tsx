@@ -167,7 +167,13 @@ export function MemberPhoto({
   }
 
   async function save(remove = false) {
-    if (pending || disabled || reason.trim().length < 3 || (!remove && !file)) return;
+    if (
+      pending ||
+      disabled ||
+      (!!member.photoFileId && reason.trim().length < 3) ||
+      (!remove && !file)
+    )
+      return;
     setPending(true);
     onBusyChange(true);
     setError("");
@@ -274,23 +280,27 @@ export function MemberPhoto({
           )}
           {(!disabled || pending) && (canUpload || member.photoFileId) && (
             <>
-              <FormField id="photo-reason" label="Motivo da alteração da foto">
-                <textarea
-                  value={reason}
-                  onChange={(event) => setReason(event.target.value)}
-                  required
-                  minLength={3}
-                  maxLength={1000}
-                  disabled={pending}
-                  rows={2}
-                />
-              </FormField>
+              {member.photoFileId && (
+                <FormField id="photo-reason" label="Motivo da alteração da foto">
+                  <textarea
+                    value={reason}
+                    onChange={(event) => setReason(event.target.value)}
+                    required
+                    minLength={3}
+                    maxLength={1000}
+                    disabled={pending}
+                    rows={2}
+                  />
+                </FormField>
+              )}
               <div className={styles.actions}>
                 {canUpload && (
                   <Button
                     type="submit"
                     intent="primary"
-                    disabled={!file || pending || reason.trim().length < 3}
+                    disabled={
+                      !file || pending || (!!member.photoFileId && reason.trim().length < 3)
+                    }
                   >
                     <Check size={18} aria-hidden="true" />
                     Salvar foto
@@ -298,7 +308,7 @@ export function MemberPhoto({
                 )}
                 {member.photoFileId && (
                   <Button
-                    disabled={pending || reason.trim().length < 3}
+                    disabled={pending || (!!member.photoFileId && reason.trim().length < 3)}
                     onClick={() => void save(true)}
                   >
                     <Trash2 size={18} aria-hidden="true" />

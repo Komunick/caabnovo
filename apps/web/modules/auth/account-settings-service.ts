@@ -164,7 +164,10 @@ export async function changeAccountSettings(
         entityId: user.id,
         before: { version: user.version },
         after: { version: user.version + (changed ? 1 : 0), revokedSessions },
-        reason: "Alteração solicitada pelo titular em Configurações",
+        reason:
+          input.action === "confirm-email"
+            ? "Confirmação da troca de e-mail previamente solicitada e auditada"
+            : input.justification,
         origin: "web",
         requestId: command.requestId,
         correlationId: command.requestId,

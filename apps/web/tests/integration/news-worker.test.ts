@@ -156,6 +156,7 @@ describe.sequential("news worker and real transactional queue", () => {
       b = await schedule(second.id, 1);
     expect(await boss.fetch(NEWS_ACTION_QUEUE)).toEqual([]);
     await updateNewsDraft(payload, context, first.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata: { ...first.metadata, title: "Edição privada", highlight: null },
       body,
@@ -204,6 +205,7 @@ describe.sequential("news worker and real transactional queue", () => {
       [fileId, created.id, context.actor!.userId],
     );
     await updateNewsDraft(payload, context, created.id, {
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       metadata: { ...created.metadata, cover: { fileId, alt: "Imagem" } },
       body,
@@ -220,8 +222,12 @@ describe.sequential("news worker and real transactional queue", () => {
     });
     await expect(readPublicNews(payload, "app", created.id)).rejects.toMatchObject({ status: 404 });
     await admin.query("UPDATE stored_file SET scan_result='clean' WHERE id=$1", [fileId]);
-    await retryNewsAction(payload, pgBossNewsActionEnqueuer(boss), context, created.id, action.id);
-    await retryNewsAction(payload, pgBossNewsActionEnqueuer(boss), context, created.id, action.id);
+    await retryNewsAction(payload, pgBossNewsActionEnqueuer(boss), context, created.id, action.id, {
+      justification: "Alteração sintética autorizada",
+    });
+    await retryNewsAction(payload, pgBossNewsActionEnqueuer(boss), context, created.id, action.id, {
+      justification: "Alteração sintética autorizada",
+    });
     await consume();
     expect(await boss.fetch(NEWS_ACTION_QUEUE)).toEqual([]);
     expect((await listNewsActions(payload, context.actor, created.id))[0]).toMatchObject({
@@ -265,7 +271,9 @@ describe.sequential("news worker and real transactional queue", () => {
     await expect(readPublicNews(payload, "site", created.id)).rejects.toMatchObject({
       status: 404,
     });
-    await retryNewsAction(payload, pgBossNewsActionEnqueuer(boss), context, created.id, action.id);
+    await retryNewsAction(payload, pgBossNewsActionEnqueuer(boss), context, created.id, action.id, {
+      justification: "Alteração sintética autorizada",
+    });
     await admin.query("UPDATE \"user\" SET status='disabled',deactivated_at=now() WHERE id=$1", [
       context.actor!.userId,
     ]);

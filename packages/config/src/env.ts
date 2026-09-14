@@ -9,23 +9,29 @@ const serverEnvSchema = z
     DATABASE_ADMIN_URL: z.url().startsWith("postgresql://").optional(),
     BETTER_AUTH_SECRET: z.string().min(32),
     BETTER_AUTH_URL: publicAppUrlSchema,
-    S3_ENDPOINT: z.url(),
+    FILE_STORAGE_BACKEND: z.enum(["database", "s3"]).default("database"),
+    S3_ENDPOINT: z.url().optional(),
     S3_PUBLIC_ENDPOINT: z.url().optional(),
     S3_REGION: z.string().min(1).default("us-east-1"),
-    S3_ACCESS_KEY: z.string().min(1),
-    S3_SECRET_KEY: z.string().min(1),
-    S3_QUARANTINE_BUCKET: z.string().min(3),
-    S3_PRIVATE_BUCKET: z.string().min(3),
-    S3_PUBLIC_BUCKET: z.string().min(3),
+    S3_ACCESS_KEY: z.string().min(1).optional(),
+    S3_SECRET_KEY: z.string().min(1).optional(),
+    S3_QUARANTINE_BUCKET: z.string().min(3).default("caab-quarantine"),
+    S3_PRIVATE_BUCKET: z.string().min(3).default("caab-private"),
+    S3_PUBLIC_BUCKET: z.string().min(3).default("caab-public"),
     CLAMAV_HOST: z.string().min(1),
     CLAMAV_PORT: z.coerce.number().int().min(1).max(65535).default(3310),
     OTEL_EXPORTER_OTLP_ENDPOINT: z.url(),
     LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
   })
   .superRefine((env, context) => {
+    if (env.FILE_STORAGE_BACKEND === "database") return;
+    for (const key of ["S3_ENDPOINT", "S3_ACCESS_KEY", "S3_SECRET_KEY"] as const) {
+      if (!env[key])
+        context.addIssue({ code: "custom", path: [key], message: "Required for S3 storage" });
+    }
     let endpoint: URL;
     try {
-      endpoint = new URL(env.S3_PUBLIC_ENDPOINT ?? env.S3_ENDPOINT);
+      endpoint = new URL(env.S3_PUBLIC_ENDPOINT ?? env.S3_ENDPOINT ?? "");
     } catch {
       return;
     }

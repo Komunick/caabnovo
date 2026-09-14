@@ -8,7 +8,7 @@ import { listAuditEvents } from "@caab/db/repositories/audit-query";
 
 export async function runAuditExport(
   pool: Pool,
-  s3: S3Client,
+  s3: S3Client | null,
   bucket: string,
   untrustedPayload: AuditExportJobPayload,
 ): Promise<void> {
@@ -55,15 +55,16 @@ export async function runAuditExport(
   } while (cursor);
 
   const body = `${lines.join("\n")}${lines.length ? "\n" : ""}`;
-  const objectKey = `audit-exports/${payload.jobId}.jsonl`;
-  await s3.send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: objectKey,
-      Body: body,
-      ContentType: "application/x-ndjson",
-    }),
-  );
+  const objectKey = `${s3 ? "" : "database/"}audit-exports/${payload.jobId}.jsonl`;
+  if (s3)
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: objectKey,
+        Body: body,
+        ContentType: "application/x-ndjson",
+      }),
+    );
   await withTransaction(pool, async (client) => {
     const inserted = await client.query(
       `INSERT INTO stored_file
@@ -71,7 +72,7 @@ export async function runAuditExport(
          declared_mime, size_bytes, checksum_sha256, status, scan_result, uploaded_by, available_at)
        VALUES ('audit_export', $1, $2, $3, $4, 'application/x-ndjson',
          'application/x-ndjson', $5, $6, 'available', 'clean', $7, now())
-       ON CONFLICT (object_key) DO NOTHING`,
+       ON CONFLICT (object_key) DO NOTHING RETURNING id`,
       [
         payload.jobId,
         `audit-export-${payload.jobId}.jsonl`,
@@ -83,6 +84,11 @@ export async function runAuditExport(
       ],
     );
     if (inserted.rowCount === 0) return;
+    if (!s3)
+      await client.query(
+        "INSERT INTO stored_file_content(file_id,object_key,body) VALUES($1,$2,$3)",
+        [inserted.rows[0].id, objectKey, Buffer.from(body)],
+      );
     await writeAuditEvent(client, {
       actorUserId: payload.requestedBy,
       effectiveIdentity: `user:${payload.requestedBy}`,

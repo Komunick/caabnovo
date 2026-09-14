@@ -401,3 +401,22 @@ Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common
 - [x] CF07 Validar contratos, integração, E2E por módulo, teclado/Axe, temas/responsividade e build; atualizar PRs sem merge e preview com dados preservados.
 
 - [x] CF08 Explicitar JPG em todos os seletores e mensagens de imagens, preservar formatos existentes e validar upload real/inspeção no PR #19.
+
+## Padronização de justificativas — 14/09/2026
+
+- [x] JP01 Inventariar criação/alteração e registrar regra, pesquisa e plano.
+- [x] JP02 Implementar contrato, serviço, auditoria e formulário desta área.
+- [x] JP03 Validar criação sem motivo, edição recusada sem motivo e auditoria preservada.
+- [x] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
+
+Validação de justificativas e resultado OAB: [evidências de 14/09/2026](evidence/justification-oab.md).
+
+## Armazenamento PostgreSQL — 14/09/2026
+
+- [x] DBF01 Criar migration aditiva e repositório de conteúdo no banco principal.
+- [x] DBF02 Implementar upload/download pelo painel, grants limitados e proteção de quarentena.
+- [x] DBF03 Adaptar worker, exportações e leitura legada; fornecer cópia verificável do S3.
+- [x] DBF04 Validar integridade, concorrência, permissões e regressões de imagens no CI.
+- [x] DBF05 Documentar configuração, transição, backup e resultados da entrega.
+
+Resultados e limites: [evidências do armazenamento](evidence/database-files.md).

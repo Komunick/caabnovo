@@ -28,3 +28,26 @@ Mobile tem dados privados. Não provisionar contas externas nesta entrega: auten
 Fontes oficiais de usuários/contatos e relacionamentos do CiviCRM acima consultadas novamente. Mantida a distinção entre pessoa e conta, e a relação entre cadastros independentes. Não copiamos regras institucionais desse produto. Guias locais da versão instalada do Next sobre Route Handlers e page.js conferidos; parâmetros assíncronos e respostas privadas preservados.
 
 Decisão de acesso confirmada pelo usuário nesta sessão: permissões de consulta, edição e análise concedidas inicialmente ao administrador existente. Demais perfis exigem concessão explícita, sem novo papel automático. Credencial continua situação/validade; emissão verificável exige definições institucionais.
+
+## Pesquisa: justificativas e auditoria — 14/09/2026
+
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação
+  independe de texto de justificativa do operador.
+- OWASP Input Validation: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+  Validar no servidor antes da mutação, incluindo texto vazio após trim.
+- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis
+  associados aos campos necessários à ação atual.
+
+A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
+Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+
+## Pesquisa: resultado OAB — 14/09/2026
+
+- [W3C, Content Structure](https://www.w3.org/WAI/tutorials/page-structure/content/): listas de descrições associam rótulos e valores semanticamente. Decisão de interface: usar dl/dt/dd, texto explícito para situações e colunas adaptáveis.
+- [OWASP, Logging](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html): minimizar dados pessoais nos registros. Decisão: novos campos ficam somente na resposta privada e na memória da tela; auditoria continua com os metadados já existentes.
+- Contrato institucional observado em uma consulta autorizada, diretamente no endpoint já configurado, sem acesso ao banco do projeto. Inventário sem dados pessoais em [contracts/oab-query.md](contracts/oab-query.md). A amostra confirma nomes/tipos observados, não todas as variantes possíveis.
+
+Os sete campos são escolha expressa do usuário. Não inferir elegibilidade nem situação financeira interna a partir deles. A consulta de validação foi única e seus valores não são fixtures, documentação nem dados de cadastro.
+
+- [GitHub upload-artifact](https://github.com/actions/upload-artifact): guardar somente screenshots OAB de fixtures sintéticas como artefato por sete dias, antes de a segunda execução Playwright limpar a pasta. Permite inspeção visual sem iniciar localhost; nenhum trace, ambiente ou resposta real é enviado.

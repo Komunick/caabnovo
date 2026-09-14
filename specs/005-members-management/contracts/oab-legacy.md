@@ -48,7 +48,7 @@ O serviço antigo também converte falhas em `[]`, confundindo indisponibilidade
 1. Consulta avulsa de OAB/BA e acesso à mesma consulta a partir de um associado com inscrição compatível, sem necessidade de criar cadastro para consultar.
 2. Permissões próprias da área, revalidadas no servidor; acesso inicial apenas ao administrador conforme decisão existente.
 3. Credenciais apenas no servidor, endpoint fixo/configurado e tempo limite controlado; nenhum scraping do CNA.
-4. Resultado legível com fonte, data e regularidade; exibir somente campos necessários, sem JSON bruto ou CPF desnecessário.
+4. Resultado legível com fonte e data; exibir somente os campos escolhidos pelo usuário em 14/09/2026, incluindo CPF e inadimplência, conforme [oab-query.md](oab-query.md). Sem JSON bruto nem cópia dos novos dados para cadastro/auditoria.
 5. Consulta não muda silenciosamente cadastro, finanças, elegibilidade ou créditos. Persistir evidência de consulta/avaliação de forma rastreável, com semântica explícita.
 6. Configuração ausente e serviço indisponível têm mensagens claras; não apresentar resultado simulado como consulta real.
 7. Testar respostas regulares/irregulares/desconhecidas, inscrições sem resultado, UF não coberta, erros, permissões e preservação das demais dimensões.

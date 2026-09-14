@@ -382,3 +382,39 @@ aberto, sem merge. A regra geral de justificativas é tarefa própria já regist
 ## Arquivos JPG — 14/09/2026
 
 Todos os seletores que aceitam imagens devem listar `.jpg`, `.jpeg` e `.png` explicitamente, preservando PDF nos documentos. Ajuda e erros devem mencionar JPG. O servidor mantém o MIME `image/jpeg`, validação de assinatura, extensão, tamanho, checksum e antivírus.
+
+## Justificativas de criação e alteração — 14/09/2026
+
+Decisão expressa do usuário: cadastros novos dispensam motivo; alterações de registros
+existentes exigem justificativa informada pelo operador, validada no servidor e gravada
+na auditoria na mesma transação. Criação continua auditada, identificada como criação
+pelo servidor; não atribuir ao operador uma justificativa que ele não escreveu.
+
+Abrange Colaboradores, Associados (incluindo novos vínculos/documentos e substituições),
+Notícias e Configurações. Parceiros já segue o padrão. Primeira inclusão de foto é
+criação; substituição/remoção exige motivo verificado com o estado bloqueado no banco.
+Notícia nova, duplicação e novo agendamento dispensam motivo. Edição, recuperação,
+arquivamento, publicação/retirada e cancelamento/reenvio exigem motivo. Execução
+programada registra sua origem automática. Perfil, senha e solicitação de troca de
+e-mail em Configurações exigem motivo; confirmação por token conclui a solicitação já
+auditada. Login, recuperação de senha, leitura, filtros, tema e uploads técnicos não
+são alterações cadastrais. Preservar autorização, idempotência e controle de versão.
+
+Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
+recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
+mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+Acesso inicial do colaborador começa no instante de criação fornecido pelo banco, evitando diferença entre relógio da aplicação e relógio da transação que escondia os papéis na resposta imediata. Permissões e auditoria permanecem obrigatórias.
+
+## Armazenamento no banco principal — 14/09/2026
+
+Por decisão do usuário, os novos arquivos do fluxo compartilhado (imagens, documentos e
+exportações) serão persistidos como bytes no PostgreSQL da aplicação, usando DATABASE_URL.
+Uploads e downloads usam o domínio do painel; S3 deixa de ser obrigatório para novos arquivos.
+Preservar contratos de intenção/finalização, limite de 25 MiB por upload, SHA-256, inspeção de
+assinatura/MIME, antivírus, quarentena, permissões, auditoria e publicação por canal.
+URLs temporárias devem expirar e vincular método e objeto. Conteúdo em quarentena, excluído
+ou rejeitado nunca pode ser baixado. Upload finalizado não pode ser sobrescrito.
+Arquivos antigos continuam acessíveis pelo adaptador S3 enquanto uma cópia verificável,
+retomável e sem exclusão da origem os transfere para o banco. A migration é aditiva.
+Serviços locais permanecem desligados; validação com banco descartável e navegador no CI.

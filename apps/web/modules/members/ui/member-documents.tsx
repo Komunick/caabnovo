@@ -38,6 +38,7 @@ export function MemberDocuments({
   canReview: boolean;
   command: (input: Record<string, unknown>) => Promise<boolean>;
 }) {
+  const [replacesId, setReplacesId] = useState("");
   const [files, setFiles] = useState<FilesPage>({ items: [], page: 1, hasNextPage: false });
   const [page, setPage] = useState(1);
   const [error, setError] = useState("");
@@ -170,7 +171,7 @@ export function MemberDocuments({
             fileId: data.get("fileId"),
             category: data.get("category"),
             replacesId: data.get("replacesId") || null,
-            justification: data.get("reason"),
+            ...(replacesId ? { justification: data.get("reason") } : {}),
           });
         }}
       >
@@ -198,7 +199,11 @@ export function MemberDocuments({
               <input name="category" required minLength={2} maxLength={80} />
             </FormField>
             <FormField id="document-replaces" label="Documento substituído (opcional)">
-              <select name="replacesId">
+              <select
+                name="replacesId"
+                value={replacesId}
+                onChange={(event) => setReplacesId(event.target.value)}
+              >
                 <option value="">Novo documento</option>
                 {member.documents
                   .filter((d) => !member.documents.some((other) => other.replacesId === d.id))
@@ -210,9 +215,11 @@ export function MemberDocuments({
               </select>
             </FormField>
           </div>
-          <FormField id="document-reason" label="Motivo do envio ou substituição">
-            <textarea name="reason" required minLength={3} maxLength={1000} />
-          </FormField>
+          {replacesId && (
+            <FormField id="document-reason" label="Motivo da substituição">
+              <textarea name="reason" required minLength={3} maxLength={1000} />
+            </FormField>
+          )}
           <Button type="submit">Anexar documento</Button>
         </fieldset>
       </form>

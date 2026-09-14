@@ -6,8 +6,14 @@ const row = {
   Nome: "Pessoa sintética",
   OAB: "001234",
   SituacaoRegular: "SIM",
-  CPF: "private",
-  Inadimplente: "private",
+  CPF: "000.000.000-00",
+  Inadimplente: "NÃO",
+  Detalhe: "Detalhe sintético",
+  SubSecao: "Subseção sintética",
+  DataCompromisso: "01/02/2020",
+  PagoTotalExercicioAtual: "private",
+  DataInadimplencia: "private",
+  ExtraField: "private",
 };
 describe("OAB provider boundary", () => {
   it.each([{}, { ...env, OAB_API_ENABLED: "false" }, { ...env, API_OAB_PASSWORD: "" }])(
@@ -22,7 +28,15 @@ describe("OAB provider boundary", () => {
   it("uses only the fixed institution endpoint, server headers, no cache and no redirect", async () => {
     const fetcher = vi.fn(async () => Response.json([row]));
     const result = await createOabProvider(env, fetcher)("1234");
-    expect(result).toEqual({ name: row.Nome, status: "regular" });
+    expect(result).toEqual({
+      name: row.Nome,
+      status: "regular",
+      cpf: row.CPF,
+      delinquent: false,
+      detail: row.Detalhe,
+      subsection: row.SubSecao,
+      commitmentDate: row.DataCompromisso,
+    });
     expect(JSON.stringify(result)).not.toContain("private");
     const [url, init] = fetcher.mock.calls[0]! as unknown as [URL, RequestInit];
     expect(url.origin).toBe("https://oab-ba.implanta.net.br");
@@ -52,10 +66,51 @@ describe("OAB provider boundary", () => {
       ),
     ).toMatchObject({ status });
   });
+  it.each([
+    ["SIM", true],
+    [" não ", false],
+    ["NAO", false],
+    ["PENDENTE", null],
+    [null, null],
+    [undefined, null],
+  ])("maps delinquency %s independently from regularity", async (value, delinquent) => {
+    const result = await createOabProvider(env, async () =>
+      Response.json([{ ...row, Inadimplente: value }]),
+    )("1234");
+    expect(result).toMatchObject({ status: "regular", delinquent });
+  });
+  it("keeps missing and blank optional fields explicit without inventing provider data", async () => {
+    const result = await createOabProvider(env, async () =>
+      Response.json([
+        {
+          Nome: row.Nome,
+          OAB: row.OAB,
+          CPF: " ",
+          Detalhe: null,
+          SubSecao: "",
+          DataCompromisso: null,
+        },
+      ]),
+    )("1234");
+    expect(result).toEqual({
+      name: row.Nome,
+      status: "unknown",
+      cpf: null,
+      delinquent: null,
+      detail: null,
+      subsection: null,
+      commitmentDate: null,
+    });
+  });
   it("distinguishes no record from service failure", async () => {
     expect(await createOabProvider(env, async () => Response.json([]))("1234")).toEqual({
       name: null,
       status: "not_found",
+      cpf: null,
+      delinquent: null,
+      detail: null,
+      subsection: null,
+      commitmentDate: null,
     });
   });
   it.each([
@@ -64,6 +119,9 @@ describe("OAB provider boundary", () => {
     [row, row],
     [{ ...row, Nome: null }],
     [{ ...row, SituacaoRegular: {} }],
+    [{ ...row, CPF: {} }],
+    [{ ...row, Inadimplente: false }],
+    [{ ...row, Detalhe: "x".repeat(1001) }],
   ])("rejects malformed, mismatched and ambiguous responses %j", async (data) => {
     await expect(
       createOabProvider(env, async () => Response.json(data))("1234"),

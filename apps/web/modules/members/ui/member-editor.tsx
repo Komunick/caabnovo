@@ -281,7 +281,7 @@ export function MemberEditor({
                   dimension,
                   result: d.get("result"),
                   source: d.get("source"),
-                  justification: d.get("reason"),
+                  justification: d.get("reason") ?? "",
                   observedAt: new Date(`${observed}T00:00:00-03:00`).toISOString(),
                   validUntil: until ? new Date(`${until}T23:59:59-03:00`).toISOString() : null,
                 });
@@ -431,7 +431,7 @@ export function MemberEditor({
                   dependentId: d.get("dependentId"),
                   relationship: d.get("relationship"),
                   startsOn: d.get("startsOn"),
-                  justification: d.get("reason"),
+                  justification: d.get("reason") ?? "",
                 });
               }}
             >
@@ -462,9 +462,6 @@ export function MemberEditor({
                     max={new Date().toISOString().slice(0, 10)}
                     defaultValue={new Date().toISOString().slice(0, 10)}
                   />
-                </FormField>
-                <FormField id="dependent-reason" label="Justificativa do vínculo">
-                  <textarea name="reason" required minLength={3} maxLength={1000} />
                 </FormField>
                 <Button type="submit" intent="primary" size="add">
                   <Plus size={20} aria-hidden="true" />

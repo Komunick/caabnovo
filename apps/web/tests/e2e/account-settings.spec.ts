@@ -78,6 +78,11 @@ test("edits own name, changes password, confirms email and signs out through the
       page.getByLabel("Novo e-mail", { exact: true }),
       "preservar@example.test",
     );
+    await keyboardType(
+      page,
+      page.locator("#settings-profile-reason"),
+      "Atualização solicitada pelo titular",
+    );
     await keyboardType(page, page.getByLabel("Nome", { exact: true }), "   ");
     await keyboardActivate(page, page.getByRole("button", { name: "Salvar nome", exact: true }));
     await expect(
@@ -94,6 +99,11 @@ test("edits own name, changes password, confirms email and signs out through the
     await expect(
       page.getByRole("button", { name: "Menu da conta de Perfil Atualizado" }),
     ).toBeVisible();
+    await keyboardType(
+      page,
+      page.locator("#settings-password-reason"),
+      "Atualização solicitada pelo titular",
+    );
     await keyboardType(page, page.getByLabel("Senha atual para trocar senha"), password);
     await keyboardType(page, page.getByLabel("Nova senha", { exact: true }), newPassword);
     await keyboardType(page, page.getByLabel("Confirmar nova senha"), password);
@@ -116,6 +126,11 @@ test("edits own name, changes password, confirms email and signs out through the
       ).status(),
     ).toBe(401);
     await keyboardType(page, page.getByLabel("Novo e-mail", { exact: true }), newEmail);
+    await keyboardType(
+      page,
+      page.locator("#settings-email-reason"),
+      "Atualização solicitada pelo titular",
+    );
     await keyboardType(page, page.getByLabel("Senha atual para trocar e-mail"), newPassword);
     await keyboardActivate(
       page,
