@@ -416,5 +416,7 @@ Validação de justificativas e resultado OAB: [evidências de 14/09/2026](evide
 - [x] DBF01 Criar migration aditiva e repositório de conteúdo no banco principal.
 - [x] DBF02 Implementar upload/download pelo painel, grants limitados e proteção de quarentena.
 - [x] DBF03 Adaptar worker, exportações e leitura legada; fornecer cópia verificável do S3.
-- [ ] DBF04 Validar integridade, concorrência, permissões e regressões de imagens no CI.
-- [ ] DBF05 Documentar configuração, transição, backup e resultados da entrega.
+- [x] DBF04 Validar integridade, concorrência, permissões e regressões de imagens no CI.
+- [x] DBF05 Documentar configuração, transição, backup e resultados da entrega.
+
+Resultados e limites: [evidências do armazenamento](evidence/database-files.md).
