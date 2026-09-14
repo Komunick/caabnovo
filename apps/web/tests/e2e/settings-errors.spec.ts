@@ -47,7 +47,7 @@ test("shows grant refusal reasons and grants administrator without MFA", async (
   expect(login.ok()).toBe(true);
   await page.goto(`/users/${user.id}`);
   await page.getByLabel("Função", { exact: true }).selectOption({ label: "Administrador" });
-  await page.getByLabel("Justificativa da função").fill("Validar concessão sem autenticador");
+  await expect(page.getByLabel("Justificativa da função")).toHaveCount(0);
   const errors = [
     ["ROLE_GRANT_DENIED", "Você não tem permissão"],
     ["GRANT_BEYOND_AUTHORITY", "você não pode conceder"],

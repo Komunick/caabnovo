@@ -39,7 +39,7 @@ paths:
           in: query
           description: Published means any publication in history; drafts have never been published.
           schema:
-            enum: [all, published, drafts]
+            enum: [ all, published, drafts ]
             default: all
         - name: category
           in: query
@@ -50,27 +50,27 @@ paths:
           in: query
           description: Intended destination of the latest editorial revision.
           schema:
-            enum: [all, app, site]
+            enum: [ all, app, site ]
             default: all
         - name: highlight
           in: query
           schema:
-            enum: [all, "yes", "no"]
+            enum: [ all, "yes", "no" ]
             default: all
         - name: cover
           in: query
           schema:
-            enum: [all, "yes", "no"]
+            enum: [ all, "yes", "no" ]
             default: all
         - name: updatedWithin
           in: query
           schema:
-            enum: [all, "7", "30", "90"]
+            enum: [ all, "7", "30", "90" ]
             default: all
         - name: sort
           in: query
           schema:
-            enum: [updated-desc, updated-asc, created-desc, created-asc, title-asc, title-desc]
+            enum: [ updated-desc, updated-asc, created-desc, created-asc, title-asc, title-desc ]
             default: updated-desc
       responses:
         "200":
@@ -1098,7 +1098,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FirstPublishNews"
+              $ref: "#/components/schemas/PublishNews"
       responses:
         "200":
           description: Success
@@ -2052,9 +2052,6 @@ components:
       type: object
       additionalProperties: false
       properties:
-        prepareForMedia:
-          type: boolean
-          description: Cria rascunho técnico para mídia, cuja conclusão pelo autor dispensa motivo.
         metadata:
           $ref: "#/components/schemas/Metadata"
         body:
@@ -2063,7 +2060,6 @@ components:
         - metadata
     UpdateDraft:
       type: object
-      description: Justificativa exigida salvo conclusão da criação técnica pelo autor, conferida no servidor.
       additionalProperties: false
       properties:
         justification:
@@ -2080,6 +2076,7 @@ components:
         - expectedVersion
         - metadata
         - body
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     VersionCommand:
       type: object
       additionalProperties: false
@@ -2104,16 +2101,13 @@ components:
           type: string
           format: uuid
       required:
-        - justification
         - expectedVersion
         - versionId
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     News:
       type: object
       additionalProperties: false
       properties:
-        creationPending:
-          type: boolean
-          description: Indica que o autor ainda pode concluir a criação técnica sem motivo. Apenas leitura.
         id:
           type: string
           format: uuid
@@ -2293,32 +2287,9 @@ components:
               - site
               - app
       required:
-        - justification
         - expectedVersion
         - channels
-    FirstPublishNews:
-      type: object
-      description: Justificativa opcional somente na primeira publicação, conforme histórico persistente do servidor.
-      additionalProperties: false
-      properties:
-        justification:
-          $ref: "#/components/schemas/ChangeJustification"
-        expectedVersion:
-          type: integer
-          minimum: 1
-          maximum: 9007199254740991
-        channels:
-          type: array
-          minItems: 1
-          maxItems: 2
-          uniqueItems: true
-          items:
-            enum:
-              - site
-              - app
-      required:
-        - expectedVersion
-        - channels
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     ScheduleNews:
       type: object
       additionalProperties: false
@@ -2432,9 +2403,6 @@ components:
       type: object
       additionalProperties: false
       properties:
-        hasBeenPublished:
-          type: boolean
-          description: Permanece true após retirada e restauração de versões.
         publication:
           anyOf:
             - type: "null"
@@ -2467,7 +2435,6 @@ components:
           items:
             $ref: "#/components/schemas/NewsAction"
       required:
-        - hasBeenPublished
         - publication
         - actions
     RetryResult:
@@ -2674,13 +2641,13 @@ components:
         - hasNextPage
     ChangeJustification:
       type: string
-      minLength: 3
       maxLength: 1000
       description: Operator reason, required after trimming whitespace; recorded in audit.
     ChangeCommand:
       type: object
       additionalProperties: false
-      required: [expectedVersion, justification]
+      required:
+        - expectedVersion
       properties:
         expectedVersion:
           type: integer
@@ -2688,10 +2655,11 @@ components:
           maximum: 9007199254740991
         justification:
           $ref: "#/components/schemas/ChangeJustification"
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     ActionChange:
       type: object
       additionalProperties: false
-      required: [justification]
       properties:
         justification:
           $ref: "#/components/schemas/ChangeJustification"
+      description: No written reason is required. Legacy reason text remains optional for compatibility.

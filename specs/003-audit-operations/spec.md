@@ -96,3 +96,8 @@ Reutilizar serviços/persistência/permissões atuais. Sem migração ou mudanç
 validação manual repetida do PR #10. Paginação/filtros de jobs e ajuste da pré-condição do reenvio
 são evoluções desta função, registradas neste mesmo spec conforme instrução de 09/09/2026. Ainda não
 foram implementadas; não invalidam nem repetem a evidência da fusão já concluída.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.

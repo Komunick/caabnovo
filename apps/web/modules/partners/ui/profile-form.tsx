@@ -16,7 +16,7 @@ export function ProfileForm({
 }: {
   profile?: PartnerProfile;
   disabled: boolean;
-  onSave: (profile: PartnerProfile, justification: string) => Promise<void>;
+  onSave: (profile: PartnerProfile) => Promise<void>;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [categories, setCategories] = useState<PartnerCategory[]>([]);
@@ -73,7 +73,7 @@ export function ProfileForm({
           return;
         }
         setErrors({});
-        void onSave(parsed.data, String(data.get("justification") ?? ""));
+        void onSave(parsed.data);
       }}
     >
       <fieldset disabled={disabled}>
@@ -116,11 +116,7 @@ export function ProfileForm({
         <FormField id="partner-description" label="Descrição (opcional)">
           <textarea name="description" maxLength={3000} defaultValue={profile?.description ?? ""} />
         </FormField>
-        {profile && (
-          <FormField id="partner-reason" label="Motivo da alteração">
-            <textarea name="justification" required minLength={3} maxLength={1000} />
-          </FormField>
-        )}
+
         <Button type="submit" intent="primary" size={profile ? "default" : "add"}>
           {!profile && <Plus aria-hidden="true" />}
           {profile ? "Salvar cadastro" : "Criar parceiro"}

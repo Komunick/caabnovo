@@ -92,11 +92,7 @@ test("administrator manages people, relationships, independent assessments and a
     ["Desbloquear associado", "Confirmar desbloqueio", "Ativo"],
   ] as const) {
     await keyboardActivate(page, administrative.getByRole("button", { name: action, exact: true }));
-    await keyboardType(
-      page,
-      page.getByLabel("Justificativa da mudança de situação"),
-      `Decisão sintética: ${action}`,
-    );
+    await expect(page.getByLabel("Justificativa da mudança de situação")).toHaveCount(0);
     await keyboardActivate(
       page,
       administrative.getByRole("button", { name: confirm, exact: true }),
@@ -115,7 +111,7 @@ test("administrator manages people, relationships, independent assessments and a
   await keyboardActivate(page, page.getByRole("button", { name: "Situações", exact: true }));
   await keyboardSelect(page, page.getByLabel("Resultado", { exact: true }), "approved");
   await keyboardType(page, page.getByLabel("Fonte ou regra aplicada"), "Regra sintética");
-  await keyboardType(page, page.getByLabel("Motivo da decisão"), "Avaliação sintética");
+  await expect(page.getByLabel("Motivo da decisão")).toHaveCount(0);
   await keyboardActivate(
     page,
     page.getByRole("button", { name: "Registrar avaliação", exact: true }),
@@ -133,11 +129,7 @@ test("administrator manages people, relationships, independent assessments and a
   await expectWcag22AA(page);
   await keyboardActivate(page, page.getByRole("button", { name: "Cadastro", exact: true }));
   await keyboardType(page, page.getByLabel("Nome completo"), `${name} corrigido`);
-  await keyboardType(
-    page,
-    page.getByLabel("Motivo da alteração"),
-    "Correção de identificação sintética",
-  );
+  await expect(page.getByLabel("Motivo da alteração")).toHaveCount(0);
   await keyboardActivate(page, page.getByRole("button", { name: "Salvar cadastro" }));
   await expect(page.getByRole("heading", { name: `${name} corrigido`, exact: true })).toBeVisible();
   await keyboardActivate(page, page.getByRole("button", { name: "Situações", exact: true }));
@@ -149,11 +141,7 @@ test("administrator manages people, relationships, independent assessments and a
     true,
   );
   await keyboardActivate(page, page.getByRole("button", { name: "Cadastro", exact: true }));
-  await keyboardType(
-    page,
-    page.getByLabel("Motivo do arquivamento ou restauração"),
-    "Arquivamento sintético",
-  );
+  await expect(page.getByLabel("Motivo do arquivamento ou restauração")).toHaveCount(0);
   await keyboardActivate(
     page,
     page.getByRole("button", { name: "Arquivar cadastro", exact: true }),
@@ -293,9 +281,7 @@ test("documents use real upload, scan, review, replacement and private download"
   await page
     .getByLabel("Resultado da análise", { exact: true })
     .selectOption("correction_requested");
-  await page
-    .getByLabel("Motivo da análise ou correção solicitada")
-    .fill("Solicitar versão legível sintética");
+  await expect(page.getByLabel("Motivo da análise ou correção solicitada")).toHaveCount(0);
   await page.getByRole("button", { name: "Registrar análise do documento" }).click();
   const documentCard = page.getByRole("listitem").filter({
     has: page.getByRole("link", { name: "Abrir documento Identificação sintética", exact: true }),
@@ -304,7 +290,7 @@ test("documents use real upload, scan, review, replacement and private download"
   await expect(documentCard).toContainText(/Identificação sintética\s*·\s*Correção solicitada/);
   await upload("substituto.jpg");
   await page.getByLabel("Documento substituído (opcional)").selectOption({ index: 1 });
-  await page.getByLabel("Motivo da substituição").fill("Substituição sintética autorizada");
+  await expect(page.getByLabel("Motivo da substituição")).toHaveCount(0);
   await page.getByRole("button", { name: "Anexar documento", exact: true }).click();
   await expect(
     page.getByRole("link", { name: "Abrir documento Identificação sintética" }),

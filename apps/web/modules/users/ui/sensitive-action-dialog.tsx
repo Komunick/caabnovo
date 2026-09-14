@@ -1,24 +1,20 @@
 "use client";
-import { FormField } from "@/components/ui/form-field";
 
-import { useEffect, useId, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export function SensitiveActionDialog({
   triggerLabel,
   title,
-  fieldLabel,
   confirmLabel,
   onConfirm,
 }: Readonly<{
   triggerLabel: string;
   title: string;
-  fieldLabel: string;
   confirmLabel: string;
-  onConfirm(reason: string): Promise<void>;
+  onConfirm(): Promise<void>;
 }>) {
-  const fieldId = useId();
   const [hydrated, setHydrated] = useState(false);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -30,9 +26,8 @@ export function SensitiveActionDialog({
     event.preventDefault();
     setPending(true);
     setError("");
-    const reason = String(new FormData(event.currentTarget).get("reason") ?? "");
     try {
-      await onConfirm(reason);
+      await onConfirm();
       setOpen(false);
     } catch {
       setError("Não foi possível concluir a ação.");
@@ -48,11 +43,8 @@ export function SensitiveActionDialog({
           {triggerLabel}
         </Button>
       </DialogTrigger>
-      <DialogContent title={title} description="Confirme esta ação sensível com uma justificativa.">
+      <DialogContent title={title} description="Confirme para concluir esta ação.">
         <form onSubmit={submit}>
-          <FormField id={fieldId} label={fieldLabel}>
-            <textarea id={fieldId} name="reason" required rows={3} />
-          </FormField>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>

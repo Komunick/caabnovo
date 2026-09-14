@@ -246,3 +246,8 @@ web/worker e exportação no banco. Reaproveitar autorização e inspeção exis
 Fornecer cópia S3 → PostgreSQL com verificação de tamanho/hash, sem apagar origem e sem
 mudar IDs/vínculos. Validar migração, concorrência, grants, uploads, publicação e downloads
 no CI sem S3 para arquivos novos; manter testes legados do adaptador S3.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.

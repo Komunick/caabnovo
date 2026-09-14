@@ -30,7 +30,6 @@ export function AuditExportDialog({
         ...filters,
         from: new Date(String(data.get("from"))).toISOString(),
         to: new Date(String(data.get("to"))).toISOString(),
-        justification: data.get("justification"),
       }),
     });
     if (!response.ok) {
@@ -79,9 +78,7 @@ export function AuditExportDialog({
               required
             />
           </FormField>
-          <FormField id="audit-export-justification" label="Justificativa da exportação">
-            <textarea id="audit-export-justification" name="justification" rows={3} required />
-          </FormField>
+
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>

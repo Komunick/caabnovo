@@ -57,9 +57,10 @@ export function createUserRoleRoute(deps: UserRoleRouteDependencies) {
     DELETE: async (request: Request, userIdValue: string, roleIdValue: string) => {
       const id = requestId(request);
       try {
-        const reason = nonEmptyReasonSchema.parse(
-          new URL(request.url).searchParams.get("justification"),
-        );
+        const reason = nonEmptyReasonSchema
+          .max(1000)
+          .default("")
+          .parse(new URL(request.url).searchParams.get("justification") ?? undefined);
         await deps.revoke({ ...(await context(request, userIdValue, roleIdValue)), reason });
         return new Response(null, { status: 204 });
       } catch (error) {

@@ -1,5 +1,4 @@
 "use client";
-import { FormField } from "@/components/ui/form-field";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -16,11 +15,10 @@ export function RedriveDialog({ jobId }: Readonly<{ jobId: string }>) {
     event.preventDefault();
     setPending(true);
     setError("");
-    const form = new FormData(event.currentTarget);
     const response = await fetch(`/api/v1/jobs/${jobId}/redrive`, {
       method: "POST",
       headers: { "content-type": "application/json", "x-csrf-token": crypto.randomUUID() },
-      body: JSON.stringify({ reason: form.get("reason") }),
+      body: JSON.stringify({}),
     });
     if (!response.ok) {
       setError("Não foi possível reenviar o processamento.");
@@ -41,9 +39,6 @@ export function RedriveDialog({ jobId }: Readonly<{ jobId: string }>) {
         description="Uma nova tentativa será auditada e manterá a mesma chave idempotente."
       >
         <form onSubmit={submit}>
-          <FormField id="redrive-reason" label="Justificativa">
-            <textarea id="redrive-reason" name="reason" minLength={1} maxLength={500} required />
-          </FormField>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>

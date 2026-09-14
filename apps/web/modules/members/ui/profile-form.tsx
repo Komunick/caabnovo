@@ -19,7 +19,7 @@ export function ProfileForm({
 }: {
   profile?: MemberProfile;
   disabled: boolean;
-  onSave: (profile: unknown, justification: string) => Promise<void>;
+  onSave: (profile: unknown) => Promise<void>;
 }) {
   const initial = profile ?? memberProfileSchema.parse({ name: "Novo cadastro" });
   return (
@@ -28,20 +28,17 @@ export function ProfileForm({
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const str = (key: string) => String(data.get(key) ?? "");
-        void onSave(
-          {
-            name: str("name"),
-            socialName: str("socialName"),
-            cpf: str("cpf"),
-            birthDate: str("birthDate") || null,
-            email: str("email"),
-            phone: str("phone"),
-            oab: str("oabNumber")
-              ? { number: str("oabNumber"), state: str("oabState"), type: str("oabType") }
-              : null,
-          },
-          str("justification"),
-        );
+        void onSave({
+          name: str("name"),
+          socialName: str("socialName"),
+          cpf: str("cpf"),
+          birthDate: str("birthDate") || null,
+          email: str("email"),
+          phone: str("phone"),
+          oab: str("oabNumber")
+            ? { number: str("oabNumber"), state: str("oabState"), type: str("oabType") }
+            : null,
+        });
       }}
     >
       <fieldset disabled={disabled}>
@@ -125,11 +122,7 @@ export function ProfileForm({
             </select>
           </FormField>
         </div>
-        {profile && (
-          <FormField id="member-reason" label="Motivo da alteração">
-            <textarea name="justification" required minLength={3} maxLength={1000} />
-          </FormField>
-        )}
+
         <Button type="submit" intent="primary" size={profile ? "default" : "add"}>
           {!profile && <Plus size={20} aria-hidden="true" />}
           {profile ? "Salvar cadastro" : "Criar cadastro"}

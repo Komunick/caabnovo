@@ -46,7 +46,7 @@ export const auditListQuerySchema = paginationQuerySchema
 
 export const auditExportRequestSchema = auditFilterSchema
   .required({ from: true, to: true })
-  .extend({ justification: nonEmptyReasonSchema })
+  .extend({ justification: nonEmptyReasonSchema.max(1000).default("") })
   .refine(orderedPeriod, { path: ["to"], message: "End date must not precede start date" });
 
 export const auditExportJobPayloadSchema = auditFilterSchema

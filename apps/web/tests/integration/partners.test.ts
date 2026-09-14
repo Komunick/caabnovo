@@ -49,7 +49,6 @@ const create = (extra = {}) =>
 const command = (partner: PartnerRecord, input: Record<string, unknown>) =>
   commandPartner(pool, next(), partner.id, {
     expectedVersion: partner.version,
-    justification: "Decisão sintética",
     ...input,
   });
 beforeAll(async () => {
@@ -144,21 +143,21 @@ async function ready() {
   return p;
 }
 describe.sequential("partner persistence", () => {
-  it("audits category, contract and benefit creation without a reason and rejects edits without one", async () => {
+  it("audits category, contract and benefit creation and edits without a written reason", async () => {
     const result = await savePartnerCategory(pool, next(), { name: "Categoria sem motivo" });
     const category = result.items.find((item) => item.name === "Categoria sem motivo")!;
     await expect(
       savePartnerCategory(pool, next(), {
         id: category.id,
         expectedVersion: category.version,
-        name: "Mudança recusada",
+        name: category.name,
         justification: "  ",
       }),
-    ).rejects.toBeDefined();
+    ).resolves.toBeDefined();
     const categoryEvent = await admin.query("SELECT reason FROM audit_event WHERE entity_id=$1", [
       category.id,
     ]);
-    expect(categoryEvent.rows.map((row) => row.reason)).toContain("Cadastro de categoria.");
+    expect(categoryEvent.rows.map((row) => row.reason)).toEqual([null, null]);
     const p = await createPartner(pool, next(), {
       profile: { name: "Novos registros sem motivo", category: category.name },
     });
@@ -172,17 +171,15 @@ describe.sequential("partner persistence", () => {
         endsOn: "2099-12-31",
       },
     });
-    await expect(
-      commandPartner(pool, next(), p.id, {
-        action: "contract-status",
-        expectedVersion: withContract.version,
-        contractId: withContract.contracts[0]!.id,
-        status: "approved",
-      }),
-    ).rejects.toBeDefined();
+    const approved = await commandPartner(pool, next(), p.id, {
+      action: "contract-status",
+      expectedVersion: withContract.version,
+      contractId: withContract.contracts[0]!.id,
+      status: "approved",
+    });
     const withBenefit = await commandPartner(pool, next(), p.id, {
       action: "benefit",
-      expectedVersion: withContract.version,
+      expectedVersion: approved.version,
       draft: { title: "Rascunho sem motivo" },
     });
     const edit = {
@@ -191,17 +188,23 @@ describe.sequential("partner persistence", () => {
       benefitId: withBenefit.benefits[0]!.id,
       draft: { title: "Rascunho alterado" },
     };
-    await expect(commandPartner(pool, next(), p.id, edit)).rejects.toBeDefined();
+    const edited = await commandPartner(pool, next(), p.id, edit);
     expect((await getPartner(pool, context.actor, p.id)).benefits[0]!.draft.title).toBe(
-      "Rascunho sem motivo",
+      "Rascunho alterado",
     );
-    await commandPartner(pool, next(), p.id, { ...edit, justification: "Revisão do rascunho" });
+    await commandPartner(pool, next(), p.id, {
+      ...edit,
+      expectedVersion: edited.version,
+      justification: "Revisão do rascunho",
+    });
     const history = await partnerHistory(pool, context.actor, p.id);
     expect(history.items.map((item) => item.reason)).toEqual([
       "Revisão do rascunho",
-      "Cadastro de benefício.",
-      "Cadastro de contrato.",
-      "Cadastro de parceiro.",
+      null,
+      null,
+      null,
+      null,
+      null,
     ]);
   });
   it("preserves legacy addresses and saves structured parts with public-compatible text", async () => {
@@ -289,13 +292,18 @@ describe.sequential("partner persistence", () => {
       profile: withUnit.units[0]!.profile,
       active: false,
     };
-    await expect(commandPartner(pool, next(), p.id, input)).rejects.toBeDefined();
-    await commandPartner(pool, next(), p.id, { ...input, justification: "Atualização sintética" });
+    const edited = await commandPartner(pool, next(), p.id, input);
+    await commandPartner(pool, next(), p.id, {
+      ...input,
+      expectedVersion: edited.version,
+      justification: "Atualização sintética",
+    });
     const history = await partnerHistory(pool, context.actor, p.id);
     expect(history.items.map((item) => item.reason)).toEqual([
       "Atualização sintética",
-      "Cadastro de unidade.",
-      "Cadastro de parceiro.",
+      null,
+      null,
+      null,
     ]);
     expect(JSON.stringify(history)).not.toContain("valid@example.test");
   });

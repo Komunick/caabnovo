@@ -19,7 +19,7 @@ export function isValidCnpj(value: string): boolean {
   return true;
 }
 const text = (max: number) => z.string().trim().max(max).default("");
-const reason = z.string().trim().min(3).max(1000);
+const reason = z.string().trim().max(1000).default("");
 const creationReason = z.string().trim().max(1000).default("");
 const date = z.iso.date();
 export const partnerProfileSchema = z.strictObject({
@@ -96,58 +96,45 @@ export const createPartnerSchema = z.strictObject({
   profile: partnerProfileSchema,
   justification: creationReason,
 });
-export const partnerCommandSchema = z
-  .discriminatedUnion("action", [
-    z.strictObject({ ...base, action: z.literal("update"), profile: partnerProfileSchema }),
-    z.strictObject({
-      ...base,
-      action: z.literal("status"),
-      status: z.enum(["active", "suspended"]),
-    }),
-    z.strictObject({ ...base, action: z.literal("archive") }),
-    z.strictObject({ ...base, action: z.literal("restore") }),
-    z.strictObject({
-      ...base,
-      action: z.literal("unit"),
-      justification: creationReason,
-      unitId: z.uuid().optional(),
-      profile: partnerUnitSchema,
-      active: z.boolean(),
-    }),
-    z.strictObject({
-      ...base,
-      action: z.literal("contract"),
-      justification: creationReason,
-      contract: partnerContractSchema,
-    }),
-    z.strictObject({
-      ...base,
-      action: z.literal("contract-status"),
-      contractId: z.uuid(),
-      status: z.enum(["approved", "ended"]),
-    }),
-    z.strictObject({
-      ...base,
-      action: z.literal("benefit"),
-      justification: creationReason,
-      benefitId: z.uuid().optional(),
-      draft: benefitDraftSchema,
-    }),
-    z.strictObject({ ...base, action: z.literal("publish"), benefitId: z.uuid() }),
-    z.strictObject({ ...base, action: z.literal("hide"), benefitId: z.uuid() }),
-  ])
-  .superRefine((input, context) => {
-    if (
-      ((input.action === "unit" && input.unitId) ||
-        (input.action === "benefit" && input.benefitId)) &&
-      input.justification.length < 3
-    )
-      context.addIssue({
-        code: "custom",
-        path: ["justification"],
-        message: "Informe o motivo da alteração.",
-      });
-  });
+export const partnerCommandSchema = z.discriminatedUnion("action", [
+  z.strictObject({ ...base, action: z.literal("update"), profile: partnerProfileSchema }),
+  z.strictObject({
+    ...base,
+    action: z.literal("status"),
+    status: z.enum(["active", "suspended"]),
+  }),
+  z.strictObject({ ...base, action: z.literal("archive") }),
+  z.strictObject({ ...base, action: z.literal("restore") }),
+  z.strictObject({
+    ...base,
+    action: z.literal("unit"),
+    justification: creationReason,
+    unitId: z.uuid().optional(),
+    profile: partnerUnitSchema,
+    active: z.boolean(),
+  }),
+  z.strictObject({
+    ...base,
+    action: z.literal("contract"),
+    justification: creationReason,
+    contract: partnerContractSchema,
+  }),
+  z.strictObject({
+    ...base,
+    action: z.literal("contract-status"),
+    contractId: z.uuid(),
+    status: z.enum(["approved", "ended"]),
+  }),
+  z.strictObject({
+    ...base,
+    action: z.literal("benefit"),
+    justification: creationReason,
+    benefitId: z.uuid().optional(),
+    draft: benefitDraftSchema,
+  }),
+  z.strictObject({ ...base, action: z.literal("publish"), benefitId: z.uuid() }),
+  z.strictObject({ ...base, action: z.literal("hide"), benefitId: z.uuid() }),
+]);
 export const partnerListSchema = z.strictObject({
   q: text(160),
   category: text(80),

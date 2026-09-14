@@ -295,3 +295,8 @@ limite de upload, assinatura/MIME e antivírus, autorização e URLs temporária
 banco simplifica a infraestrutura por decisão do usuário, mas aumenta o volume de backup/WAL;
 não foi realizado dimensionamento da VM. Backups precisam incluir a nova tabela e a restauração
 deve verificar hashes. Guia local Next consultado: route handlers aceitam Request/Response e PUT.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.

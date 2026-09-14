@@ -12,7 +12,7 @@ export const roleSchema = roleReferenceSchema.extend({
 export const roleChangeRequestSchema = z
   .object({
     validUntil: isoDateTimeSchema.nullable().optional(),
-    justification: nonEmptyReasonSchema,
+    justification: nonEmptyReasonSchema.max(1000).default(""),
   })
   .strict();
 

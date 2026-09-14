@@ -1,7 +1,6 @@
 import {
   newsDraftMetadataSchema,
   publishNewsRequestSchema,
-  firstPublishNewsRequestSchema,
   uploadMimeSchema,
   type NewsDraftMetadata,
 } from "@caab/contracts";
@@ -27,12 +26,9 @@ export function validateNewsPublication(
   actor: { userId: string } | undefined,
   input: unknown,
   snapshot: NewsPublicationSnapshot,
-  firstPublication = false,
 ) {
   if (!actor) throw Object.assign(new Error("Authentication required"), { status: 401 });
-  const request = (
-    firstPublication ? firstPublishNewsRequestSchema : publishNewsRequestSchema
-  ).parse(input);
+  const request = publishNewsRequestSchema.parse(input);
   if (request.expectedVersion !== snapshot.version) {
     throw new NewsPolicyError(
       "NEWS_VERSION_CONFLICT",

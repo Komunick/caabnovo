@@ -4,14 +4,10 @@ export const idSchema = z.uuid();
 export const requestIdSchema = z.uuid();
 export const correlationIdSchema = z.uuid();
 export const isoDateTimeSchema = z.iso.datetime({ offset: true });
-export const changeJustificationSchema = z
-  .string()
-  .trim()
-  .min(3, "Informe o motivo da alteração (ao menos 3 caracteres).")
-  .max(1000);
+export const changeJustificationSchema = z.string().trim().max(1000).default("");
 export const creationJustificationSchema = z.string().trim().max(1000).default("");
 
-export const nonEmptyReasonSchema = z.string().trim().min(1);
+export const nonEmptyReasonSchema = z.string().trim();
 
 export const paginationQuerySchema = z.object({
   cursor: z.string().max(512).optional(),

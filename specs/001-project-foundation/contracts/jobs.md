@@ -53,3 +53,8 @@ retention and dead-letter behavior. Defaults are not accepted without explicit r
 - Payloads contain identifiers and immutable parameters only; handlers reload current protected data.
 - Scanner/storage/network unavailability never marks a file safe; retry or terminal failure applies.
 - Manual redrive requires permission, reason and audit event.
+
+
+## Regra final de justificativas — 14/09/2026
+
+Nenhuma operação desta função exige motivo escrito. Campos de justificativa foram retirados da interface. Contratos aceitam omissão e vazio; texto legado opcional mantém seu limite. As exigências anteriores de justificativa estão substituídas. Histórico permanece preservado, e novos eventos registram autoria, data, ação e alterações automaticamente, sem motivo inventado. Fonte, resultado, autenticação, permissões, versão e dados necessários à operação continuam obrigatórios.

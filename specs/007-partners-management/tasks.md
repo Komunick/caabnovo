@@ -101,3 +101,10 @@ Hooks before/after ausentes. Nenhum deploy/merge ou seed sobre banco compartilha
 - [x] T037 Aplicar os campos comuns em todas as abas, separar endereço de parceiro/unidade, preservar legado e projeção pública; testar persistência, consulta CEP, teclado e regressão no PR #18 dependente do #19.
 
 - [x] T038 Explicitar JPG nos anexos de contratos usando o seletor comum do PR #19 e preservar PNG/PDF.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+- [ ] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [ ] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [ ] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.

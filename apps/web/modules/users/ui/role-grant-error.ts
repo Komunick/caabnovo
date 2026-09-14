@@ -7,8 +7,7 @@ const messages: Record<string, string> = {
   ROLE_ALREADY_ASSIGNED: "Este colaborador já possui esta função. Atualize a página para conferir.",
   USER_NOT_FOUND: "O colaborador não foi encontrado ou está desativado.",
   ROLE_NOT_FOUND: "Esta função não está mais disponível. Atualize a página.",
-  JUSTIFICATION_REQUIRED: "Informe uma justificativa para conceder a função.",
-  VALIDATION_FAILED: "Confira a função selecionada e preencha a justificativa.",
+  VALIDATION_FAILED: "Confira a função selecionada.",
   AUTHENTICATION_REQUIRED: "Sua sessão expirou. Entre novamente para continuar.",
 };
 

@@ -53,7 +53,7 @@ export const newsRoutes = createNewsRoutes({
       ),
     publication: async (actor, id) => {
       const payload = await getNewsPayload();
-      const state = await newsTransaction(payload, actor, async ({ req, db }) => {
+      const publication = await newsTransaction(payload, actor, async ({ req }) => {
         const current = await payload.findByID({
           collection: "news",
           id,
@@ -62,20 +62,15 @@ export const newsRoutes = createNewsRoutes({
           draft: false,
           depth: 0,
         });
-        const lifecycle = (
-          await db.query("SELECT first_published_at FROM news WHERE id=$1::uuid", [id])
-        ).rows[0];
-        const publication =
-          current._status === "published"
-            ? {
-                revision: Number(current.revision),
-                channels: current.metadata?.channels as string[],
-                publishedAt: String(current.updatedAt),
-              }
-            : null;
-        return { publication, hasBeenPublished: lifecycle?.first_published_at != null };
+        return current._status === "published"
+          ? {
+              revision: Number(current.revision),
+              channels: current.metadata?.channels as string[],
+              publishedAt: String(current.updatedAt),
+            }
+          : null;
       });
-      return { ...state, actions: await listNewsActions(payload, actor, id) };
+      return { publication, actions: await listNewsActions(payload, actor, id) };
     },
     media: async (actor, id, page) => listNewsMedia(await getNewsPayload(), actor, id, page),
     mediaDownload: async (actor, id, fileId) =>

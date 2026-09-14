@@ -27,7 +27,6 @@ export function ReviewPanel({
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [reason, setReason] = useState("");
   const [decision, setDecision] = useState<{
     review: PartnerReview;
     status: "published" | "hidden";
@@ -159,13 +158,12 @@ export function ReviewPanel({
                         {
                           expectedVersion: decision.review.version,
                           status: decision.status,
-                          justification: reason,
                         },
                         "Moderação registrada. A opinião original foi preservada.",
                       );
                       if (saved) {
                         setDecision(null);
-                        setReason("");
+
                         setRevision((value) => value + 1);
                       }
                     }}
@@ -176,16 +174,7 @@ export function ReviewPanel({
                           ? "Aprovar avaliação"
                           : "Ocultar avaliação"}
                       </legend>
-                      <FormField id="review-moderation-reason" label="Justificativa da moderação">
-                        <textarea
-                          name="justification"
-                          value={reason}
-                          onChange={(event) => setReason(event.target.value)}
-                          required
-                          minLength={3}
-                          maxLength={1000}
-                        />
-                      </FormField>
+
                       <div className={styles.actions}>
                         <Button intent="primary" type="submit">
                           Confirmar moderação
@@ -194,7 +183,6 @@ export function ReviewPanel({
                           type="button"
                           onClick={() => {
                             setDecision(null);
-                            setReason("");
                           }}
                         >
                           Cancelar

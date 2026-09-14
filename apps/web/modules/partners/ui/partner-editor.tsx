@@ -154,8 +154,8 @@ export function PartnerEditor({
             key={partner.version}
             profile={partner.profile}
             disabled={disabled || !canWrite}
-            onSave={async (profile, justification) => {
-              await command({ action: "update", profile, justification });
+            onSave={async (profile) => {
+              await command({ action: "update", profile });
             }}
           />
           {canWrite && (
@@ -169,7 +169,6 @@ export function PartnerEditor({
                   const success = await command({
                     action: action === "active" || action === "suspended" ? "status" : action,
                     ...(action === "active" || action === "suspended" ? { status: action } : {}),
-                    justification: String(data.get("justification")),
                   });
                   if (success)
                     setMessage(
@@ -196,9 +195,7 @@ export function PartnerEditor({
                       )}
                     </select>
                   </FormField>
-                  <FormField id="partner-state-reason" label="Justificativa da mudança de situação">
-                    <textarea name="justification" required minLength={3} maxLength={1000} />
-                  </FormField>
+
                   <Button type="submit">Confirmar alteração de situação</Button>
                 </fieldset>
               </form>

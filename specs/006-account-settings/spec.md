@@ -154,3 +154,8 @@ são alterações cadastrais. Preservar autorização, idempotência e controle 
 Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
 recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.

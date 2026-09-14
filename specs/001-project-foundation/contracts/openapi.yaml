@@ -2,7 +2,9 @@ openapi: 3.1.1
 info:
   title: CAAB Foundation API
   version: 1.0.0
-  description: Versioned administrative contracts for identity context, access management, audit, files and asynchronous operation status. Authentication endpoints are delegated to Better Auth and constrained by authentication.md.
+  description: Versioned administrative contracts for identity context, access management, audit,
+    files and asynchronous operation status. Authentication endpoints are delegated to Better Auth
+    and constrained by authentication.md.
 servers:
   - url: /api/v1
 security:
@@ -14,7 +16,8 @@ paths:
         name: grant
         required: true
         schema: { type: string, maxLength: 2048 }
-        description: Five-minute HMAC capability issued after authorization; bound to object and HTTP method. Never log this value.
+        description: Five-minute HMAC capability issued after authorization; bound to object and HTTP
+          method. Never log this value.
     put:
       operationId: putDatabaseFileContent
       security: []
@@ -106,7 +109,7 @@ paths:
   /users/{userId}:
     patch:
       operationId: updateUser
-      summary: Update or disable a user with justification
+      summary: Update or disable a user with automatic audit
       parameters:
         - $ref: "#/components/parameters/UserId"
         - $ref: "#/components/parameters/CsrfToken"
@@ -136,7 +139,7 @@ paths:
   /users/{userId}/roles/{roleId}:
     put:
       operationId: grantUserRole
-      summary: Grant a role with a mandatory justification
+      summary: Grant a role with automatic audit
       parameters:
         - $ref: "#/components/parameters/UserId"
         - $ref: "#/components/parameters/RoleId"
@@ -162,17 +165,18 @@ paths:
           $ref: "#/components/responses/Unprocessable"
     delete:
       operationId: revokeUserRole
-      summary: Revoke a role with a mandatory justification
+      summary: Revoke a role with automatic audit
       parameters:
         - $ref: "#/components/parameters/UserId"
         - $ref: "#/components/parameters/RoleId"
         - $ref: "#/components/parameters/CsrfToken"
         - name: justification
           in: query
-          required: true
+          required: false
           schema:
             type: string
-            minLength: 1
+            maxLength: 1000
+          description: Optional legacy field; omission is accepted.
       responses:
         "204":
           description: Role revoked
@@ -369,7 +373,7 @@ paths:
   /jobs/{jobId}/redrive:
     post:
       operationId: redriveJob
-      summary: Requeue a failed job with an audited justification
+      summary: Requeue a failed job with automatic audit
       parameters:
         - $ref: "#/components/parameters/JobId"
         - $ref: "#/components/parameters/CsrfToken"
@@ -589,12 +593,12 @@ components:
           maxLength: 1000
           default: ""
           description: Optional legacy field; creation never requires an operator reason.
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     UpdateUserRequest:
       type: object
       additionalProperties: false
       required:
         - version
-        - justification
       properties:
         name:
           type: string
@@ -607,12 +611,12 @@ components:
           minimum: 1
         justification:
           type: string
-          minLength: 1
+          maxLength: 1000
+          default: ""
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     RoleChangeRequest:
       type: object
       additionalProperties: false
-      required:
-        - justification
       properties:
         validUntil:
           type:
@@ -621,7 +625,9 @@ components:
           format: date-time
         justification:
           type: string
-          minLength: 1
+          maxLength: 1000
+          default: ""
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     RoleReference:
       type: object
       additionalProperties: false
@@ -741,7 +747,6 @@ components:
       required:
         - from
         - to
-        - justification
       properties:
         from:
           type: string
@@ -758,7 +763,9 @@ components:
           type: string
         justification:
           type: string
-          minLength: 1
+          maxLength: 1000
+          default: ""
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     CreateUploadIntentRequest:
       type: object
       additionalProperties: false
@@ -905,13 +912,12 @@ components:
     RedriveJobRequest:
       type: object
       additionalProperties: false
-      required:
-        - reason
       properties:
         reason:
           type: string
-          minLength: 1
           maxLength: 500
+          default: ""
+      description: No written reason is required. Legacy reason text remains optional for compatibility.
     Error:
       type: object
       additionalProperties: false

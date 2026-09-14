@@ -7,7 +7,8 @@ import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { AccountSettingsRequest } from "@caab/contracts";
+import type { z } from "zod";
+import type { accountSettingsRequestSchema } from "@caab/contracts";
 import { newPasswordSchema, PASSWORD_MAX_LENGTH, PASSWORD_REQUIREMENTS } from "@caab/contracts";
 import Link from "next/link";
 
@@ -33,7 +34,7 @@ const errors: Record<string, string> = {
     "Confira os campos e escolha uma senha forte, com maiúsculas, minúsculas e números.",
 };
 
-export async function saveSettings(input: AccountSettingsRequest) {
+export async function saveSettings(input: z.input<typeof accountSettingsRequestSchema>) {
   const response = await fetch("/api/v1/me/settings", {
     method: "POST",
     headers: { "content-type": "application/json", "x-csrf-token": crypto.randomUUID() },
@@ -78,13 +79,13 @@ export function AccountSettingsForm({
     setPending(action);
     setFeedback(null);
     try {
-      const input: AccountSettingsRequest =
+      const input: z.input<typeof accountSettingsRequestSchema> =
         action === "profile"
-          ? { action, name: text("name").trim(), version, justification: text("justification") }
+          ? { action, name: text("name").trim(), version }
           : action === "password"
             ? {
                 action,
-                justification: text("justification"),
+
                 currentPassword: text("currentPassword"),
                 newPassword: text("newPassword"),
                 confirmPassword: text("confirmPassword"),
@@ -92,7 +93,7 @@ export function AccountSettingsForm({
               }
             : {
                 action,
-                justification: text("justification"),
+
                 currentPassword: text("currentPassword"),
                 newEmail: text("newEmail").trim(),
                 version,
@@ -153,15 +154,7 @@ export function AccountSettingsForm({
               autoComplete="name"
             />
           </FormField>
-          <FormField id="settings-profile-reason" label="Motivo da alteração">
-            <textarea
-              name="justification"
-              required
-              minLength={3}
-              maxLength={1000}
-              disabled={disabled}
-            />
-          </FormField>
+
           {message("profile")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "profile" ? "Salvando…" : "Salvar nome"}
@@ -206,15 +199,7 @@ export function AccountSettingsForm({
               maxLength={128}
             />
           </FormField>
-          <FormField id="settings-email-reason" label="Motivo da alteração">
-            <textarea
-              name="justification"
-              required
-              minLength={3}
-              maxLength={1000}
-              disabled={disabled}
-            />
-          </FormField>
+
           {message("request-email")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "request-email" ? "Enviando…" : "Enviar confirmação"}
@@ -261,15 +246,7 @@ export function AccountSettingsForm({
               required
             />
           </FormField>
-          <FormField id="settings-password-reason" label="Motivo da alteração">
-            <textarea
-              name="justification"
-              required
-              minLength={3}
-              maxLength={1000}
-              disabled={disabled}
-            />
-          </FormField>
+
           {message("password")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "password" ? "Salvando…" : "Alterar senha"}

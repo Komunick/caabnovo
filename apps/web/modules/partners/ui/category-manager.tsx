@@ -84,7 +84,6 @@ export function CategoryManager({
                 ...(editing === "new" ? {} : { id: editing.id, expectedVersion: editing.version }),
                 name: String(data.get("name")),
                 active: data.get("active") === "on",
-                justification: String(data.get("justification") ?? ""),
               },
               "Categoria salva.",
             );
@@ -116,11 +115,7 @@ export function CategoryManager({
               </label>
             </div>
             <p>Uma categoria inativa mantém os parceiros vinculados e deixa de aparecer no app.</p>
-            {editing !== "new" && (
-              <FormField id="category-reason" label="Justificativa da categoria">
-                <textarea name="justification" required minLength={3} maxLength={1000} />
-              </FormField>
-            )}
+
             <div className={styles.actions}>
               <Button intent="primary" type="submit">
                 Salvar categoria

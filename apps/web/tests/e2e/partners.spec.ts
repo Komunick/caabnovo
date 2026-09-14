@@ -91,7 +91,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
     page.getByRole("heading", { name: "Convênio sintético", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Aprovar contrato", exact: true }).click();
-  await page.locator("#contract-decision-reason").fill("Aprovação sintética");
+  await expect(page.locator("#contract-decision-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Confirmar aprovação", exact: true }).click();
   await expect(page.getByText("Aprovado ·", { exact: false })).toBeVisible();
   const download = await page.request.get(
@@ -128,7 +128,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
     fullPage: true,
   });
   await page.getByRole("button", { name: "Publicar", exact: true }).click();
-  await page.locator("#benefit-publish-reason").fill("Publicação sintética no banco isolado");
+  await expect(page.locator("#benefit-publish-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Confirmar publicação", exact: true }).click();
   await expect(page.getByText("Em exibição ·", { exact: false })).toBeVisible();
   const visible = await page.request.get("/api/v1/benefits/site");
@@ -142,9 +142,9 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await page.getByLabel("Título", { exact: true }).fill("Título privado em revisão");
   await page.getByLabel("Fim da oferta").fill("2098-12-31");
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
-  await expect(page.locator("#benefit-reason")).toBeVisible();
+  await expect(page.locator("#benefit-reason")).toHaveCount(0);
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Título privado em revisão");
-  await page.locator("#benefit-reason").fill("Revisão privada sintética");
+  await expect(page.locator("#benefit-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Título privado em revisão", exact: true }),
@@ -205,7 +205,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await expectWcag22AA(page);
   await page.getByRole("button", { name: "Benefícios", exact: true }).click();
   await page.getByRole("button", { name: "Retirar de exibição", exact: true }).click();
-  await page.locator("#benefit-publish-reason").fill("Fim da validação sintética");
+  await expect(page.locator("#benefit-publish-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Confirmar retirada", exact: true }).click();
   await expect(page.getByText("Rascunho ·", { exact: false })).toBeVisible();
 });

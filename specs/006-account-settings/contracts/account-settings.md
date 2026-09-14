@@ -30,3 +30,8 @@ Recuperação usa `POST /api/auth/request-password-reset` com `{ email }` e `POS
 Limites em ambiente normal: três pedidos/minuto e cinco tentativas de redefinição/minuto, com HTTP 429 ao exceder. Solicitações válidas retornam a mesma mensagem para endereços conhecidos e desconhecidos. A disponibilidade SMTP é verificada antes de procurar a conta; indisponibilidade retorna HTTP 503 `RECOVERY_UNAVAILABLE`, com erro e opção de nova tentativa na tela. Mailpit somente em localhost; envio real obrigatório fora dele (FR-013).
 
 O link de confirmação usa `/confirm-email#token=...`. O fragmento não é enviado no endereço da requisição HTTP; o cliente o remove da barra e envia o token somente no corpo da confirmação explícita. Reabrir o link exige novamente a sessão do titular; não há redirecionamento automático para destinos externos.
+
+
+## Regra final de justificativas — 14/09/2026
+
+Nenhuma operação desta função exige motivo escrito. Campos de justificativa foram retirados da interface. Contratos aceitam omissão e vazio; texto legado opcional mantém seu limite. As exigências anteriores de justificativa estão substituídas. Histórico permanece preservado, e novos eventos registram autoria, data, ação e alterações automaticamente, sem motivo inventado. Fonte, resultado, autenticação, permissões, versão e dados necessários à operação continuam obrigatórios.

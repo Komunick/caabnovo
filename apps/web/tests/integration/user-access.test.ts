@@ -89,7 +89,7 @@ beforeEach(async () => {
 });
 
 describe.sequential("user access transactions", () => {
-  it("creates a collaborator with initial roles without a reason, then requires it for changes", async () => {
+  it("creates and edits a collaborator without a reason while preserving audit attribution", async () => {
     const actorId = await seedUser("manager@example.test");
     const roleId = await seedRole("initial-role");
     const created = await createUser(database.pool, {
@@ -105,20 +105,20 @@ describe.sequential("user access transactions", () => {
     );
     expect(event.rows[0]).toMatchObject({
       actor_user_id: actorId,
-      reason: "Cadastro inicial de colaborador e acessos",
+      reason: null,
     });
     await expect(
       changeUser(database.pool, {
         ...context(actorId),
         userId: created.id,
         version: 1,
-        name: "Recusado",
+        name: "Atualizado sem motivo",
         justification: "   ",
       }),
-    ).rejects.toMatchObject({ code: "JUSTIFICATION_REQUIRED" });
+    ).resolves.toMatchObject({ name: "Atualizado sem motivo", version: 2 });
     expect(
       (await admin.query('SELECT name,version FROM "user" WHERE id=$1', [created.id])).rows[0],
-    ).toEqual({ name: "Novo colaborador", version: 1 });
+    ).toEqual({ name: "Atualizado sem motivo", version: 2 });
   });
   it("grants an administrative role to an active user without an authenticator", async () => {
     const actorId = await seedUser("manager@example.test");

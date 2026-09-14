@@ -171,8 +171,8 @@ export function MemberEditor({
             key={member.version}
             profile={member.profile}
             disabled={busy || !!member.archivedAt || !canWrite}
-            onSave={async (profile, justification) => {
-              await command({ action: "update", profile, justification });
+            onSave={async (profile) => {
+              await command({ action: "update", profile });
             }}
           />
           <hr />
@@ -181,13 +181,9 @@ export function MemberEditor({
               e.preventDefault();
               void command({
                 action: member.archivedAt ? "restore" : "archive",
-                justification: String(new FormData(e.currentTarget).get("reason")),
               });
             }}
           >
-            <FormField id="archive-reason" label="Motivo do arquivamento ou restauração">
-              <textarea name="reason" required minLength={3} maxLength={1000} />
-            </FormField>
             <Button
               type="submit"
               disabled={busy || !canWrite}
@@ -281,7 +277,7 @@ export function MemberEditor({
                   dimension,
                   result: d.get("result"),
                   source: d.get("source"),
-                  justification: d.get("reason") ?? "",
+
                   observedAt: new Date(`${observed}T00:00:00-03:00`).toISOString(),
                   validUntil: until ? new Date(`${until}T23:59:59-03:00`).toISOString() : null,
                 });
@@ -329,9 +325,7 @@ export function MemberEditor({
                 <FormField id="assessment-source" label="Fonte ou regra aplicada">
                   <input name="source" required minLength={3} maxLength={300} />
                 </FormField>
-                <FormField id="assessment-reason" label="Motivo da decisão">
-                  <textarea name="reason" required minLength={3} maxLength={1000} />
-                </FormField>
+
                 <Button type="submit" intent="primary">
                   Registrar avaliação
                 </Button>
@@ -380,13 +374,9 @@ export function MemberEditor({
                       void command({
                         action: "unlink",
                         relationshipId: r.id,
-                        justification: String(new FormData(e.currentTarget).get("reason")),
                       });
                     }}
                   >
-                    <FormField id={`end-${r.id}`} label="Motivo do encerramento">
-                      <input name="reason" required minLength={3} maxLength={1000} />
-                    </FormField>
                     <Button type="submit" disabled={busy || !!member.archivedAt || !canWrite}>
                       Encerrar vínculo
                     </Button>
@@ -431,7 +421,6 @@ export function MemberEditor({
                   dependentId: d.get("dependentId"),
                   relationship: d.get("relationship"),
                   startsOn: d.get("startsOn"),
-                  justification: d.get("reason") ?? "",
                 });
               }}
             >
@@ -486,7 +475,7 @@ export function MemberEditor({
       {tab === "Histórico" && (
         <section className="panel">
           <h2>Histórico do cadastro</h2>
-          <p>Horários de Brasília. Alterações preservam responsável e motivo.</p>
+          <p>Horários de Brasília. Alterações preservam responsável, data e histórico.</p>
           {!history ? (
             <p>Carregando histórico…</p>
           ) : (

@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { changeJustificationSchema } from "@caab/contracts";
 import type { NewsRecord } from "../news-service";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
@@ -8,7 +7,6 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { newsFieldErrors, focusNewsError, type NewsFieldErrors } from "./field-errors";
 
 type PublicationState = {
-  hasBeenPublished: boolean;
   publication: { revision: number; channels: string[]; publishedAt: string } | null;
   actions: {
     id: string;
@@ -48,20 +46,15 @@ export function NewsPublishing({
   onFieldErrors,
 }: Readonly<{
   record?: NewsRecord;
-  onPrepare(justification: string): Promise<NewsRecord | undefined>;
+  onPrepare(): Promise<NewsRecord | undefined>;
   dirty: boolean;
   disabled: boolean;
   onSaved(record: NewsRecord): void;
   onBusyChange(busy: boolean): void;
   onFieldErrors(errors: NewsFieldErrors): void;
 }>) {
-  const [state, setState] = useState<PublicationState>({
-    publication: null,
-    actions: [],
-    hasBeenPublished: false,
-  });
+  const [state, setState] = useState<PublicationState>({ publication: null, actions: [] });
   const [channels, setChannels] = useState<string[]>(record?.metadata.channels ?? []);
-  const [justification, setJustification] = useState("");
   const [runAt, setRunAt] = useState("");
   const [scheduleAction, setScheduleAction] = useState("publish");
   const [pending, setPending] = useState(false);
@@ -84,9 +77,6 @@ export function NewsPublishing({
     void reload().catch((error: Error) => setError(error.message));
   }, [reload, record?.revision]);
   const hasPending = state.actions.some((action) => action.status === "pending");
-  const editingContent = !!record && !record.creationPending && dirty;
-  const showReason =
-    state.hasBeenPublished || editingContent || hasPending || !!fieldErrors.justification;
   useEffect(() => {
     if (!hasPending) return;
     const timer = setInterval(() => {
@@ -102,22 +92,8 @@ export function NewsPublishing({
     setError("");
     setMessage("");
     setFieldErrors({});
-    const needsReason =
-      action === "publish"
-        ? state.hasBeenPublished || editingContent
-        : action === "schedule"
-          ? editingContent
-          : true;
-    if (needsReason && !changeJustificationSchema.safeParse(justification).success) {
-      setError("Informe o motivo da alteração (3 a 1000 caracteres).");
-      setFieldErrors({ justification: "Informe o motivo da alteração (3 a 1000 caracteres)." });
-      setConfirm(undefined);
-      focusNewsError();
-      return;
-    }
     let input: Record<string, unknown> = {
       channels,
-      ...(action !== "schedule" && needsReason ? { justification } : {}),
     };
     if (action === "schedule") {
       // The form explicitly uses Brasília time; the current supported window is the next year.
@@ -146,9 +122,8 @@ export function NewsPublishing({
     onBusyChange(true);
     try {
       const prepared =
-        (action === "publish" || action === "schedule") &&
-        (!record || record.creationPending || dirty)
-          ? await onPrepare(justification)
+        (action === "publish" || action === "schedule") && (!record || dirty)
+          ? await onPrepare()
           : record;
       if (!prepared) {
         setConfirm(undefined);
@@ -156,7 +131,7 @@ export function NewsPublishing({
       }
       input =
         action === "cancel" || action === "retry"
-          ? { justification }
+          ? {}
           : { ...input, expectedVersion: prepared.revision };
       const body = JSON.stringify(input),
         fingerprint = `${action}:${actionId ?? ""}:${body}`;
@@ -201,7 +176,7 @@ export function NewsPublishing({
       if (action === "publish" || action === "unpublish")
         onSaved((await response.json()) as NewsRecord);
       retry.current = undefined;
-      setJustification("");
+
       setConfirm(undefined);
       await reload(prepared.id);
       setMessage(
@@ -227,22 +202,7 @@ export function NewsPublishing({
   return (
     <section className="panel" aria-labelledby="news-publication-title">
       <h2 id="news-publication-title">Publicação e agenda</h2>
-      {showReason && (
-        <FormField
-          id="news-publication-reason"
-          label="Motivo da publicação ou alteração"
-          hint="Obrigatório para alterar conteúdo salvo, republicar, retirar publicação, cancelar ou reenviar. Criação e primeira publicação não exigem motivo."
-          error={fieldErrors.justification}
-        >
-          <textarea
-            value={justification}
-            onChange={(event) => setJustification(event.target.value)}
-            minLength={3}
-            maxLength={1000}
-            disabled={disabled || pending}
-          />
-        </FormField>
-      )}
+
       {state.publication ? (
         <p>
           Publicada · revisão {state.publication.revision} · {date(state.publication.publishedAt)}{" "}

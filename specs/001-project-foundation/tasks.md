@@ -420,3 +420,10 @@ Validação de justificativas e resultado OAB: [evidências de 14/09/2026](evide
 - [x] DBF05 Documentar configuração, transição, backup e resultados da entrega.
 
 Resultados e limites: [evidências do armazenamento](evidence/database-files.md).
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+- [ ] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [ ] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [ ] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.

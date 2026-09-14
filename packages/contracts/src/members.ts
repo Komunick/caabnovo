@@ -15,7 +15,7 @@ export function isValidCpf(value: string): boolean {
 
 const optionalText = (max: number) => z.string().trim().max(max).default("");
 const date = z.iso.date();
-const reason = z.string().trim().min(3).max(1000);
+const reason = z.string().trim().max(1000).default("");
 const uuid = z.uuid();
 export const MAX_MEMBER_PHOTO_BYTES = 5 * 1024 * 1024;
 export const memberProfileSchema = z.strictObject({
@@ -135,16 +135,6 @@ export const memberCommandSchema = z
     }),
   ])
   .superRefine((input, ctx) => {
-    if (
-      ((input.action === "document" && input.replacesId) ||
-        (input.action === "photo" && input.fileId === null)) &&
-      !reason.safeParse(input.justification).success
-    )
-      ctx.addIssue({
-        code: "custom",
-        path: ["justification"],
-        message: "Informe o motivo da alteração (3 a 1000 caracteres).",
-      });
     if (input.action === "link" && input.startsOn > new Date().toISOString().slice(0, 10))
       ctx.addIssue({ code: "custom", path: ["startsOn"], message: "Início futuro" });
     if (input.action !== "assess") return;

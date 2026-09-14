@@ -33,7 +33,7 @@ test("auditor searches combined filters and starts an authorized export", async 
   await expect(page.getByRole("button", { name: /Editar|Excluir/ })).toHaveCount(0);
 
   await page.getByRole("button", { name: "Exportar auditoria" }).click();
-  await page.getByLabel("Justificativa da exportação").fill("Investigação sintética autorizada");
+  await expect(page.getByLabel("Justificativa da exportação")).toHaveCount(0);
   await page.getByRole("button", { name: "Iniciar exportação" }).click();
   await expect(page).toHaveURL(/\/audit\/exports\/[0-9a-f-]+$/, { timeout: 15_000 });
   await expect(page.getByRole("heading", { name: "Exportação de auditoria" })).toBeVisible();

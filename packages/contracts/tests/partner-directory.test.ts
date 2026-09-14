@@ -16,7 +16,7 @@ describe("partner directory contracts", () => {
     expect(categoryCommandSchema.safeParse({ name: "Nova categoria" }).success).toBe(true);
     const edit = { ...input, id: crypto.randomUUID(), expectedVersion: 1 };
     for (const justification of [undefined, "", "  ", "ab"])
-      expect(categoryCommandSchema.safeParse({ ...edit, justification }).success).toBe(false);
+      expect(categoryCommandSchema.safeParse({ ...edit, justification }).success).toBe(true);
     expect(categoryCommandSchema.safeParse(edit).success).toBe(true);
   });
   it("distinguishes all categories from an explicit empty selection and rejects duplicates", () => {
@@ -50,7 +50,6 @@ describe("partner directory contracts", () => {
       { comment: "Alterado" },
       { authorLabel: "Outro" },
       { status: "pending" },
-      { justification: "" },
     ])
       expect(moderatePartnerReviewSchema.safeParse({ ...input, ...extra }).success).toBe(false);
   });

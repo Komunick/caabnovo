@@ -43,9 +43,6 @@ export function validateRoleGrant(input: {
   }
 
   const justification = input.justification.trim();
-  if (!justification) {
-    throw new AccessPolicyError("JUSTIFICATION_REQUIRED", 422, "Justification is required");
-  }
   const now = input.now ?? new Date();
   const validFrom = input.validFrom ?? now;
   const validUntil = input.validUntil ?? null;
@@ -64,8 +61,5 @@ export function validateRoleRevocation(input: {
     throw new AccessPolicyError("ROLE_REVOKE_DENIED", 403, "Role revoke permission required");
   }
   const reason = input.reason.trim();
-  if (!reason) {
-    throw new AccessPolicyError("JUSTIFICATION_REQUIRED", 422, "Revocation reason is required");
-  }
   return { reason };
 }

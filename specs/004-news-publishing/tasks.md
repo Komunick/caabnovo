@@ -137,11 +137,8 @@ Contexto e plano de retomada: [standby-origin-fix.md](standby-origin-fix.md).
 
 Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../001-project-foundation/evidence/justification-oab.md).
 
-## Correção da criação editorial — 14/09/2026
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-- [x] CR01 Diagnosticar salvamento técnico de mídia e exigência na primeira publicação.
-- [x] CR02 Implementar estado persistente, autorização/concorrência e auditoria da conclusão.
-- [x] CR03 Corrigir formulários e contratos para criação e primeira publicação sem motivo.
-- [ ] CR04 Validar regressões de criação com mídia, edição, republicação e migrations.
-- [ ] CR05 Registrar evidências e reunir a entrega ativa em PR após os gates.
-- [ ] CR06 Tornar a descrição da capa opcional e validar publicação sem preenchimento.
+- [ ] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [ ] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [ ] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.

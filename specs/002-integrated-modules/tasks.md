@@ -259,3 +259,10 @@ Incrementos locais completos, começando por US1. O usuário pediu planejamento 
 início imediato, não conclusão instantânea nem telas demonstrativas. Marcar [x] apenas trabalho
 executado/verificado. Manter decisões de negócio pendentes visíveis, avançando nas tarefas
 independentes.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+- [ ] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [ ] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [ ] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.

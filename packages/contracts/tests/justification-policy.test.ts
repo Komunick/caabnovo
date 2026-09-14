@@ -10,6 +10,12 @@ import {
   publishNewsRequestSchema,
   accountSettingsRequestSchema,
   emptyNewsBody,
+  roleChangeRequestSchema,
+  userAccessChangeSchema,
+  auditExportRequestSchema,
+  redriveJobRequestSchema,
+  partnerAppSettingsSchema,
+  moderatePartnerReviewSchema,
 } from "../src/index";
 
 const id = "11111111-1111-4111-8111-111111111111";
@@ -64,13 +70,24 @@ describe("creation and edit justification policy", () => {
     [restoreNewsRevisionRequestSchema, { expectedVersion: 1, versionId: id }],
     [publishNewsRequestSchema, { expectedVersion: 1, channels: ["site"] }],
     [accountSettingsRequestSchema, { action: "profile", name: "Atualizado", version: 1 }],
+    [roleChangeRequestSchema, {}],
+    [userAccessChangeSchema, { permissions: [], expectedPermissions: [], version: 0 }],
+    [auditExportRequestSchema, { from: "2026-09-01T00:00:00Z", to: "2026-09-14T00:00:00Z" }],
+    [partnerAppSettingsSchema, { expectedVersion: 1, mode: "all", categoryIds: [] }],
+    [moderatePartnerReviewSchema, { expectedVersion: 1, status: "hidden" }],
   ] as const;
-  it.each(changes)("rejects missing and blank reasons for changes (%#)", (schema, command) => {
+  it.each(changes)("accepts missing and blank reasons for changes (%#)", (schema, command) => {
     for (const justification of [undefined, "", "   "]) {
-      expect(schema.safeParse({ ...command, justification }).success).toBe(false);
+      expect(schema.safeParse({ ...command, justification }).success).toBe(true);
     }
     expect(schema.safeParse({ ...command, justification: "Correção solicitada" }).success).toBe(
       true,
     );
+    expect(schema.safeParse({ ...command, justification: "a".repeat(1001) }).success).toBe(false);
+  });
+  it("requeues jobs without a reason while bounding legacy text", () => {
+    for (const reason of [undefined, "", "   "])
+      expect(redriveJobRequestSchema.parse({ reason }).reason).toBe("");
+    expect(redriveJobRequestSchema.safeParse({ reason: "a".repeat(501) }).success).toBe(false);
   });
 });

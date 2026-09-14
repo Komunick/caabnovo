@@ -27,7 +27,6 @@ export async function preparePublication(
   source: Record<string, unknown>,
   actorUserId: string,
   input: unknown,
-  firstPublication = false,
 ) {
   const metadata = newsDraftMetadataSchema.parse(source.metadata);
   const body = newsBodySchema.parse(source.body);
@@ -36,31 +35,26 @@ export async function preparePublication(
   const files = await readNewsMedia(db, [
     ...new Set([...imageIds, ...(metadata.cover ? [metadata.cover.fileId] : [])]),
   ]);
-  const command = validateNewsPublication(
-    { userId: actorUserId },
-    input,
-    {
-      id,
-      version: Number(source.revision),
-      archived: source.archived === true,
-      metadata,
-      content: {
-        status: images.some((image) => !image.alt)
-          ? "invalid"
-          : hasText(body.root) || images.length
-            ? "valid"
-            : "empty",
-        fileIds: imageIds,
-      },
-      files: files.map((file) => ({
-        id: file.id,
-        ownerNewsId: file.ownerNewsId,
-        mime: file.mime,
-        status: file.usable ? "available" : "unavailable",
-      })),
+  const command = validateNewsPublication({ userId: actorUserId }, input, {
+    id,
+    version: Number(source.revision),
+    archived: source.archived === true,
+    metadata,
+    content: {
+      status: images.some((image) => !image.alt)
+        ? "invalid"
+        : hasText(body.root) || images.length
+          ? "valid"
+          : "empty",
+      fileIds: imageIds,
     },
-    firstPublication,
-  );
+    files: files.map((file) => ({
+      id: file.id,
+      ownerNewsId: file.ownerNewsId,
+      mime: file.mime,
+      status: file.usable ? "available" : "unavailable",
+    })),
+  });
   return { command, metadata, body };
 }
 
@@ -76,15 +70,12 @@ export async function publishNewsRevision(
   context: NewsPublicationContext,
 ) {
   if (latest.archived) throw new NewsPolicyError("NEWS_ARCHIVED", 409, "Notícia arquivada.");
-  const lifecycle = (await db.query("SELECT first_published_at FROM news WHERE id=$1::uuid", [id]))
-    .rows[0];
   const { command, metadata, body } = await preparePublication(
     db,
     id,
     source,
     context.actorUserId,
     input,
-    lifecycle?.first_published_at === null,
   );
   // Serialize publishers of the same slug, including different news items.
   await db.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [
@@ -148,10 +139,6 @@ export async function publishNewsRevision(
     before: { revision: Number(latest.revision) },
     after: { revision, sourceRevision: Number(source.revision), channels: command.channels },
   });
-  await db.query(
-    "UPDATE news SET creation_pending=false, first_published_at=COALESCE(first_published_at,now()) WHERE id=$1::uuid",
-    [id],
-  );
   return published;
 }
 

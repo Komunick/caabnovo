@@ -136,22 +136,9 @@ geral. `path` identifica o controle (`metadata.slug`, `title`, `cover.alt`, `con
 Conflito de endereço publicado retorna 409 com campo `metadata.slug`. Mensagens internas e dados
 de exceção não são expostos; a interface traduz os códigos e mantém o texto editado.
 
-## Criação editorial e capa — 14/09/2026
 
-`POST /api/v1/news` aceita `prepareForMedia?: boolean`. Quando true, cria somente
-o rascunho técnico necessário ao upload. A resposta informa `creationPending`;
-o GET individual informa true apenas ao autor responsável por concluir a criação.
-O primeiro PUT desse autor conclui a criação e dispensa justificativa. PUTs posteriores
-e alterações por outra pessoa continuam exigindo motivo; o servidor decide sob lock.
-O cliente não pode enviar `creationPending` nem o estado de publicação para alterar a regra.
-Criações normais (POST sem a flag ou false) já estão concluídas.
+## Regra final de justificativas — 14/09/2026
 
-A primeira publicação dispensa justificativa; republicações continuam exigindo.
-`GET /api/v1/news/{id}/publication` inclui `hasBeenPublished`, que permanece true
-após retirada ou restauração. Rascunhos legados não reabrem a exceção de criação.
-Auditoria registra autor, evento e revisões mesmo sem motivo. Campos opcionais de
-justificativa, quando enviados, continuam sujeitos ao limite de 3 a 1000 caracteres.
+Nenhuma operação desta função exige motivo escrito. Campos de justificativa foram retirados da interface. Contratos aceitam omissão e vazio; texto legado opcional mantém seu limite. As exigências anteriores de justificativa estão substituídas. Histórico permanece preservado, e novos eventos registram autoria, data, ação e alterações automaticamente, sem motivo inventado. Fonte, resultado, autenticação, permissões, versão e dados necessários à operação continuam obrigatórios.
 
-`metadata.cover.alt` é opcional, aceita vazio e normaliza omissão para `""`.
-O limite de 500 caracteres permanece; publicação imediata/agendada não exige descrição
-da capa. Arquivos continuam sujeitos a autorização, propriedade e liberação existentes.
+A descrição da capa também é opcional, com limite de 500 caracteres e normalização de ausência para texto vazio. Não existe estado especial de criação para dispensar motivo.

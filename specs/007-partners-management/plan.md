@@ -109,3 +109,8 @@ nova é necessária para expirar, pois a leitura revalida vigência no servidor.
 ## Campos de todo o sistema — 14/09/2026
 
 Consumir a evolução do PR #19. Espalhar brazilianAddressSchema.shape nos perfis JSONB de parceiro/unidade; formatar address no contrato para preservar consumidores públicos. Formulários enviam partes independentes e listagem exibe formato compatível. Sem migration ou backfill. Atualizar os testes de contatos/persistência/legado e todos os gates afetados.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.

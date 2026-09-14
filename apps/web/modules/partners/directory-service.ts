@@ -105,18 +105,10 @@ export async function savePartnerCategory(pool: Pool, context: PartnerContext, r
             )
           ).rows[0]!.id;
         }
-        await audit(
-          client,
-          context,
-          pending.scope,
-          id,
-          "category-saved",
-          input.justification || "Cadastro de categoria.",
-          {
-            name: input.name,
-            active: input.active,
-          },
-        );
+        await audit(client, context, pending.scope, id, "category-saved", input.justification, {
+          name: input.name,
+          active: input.active,
+        });
         return { items: await categories(client) };
       },
       PERMISSIONS.partnersWrite,

@@ -32,7 +32,7 @@ test("legacy address stays visible until explicitly replaced by separate fields"
     "Endereço anterior: Rua antiga, 42, fundos",
   );
   await expect(page.locator("#partner-street")).toBeDisabled();
-  await page.locator("#partner-reason").fill("Conferência sem mudar endereço");
+  await expect(page.locator("#partner-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar cadastro", exact: true }).click();
   await expect(page.locator("#partner-legacy")).toBeVisible();
   await page.getByLabel("Substituir o endereço anterior pelos campos separados").check();
@@ -40,7 +40,7 @@ test("legacy address stays visible until explicitly replaced by separate fields"
   await page.locator("#partner-neighborhood").fill("Centro");
   await page.locator("#partner-number").fill("42");
   await page.locator("#partner-complement").fill("Fundos");
-  await page.locator("#partner-reason").fill("Separação explícita do endereço");
+  await expect(page.locator("#partner-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar cadastro", exact: true }).click();
   await expect(page.locator("#partner-legacy")).toHaveCount(0);
   await page.reload();
@@ -49,7 +49,7 @@ test("legacy address stays visible until explicitly replaced by separate fields"
   await expect(page.locator("#partner-number")).toHaveValue("42");
   await expect(page.locator("#partner-complement")).toHaveValue("Fundos");
 });
-test("partner and unit creation share contact masks, CEP lookup and edit-only reasons", async ({
+test("partner and unit creation share contact masks, CEP lookup and without edit reasons", async ({
   page,
 }, testInfo) => {
   test.setTimeout(120000);
@@ -129,7 +129,7 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
     page.getByRole("navigation", { name: "Seções do parceiro", exact: true }),
   ).toBeVisible();
   await expect(page.locator("#partner-street")).toHaveValue("Rua sintética");
-  await expect(page.locator("#partner-reason")).toBeVisible();
+  await expect(page.locator("#partner-reason")).toHaveCount(0);
   await keyboardActivate(page, page.getByRole("button", { name: "Unidades", exact: true }));
   await expect(page.getByRole("button", { name: "Unidades", exact: true })).toHaveAttribute(
     "aria-pressed",
@@ -160,11 +160,11 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
   await page
     .getByRole("button", { name: "Editar unidade Unidade de contato", exact: true })
     .click();
-  await expect(page.locator("#unit-reason")).toBeVisible();
+  await expect(page.locator("#unit-reason")).toHaveCount(0);
   await page.locator("#unit-phone").fill("7133334444");
   await page.getByRole("button", { name: "Salvar unidade", exact: true }).click();
-  await expect(page.locator("#unit-reason")).toBeVisible();
-  await page.locator("#unit-reason").fill("Atualização sintética do telefone");
+  await expect(page.locator("#unit-reason")).toHaveCount(0);
+  await expect(page.locator("#unit-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar unidade", exact: true }).click();
   await expect(page.locator("#unit-reason")).toHaveCount(0);
   await page.goto(`${detail}?tab=units`);

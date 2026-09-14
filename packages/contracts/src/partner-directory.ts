@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { PartnerUnit } from "./partners";
 
-const reason = z.string().trim().min(3).max(1000);
+const reason = z.string().trim().max(1000).default("");
 const version = z.number().int().positive();
 export const categoryCommandSchema = z
   .strictObject({
@@ -13,10 +13,6 @@ export const categoryCommandSchema = z
   })
   .refine((value) => !value.id || value.expectedVersion !== undefined, {
     path: ["expectedVersion"],
-  })
-  .refine((value) => !value.id || value.justification.length >= 3, {
-    path: ["justification"],
-    message: "Informe o motivo da alteração da categoria.",
   });
 export const partnerAppSettingsSchema = z.strictObject({
   expectedVersion: version,

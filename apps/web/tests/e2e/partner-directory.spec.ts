@@ -97,8 +97,8 @@ test("directory screens preserve edits and apply app settings, unit links and re
   const renamed = `${category} nova`;
   await page.getByLabel("Nome da categoria", { exact: true }).fill(renamed);
   await page.getByRole("button", { name: "Salvar categoria", exact: true }).click();
-  await expect(page.locator("#category-reason")).toBeVisible();
-  await page.getByLabel("Justificativa da categoria").fill("Renomear preservando vínculos");
+  await expect(page.locator("#category-reason")).toHaveCount(0);
+  await expect(page.getByLabel("Justificativa da categoria")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar categoria", exact: true }).click();
   await expect(page.getByRole("row").filter({ hasText: renamed })).toContainText("1");
   await page.goto("/partners/units");
@@ -115,7 +115,7 @@ test("directory screens preserve edits and apply app settings, unit links and re
   await page.goto("/partners/settings");
   await page.getByLabel("Escolher categorias", { exact: true }).check();
   await page.getByRole("button", { name: "Desmarcar todas", exact: true }).click();
-  await page.getByLabel("Justificativa da configuração").fill("Seleção vazia de teste");
+  await expect(page.getByLabel("Justificativa da configuração")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar configuração do app", exact: true }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Configuração do app salva." }),
@@ -149,15 +149,13 @@ test("directory screens preserve edits and apply app settings, unit links and re
     justification: "Alteração concorrente sintética",
   });
   await page.getByLabel(renamed, { exact: true }).check();
-  await page.getByLabel("Justificativa da configuração").fill("Seleção preservada após conflito");
+  await expect(page.getByLabel("Justificativa da configuração")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar configuração do app", exact: true }).click();
   await expect(page.getByRole("main").getByRole("alert")).toContainText("Outra pessoa");
   await page.getByRole("button", { name: "Atualizar versão da configuração" }).click();
   await expect(page.getByRole("main").getByRole("alert")).toContainText("Sua seleção foi mantida");
   await expect(page.getByLabel(renamed, { exact: true })).toBeChecked();
-  await expect(page.getByLabel("Justificativa da configuração")).toHaveValue(
-    "Seleção preservada após conflito",
-  );
+  await expect(page.getByLabel("Justificativa da configuração")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar configuração do app", exact: true }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Configuração do app salva." }),
@@ -190,7 +188,7 @@ test("directory screens preserve edits and apply app settings, unit links and re
   await page.reload();
   await expect(page.getByText("Opinião sintética preservada", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Ocultar avaliação", exact: true }).click();
-  await page.getByLabel("Justificativa da moderação").fill("Motivo sintético preservado");
+  await expect(page.getByLabel("Justificativa da moderação")).toHaveCount(0);
   await page.route("**/reviews/*", (route) =>
     route.request().method() === "POST"
       ? route.fulfill({ status: 503, json: { code: "UNAVAILABLE" } })
@@ -200,9 +198,7 @@ test("directory screens preserve edits and apply app settings, unit links and re
   await expect(page.getByRole("main").getByRole("alert")).toContainText("503");
   await page.unroute("**/reviews/*");
   await page.getByRole("button", { name: "Atualizar avaliações", exact: true }).click();
-  await expect(page.getByLabel("Justificativa da moderação")).toHaveValue(
-    "Motivo sintético preservado",
-  );
+  await expect(page.getByLabel("Justificativa da moderação")).toHaveCount(0);
   await expect(page.getByText("Carregando avaliações…", { exact: true })).toHaveCount(0);
   await keyboardActivate(
     page,

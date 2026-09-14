@@ -52,7 +52,6 @@ export function UserForm(props: Readonly<UserFormProps>) {
           ? {
               name: data.get("name"),
               version: props.user.version,
-              justification: data.get("justification"),
             }
           : {
               name: data.get("name"),
@@ -80,7 +79,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
     setPending(false);
   }
 
-  async function disable(reason: string) {
+  async function disable() {
     if (props.mode !== "edit") return;
     const response = await fetch(`/api/v1/users/${props.user.id}`, {
       method: "PATCH",
@@ -88,7 +87,6 @@ export function UserForm(props: Readonly<UserFormProps>) {
       body: JSON.stringify({
         status: "disabled",
         version: props.user.version,
-        justification: reason,
       }),
     });
     if (!response.ok) throw new Error(await errorMessage(response));
@@ -134,11 +132,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
             ) : null}
           </>
         ) : null}
-        {props.mode === "edit" && (
-          <FormField id={`${props.mode}-justification`} label="Justificativa">
-            <textarea id={`${props.mode}-justification`} name="justification" rows={3} required />
-          </FormField>
-        )}
+
         {error ? <p role="alert">{error}</p> : null}
         {message ? <p role="status">{message}</p> : null}
         <button
@@ -159,7 +153,6 @@ export function UserForm(props: Readonly<UserFormProps>) {
           <SensitiveActionDialog
             triggerLabel="Desativar colaborador"
             title="Desativar colaborador"
-            fieldLabel="Justificativa da desativação"
             confirmLabel="Confirmar desativação"
             onConfirm={disable}
           />

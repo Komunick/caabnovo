@@ -56,8 +56,12 @@ export function AuditTable({
                       <dl className="audit-metadata">
                         <dt>Ator</dt>
                         <dd>{event.actorUserId ?? "Sistema"}</dd>
-                        <dt>Justificativa</dt>
-                        <dd>{event.reason ?? "Não informada"}</dd>
+                        {event.reason && (
+                          <>
+                            <dt>Justificativa registrada</dt>
+                            <dd>{event.reason}</dd>
+                          </>
+                        )}
                         <dt>Requisição</dt>
                         <dd>{event.requestId}</dd>
                         <dt>Correlação</dt>

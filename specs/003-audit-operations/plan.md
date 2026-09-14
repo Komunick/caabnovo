@@ -42,3 +42,8 @@ práticas atuais de consulta operacional; definir cursor estável por created_at
 contrato existente de jobs. Repositório, serviço e página de Processamentos serão atualizados em
 conjunto. Reenvio verificará jobs:read e jobs:redrive antes da mutação. Validar negação sem efeitos
 colaterais e paginação com mais de 100 registros. Nenhuma mudança desta fase foi aplicada ainda.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
