@@ -385,6 +385,8 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 
 ## Campos comuns — revisão de 11/09/2026
 
-- [ ] CF01 Inventariar formulários existentes e extrair máscaras/contratos/avisos compartilhados.
-- [ ] CF02 Aplicar aos campos de Associados, Colaboradores, login, recuperação e Configurações; preservar autorização e dados.
+- [x] CF01 Inventariar formulários existentes e extrair máscaras/contratos/avisos compartilhados.
+- [x] CF02 Aplicar aos campos de Associados, Colaboradores, login, recuperação e Configurações; preservar autorização e dados.
 - [ ] CF03 Testar telefone fixo/celular, CPF/CNPJ, CEP/falhas/concorrência, e-mail/site inválidos e teclado; concluir gates e PR próprio.
+
+Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common-fields.md).
