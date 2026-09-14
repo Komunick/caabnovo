@@ -98,6 +98,6 @@ Hooks before/after ausentes. Nenhum deploy/merge ou seed sobre banco compartilha
 
 ## Campos de todo o sistema — 14/09/2026
 
-- [ ] T037 Aplicar os campos comuns em todas as abas, separar endereço de parceiro/unidade, preservar legado e projeção pública; testar persistência, consulta CEP, teclado e regressão no PR #18 dependente do #19.
+- [x] T037 Aplicar os campos comuns em todas as abas, separar endereço de parceiro/unidade, preservar legado e projeção pública; testar persistência, consulta CEP, teclado e regressão no PR #18 dependente do #19.
 
-- [ ] T038 Explicitar JPG nos anexos de contratos usando o seletor comum do PR #19 e preservar PNG/PDF.
+- [x] T038 Explicitar JPG nos anexos de contratos usando o seletor comum do PR #19 e preservar PNG/PDF.

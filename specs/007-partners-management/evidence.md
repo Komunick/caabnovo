@@ -142,3 +142,24 @@ de integração, builds, E2E Chromium e acessibilidade do projeto. Commits poste
 apenas registram links/resultados nesta documentação e a conclusão das tarefas.
 As verificações automáticas desses registros documentais podem repetir no PR;
 nenhuma proteção foi dispensada e nenhum merge foi realizado.
+
+## Campos, endereço e JPG — 14/09/2026
+
+Todas as abas consomem o padrão comum do PR #19. Parceiros e Unidades persistem
+rua, bairro, número e complemento separadamente e conservam o endereço público
+formatado. Endereços antigos permanecem intactos até conversão explícita. CEP
+preenche rua/bairro/cidade/UF e preserva campos alterados durante a consulta.
+JPG aparece explicitamente no seletor e nas mensagens de anexos de contratos;
+PDF, PNG e JPEG permanecem aceitos, com a inspeção original do servidor.
+
+312 testes unitários/contratos e 136 integrações passaram. As três jornadas de
+contatos/endereços passaram, incluindo legado e concorrência do CEP. Teclado, Axe,
+claro/escuro e larguras 390/1440 px foram exercitados. Evidências inspecionadas:
+[desktop claro](evidence/address-fields-light-1440.png) e
+[celular escuro](evidence/address-fields-dark-390.png).
+
+Sem migration adicional, backfill, dependência nova ou alteração de permissões.
+PR #18 permanece dependente do #19, ambos sem merge autorizado.
+
+Repetição final: documentos com substituição JPG/download e jornada completa de
+Parceiros com contrato PNG passaram (2/2, 55,5 s).
