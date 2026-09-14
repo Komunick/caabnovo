@@ -31,8 +31,8 @@ Sem migrations. Valores antigos fora do novo formato exigem correção ao editar
 CF01–CF03, CF-M, CF-A e CF-CI concluídas com validação local e CI aprovado no
 PR #19, ainda aberto para revisão humana. A regressão Chromium completa passou na composição: 55 testes
 em 6,4 minutos, incluindo recuperação, contas, Associados/fotos e Notícias.
-A regra futura de número OAB e a revisão geral de motivos de cadastro/edição ficam
-na lista local, fora deste PR. O PR de Parceiros depende desta extração; manter ambos
+Na entrega inicial, OAB e a revisão geral de motivos ficaram na lista local.
+A ampliação de 14/09 abaixo inclui OAB; a revisão geral de motivos continua futura. O PR de Parceiros depende desta extração; manter ambos
 separados e nenhuma integração automática em dev/main.
 
 ## CI e registro oficial de storage
@@ -103,3 +103,18 @@ antes/depois do complemento JPG preservou 25 contas, 82 associados, 1 parceiro,
 65 arquivos e 4 fotos vinculadas. Um arquivo havia sido acrescentado entre as
 verificações anteriores, antes desta atualização; nenhuma contagem foi reduzida.
 Checks remotos do commit final devem ser consultados na aba Checks do PR #19.
+
+## Fechamento da pendência E2E — 14/09/2026
+
+O teste de análise de documentos buscava a primeira ocorrência de “Correção
+solicitada”, que podia ser o item dentro do histórico recolhido. A verificação agora
+seleciona o cartão pelo link do documento e confere o status ao lado da categoria.
+Mantém envio, inspeção, revisão, substituição, download e comparação dos bytes JPG.
+Não adiciona espera fixa, retry nem alteração no comportamento da aplicação.
+
+O cenário corrigido passou três vezes consecutivas (58,8 s). A suíte local completa
+foi interrompida a pedido do usuário após 47 testes aprovados, sem falha até então;
+isso não é uma execução completa de 57 testes. Os servidores permanecem desligados.
+A rodada remota anterior passou integralmente nos PRs #19 e #18, incluindo browser,
+quality e security, nos commits 6cb70eb e ffe931a. O envio desta correção executa
+novamente todos os gates no CI; resultado final registrado na descrição dos PRs.
