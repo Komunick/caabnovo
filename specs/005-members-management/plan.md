@@ -85,3 +85,6 @@ US1 cadastro/vínculos → US2 documentos → US3 avaliações → US4 consumido
 Campos comuns (11/09/2026): consumir MaskedContactInput/ValidatedTextField e contratos
 compartilhados de telefone/e-mail; preservar o componente de nascimento e o seletor
 válido de UF da OAB. Validação/entrega transversal pelas tarefas CF01–CF03 da fundação.
+## Campos — 14/09/2026
+
+Reutilizar oabNumberSchema em memberProfileSchema e máscara oab no componente compartilhado; consulta mantém leitura de registro legado e recusa incompatibilidade sem truncar dados persistidos.

@@ -1,4 +1,6 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, ShieldCheck } from "lucide-react";
@@ -205,8 +207,7 @@ export function UserAccessForm({
               Ao salvar, esta seleção passa a definir todos os acessos da conta. Início,
               configurações pessoais e notícias públicas continuam disponíveis.
             </p>
-            <div className="form-field">
-              <label htmlFor="access-reason">Justificativa dos acessos</label>
+            <FormField id="access-reason" label="Justificativa dos acessos">
               <textarea
                 id="access-reason"
                 rows={2}
@@ -216,7 +217,7 @@ export function UserAccessForm({
                 onChange={(event) => setReason(event.target.value)}
                 disabled={pending}
               />
-            </div>
+            </FormField>
             <Button intent="primary" type="submit" disabled={pending || !changed || !reason.trim()}>
               <Check size={18} aria-hidden="true" />
               {pending ? "Salvando…" : "Salvar acessos"}

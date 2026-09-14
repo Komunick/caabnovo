@@ -252,3 +252,17 @@ e mc RELEASE.2025-08-13T08-35-41Z foram consultados em Quay nesta data.
 Decisão: mudar apenas o registro em compose.yaml, mantendo as versões fixadas,
 serviços, portas, volumes e testes. Sem migração de storage ou atualização de versão.
 O registro oficial evita depender de uma imagem de terceiros ou desativar o gate.
+
+## Pesquisa da ampliação dos campos — 14/09/2026
+
+- https://www.w3.org/WAI/tutorials/forms/validation/ : controles HTML tipados,
+  required e validação no cliente complementam a validação obrigatória no servidor.
+- https://www.w3.org/WAI/tutorials/forms/notifications/ : erro textual associado
+  ao campo, foco e possibilidade de corrigir preservando os valores.
+- https://viacep.com.br/ : resposta separa logradouro, bairro, localidade e UF;
+  CEP requer oito dígitos. Complemento retornado pode descrever trecho postal
+  (ex.: lado ímpar), portanto não representa sala/apartamento do usuário.
+
+Decisão: número/complemento sempre manuais; preservar resposta tardia por campo;
+conversão de texto legado explícita, sem parsing especulativo. Não aplicar máscaras
+a texto livre, senha ou busca mista. Sem novas dependências.

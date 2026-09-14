@@ -29,8 +29,11 @@ export function BirthDateField({
   id,
   defaultValue,
   disabled,
+  ...aria
 }: {
   id?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean;
   defaultValue: string;
   disabled: boolean;
 }) {
@@ -63,6 +66,7 @@ export function BirthDateField({
   return (
     <div className={`${styles.birthDateField} field-with-action`}>
       <input
+        {...aria}
         id={id}
         name="birthDate"
         type="date"

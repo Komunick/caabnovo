@@ -209,3 +209,16 @@ E2E dos formulários afetados, integração, build, acessibilidade e CI.
 Trocar minio/minio e minio/mc pelo namespace oficial quay.io/minio, preservando
 as tags fixadas. Validar manifests/pull e sintaxe do Compose, sem recriar serviços
 ou volumes locais. Reexecutar o CI do mesmo PR; nenhum gate é dispensado.
+
+## Ampliação dos campos — 14/09/2026
+
+Evoluir FormField para apresentar validação nativa acessível de input/select/textarea,
+preservando validadores específicos e descrições existentes. Substituir wrappers
+repetidos nos módulos e revisar atributos contra contratos de cada domínio.
+Compartilhar contrato de endereço e formatação em brazilian-address.ts; componente
+controla partes independentes, revisão manual por campo e conversão explícita de
+legado. Parceiros consome os componentes pelo PR #18 dependente; schemas JSONB,
+formulários e projeção preservam compatibilidade sem migration SQL. Implementação
+comum e OAB ficam no PR #19; adaptações exclusivas de Parceiros ficam no PR #18.
+Validar unitários/contratos, integrações afetadas, build, E2E de todos os módulos,
+acessibilidade e CI; compor preview 3107 após validação isolada, sem seed real.

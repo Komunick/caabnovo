@@ -399,12 +399,12 @@ describe.sequential("member persistence", () => {
     for (let index = 0; index < 26; index++) {
       people.push(
         await create(`${prefix} BA ${String(index).padStart(2, "0")}`, {
-          oab: { state: "BA", number: `F${index}${Date.now()}`, type: "lawyer" },
+          oab: { state: "BA", number: String(700000 + index), type: "lawyer" },
         }),
       );
     }
     await create(`${prefix} RJ`, {
-      oab: { state: "RJ", number: `F${Date.now()}`, type: "lawyer" },
+      oab: { state: "RJ", number: "700050", type: "lawyer" },
     });
     await create(`${prefix} sem inscrição`);
     const filters = { q: prefix, oabState: "BA", registrationStatus: "unknown" };

@@ -1,4 +1,5 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import { useEffect, useId, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -49,10 +50,9 @@ export function SensitiveActionDialog({
       </DialogTrigger>
       <DialogContent title={title} description="Confirme esta ação sensível com uma justificativa.">
         <form onSubmit={submit}>
-          <div className="form-field">
-            <label htmlFor={fieldId}>{fieldLabel}</label>
+          <FormField id={fieldId} label={fieldLabel}>
             <textarea id={fieldId} name="reason" required rows={3} />
-          </div>
+          </FormField>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>

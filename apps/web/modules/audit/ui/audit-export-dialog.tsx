@@ -1,4 +1,5 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -60,8 +61,7 @@ export function AuditExportDialog({
         description="O arquivo será privado e o endereço de download terá duração limitada."
       >
         <form onSubmit={submit}>
-          <div className="form-field">
-            <label htmlFor="audit-export-from">Início</label>
+          <FormField id="audit-export-from" label="Início">
             <input
               id="audit-export-from"
               name="from"
@@ -69,9 +69,8 @@ export function AuditExportDialog({
               defaultValue={localValue(yesterday)}
               required
             />
-          </div>
-          <div className="form-field">
-            <label htmlFor="audit-export-to">Fim</label>
+          </FormField>
+          <FormField id="audit-export-to" label="Fim">
             <input
               id="audit-export-to"
               name="to"
@@ -79,11 +78,10 @@ export function AuditExportDialog({
               defaultValue={localValue(now)}
               required
             />
-          </div>
-          <div className="form-field">
-            <label htmlFor="audit-export-justification">Justificativa da exportação</label>
+          </FormField>
+          <FormField id="audit-export-justification" label="Justificativa da exportação">
             <textarea id="audit-export-justification" name="justification" rows={3} required />
-          </div>
+          </FormField>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>
