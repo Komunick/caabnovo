@@ -105,3 +105,7 @@ privada na jornada T019. O pedido atual autoriza atualizar o preview principal a
 Sem exceções arquiteturais. Quatro entidades próprias; arquivos, histórico e identidade
 reutilizados. Estado publicado guarda somente snapshot dos dados da oferta; nenhuma fila
 nova é necessária para expirar, pois a leitura revalida vigência no servidor.
+
+## Campos de todo o sistema — 14/09/2026
+
+Consumir a evolução do PR #19. Espalhar brazilianAddressSchema.shape nos perfis JSONB de parceiro/unidade; formatar address no contrato para preservar consumidores públicos. Formulários enviam partes independentes e listagem exibe formato compatível. Sem migration ou backfill. Atualizar os testes de contatos/persistência/legado e todos os gates afetados.

@@ -156,3 +156,7 @@ Parceiro (estabelecimento), unidade (local/abrangência), contrato (condições 
 - Contrato mínimo externo de consulta será entregue, sem refazer o aplicativo ou site. Arquivos administrativos permanecem privados.
 - Sem consultas ao legado, Receita, OAB ou envio de mensagens; dados sintéticos para testes.
 - Base dev ab0ad89. A foto de Associados no PR #17 é independente desta entrega. Um PR completo para dev; nenhum merge automático.
+
+## Campos de todo o sistema — 14/09/2026
+
+Todos os controles das sete páginas e seis abas adotam validação e mensagens comuns. Cadastro e unidades têm rua, bairro, número e complemento separados; CEP só preenche rua/bairro/cidade/UF. Dados legados ficam preservados e visíveis até conversão explícita, sem inferir partes. API pública mantém address formatado.

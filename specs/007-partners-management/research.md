@@ -82,3 +82,7 @@ avaliações e política de autoria pertencem à integração futura do app; con
 moderação administrativas fazem parte do complemento solicitado. Portal,
 resgates, QR e efeitos em Caassh não pertencem a esta entrega. Nenhuma consulta ao legado
 ou transmissão de dados reais foi realizada nesta pesquisa.
+
+## Campos de todo o sistema — 14/09/2026
+
+Pesquisa oficial em 14/09/2026: https://viacep.com.br/ distingue logradouro/bairro de complemento postal. https://www.w3.org/WAI/tutorials/forms/validation/ e https://www.w3.org/WAI/tutorials/forms/notifications/ sustentam mensagens próximas ao campo e validação no servidor. Número/complemento manuais; conversão explícita de legado. Fundação documenta os componentes compartilhados.

@@ -95,3 +95,7 @@ delegada; isso não cria autorização para agentes de implementação adicionai
 
 36 tarefas, IDs únicos; 22 da entrega inicial e 14 dos complementos solicitados.
 Hooks before/after ausentes. Nenhum deploy/merge ou seed sobre banco compartilhado.
+
+## Campos de todo o sistema — 14/09/2026
+
+- [ ] T037 Aplicar os campos comuns em todas as abas, separar endereço de parceiro/unidade, preservar legado e projeção pública; testar persistência, consulta CEP, teclado e regressão no PR #18 dependente do #19.

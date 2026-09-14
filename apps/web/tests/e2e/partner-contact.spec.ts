@@ -2,6 +2,53 @@ import { randomUUID } from "node:crypto";
 import { test, expect, syntheticUsers } from "./fixtures";
 import { expectWcag22AA } from "./accessibility";
 import { keyboardActivate } from "./keyboard";
+
+test("legacy address stays visible until explicitly replaced by separate fields", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByLabel("E-mail", { exact: true }).fill(syntheticUsers.administrator.email);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/, { timeout: 30000 });
+  const created = await page.request.post("/api/v1/partners", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": randomUUID(),
+      "idempotency-key": randomUUID(),
+    },
+    data: {
+      profile: {
+        name: `Legado ${randomUUID().slice(0, 8)}`,
+        category: "Contatos",
+        address: "Rua antiga, 42, fundos",
+      },
+    },
+  });
+  expect(created.status()).toBe(201);
+  const { id } = await created.json();
+  await page.goto(`/partners/${id}`);
+  await expect(page.locator("#partner-legacy")).toHaveText(
+    "Endereço anterior: Rua antiga, 42, fundos",
+  );
+  await expect(page.locator("#partner-street")).toBeDisabled();
+  await page.locator("#partner-reason").fill("Conferência sem mudar endereço");
+  await page.getByRole("button", { name: "Salvar cadastro", exact: true }).click();
+  await expect(page.locator("#partner-legacy")).toBeVisible();
+  await page.getByLabel("Substituir o endereço anterior pelos campos separados").check();
+  await page.locator("#partner-street").fill("Rua nova");
+  await page.locator("#partner-neighborhood").fill("Centro");
+  await page.locator("#partner-number").fill("42");
+  await page.locator("#partner-complement").fill("Fundos");
+  await page.locator("#partner-reason").fill("Separação explícita do endereço");
+  await page.getByRole("button", { name: "Salvar cadastro", exact: true }).click();
+  await expect(page.locator("#partner-legacy")).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator("#partner-street")).toHaveValue("Rua nova");
+  await expect(page.locator("#partner-neighborhood")).toHaveValue("Centro");
+  await expect(page.locator("#partner-number")).toHaveValue("42");
+  await expect(page.locator("#partner-complement")).toHaveValue("Fundos");
+});
 test("partner and unit creation share contact masks, CEP lookup and edit-only reasons", async ({
   page,
 }, testInfo) => {
@@ -24,7 +71,7 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
   await page.getByLabel("E-mail", { exact: true }).fill(syntheticUsers.administrator.email);
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30000 });
   await page.goto("/partners/new");
   await expect(
     page.getByRole("navigation", { name: "Áreas de parceiros", exact: true }),
@@ -60,7 +107,7 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
     "(71) 3333-4444",
   );
   await page.locator("#partner-postalCode").fill("40020000");
-  await expect(page.locator("#partner-address")).toHaveValue("Rua sintética, Centro");
+  await expect(page.locator("#partner-street")).toHaveValue("Rua sintética");
   await expect(page.locator("#partner-city")).toHaveValue("Salvador");
   await expect(page.locator("#partner-state")).toHaveValue("BA");
   await expect(page.locator("#partner-state-options option")).toHaveCount(27);
@@ -69,7 +116,8 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
   await expect(page.locator("#partner-state")).toHaveAttribute("aria-invalid", "true");
   await page.locator("#partner-state").fill("ba");
   await expect(page.locator("#partner-state")).toHaveValue("BA");
-  await page.locator("#partner-address").fill("Rua sintética, 10, Centro");
+  await page.locator("#partner-number").fill("10A");
+  await page.locator("#partner-complement").fill("Sala 2");
   await expectWcag22AA(page);
   await page.getByRole("button", { name: "Criar parceiro", exact: true }).click();
   await expect(page).toHaveURL(/\/partners\/[0-9a-f-]+$/);
@@ -80,7 +128,7 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
   await expect(
     page.getByRole("navigation", { name: "Seções do parceiro", exact: true }),
   ).toBeVisible();
-  await expect(page.locator("#partner-address")).toHaveValue("Rua sintética, 10, Centro");
+  await expect(page.locator("#partner-street")).toHaveValue("Rua sintética");
   await expect(page.locator("#partner-reason")).toBeVisible();
   await keyboardActivate(page, page.getByRole("button", { name: "Unidades", exact: true }));
   await expect(page.getByRole("button", { name: "Unidades", exact: true })).toHaveAttribute(
@@ -94,6 +142,9 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
   await expect(page.getByRole("main").getByRole("alert")).toContainText("CEP não encontrado");
   await page.locator("#unit-postalCode").fill("40020000");
   await expect(page.locator("#unit-city")).toHaveValue("Salvador");
+  await expect(page.locator("#unit-neighborhood")).toHaveValue("Centro");
+  await page.locator("#unit-number").fill("s/n");
+  await page.locator("#unit-complement").fill("Fundos");
   await page.locator("#unit-phone").fill("abc71999998888");
   await expect(page.locator("#unit-phone")).toHaveValue("(71) 99999-8888");
   await page.setViewportSize({ width: 390, height: 900 });
@@ -122,9 +173,20 @@ test("partner and unit creation share contact masks, CEP lookup and edit-only re
   expect(data.profile).toMatchObject({
     phone: "7133334444",
     postalCode: "40020000",
-    address: "Rua sintética, 10, Centro",
+    address: "Rua sintética, 10A, Sala 2, Centro",
+    street: "Rua sintética",
+    neighborhood: "Centro",
+    number: "10A",
+    complement: "Sala 2",
   });
-  expect(data.units[0].profile).toMatchObject({ phone: "7133334444", postalCode: "40020000" });
+  expect(data.units[0].profile).toMatchObject({
+    phone: "7133334444",
+    postalCode: "40020000",
+    street: "Rua sintética",
+    neighborhood: "Centro",
+    number: "s/n",
+    complement: "Fundos",
+  });
   await page.getByRole("link", { name: "Voltar à lista", exact: true }).click();
   await expect(
     page.getByRole("navigation", { name: "Áreas de parceiros", exact: true }),
@@ -140,7 +202,7 @@ test("CEP responses preserve manual edits and an unavailable lookup does not blo
   await page.getByLabel("E-mail", { exact: true }).fill(syntheticUsers.administrator.email);
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30000 });
   await page.goto("/partners/new");
   let release!: () => void;
   const responseGate = new Promise<void>((resolve) => {
@@ -160,16 +222,22 @@ test("CEP responses preserve manual edits and an unavailable lookup does not blo
   });
   await page.locator("#partner-postalCode").fill("40020000");
   await expect(page.getByText("Consultando CEP…", { exact: true })).toBeVisible();
-  await page.locator("#partner-address").fill("Correção manual preservada");
+  await page.locator("#partner-street").fill("Correção manual preservada");
+  await page.locator("#partner-neighborhood").fill("Bairro manual");
+  await page.locator("#partner-number").fill("42");
+  await page.locator("#partner-complement").fill("Apartamento 3");
   release();
   await expect(page.locator("#partner-city")).toHaveValue("Salvador");
-  await expect(page.locator("#partner-address")).toHaveValue("Correção manual preservada");
+  await expect(page.locator("#partner-street")).toHaveValue("Correção manual preservada");
+  await expect(page.locator("#partner-neighborhood")).toHaveValue("Bairro manual");
+  await expect(page.locator("#partner-number")).toHaveValue("42");
+  await expect(page.locator("#partner-complement")).toHaveValue("Apartamento 3");
   await page.route("https://viacep.com.br/ws/40010000/json/", (route) => route.abort("failed"));
   await page.locator("#partner-postalCode").fill("40010000");
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
     "preencha o endereço manualmente",
   );
-  await expect(page.locator("#partner-address")).toHaveValue("Correção manual preservada");
+  await expect(page.locator("#partner-street")).toHaveValue("Correção manual preservada");
   await page
     .getByLabel("Nome do parceiro", { exact: true })
     .fill(`CEP manual ${randomUUID().slice(0, 8)}`);

@@ -1,4 +1,6 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { SearchField, FilterToggle } from "@/components/ui/search-controls";
@@ -90,8 +92,7 @@ export function PartnerFilters({
           )}
         </div>
         <div id="partner-filter-options" className="list-filters" hidden={!expanded}>
-          <div className="form-field">
-            <label htmlFor="partner-category-filter">Categoria</label>
+          <FormField id="partner-category-filter" label="Categoria">
             <select
               id="partner-category-filter"
               value={filters.category}
@@ -102,9 +103,8 @@ export function PartnerFilters({
                 <option key={category}>{category}</option>
               ))}
             </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="partner-status-filter">Situação</label>
+          </FormField>
+          <FormField id="partner-status-filter" label="Situação">
             <select
               id="partner-status-filter"
               value={filters.status}
@@ -116,10 +116,9 @@ export function PartnerFilters({
                 </option>
               ))}
             </select>
-          </div>
+          </FormField>
           {benefits && (
-            <div className="form-field">
-              <label htmlFor="partner-channel-filter">Canal</label>
+            <FormField id="partner-channel-filter" label="Canal">
               <select
                 id="partner-channel-filter"
                 value={filters.channel}
@@ -129,7 +128,7 @@ export function PartnerFilters({
                 <option value="site">Site</option>
                 <option value="app">Aplicativo</option>
               </select>
-            </div>
+            </FormField>
           )}
         </div>
         <span role="status">{pending ? "Atualizando resultados…" : ""}</span>

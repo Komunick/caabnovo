@@ -25,9 +25,20 @@ export function UnitForm({
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const raw = Object.fromEntries(
-          ["name", "mode", "postalCode", "address", "city", "state", "region", "phone"].map(
-            (name) => [name, String(data.get(name) ?? "")],
-          ),
+          [
+            "name",
+            "mode",
+            "postalCode",
+            "street",
+            "neighborhood",
+            "number",
+            "complement",
+            "address",
+            "city",
+            "state",
+            "region",
+            "phone",
+          ].map((name) => [name, String(data.get(name) ?? "")]),
         );
         const parsed = partnerUnitSchema.safeParse(raw);
         if (!parsed.success) {

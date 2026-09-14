@@ -1,3 +1,4 @@
+import { formatBrazilianAddress } from "@caab/contracts";
 import "server-only";
 import { createHash } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
@@ -220,7 +221,14 @@ export async function createPartner(pool: Pool, context: PartnerContext, raw: un
         const category = await resolveCategory(client, input.profile.category);
         const result = await client.query<{ id: string }>(
           "INSERT INTO partner(profile,category_id) VALUES($1,$2) RETURNING id",
-          [{ ...input.profile, category: category.name }, category.id],
+          [
+            {
+              ...input.profile,
+              address: formatBrazilianAddress(input.profile),
+              category: category.name,
+            },
+            category.id,
+          ],
         );
         return finish(
           client,
@@ -296,7 +304,11 @@ export async function commandPartner(
           case "update":
             await client.query("UPDATE partner SET profile=$2,category_id=$3 WHERE id=$1", [
               id,
-              { ...input.profile, category: category!.name },
+              {
+                ...input.profile,
+                address: formatBrazilianAddress(input.profile),
+                category: category!.name,
+              },
               category!.id,
             ]);
             break;
@@ -326,11 +338,20 @@ export async function commandPartner(
             const result = input.unitId
               ? await client.query<{ id: string }>(
                   "UPDATE partner_unit SET profile=$3,active=$4,updated_at=now() WHERE id=$1 AND partner_id=$2 RETURNING id",
-                  [input.unitId, id, input.profile, input.active],
+                  [
+                    input.unitId,
+                    id,
+                    { ...input.profile, address: formatBrazilianAddress(input.profile) },
+                    input.active,
+                  ],
                 )
               : await client.query<{ id: string }>(
                   "INSERT INTO partner_unit(partner_id,profile,active) VALUES($1,$2,$3) RETURNING id",
-                  [id, input.profile, input.active],
+                  [
+                    id,
+                    { ...input.profile, address: formatBrazilianAddress(input.profile) },
+                    input.active,
+                  ],
                 );
             if (!result.rows[0]) throw new PartnerError("PARTNER_UNIT_NOT_FOUND", 404);
             after.unitId = result.rows[0].id;

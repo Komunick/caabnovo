@@ -82,7 +82,15 @@ export function ContractPanel({
             </FormField>
             <div className={styles.grid}>
               <FormField id="contract-start" label="Início da vigência">
-                <input type="date" name="startsOn" required />
+                <input
+                  type="date"
+                  name="startsOn"
+                  required
+                  onChange={(event) => {
+                    const end = event.currentTarget.form?.elements.namedItem("endsOn");
+                    if (end instanceof HTMLInputElement) end.min = event.currentTarget.value;
+                  }}
+                />
               </FormField>
               <FormField id="contract-end" label="Fim da vigência">
                 <input type="date" name="endsOn" required />

@@ -1,7 +1,6 @@
 import { z } from "zod";
+import { brazilianAddressSchema } from "./brazilian-address";
 import {
-  brazilianStateSchema,
-  postalCodeSchema,
   brazilianPhoneSchema,
   contactEmailSchema,
   contactWebsiteSchema,
@@ -40,18 +39,12 @@ export const partnerProfileSchema = z.strictObject({
   email: contactEmailSchema,
   phone: brazilianPhoneSchema,
   website: contactWebsiteSchema,
-  postalCode: postalCodeSchema,
-  address: text(300),
-  city: text(100),
-  state: brazilianStateSchema,
+  ...brazilianAddressSchema.shape,
 });
 export const partnerUnitSchema = z.strictObject({
   name: z.string().trim().min(2).max(160),
   mode: z.enum(["presential", "remote"]),
-  city: text(100),
-  state: brazilianStateSchema,
-  postalCode: postalCodeSchema,
-  address: text(300),
+  ...brazilianAddressSchema.shape,
   region: text(300),
   phone: brazilianPhoneSchema,
 });

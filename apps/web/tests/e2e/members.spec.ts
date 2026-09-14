@@ -192,7 +192,7 @@ test("selection filters apply immediately and preserve search, pagination and hi
           oab: {
             state,
             type: "lawyer",
-            number: String(800000 + index),
+            number: String(100000 + (Number.parseInt(randomUUID().slice(0, 6), 16) % 900000)),
           },
         },
         justification: "Filtro sintético de teste",

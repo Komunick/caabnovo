@@ -204,6 +204,54 @@ describe.sequential("partner persistence", () => {
       "Cadastro de parceiro.",
     ]);
   });
+  it("preserves legacy addresses and saves structured parts with public-compatible text", async () => {
+    const legacy = await create({ address: "Rua antiga, 12, fundos" });
+    const unchanged = await commandPartner(pool, next(), legacy.id, {
+      action: "update",
+      expectedVersion: legacy.version,
+      justification: "Ajuste de contato",
+      profile: { ...legacy.profile, phone: "7133334444" },
+    });
+    expect(unchanged.profile.address).toBe("Rua antiga, 12, fundos");
+    expect(unchanged.profile.street).toBe("");
+    const converted = await commandPartner(pool, next(), legacy.id, {
+      action: "update",
+      expectedVersion: unchanged.version,
+      justification: "Separar endereço",
+      profile: {
+        ...unchanged.profile,
+        street: "Rua nova",
+        neighborhood: "Centro",
+        number: "12A",
+        complement: "Sala 2",
+      },
+    });
+    expect((await getPartner(pool, context.actor, legacy.id)).profile).toMatchObject({
+      street: "Rua nova",
+      neighborhood: "Centro",
+      number: "12A",
+      complement: "Sala 2",
+      address: "Rua nova, 12A, Sala 2, Centro",
+    });
+    const unit = await commandPartner(pool, next(), legacy.id, {
+      action: "unit",
+      expectedVersion: converted.version,
+      active: true,
+      profile: {
+        name: "Unidade estruturada",
+        mode: "presential",
+        street: "Rua dois",
+        neighborhood: "Bairro dois",
+        number: "s/n",
+        complement: "Fundos",
+      },
+    });
+    expect(unit.units[0]!.profile).toMatchObject({
+      number: "s/n",
+      complement: "Fundos",
+      address: "Rua dois, s/n, Fundos, Bairro dois",
+    });
+  });
   it("creates partner and unit without a reason, persists normalized contacts and audits edits", async () => {
     const p = await createPartner(pool, next(), {
       profile: {

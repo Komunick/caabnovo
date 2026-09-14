@@ -47,10 +47,16 @@ export function ProfileForm({
         const raw = Object.fromEntries([
           ...fields.map((f) => [f.name, String(data.get(f.name) ?? "")]),
           ["description", String(data.get("description") ?? "")],
-          ...["postalCode", "address", "city", "state"].map((name) => [
-            name,
-            String(data.get(name) ?? ""),
-          ]),
+          ...[
+            "postalCode",
+            "street",
+            "neighborhood",
+            "number",
+            "complement",
+            "address",
+            "city",
+            "state",
+          ].map((name) => [name, String(data.get(name) ?? "")]),
         ]);
         const parsed = partnerProfileSchema.safeParse(raw);
         if (!parsed.success) {
