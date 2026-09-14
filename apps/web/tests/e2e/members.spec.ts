@@ -301,7 +301,11 @@ test("documents use real upload, scan, review, replacement and private download"
     .getByLabel("Motivo da análise ou correção solicitada")
     .fill("Solicitar versão legível sintética");
   await page.getByRole("button", { name: "Registrar análise do documento" }).click();
-  await expect(page.getByText("Correção solicitada", { exact: false }).first()).toBeVisible();
+  const documentCard = page.getByRole("listitem").filter({
+    has: page.getByRole("link", { name: "Abrir documento Identificação sintética", exact: true }),
+  });
+  await expect(documentCard).toBeVisible();
+  await expect(documentCard).toContainText(/Identificação sintética\s*·\s*Correção solicitada/);
   await upload("substituto.jpg");
   await page.getByLabel("Documento substituído (opcional)").selectOption({ index: 1 });
   await page.getByRole("button", { name: "Anexar documento", exact: true }).click();
