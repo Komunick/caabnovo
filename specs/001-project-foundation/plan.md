@@ -222,3 +222,7 @@ formulários e projeção preservam compatibilidade sem migration SQL. Implement
 comum e OAB ficam no PR #19; adaptações exclusivas de Parceiros ficam no PR #18.
 Validar unitários/contratos, integrações afetadas, build, E2E de todos os módulos,
 acessibilidade e CI; compor preview 3107 após validação isolada, sem seed real.
+
+## Complemento JPG — 14/09/2026
+
+Compartilhar constantes de seleção de imagens/documentos nos contratos e aplicá-las a fotos de Associados, documentos, capas e imagens do corpo das Notícias. Anexos de contratos consomem a mesma constante no PR #18. Validar JPEG real em upload e inspeção, preservando PNG e rejeição de conteúdo incompatível.

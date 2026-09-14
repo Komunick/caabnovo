@@ -266,3 +266,7 @@ O registro oficial evita depender de uma imagem de terceiros ou desativar o gate
 Decisão: número/complemento sempre manuais; preservar resposta tardia por campo;
 conversão de texto legado explícita, sem parsing especulativo. Não aplicar máscaras
 a texto livre, senha ou busca mista. Sem novas dependências.
+
+## JPG nos seletores — 14/09/2026
+
+A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept) recomenda combinar identificadores de extensão e MIME; o atributo orienta a seleção, sem validar conteúdo. A [propriedade Blob.type](https://developer.mozilla.org/en-US/docs/Web/API/Blob/type) depende da identificação do navegador. Decisão: listar `.jpg,.jpeg,.png` junto aos MIME existentes, explicitar JPG na interface e preservar a inspeção efetiva do servidor. JPEG já é reconhecido pelo pipeline como `image/jpeg`, com ambas as extensões; nenhum novo formato binário ou permissão é introduzido.

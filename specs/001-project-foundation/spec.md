@@ -378,3 +378,7 @@ seleção obrigatória, texto vazio/espaços, CEP indisponível e corrida de res
 reabrir parceiro/unidade com as quatro partes persistidas e conferir endereço
 legado sem edição. Testar teclado, Axe, claro/escuro e celular. PR #19 permanece
 aberto, sem merge. A regra geral de justificativas é tarefa própria já registrada.
+
+## Arquivos JPG — 14/09/2026
+
+Todos os seletores que aceitam imagens devem listar `.jpg`, `.jpeg` e `.png` explicitamente, preservando PDF nos documentos. Ajuda e erros devem mencionar JPG. O servidor mantém o MIME `image/jpeg`, validação de assinatura, extensão, tamanho, checksum e antivírus.

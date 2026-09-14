@@ -1,3 +1,4 @@
+import { jpeg } from "./jpeg-fixture";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, syntheticUsers, test } from "./fixtures";
 
@@ -13,13 +14,9 @@ test("editor uploads a cover through the existing file flow and preserves its de
   await page.goto("/news/new");
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 15000 });
-  const image = Buffer.from(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aX1cAAAAASUVORK5CYII=",
-    "base64",
-  );
   await page
     .getByLabel("Enviar imagem", { exact: true })
-    .setInputFiles({ name: "capa-sintetica.png", mimeType: "image/png", buffer: image });
+    .setInputFiles({ name: "capa-sintetica.jpg", mimeType: "image/jpeg", buffer: jpeg });
   await expect(
     page.getByRole("status").filter({ hasText: "Imagem enviada para verificação" }),
   ).toBeVisible({ timeout: 20000 });
@@ -34,7 +31,7 @@ test("editor uploads a cover through the existing file flow and preserves its de
   await expect(
     page
       .getByRole("group", { name: "Imagens desta notícia" })
-      .getByRole("button", { name: /capa-sintetica.png/ }),
+      .getByRole("button", { name: /capa-sintetica.jpg/ }),
   ).toHaveAttribute("aria-pressed", "true");
   expect(
     (
@@ -52,6 +49,6 @@ test("editor uploads a cover through the existing file flow and preserves its de
     page
       .getByRole("group", { name: "Imagens desta notícia" })
       .getByRole("button")
-      .filter({ hasText: "capa-sintetica.png" }),
+      .filter({ hasText: "capa-sintetica.jpg" }),
   ).toHaveCount(1);
 });

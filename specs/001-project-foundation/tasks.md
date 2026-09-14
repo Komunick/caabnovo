@@ -399,3 +399,5 @@ Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common
 - [ ] CF05 Separar endereço compartilhado em rua/bairro/número/complemento, preservar legado e consulta CEP concorrente; integrar consumidores no PR #18.
 - [ ] CF06 Aplicar OAB numérica até seis caracteres em todos os campos específicos e contratos, preservando busca mista e dados existentes.
 - [ ] CF07 Validar contratos, integração, E2E por módulo, teclado/Axe, temas/responsividade e build; atualizar PRs sem merge e preview com dados preservados.
+
+- [ ] CF08 Explicitar JPG em todos os seletores e mensagens de imagens, preservar formatos existentes e validar upload real/inspeção no PR #19.

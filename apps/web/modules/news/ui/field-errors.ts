@@ -55,7 +55,7 @@ export function newsFieldErrors(issues: readonly Issue[]): NewsFieldErrors {
             : "Use uma descrição da capa de até 500 caracteres.";
       else
         errors.cover =
-          "Escolha uma imagem PNG ou JPEG desta notícia e aguarde a liberação do arquivo.";
+          "Escolha uma imagem PNG, JPG ou JPEG desta notícia e aguarde a liberação do arquivo.";
     } else if (field === "body" || field === "content")
       errors.body =
         issue.code === "CONTENT_REQUIRED"

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Camera, Check, Trash2, UserRound, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { MAX_MEMBER_PHOTO_BYTES, type MemberRecord } from "@caab/contracts";
+import { IMAGE_FILE_ACCEPT, MAX_MEMBER_PHOTO_BYTES, type MemberRecord } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { uploadMemberPhoto, type PreparedPhoto } from "./photo-upload";
@@ -41,7 +41,7 @@ export function NewMemberPhoto({
   return (
     <section className={styles.photoEditor} aria-labelledby="new-member-photo-title">
       <h3 id="new-member-photo-title">Foto de perfil</h3>
-      <p>Opcional · JPEG ou PNG de até 5 MB. A foto será salva junto com o cadastro.</p>
+      <p>Opcional · JPG, JPEG ou PNG de até 5 MB. A foto será salva junto com o cadastro.</p>
       <div className={styles.photoFields}>
         <div className={styles.photoPreview}>
           <MemberAvatar preview src={preview} />
@@ -53,13 +53,13 @@ export function NewMemberPhoto({
             tabIndex={-1}
             className="sr-only"
             type="file"
-            accept="image/jpeg,image/png"
+            accept={IMAGE_FILE_ACCEPT}
             aria-label="Selecionar foto de perfil"
             disabled={disabled}
             onChange={(event) => {
               const next = event.target.files?.[0];
               if (next && !isValidMemberPhoto(next)) {
-                setError("Escolha uma foto JPEG ou PNG de até 5 MB.");
+                setError("Escolha uma foto JPG, JPEG ou PNG de até 5 MB.");
                 onChange(undefined);
               } else {
                 setError("");
@@ -155,7 +155,7 @@ export function MemberPhoto({
     setError("");
     setNotice("");
     if (next && !isValidMemberPhoto(next)) {
-      setError("Escolha uma foto JPEG ou PNG de até 5 MB.");
+      setError("Escolha uma foto JPG, JPEG ou PNG de até 5 MB.");
       setFile(undefined);
       prepared.current = null;
       uploadKey.current = crypto.randomUUID();
@@ -219,7 +219,7 @@ export function MemberPhoto({
     <section className={styles.photoEditor} aria-labelledby="member-photo-title">
       <div>
         <h3 id="member-photo-title">Foto de perfil</h3>
-        <p>Opcional · JPEG ou PNG de até 5 MB.</p>
+        <p>Opcional · JPG, JPEG ou PNG de até 5 MB.</p>
       </div>
       <div className={styles.photoFields}>
         <div className={styles.photoPreview}>
@@ -249,7 +249,7 @@ export function MemberPhoto({
                 tabIndex={-1}
                 className="sr-only"
                 type="file"
-                accept="image/jpeg,image/png"
+                accept={IMAGE_FILE_ACCEPT}
                 aria-label="Selecionar foto de perfil"
                 disabled={disabled || pending}
                 onChange={(event) => {
