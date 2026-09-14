@@ -130,7 +130,7 @@ export function BrazilianAddressFields({
   }
   return (
     <>
-      <div className={className}>
+      <div className={["address-fields", className].filter(Boolean).join(" ")}>
         <ValidatedTextField
           id={`${prefix}-postalCode`}
           name="postalCode"
