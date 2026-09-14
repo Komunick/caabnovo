@@ -140,8 +140,7 @@ test("invalid news fields have red borders, specific hints and keyboard focus", 
   const tags = page.getByLabel("Tags", { exact: true });
   await slug.fill("Endereço com espaços");
   await tags.fill("uma,,outra");
-  await page.getByLabel("Destacar notícia").focus();
-  await page.getByLabel("Destacar notícia").press("Space");
+  await page.getByLabel("Destacar notícia").check();
   const order = page.getByLabel("Ordem do destaque", { exact: true });
   await order.fill("101");
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
