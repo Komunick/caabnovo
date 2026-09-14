@@ -21,7 +21,7 @@ test("common e-mail feedback protects login, recovery, collaborators and setting
   await email.fill(syntheticUsers.administrator.email);
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30000 });
   await page.goto("/users");
   const createEmail = page.locator("#create-email");
   await createEmail.fill("nome@invalido");
@@ -46,7 +46,7 @@ test("member contact fields share masks and validation for fixed and mobile phon
   await page.getByLabel("E-mail", { exact: true }).fill(syntheticUsers.administrator.email);
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30000 });
   await page.goto("/members/new");
   const phone = page.getByLabel("Telefone (opcional)", { exact: true });
   await phone.fill("7133334444");

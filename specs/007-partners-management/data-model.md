@@ -1,5 +1,15 @@
 # Modelo de dados
 
+Revisão de 14/09/2026: categorias, contratos e rascunhos de benefícios também usam
+descrição automática na auditoria de criação sem motivo. Edições e transições mantêm
+justificativa explícita. Sem migration ou alteração de registros/eventos anteriores.
+
+Revisão de contatos em 11/09/2026: postalCode/address/city/state no profile JSONB
+do parceiro e postalCode no da unidade, todos opcionais e sem nova migration.
+Entradas futuras normalizam CEP/telefone; registros legados não são reescritos.
+Criações de parceiro/unidade têm justificativa automática na auditoria quando
+não fornecida; alterações mantêm justificativa explícita obrigatória.
+
 ## Complemento de diretório — migration 0017
 
 - `partner_category`: UUID estável, nome único sem distinguir maiúsculas ou espaços

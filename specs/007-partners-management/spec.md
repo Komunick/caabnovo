@@ -94,6 +94,29 @@ Desativação não apaga categorias, parceiros, unidades ou avaliações.
 
 ### Functional Requirements
 
+- **FR-022 (revisão de 11/09/2026)**: As seções do cadastro devem ter aparência
+  distinta da navegação geral da lista: faixa contextual “Dados do parceiro”,
+  rótulos de texto e linha na seção ativa. Preservar foco, teclado e adaptação em 390 px.
+
+- **FR-018 (revisão de 11/09/2026)**: Cadastro/edição de parceiros e unidades inclui CEP opcional
+  com máscara e consulta automática após oito dígitos. Preencher endereço, cidade e
+  UF; permitir complemento/correção manual e cadastro quando a consulta falhar.
+  Respostas antigas ou tardias não sobrescrevem outro CEP nem campos já corrigidos.
+- **FR-019**: UF aceita digitação e lista das 27 unidades federativas; normalizar
+  maiúsculas e validar a sigla no servidor. Telefone opcional aceita apenas números
+  de entrada, com DDD de dois dígitos e número de oito (fixo) ou nove (celular).
+  Exibir parênteses do DDD e traço automaticamente ao completar o número.
+- **FR-020 (ampliado em 14/09/2026)**: Criar parceiro, unidade, categoria, contrato ou
+  rascunho de benefício não exige campo de motivo. Editar registros existentes ou
+  desativar unidade/categoria exige justificativa também no servidor. Criação permanece
+  auditada com ator/data e descrição automática, sem solicitar justificativa ao operador.
+  Aprovação/encerramento de contratos, publicação/retirada, moderação e alterações das
+  configurações continuam exigindo motivo por alterarem registros ou estados existentes.
+- **FR-021**: CNPJ com máscara compatível com letras, e-mail e site com limites e
+  aviso junto ao campo inválido; conservar preenchimento e impedir envio inválido.
+  Usar máscaras/validações compartilhadas da fundação. A consulta de CEP é direta
+  ao ViaCEP; não reutilizar a API do sistema antigo, conforme pedido explícito.
+
 - **FR-001**: Cadastro único de estabelecimento com nome de exibição, razão social opcional, CNPJ opcional, categoria, descrição e contatos administrativos opcionais. CNPJ válido e único quando informado; validação não comprova situação na Receita.
 - **FR-002**: Manter unidades e abrangência presencial/remota, endereço/localidade, contato e estado ativo/inativo por parceiro.
 - **FR-003**: Registrar contratos com referência, condições, início/fim, estado pendente/aprovado/encerrado, arquivo privado opcional e autoria; aprovação e encerramento exigem motivo.

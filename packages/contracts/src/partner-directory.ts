@@ -9,10 +9,14 @@ export const categoryCommandSchema = z
     expectedVersion: version.optional(),
     name: z.string().trim().min(2).max(80),
     active: z.boolean().default(true),
-    justification: reason,
+    justification: z.string().trim().max(1000).default(""),
   })
   .refine((value) => !value.id || value.expectedVersion !== undefined, {
     path: ["expectedVersion"],
+  })
+  .refine((value) => !value.id || value.justification.length >= 3, {
+    path: ["justification"],
+    message: "Informe o motivo da alteração da categoria.",
   });
 export const partnerAppSettingsSchema = z.strictObject({
   expectedVersion: version,

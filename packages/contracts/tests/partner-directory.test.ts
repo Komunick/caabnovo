@@ -11,13 +11,13 @@ describe("partner directory contracts", () => {
   it("requires a version when editing and rejects invalid category commands", () => {
     const input = { name: " Saúde ", justification: "Organização sintética" };
     expect(categoryCommandSchema.parse(input).name).toBe("Saúde");
-    for (const extra of [
-      { id: crypto.randomUUID() },
-      { name: " " },
-      { justification: "" },
-      { role: "admin" },
-    ])
+    for (const extra of [{ id: crypto.randomUUID() }, { name: " " }, { role: "admin" }])
       expect(categoryCommandSchema.safeParse({ ...input, ...extra }).success).toBe(false);
+    expect(categoryCommandSchema.safeParse({ name: "Nova categoria" }).success).toBe(true);
+    const edit = { ...input, id: crypto.randomUUID(), expectedVersion: 1 };
+    for (const justification of [undefined, "", "  ", "ab"])
+      expect(categoryCommandSchema.safeParse({ ...edit, justification }).success).toBe(false);
+    expect(categoryCommandSchema.safeParse(edit).success).toBe(true);
   });
   it("distinguishes all categories from an explicit empty selection and rejects duplicates", () => {
     const input = {

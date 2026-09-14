@@ -10,7 +10,6 @@ import { UnitPanel } from "./unit-panel";
 import { ContractPanel } from "./contract-panel";
 import { BenefitPanel } from "./benefit-panel";
 import { ReviewPanel } from "./review-panel";
-import { PartnerNavigation } from "./partner-navigation";
 import { partnerRequest, mutationHeaders } from "./client";
 import { formatDate, historyDescription, statusLabels } from "./labels";
 import styles from "./partners.module.css";
@@ -126,25 +125,28 @@ export function PartnerEditor({
       <p role="status" aria-live="polite">
         {message}
       </p>
-      <nav className="module-tabs" aria-label="Seções do parceiro">
-        {["Cadastro", "Unidades", "Contratos", "Benefícios", "Avaliações", "Histórico"].map(
-          (label) => (
-            <Button
-              key={label}
-              aria-pressed={tab === label}
-              intent={tab === label ? "primary" : "secondary"}
-              disabled={busy}
-              onClick={() => {
-                setTab(label);
-                if (label === "Histórico") void loadHistory();
-              }}
-            >
-              {label}
-            </Button>
-          ),
-        )}
-      </nav>
-      <PartnerNavigation active="partners" />
+      <div className={styles.sectionNavigation}>
+        <p className={styles.sectionLabel}>Dados do parceiro</p>
+        <nav className={styles.sectionTabs} aria-label="Seções do parceiro">
+          {["Cadastro", "Unidades", "Contratos", "Benefícios", "Avaliações", "Histórico"].map(
+            (label) => (
+              <button
+                key={label}
+                type="button"
+                className={styles.sectionTab}
+                aria-pressed={tab === label}
+                disabled={busy}
+                onClick={() => {
+                  setTab(label);
+                  if (label === "Histórico") void loadHistory();
+                }}
+              >
+                {label}
+              </button>
+            ),
+          )}
+        </nav>
+      </div>
       <div hidden={tab !== "Cadastro"}>
         <section className="panel">
           <h2>Cadastro</h2>

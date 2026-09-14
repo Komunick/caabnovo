@@ -67,7 +67,6 @@ export function ContractPanel({
                   endsOn: value("endsOn"),
                   fileId: fileId || null,
                 },
-                justification: value("justification"),
               })
             )
               setAdding(false);
@@ -100,9 +99,6 @@ export function ContractPanel({
             ) : (
               <p>O acesso a arquivos é necessário para anexar um documento.</p>
             )}
-            <FormField id="contract-reason" label="Motivo do registro">
-              <textarea name="justification" required minLength={3} maxLength={1000} />
-            </FormField>
             <div className={styles.actions}>
               <Button type="submit" intent="primary">
                 Registrar contrato

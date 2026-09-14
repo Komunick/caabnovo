@@ -228,7 +228,7 @@ export async function createPartner(pool: Pool, context: PartnerContext, raw: un
           pending.scope,
           result.rows[0]!.id,
           "created",
-          input.justification,
+          input.justification || "Cadastro de parceiro.",
           { version: 1 },
         );
       },
@@ -441,7 +441,21 @@ export async function commandPartner(
         await client.query("UPDATE partner SET version=version+1,updated_at=now() WHERE id=$1", [
           id,
         ]);
-        return finish(client, context, pending.scope, id, input.action, input.justification, after);
+        return finish(
+          client,
+          context,
+          pending.scope,
+          id,
+          input.action,
+          input.action === "unit" && !input.unitId
+            ? input.justification || "Cadastro de unidade."
+            : input.action === "contract"
+              ? input.justification || "Cadastro de contrato."
+              : input.action === "benefit" && !input.benefitId
+                ? input.justification || "Cadastro de benefício."
+                : input.justification,
+          after,
+        );
       },
       publishing ? PERMISSIONS.partnersPublish : PERMISSIONS.partnersWrite,
     );

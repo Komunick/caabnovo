@@ -16,9 +16,11 @@ trabalho; não cria PRs preliminares ou um PR apenas de documentação.
 O módulo administrativo de estabelecimentos externos é detalhado na
 [spec 007](../specs/007-partners-management/spec.md), no
 [plano](../specs/007-partners-management/plan.md) e nas
-[tarefas](../specs/007-partners-management/tasks.md). Possui quatro páginas: lista de
-parceiros, novo parceiro, detalhe com Cadastro/Unidades/Contratos/Benefícios/Histórico e
-lista geral de benefícios. O [mapa de interface](../specs/007-partners-management/interface.md)
+[tarefas](../specs/007-partners-management/tasks.md). Possui sete páginas: lista de
+parceiros, novo parceiro, detalhe com Cadastro/Unidades/Contratos/Benefícios/Avaliações/Histórico,
+lista geral de benefícios, unidades, categorias e configurações do app. Cadastros novos
+dispensam motivo; alterações exigem justificativa, com auditoria preservada em ambos.
+O [mapa de interface](../specs/007-partners-management/interface.md)
 registra suas funções e a harmonização com Associados e Notícias.
 
 Permissões individuais distinguem consulta, edição e aprovação/publicação. Documentos

@@ -23,7 +23,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   const name = `Parceiro sintético ${randomUUID().slice(0, 8)}`;
   await keyboardType(page, page.getByLabel("Nome do parceiro", { exact: true }), name);
   await keyboardType(page, page.getByLabel("Categoria", { exact: true }), "Bem-estar");
-  await keyboardType(page, page.locator("#partner-reason"), "Cadastro sintético para validação");
+  await expect(page.locator("#partner-reason")).toHaveCount(0);
   await keyboardActivate(page, page.getByRole("button", { name: "Criar parceiro", exact: true }));
   await expect(page).toHaveURL(/\/partners\/[0-9a-f-]+$/);
   const detail = page.url();
@@ -51,9 +51,9 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await page.getByRole("button", { name: "Unidades", exact: true }).click();
   await page.getByRole("button", { name: "Adicionar unidade", exact: true }).click();
   await page.getByLabel("Nome da unidade").fill("Unidade Salvador");
-  await page.getByLabel("Cidade (opcional)", { exact: true }).fill("Salvador");
-  await page.getByLabel("Estado (UF) (opcional)", { exact: true }).fill("BA");
-  await page.locator("#unit-reason").fill("Unidade sintética");
+  await page.locator("#unit-city").fill("Salvador");
+  await page.locator("#unit-state").fill("BA");
+  await expect(page.locator("#unit-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar unidade", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Unidade Salvador", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Contratos", exact: true }).click();
@@ -85,7 +85,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
     path: testInfo.outputPath("partners-contract-form.png"),
     fullPage: true,
   });
-  await page.locator("#contract-reason").fill("Registro sintético");
+  await expect(page.locator("#contract-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Registrar contrato", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Convênio sintético", exact: true }),
@@ -120,7 +120,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await page.getByLabel("Início da oferta").fill("2020-01-01");
   await page.getByLabel("Fim da oferta").fill("2099-12-31");
   await page.getByLabel("Site", { exact: true }).check();
-  await page.locator("#benefit-reason").fill("Oferta sintética");
+  await expect(page.locator("#benefit-reason")).toHaveCount(0);
   await expectWcag22AA(page);
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await page.screenshot({
@@ -141,6 +141,9 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await page.getByRole("button", { name: "Editar benefício", exact: true }).click();
   await page.getByLabel("Título", { exact: true }).fill("Título privado em revisão");
   await page.getByLabel("Fim da oferta").fill("2098-12-31");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page.locator("#benefit-reason")).toBeVisible();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Título privado em revisão");
   await page.locator("#benefit-reason").fill("Revisão privada sintética");
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await expect(

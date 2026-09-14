@@ -1,5 +1,68 @@
 # Evidências — Parceiros e benefícios
 
+## Retomada de 14/09/2026
+
+Sete páginas e seis seções de detalhe implementadas. Diretório de unidades/categorias,
+configuração do catálogo do app e moderação preservando a avaliação original.
+Campos de parceiro/unidade usam CEP direto no ViaCEP, UF, máscaras e validações
+compartilhadas com o [PR #19](https://github.com/Komunick/caabnovo/pull/19), do qual esta
+branch depende. Navegação interna “Dados do parceiro” usa texto e linha ativa,
+distinta das áreas gerais. Novos parceiros, unidades, categorias, contratos e benefícios
+dispensam motivo; edições, publicação, decisões e moderação exigem justificativa no servidor.
+
+| Verificação local | Resultado em 14/09 |
+| --- | --- |
+| Formatação, lint, typecheck | Passaram |
+| Unitários/contratos | 308 testes, 48 arquivos passaram |
+| Integração completa e migrations | 135 testes, 16 arquivos passaram em bancos descartáveis |
+| Build web e worker | Passaram |
+| Chromium completo | 55 testes passaram em 6,4 minutos |
+| Acessibilidade | Axe WCAG 2.2 AA, teclado e ausência de overflow nas matrizes das sete páginas e avaliações |
+| Dependências | 3 baixas e 5 moderadas; nenhuma alta/crítica, sem atualização de dependências |
+| Segredos | Nenhum padrão conhecido no diff local; Gitleaks completo no CI |
+
+A integração completa foi repetida com `--maxWorkers=1` após a inicialização simultânea
+de vários bancos exceder o timeout local. A primeira rodada direcionada de navegador
+teve sete aprovados e um timeout de login a 5 s; trace confirmou resposta 200. A espera
+foi alinhada aos 30 s das demais jornadas, duas regressões passaram e a suíte completa
+de 55 testes passou em seguida. Nenhum teste ou gate foi removido.
+
+Os testes verificam criação sem motivo, recusa de edição/decisão sem motivo, auditoria
+automática, persistência, revisão de telefone, falhas de CEP e preservação de correção
+manual, vínculos de categoria, seleção vazia e canais independentes, conflitos,
+moderação imutável, permissões, documentos privados e publicação. A regressão inclui
+Associados/fotos, recuperação, configurações, contas, Notícias e Auditoria.
+
+### Capturas atuais
+
+- [Cadastro e abas internas, desktop claro](evidence/detalhe-light-1440.png)
+- [Cadastro e abas internas, celular escuro](evidence/detalhe-dark-390.png)
+- [Novo parceiro sem motivo, celular](evidence/novo-light-390.png)
+- [Categorias, desktop](evidence/categorias-light-1440.png)
+- [Unidades, celular](evidence/unidades-light-390.png)
+- [Configuração do app, celular escuro](evidence/configuracoes-dark-390.png)
+- [Avaliações, desktop escuro](evidence/avaliacoes-dark-1440.png)
+
+Inspeção visual confirma rótulos, campos, foco e controles legíveis, abas internas
+distintas e quebra de linha em 390 px. Tabelas preservam rolagem interna no celular.
+Capturas e traces completos preservados no arquivo local da primeira rodada e no
+relatório Playwright da rodada completa; somente dados sintéticos.
+
+### Entrega e preservação
+
+E2E exclusivamente em localhost:3108, banco caab_partners_check/5447; integrações
+usam Testcontainers. Preview principal 3107 restaurado na composição anterior durante
+a validação. Antes de atualizar: 25 contas, 82 associados, 1 parceiro, 64 arquivos e
+4 vínculos de foto. A atualização final do preview e os checks remotos permanecem
+em acompanhamento na tarefa T030. Nenhum seed no preview nem merge de PR.
+
+Apenas as migrations aditivas 0016/0017 já previstas; CEP/endereço/motivo não exigem
+migration. Coleta externa das avaliações ainda depende do app; não há ingestão pública.
+O PR #19 também corrige o pull de storage do CI para o registro oficial Quay,
+com as mesmas versões/IDs de imagens. Não altera os volumes locais.
+
+## Histórico — entrega inicial de 11/09/2026
+
 Validação em 11/09/2026, branch `feature/partners-management`, base `ab0ad89`.
 Quatro páginas e cinco abas implementadas conforme spec/interface. Nesta retomada,
 histórico ganhou recuperação de falha sem recarregar o formulário; ofertas mostram

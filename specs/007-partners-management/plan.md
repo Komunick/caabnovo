@@ -41,6 +41,31 @@ conversão ou política de avaliação. Revisão humana sensível no PR, sem mer
 
 ## Implementation Sequence
 
+### Retomada — 14/09/2026
+
+Aplicar a regra de criação sem justificativa também às categorias, contratos e
+rascunhos de benefícios. Contratos e formulários distinguem criação de edição pelo
+ID do registro; o servidor exige motivo para edições e transições de estado.
+Auditoria de criação usa descrição automática quando não há motivo informado.
+Sem migration ou reescrita dos eventos anteriores. Cobrir rejeição de edição sem
+motivo, criação sem motivo e trilha de auditoria em contratos, integração e E2E.
+
+### Ajustes no formulário de unidade — 11/09/2026
+
+Adicionar postalCode opcional ao JSON do perfil, sem migration e sem alterar
+registros existentes. Consulta pontual ao ViaCEP pelo navegador apenas com os oito
+dígitos do CEP, sem credenciais/referrer; timeout, cancelamento e preservação de
+campos corrigidos durante a consulta. UF em input com datalist nativo; telefone
+normalizado em dígitos no contrato e formatado na interface. Justificativa opcional
+somente no comando unit sem unitId; serviço registra descrição automática da criação.
+Cobrir contratos, persistência/auditoria e E2E de fixo/celular, CEP, falha e concorrência.
+
+Aplicar também ao parceiro: endereço e CEP opcionais, CNPJ com máscara alfanumérica,
+e-mail/site validados ao sair do campo e ao enviar, criação sem motivo obrigatório.
+Usar componentes e contratos da branch fix/common-field-validation (spec 001,
+tarefas CF01–CF03), em PR separado da implementação específica de Parceiros.
+Compor ambos no preview local; não integrar branches ou PRs em dev sem autorização.
+
 ### Complemento de 11/09/2026
 
 Reutilizar a worktree/PR 18. Migration 0017 aditiva: categorias normalizadas e vínculo
@@ -64,10 +89,14 @@ da migration local, sem seed de testes no banco 3107.
 3. Serviço transacional e HTTP; validar sessão atual, propriedade, idempotência e auditoria.
 4. Interface de cadastro/unidades; contratos com upload real; benefícios com prévia/publicação.
 5. Consulta externa com whitelist e filtros de vigência em cada leitura; testes de canais.
-6. Verificação visual e acessibilidade nos quatro caminhos; unidade/integração/E2E/build.
+6. Verificação visual e acessibilidade nas sete páginas e aba Avaliações; unidade/integração/E2E/build.
 7. PR único para dev com evidências e rollback, corrigindo os próprios gates.
 
 ## Complexity Tracking
+
+Correção de navegação solicitada em 11/09/2026: retirar PartnerNavigation do editor,
+preservando o retorno à lista e as seções internas. Conferir a separação em criação,
+edição e consulta geral no E2E de contatos, incluindo a captura em 390 px.
 
 Retomada de 11/09/2026: concluir estados de consulta do histórico e a distinção visual
 entre rascunho e publicação, dentro de T015/T018; cobrir recuperação de falha e edição

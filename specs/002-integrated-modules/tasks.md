@@ -118,23 +118,24 @@ exceções, remarcação/desfecho e avaliação preservada.
 
 Implementação administrativa detalhada na [spec 007](../007-partners-management/spec.md),
 com [plano](../007-partners-management/plan.md), [tarefas](../007-partners-management/tasks.md)
-e [quatro páginas](../007-partners-management/interface.md). Parceiros são estabelecimentos
-externos. Coleta/moderação de avaliações, portal e resgate permanecem nas integrações futuras;
-essas partes das tarefas gerais abaixo não estão concluídas pela entrega administrativa.
+e [sete páginas](../007-partners-management/interface.md). Parceiros são estabelecimentos
+externos. Cadastro, diretório, configuração do app e moderação administrativa estão na
+spec 007. Coleta externa de avaliações, portal e resgate permanecem integrações futuras;
+não são apresentados como conectados pela entrega administrativa.
 
 Objetivo: parceiros/contratos/ofertas confiáveis. Teste independente: vigência, ocultação e
 moderação.
 
-- [ ] T027 [US5] Definir condições/exposição/moderação e contrato em
-      `specs/002-integrated-modules/contracts/partners.md`.
-- [ ] T028 [US5] Modelar parceiro/unidades/contratos/ofertas/categorias/avaliações em
+- [x] T027 [US5] Definir condições/exposição/moderação e contrato em
+      `specs/007-partners-management/contracts/partners.md`.
+- [x] T028 [US5] Modelar parceiro/unidades/contratos/ofertas/categorias/avaliações em
       `packages/db/migrations/` e `packages/contracts/src/partners.ts`.
-- [ ] T029 [US5] Implementar testes de vigência/autorização/moderação em
-      `apps/web/modules/partners/partner-service.test.ts`.
-- [ ] T030 [US5] Implementar serviços/API/UI usando arquivos existentes em
+- [x] T029 [US5] Implementar testes de vigência/autorização/moderação em
+      `apps/web/tests/integration/partners.test.ts`.
+- [x] T030 [US5] Implementar serviços/API/UI usando arquivos existentes em
       `apps/web/modules/partners/`, `app/api/v1/partners/` e `app/(admin)/partners/`.
-- [ ] T031 [US5] Validar oferta, contrato, ocultação e opinião preservada em
-      `apps/web/tests/e2e/partners.spec.ts`.
+- [x] T031 [US5] Validar oferta, contrato, ocultação e opinião preservada em
+      `apps/web/tests/e2e/partners.spec.ts` e `partner-directory.spec.ts`.
 
 ## Phase 8 — US6 Acesso existente; cadastro de equipe retirado do escopo
 

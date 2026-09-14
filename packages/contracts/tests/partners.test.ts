@@ -6,10 +6,45 @@ import {
   benefitDraftSchema,
   benefitPublicationSchema,
   partnerListSchema,
+  createPartnerSchema,
+  partnerUnitSchema,
 } from "../src/partners";
 import { accessPermissionSchema, userAccessChangeSchema } from "../src/user-access";
 
 describe("partner contracts", () => {
+  it("allows creation without a reason but requires one for partner and unit edits", () => {
+    const profile = { name: "Parceiro sintético", category: "Teste" };
+    expect(createPartnerSchema.safeParse({ profile }).success).toBe(true);
+    const unit = {
+      action: "unit",
+      expectedVersion: 1,
+      profile: { name: "Unidade", mode: "presential" },
+      active: true,
+    };
+    expect(partnerCommandSchema.safeParse(unit).success).toBe(true);
+    expect(partnerCommandSchema.safeParse({ ...unit, unitId: crypto.randomUUID() }).success).toBe(
+      false,
+    );
+    expect(
+      partnerCommandSchema.safeParse({ action: "update", profile, expectedVersion: 1 }).success,
+    ).toBe(false);
+    expect(
+      partnerUnitSchema.parse({
+        ...unit.profile,
+        postalCode: "40020-000",
+        phone: "(71) 3333-4444",
+        state: "ba",
+      }),
+    ).toMatchObject({ postalCode: "40020000", phone: "7133334444", state: "BA" });
+    for (const extra of [
+      { email: "email-invalido" },
+      { website: "ftp://example.test" },
+      { postalCode: "123" },
+      { phone: "telefone" },
+      { state: "ZZ" },
+    ])
+      expect(partnerProfileSchema.safeParse({ ...profile, ...extra }).success).toBe(false);
+  });
   it("accepts both CNPJ formats and preserves initial zeroes", () => {
     for (const cnpj of ["12ABC34501DE35", "04252011000110"]) expect(isValidCnpj(cnpj)).toBe(true);
     expect(
@@ -58,7 +93,7 @@ describe("partner contracts", () => {
     ])
       expect(benefitPublicationSchema.safeParse({ ...complete, ...extra }).success).toBe(false);
   });
-  it("requires version, justification, valid civil dates and known actions", () => {
+  it("allows new contracts without a reason and requires valid versions and civil dates", () => {
     const input = {
       action: "contract",
       expectedVersion: 1,
@@ -73,12 +108,42 @@ describe("partner contracts", () => {
     expect(partnerCommandSchema.safeParse(input).success).toBe(true);
     for (const extra of [
       { expectedVersion: 0 },
-      { justification: " " },
       { action: "delete" },
       { contract: { ...input.contract, endsOn: "2026-08-01" } },
     ])
       expect(partnerCommandSchema.safeParse({ ...input, ...extra }).success).toBe(false);
     expect(partnerListSchema.safeParse({ page: 0 }).success).toBe(false);
+    expect(partnerCommandSchema.safeParse({ ...input, justification: undefined }).success).toBe(
+      true,
+    );
+  });
+  it("requires reasons for benefit edits and every state transition, but not new drafts", () => {
+    const id = crypto.randomUUID();
+    const draft = { action: "benefit", expectedVersion: 1, draft: { title: "Oferta" } };
+    expect(partnerCommandSchema.safeParse(draft).success).toBe(true);
+    const edits = [
+      { ...draft, benefitId: id },
+      { action: "contract-status", contractId: id, status: "approved" },
+      { action: "contract-status", contractId: id, status: "ended" },
+      { action: "publish", benefitId: id },
+      { action: "hide", benefitId: id },
+      { action: "status", status: "suspended" },
+      { action: "archive" },
+      { action: "restore" },
+    ];
+    for (const edit of edits) {
+      for (const justification of [undefined, "", "  ", "ab"])
+        expect(
+          partnerCommandSchema.safeParse({ expectedVersion: 1, ...edit, justification }).success,
+        ).toBe(false);
+      expect(
+        partnerCommandSchema.safeParse({
+          expectedVersion: 1,
+          ...edit,
+          justification: "Alteração sintética",
+        }).success,
+      ).toBe(true);
+    }
   });
   it("allows all permissions and requires read before publishing partners", () => {
     const base = { version: 0, expectedPermissions: [], justification: "Acesso de teste" };

@@ -1,12 +1,18 @@
 # Contratos v1 de Parceiros
 
+Revisão de 14/09/2026: motivo opcional na criação de parceiro, unidade, categoria,
+contrato e rascunho de benefício, com descrição automática na auditoria. Motivo de
+3 a 1000 caracteres obrigatório em edições e transições, validado após trim no servidor.
+Identificadores de unidade/benefício/categoria distinguem edição de criação; enviar
+um ID existente nunca dispensa a justificativa. Configuração e moderação mantêm motivo.
+
 ## Diretório, configuração e avaliações
 
 | Rota | Contrato e permissão |
 | --- | --- |
 | GET /api/v1/partners/units | partners:read; q/status/page, 25 unidades por página, parceiro e link contextual |
 | GET /api/v1/partners/categories | partners:read; categorias, versões e contagem de parceiros não arquivados |
-| POST /api/v1/partners/categories | partners:write; nome, ativa, motivo; id/expectedVersion para editar |
+| POST /api/v1/partners/categories | partners:write; nome, ativa; id/expectedVersion e motivo para editar |
 | GET /api/v1/partners/settings | partners:read; configuração atual e categorias |
 | POST /api/v1/partners/settings | partners:publish; expectedVersion, mode all/selected, categoryIds únicos e motivo |
 | GET /api/v1/partners/{id}/reviews | partners:read; status/page, 25 opiniões, total e média incluindo ocultas; sem referência privada do autor |
@@ -26,9 +32,9 @@ Privadas: sessão ativa; partners:read em todas as leituras, partners:write para
 | Rota | Contrato |
 | --- | --- |
 | GET /api/v1/partners | q/category/status/page; paginação 25, hasNextPage, opções de categorias |
-| POST /api/v1/partners | profile + justification; retorna PartnerRecord |
+| POST /api/v1/partners | profile; justification opcional na criação; retorna PartnerRecord |
 | GET /api/v1/partners/{id} | perfil, unidades, contratos, benefícios e version; documentos redigidos sem files:read |
-| POST /api/v1/partners/{id}/commands | expectedVersion, justification, action e entrada específica |
+| POST /api/v1/partners/{id}/commands | expectedVersion, action e entrada específica; justification obrigatória em edição/transição e opcional em criação |
 | GET /api/v1/partners/{id}/history | page; histórico contextual sem dados privados desnecessários |
 | GET /api/v1/partners/{id}/files | arquivos próprios e estado de verificação |
 | GET /api/v1/partners/{id}/files/{fileId} | redirect temporário privado após reautorização |
@@ -45,6 +51,13 @@ unidade/localidade/endereço/abrangência. Sem CNPJ, contatos administrativos, d
 atores, permissões ou identidade de associado. Consulta no-store revalida vigência/estados; a
 publicação expressa decisão de exibição, não comprova elegibilidade do consumidor. App/site
 consomem este contrato sem exigir alteração dos respectivos frontends nesta entrega.
+
+Perfis de parceiro/unidade aceitam postalCode (oito dígitos, opcional), address,
+city e state (UF válida); telefone aceita DDD + oito/nove dígitos, normalizado em
+números. E-mail e URL http/https são validados pelo contrato compartilhado. No
+comando unit, justification é opcional somente sem unitId; edição exige motivo.
+Criação de parceiro/unidade sem motivo registra descrição automática na auditoria.
+Novos campos de contato/endereço do parceiro não são incluídos na projeção pública.
 
 CNPJ normalizado em maiúsculas, sem máscara, com DV alfanumérico oficial; datas civis ISO.
 Website somente http/https. Rascunho aceita campos de publicação incompletos; publicar revalida

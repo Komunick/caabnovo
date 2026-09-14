@@ -35,7 +35,7 @@ test("directory screens preserve edits and apply app settings, unit links and re
   await page.goto("/partners/categories");
   await keyboardActivate(page, page.getByRole("button", { name: "Nova categoria", exact: true }));
   await keyboardType(page, page.getByLabel("Nome da categoria", { exact: true }), category);
-  await page.getByLabel("Justificativa da categoria").fill("Organização sintética");
+  await expect(page.locator("#category-reason")).toHaveCount(0);
   await page.route("**/api/v1/partners/categories", (route) =>
     route.request().method() === "POST"
       ? route.fulfill({ status: 503, json: { code: "UNAVAILABLE" } })
@@ -96,6 +96,8 @@ test("directory screens preserve edits and apply app settings, unit links and re
   await page.getByRole("button", { name: `Editar categoria ${category}`, exact: true }).click();
   const renamed = `${category} nova`;
   await page.getByLabel("Nome da categoria", { exact: true }).fill(renamed);
+  await page.getByRole("button", { name: "Salvar categoria", exact: true }).click();
+  await expect(page.locator("#category-reason")).toBeVisible();
   await page.getByLabel("Justificativa da categoria").fill("Renomear preservando vínculos");
   await page.getByRole("button", { name: "Salvar categoria", exact: true }).click();
   await expect(page.getByRole("row").filter({ hasText: renamed })).toContainText("1");

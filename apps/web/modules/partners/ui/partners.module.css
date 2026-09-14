@@ -77,6 +77,46 @@
 .muted {
   color: var(--color-muted);
 }
+.sectionNavigation {
+  min-width: 0;
+  padding: 1rem 1rem 0;
+  background: var(--color-surface-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+.sectionLabel {
+  margin: 0 0 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.sectionTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+}
+.sectionTab {
+  min-height: 2.75rem;
+  padding: 0.65rem 0.25rem;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sectionTab[aria-pressed="true"] {
+  border-bottom-color: var(--color-action);
+  color: var(--color-action);
+}
+.sectionTab:hover:not(:disabled) {
+  background: var(--color-action-soft);
+}
+.sectionTab:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
 .table {
   min-width: 34rem;
 }

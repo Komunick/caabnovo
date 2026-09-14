@@ -79,9 +79,15 @@ function BenefitForm({
         if (
           await command({
             action: "benefit",
-            ...(benefit ? { benefitId: benefit.id } : {}),
+            ...(benefit
+              ? {
+                  benefitId: benefit.id,
+                  justification: String(
+                    new FormData(event.currentTarget).get("justification") ?? "",
+                  ),
+                }
+              : {}),
             draft: parsed.data,
-            justification: String(new FormData(event.currentTarget).get("justification")),
           })
         )
           onClose();
@@ -186,9 +192,11 @@ function BenefitForm({
           ))}
         </fieldset>
         <BenefitPreview draft={draft} partner={partner} />
-        <FormField id="benefit-reason" label="Motivo do cadastro ou alteração">
-          <textarea name="justification" required minLength={3} maxLength={1000} />
-        </FormField>
+        {benefit && (
+          <FormField id="benefit-reason" label="Motivo da alteração">
+            <textarea name="justification" required minLength={3} maxLength={1000} />
+          </FormField>
+        )}
         <div className={styles.actions}>
           <Button type="submit" intent="primary">
             Salvar rascunho
