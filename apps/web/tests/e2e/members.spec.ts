@@ -56,6 +56,7 @@ test("birth calendar and contact masks work without saving a member", async ({ p
   await expect(calendar).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(calendar).toBeHidden();
+  await expect(trigger).toBeFocused();
   const cpf = page.getByLabel("CPF (opcional)");
   await cpf.pressSequentially("abc1234567890123");
   await expect(cpf).toHaveValue("123.456.789-01");

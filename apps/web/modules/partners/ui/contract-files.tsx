@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { uploadIntentSchema, type PartnerFile } from "@caab/contracts";
+import { DOCUMENT_FILE_ACCEPT, uploadIntentSchema, type PartnerFile } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { mutationHeaders, partnerRequest } from "./client";
@@ -48,7 +48,7 @@ export function ContractFiles({
       !file.size ||
       file.size > 25 * 1024 * 1024
     ) {
-      setError("Escolha PDF, PNG ou JPEG de até 25 MB.");
+      setError("Escolha PDF, PNG, JPG ou JPEG de até 25 MB.");
       return;
     }
     setBusy(true);
@@ -109,10 +109,10 @@ export function ContractFiles({
       {error && <p role="alert">{error}</p>}
       <p role="status">{notice}</p>
       {canUpload && (
-        <FormField id="contract-upload" label="Enviar PDF, PNG ou JPEG, até 25 MB">
+        <FormField id="contract-upload" label="Enviar PDF, PNG, JPG ou JPEG, até 25 MB">
           <input
             type="file"
-            accept="application/pdf,image/png,image/jpeg"
+            accept={DOCUMENT_FILE_ACCEPT}
             disabled={disabled || busy}
             onChange={(event) => {
               void upload(event.target.files?.[0]);

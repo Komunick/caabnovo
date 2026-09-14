@@ -64,7 +64,7 @@ test("operator creates a partner, approves a contract and publishes an offer wit
     .fill("Condições aprovadas para demonstração isolada.");
   await page.getByLabel("Início da vigência").fill("2020-01-01");
   await page.getByLabel("Fim da vigência").fill("2099-12-31");
-  await page.getByLabel("Enviar PDF, PNG ou JPEG, até 25 MB").setInputFiles({
+  await page.getByLabel("Enviar PDF, PNG, JPG ou JPEG, até 25 MB").setInputFiles({
     name: "contrato-sintetico.png",
     mimeType: "image/png",
     buffer: Buffer.from(
