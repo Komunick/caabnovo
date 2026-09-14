@@ -210,3 +210,14 @@ são alterações cadastrais. Preservar autorização, idempotência e controle 
 Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
 recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+## Resultado da consulta OAB — revisão de 14/09/2026
+
+Decisão do usuário após consulta individual autorizada somente para leitura:
+- Exibir nome, CPF, situação regular, inadimplência, detalhe, subseção e data de compromisso.
+- Não repetir a OAB no resultado: ela já está no formulário. Não exibir pagamento total do exercício nem data de inadimplência.
+- Nome em destaque e demais informações em pares de rótulo/valor responsivos; regularidade e inadimplência são independentes.
+- Campo ausente/vazio ou situação desconhecida deve aparecer como não informado, sem inferir resposta negativa.
+- Preservar fonte, horário, ausência de registro, erros, permissões e a auditoria existente. Nenhum novo campo pessoal do retorno é persistido ou copiado para cadastro/avaliações.
+- Documentar os dez nomes de campos efetivamente retornados, com tipos e uso, sem inscrição, nome, CPF ou demais valores pessoais da consulta real.
+- Testes automatizados usam exclusivamente dados sintéticos e um provedor simulado; não repetir a consulta real.

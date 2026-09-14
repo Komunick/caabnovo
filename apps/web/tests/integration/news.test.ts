@@ -630,6 +630,7 @@ describe.sequential("news persistence with Payload", () => {
       [fileId, created.id, context.actor!.userId],
     );
     const input = {
+      justification: "Atualização editorial sintética",
       expectedVersion: 1,
       metadata: { cover: { fileId, alt: "Descrição" } },
       body: emptyNewsBody,
@@ -832,7 +833,12 @@ describe.sequential("news persistence with Payload", () => {
         ],
       },
     };
-    const input = { expectedVersion: 1, metadata: {}, body };
+    const input = {
+      expectedVersion: 1,
+      justification: "Atualização editorial sintética",
+      metadata: {},
+      body,
+    };
     await expect(
       createNewsDraft(payload, mediaContext, { metadata: {}, body }),
     ).rejects.toMatchObject({ status: 422 });

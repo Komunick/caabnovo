@@ -403,3 +403,5 @@ são alterações cadastrais. Preservar autorização, idempotência e controle 
 Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
 recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+Acesso inicial do colaborador começa no instante de criação fornecido pelo banco, evitando diferença entre relógio da aplicação e relógio da transação que escondia os papéis na resposta imediata. Permissões e auditoria permanecem obrigatórias.

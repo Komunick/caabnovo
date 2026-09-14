@@ -4,11 +4,35 @@ import { z } from "zod";
 import { oabNumberSchema, type OabLookupResult } from "@caab/contracts";
 import { OabError } from "./oab-errors";
 
-export type OabProvider = (number: string) => Promise<Pick<OabLookupResult, "status" | "name">>;
+type ProviderResult = Pick<
+  OabLookupResult,
+  "status" | "name" | "cpf" | "delinquent" | "detail" | "subsection" | "commitmentDate"
+>;
+export type OabProvider = (number: string) => Promise<ProviderResult>;
+const emptyDetails = {
+  cpf: null,
+  delinquent: null,
+  detail: null,
+  subsection: null,
+  commitmentDate: null,
+};
+function providerBoolean(input: string | null | undefined): boolean | null {
+  const value = input
+    ?.trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+  return value === "SIM" ? true : value === "NAO" ? false : null;
+}
 const providerRow = z.object({
   Nome: z.string().trim().min(1).max(160),
   OAB: z.union([oabNumberSchema, z.number().int().positive().max(999999).transform(String)]),
-  SituacaoRegular: z.string().max(100).nullable().optional(),
+  SituacaoRegular: z.string().max(100).nullish(),
+  CPF: z.string().trim().max(14).nullish(),
+  Inadimplente: z.string().max(100).nullish(),
+  Detalhe: z.string().trim().max(1000).nullish(),
+  SubSecao: z.string().trim().max(160).nullish(),
+  DataCompromisso: z.string().trim().max(40).nullish(),
 });
 type OabEnvironment = Readonly<Record<string, string | undefined>>;
 export function isOabConfigured(env: OabEnvironment = process.env) {
@@ -84,15 +108,20 @@ export function createOabProvider(
           const parsed = z.array(providerRow).max(1).safeParse(data);
           if (!parsed.success) throw new OabError("OAB_INVALID_RESPONSE", 502);
           const row = parsed.data[0];
-          if (!row) return { status: "not_found" as const, name: null };
+          if (!row) return { status: "not_found" as const, name: null, ...emptyDetails };
           if (row.OAB.replace(/^0+/, "") !== number.replace(/^0+/, ""))
             throw new OabError("OAB_INVALID_RESPONSE", 502);
-          const value = row.SituacaoRegular?.trim()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toUpperCase();
-          const status = value === "SIM" ? "regular" : value === "NAO" ? "irregular" : "unknown";
-          return { name: row.Nome, status } as Pick<OabLookupResult, "status" | "name">;
+          const regular = providerBoolean(row.SituacaoRegular);
+          const status = regular === true ? "regular" : regular === false ? "irregular" : "unknown";
+          return {
+            name: row.Nome,
+            status,
+            cpf: row.CPF || null,
+            delinquent: providerBoolean(row.Inadimplente),
+            detail: row.Detalhe || null,
+            subsection: row.SubSecao || null,
+            commitmentDate: row.DataCompromisso || null,
+          } satisfies ProviderResult;
         })(),
       ]);
     } catch (error) {

@@ -97,3 +97,11 @@ Reutilizar oabNumberSchema em memberProfileSchema e máscara oab no componente c
 4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
    navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
    regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.
+
+## Plano: resultado OAB selecionado — 14/09/2026
+
+1. Registrar contrato observado sem valores pessoais e seleção autorizada no contrato OAB existente.
+2. Ampliar somente a projeção privada do adaptador/contrato com CPF, inadimplência, detalhe, subseção e data de compromisso; mapear SIM/NÃO de forma independente e desconhecido para null.
+3. Renderizar os sete campos selecionados com lista de descrições sem repetir inscrição; preservar mensagens de falha e fonte/horário.
+4. Validar projeção, descarte de campos não selecionados, dados ausentes/desconhecidos, auditoria sem novos dados pessoais e apresentação acessível em desktop/mobile com fixtures sintéticas. Executar integração/navegador no CI, sem localhost.
+5. Entregar na branch ativa do ciclo junto à padronização, sem abrir outra branch antes do PR. Nenhuma migration, dependência ou configuração adicional.

@@ -129,6 +129,8 @@ export async function createUser(
           targetUserId: created.id,
           rolePermissions: role.permissions,
           roleAdministrative: role.administrative,
+          // Initial access starts at creation, using the same database transaction clock.
+          now: created.createdAt,
           justification: reason,
         });
 
