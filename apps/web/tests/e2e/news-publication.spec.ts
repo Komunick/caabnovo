@@ -1,3 +1,4 @@
+import { justifyNewsChange } from "./news-justification";
 import AxeBuilder from "@axe-core/playwright";
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
@@ -20,17 +21,18 @@ async function prepare(page: import("@playwright/test").Page, media = false) {
     .fill("Conteúdo público <script>texto seguro</script>");
   await page.getByLabel("Destacar notícia").check();
   await page.getByLabel("Ordem do destaque").fill("2");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
   return page.url().split("/").at(-1)!;
 }
 async function confirm(page: import("@playwright/test").Page) {
+  await justifyNewsChange(page);
   const button = page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true });
   await button.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("dialog")).toBeHidden({ timeout: 60000 });
 }
-
 test("the worker releases a real image and publishes the scheduled revision for anonymous readers", async ({
   page,
   request,
@@ -65,6 +67,7 @@ test("the worker releases a real image and publishes the scheduled revision for 
         { timeout: 60000 },
       )
       .toBe(true);
+    await justifyNewsChange(page);
     await page.getByRole("button", { name: "Salvar rascunho" }).click();
     await expect(
       page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 2." }),
@@ -79,6 +82,7 @@ test("the worker releases a real image and publishes the scheduled revision for 
     await page.getByRole("button", { name: "Agendar", exact: true }).click();
     await confirm(page);
     await page.getByLabel("Título", { exact: true }).fill("Rascunho posterior ao agendamento");
+    await justifyNewsChange(page);
     await page.getByRole("button", { name: "Salvar rascunho" }).click();
     await expect(
       page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 3." }),
@@ -127,7 +131,6 @@ test("the worker releases a real image and publishes the scheduled revision for 
     });
   }
 });
-
 test("publishes publicly, keeps edits private, schedules, cancels and withdraws per channel", async ({
   page,
   request,
@@ -138,6 +141,7 @@ test("publishes publicly, keeps edits private, schedules, cancels and withdraws 
     destinations = page.getByRole("group", { name: "Destinos da ação" });
   expect((await request.get(`/api/v1/content/app/news/${id}`)).status()).toBe(404);
   await destinations.getByLabel("Aplicativo", { exact: true }).check();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Publicar agora", exact: true }).click();
   await confirm(page);
   const published = await request.get(`/api/v1/content/app/news/${id}`);
@@ -166,6 +170,7 @@ test("publishes publicly, keeps edits private, schedules, cancels and withdraws 
   await anonymous.close();
   await page.getByLabel("Título", { exact: true }).fill("Edição privada posterior");
   await expect(page.getByRole("button", { name: "Publicar agora", exact: true })).toBeEnabled();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 3." }),
@@ -178,13 +183,16 @@ test("publishes publicly, keeps edits private, schedules, cancels and withdraws 
   await page.getByRole("button", { name: "Agendar", exact: true }).click();
   await confirm(page);
   await expect(page.getByRole("button", { name: "Cancelar agendamento" })).toBeVisible();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Cancelar agendamento" }).click();
   await expect(page.getByText("Agendamento cancelado.", { exact: true })).toBeVisible();
   await destinations.getByLabel("Site", { exact: true }).check();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Publicar agora", exact: true }).click();
   await confirm(page);
   expect((await request.get(`/api/v1/content/site/news/${id}`)).status()).toBe(200);
   await destinations.getByLabel("Site", { exact: true }).uncheck();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Retirar publicação", exact: true }).click();
   await confirm(page);
   expect((await request.get(`/api/v1/content/app/news/${id}`)).status()).toBe(404);

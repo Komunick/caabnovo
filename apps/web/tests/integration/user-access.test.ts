@@ -3,7 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { grantRole, revokeRole } from "../../modules/users/role-assignment-service";
-import { changeUser } from "../../modules/users/user-service";
+import { createUser, changeUser } from "../../modules/users/user-service";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
 
 let container: StartedPostgreSqlContainer;
@@ -89,6 +89,37 @@ beforeEach(async () => {
 });
 
 describe.sequential("user access transactions", () => {
+  it("creates a collaborator with initial roles without a reason, then requires it for changes", async () => {
+    const actorId = await seedUser("manager@example.test");
+    const roleId = await seedRole("initial-role");
+    const created = await createUser(database.pool, {
+      ...context(actorId),
+      name: "Novo colaborador",
+      email: "new@example.test",
+      roleIds: [roleId],
+    });
+    expect(created.roles).toHaveLength(1);
+    const event = await admin.query(
+      "SELECT reason,actor_user_id FROM audit_event WHERE entity_id=$1 AND action='user.created'",
+      [created.id],
+    );
+    expect(event.rows[0]).toMatchObject({
+      actor_user_id: actorId,
+      reason: "Cadastro inicial de colaborador e acessos",
+    });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: created.id,
+        version: 1,
+        name: "Recusado",
+        justification: "   ",
+      }),
+    ).rejects.toMatchObject({ code: "JUSTIFICATION_REQUIRED" });
+    expect(
+      (await admin.query('SELECT name,version FROM "user" WHERE id=$1', [created.id])).rows[0],
+    ).toEqual({ name: "Novo colaborador", version: 1 });
+  });
   it("grants an administrative role to an active user without an authenticator", async () => {
     const actorId = await seedUser("manager@example.test");
     const targetId = await seedUser("target@example.test");

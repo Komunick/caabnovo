@@ -62,14 +62,13 @@ export async function createUser(
     email: string;
     name: string;
     roleIds: string[];
-    justification: string;
+    justification?: string;
     idempotencyKey?: string;
   },
   overrides: ServiceDependencies = {},
 ) {
   requirePermission(command.actor, PERMISSIONS.usersCreate);
-  const reason = command.justification.trim();
-  if (!reason) throw new UserAccessError("JUSTIFICATION_REQUIRED", 422, "Justification required");
+  const reason = command.justification?.trim() || "Cadastro inicial de colaborador e acessos";
   const deps = dependencies(overrides);
   try {
     return await withTransaction(pool, async (client) => {

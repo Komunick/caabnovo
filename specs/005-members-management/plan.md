@@ -88,3 +88,12 @@ válido de UF da OAB. Validação/entrega transversal pelas tarefas CF01–CF03 
 ## Campos — 14/09/2026
 
 Reutilizar oabNumberSchema em memberProfileSchema e máscara oab no componente compartilhado; consulta mantém leitura de registro legado e recusa incompatibilidade sem truncar dados persistidos.
+
+## Plano da padronização de justificativas — 14/09/2026
+
+1. Atualizar contratos de criação/alteração e registrar a distinção no serviço e auditoria.
+2. Ajustar formulários e mensagens; manter ações sensíveis, permissões e concorrência.
+3. Cobrir contratos negativos, criação sem motivo e motivo persistido em integração/E2E.
+4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
+   navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
+   regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.

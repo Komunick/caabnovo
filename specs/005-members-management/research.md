@@ -28,3 +28,16 @@ Mobile tem dados privados. Não provisionar contas externas nesta entrega: auten
 Fontes oficiais de usuários/contatos e relacionamentos do CiviCRM acima consultadas novamente. Mantida a distinção entre pessoa e conta, e a relação entre cadastros independentes. Não copiamos regras institucionais desse produto. Guias locais da versão instalada do Next sobre Route Handlers e page.js conferidos; parâmetros assíncronos e respostas privadas preservados.
 
 Decisão de acesso confirmada pelo usuário nesta sessão: permissões de consulta, edição e análise concedidas inicialmente ao administrador existente. Demais perfis exigem concessão explícita, sem novo papel automático. Credencial continua situação/validade; emissão verificável exige definições institucionais.
+
+## Pesquisa: justificativas e auditoria — 14/09/2026
+
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação
+  independe de texto de justificativa do operador.
+- OWASP Input Validation: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+  Validar no servidor antes da mutação, incluindo texto vazio após trim.
+- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis
+  associados aos campos necessários à ação atual.
+
+A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
+Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.

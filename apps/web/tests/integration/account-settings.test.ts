@@ -68,18 +68,32 @@ async function identity() {
 
 describe("personal account settings", () => {
   it("updates own profile without management grants, rejects stale versions and secret-free audit", async () => {
-    await change({ action: "profile", name: "New name", version: 1 });
+    await change({
+      justification: "Alteração sintética autorizada",
+      action: "profile",
+      name: "New name",
+      version: 1,
+    });
     expect((await identity()).name).toBe("New name");
-    await expect(change({ action: "profile", name: "Stale", version: 1 })).rejects.toMatchObject({
+    await expect(
+      change({
+        justification: "Alteração sintética autorizada",
+        action: "profile",
+        name: "Stale",
+        version: 1,
+      }),
+    ).rejects.toMatchObject({
       code: "VERSION_CONFLICT",
     });
     const events = await admin.query("SELECT * FROM audit_event WHERE entity_id=$1", [userId]);
     expect(events.rowCount).toBe(1);
+    expect(events.rows[0].reason).toBe("Alteração sintética autorizada");
     expect(JSON.stringify(events.rows)).not.toContain(password);
   });
   it("requires the current password, validates confirmation and preserves the credential on failure", async () => {
     await expect(
       change({
+        justification: "Alteração sintética autorizada",
         action: "password",
         currentPassword: "Wrong",
         newPassword,
@@ -89,6 +103,7 @@ describe("personal account settings", () => {
     ).rejects.toMatchObject({ code: "INVALID_PASSWORD" });
     await expect(
       change({
+        justification: "Alteração sintética autorizada",
         action: "password",
         currentPassword: password,
         newPassword,
@@ -107,6 +122,7 @@ describe("personal account settings", () => {
       [other, userId],
     );
     await change({
+      justification: "Alteração sintética autorizada",
       action: "password",
       currentPassword: password,
       newPassword,
@@ -124,7 +140,13 @@ describe("personal account settings", () => {
   });
   it("keeps old email until confirmation, hashes the token, and prevents replay", async () => {
     const newEmail = `new-${userId}@example.test`;
-    await change({ action: "request-email", currentPassword: password, newEmail, version: 1 });
+    await change({
+      justification: "Alteração sintética autorizada",
+      action: "request-email",
+      currentPassword: password,
+      newEmail,
+      version: 1,
+    });
     expect((await identity()).email).toBe(`${userId}@example.test`);
     const row = (
       await admin.query("SELECT token_hash FROM account_email_change WHERE user_id=$1", [userId])
@@ -144,6 +166,7 @@ describe("personal account settings", () => {
   });
   it("does not apply expired links or links belonging to another account", async () => {
     await change({
+      justification: "Alteração sintética autorizada",
       action: "request-email",
       currentPassword: password,
       newEmail: `new-${userId}@example.test`,
@@ -189,7 +212,13 @@ describe("personal account settings", () => {
     const newEmail = `conflict-${userId}@example.test`;
     await expect(
       change(
-        { action: "request-email", currentPassword: password, newEmail, version: 1 },
+        {
+          justification: "Alteração sintética autorizada",
+          action: "request-email",
+          currentPassword: password,
+          newEmail,
+          version: 1,
+        },
         async () => {
           throw new Error("SMTP unavailable");
         },
@@ -199,7 +228,13 @@ describe("personal account settings", () => {
       (await admin.query("SELECT id FROM account_email_change WHERE user_id=$1", [userId]))
         .rowCount,
     ).toBe(0);
-    await change({ action: "request-email", currentPassword: password, newEmail, version: 1 });
+    await change({
+      justification: "Alteração sintética autorizada",
+      action: "request-email",
+      currentPassword: password,
+      newEmail,
+      version: 1,
+    });
     await admin.query('INSERT INTO "user"(email,name) VALUES ($1::citext,$1::text)', [newEmail]);
     await expect(change({ action: "confirm-email", token })).rejects.toMatchObject({
       code: "EMAIL_UNAVAILABLE",
@@ -210,6 +245,7 @@ describe("personal account settings", () => {
     for (let i = 0; i < 5; i++)
       await expect(
         change({
+          justification: "Alteração sintética autorizada",
           action: "request-email",
           currentPassword: "Wrong",
           newEmail: `new-${userId}@example.test`,
@@ -218,6 +254,7 @@ describe("personal account settings", () => {
       ).rejects.toMatchObject({ code: "INVALID_PASSWORD" });
     await expect(
       change({
+        justification: "Alteração sintética autorizada",
         action: "request-email",
         currentPassword: password,
         newEmail: `new-${userId}@example.test`,
@@ -225,7 +262,14 @@ describe("personal account settings", () => {
       }),
     ).rejects.toMatchObject({ code: "TOO_MANY_ATTEMPTS" });
     await admin.query("UPDATE session SET revoked_at=now() WHERE id=$1", [sessionId]);
-    await expect(change({ action: "profile", name: "Denied", version: 1 })).rejects.toMatchObject({
+    await expect(
+      change({
+        justification: "Alteração sintética autorizada",
+        action: "profile",
+        name: "Denied",
+        version: 1,
+      }),
+    ).rejects.toMatchObject({
       code: "AUTHENTICATION_REQUIRED",
     });
   });

@@ -226,3 +226,12 @@ acessibilidade e CI; compor preview 3107 após validação isolada, sem seed rea
 ## Complemento JPG — 14/09/2026
 
 Compartilhar constantes de seleção de imagens/documentos nos contratos e aplicá-las a fotos de Associados, documentos, capas e imagens do corpo das Notícias. Anexos de contratos consomem a mesma constante no PR #18. Validar JPEG real em upload e inspeção, preservando PNG e rejeição de conteúdo incompatível.
+
+## Plano da padronização de justificativas — 14/09/2026
+
+1. Atualizar contratos de criação/alteração e registrar a distinção no serviço e auditoria.
+2. Ajustar formulários e mensagens; manter ações sensíveis, permissões e concorrência.
+3. Cobrir contratos negativos, criação sem motivo e motivo persistido em integração/E2E.
+4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
+   navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
+   regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.

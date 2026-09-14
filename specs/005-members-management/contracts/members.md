@@ -42,3 +42,14 @@ Schemas executáveis em packages/contracts/src/members.ts. Upload da fundação 
 Mobile: sem lista pública ou provisionamento nesta entrega; futura identidade vinculada acessará somente projeção própria, sem CPF/documentos/revisões internas nem acesso administrativo automático.
 
 Revisões: cada documento inclui reviews[] com id/result/reason/actorName/createdAt, da mais recente à mais antiga. Respostas sem files:read não incluem evidências documentais. Histórico inclui eventos de vínculos dos quais a pessoa é dependente.
+
+## Justificativa — revisão de 14/09/2026
+
+Criação do associado (`POST /members`), novo vínculo (`link`), documento sem
+`replacesId` e primeira foto dispensam `justification`. Campo opcional de criação
+permanece aceito para compatibilidade com clientes anteriores. Substituir documento,
+substituir/remover foto e demais comandos de alteração exigem motivo válido.
+A condição da foto é conferida no servidor com lock/versão do associado; omitir o
+motivo em uma substituição não pode contornar a regra. Criações e alterações mantêm
+auditoria atômica. Atualizar frontend/backend juntos; clientes administrativos que
+alteram registros devem enviar o motivo. APIs públicas de leitura não mudam.

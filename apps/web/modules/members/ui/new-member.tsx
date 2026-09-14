@@ -18,7 +18,6 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
   const prepared = useRef<PreparedPhoto | null>(null);
   const uploadKey = useRef(crypto.randomUUID());
   const photoKey = useRef({ body: "", key: "" });
-  const reason = useRef("");
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
   const retry = useRef({ body: "", key: "" });
@@ -48,7 +47,6 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
         action: "photo",
         fileId,
         expectedVersion: record.version,
-        justification: reason.current,
       });
       if (photoKey.current.body !== body) photoKey.current = { body, key: crypto.randomUUID() };
       await memberRequest(`/api/v1/members/${record.id}/commands`, {
@@ -103,10 +101,10 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
       ) : (
         <ProfileForm
           disabled={busy}
-          onSave={async (profile, justification) => {
+          onSave={async (profile) => {
             setBusy(true);
             setError("");
-            const body = JSON.stringify({ profile, justification });
+            const body = JSON.stringify({ profile });
             if (retry.current.body !== body) retry.current = { body, key: crypto.randomUUID() };
             try {
               const record = await memberRequest<MemberRecord>("/api/v1/members", {
@@ -114,7 +112,6 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
                 headers: mutationHeaders(retry.current.key),
                 body,
               });
-              reason.current = justification;
               setCreated(record);
               await finishPhoto(record);
             } catch (e) {

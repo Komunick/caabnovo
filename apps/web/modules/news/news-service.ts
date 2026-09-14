@@ -8,6 +8,7 @@ import {
   newsBodyImages,
   newsDraftMetadataSchema,
   newsVersionCommandSchema,
+  newsChangeCommandSchema,
   restoreNewsRevisionRequestSchema,
   newsListQuerySchema,
   publishNewsRequestSchema,
@@ -236,6 +237,7 @@ export async function updateNewsDraft(
         actorUserId: prepared.editorUserId,
         effectiveIdentity: `user:${prepared.editorUserId}`,
         action: "news.draft.updated",
+        reason: prepared.justification,
         entityType: "news",
         entityId: id,
         before: { revision: prepared.expectedVersion },
@@ -354,7 +356,7 @@ export async function archiveNews(
   input: unknown,
 ) {
   idSchema.parse(id);
-  const command = newsVersionCommandSchema.parse(input);
+  const command = newsChangeCommandSchema.parse(input);
   return newsPublishTransaction(payload, context.actor, async ({ req, lockNews, audit, db }) => {
     await lockNews(id);
     const before = await readDraft(payload, req, id);
@@ -387,6 +389,7 @@ export async function archiveNews(
       actorUserId: context.actor!.userId,
       effectiveIdentity: `user:${context.actor!.userId}`,
       action: "news.archived",
+      reason: command.justification,
       entityType: "news",
       entityId: id,
       before: { revision: command.expectedVersion, archived: false },
@@ -442,6 +445,7 @@ export async function restoreNewsRevision(
       actorUserId: prepared.editorUserId,
       effectiveIdentity: `user:${prepared.editorUserId}`,
       action: "news.revision.restored",
+      reason: command.justification,
       entityType: "news",
       entityId: id,
       before: { revision: command.expectedVersion },
@@ -510,6 +514,7 @@ export async function unpublishNews(
       const latest = await readDraft(payload, req, id);
       requireVersion(latest, command.expectedVersion);
       await withdrawNewsChannels(payload, db, req, id, command.channels, latest, {
+        reason: command.justification,
         actorUserId: context.actor!.userId,
         requestId: context.requestId,
         correlationId: context.correlationId,

@@ -539,7 +539,6 @@ components:
         - email
         - name
         - roleIds
-        - justification
       properties:
         email:
           type: string
@@ -556,7 +555,9 @@ components:
             format: uuid
         justification:
           type: string
-          minLength: 1
+          maxLength: 1000
+          default: ""
+          description: Optional legacy field; creation never requires an operator reason.
     UpdateUserRequest:
       type: object
       additionalProperties: false

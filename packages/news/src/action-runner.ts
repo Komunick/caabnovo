@@ -53,6 +53,7 @@ export async function runNewsAction(payload: Payload, input: unknown, now = new 
       requestId: String(action.request_id),
       correlationId: String(action.correlation_id),
       origin: "worker" as const,
+      reason: "Execução automática de agendamento",
     };
     let revision: number;
     if (action.action === "publish") {
@@ -74,7 +75,11 @@ export async function runNewsAction(payload: Payload, input: unknown, now = new 
         job.newsId,
         source,
         latest,
-        { expectedVersion: Number(action.source_revision), channels: action.channels },
+        {
+          expectedVersion: Number(action.source_revision),
+          channels: action.channels,
+          justification: context.reason,
+        },
         context,
       );
       revision = Number(published.revision);

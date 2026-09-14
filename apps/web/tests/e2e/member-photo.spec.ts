@@ -20,7 +20,7 @@ test("member photo uploads privately, persists, replaces and removes at mobile w
   await page.goto("/members/new");
   const name = `Foto sintética ${randomUUID().slice(0, 8)}`;
   await page.getByLabel("Nome completo").fill(name);
-  await page.getByLabel("Motivo do cadastro ou alteração").fill("Cadastro sintético para foto");
+  await expect(page.getByLabel("Motivo da alteração", { exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Criar cadastro" }).click();
   await expect(page).toHaveURL(/\/members\/[0-9a-f-]+$/);
   const profileUrl = page.url();
@@ -44,7 +44,8 @@ test("member photo uploads privately, persists, replaces and removes at mobile w
       buffer: filename.endsWith(".JPG") ? jpeg : image,
     });
     await expect(photo.getByText("Prévia · ainda não salva")).toBeVisible();
-    await photo.getByLabel("Motivo da alteração da foto").fill("Atualização sintética da foto");
+    if (await photo.getByLabel("Motivo da alteração da foto").isVisible())
+      await photo.getByLabel("Motivo da alteração da foto").fill("Atualização sintética da foto");
     await photo.getByRole("button", { name: "Salvar foto", exact: true }).click();
     await expect(photo.getByRole("status")).toHaveText("Foto de perfil atualizada.", {
       timeout: 65_000,
@@ -92,7 +93,7 @@ test("new member accepts a photo before creation and retries upload without dupl
   await page.goto("/members/new");
   const name = `Novo com foto ${randomUUID().slice(0, 8)}`;
   await page.getByLabel("Nome completo").fill(name);
-  await page.getByLabel("Motivo do cadastro ou alteração").fill("Cadastro sintético com foto");
+  await expect(page.getByLabel("Motivo da alteração", { exact: true })).toHaveCount(0);
   await page
     .getByLabel("Selecionar foto de perfil")
     .setInputFiles({ name: "foto-inicial.jpg", mimeType: "image/jpeg", buffer: jpeg });

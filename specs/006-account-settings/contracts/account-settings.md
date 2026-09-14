@@ -4,9 +4,9 @@
 
 | action | Campos adicionais | Resultado |
 | --- | --- | --- |
-| profile | name (1–160 caracteres), version (inteiro positivo) | Atualiza nome e versão. |
-| password | currentPassword, newPassword (12–72), confirmPassword, version | Troca a senha, invalida pedidos de e-mail pendentes e encerra as outras sessões. |
-| request-email | currentPassword, newEmail, version | Envia link de uso único, sem mudar o endereço atual. Novo pedido invalida o anterior; intervalo mínimo de um minuto entre pedidos enviados. |
+| profile | name (1–160 caracteres), version (inteiro positivo), justification (3–1000 após trim) | Atualiza nome e versão. |
+| password | currentPassword, newPassword (12–72), confirmPassword, version, justification (3–1000 após trim) | Troca a senha, invalida pedidos de e-mail pendentes e encerra as outras sessões. |
+| request-email | currentPassword, newEmail, version, justification (3–1000 após trim) | Envia link de uso único, sem mudar o endereço atual. Novo pedido invalida o anterior; intervalo mínimo de um minuto entre pedidos enviados. |
 | confirm-email | token (64 caracteres hexadecimais) | Confirma pedido válido do titular, atualiza endereço e versão e encerra as outras sessões. |
 
 Sucesso: HTTP 200, `{ "success": true, "version": 2 }` (versão ilustrativa).

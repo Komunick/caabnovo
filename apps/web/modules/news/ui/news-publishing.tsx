@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { changeJustificationSchema } from "@caab/contracts";
 import type { NewsRecord } from "../news-service";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
@@ -46,7 +47,7 @@ export function NewsPublishing({
   onFieldErrors,
 }: Readonly<{
   record?: NewsRecord;
-  onPrepare(): Promise<NewsRecord | undefined>;
+  onPrepare(justification: string): Promise<NewsRecord | undefined>;
   dirty: boolean;
   disabled: boolean;
   onSaved(record: NewsRecord): void;
@@ -55,6 +56,7 @@ export function NewsPublishing({
 }>) {
   const [state, setState] = useState<PublicationState>({ publication: null, actions: [] });
   const [channels, setChannels] = useState<string[]>(record?.metadata.channels ?? []);
+  const [justification, setJustification] = useState("");
   const [runAt, setRunAt] = useState("");
   const [scheduleAction, setScheduleAction] = useState("publish");
   const [pending, setPending] = useState(false);
@@ -92,7 +94,17 @@ export function NewsPublishing({
     setError("");
     setMessage("");
     setFieldErrors({});
-    let input: Record<string, unknown> = { channels };
+    if (action !== "schedule" && !changeJustificationSchema.safeParse(justification).success) {
+      setError("Informe o motivo da alteração (3 a 1000 caracteres).");
+      setFieldErrors({ justification: "Informe o motivo da alteração (3 a 1000 caracteres)." });
+      setConfirm(undefined);
+      focusNewsError();
+      return;
+    }
+    let input: Record<string, unknown> = {
+      channels,
+      ...(action !== "schedule" ? { justification } : {}),
+    };
     if (action === "schedule") {
       // The form explicitly uses Brasília time; the current supported window is the next year.
       const parsed = new Date(`${runAt}:00-03:00`);
@@ -121,13 +133,16 @@ export function NewsPublishing({
     try {
       const prepared =
         (action === "publish" || action === "schedule") && (!record || dirty)
-          ? await onPrepare()
+          ? await onPrepare(justification)
           : record;
       if (!prepared) {
         setConfirm(undefined);
         return;
       }
-      input = { ...input, expectedVersion: prepared.revision };
+      input =
+        action === "cancel" || action === "retry"
+          ? { justification }
+          : { ...input, expectedVersion: prepared.revision };
       const body = JSON.stringify(input),
         fingerprint = `${action}:${actionId ?? ""}:${body}`;
       if (retry.current?.fingerprint !== fingerprint)
@@ -171,6 +186,7 @@ export function NewsPublishing({
       if (action === "publish" || action === "unpublish")
         onSaved((await response.json()) as NewsRecord);
       retry.current = undefined;
+      setJustification("");
       setConfirm(undefined);
       await reload(prepared.id);
       setMessage(
@@ -196,6 +212,20 @@ export function NewsPublishing({
   return (
     <section className="panel" aria-labelledby="news-publication-title">
       <h2 id="news-publication-title">Publicação e agenda</h2>
+      <FormField
+        id="news-publication-reason"
+        label="Motivo da publicação ou alteração"
+        hint="Obrigatório para publicar, retirar publicação, cancelar ou reenviar. Novo agendamento não exige motivo; salvar alterações no conteúdo exige."
+        error={fieldErrors.justification}
+      >
+        <textarea
+          value={justification}
+          onChange={(event) => setJustification(event.target.value)}
+          minLength={3}
+          maxLength={1000}
+          disabled={disabled || pending}
+        />
+      </FormField>
       {state.publication ? (
         <p>
           Publicada · revisão {state.publication.revision} · {date(state.publication.publishedAt)}{" "}

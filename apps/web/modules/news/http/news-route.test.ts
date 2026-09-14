@@ -75,7 +75,12 @@ describe("news HTTP boundary", () => {
 
     const update = await routes.PUT(
       mutation(
-        { expectedVersion: 1, metadata: {}, body: emptyNewsBody },
+        {
+          justification: "Alteração sintética autorizada",
+          expectedVersion: 1,
+          metadata: {},
+          body: emptyNewsBody,
+        },
         { origin: "https://panel.example.test" },
       ),
       newsId,
@@ -93,7 +98,11 @@ describe("news HTTP boundary", () => {
       ]),
     );
     const response = await routes.publish(
-      mutation({ expectedVersion: 1, channels: ["app"] }),
+      mutation({
+        justification: "Alteração sintética autorizada",
+        expectedVersion: 1,
+        channels: ["app"],
+      }),
       newsId,
       "publish",
     );
@@ -109,7 +118,11 @@ describe("news HTTP boundary", () => {
       (
         await (
           await routes.publish(
-            mutation({ expectedVersion: 1, channels: ["app"] }),
+            mutation({
+              justification: "Alteração sintética autorizada",
+              expectedVersion: 1,
+              channels: ["app"],
+            }),
             newsId,
             "publish",
           )
@@ -125,7 +138,7 @@ describe("news HTTP boundary", () => {
         channels: ["app"],
         ...(action === "schedule"
           ? { action: "publish", runAt: new Date(Date.now() + 60000).toISOString() }
-          : {}),
+          : { justification: "Alteração sintética autorizada" }),
       };
       expect(
         (await routes.publish(mutation(body, { origin: "https://foreign.test" }), newsId, action))
@@ -210,6 +223,37 @@ describe("news HTTP boundary", () => {
     expect(service.create).toHaveBeenCalledTimes(1);
   });
 
+  it("rejects edits and action changes without a reason before calling the service", async () => {
+    const { routes, service } = setup();
+    for (const justification of [undefined, "", "   "]) {
+      expect(
+        (
+          await routes.PUT(
+            mutation({ expectedVersion: 1, metadata: {}, body: emptyNewsBody, justification }),
+            newsId,
+          )
+        ).status,
+      ).toBe(422);
+      for (const action of ["publish", "unpublish"] as const)
+        expect(
+          (
+            await routes.publish(
+              mutation({ expectedVersion: 1, channels: ["site"], justification }),
+              newsId,
+              action,
+            )
+          ).status,
+        ).toBe(422);
+      for (const action of ["cancel", "retry"] as const)
+        expect(
+          (await routes.cancel(mutation({ justification }), newsId, crypto.randomUUID(), action))
+            .status,
+        ).toBe(422);
+    }
+    for (const action of ["update", "publish", "unpublish", "cancel", "retry"] as const)
+      expect(service[action]).not.toHaveBeenCalled();
+  });
+
   it("rejects cross-origin, missing CSRF and missing idempotency before writes", async () => {
     const { routes, service } = setup();
     expect(
@@ -224,7 +268,10 @@ describe("news HTTP boundary", () => {
     expect(
       (
         await routes.command(
-          mutation({ expectedVersion: 1 }, { "idempotency-key": "" }),
+          mutation(
+            { justification: "Alteração sintética autorizada", expectedVersion: 1 },
+            { "idempotency-key": "" },
+          ),
           newsId,
           "duplicate",
         )
@@ -281,7 +328,12 @@ describe("news HTTP boundary", () => {
       Object.assign(new Error("sensitive sql"), { status: 409, code: "NEWS_VERSION_CONFLICT" }),
     );
     const response = await routes.PUT(
-      mutation({ expectedVersion: 1, metadata: {}, body: emptyNewsBody }),
+      mutation({
+        justification: "Alteração sintética autorizada",
+        expectedVersion: 1,
+        metadata: {},
+        body: emptyNewsBody,
+      }),
       newsId,
     );
     expect(response.status).toBe(409);

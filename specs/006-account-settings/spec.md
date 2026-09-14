@@ -134,3 +134,23 @@ Como titular, quero solicitar um link no meu e-mail para recuperar o acesso sem 
 Revisão transversal em 11/09/2026: e-mails em login, recuperação e alteração do e-mail
 usam o componente comum de aviso junto ao campo, com limite de 254 caracteres.
 Não mudar autenticação, confirmação de titularidade ou política de envio.
+## Justificativas de criação e alteração — 14/09/2026
+
+Decisão expressa do usuário: cadastros novos dispensam motivo; alterações de registros
+existentes exigem justificativa informada pelo operador, validada no servidor e gravada
+na auditoria na mesma transação. Criação continua auditada, identificada como criação
+pelo servidor; não atribuir ao operador uma justificativa que ele não escreveu.
+
+Abrange Colaboradores, Associados (incluindo novos vínculos/documentos e substituições),
+Notícias e Configurações. Parceiros já segue o padrão. Primeira inclusão de foto é
+criação; substituição/remoção exige motivo verificado com o estado bloqueado no banco.
+Notícia nova, duplicação e novo agendamento dispensam motivo. Edição, recuperação,
+arquivamento, publicação/retirada e cancelamento/reenvio exigem motivo. Execução
+programada registra sua origem automática. Perfil, senha e solicitação de troca de
+e-mail em Configurações exigem motivo; confirmação por token conclui a solicitação já
+auditada. Login, recuperação de senha, leitura, filtros, tema e uploads técnicos não
+são alterações cadastrais. Preservar autorização, idempotência e controle de versão.
+
+Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
+recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
+mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.

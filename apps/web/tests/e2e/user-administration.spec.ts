@@ -30,7 +30,7 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await expect(createButton).toBeEnabled();
   await page.getByLabel("Nome").fill(name);
   await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Justificativa", { exact: true }).fill("Conta sintética para validação");
+  await expect(page.getByLabel("Justificativa", { exact: true })).toHaveCount(0);
   await createButton.click();
   await expect(page).toHaveURL(/\/users\/[0-9a-f-]+$/);
   await expect(page.getByRole("heading", { name })).toBeVisible();

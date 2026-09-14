@@ -58,7 +58,6 @@ export function UserForm(props: Readonly<UserFormProps>) {
               name: data.get("name"),
               email: data.get("email"),
               roleIds: data.getAll("roleIds"),
-              justification: data.get("justification"),
             },
       ),
     });
@@ -135,9 +134,11 @@ export function UserForm(props: Readonly<UserFormProps>) {
             ) : null}
           </>
         ) : null}
-        <FormField id={`${props.mode}-justification`} label="Justificativa">
-          <textarea id={`${props.mode}-justification`} name="justification" rows={3} required />
-        </FormField>
+        {props.mode === "edit" && (
+          <FormField id={`${props.mode}-justification`} label="Justificativa">
+            <textarea id={`${props.mode}-justification`} name="justification" rows={3} required />
+          </FormField>
+        )}
         {error ? <p role="alert">{error}</p> : null}
         {message ? <p role="status">{message}</p> : null}
         <button

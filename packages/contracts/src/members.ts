@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { creationJustificationSchema } from "./common";
 import { oabNumberSchema } from "./oab-lookup";
 import { brazilianPhoneSchema, contactEmailSchema } from "./brazilian-contact";
 
@@ -72,7 +73,7 @@ export const memberProfileSchema = z.strictObject({
 });
 export const createMemberSchema = z.strictObject({
   profile: memberProfileSchema,
-  justification: reason,
+  justification: creationJustificationSchema,
 });
 export const memberDimensions = {
   registration: ["unknown", "pending", "approved", "rejected"],
@@ -89,7 +90,12 @@ export type MemberAdministrativeStatus = z.infer<typeof memberAdministrativeStat
 export const memberCommandSchema = z
   .discriminatedUnion("action", [
     z.strictObject({ ...base, action: z.literal("update"), profile: memberProfileSchema }),
-    z.strictObject({ ...base, action: z.literal("photo"), fileId: uuid.nullable() }),
+    z.strictObject({
+      ...base,
+      justification: creationJustificationSchema,
+      action: z.literal("photo"),
+      fileId: uuid.nullable(),
+    }),
     z.strictObject({ ...base, action: z.literal("archive") }),
     z.strictObject({ ...base, action: z.literal("restore") }),
     z.strictObject({ ...base, action: z.literal("activate") }),
@@ -97,6 +103,7 @@ export const memberCommandSchema = z
     z.strictObject({ ...base, action: z.literal("unblock") }),
     z.strictObject({
       ...base,
+      justification: creationJustificationSchema,
       action: z.literal("link"),
       dependentId: uuid,
       relationship: z.string().trim().min(2).max(80),
@@ -105,6 +112,7 @@ export const memberCommandSchema = z
     z.strictObject({ ...base, action: z.literal("unlink"), relationshipId: uuid }),
     z.strictObject({
       ...base,
+      justification: creationJustificationSchema,
       action: z.literal("document"),
       fileId: uuid,
       category: z.string().trim().min(2).max(80),
@@ -127,6 +135,16 @@ export const memberCommandSchema = z
     }),
   ])
   .superRefine((input, ctx) => {
+    if (
+      ((input.action === "document" && input.replacesId) ||
+        (input.action === "photo" && input.fileId === null)) &&
+      !reason.safeParse(input.justification).success
+    )
+      ctx.addIssue({
+        code: "custom",
+        path: ["justification"],
+        message: "Informe o motivo da alteração (3 a 1000 caracteres).",
+      });
     if (input.action === "link" && input.startsOn > new Date().toISOString().slice(0, 10))
       ctx.addIssue({ code: "custom", path: ["startsOn"], message: "Início futuro" });
     if (input.action !== "assess") return;

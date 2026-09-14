@@ -2,7 +2,12 @@ import "server-only";
 import { createHash } from "node:crypto";
 import type { Payload } from "payload";
 import type { PgBoss } from "pg-boss";
-import { idSchema, scheduleNewsRequestSchema, type NewsActionJobPayload } from "@caab/contracts";
+import {
+  newsActionChangeSchema,
+  idSchema,
+  scheduleNewsRequestSchema,
+  type NewsActionJobPayload,
+} from "@caab/contracts";
 import { preparePublication } from "@caab/news/publication";
 import type { NewsDatabase } from "@caab/news/database";
 import { newsTransaction, newsPublishTransaction } from "./payload/transaction";
@@ -112,6 +117,7 @@ export async function scheduleNews(
     if (command.action === "publish")
       await preparePublication(db, id, current, context.actor!.userId, {
         expectedVersion: command.expectedVersion,
+        justification: "Validação de novo agendamento",
         channels: command.channels,
       });
     const source =
@@ -215,9 +221,11 @@ export async function retryNewsAction(
   context: NewsCommandContext,
   id: string,
   actionId: string,
+  input: unknown,
 ) {
   idSchema.parse(id);
   idSchema.parse(actionId);
+  const command = newsActionChangeSchema.parse(input);
   return newsPublishTransaction(payload, context.actor, async ({ db, lockNews, audit }) => {
     await lockNews(id);
     const action = (
@@ -256,6 +264,7 @@ export async function retryNewsAction(
       actorUserId: context.actor!.userId,
       effectiveIdentity: `user:${context.actor!.userId}`,
       action: "news.action.retried",
+      reason: command.justification,
       entityType: "news",
       entityId: id,
       after: { actionId, jobId: action.job_id, nextAttempt: Number(job.attempt_count) + 1 },
@@ -271,9 +280,11 @@ export async function cancelNewsAction(
   context: NewsCommandContext,
   id: string,
   actionId: string,
+  input: unknown,
 ) {
   idSchema.parse(id);
   idSchema.parse(actionId);
+  const command = newsActionChangeSchema.parse(input);
   return newsPublishTransaction(payload, context.actor, async ({ db, lockNews, audit }) => {
     await lockNews(id);
     const row = (
@@ -296,6 +307,7 @@ export async function cancelNewsAction(
       actorUserId: context.actor!.userId,
       effectiveIdentity: `user:${context.actor!.userId}`,
       action: "news.action.cancelled",
+      reason: command.justification,
       entityType: "news",
       entityId: id,
       after: { actionId },

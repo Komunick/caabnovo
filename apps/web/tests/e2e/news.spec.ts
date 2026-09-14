@@ -1,4 +1,5 @@
-﻿import AxeBuilder from "@axe-core/playwright";
+import { justifyNewsChange } from "./news-justification";
+import AxeBuilder from "@axe-core/playwright";
 import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
 
 // New routes may compile on their first request when running against localhost in dev mode.
@@ -12,6 +13,33 @@ async function signIn(page: import("@playwright/test").Page) {
   await expect(page).toHaveURL(/\/$/, { timeout: 15000 });
 }
 
+test("creates without a reason and requires an explicit reason for later edits", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.goto("/news/new");
+  await expect(page.locator("#news-reason")).toHaveCount(0);
+  await page.getByLabel("Título", { exact: true }).fill("Criação sem motivo");
+  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
+  const id = page.url().split("/").at(-1)!;
+  const saved = await (await page.request.get(`/api/v1/news/${id}`)).json();
+  const refused = await page.request.put(`/api/v1/news/${id}`, {
+    headers: { origin: new URL(page.url()).origin, "x-csrf-token": crypto.randomUUID() },
+    data: { expectedVersion: saved.revision, metadata: { title: "Recusado" }, body: saved.body },
+  });
+  expect(refused.status()).toBe(422);
+  expect((await (await page.request.get(`/api/v1/news/${id}`)).json()).revision).toBe(
+    saved.revision,
+  );
+  await page.getByLabel("Título", { exact: true }).fill("Edição com motivo");
+  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  await expect(page.locator("#news-reason")).toHaveAttribute("aria-invalid", "true");
+  await page.locator("#news-reason").fill("Correção editorial solicitada");
+  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Revisão 2" })).toBeVisible();
+  await expect(page.locator("#news-reason")).toHaveValue("");
+});
 test("news list previews summaries and filters automatically with clear actions", async ({
   page,
 }, testInfo) => {
@@ -30,6 +58,7 @@ test("news list previews summaries and filters automatically with clear actions"
     .getByRole("group", { name: "Destinos previstos" })
     .getByLabel("Aplicativo", { exact: true })
     .check();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
   const editorUrl = page.url();
@@ -109,6 +138,7 @@ test("news list previews summaries and filters automatically with clear actions"
   ).toBeVisible();
   await expect(item).toContainText(title);
   await page.unroute("**/api/v1/news?*");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Tentar novamente" }).click();
   await expect(page.getByRole("heading", { name: "Nenhuma notícia encontrada" })).toBeVisible();
   await page.getByRole("button", { name: "Limpar filtros", exact: true }).click();
@@ -116,6 +146,7 @@ test("news list previews summaries and filters automatically with clear actions"
   await expect(page.getByRole("combobox", { name: "Exibir", exact: true })).toHaveValue("active");
   await page.goto(editorUrl);
   await page.getByRole("button", { name: "Arquivar", exact: true }).click();
+  await justifyNewsChange(page);
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Notícia arquivada" })).toBeVisible();
   await page.goto("/news/drafts");
@@ -129,7 +160,6 @@ test("news list previews summaries and filters automatically with clear actions"
   await expect(item).toContainText(title);
   await expect(item).toContainText("Arquivada");
 });
-
 test("invalid news fields have red borders, specific hints and keyboard focus", async ({
   page,
 }, testInfo) => {
@@ -143,6 +173,7 @@ test("invalid news fields have red borders, specific hints and keyboard focus", 
   await page.getByLabel("Destacar notícia").check();
   const order = page.getByLabel("Ordem do destaque", { exact: true });
   await order.fill("101");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(slug).toBeFocused();
   for (const field of [slug, tags, order])
@@ -178,12 +209,15 @@ test("invalid news fields have red borders, specific hints and keyboard focus", 
   await slug.fill("endereco-corrigido");
   await tags.fill("uma,outra");
   await order.fill("10");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
   await expect(slug).not.toHaveAttribute("aria-invalid", "true");
   const publication = page.getByRole("region", { name: "Publicação e agenda" });
   await publication.getByLabel("Aplicativo", { exact: true }).check();
+  await justifyNewsChange(page);
   await publication.getByRole("button", { name: "Publicar agora", exact: true }).click();
+  await justifyNewsChange(page);
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(page.getByLabel("Título", { exact: true })).toHaveAttribute("aria-invalid", "true");
@@ -194,7 +228,6 @@ test("invalid news fields have red borders, specific hints and keyboard focus", 
   await expect(page.locator("#news-body-error")).toContainText("Escreva o conteúdo");
   await expect(page.getByLabel("Título", { exact: true })).toBeFocused();
 });
-
 test("panel user creates, previews, restores, duplicates and archives news", async ({
   page,
 }, testInfo) => {
@@ -205,6 +238,7 @@ test("panel user creates, previews, restores, duplicates and archives news", asy
     .getByRole("link", { name: "Notícias", exact: true })
     .click();
   await page.getByRole("link", { name: "Nova notícia" }).click();
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 15000 });
   const url = page.url();
@@ -213,6 +247,7 @@ test("panel user creates, previews, restores, duplicates and archives news", asy
   await page
     .getByRole("textbox", { name: "Conteúdo da notícia", exact: true })
     .fill('Conteúdo acessível <script>alert("teste")</script>');
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 2." }),
@@ -236,6 +271,7 @@ test("panel user creates, previews, restores, duplicates and archives news", asy
   expect(await page.locator(".news-prose script").count()).toBe(0);
   await page.getByRole("link", { name: "Voltar ao editor" }).click();
   await page.getByRole("button", { name: "Recuperar revisão 1", exact: true }).click();
+  await justifyNewsChange(page);
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeHidden({ timeout: 15000 });
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("");
@@ -244,6 +280,7 @@ test("panel user creates, previews, restores, duplicates and archives news", asy
   await expect(page).not.toHaveURL(url);
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 15000 });
   await page.getByRole("button", { name: "Arquivar", exact: true }).click();
+  await justifyNewsChange(page);
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeHidden({ timeout: 15000 });
   await expect(page.getByRole("heading", { name: "Notícia arquivada" })).toBeVisible();
@@ -258,19 +295,21 @@ test("panel user creates, previews, restores, duplicates and archives news", asy
   );
   await page.screenshot({ path: testInfo.outputPath("news-editor-mobile.png"), fullPage: true });
 });
-
 test("a stale editor retains its content when another save wins", async ({ page, context }) => {
   test.setTimeout(60_000);
   await signIn(page);
   await page.goto("/news/new");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/, { timeout: 15000 });
   const other = await context.newPage();
   await other.goto(page.url());
   await page.getByLabel("Título", { exact: true }).fill("Edição vencedora");
+  await justifyNewsChange(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Revisão 2" })).toBeVisible();
   await other.getByLabel("Título", { exact: true }).fill("Meu texto preservado");
+  await justifyNewsChange(other);
   await other.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(
     other.getByRole("alert").filter({ hasText: "Outra alteração foi salva" }),

@@ -33,9 +33,13 @@ describe("news contracts", () => {
         highlight: null,
       },
     });
-    expect(publishNewsRequestSchema.safeParse({ expectedVersion: 1, channels: [] }).success).toBe(
-      false,
-    );
+    expect(
+      publishNewsRequestSchema.safeParse({
+        justification: "Alteração sintética autorizada",
+        expectedVersion: 1,
+        channels: [],
+      }).success,
+    ).toBe(false);
   });
 
   it("normalizes editorial metadata without interpreting text as HTML", () => {
@@ -95,13 +99,22 @@ describe("news contracts", () => {
   it("rejects unknown or duplicate destinations", () => {
     for (const channels of [["site", "site"], ["email"], ["app", "site", "app"]]) {
       expect(newsDraftMetadataSchema.safeParse({ channels }).success).toBe(false);
-      expect(publishNewsRequestSchema.safeParse({ expectedVersion: 1, channels }).success).toBe(
-        false,
-      );
+      expect(
+        publishNewsRequestSchema.safeParse({
+          justification: "Alteração sintética autorizada",
+          expectedVersion: 1,
+          channels,
+        }).success,
+      ).toBe(false);
     }
     expect(
-      publishNewsRequestSchema.parse({ expectedVersion: 1, channels: ["site", "app"] }),
+      publishNewsRequestSchema.parse({
+        justification: "Alteração sintética autorizada",
+        expectedVersion: 1,
+        channels: ["site", "app"],
+      }),
     ).toEqual({
+      justification: "Alteração sintética autorizada",
       expectedVersion: 1,
       channels: ["site", "app"],
     });
@@ -110,13 +123,19 @@ describe("news contracts", () => {
   it("requires a positive safe integer version for mutation", () => {
     for (const expectedVersion of [undefined, 0, -1, 1.5, "1", Number.MAX_SAFE_INTEGER + 1]) {
       expect(
-        updateNewsDraftRequestSchema.safeParse({ metadata: {}, expectedVersion }).success,
+        updateNewsDraftRequestSchema.safeParse({
+          metadata: {},
+          body: emptyNewsBody,
+          justification: "Alteração sintética autorizada",
+          expectedVersion,
+        }).success,
       ).toBe(false);
     }
     expect(
       updateNewsDraftRequestSchema.safeParse({
         metadata: {},
         body: emptyNewsBody,
+        justification: "Alteração sintética autorizada",
         expectedVersion: 1,
       }).success,
     ).toBe(true);

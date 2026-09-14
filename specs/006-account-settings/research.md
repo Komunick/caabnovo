@@ -31,3 +31,16 @@ Atlassian separa perfil e visibilidade, idioma, e-mails/notificações, contas d
 ## Envio de e-mail
 
 O teste local usa Mailpit, com interface e SMTP expostos somente em loopback. [Docker do Mailpit](https://mailpit.axllent.org/docs/install/docker/). O transporte SMTP real deve usar TLS e configuração própria de implantação. [SMTP do Nodemailer](https://nodemailer.com/smtp).
+
+## Pesquisa: justificativas e auditoria — 14/09/2026
+
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação
+  independe de texto de justificativa do operador.
+- OWASP Input Validation: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+  Validar no servidor antes da mutação, incluindo texto vazio após trim.
+- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis
+  associados aos campos necessários à ação atual.
+
+A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
+Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.

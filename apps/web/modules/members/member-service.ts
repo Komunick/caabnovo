@@ -13,6 +13,7 @@ import {
   type MemberListItem,
   type MemberFile,
   MAX_MEMBER_PHOTO_BYTES,
+  changeJustificationSchema,
 } from "@caab/contracts";
 import type { RequestActor } from "../shared/request-context";
 import type { WebObjectStorage } from "../files/object-storage";
@@ -220,7 +221,7 @@ export async function createMember(pool: Pool, context: MemberContext, raw: unkn
           claim.scope,
           created.rows[0]!.id,
           "created",
-          input.justification,
+          input.justification || "Cadastro inicial de associado",
           { version: 1 },
         );
       },
@@ -282,6 +283,15 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
         if (row.version !== input.expectedVersion) throw new MemberError("MEMBER_VERSION_CONFLICT");
         if (row.archived_at && input.action !== "restore") throw new MemberError("MEMBER_ARCHIVED");
         const after: Record<string, unknown> = { version: row.version + 1 };
+        const justification =
+          input.action === "photo" && row.photo_file_id
+            ? changeJustificationSchema.parse(input.justification)
+            : input.justification ||
+              (input.action === "link"
+                ? "Cadastro inicial de vínculo"
+                : input.action === "document"
+                  ? "Cadastro inicial de documento"
+                  : "Inclusão inicial de foto");
         switch (input.action) {
           case "photo": {
             if (input.fileId) {
@@ -430,7 +440,7 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
         await client.query("UPDATE member SET version=version+1,updated_at=now() WHERE id=$1", [
           id,
         ]);
-        return finish(client, context, claim.scope, id, input.action, input.justification, after);
+        return finish(client, context, claim.scope, id, input.action, justification, after);
       },
       ["assess", "review", "activate", "block", "unblock"].includes(input.action)
         ? PERMISSIONS.membersReview

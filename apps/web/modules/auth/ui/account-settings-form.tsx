@@ -80,10 +80,11 @@ export function AccountSettingsForm({
     try {
       const input: AccountSettingsRequest =
         action === "profile"
-          ? { action, name: text("name").trim(), version }
+          ? { action, name: text("name").trim(), version, justification: text("justification") }
           : action === "password"
             ? {
                 action,
+                justification: text("justification"),
                 currentPassword: text("currentPassword"),
                 newPassword: text("newPassword"),
                 confirmPassword: text("confirmPassword"),
@@ -91,6 +92,7 @@ export function AccountSettingsForm({
               }
             : {
                 action,
+                justification: text("justification"),
                 currentPassword: text("currentPassword"),
                 newEmail: text("newEmail").trim(),
                 version,
@@ -151,6 +153,15 @@ export function AccountSettingsForm({
               autoComplete="name"
             />
           </FormField>
+          <FormField id="settings-profile-reason" label="Motivo da alteração">
+            <textarea
+              name="justification"
+              required
+              minLength={3}
+              maxLength={1000}
+              disabled={disabled}
+            />
+          </FormField>
           {message("profile")}
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "profile" ? "Salvando…" : "Salvar nome"}
@@ -193,6 +204,15 @@ export function AccountSettingsForm({
               autoComplete="current-password"
               required
               maxLength={128}
+            />
+          </FormField>
+          <FormField id="settings-email-reason" label="Motivo da alteração">
+            <textarea
+              name="justification"
+              required
+              minLength={3}
+              maxLength={1000}
+              disabled={disabled}
             />
           </FormField>
           {message("request-email")}
@@ -239,6 +259,15 @@ export function AccountSettingsForm({
               minLength={12}
               maxLength={PASSWORD_MAX_LENGTH}
               required
+            />
+          </FormField>
+          <FormField id="settings-password-reason" label="Motivo da alteração">
+            <textarea
+              name="justification"
+              required
+              minLength={3}
+              maxLength={1000}
+              disabled={disabled}
             />
           </FormField>
           {message("password")}

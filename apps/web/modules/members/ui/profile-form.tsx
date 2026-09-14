@@ -125,9 +125,11 @@ export function ProfileForm({
             </select>
           </FormField>
         </div>
-        <FormField id="member-reason" label="Motivo do cadastro ou alteração">
-          <textarea name="justification" required minLength={3} maxLength={1000} />
-        </FormField>
+        {profile && (
+          <FormField id="member-reason" label="Motivo da alteração">
+            <textarea name="justification" required minLength={3} maxLength={1000} />
+          </FormField>
+        )}
         <Button type="submit" intent="primary" size={profile ? "default" : "add"}>
           {!profile && <Plus size={20} aria-hidden="true" />}
           {profile ? "Salvar cadastro" : "Criar cadastro"}

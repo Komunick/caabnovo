@@ -401,3 +401,10 @@ Validação local em 14/09/2026: [evidências dos campos comuns](evidence/common
 - [x] CF07 Validar contratos, integração, E2E por módulo, teclado/Axe, temas/responsividade e build; atualizar PRs sem merge e preview com dados preservados.
 
 - [x] CF08 Explicitar JPG em todos os seletores e mensagens de imagens, preservar formatos existentes e validar upload real/inspeção no PR #19.
+
+## Padronização de justificativas — 14/09/2026
+
+- [x] JP01 Inventariar criação/alteração e registrar regra, pesquisa e plano.
+- [x] JP02 Implementar contrato, serviço, auditoria e formulário desta área.
+- [ ] JP03 Validar criação sem motivo, edição recusada sem motivo e auditoria preservada.
+- [ ] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
