@@ -196,7 +196,6 @@ export function NewsEditor({
     setError("");
     const input = JSON.stringify({
       expectedVersion: record.revision,
-      ...(action !== "duplicate" ? {} : {}),
       ...(versionId ? { versionId } : {}),
     });
     const fingerprint = `${action}:${record.id}:${input}`;

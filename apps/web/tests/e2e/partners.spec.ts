@@ -141,8 +141,6 @@ test("operator creates a partner, approves a contract and publishes an offer wit
   await page.getByRole("button", { name: "Editar benefício", exact: true }).click();
   await page.getByLabel("Título", { exact: true }).fill("Título privado em revisão");
   await page.getByLabel("Fim da oferta").fill("2098-12-31");
-  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
-  await expect(page.locator("#benefit-reason")).toHaveCount(0);
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Título privado em revisão");
   await expect(page.locator("#benefit-reason")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();

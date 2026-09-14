@@ -163,9 +163,7 @@ test("partner and unit creation share contact masks, CEP lookup and without edit
   await expect(page.locator("#unit-reason")).toHaveCount(0);
   await page.locator("#unit-phone").fill("7133334444");
   await page.getByRole("button", { name: "Salvar unidade", exact: true }).click();
-  await expect(page.locator("#unit-reason")).toHaveCount(0);
-  await expect(page.locator("#unit-reason")).toHaveCount(0);
-  await page.getByRole("button", { name: "Salvar unidade", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Salvar unidade", exact: true })).toHaveCount(0);
   await expect(page.locator("#unit-reason")).toHaveCount(0);
   await page.goto(`${detail}?tab=units`);
   await expect(page.getByText("Telefone: (71) 3333-4444", { exact: true })).toBeVisible();

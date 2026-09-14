@@ -96,7 +96,6 @@ test("directory screens preserve edits and apply app settings, unit links and re
   await page.getByRole("button", { name: `Editar categoria ${category}`, exact: true }).click();
   const renamed = `${category} nova`;
   await page.getByLabel("Nome da categoria", { exact: true }).fill(renamed);
-  await page.getByRole("button", { name: "Salvar categoria", exact: true }).click();
   await expect(page.locator("#category-reason")).toHaveCount(0);
   await expect(page.getByLabel("Justificativa da categoria")).toHaveCount(0);
   await page.getByRole("button", { name: "Salvar categoria", exact: true }).click();

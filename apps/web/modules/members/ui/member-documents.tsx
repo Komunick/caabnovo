@@ -171,7 +171,6 @@ export function MemberDocuments({
             fileId: data.get("fileId"),
             category: data.get("category"),
             replacesId: data.get("replacesId") || null,
-            ...(replacesId ? {} : {}),
           });
         }}
       >
