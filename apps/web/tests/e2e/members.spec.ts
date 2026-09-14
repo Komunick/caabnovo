@@ -1,3 +1,4 @@
+import { jpeg } from "./jpeg-fixture";
 import { randomUUID } from "node:crypto";
 import type { Locator, Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -266,9 +267,11 @@ test("documents use real upload, scan, review, replacement and private download"
     "base64",
   );
   async function upload(name: string) {
-    await page
-      .getByLabel("Enviar arquivo privado", { exact: false })
-      .setInputFiles({ name, mimeType: "image/png", buffer: png });
+    await page.getByLabel("Enviar arquivo privado", { exact: false }).setInputFiles({
+      name,
+      mimeType: name.endsWith(".jpg") ? "image/jpeg" : "image/png",
+      buffer: name.endsWith(".jpg") ? jpeg : png,
+    });
     await expect(page.getByRole("status").filter({ hasText: "Arquivo enviado" })).toBeVisible({
       timeout: 30000,
     });
@@ -299,7 +302,7 @@ test("documents use real upload, scan, review, replacement and private download"
     .fill("Solicitar versão legível sintética");
   await page.getByRole("button", { name: "Registrar análise do documento" }).click();
   await expect(page.getByText("Correção solicitada", { exact: false }).first()).toBeVisible();
-  await upload("substituto.png");
+  await upload("substituto.jpg");
   await page.getByLabel("Documento substituído (opcional)").selectOption({ index: 1 });
   await page.getByRole("button", { name: "Anexar documento", exact: true }).click();
   await expect(

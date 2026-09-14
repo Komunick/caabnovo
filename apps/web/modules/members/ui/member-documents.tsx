@@ -1,6 +1,11 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { uploadIntentSchema, type MemberRecord, type MemberFile } from "@caab/contracts";
+import {
+  DOCUMENT_FILE_ACCEPT,
+  uploadIntentSchema,
+  type MemberRecord,
+  type MemberFile,
+} from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { memberRequest, mutationHeaders } from "./client";
@@ -55,7 +60,7 @@ export function MemberDocuments({
       file.size === 0 ||
       file.size > 25 * 1024 * 1024
     ) {
-      setError("Escolha PDF, PNG ou JPEG de até 25 MB.");
+      setError("Escolha PDF, PNG, JPG ou JPEG de até 25 MB.");
       return;
     }
     setUploading(true);
@@ -119,10 +124,13 @@ export function MemberDocuments({
       {error && <p role="alert">{error}</p>}
       <p role="status">{notice}</p>
       {canUpload && (
-        <FormField id="member-upload" label="Enviar arquivo privado (PDF, PNG ou JPEG, até 25 MB)">
+        <FormField
+          id="member-upload"
+          label="Enviar arquivo privado (PDF, PNG, JPG ou JPEG, até 25 MB)"
+        >
           <input
             type="file"
-            accept="application/pdf,image/png,image/jpeg"
+            accept={DOCUMENT_FILE_ACCEPT}
             disabled={disabled || uploading || !canWrite}
             onChange={(e) => {
               void upload(e.target.files?.[0]);
