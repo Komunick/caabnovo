@@ -356,3 +356,25 @@ sem transmitir dados da conta. Não reescrever dados persistidos em lote.
 A infraestrutura local/CI deve usar as imagens oficiais de MinIO e mc em Quay,
 mantendo as versões fixadas e os mesmos volumes/contratos S3. O ajuste resolve
 o pull recusado pelo Docker Hub, sem substituir o storage ou dispensar testes.
+
+## Ampliação do PR #19 — 14/09/2026
+
+Aplicar o padrão em todo o sistema, confirmado pelo usuário: campos de todas as
+abas, filtros e diálogos usam rótulo associado, limites coerentes, indicação de
+erro junto ao controle e correção sem perder o valor. Textos, seleções, datas,
+senhas e arquivos mantêm seus contratos específicos; máscaras somente nos tipos
+aplicáveis. OAB aceita apenas dígitos, até seis posições, na digitação/colagem e
+no servidor. A busca mista por nome/CPF/OAB continua textual.
+
+Todos os endereços físicos existentes oferecem rua, bairro, número e complemento
+separados, além de CEP, cidade e UF. Número admite 12A e s/n. ViaCEP preenche
+rua/bairro/cidade/UF separadamente, preservando número/complemento e correções
+feitas durante a consulta. Texto legado permanece visível e preservado até
+conversão explícita pelo operador. Sem dedução por vírgulas ou perda de dados.
+API pública mantém endereço formatado compatível.
+
+Critérios: validar campos em cada módulo e aba, colagem e correção, datas inválidas,
+seleção obrigatória, texto vazio/espaços, CEP indisponível e corrida de respostas;
+reabrir parceiro/unidade com as quatro partes persistidas e conferir endereço
+legado sem edição. Testar teclado, Axe, claro/escuro e celular. PR #19 permanece
+aberto, sem merge. A regra geral de justificativas é tarefa própria já registrada.

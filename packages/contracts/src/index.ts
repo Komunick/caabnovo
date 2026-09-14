@@ -14,6 +14,7 @@ export * from "./news-delivery";
 export * from "./openapi";
 export * from "./members";
 export * from "./brazilian-contact";
+export * from "./brazilian-address";
 export * from "./oab-lookup";
 export * from "./user-access";
 export * from "./partners";

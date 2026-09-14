@@ -2,8 +2,9 @@
 
 import type { ComponentProps } from "react";
 
-export type ContactMask = "cpf" | "phone" | "cnpj" | "postalCode";
+export type ContactMask = "cpf" | "phone" | "cnpj" | "postalCode" | "oab";
 export function formatContactInput(value: string, kind: ContactMask) {
+  if (kind === "oab") return value.replace(/\D/g, "").slice(0, 6);
   if (kind === "cnpj") {
     const valueChars = value
       .toUpperCase()
@@ -49,7 +50,21 @@ export function MaskedContactInput({
       {...props}
       type="text"
       inputMode={kind === "cnpj" ? "text" : "numeric"}
-      defaultValue={formatContactInput(defaultValue, kind)}
+      defaultValue={kind === "oab" ? defaultValue : formatContactInput(defaultValue, kind)}
+      onPaste={(event) => {
+        event.preventDefault();
+        const input = event.currentTarget;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? start;
+        const pasted = event.clipboardData
+          .getData("text")
+          .replace(kind === "cnpj" ? /[^a-z0-9]/gi : /\D/g, "");
+        input.value = formatContactInput(
+          input.value.slice(0, start) + pasted + input.value.slice(end),
+          kind,
+        );
+        onValueChange?.(input);
+      }}
       onChange={(event) => {
         const input = event.currentTarget;
         const digitsBeforeCaret = input.value

@@ -412,7 +412,7 @@ export function MemberEditor({
             }}
           >
             <FormField id="dependent-search" label="Buscar pessoa pelo nome">
-              <input name="q" required minLength={2} />
+              <input name="q" required minLength={2} maxLength={160} />
             </FormField>
             <Button type="submit">Buscar pessoa</Button>
           </form>

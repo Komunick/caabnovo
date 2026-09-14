@@ -1,4 +1,5 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -40,10 +41,9 @@ export function RedriveDialog({ jobId }: Readonly<{ jobId: string }>) {
         description="Uma nova tentativa será auditada e manterá a mesma chave idempotente."
       >
         <form onSubmit={submit}>
-          <div className="form-field">
-            <label htmlFor="redrive-reason">Justificativa</label>
+          <FormField id="redrive-reason" label="Justificativa">
             <textarea id="redrive-reason" name="reason" minLength={1} maxLength={500} required />
-          </div>
+          </FormField>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>

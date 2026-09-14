@@ -5,32 +5,56 @@ import {
   brazilianStateSchema,
   postalCodeSchema,
   contactFieldMessages,
+  formatBrazilianAddress,
+  type BrazilianAddress,
 } from "@caab/contracts";
 import { Button } from "./button";
 import { FormField } from "./form-field";
 import { ValidatedTextField } from "./validated-text-field";
 
-type Address = { address: string; city: string; state: string };
+type Address = Pick<
+  BrazilianAddress,
+  "street" | "neighborhood" | "number" | "complement" | "city" | "state"
+>;
 export function BrazilianAddressFields({
   prefix,
   initial,
   className,
 }: {
   prefix: string;
-  initial?: Partial<Address & { postalCode: string }>;
+  initial?: Partial<BrazilianAddress>;
   className?: string;
 }) {
   const [address, setAddress] = useState<Address>({
-    address: initial?.address ?? "",
+    street: initial?.street ?? "",
+    neighborhood: initial?.neighborhood ?? "",
+    number: initial?.number ?? "",
+    complement: initial?.complement ?? "",
     city: initial?.city ?? "",
     state: initial?.state ?? "",
   });
+  const legacy = ![
+    initial?.street,
+    initial?.neighborhood,
+    initial?.number,
+    initial?.complement,
+  ].some(Boolean)
+    ? (initial?.address ?? "")
+    : "";
+  const [converting, setConverting] = useState(!legacy);
   const [lookup, setLookup] = useState("");
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [stateError, setStateError] = useState("");
   const [retry, setRetry] = useState(0);
-  const revisions = useRef({ address: 0, city: 0, state: 0 });
+  const revisions = useRef({
+    street: 0,
+    neighborhood: 0,
+    number: 0,
+    complement: 0,
+    city: 0,
+    state: 0,
+  });
   const stateInput = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const valid = brazilianStateSchema.safeParse(address.state).success;
@@ -65,19 +89,20 @@ export function BrazilianAddressFields({
             !brazilianStateCodes.includes(result.uf)
           )
             throw new Error("Resposta inválida");
-          const next: Address = {
-            address: [result.logradouro, result.bairro]
-              .filter((value) => typeof value === "string" && value)
-              .join(", ")
-              .slice(0, 300),
+          const next = {
+            street: typeof result.logradouro === "string" ? result.logradouro.slice(0, 300) : "",
+            neighborhood: typeof result.bairro === "string" ? result.bairro.slice(0, 100) : "",
             city: result.localidade.slice(0, 100),
             state: result.uf,
           };
           setAddress((current) => ({
-            address:
-              revisions.current.address === initialRevisions.address
-                ? next.address
-                : current.address,
+            ...current,
+            street:
+              revisions.current.street === initialRevisions.street ? next.street : current.street,
+            neighborhood:
+              revisions.current.neighborhood === initialRevisions.neighborhood
+                ? next.neighborhood
+                : current.neighborhood,
             city: revisions.current.city === initialRevisions.city ? next.city : current.city,
             state: revisions.current.state === initialRevisions.state ? next.state : current.state,
           }));
@@ -123,19 +148,48 @@ export function BrazilianAddressFields({
             setError("");
           }}
         />
-        <FormField
-          id={`${prefix}-address`}
-          label="Endereço (opcional)"
-          hint="Logradouro, bairro, número e complemento."
-        >
-          <input
-            name="address"
-            autoComplete="street-address"
-            maxLength={300}
-            value={address.address}
-            onChange={(event) => change("address", event.target.value)}
-          />
-        </FormField>
+        {legacy && (
+          <div>
+            <p id={`${prefix}-legacy`}>Endereço anterior: {legacy}</p>
+            <label className="checkbox-field">
+              <input
+                type="checkbox"
+                checked={converting}
+                onChange={(event) => setConverting(event.target.checked)}
+              />
+              Substituir o endereço anterior pelos campos separados
+            </label>
+          </div>
+        )}
+        <input
+          type="hidden"
+          name="address"
+          value={converting ? formatBrazilianAddress(address) : legacy}
+        />
+        {(
+          [
+            ["street", "Rua (opcional)", 300, "address-line1"],
+            ["neighborhood", "Bairro (opcional)", 100, "address-level3"],
+            ["number", "Número (opcional)", 20, "off"],
+            ["complement", "Complemento (opcional)", 150, "address-line2"],
+          ] as const
+        ).map(([name, label, max, autoComplete]) => (
+          <FormField
+            key={name}
+            id={`${prefix}-${name}`}
+            label={label}
+            hint={name === "number" ? "Ex.: 123, 12A ou s/n." : undefined}
+          >
+            <input
+              name={name}
+              maxLength={max}
+              autoComplete={autoComplete}
+              disabled={!converting}
+              value={address[name]}
+              onChange={(event) => change(name, event.target.value)}
+            />
+          </FormField>
+        ))}
         <FormField id={`${prefix}-city`} label="Cidade (opcional)">
           <input
             name="city"

@@ -366,6 +366,7 @@ export function NewsEditor({
                     >
                       <input
                         value={metadata.slug}
+                        pattern="(?:[a-z0-9]+(?:-[a-z0-9]+)*)?"
                         maxLength={180}
                         onChange={(e) => change("slug", e.target.value)}
                       />
@@ -387,9 +388,21 @@ export function NewsEditor({
                     >
                       <input
                         value={metadata.tags.join(",")}
-                        onChange={(e) =>
-                          change("tags", e.target.value ? e.target.value.split(",") : [])
-                        }
+                        maxLength={1619}
+                        onBlur={(event) => {
+                          const valid = newsDraftMetadataSchema.shape.tags.safeParse(
+                            metadata.tags,
+                          ).success;
+                          event.currentTarget.setCustomValidity(
+                            valid
+                              ? ""
+                              : "Use até 20 tags, com até 80 caracteres cada, sem itens vazios.",
+                          );
+                        }}
+                        onChange={(e) => {
+                          e.target.setCustomValidity("");
+                          change("tags", e.target.value ? e.target.value.split(",") : []);
+                        }}
                       />
                     </FormField>
                   </div>

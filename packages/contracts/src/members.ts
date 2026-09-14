@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { oabNumberSchema } from "./oab-lookup";
 import { brazilianPhoneSchema, contactEmailSchema } from "./brazilian-contact";
 
 export function isValidCpf(value: string): boolean {
@@ -34,11 +35,7 @@ export const memberProfileSchema = z.strictObject({
   phone: brazilianPhoneSchema,
   oab: z
     .strictObject({
-      number: z
-        .string()
-        .trim()
-        .toUpperCase()
-        .regex(/^[A-Z0-9-]{1,20}$/),
+      number: oabNumberSchema,
       state: z.enum([
         "AC",
         "AL",

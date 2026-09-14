@@ -1,6 +1,11 @@
 "use client";
 import { Plus } from "lucide-react";
-import { memberProfileSchema, contactFieldMessages, type MemberProfile } from "@caab/contracts";
+import {
+  memberProfileSchema,
+  oabNumberSchema,
+  contactFieldMessages,
+  type MemberProfile,
+} from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { BirthDateField } from "./birth-date-field";
@@ -88,9 +93,20 @@ export function ProfileForm({
             placeholder="(00) 00000-0000"
             defaultValue={initial.phone}
           />
-          <FormField id="member-oab-number" label="Número OAB (opcional)">
-            <input name="oabNumber" maxLength={20} defaultValue={initial.oab?.number ?? ""} />
-          </FormField>
+          <ValidatedTextField
+            id="member-oab-number"
+            label="Número OAB (opcional)"
+            name="oabNumber"
+            mask="oab"
+            maxLength={6}
+            defaultValue={initial.oab?.number ?? ""}
+            schema={{
+              safeParse: (value) => ({
+                success: value === "" || oabNumberSchema.safeParse(value).success,
+              }),
+            }}
+            message="Informe uma inscrição válida com até seis números."
+          />
           <FormField id="member-oab-state" label="Estado da OAB">
             <select name="oabState" defaultValue={initial.oab?.state ?? "BA"}>
               {memberProfileSchema.shape.oab

@@ -1,4 +1,5 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -76,8 +77,7 @@ export function MemberFilters({ query }: { query: Query }) {
           )}
         </div>
         <div id="member-filter-options" className="list-filters" hidden={!expanded}>
-          <div className="form-field">
-            <label htmlFor="member-oab-filter">Estado da OAB</label>
+          <FormField id="member-oab-filter" label="Estado da OAB">
             <select
               id="member-oab-filter"
               name="oabState"
@@ -96,9 +96,8 @@ export function MemberFilters({ query }: { query: Query }) {
                 </option>
               ))}
             </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="member-filter">Análise cadastral</label>
+          </FormField>
+          <FormField id="member-filter" label="Análise cadastral">
             <select
               id="member-filter"
               name="registrationStatus"
@@ -119,9 +118,8 @@ export function MemberFilters({ query }: { query: Query }) {
                 </option>
               ))}
             </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="member-archived">Exibir</label>
+          </FormField>
+          <FormField id="member-archived" label="Exibir">
             <select
               id="member-archived"
               name="archived"
@@ -137,9 +135,8 @@ export function MemberFilters({ query }: { query: Query }) {
               <option value="archived">Arquivados</option>
               <option value="all">Todos</option>
             </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="member-administrative-filter">Situação administrativa</label>
+          </FormField>
+          <FormField id="member-administrative-filter" label="Situação administrativa">
             <select
               id="member-administrative-filter"
               name="administrativeStatus"
@@ -160,7 +157,7 @@ export function MemberFilters({ query }: { query: Query }) {
                 </option>
               ))}
             </select>
-          </div>
+          </FormField>
         </div>
         <span role="status">{pending ? "Atualizando cadastros…" : ""}</span>
       </fieldset>

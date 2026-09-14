@@ -1,4 +1,5 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -204,8 +205,7 @@ export function NewsList({
           className="list-filters"
           aria-label="Opções de filtro de notícias"
         >
-          <label>
-            Exibir
+          <FormField id="news-filter-1" label="Exibir">
             <select value={query.state} onChange={(event) => select("state", event.target.value)}>
               {states.map((state) => (
                 <option key={state.value} value={state.value}>
@@ -213,18 +213,16 @@ export function NewsList({
                 </option>
               ))}
             </select>
-          </label>
-          <label>
-            Categoria
+          </FormField>
+          <FormField id="news-filter-2" label="Categoria">
             <input
               value={query.category}
               maxLength={80}
               placeholder="Todas as categorias"
               onChange={(event) => changeText("category", event.target.value)}
             />
-          </label>
-          <label>
-            Destino previsto
+          </FormField>
+          <FormField id="news-filter-3" label="Destino previsto">
             <select
               value={query.channel}
               onChange={(event) => select("channel", event.target.value)}
@@ -233,9 +231,8 @@ export function NewsList({
               <option value="app">Aplicativo</option>
               <option value="site">Site</option>
             </select>
-          </label>
-          <label>
-            Destaque
+          </FormField>
+          <FormField id="news-filter-4" label="Destaque">
             <select
               value={query.highlight}
               onChange={(event) => select("highlight", event.target.value)}
@@ -244,17 +241,15 @@ export function NewsList({
               <option value="yes">Em destaque</option>
               <option value="no">Sem destaque</option>
             </select>
-          </label>
-          <label>
-            Imagem de capa
+          </FormField>
+          <FormField id="news-filter-5" label="Imagem de capa">
             <select value={query.cover} onChange={(event) => select("cover", event.target.value)}>
               <option value="all">Com ou sem capa</option>
               <option value="yes">Com capa</option>
               <option value="no">Sem capa</option>
             </select>
-          </label>
-          <label>
-            Atualização
+          </FormField>
+          <FormField id="news-filter-6" label="Atualização">
             <select
               value={query.updatedWithin}
               onChange={(event) => select("updatedWithin", event.target.value)}
@@ -264,9 +259,8 @@ export function NewsList({
               <option value="30">Últimos 30 dias</option>
               <option value="90">Últimos 90 dias</option>
             </select>
-          </label>
-          <label>
-            Ordenar por
+          </FormField>
+          <FormField id="news-filter-7" label="Ordenar por">
             <select value={query.sort} onChange={(event) => select("sort", event.target.value)}>
               <option value="updated-desc">Atualização: mais recentes</option>
               <option value="updated-asc">Atualização: mais antigas</option>
@@ -275,7 +269,7 @@ export function NewsList({
               <option value="title-asc">Título: A–Z</option>
               <option value="title-desc">Título: Z–A</option>
             </select>
-          </label>
+          </FormField>
         </fieldset>
       </div>
       <p role="status" className={styles.resultsStatus} aria-live="polite">

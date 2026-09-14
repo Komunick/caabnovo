@@ -1,4 +1,6 @@
 "use client";
+import { FormField } from "@/components/ui/form-field";
+
 import { Plus } from "lucide-react";
 
 import { useEffect, useState, type FormEvent } from "react";
@@ -100,8 +102,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
         {props.mode === "create" ? "Criar colaborador" : "Dados da conta"}
       </h2>
       <form className={props.mode === "create" ? "user-create-form" : undefined} onSubmit={submit}>
-        <div className="form-field">
-          <label htmlFor={`${props.mode}-name`}>Nome</label>
+        <FormField id={`${props.mode}-name`} label="Nome">
           <input
             id={`${props.mode}-name`}
             name="name"
@@ -109,7 +110,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
             maxLength={160}
             required
           />
-        </div>
+        </FormField>
         {props.mode === "create" ? (
           <>
             <ValidatedTextField
@@ -134,10 +135,9 @@ export function UserForm(props: Readonly<UserFormProps>) {
             ) : null}
           </>
         ) : null}
-        <div className="form-field">
-          <label htmlFor={`${props.mode}-justification`}>Justificativa</label>
+        <FormField id={`${props.mode}-justification`} label="Justificativa">
           <textarea id={`${props.mode}-justification`} name="justification" rows={3} required />
-        </div>
+        </FormField>
         {error ? <p role="alert">{error}</p> : null}
         {message ? <p role="status">{message}</p> : null}
         <button

@@ -11,7 +11,7 @@ export function PasswordInput({ id, ...props }: Omit<ComponentProps<typeof Input
   const label = visible ? "Ocultar senha" : "Mostrar senha";
   return (
     <div className="password-input">
-      <Input {...props} id={inputId} type={visible ? "text" : "password"} />
+      <Input data-password="true" {...props} id={inputId} type={visible ? "text" : "password"} />
       <button
         className="password-input-toggle"
         type="button"
