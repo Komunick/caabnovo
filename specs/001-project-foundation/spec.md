@@ -405,7 +405,8 @@ recusada sem mutação; alterações válidas preservam motivo e ator na auditor
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
 
 Acesso inicial do colaborador começa no instante de criação fornecido pelo banco, evitando diferença entre relógio da aplicação e relógio da transação que escondia os papéis na resposta imediata. Permissões e auditoria permanecem obrigatórias.
-# Armazenamento no banco principal — 14/09/2026
+
+## Armazenamento no banco principal — 14/09/2026
 
 Por decisão do usuário, os novos arquivos do fluxo compartilhado (imagens, documentos e
 exportações) serão persistidos como bytes no PostgreSQL da aplicação, usando DATABASE_URL.

@@ -177,7 +177,8 @@ reais e repetir o smoke no domínio DEV. A mudança de domínio/repositório em 
 Pendências já documentadas de produto, como política institucional de retenção em
 `docs/production-readiness.md`, não foram tratadas como bugs a preencher com regras inventadas.
 Não houve acesso a configurações, logs privados, banco ou infraestrutura remota nesta revisão.
-# Atualização de armazenamento — 14/09/2026
+
+## Atualização de armazenamento — 14/09/2026
 
 Novos arquivos usam `FILE_STORAGE_BACKEND=database` (padrão), com conteúdo no PostgreSQL
 principal e upload/download pela origem do painel. As instruções S3 deste relatório passam

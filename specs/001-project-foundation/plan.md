@@ -235,6 +235,7 @@ Compartilhar constantes de seleção de imagens/documentos nos contratos e aplic
 4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
    navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
    regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.
+
 ## Armazenamento PostgreSQL — 14/09/2026
 
 Adicionar tabela de conteúdo bytea ligada a stored_file; manter metadados separados das

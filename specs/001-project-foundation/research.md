@@ -283,6 +283,7 @@ A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference
 
 A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
 Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+
 ## Conteúdo binário no PostgreSQL — 14/09/2026
 
 Fontes oficiais: [bytea](https://www.postgresql.org/docs/18/datatype-binary.html),

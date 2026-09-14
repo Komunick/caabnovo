@@ -111,7 +111,12 @@ describe("files in the application PostgreSQL", () => {
     await expect(createDownloadGrant(pool, storage, actor, grant.fileId)).rejects.toMatchObject({
       status: 409,
     });
-    const payload = await finalize(grant.fileId);
+    const [payload, concurrentUpload] = await Promise.all([
+      finalize(grant.fileId),
+      put(grant.uploadUrl),
+    ]);
+    // A retry may finish before finalization or lose the row-lock race. Both preserve the bytes.
+    expect([204, 409]).toContain(concurrentUpload.status);
     expect((await put(grant.uploadUrl)).status).toBe(409);
     const worker = new DatabaseWorkerObjectStorage(pool);
     await expect(
