@@ -28,8 +28,8 @@ Sem migrations. Valores antigos fora do novo formato exigem correção ao editar
 
 ## Escopo e entrega
 
-CF01/CF02 implementadas; CF03, CF-M e CF-A têm a validação local acima e aguardam
-o fechamento do PR/CI. A regressão Chromium completa passou na composição: 55 testes
+CF01–CF03, CF-M, CF-A e CF-CI concluídas com validação local e CI aprovado no
+PR #19, ainda aberto para revisão humana. A regressão Chromium completa passou na composição: 55 testes
 em 6,4 minutos, incluindo recuperação, contas, Associados/fotos e Notícias.
 A regra futura de número OAB e a revisão geral de motivos de cadastro/edição ficam
 na lista local, fora deste PR. O PR de Parceiros depende desta extração; manter ambos
@@ -45,4 +45,8 @@ coincidem com as cópias Docker Hub existentes: MinIO
 `sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e`
 e mc `sha256:a7fe349ef4bd8521fb8497f55c6042871b2ae640607cf99d9bede5e9bdf11727`.
 Não houve atualização de versão, recriação de serviço ou mudança de volume/bucket.
-Checks serão repetidos no mesmo PR, sem dispensar gates.
+Quality, browser e security passaram para a implementação 94ec9b9 na
+[execução 34843665347](https://github.com/Komunick/caabnovo/actions/runs/34843665347)
+e na execução de push 34843661174. O job browser completou E2E e acessibilidade
+usando as imagens oficiais de Quay. Este registro final altera somente documentação;
+os checks automáticos podem repetir, sem dispensa de gates ou merge.
