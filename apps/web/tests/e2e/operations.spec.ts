@@ -127,7 +127,11 @@ test("quarantined upload remains private and unavailable for download", async ({
   });
   expect(intent.status()).toBe(201);
   const grant = (await intent.json()) as { fileId: string; uploadUrl: string };
-  expect(grant.uploadUrl).toContain("caab-quarantine");
+  const uploadUrl = new URL(grant.uploadUrl);
+  expect(uploadUrl.origin).toBe(new URL(origin).origin);
+  expect(uploadUrl.pathname).toBe("/api/v1/files/content");
+  const wrongMethod = await page.request.get(grant.uploadUrl);
+  expect(wrongMethod.status()).toBe(403);
 
   const blocked = await page.request.get(`/api/v1/files/${grant.fileId}/download`);
   expect(blocked.status()).toBe(409);

@@ -5,6 +5,12 @@ da aplicação. `stored_file` conserva os metadados e `stored_file_content.body`
 em `bytea`. O fluxo compartilhado inclui imagens JPG/PNG, documentos PDF e exportações
 de auditoria. Nenhum banco, volume de imagens ou domínio de storage novo é necessário.
 
+No Compose, MinIO e sua inicialização pertencem ao perfil opcional `legacy-storage`.
+O início padrão dos serviços não inicia esse armazenamento; os volumes existentes permanecem
+declarados e preservados. Quando for necessário acessar o legado local, e somente após
+autorizar a retomada dos serviços, usar `docker compose --profile legacy-storage up -d storage`.
+Não executar `storage-init` contra buckets existentes como parte da migração.
+
 ## Configuração e implantação
 
 1. Fazer e verificar backup do PostgreSQL e preservar o armazenamento anterior.
