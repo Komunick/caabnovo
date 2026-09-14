@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: oab-result-synthetic-screenshots
-          path: test-results/**/oab-result-*.png
+          path: apps/web/test-results/**/oab-result-*.png
           retention-days: 7
           if-no-files-found: warn
       - run: pnpm test:a11y --project=chromium

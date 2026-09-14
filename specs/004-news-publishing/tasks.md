@@ -132,5 +132,7 @@ Contexto e plano de retomada: [standby-origin-fix.md](standby-origin-fix.md).
 
 - [x] JP01 Inventariar criação/alteração e registrar regra, pesquisa e plano.
 - [x] JP02 Implementar contrato, serviço, auditoria e formulário desta área.
-- [ ] JP03 Validar criação sem motivo, edição recusada sem motivo e auditoria preservada.
-- [ ] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
+- [x] JP03 Validar criação sem motivo, edição recusada sem motivo e auditoria preservada.
+- [x] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
+
+Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../001-project-foundation/evidence/justification-oab.md).
