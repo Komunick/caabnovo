@@ -106,6 +106,9 @@ test("text, date and OAB fields give consistent feedback across modules", async 
   await birth.fill("2999-01-01");
   await page.locator("#member-email").focus();
   await expect(birth).toHaveAttribute("aria-invalid", "true");
+  await page.getByRole("button", { name: "Abrir calendário de nascimento" }).click();
+  await page.getByRole("button", { name: "Limpar data", exact: true }).click();
+  await expect(birth).not.toHaveAttribute("aria-invalid", "true");
   await birth.fill("2000-01-01");
   await page.locator("#member-email").focus();
   await expect(birth).not.toHaveAttribute("aria-invalid", "true");
