@@ -150,6 +150,15 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+      - name: Preserve processing filter screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: jobs-synthetic-screenshots
+          path: apps/web/test-results/**/jobs-filters-*.png
+          retention-days: 7
+          if-no-files-found: warn
+
       - run: pnpm test:a11y --project=chromium
 
   security:

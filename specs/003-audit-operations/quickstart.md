@@ -1,5 +1,16 @@
 # Validar fusão
 
+## US3 Processamentos — 15/09/2026
+
+Unitários: `pnpm test:unit`; contratos: `pnpm test:contract`. Banco/build/navegador
+são executados pelo CI com banco e contas sintéticas, sem seeds no preview principal.
+Regressão de banco em `apps/web/tests/integration/job-query.test.ts`: 137 execuções,
+datas empatadas/microssegundos, páginas de 25 e 100, filtros combinados, vazios e inserção
+entre páginas. Testes adicionais verificam negação antes dos efeitos, concorrência,
+limite de tentativas e rollback da fila. Navegador em `operations.spec.ts`: filtros,
+teclado, continuação/primeira página, limpeza, URL inválida, celular e acessibilidade.
+Capturas sintéticas no artefato `jobs-synthetic-screenshots` do CI.
+
 Usar serviços locais e usuários sintéticos da fundação. Executar:
 
 ```powershell
