@@ -176,7 +176,7 @@ function CatalogForm({
                   min={1}
                   max={1440}
                   required
-                  defaultValue={item?.durationMinutes ?? 30}
+                  defaultValue={item?.durationMinutes ?? ""}
                 />
               </FormField>
               <p>

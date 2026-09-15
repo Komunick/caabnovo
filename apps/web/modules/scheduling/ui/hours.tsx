@@ -60,7 +60,11 @@ function HoursEditor({
   const [notice, setNotice] = useState("");
   const change = (weekday: number, field: string, value: string) =>
     setRows((values) =>
-      values.map((row) => (row.weekday === weekday ? { ...row, [field]: value || null } : row)),
+      values.map((row) =>
+        row.weekday === weekday
+          ? { ...row, [field]: value || (field.startsWith("lunch") ? null : "") }
+          : row,
+      ),
     );
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -98,8 +102,8 @@ function HoursEditor({
                             ...values,
                             {
                               weekday,
-                              start: "08:00",
-                              end: "17:00",
+                              start: "",
+                              end: "",
                               lunchStart: null,
                               lunchEnd: null,
                             },

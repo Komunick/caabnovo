@@ -46,7 +46,7 @@ export function SchedulingAgenda() {
                       {booking.memberName}
                     </strong>
                     <p>
-                      {booking.procedureName} · {booking.professionalName}
+                      {booking.serviceName} · {booking.procedureName} · {booking.professionalName}
                     </p>
                     <p>
                       {booking.unitName} ·{" "}

@@ -55,7 +55,7 @@ Pré/pós-design: solução coesa no monólito, PostgreSQL como autoridade, cont
 versionados, auditoria, minimização e acessibilidade. Sem nova infraestrutura.
 Decisões explícitas do usuário prevalecem sobre trechos históricos locais:
 qualquer acesso válido ao painel autoriza Agendamentos; motivos não são obrigatórios.
-Não ampliar permissões de outros módulos. Branch codex existente conforme instrução
+Não ampliar permissões de outros módulos. Branch feature vigente conforme instrução
 do ambiente; exceção de Processamentos em outra branch está registrada no mapa local.
 Gates de implementação continuam exigidos; planejamento não equivale a aprovação de
 CI, teste, merge ou deploy. Nenhuma integração Cal.com necessária identificada.
@@ -65,12 +65,12 @@ CI, teste, merge ou deploy. Nenhuma integração Cal.com necessária identificad
 Documentação em specs/008-scheduling-management: spec, plan, research, roadmap,
 data-model, contracts/admin.md, quickstart, tasks e checklists/requirements.md.
 
-Destinos de implementação futura:
+Estrutura implementada:
 - apps/web/modules/scheduling/ — catálogo, horários, disponibilidade, comandos e UI.
 - apps/web/app/(admin)/scheduling/ — lista, configuração e detalhes.
 - apps/web/app/api/v1/scheduling/ — endpoints autenticados do painel.
 - packages/contracts/src/scheduling.ts — contratos.
-- packages/db/migrations/ — próximo número livre ao implementar, sem reservar número.
+- packages/db/migrations/ — 0020_scheduling.sql.
 - packages/db/src/repositories/members.ts — leitura mínima e coerente da elegibilidade.
 - apps/web/modules/members/ — coordenação de bloqueios/vínculos com confirmação.
 - apps/web/modules/workspace/ — navegação e busca.
@@ -81,7 +81,7 @@ Destinos de implementação futura:
 Unidades da agenda não são automaticamente unidades de Parceiros; profissionais não
 são contas de login. Não antecipar motor genérico de recursos, turmas ou pagamentos.
 
-## Sequência de implementação futura
+## Sequência da entrega
 
 1. Contratos/modelo, migrations e testes de integridade.
 2. US1: catálogo mínimo, autorização e horários, busca de beneficiário e criar reserva.
@@ -97,7 +97,7 @@ são contas de login. Não antecipar motor genérico de recursos, turmas ou paga
 ## Integridade e concorrência
 
 - Intervalos [início,fim); exclusion constraint GiST por profissional e intervalo
-  para status scheduled. Avaliar btree_gist na migration conforme PostgreSQL do ambiente.
+  para status scheduled. Extensão btree_gist aplicada pela migration.
 - Criar/remarcar em transação, com lock de configuração/identidades e releitura.
   Escritas em horários/catálogo usam a mesma ordem de locks. Erro na remarcação faz rollback.
 - Mudanças em bloqueio/vínculo de dependência precisam participar do mesmo protocolo.
@@ -123,6 +123,6 @@ Homologação com dados sintéticos; nenhum tráfego público muda nesta etapa.
 
 Format/lint/types, contratos, integração real concorrente, E2E, a11y, build,
 segurança e revisão humana conforme DELIVERY-WORKFLOW. Executar no CI quando houver
-código; não reativar localhost/banco sem pedido. Pesquisa e estrutura revisadas agora;
-tarefas permanecem não executadas.
+código; não reativar localhost/banco sem pedido. Resultados em evidence/;
+tarefas atualizadas conforme implementação e validação.
 

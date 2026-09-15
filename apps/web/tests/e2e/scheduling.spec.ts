@@ -112,11 +112,15 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await page.goto("/scheduling/hours");
   await choose(page, "Unidade", unit);
   await page.getByLabel(`Atendimento em ${day}`, { exact: true }).check();
+  await page.getByLabel("Início", { exact: true }).fill("08:00");
+  await page.getByLabel("Fim", { exact: true }).fill("17:00");
   await keyboardActivate(page, page.getByRole("button", { name: "Salvar horários" }));
   await expect(page.getByText("Horários salvos.", { exact: true })).toBeVisible();
   await page.getByLabel("Configurar", { exact: true }).selectOption("professionals");
   await choose(page, "Profissional", professional);
   await page.getByLabel(`Atendimento em ${day}`, { exact: true }).check();
+  await page.getByLabel("Início", { exact: true }).fill("08:00");
+  await page.getByLabel("Fim", { exact: true }).fill("17:00");
   await page.getByLabel("Início do almoço (opcional)").fill("12:00");
   await page.getByLabel("Fim do almoço (opcional)").fill("13:00");
   await keyboardActivate(page, page.getByRole("button", { name: "Salvar horários" }));
