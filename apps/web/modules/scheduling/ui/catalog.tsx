@@ -94,7 +94,7 @@ function CatalogForm({
               label="Unidade"
               resource="units"
               value={unitId}
-              selectedLabel="Unidade atual"
+              selectedLabel={item?.unitName}
               disabled={!!item}
               onChange={(value) => {
                 setUnitId(value);
@@ -108,6 +108,7 @@ function CatalogForm({
             <Choice
               key={`service-${unitId}`}
               label="Serviço"
+              selectedLabel={item?.serviceName}
               resource="services"
               filters={`unitId=${unitId}`}
               disabled={!unitId || !!item}
@@ -124,6 +125,7 @@ function CatalogForm({
               <Choice
                 key={`procedure-${serviceId}`}
                 label="Procedimento"
+                selectedLabel={item?.procedureName}
                 resource="procedures"
                 filters={`serviceId=${serviceId}`}
                 disabled={!serviceId || !!item}
@@ -133,6 +135,7 @@ function CatalogForm({
               />
               <Choice
                 label="Profissional"
+                selectedLabel={item?.professionalName}
                 resource="professionals"
                 value={professionalId}
                 disabled={!!item}
@@ -281,6 +284,12 @@ export function SchedulingCatalog() {
                 <li key={item.id}>
                   <div>
                     <strong>{item.name}</strong>
+                    {item.unitName && (
+                      <p>
+                        {item.unitName}
+                        {item.serviceName ? ` · ${item.serviceName}` : ""}
+                      </p>
+                    )}
                     <p>
                       {item.active ? "Ativo" : "Inativo"}
                       {item.durationMinutes ? ` · ${item.durationMinutes} min` : ""}

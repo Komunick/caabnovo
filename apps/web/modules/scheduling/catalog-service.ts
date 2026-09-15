@@ -29,14 +29,14 @@ const catalogs = {
   },
   services: {
     table: "scheduling_service",
-    from: "scheduling_service c",
+    from: "scheduling_service c JOIN scheduling_unit u ON u.id=c.unit_id",
     name: "c.name",
     fields: { name: "name", active: "active", unitId: "unit_id" },
-    extra: ",'unitId',c.unit_id",
+    extra: ",'unitId',c.unit_id,'unitName',u.name",
   },
   procedures: {
     table: "scheduling_procedure",
-    from: "scheduling_procedure c",
+    from: "scheduling_procedure c JOIN scheduling_service s ON s.id=c.service_id JOIN scheduling_unit u ON u.id=c.unit_id",
     name: "c.name",
     fields: {
       name: "name",
@@ -47,7 +47,7 @@ const catalogs = {
       description: "description",
     },
     extra:
-      ",'serviceId',c.service_id,'unitId',c.unit_id,'durationMinutes',c.duration_minutes,'description',c.description",
+      ",'serviceId',c.service_id,'serviceName',s.name,'unitId',c.unit_id,'unitName',u.name,'durationMinutes',c.duration_minutes,'description',c.description",
   },
   professionals: {
     table: "scheduling_professional",
@@ -58,7 +58,7 @@ const catalogs = {
   },
   assignments: {
     table: "scheduling_assignment",
-    from: "scheduling_assignment c JOIN scheduling_professional p ON p.id=c.professional_id JOIN scheduling_procedure r ON r.id=c.procedure_id",
+    from: "scheduling_assignment c JOIN scheduling_professional p ON p.id=c.professional_id JOIN scheduling_procedure r ON r.id=c.procedure_id JOIN scheduling_service s ON s.id=r.service_id JOIN scheduling_unit u ON u.id=c.unit_id",
     name: "p.name || ' — ' || r.name",
     fields: {
       active: "active",
@@ -66,7 +66,8 @@ const catalogs = {
       procedureId: "procedure_id",
       professionalId: "professional_id",
     },
-    extra: ",'unitId',c.unit_id,'procedureId',c.procedure_id,'professionalId',c.professional_id",
+    extra:
+      ",'unitId',c.unit_id,'unitName',u.name,'serviceId',s.id,'serviceName',s.name,'procedureId',c.procedure_id,'procedureName',r.name,'professionalId',c.professional_id,'professionalName',p.name",
   },
 } as const;
 function catalogSelect(kind: SchedulingKind) {

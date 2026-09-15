@@ -88,6 +88,16 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await choose(page, "Profissional", professional);
   await save();
   await screenshot(page, testInfo.outputPath("scheduling-catalog-mobile-light.png"));
+  await page
+    .getByRole("button", { name: `Editar ${professional} — ${procedure}`, exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Selecionar unidade", { exact: true }).locator("option:checked"),
+  ).toHaveText(unit);
+  await expect(
+    page.getByLabel("Selecionar serviço", { exact: true }).locator("option:checked"),
+  ).toHaveText(service);
+  await page.getByRole("button", { name: "Fechar formulário", exact: true }).click();
   const date = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
   const weekday = new Date(`${date}T12:00:00-03:00`).getUTCDay();
   const day = [

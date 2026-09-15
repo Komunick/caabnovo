@@ -10,38 +10,38 @@ dados, autorização e acessibilidade. Etapas do produto estão em roadmap.md.
 
 ## Phase 1 — Setup
 
-- [ ] T001 Conferir base/branch sem PR e validar o recorte/hipóteses com a revisão do planejamento em specs/008-scheduling-management/spec.md antes do código.
-- [ ] T002 Conciliar contratos com os padrões existentes em specs/008-scheduling-management/contracts/admin.md e definir próximo número de migration livre em packages/db/migrations/.
+- [x] T001 Conferir base/branch sem PR e validar o recorte/hipóteses com a revisão do planejamento em specs/008-scheduling-management/spec.md antes do código.
+- [x] T002 Conciliar contratos com os padrões existentes em specs/008-scheduling-management/contracts/admin.md e definir próximo número de migration livre em packages/db/migrations/.
 
 ## Phase 2 — Foundational
 
-- [ ] T003 Criar migration aditiva de catálogo, horários, reservas, histórico e idempotência em packages/db/migrations/, conforme specs/008-scheduling-management/data-model.md; validar exclusão temporal e FKs.
-- [ ] T004 Definir contratos/validações de payload, paginação, versões, erros e estados em packages/contracts/src/scheduling.ts e exportar em packages/contracts/src/index.ts.
-- [ ] T005 Implementar guarda com acesso administrativo válido e proteção de mutações em apps/web/modules/scheduling/http/; sem concessões extras; testes em apps/web/tests/integration/scheduling-auth.test.ts.
-- [ ] T006 Implementar protocolo transacional de configurações/beneficiários, incluindo bloqueio e mudança de vínculos em apps/web/modules/members/ e packages/db/src/repositories/members.ts, com regressões concorrentes em apps/web/tests/integration/scheduling-eligibility.test.ts.
+- [x] T003 Criar migration aditiva de catálogo, horários, reservas, histórico e idempotência em packages/db/migrations/, conforme specs/008-scheduling-management/data-model.md; validar exclusão temporal e FKs.
+- [x] T004 Definir contratos/validações de payload, paginação, versões, erros e estados em packages/contracts/src/scheduling.ts e exportar em packages/contracts/src/index.ts.
+- [x] T005 Implementar guarda com acesso administrativo válido e proteção de mutações em apps/web/modules/scheduling/http/; sem concessões extras; testes em apps/web/tests/integration/scheduling-auth.test.ts.
+- [x] T006 Implementar protocolo transacional de configurações/beneficiários, incluindo bloqueio e mudança de vínculos em apps/web/modules/members/ e packages/db/src/repositories/members.ts, com regressões concorrentes em apps/web/tests/integration/scheduling-eligibility.test.ts.
 
 ## Phase 3 — US1: configurar e reservar
 
 Objetivo: cadastro mínimo e primeira reserva persistida. Teste independente:
 catálogo vazio → configurar no painel → reservar → consultar após recarga.
 
-- [ ] T007 [P] [US1] Criar testes dos contratos e horários semanais/almoço em packages/contracts/src/scheduling.test.ts e apps/web/modules/scheduling/availability.test.ts antes dos serviços.
-- [ ] T008 [P] [US1] Criar testes de 20 reservas concorrentes, retry, limites adjacentes e corrida com alteração de expediente em apps/web/tests/integration/scheduling-create.test.ts.
-- [ ] T009 [US1] Implementar catálogo, habilitações, horários e proteção de alterações com reservas futuras em apps/web/modules/scheduling/catalog-service.ts e hours-service.ts.
-- [ ] T010 [US1] Implementar disponibilidade, busca mínima de beneficiários e criação transacional/idempotente em apps/web/modules/scheduling/availability-service.ts, beneficiary-service.ts e booking-service.ts.
-- [ ] T011 [US1] Expor catálogo, horários, vagas, beneficiários e criação autenticada em apps/web/app/api/v1/scheduling/ conforme contracts/admin.md.
-- [ ] T012 [US1] Criar formulários de oferta/horários e reserva com seleção de vaga em apps/web/modules/scheduling/ui/ e apps/web/app/(admin)/scheduling/; não exigir cadastro via banco.
-- [ ] T013 [US1] Validar jornada sintética de configuração/criação/recarga e erros em apps/web/tests/e2e/scheduling-create.spec.ts.
+- [x] T007 [P] [US1] Criar testes dos contratos e horários semanais/almoço em packages/contracts/src/scheduling.test.ts e apps/web/modules/scheduling/availability.test.ts antes dos serviços.
+- [x] T008 [P] [US1] Criar testes de 20 reservas concorrentes, retry, limites adjacentes e corrida com alteração de expediente em apps/web/tests/integration/scheduling-create.test.ts.
+- [x] T009 [US1] Implementar catálogo, habilitações, horários e proteção de alterações com reservas futuras em apps/web/modules/scheduling/catalog-service.ts e hours-service.ts.
+- [x] T010 [US1] Implementar disponibilidade, busca mínima de beneficiários e criação transacional/idempotente em apps/web/modules/scheduling/availability-service.ts, beneficiary-service.ts e booking-service.ts.
+- [x] T011 [US1] Expor catálogo, horários, vagas, beneficiários e criação autenticada em apps/web/app/api/v1/scheduling/ conforme contracts/admin.md.
+- [x] T012 [US1] Criar formulários de oferta/horários e reserva com seleção de vaga em apps/web/modules/scheduling/ui/ e apps/web/app/(admin)/scheduling/; não exigir cadastro via banco.
+- [x] T013 [US1] Validar jornada sintética de configuração/criação/recarga e erros em apps/web/tests/e2e/scheduling-create.spec.ts.
 
 ## Phase 4 — US2: consultar, remarcar e cancelar
 
 Objetivo: operação da reserva existente. Teste independente com fixture sintética:
 localizar → remarcar → conferir histórico → cancelar e liberar horário.
 
-- [ ] T014 [P] [US2] Criar testes de rollback da remarcação, versão desatualizada, idempotência/cancelamento e preservação histórica em apps/web/tests/integration/scheduling-manage.test.ts.
-- [ ] T015 [US2] Implementar listagem/detalhes, remarcação atômica e cancelamento em apps/web/modules/scheduling/booking-service.ts e apps/web/app/api/v1/scheduling/bookings/.
-- [ ] T016 [US2] Implementar lista diária paginada, filtros na URL, detalhes, ações e confirmação em apps/web/modules/scheduling/ui/ e apps/web/app/(admin)/scheduling/.
-- [ ] T017 [US2] Integrar navegação/busca e eventos humanos de auditoria em apps/web/modules/workspace/ e apps/web/modules/audit/, sem liberar dados de outros módulos.
+- [x] T014 [P] [US2] Criar testes de rollback da remarcação, versão desatualizada, idempotência/cancelamento e preservação histórica em apps/web/tests/integration/scheduling-manage.test.ts.
+- [x] T015 [US2] Implementar listagem/detalhes, remarcação atômica e cancelamento em apps/web/modules/scheduling/booking-service.ts e apps/web/app/api/v1/scheduling/bookings/.
+- [x] T016 [US2] Implementar lista diária paginada, filtros na URL, detalhes, ações e confirmação em apps/web/modules/scheduling/ui/ e apps/web/app/(admin)/scheduling/.
+- [x] T017 [US2] Integrar navegação/busca e eventos humanos de auditoria em apps/web/modules/workspace/ e apps/web/modules/audit/, sem liberar dados de outros módulos.
 - [ ] T018 [US2] Validar gestão por teclado, mobile claro/escuro e estados vazios/erro em apps/web/tests/e2e/scheduling.spec.ts; capturas sintéticas em specs/008-scheduling-management/evidence/.
 
 ## Phase 5 — Polish e saída da etapa 1

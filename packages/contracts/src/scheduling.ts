@@ -52,6 +52,10 @@ export const schedulingCatalogItemSchema = z.object({
   description: z.string().optional(),
   address: brazilianAddressSchema.optional(),
   phone: z.string().optional(),
+  unitName: z.string().optional(),
+  serviceName: z.string().optional(),
+  procedureName: z.string().optional(),
+  professionalName: z.string().optional(),
 });
 export type SchedulingCatalogItem = z.infer<typeof schedulingCatalogItemSchema>;
 export const schedulingPageQuerySchema = z.object({

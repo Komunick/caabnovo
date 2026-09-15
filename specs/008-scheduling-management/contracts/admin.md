@@ -33,6 +33,8 @@ expectedVersion; retorna {version,rows}. Cada linha: weekday (0 domingo a 6 sáb
 start/end HH:mm e lunchStart/lunchEnd nulos ou HH:mm (somente profissionais).
 Catálogos: id/name/active/version e referências correspondentes; procedimentos
 incluem description/durationMinutes; unidades incluem address/phone opcionais.
+Serviços, procedimentos e habilitações incluem os nomes das referências de catálogo,
+para distinguir ofertas homônimas de unidades diferentes na listagem e na edição.
 Detalhes: {booking,history:{items,page,pageSize,total}}. Histórico usa created,
 rescheduled e cancelled, actorName, occurredAt e snapshots before/after.
 Disponibilidade aceita excludeBookingId para remarcação; confirmar revalida a vaga.

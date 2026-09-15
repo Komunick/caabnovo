@@ -4,7 +4,7 @@
 
 - [x] AE01 Compartilhar lock transacional e projeção mínima de elegibilidade com spec 008.
 - [x] AE02 Preservar regras/permissões do módulo e cobrir cadeias de titulares vigentes.
-- [ ] AE03 Validar bloqueio/vínculo/desvínculo concorrentes reais no CI e registrar evidências da spec 008.
+- [x] AE03 Validar bloqueio/vínculo/desvínculo concorrentes reais no CI e registrar evidências da spec 008.
 
 ## Incremento: foto de perfil — branch feature/member-profile-photo
 

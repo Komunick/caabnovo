@@ -121,6 +121,32 @@ afterAll(async () => {
 });
 
 describe.sequential("scheduling transactions and migration", () => {
+  it("distinguishes identically named offers by unit and preserves readable parent references", async () => {
+    const north = await offer();
+    const south = await offer();
+    await admin.query(
+      "UPDATE scheduling_unit SET name=CASE WHEN id=$1 THEN 'Unidade Norte' ELSE 'Unidade Sul' END WHERE id IN ($1,$2)",
+      [north.unit.id, south.unit.id],
+    );
+    const services = await listSchedulingCatalog(pool, context.actor, "services", {
+      unitId: north.unit.id,
+    });
+    expect(services.items).toHaveLength(1);
+    expect(services.items[0]).toMatchObject({
+      name: north.service.name,
+      unitName: "Unidade Norte",
+    });
+    const assignments = await listSchedulingCatalog(pool, context.actor, "assignments", {
+      unitId: south.unit.id,
+    });
+    expect(assignments.items[0]).toMatchObject({
+      unitName: "Unidade Sul",
+      serviceId: south.service.id,
+      serviceName: south.service.name,
+      procedureName: south.procedure.name,
+      professionalName: "Profissional sintético",
+    });
+  });
   it("allows an active account without grants, but exposes only the beneficiary projection", async () => {
     const data = await offer();
     await admin.query(
