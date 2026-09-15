@@ -4,6 +4,19 @@
 
 ## Summary
 
+### US3 — execução em 15/09/2026
+
+Branch feature/processamentos-20260915, criada separadamente a pedido do usuário.
+Evoluir contrato Zod de consulta/retorno, mover consulta ao repositório existente e
+validar permissões antes de toda consulta/mutação. Cursor timestamp UTC com seis casas
+e UUID, comparados como tupla no PostgreSQL; buscar limit+1 para indicar continuação.
+Formulário GET com Next Form, filtros de estado/tipo, próxima página e primeira página;
+URL inválida recebe aviso com recuperação, sem consultar lista irrestrita silenciosamente.
+Não criar endpoint de lista: a página usa o serviço autorizado existente. Sem migration.
+Regressões unitárias/contrato, banco descartável com mais de 100 linhas e microssegundos,
+reenvio negado sem efeitos, reenvio permitido/rollback/concorrência, navegador e a11y.
+Executar build, integração e navegador no CI. Sem justificativa obrigatória.
+
 Centralizar catálogo de áreas repetido em menu, busca e dashboard. Rotas de jobs em `/audit/jobs`,
 subnavegação Eventos/Processamentos e redirecionamentos das rotas existentes. Serviços/APIs
 inalterados.

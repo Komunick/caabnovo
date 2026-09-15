@@ -34,16 +34,19 @@
 
 ## US3 — Melhorias da função existente
 
-- [ ] T010 [US3] Complementar pesquisa e contrato de consulta em
+- [x] T010 [US3] Complementar pesquisa e contrato de consulta em
       `specs/003-audit-operations/research.md` e `contracts/navigation.md` antes do código.
-- [ ] T011 [US3] Exigir leitura antes de reenvio e testar negação sem mutação em
+- [x] T011 [US3] Exigir leitura antes de reenvio e testar negação sem mutação em
       `apps/web/modules/jobs/job-service.ts` e `job-service.test.ts` (programa T009).
-- [ ] T012 [US3] Implementar paginação estável e filtros no contrato, repositório, serviço e tela em
+- [x] T012 [US3] Implementar paginação estável e filtros no contrato, repositório, serviço e tela em
       `packages/contracts/src/jobs.ts`, `packages/db/src/repositories/job-execution.ts`,
       `apps/web/modules/jobs/job-service.ts` e `apps/web/app/(admin)/audit/jobs/page.tsx` (programa
       T010).
-- [ ] T013 [US3] Validar regressões de consulta/reenvio em `apps/web/tests/e2e/operations.spec.ts` e
+- [x] T013 [US3] Validar regressões de consulta/reenvio em `apps/web/tests/e2e/operations.spec.ts` e
       atualizar `specs/003-audit-operations/evidence.md`.
+
+US3 concluída em 15/09/2026: código 85e5845 aprovado no CI 35006098095, 620 testes e todos
+os gates; capturas desktop/celular revisadas. [Evidências](evidence/processamentos-2026-09-15.md).
 
 Dependências: T001–T003 → T004/T005/T007 → T006/T008 → T009. US3: T010 → T011/T012 → T013. Código e
 testes de histórias se encontram na verificação; execução local sequencial. PR próprio autorizado em

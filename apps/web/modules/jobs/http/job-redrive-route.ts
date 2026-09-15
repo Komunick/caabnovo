@@ -27,6 +27,7 @@ export function createJobRedriveRoute(deps: {
           (await deps.resolveActor(request)) ?? undefined,
           PERMISSIONS.jobsRedrive,
         );
+        requirePermission(actor, PERMISSIONS.jobsRead);
         validateMutation(request, false);
         const { jobId } = await context.params;
         const body = redriveJobRequestSchema.parse(await request.json());

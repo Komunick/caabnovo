@@ -6,10 +6,16 @@ import type {
   FileScanJobPayload,
   NewsActionJobPayload,
   Job,
+  JobList,
 } from "@caab/contracts";
+import { jobListQuerySchema } from "@caab/contracts";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
-import { findJobExecution, redriveJobExecution } from "@caab/db/repositories/job-execution";
+import {
+  findJobExecution,
+  listJobExecutions,
+  redriveJobExecution,
+} from "@caab/db/repositories/job-execution";
 import { requirePermission } from "../auth/authorize";
 import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
@@ -40,38 +46,25 @@ export async function findAuthorizedJob(
 export async function listAuthorizedJobs(
   pool: Pool,
   actor: RequestActor,
-  limit = 100,
-): Promise<Job[]> {
+  input: unknown = {},
+): Promise<JobList> {
   requirePermission(actor, PERMISSIONS.jobsRead);
-  const result = await pool.query<{
-    id: string;
-    job_type: string;
-    status: Job["status"];
-    progress: number;
-    attempt_count: number;
-    safe_error_code: string | null;
-    safe_error_message: string | null;
-    created_at: Date;
-    finished_at: Date | null;
-    correlation_id: string;
-  }>(
-    `SELECT id, job_type, status, progress, attempt_count, safe_error_code,
-      safe_error_message, created_at, finished_at, correlation_id
-     FROM job_execution ORDER BY created_at DESC LIMIT $1`,
-    [Math.max(1, Math.min(100, Math.trunc(limit)))],
-  );
-  return result.rows.map((job) => ({
-    id: job.id,
-    jobType: job.job_type,
-    status: job.status,
-    progress: job.progress,
-    attemptCount: job.attempt_count,
-    safeErrorCode: job.safe_error_code,
-    safeErrorMessage: job.safe_error_message,
-    createdAt: job.created_at.toISOString(),
-    finishedAt: job.finished_at?.toISOString() ?? null,
-    correlationId: job.correlation_id,
-  }));
+  const page = await listJobExecutions(pool, jobListQuerySchema.parse(input));
+  return {
+    nextCursor: page.nextCursor,
+    items: page.items.map((job) => ({
+      id: job.id,
+      jobType: job.jobType,
+      status: job.status,
+      progress: job.progress,
+      attemptCount: job.attemptCount,
+      safeErrorCode: job.safeErrorCode,
+      safeErrorMessage: job.safeErrorMessage,
+      createdAt: job.createdAt.toISOString(),
+      finishedAt: job.finishedAt?.toISOString() ?? null,
+      correlationId: job.correlationId,
+    })),
+  };
 }
 
 export interface RedriveEnqueuer {
@@ -106,6 +99,7 @@ export async function redriveJob(
   },
   enqueuer: RedriveEnqueuer,
 ): Promise<Job> {
+  requirePermission(actor, PERMISSIONS.jobsRead);
   requirePermission(actor, PERMISSIONS.jobsRedrive);
   await withTransaction(pool, async (client) => {
     const result = await client.query<{

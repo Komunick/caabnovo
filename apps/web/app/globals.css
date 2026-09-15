@@ -932,6 +932,30 @@ h2 {
 }
 
 /* Data and operations */
+.jobs-panel {
+  min-width: 0;
+}
+
+.jobs-table {
+  min-width: 44rem;
+}
+
+.jobs-table th:first-child {
+  width: 13rem;
+}
+
+.jobs-table .status-badge,
+.jobs-table td:last-child {
+  white-space: nowrap;
+}
+
+.jobs-filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
 .table-scroll {
   max-width: 100%;
   overflow-x: auto;

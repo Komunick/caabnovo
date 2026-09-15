@@ -45,14 +45,17 @@ anteriores, exportação e reenvio autorizado.
       detalhe.
 - [x] T008 [US1] Cobrir negações por perfil, compatibilidade e busca sem duplicata em
       `apps/web/tests/e2e/audit.spec.ts`, `operations.spec.ts` e `workspace-experience.spec.ts`.
-- [ ] T009 [US1] Validar leitura antes da mutação de reenvio em
+- [x] T009 [US1] Validar leitura antes da mutação de reenvio em
       `apps/web/modules/jobs/job-service.ts` e adicionar regressão em
       `apps/web/modules/jobs/job-service.test.ts`.
-- [ ] T010 [US1] Evoluir o spec 003 e paginar/filtrar jobs reaproveitando consultas em
+- [x] T010 [US1] Evoluir o spec 003 e paginar/filtrar jobs reaproveitando consultas em
       `packages/db/src/repositories/job-execution.ts`, `apps/web/modules/jobs/job-service.ts`,
       `app/(admin)/audit/jobs/page.tsx` e contrato em `packages/contracts/src/jobs.ts`.
 - [x] T011 [US1] Executar verificações das mudanças de US1 e registrar resultados em
       `specs/002-integrated-modules/evidence/us1.md`.
+
+US1/T009–T010 concluídas em 15/09/2026 na branch própria de Processamentos solicitada
+pelo usuário. [Evidência US3/spec003](../003-audit-operations/evidence/processamentos-2026-09-15.md).
 
 ## Phase 4 — US2 Conteúdo (P1)
 

@@ -42,3 +42,7 @@ verificaram os fluxos reutilizados.
 
 [T014 — auditoria legível e filtros digitáveis](evidence/audit-readable-2026-09-15.md), com
 identificação autorizada dos alvos, antes/depois, suporte recolhido e CI final aprovado.
+# US3 Processamentos — concluída em 15/09/2026
+
+Código 85e5845 aprovado no CI 35006098095: 620 testes, formatação/lint/tipos/build/segurança.
+Capturas desktop/celular revisadas. [Relatório completo](evidence/processamentos-2026-09-15.md).
