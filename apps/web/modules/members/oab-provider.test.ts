@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createOabProvider, isOabConfigured } from "./oab-provider";
 
-const env = { OAB_API_ENABLED: "true", API_OAB_KEY: "test-key", API_OAB_PASSWORD: "test-password" };
+const env = { API_OAB_KEY: "test-key", API_OAB_PASSWORD: "test-password" };
 const row = {
   Nome: "Pessoa sintética",
   OAB: "001234",
@@ -16,15 +16,53 @@ const row = {
   ExtraField: "private",
 };
 describe("OAB provider boundary", () => {
-  it.each([{}, { ...env, OAB_API_ENABLED: "false" }, { ...env, API_OAB_PASSWORD: "" }])(
-    "fails closed without configuration %j",
-    async (source) => {
-      const fetcher = vi.fn();
-      expect(isOabConfigured(source)).toBe(false);
-      expect(() => createOabProvider(source, fetcher)).toThrow("OAB_NOT_CONFIGURED");
-      expect(fetcher).not.toHaveBeenCalled();
+  afterEach(() => vi.unstubAllEnvs());
+  it.each([
+    {},
+    { ...env, API_OAB_KEY: " " },
+    { ...env, API_OAB_PASSWORD: "" },
+    { API_OAB_KEY: "test-key" },
+    { API_OAB_PASSWORD: "test-password" },
+  ])("fails closed without configuration %j", async (source) => {
+    const fetcher = vi.fn();
+    expect(isOabConfigured(source)).toBe(false);
+    expect(() => createOabProvider(source, fetcher)).toThrow("OAB_NOT_CONFIGURED");
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+  it.each([undefined, "true", " TRUE ", "false", " FALSE ", "", "treu", "1"])(
+    "queries with server credentials regardless of legacy activation flag %s",
+    async (flag) => {
+      const source = {
+        API_OAB_KEY: " test-key ",
+        API_OAB_PASSWORD: " test-password ",
+        ...(flag === undefined ? {} : { OAB_API_ENABLED: flag }),
+      };
+      const fetcher = vi.fn(async () => Response.json([row]));
+      expect(isOabConfigured(source)).toBe(true);
+      await expect(createOabProvider(source, fetcher)("1234")).resolves.toMatchObject({
+        status: "regular",
+        name: row.Nome,
+      });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      expect(fetcher.mock.calls[0]).toEqual([
+        expect.any(URL),
+        expect.objectContaining({
+          headers: { Chave: "test-key", Senha: "test-password" },
+        }),
+      ]);
     },
   );
+  it("reads current server credentials and ignores the legacy disable switch", () => {
+    vi.stubEnv("OAB_API_ENABLED", undefined);
+    vi.stubEnv("API_OAB_KEY", "runtime-test-key");
+    vi.stubEnv("API_OAB_PASSWORD", "runtime-test-password");
+    expect(isOabConfigured()).toBe(true);
+    vi.stubEnv("OAB_API_ENABLED", "false");
+    expect(isOabConfigured()).toBe(true);
+    vi.stubEnv("OAB_API_ENABLED", "true");
+    vi.stubEnv("API_OAB_PASSWORD", "");
+    expect(isOabConfigured()).toBe(false);
+  });
   it("uses only the fixed institution endpoint, server headers, no cache and no redirect", async () => {
     const fetcher = vi.fn(async () => Response.json([row]));
     const result = await createOabProvider(env, fetcher)("1234");

@@ -36,9 +36,7 @@ const providerRow = z.object({
 });
 type OabEnvironment = Readonly<Record<string, string | undefined>>;
 export function isOabConfigured(env: OabEnvironment = process.env) {
-  return (
-    env.OAB_API_ENABLED === "true" && !!env.API_OAB_KEY?.trim() && !!env.API_OAB_PASSWORD?.trim()
-  );
+  return !!env.API_OAB_KEY?.trim() && !!env.API_OAB_PASSWORD?.trim();
 }
 export function createOabProvider(
   env: OabEnvironment = process.env,
