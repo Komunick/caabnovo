@@ -1,5 +1,13 @@
 # Pesquisa de mercado: Agendamentos para diferentes negócios
 
+> Atualização em 15/09/2026: a CAAB administra a oferta pelo painel; qualquer pessoa
+> com acesso válido ao painel pode alterar Agendamentos. A hipótese abaixo de gestão
+> independente pelos profissionais foi substituída. Unidades com vários serviços,
+> profissionais, procedimentos, funcionamento e avaliações foram confirmados.
+> Cal.com é referência, com integração somente se nenhuma outra possibilidade existir.
+> Ver [pesquisa complementar](pesquisa-gestao-agendamentos-2026-09-15.md) e
+> [decisões vigentes](brainstorming-agendamentos.md). As propostas de mercado seguem abertas.
+
 **Data de consulta:** 14/09/2026. **Estado:** pesquisa concluída para revisão; nenhuma
 proposta deste documento está aprovada para implementação.
 

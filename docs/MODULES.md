@@ -194,6 +194,15 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 
 ## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
 
+**Atualização de Agendamentos em 15/09/2026:** administração pela CAAB da oferta e
+das reservas do app/site. Qualquer pessoa com acesso válido ao painel administrativo
+pode consultar e alterar Agendamentos, sem concessão extra ou restrição por unidade.
+Inclui unidades com vários serviços, profissionais, procedimentos, funcionamento e
+gestão de avaliações. Autenticação e auditoria permanecem; a regra não altera outros
+módulos. Não pressupor área administrativa independente de negócios/profissionais.
+Cal.com é referência; integrar somente se nenhuma outra possibilidade for encontrada.
+Detalhes e opções abertas no [brainstorming](../specs/002-integrated-modules/brainstorming-agendamentos.md).
+
 O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
 solicitou novo brainstorming para uma grande evolução antes da implementação.
 Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.

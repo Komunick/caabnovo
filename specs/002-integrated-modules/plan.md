@@ -67,7 +67,28 @@ módulos já implementados. Sem packages ou tabelas genéricas para antecipar ab
 
 ## Implementation Sequence
 
+### Agendamentos — direção vigente em 15/09/2026
+
+Brainstorming/pesquisa: CAAB administra pelo painel a oferta de reservas do app/site.
+Qualquer pessoa com acesso válido ao painel pode fazer alterações em Agendamentos,
+sem concessão extra do módulo. Cadastro de unidades com vários serviços, profissionais,
+procedimentos, funcionamento e gestão de avaliações são parte do escopo confirmado.
+Não pressupor portal administrativo independente para profissionais/negócios.
+
+Próximos passos: revisar a [pesquisa complementar](pesquisa-gestao-agendamentos-2026-09-15.md),
+validar serviço/procedimento e vínculos, detalhar horários/exceções, ações de avaliações,
+consumo no app/site, público elegível e preservação de dados. Depois consolidar spec
+própria, plano, tarefas e critérios de aceite. As tarefas de implementação antigas
+permanecem suspensas; não definir prazos, multas, bloqueios ou telas como aprovados.
+
+Avaliar solução própria com a base existente. Cal.com é somente referência e não
+deve ser integrado salvo se nenhuma outra possibilidade for encontrada. Registrar
+alternativas e impedimentos concretos caso essa condição venha a ser investigada.
+Não criar integração, dependência ou serviço nesta pesquisa.
+
 ### Prioridade vigente — 14/09/2026
+
+Histórico; aplicar as decisões de 15/09 acima onde houver divergência.
 
 Etapa atual limitada a pesquisa de mercado e documentação por solicitação expressa.
 Recorte: barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba;

@@ -120,18 +120,15 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 
 ### 7.1 Decisão
 
-O núcleo de agendamentos será implementado no domínio CAAB. Cal.com não será a fonte de verdade
-inicial.
+Direção: avaliar núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário
+em 15/09/2026: Cal.com é referência de pesquisa e **não deve ser integrado, salvo
+se nenhuma outra possibilidade for encontrada**. A abertura anterior para integração
+futura foi substituída por essa condição; conveniência não a satisfaz.
 
-Cal.com poderá ser integrado no futuro para:
-
-- Sincronização com Google/Outlook.
-- Reservas públicas.
-- Round-robin.
-- Roteamento avançado.
-- Lembretes e integrações já suportadas.
-
-Antes de uso self-hosted ou incorporação do código, revisar AGPL e alternativas comerciais.
+A pesquisa não demonstrou esgotamento de alternativas. Não instalar SDK, incorporar
+código, subir serviço ou integrar API/iframe do Cal.com nesta etapa. Registrar
+requisitos, alternativas e impedimentos se a exceção vier a ser investigada.
+Detalhes em [pesquisa de Agendamentos](../specs/002-integrated-modules/pesquisa-gestao-agendamentos-2026-09-15.md).
 
 ### 7.2 Integridade
 
@@ -382,7 +379,7 @@ responsabilidade definida.
 - TanStack Table/Query.
 - React Hook Form + Zod.
 - FullCalendar Standard para a interface da agenda.
-- Agenda própria; Cal.com apenas após prova de adequação e revisão de licença.
+- Agenda própria em avaliação; Cal.com somente se nenhuma outra possibilidade for encontrada.
 - Conteúdo de arquivos exclusivamente no PostgreSQL; adaptadores legados retirados.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.

@@ -1,5 +1,27 @@
 # Decisões e entradas por domínio
 
+## Gestão de Agendamentos pela CAAB — 15/09/2026
+
+O usuário definiu administração pela CAAB no painel, acessível para consulta e
+alterações a qualquer pessoa com acesso válido ao painel, sem concessão adicional
+de Agendamentos. A unidade oferece vários serviços, com profissionais, procedimentos,
+horários de funcionamento e avaliações. O módulo administra o serviço de reservas
+do app/site. Não pressupor contas administrativas independentes para profissionais.
+
+Pesquisa atual em fontes oficiais de Cal.com, Trinks, SimplyBook.me e Fresha:
+[relatório, evidências, propostas e questões abertas](pesquisa-gestao-agendamentos-2026-09-15.md).
+Constatadas configurações separadas de catálogo/equipe, funcionamento/disponibilidade,
+exceções, recursos e operação de avaliações. A nomenclatura varia entre produtos;
+o mapeamento serviço/procedimento da CAAB ainda precisa de validação.
+
+Cal.com serve de referência; **integração somente se nenhuma outra possibilidade
+for encontrada**, por determinação do usuário. A pesquisa não demonstra essa condição
+e não propõe integração. Solução própria permanece a direção a avaliar; nenhuma prova
+técnica de implementação foi executada. Nenhuma dependência, conta ou infraestrutura criada.
+
+O registro de 14/09 abaixo é histórico onde divergir destas decisões. Implementação
+permanece pendente; o acesso amplo definido aqui não altera outros módulos.
+
 ## Pesquisa de mercado de Agendamentos — 14/09/2026
 
 O usuário esclareceu que o módulo permitirá aos profissionais configurar sistemas
