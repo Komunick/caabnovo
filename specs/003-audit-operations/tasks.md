@@ -51,10 +51,10 @@ testes de histórias se encontram na verificação; execução local sequencial.
 
 ## Revisão solicitada — 11/09/2026
 
-- [ ] T014 Apresentar os eventos de auditoria em linguagem simples, com quem realizou a ação,
+- [x] T014 Apresentar os eventos de auditoria em linguagem simples, com quem realizou a ação,
       o que mudou e quem foi afetado. Exemplo: “Gabriel removeu o perfil de administrador de Felipe”.
       Substituir códigos como `role.revoked` e identificadores na leitura principal por descrições
-      em português; manter códigos e dados técnicos disponíveis nos detalhes. Resolver nomes com
+      em português; manter códigos e dados técnicos recolhidos em Informações para suporte, no final do painel. Resolver nomes com
       as permissões existentes, prever registros antigos ou nomes indisponíveis sem inventar
       informações e preservar o registro original. Validar concessão/remoção de funções,
       criação/alteração/desativação de colaboradores e demais ações registradas; conferir
@@ -62,10 +62,10 @@ testes de histórias se encontram na verificação; execução local sequencial.
 
 T014 autorizada em 15/09/2026 e reformulada após a revisão do usuário; integra o ciclo ativo.
 
-- [ ] T014a Histórico por data, filtros de pessoa/área/ação/período e painel lateral acessível.
-- [ ] T014b Detalhes completos em linguagem simples, antes/depois e suporte técnico recolhido.
-- [ ] T014c Validar permissões da busca de pessoas, tradução, filtros, teclado, celular e screenshots sintéticos; atualizar preview com limites de recursos.
-- [ ] T014d Área/ação digitáveis e selecionáveis como o Estado de Parceiros; validar rótulos, limpeza, texto inválido e compatibilidade dos links antigos.
+- [x] T014a Histórico por data, filtros de pessoa/área/ação/período e painel lateral acessível.
+- [x] T014b Detalhes completos em linguagem simples, antes/depois e suporte técnico recolhido.
+- [x] T014c Validar permissões da busca de pessoas, tradução, filtros, teclado, celular e screenshots sintéticos; atualizar preview com limites de recursos.
+- [x] T014d Área/ação digitáveis e selecionáveis como o Estado de Parceiros; validar rótulos, limpeza, texto inválido e compatibilidade dos links antigos.
 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
@@ -78,7 +78,14 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 
 ## Retirada do armazenamento legado — 15/09/2026
 
-- [ ] SR01 Remover saída S3 das exportações e validar conteúdo privado/idempotência no PostgreSQL; evidências compartilhadas com a fundação.
+- [x] SR01 Remover saída S3 das exportações e validar conteúdo privado/idempotência no PostgreSQL; evidências compartilhadas com a fundação.
 # Andamento T014 — 15/09/2026
 
-Implementação na branch ativa: catálogo de frases e filtros em português, resumo de campos/acessos alterados, nomes consultados por página com users:read/roles:read, fallback neutro e detalhes técnicos originais. 262 testes unitários e 89 de contrato aprovados localmente; integração, E2E com screenshots e acessibilidade aguardam CI. T014 só será concluída após essas verificações.
+Primeira revisão substituída pelo histórico com painel de detalhes humanos. Validação final e evidências na seção de conclusão abaixo.
+
+## T014 concluída — 15/09/2026
+
+Histórico, detalhes humanos, nomes autorizados dos alvos e filtros digitáveis concluídos.
+CI final591cf00 /34976399886 aprovado:276unitários,94contratos,152integrações,62E2E,6a11y.
+Preview3107 atualizado com build remoto e conferido no Chrome, com banco e limites preservados.
+[Evidências finais](evidence/audit-readable-2026-09-15.md). US3 continua pendente; não ampliada nesta entrega.

@@ -37,3 +37,8 @@ leitura antes do reenvio são melhorias pendentes na US3 deste mesmo spec. A lis
 somente as 100 execuções recentes. Produção mantém pendências T089/T095. Não foi repetida a
 integração de banco: esta função não altera migrations nem serviços de persistência; contratos e E2E
 verificaram os fluxos reutilizados.
+
+## Evolução entregue em 15/09/2026
+
+[T014 — auditoria legível e filtros digitáveis](evidence/audit-readable-2026-09-15.md), com
+identificação autorizada dos alvos, antes/depois, suporte recolhido e CI final aprovado.

@@ -21,8 +21,8 @@ consulta bytes reais do banco, verifica redação e uma única cópia ao repetir
 ## Validação
 
 - Formatação, lint, tipos e integridade do diff aprovados localmente.
-- 253 unitários e 89 contratos aprovados (342 testes).
-- CI inicial de armazenamento aprovado: [34966205236](https://github.com/Komunick/caabnovo/actions/runs/34966205236). Verificação final conjunta com T014 ainda pendente.
+- CI final conjunto aprovado: [34976399886](https://github.com/Komunick/caabnovo/actions/runs/34976399886), commit591cf00.
+- 276 unitários, 94 contratos, 152 integrações, 62 E2E e 6 testes de acessibilidade aprovados.
 - Preview local reativado a pedido do usuário, com limites de memória/CPU; sem mudança no banco remoto.
 
 ## Preservação do preview local
