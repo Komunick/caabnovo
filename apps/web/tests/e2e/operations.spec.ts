@@ -6,6 +6,69 @@ const adminUrl =
   process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab";
 const origin = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
+test("operator filters and pages through jobs with keyboard, mobile and recoverable invalid URLs", async ({
+  page,
+}, testInfo) => {
+  const database = new Client({ connectionString: adminUrl });
+  await database.connect();
+  const jobType = `Verificação sintética ${crypto.randomUUID().slice(0, 8)}`;
+  try {
+    await database.query(
+      `INSERT INTO job_execution(job_type,queue_name,idempotency_key,correlation_id,status,attempt_limit,created_at)
+      SELECT $1,'synthetic-page',n::text,gen_random_uuid(),CASE WHEN n<=31 THEN 'failed'::job_status ELSE 'succeeded'::job_status END,3,
+        '2026-09-15T10:00:00.123456Z'::timestamptz FROM generate_series(1,34) n`,
+      [jobType],
+    );
+    await signIn(page);
+    await page.goto("/audit/jobs");
+    await page.getByLabel("Tipo", { exact: true }).fill(jobType);
+    await page.getByLabel("Estado", { exact: true }).selectOption("failed");
+    await page.getByRole("button", { name: "Aplicar filtros" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByText("25 processamentos nesta página.")).toBeVisible();
+    const firstIds = await page
+      .locator('tbody a[href^="/audit/jobs/"]')
+      .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+    await expectWcag22AA(page);
+    await page.screenshot({
+      path: testInfo.outputPath("jobs-filters-desktop.png"),
+      fullPage: true,
+    });
+    await page.getByRole("link", { name: "Próxima", exact: true }).click();
+    await expect(page.getByText("6 processamentos nesta página.")).toBeVisible();
+    await expect(page.getByLabel("Tipo", { exact: true })).toHaveValue(jobType);
+    await expect(page.getByLabel("Estado", { exact: true })).toHaveValue("failed");
+    const lastIds = await page
+      .locator('tbody a[href^="/audit/jobs/"]')
+      .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+    expect(new Set([...firstIds, ...lastIds]).size).toBe(31);
+    await expect(page.getByRole("link", { name: "Próxima", exact: true })).toHaveCount(0);
+    await page.getByRole("link", { name: "Primeira página" }).click();
+    await expect(page.getByText("25 processamentos nesta página.")).toBeVisible();
+    await page.getByLabel("Estado", { exact: true }).selectOption("succeeded");
+    await page.getByRole("button", { name: "Aplicar filtros" }).click();
+    await expect(page.getByText("3 processamentos nesta página.")).toBeVisible();
+    expect(new URL(page.url()).searchParams.has("cursor")).toBe(false);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ colorScheme: "dark" });
+    await expectWcag22AA(page);
+    await page.screenshot({ path: testInfo.outputPath("jobs-filters-mobile.png"), fullPage: true });
+    await page.getByLabel("Estado", { exact: true }).selectOption("running");
+    await page.getByRole("button", { name: "Aplicar filtros" }).click();
+    await expect(page.getByText("Nenhum processamento encontrado nesta consulta.")).toBeVisible();
+    await page.getByRole("link", { name: "Limpar filtros" }).click();
+    await expect(page.getByLabel("Tipo", { exact: true })).toHaveValue("");
+    await expect(page.getByLabel("Estado", { exact: true })).toHaveValue("");
+    await page.goto("/audit/jobs?cursor=invalid&status=failed");
+    await expect(page.getByRole("alert")).toContainText("inválidos");
+    await page.getByRole("link", { name: "Reiniciar consulta" }).click();
+    await expect(page.getByRole("heading", { name: "Processamentos", exact: true })).toBeVisible();
+  } finally {
+    await database.query("DELETE FROM job_execution WHERE job_type=$1", [jobType]);
+    await database.end();
+  }
+});
+
 async function signIn(page: import("@playwright/test").Page) {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.accessManager.email);

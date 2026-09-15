@@ -34,11 +34,11 @@
 
 ## US3 — Melhorias da função existente
 
-- [ ] T010 [US3] Complementar pesquisa e contrato de consulta em
+- [x] T010 [US3] Complementar pesquisa e contrato de consulta em
       `specs/003-audit-operations/research.md` e `contracts/navigation.md` antes do código.
-- [ ] T011 [US3] Exigir leitura antes de reenvio e testar negação sem mutação em
+- [x] T011 [US3] Exigir leitura antes de reenvio e testar negação sem mutação em
       `apps/web/modules/jobs/job-service.ts` e `job-service.test.ts` (programa T009).
-- [ ] T012 [US3] Implementar paginação estável e filtros no contrato, repositório, serviço e tela em
+- [x] T012 [US3] Implementar paginação estável e filtros no contrato, repositório, serviço e tela em
       `packages/contracts/src/jobs.ts`, `packages/db/src/repositories/job-execution.ts`,
       `apps/web/modules/jobs/job-service.ts` e `apps/web/app/(admin)/audit/jobs/page.tsx` (programa
       T010).

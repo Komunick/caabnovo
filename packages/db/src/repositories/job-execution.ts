@@ -152,3 +152,36 @@ export async function redriveJobExecution(
   );
   return result.rowCount === 1;
 }
+
+/** Input is validated by the jobs service before reaching the repository. */
+export async function listJobExecutions(
+  db: Queryable,
+  query: {
+    limit: number;
+    status?: JobExecutionRecord["status"];
+    jobType?: string;
+    cursor?: string;
+  },
+): Promise<{ items: JobExecutionRecord[]; nextCursor: string | null }> {
+  const [createdAt, id] = query.cursor?.split("|") ?? [];
+  const result = await db.query<JobExecutionRecord & { cursorCreatedAt: string }>(
+    `SELECT id, job_type AS "jobType", status, progress, attempt_count AS "attemptCount",
+       attempt_limit AS "attemptLimit", safe_error_code AS "safeErrorCode",
+       safe_error_message AS "safeErrorMessage", created_at AS "createdAt",
+       finished_at AS "finishedAt", correlation_id AS "correlationId",
+       to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "cursorCreatedAt"
+     FROM job_execution
+     WHERE ($1::job_status IS NULL OR status = $1::job_status)
+       AND ($2::text IS NULL OR job_type = $2)
+       AND ($3::timestamptz IS NULL OR (created_at, id) < ($3::timestamptz, $4::uuid))
+     ORDER BY created_at DESC, id DESC LIMIT $5`,
+    [query.status ?? null, query.jobType ?? null, createdAt ?? null, id ?? null, query.limit + 1],
+  );
+  const items = result.rows.slice(0, query.limit);
+  const last = items.at(-1);
+  return {
+    items,
+    nextCursor:
+      result.rows.length > query.limit && last ? `${last.cursorCreatedAt}|${last.id}` : null,
+  };
+}

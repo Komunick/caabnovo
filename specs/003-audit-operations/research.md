@@ -1,5 +1,22 @@
 # Pesquisa da fusão
 
+## Processamentos US3 — pesquisa de 15/09/2026
+
+Fontes oficiais consultadas antes do código:
+
+- [AWS Step Functions, ListExecutions](https://docs.aws.amazon.com/step-functions/latest/apireference/API_ListExecutions.html): consulta operacional por estado, resultados recentes primeiro e continuação mantendo filtros.
+- [PostgreSQL, LIMIT/OFFSET](https://www.postgresql.org/docs/current/queries-limit.html): paginação requer ordem única; grandes offsets ainda calculam registros descartados.
+- [OWASP, Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html): validar autorização em cada requisição, negar por padrão e testar controles.
+
+Decisão: cursor por created_at/id decrescentes, 25 registros por padrão e máximo 100;
+filtros exatos de estado e tipo no servidor; próxima página e retorno ao início mantêm
+filtros. Preservar microssegundos do PostgreSQL no cursor, sem conversão intermediária
+para Date. Consulta é ao estado atual, sem promessa de snapshot se um worker alterar
+estados entre páginas. Tipos existentes continuam consultáveis por campo digitável.
+Verificar jobs:read e jobs:redrive no serviço e na rota antes de iniciar fila/transação.
+Sem nova API pública, tabela, dependência ou política de retry. Fontes são referências
+de desenho, sem integração AWS nem adoção de suas regras de expiração de tokens.
+
 Decisão, racional, alternativas e revisão técnica em
 [pesquisa do programa](../002-integrated-modules/research.md). Somente código do projeto novo.
 

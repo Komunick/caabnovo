@@ -1,10 +1,10 @@
 # Feature Specification: Auditoria e Processamentos
 
-**Feature Branch**: `feature/product-direction`
+**Feature Branch**: `feature/processamentos-20260915` (US3; histórico da fusão preservado)
 
 **Created**: 2026-09-09
 
-**Status**: Fusão implementada e validada localmente; melhorias de Processamentos planejadas.
+**Status**: Fusão entregue; US3 implementada, em validação no CI.
 
 **Input**: Fundir Operações com Auditoria; um spec próprio para cada nova funcionalidade.
 **Programa**: [Módulos integrados](../002-integrated-modules/plan.md), US1/T005–T011.
@@ -34,7 +34,7 @@ abrir URL anterior de lista/detalhe e realizar o fluxo autorizado de reenvio/exp
 **Acceptance Scenarios**:
 
 1. Favorito antigo de processamento chega ao mesmo registro na área nova.
-2. Reenvio exige sua permissão/justificativa; a fusão não concede esse direito ao leitor de eventos.
+2. Reenvio exige leitura e permissão de reenvio, sem justificativa; a fusão não concede esse direito ao leitor de eventos.
 3. Exportação autorizada não passa a exigir leitura de jobs.
 4. Identificador inválido ou inexistente produz a resposta segura existente.
 
@@ -55,7 +55,11 @@ mudança persistida.
 1. Próxima página mantém os filtros e permite alcançar uma execução antiga.
 2. Paginação possui ordenação estável e não repete registros em um conjunto sem alterações.
 3. Perfil somente de reenvio recebe negação sem enfileirar trabalho nem alterar a execução.
-4. Perfil com leitura e reenvio mantém o fluxo autorizado com justificativa.
+4. Perfil com leitura e reenvio mantém o fluxo autorizado sem justificativa obrigatória.
+5. Filtros combinados reiniciam a consulta; próxima página e primeira página preservam os filtros.
+6. URL inválida mostra aviso recuperável; consulta vazia informa ausência de resultados.
+7. Tipos conhecidos aparecem em português, incluindo sugestões digitáveis; tipos históricos continuam consultáveis por seu nome exato.
+8. Reenvios concorrentes geram somente um enfileiramento/auditoria; falha de fila desfaz a alteração, e limite de tentativas permanece.
 
 ## Requirements
 
@@ -94,8 +98,8 @@ cadastro nem fusão de eventos com execuções.
 
 Reutilizar serviços/persistência/permissões atuais. Sem migração ou mudança institucional ou
 validação manual repetida do PR #10. Paginação/filtros de jobs e ajuste da pré-condição do reenvio
-são evoluções desta função, registradas neste mesmo spec conforme instrução de 09/09/2026. Ainda não
-foram implementadas; não invalidam nem repetem a evidência da fusão já concluída.
+são evoluções desta função, registradas neste mesmo spec conforme instrução de 09/09/2026.
+Implementadas na US3 de 15/09; sua evidência complementa a fusão já concluída.
 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
