@@ -5,6 +5,11 @@
 
 ## Summary
 
+Revisão de integração da spec 008 em 15/09/2026: retirar Agendamentos das áreas
+futuras da home, incluir seu título no cabeçalho e manter cor/fundo do menu da
+conta no mesmo tema. Preservar transição de borda; ampliar o teste de contraste
+durante a troca de temas com os textos do perfil, além do Axe da jornada.
+
 Escopo integrado em monólito modular. PRs acompanham funções/specs concluídos, conforme orientação
 de 09/09/2026. Começar pela fusão de navegação Auditoria/Processamentos, sem migração nem ampliação de
 permissões. Demais domínios seguem dependências e regras institucionais definidas, nunca inventadas.
@@ -67,7 +72,32 @@ módulos já implementados. Sem packages ou tabelas genéricas para antecipar ab
 
 ## Implementation Sequence
 
+### Próxima etapa após Agendamentos — decisão de 15/09/2026
+
+Após concluir e validar a primeira versão funcional do módulo de Agendamentos no
+painel (etapa 1 da spec 008), o próximo passo será a **primeira versão da interface
+do usuário no app e no site**. Essa etapa tem prioridade sobre as demais expansões
+de Agendamentos e sobre Mensagens, Créditos, Portal do Parceiro e Relatórios.
+
+A interface do usuário terá spec, plano, tarefas e critérios de aceite próprios
+antes da implementação, reutilizando os dados e serviços do painel. O recorte de
+telas, jornadas, identidade/autenticação e contratos dos dois canais será definido
+nessa preparação; a integração de reservas permanece coordenada com a spec 008.
+Não é necessário concluir toda a equivalência com o legado para iniciar essa etapa.
+Esta decisão fixa a sequência; não inicia a implementação do app/site neste pedido.
+CAASSH permanece desativado e pendente de revisão.
+
 ### Agendamentos — direção vigente em 15/09/2026
+
+**Atualização posterior:** planejamento próprio na [spec 008](../008-scheduling-management/plan.md)
+com três etapas e primeira entrega administrativa confirmada pelo usuário. Ver
+[tarefas](../008-scheduling-management/tasks.md); não executar T022–T026 antigas.
+Spec e primeira versão administrativa implementadas; gates finais em validação. As instruções de brainstorming abaixo são histórico das etapas posteriores.
+
+Separar funcionalidades comprovadas no legado de sugestões novas; o usuário
+citou controle de salas como sugestão. Não promover opções da pesquisa a requisitos.
+Detalhar gerenciamento de horários a partir do [inventário](horarios-legado-2026-09-15.md),
+conferindo diferenças entre configuração, cálculo de horários e confirmação da reserva.
 
 Brainstorming/pesquisa: CAAB administra pelo painel a oferta de reservas do app/site.
 Qualquer pessoa com acesso válido ao painel pode fazer alterações em Agendamentos,
@@ -119,10 +149,13 @@ paginação/filtros de jobs e pré-condição de reenvio, atualizam o spec exist
 2. US2 e US6: Conteúdo e Equipe reaproveitam autenticação/arquivos; verificar CMS e política
    editorial.
 3. US3 e US5: Pessoas e Benefícios estabelecem identidades, vínculos e condições.
-4. US4: Oferta/disponibilidade e operação de atendimentos sobre Pessoas; concorrência em banco real.
-5. US7, US8 e US9: Mensagens, Créditos e Portal sobre cadastros e políticas confirmados.
-6. US10: Pendências e relatórios dos registros reais dos domínios.
-7. Validar cada função antes do seu PR; concluir validação cruzada de US1–US10 antes de liberar o conjunto.
+4. US4/spec 008: concluir e validar a primeira versão funcional de Agendamentos no painel.
+5. Primeira versão da interface do usuário no app/site: próximo passo imediato, com
+   especificação própria e integração aos mesmos dados e serviços.
+6. Retomar demais expansões de Agendamentos e US7/US9 (Mensagens e Portal) conforme
+   prioridades e regras confirmadas; US8/Créditos permanece suspensa até nova decisão.
+7. US10: Pendências e relatórios dos registros reais dos domínios.
+8. Validar cada função antes do seu PR; concluir validação cruzada das funções liberadas.
 
 Cada história segue contrato/modelo → testes de invariantes → serviço → UI → integração → evidência.
 O usuário autorizou começar a implementação enquanto o plano completo é mantido, sem aguardar regras

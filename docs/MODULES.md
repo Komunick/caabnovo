@@ -1,4 +1,14 @@
 # Módulos e responsabilidades — entrega integrada
+## Agendamentos — implementação da etapa 1 em 15/09/2026
+
+A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
+oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
+e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
+[evidências](../specs/008-scheduling-management/evidence/release-review.md).
+Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
+Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
+primeira interface do usuário no app/site; CAASSH continua desativado.
 
 Atualizado em 09/09/2026 por orientação do responsável: incluir todos os módulos no escopo da mesma
 entrega, reaproveitar a fundação e fundir Operações com Auditoria. Melhorias posteriores não
@@ -193,6 +203,10 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
 ## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+
+**Planejamento incremental em 15/09:** [spec 008](../specs/008-scheduling-management/spec.md)
+passa a responder por Agendamentos: primeiro painel básico funcional, depois legado
+com app/site, por último novas funções escolhidas. Sem implementação nesta etapa.
 
 **Atualização de Agendamentos em 15/09/2026:** administração pela CAAB da oferta e
 das reservas do app/site. Qualquer pessoa com acesso válido ao painel administrativo

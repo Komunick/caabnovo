@@ -1503,9 +1503,8 @@ body {
   border: 1px solid rgb(255 255 255 / 8%);
   border-radius: 0.85rem;
   background: var(--color-sidebar-hover);
-  transition:
-    border-color 180ms ease,
-    background 180ms ease;
+  /* Keep foreground and background in the same theme throughout the change. */
+  transition: border-color 180ms ease;
   border-color: var(--color-border);
 }
 
@@ -4684,4 +4683,91 @@ thead th {
 }
 .page-loading__skeleton span:last-child {
   width: 65%;
+}
+:root .scheduling-workspace {
+  min-width: 0;
+}
+.scheduling-workspace .panel,
+.scheduling-workspace fieldset {
+  min-width: 0;
+}
+.scheduling-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.scheduling-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.scheduling-actions a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.scheduling-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+.scheduling-choice,
+.scheduling-day {
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+.scheduling-choice legend,
+.scheduling-day legend {
+  font-weight: 650;
+  padding: 0 0.25rem;
+}
+.scheduling-choice .scheduling-actions {
+  font-size: 0.8rem;
+}
+.scheduling-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+.scheduling-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 0;
+  overflow-wrap: anywhere;
+}
+.scheduling-list li > div {
+  flex: 1 1 220px;
+}
+.scheduling-list p,
+.scheduling-history p {
+  margin: 0.3rem 0;
+}
+.scheduling-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 1rem;
+}
+.scheduling-details dt {
+  font-weight: 650;
+}
+.scheduling-details dd {
+  margin: 0.3rem 0;
+  overflow-wrap: anywhere;
+}
+.scheduling-history {
+  padding-left: 1.5rem;
+}
+.scheduling-history li {
+  padding: 0.75rem 0;
+  overflow-wrap: anywhere;
 }

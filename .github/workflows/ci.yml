@@ -99,6 +99,14 @@ jobs:
           pnpm db:seed:dev
           pnpm dev:worker > /tmp/caab-e2e-worker.log 2>&1 &
       - run: pnpm test:e2e --project=chromium
+      - name: Preserve scheduling review evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scheduling-synthetic-evidence
+          path: apps/web/test-results/scheduling-*/**
+          retention-days: 7
+          if-no-files-found: warn
       - name: Preserve synthetic OAB screenshots
         if: always()
         uses: actions/upload-artifact@v7

@@ -13,7 +13,36 @@ existentes atualizam seus próprios specs; não criam novas especificações.
 
 ## User Scenarios & Testing
 
+### Integração da agenda e contraste — 15/09/2026
+
+O cabeçalho identifica Agendamentos nas rotas /scheduling. O menu da conta deve
+manter contraste legível também durante a troca de tema, sem animar seu fundo
+separadamente dos textos. Essa correção compartilhada foi identificada no E2E da spec 008.
+
+### Prioridade após Agendamentos — 15/09/2026
+
+Decisão do usuário: após a primeira versão funcional de Agendamentos no painel,
+o próximo passo será a primeira versão da interface do usuário no app/site.
+Essa etapa terá especificação própria antes do código e prioridade sobre as demais
+expansões e módulos ainda pendentes. Reutilizar os dados e serviços existentes;
+detalhar jornadas e contratos dos canais sem duplicar cadastros. Ver a sequência
+vigente em [plan.md](plan.md). Este registro autoriza o planejamento da prioridade,
+sem iniciar implementação ou alterar a suspensão de CAASSH.
+
 ### Definições vigentes de Agendamentos — 15/09/2026
+
+**Planejamento incremental posterior:** a função agora tem spec própria
+[008 — Agendamentos](../008-scheduling-management/spec.md). Etapa 1: operação
+funcional no painel com oferta e horários, criação, consulta, remarcação e cancelamento.
+Etapa 2: equivalência com legado e conexão real ao app/site. Etapa 3: novas funções
+selecionadas entre sugestões. Etapa 1 implementada e em validação; 002 mantém o mapa.
+
+Correção posterior do usuário: funcionalidades ausentes do site antigo ficam como
+sugestões (exemplo: controle de salas), sem aprovação implícita pela pesquisa.
+Gerenciamento de horários deve explicitar funcionamento, expediente, almoço,
+indisponibilidades, agenda extra, antecedência e janela de reservas. Conferir o
+[inventário do legado](horarios-legado-2026-09-15.md); presença no código não comprova
+funcionamento publicado nem aprova a cópia de regras ou falhas antigas.
 
 US4 administra pela CAAB o serviço de agendamentos do app/site. Qualquer pessoa
 com acesso válido ao painel administrativo pode consultar e alterar o módulo,
@@ -28,7 +57,7 @@ Esta decisão substitui a hipótese de administração independente por profissi
 
 Ver [decisões do brainstorming](brainstorming-agendamentos.md) e
 [pesquisa complementar](pesquisa-gestao-agendamentos-2026-09-15.md).
-Ainda sem implementação autorizada; T022–T026 continuam suspensas. A futura spec
+Primeira entrega autorizada pela spec 008; T022–T026 antigas continuam suspensas. A spec
 deve validar acesso ao módulo por qualquer conta com acesso administrativo válido,
 recusa sem esse acesso e auditoria de alterações, sem inventar concessão de Agendamentos.
 
@@ -155,4 +184,4 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos segue agora a entrega incremental da spec 008; OAB-BA permanece pendente da hospedagem.

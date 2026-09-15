@@ -1,0 +1,160 @@
+"use client";
+import { useState } from "react";
+import type { SchedulingBooking, SchedulingEvent, SchedulingPage } from "@caab/contracts";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { BookingForm } from "./booking-form";
+import {
+  DataState,
+  Pagination,
+  SchedulingShell,
+  dateTimeLabel,
+  useSchedulingData,
+  useSchedulingMutation,
+} from "./shared";
+type Details = { booking: SchedulingBooking; history: SchedulingPage<SchedulingEvent> };
+export function SchedulingBookingDetail({ id }: { id: string }) {
+  const [page, setPage] = useState(1);
+  const [rescheduling, setRescheduling] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [notice, setNotice] = useState("");
+  const result = useSchedulingData<Details>(`bookings/${id}?page=${page}`);
+  const mutation = useSchedulingMutation();
+  const booking = result.data?.booking;
+  async function cancel() {
+    if (
+      booking &&
+      (await mutation.mutate(`bookings/${id}/cancel`, "POST", { expectedVersion: booking.version }))
+    ) {
+      setCancelOpen(false);
+      setNotice("Reserva cancelada. O horário foi liberado.");
+      setRescheduling(false);
+      result.reload();
+    }
+  }
+  return (
+    <SchedulingShell
+      title="Detalhes da reserva"
+      description="Confira o atendimento e o histórico de alterações."
+    >
+      {notice && <p role="status">{notice}</p>}
+      {booking && result.data ? (
+        <>
+          <section className="panel page-stack">
+            <h2>{booking.memberName}</h2>
+            <dl className="scheduling-details">
+              <div>
+                <dt>Atendimento</dt>
+                <dd>
+                  {booking.procedureName} · {booking.durationMinutes} min
+                </dd>
+              </div>
+              <div>
+                <dt>Início</dt>
+                <dd>{dateTimeLabel(booking.startsAt)}</dd>
+              </div>
+              <div>
+                <dt>Fim</dt>
+                <dd>{dateTimeLabel(booking.endsAt)}</dd>
+              </div>
+              <div>
+                <dt>Unidade e serviço</dt>
+                <dd>
+                  {booking.unitName} · {booking.serviceName}
+                </dd>
+              </div>
+              <div>
+                <dt>Profissional</dt>
+                <dd>{booking.professionalName}</dd>
+              </div>
+              <div>
+                <dt>Estado</dt>
+                <dd>{booking.status === "scheduled" ? "Agendado" : "Cancelado"}</dd>
+              </div>
+            </dl>
+            {booking.status === "scheduled" && new Date(booking.startsAt).getTime() > Date.now() ? (
+              <div className="scheduling-actions">
+                <Button onClick={() => setRescheduling((value) => !value)}>
+                  {rescheduling ? "Fechar remarcação" : "Remarcar"}
+                </Button>
+                <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+                  <DialogTrigger asChild>
+                    <Button intent="danger">Cancelar reserva</Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    title="Cancelar esta reserva?"
+                    description={`${booking.memberName} · ${booking.procedureName} · ${dateTimeLabel(booking.startsAt)}. O horário ficará disponível e o histórico será preservado.`}
+                  >
+                    {mutation.error && <p role="alert">{mutation.error}</p>}
+                    <div className="scheduling-actions">
+                      <DialogClose asChild>
+                        <Button disabled={mutation.pending}>Manter reserva</Button>
+                      </DialogClose>
+                      <Button intent="danger" disabled={mutation.pending} onClick={cancel}>
+                        {mutation.pending ? "Cancelando…" : "Confirmar cancelamento"}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            ) : (
+              <p>Esta reserva não permite novas alterações.</p>
+            )}
+          </section>
+          {rescheduling && (
+            <section className="panel">
+              <h2>Remarcar atendimento</h2>
+              <BookingForm
+                key={booking.version}
+                booking={booking}
+                onSaved={() => {
+                  setRescheduling(false);
+                  setNotice("Reserva remarcada.");
+                  setPage(1);
+                  result.reload();
+                }}
+              />
+            </section>
+          )}
+          <section className="panel">
+            <h2>Histórico</h2>
+            <ol className="scheduling-history">
+              {result.data.history.items.map((event) => (
+                <li key={event.id}>
+                  <strong>
+                    {
+                      {
+                        created: "Reserva criada",
+                        rescheduled: "Reserva remarcada",
+                        cancelled: "Reserva cancelada",
+                      }[event.action]
+                    }
+                  </strong>
+                  <p>
+                    {dateTimeLabel(event.occurredAt)} · {event.actorName}
+                  </p>
+                  {event.before?.startsAt && (
+                    <p>
+                      Antes: {dateTimeLabel(event.before.startsAt)} ·{" "}
+                      {event.before.professionalName} · {event.before.procedureName}
+                    </p>
+                  )}
+                  {event.after.startsAt && (
+                    <p>
+                      {event.action === "cancelled" ? "Horário liberado" : "Atendimento"}:{" "}
+                      {dateTimeLabel(event.after.startsAt)} · {event.after.professionalName} ·{" "}
+                      {event.after.procedureName}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ol>
+            <Pagination {...result.data.history} onPage={setPage} />
+          </section>
+        </>
+      ) : (
+        <DataState error={result.error} reload={result.reload} />
+      )}
+    </SchedulingShell>
+  );
+}

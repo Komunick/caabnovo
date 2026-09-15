@@ -1,4 +1,14 @@
 # CAAB — Sistema Interno de Gestão
+## Agendamentos — implementação da etapa 1 em 15/09/2026
+
+A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
+oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
+e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
+[evidências](../specs/008-scheduling-management/evidence/release-review.md).
+Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
+Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
+primeira interface do usuário no app/site; CAASSH continua desativado.
 
 ## 1. Controle do documento
 
@@ -13,6 +23,14 @@
 **Data:** 09/09/2026
 
 **Escopo desta versão:** todos os módulos do painel e portal do parceiro
+
+**Prioridade atualizada em 15/09/2026:** após concluir e validar a primeira versão
+funcional de Agendamentos no painel, o próximo passo será a primeira versão da
+interface do usuário no app/site, antes das demais expansões e módulos pendentes.
+Essa etapa terá spec, plano, tarefas e critérios próprios, reutilizando os dados e
+serviços do painel. A exclusão de refazer app/site na seção 5 limita a entrega
+administrativa inicial; não exclui essa próxima etapa confirmada do produto.
+Ver [sequência vigente](../specs/002-integrated-modules/plan.md).
 
 O aplicativo e o site externo participam do desenho dos contratos de conteúdo, benefícios, cadastro,
 credencial, agenda e mensagens. Alterações nesses consumidores, contratação de serviços e migração

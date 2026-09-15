@@ -1,4 +1,14 @@
 # CAAB — Referência de Stack e Arquitetura
+## Agendamentos — implementação da etapa 1 em 15/09/2026
+
+A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
+oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
+e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
+[evidências](../specs/008-scheduling-management/evidence/release-review.md).
+Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
+Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
+primeira interface do usuário no app/site; CAASSH continua desativado.
 
 ## 1. Contexto
 
@@ -119,6 +129,10 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 ## 7. Agenda
 
 ### 7.1 Decisão
+
+Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md):
+primeira entrega usa lista diária com componentes existentes. FullCalendar citado
+abaixo é opção para evolução visual; não adicionar biblioteca de calendário no básico.
 
 Direção: avaliar núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário
 em 15/09/2026: Cal.com é referência de pesquisa e **não deve ser integrado, salvo

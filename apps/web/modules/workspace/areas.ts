@@ -1,4 +1,5 @@
 import {
+  CalendarDays,
   ContactRound,
   FileClock,
   House,
@@ -32,6 +33,15 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       keywords: "dashboard visão geral",
       icon: House,
       paths: ["/"],
+    },
+    {
+      id: "scheduling",
+      href: "/scheduling",
+      label: "Agendamentos",
+      description: "Configure atendimentos e gerencie reservas.",
+      keywords: "agenda agendamentos reservas horários procedimentos profissionais atendimento",
+      icon: CalendarDays,
+      paths: ["/scheduling"],
     },
   ];
   if (allowed.has(PERMISSIONS.newsRead)) {

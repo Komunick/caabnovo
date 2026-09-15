@@ -1,5 +1,11 @@
 # Tasks: Associados
 
+## Coordenação com Agendamentos — 15/09/2026
+
+- [x] AE01 Compartilhar lock transacional e projeção mínima de elegibilidade com spec 008.
+- [x] AE02 Preservar regras/permissões do módulo e cobrir cadeias de titulares vigentes.
+- [x] AE03 Validar bloqueio/vínculo/desvínculo concorrentes reais no CI e registrar evidências da spec 008.
+
 ## Incremento: foto de perfil — branch feature/member-profile-photo
 
 **Status: PRONTO — aceite explícito do usuário em 11/09/2026.** A foto pertence ao

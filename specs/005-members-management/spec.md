@@ -1,5 +1,13 @@
 # Feature Specification: Associados e dependentes
 
+## Coordenação com Agendamentos — 15/09/2026
+
+Bloqueio, desbloqueio, ativação, arquivo/restauração e mudanças de vínculos usam
+o mesmo lock transacional das confirmações de reservas (spec 008). A confirmação
+relê bloqueio próprio e de titulares vigentes após obter o lock. Isso não altera
+permissões ou regras de Associados. A busca da agenda expõe somente nome, ano
+de nascimento e OAB; documentos, CPF, contato e finanças continuam protegidos.
+
 **Feature Branch**: `feature/members-management`
 **Created**: 2026-09-09
 **Status**: Pronto conforme confirmação do usuário em 11/09/2026; preparação do PR autorizada.

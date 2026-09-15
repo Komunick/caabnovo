@@ -17,6 +17,30 @@ export type WorkspaceDestination = Pick<
 // Only implemented destinations. Contextual tasks explicitly ask the person to choose a record.
 const functions: readonly FunctionDefinition[] = [
   {
+    id: "scheduling-new",
+    area: "scheduling",
+    href: "/scheduling/new",
+    label: "Criar reserva",
+    description: "Escolha o beneficiário e uma vaga de atendimento.",
+    keywords: "novo agendar reservar consulta atendimento",
+  },
+  {
+    id: "scheduling-catalog",
+    area: "scheduling",
+    href: "/scheduling/catalog",
+    label: "Oferta de atendimento",
+    description: "Cadastre unidades, serviços, procedimentos e profissionais.",
+    keywords: "catálogo configurar habilitar profissional duração",
+  },
+  {
+    id: "scheduling-hours",
+    area: "scheduling",
+    href: "/scheduling/hours",
+    label: "Horários de atendimento",
+    description: "Configure expediente, jornada e almoço.",
+    keywords: "horas dias semanais intervalo disponibilidade almoço",
+  },
+  {
     id: "user-disable",
     area: "users",
     href: "/users",

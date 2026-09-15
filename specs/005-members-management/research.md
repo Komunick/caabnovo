@@ -1,5 +1,15 @@
 # Pesquisa — 09/09/2026
 
+## Revisão de concorrência — 15/09/2026
+
+Fonte oficial reconsultada antes da implementação da spec 008:
+[PostgreSQL — locks explícitos](https://www.postgresql.org/docs/current/explicit-locking.html).
+Decisão: reutilizar o advisory lock transacional dos vínculos para os comandos de
+estado e confirmação de reservas. Locks somente na reserva não impediriam leitura
+obsoleta quando outro operador bloqueasse um titular ou alterasse um vínculo.
+Limite: escritas curtas serializadas no recorte inicial; sem mudar autorizações,
+sem regra nova de bloqueio e sem trazer dados completos para a agenda.
+
 Pesquisa documental oficial, sem teste de interfaces comerciais nem acesso ao legado.
 
 ## Foto de perfil — pesquisa de 11/09/2026

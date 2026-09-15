@@ -1,5 +1,13 @@
 # Implementation Plan: Associados
 
+## Coordenação com Agendamentos — 15/09/2026
+
+Extrair o lock de vínculos 5010/1 para lockMemberEligibility no repositório.
+Usá-lo antes dos locks de linhas em todos os comandos que alteram a elegibilidade
+consumida pela agenda. Adicionar findSchedulingBeneficiary, sem mudar o contrato
+findMemberSummary. Testar bloqueio próprio/ancestral, vínculo futuro/encerrado e
+comandos concorrentes reais em tests/integration/scheduling.test.ts.
+
 Branch `feature/members-management` · 2026-09-09 · [Spec](spec.md)
 
 ## Summary
