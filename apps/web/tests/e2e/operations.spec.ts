@@ -51,6 +51,21 @@ test("operator filters and pages through jobs with keyboard, mobile and recovera
     expect(new URL(page.url()).searchParams.has("cursor")).toBe(false);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ colorScheme: "dark" });
+    const tableScroll = page.getByLabel("Tabela de processamentos recentes");
+    expect(await tableScroll.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+      true,
+    );
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    await tableScroll.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect
+      .poll(() => tableScroll.evaluate((element) => element.scrollLeft))
+      .toBeGreaterThan(0);
+    await tableScroll.evaluate((element) => {
+      element.scrollLeft = 0;
+    });
     await expectWcag22AA(page);
     await page.screenshot({ path: testInfo.outputPath("jobs-filters-mobile.png"), fullPage: true });
     await page.getByLabel("Estado", { exact: true }).selectOption("running");
@@ -60,7 +75,9 @@ test("operator filters and pages through jobs with keyboard, mobile and recovera
     await expect(page.getByLabel("Tipo", { exact: true })).toHaveValue("");
     await expect(page.getByLabel("Estado", { exact: true })).toHaveValue("");
     await page.goto("/audit/jobs?cursor=invalid&status=failed");
-    await expect(page.getByRole("alert")).toContainText("inválidos");
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Os filtros ou a página informada" }),
+    ).toBeVisible();
     await page.getByRole("link", { name: "Reiniciar consulta" }).click();
     await expect(page.getByRole("heading", { name: "Processamentos", exact: true })).toBeVisible();
   } finally {

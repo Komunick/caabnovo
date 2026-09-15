@@ -111,7 +111,7 @@ export default async function JobsPage({
           </datalist>
         </div>
         <input type="hidden" name="limit" value={query.limit} />
-        <div className="form-actions">
+        <div className="jobs-filter-actions">
           <Button type="submit" intent="primary">
             Aplicar filtros
           </Button>
@@ -120,7 +120,7 @@ export default async function JobsPage({
           </Link>
         </div>
       </Form>
-      <section className="panel" aria-labelledby="job-list-title">
+      <section className="panel jobs-panel" aria-labelledby="job-list-title">
         <h2 id="job-list-title">Execuções</h2>
         <p>
           {jobs.length} {jobs.length === 1 ? "processamento" : "processamentos"} nesta página.
@@ -128,7 +128,7 @@ export default async function JobsPage({
         {jobs.length === 0 ? <p>Nenhum processamento encontrado nesta consulta.</p> : null}
         {jobs.length > 0 ? (
           <TableContainer aria-label="Tabela de processamentos recentes">
-            <Table caption="Processamentos recentes">
+            <Table className="jobs-table" caption="Processamentos recentes">
               <thead>
                 <tr>
                   <th scope="col">Tipo</th>
