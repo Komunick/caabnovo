@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-09
 
-**Status**: Fusão entregue; US3 implementada, em validação no CI.
+**Status**: Fusão entregue; US3 implementada e validada no CI em 15/09/2026.
 
 **Input**: Fundir Operações com Auditoria; um spec próprio para cada nova funcionalidade.
 **Programa**: [Módulos integrados](../002-integrated-modules/plan.md), US1/T005–T011.
