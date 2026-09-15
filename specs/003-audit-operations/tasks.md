@@ -60,7 +60,11 @@ testes de histórias se encontram na verificação; execução local sequencial.
       criação/alteração/desativação de colaboradores e demais ações registradas; conferir
       leitura visual, filtros e ausência de exposição de dados restritos.
 
-T014 registrada para implementação posterior, a pedido do usuário; não faz parte da harmonização visual atual.
+T014 autorizada em 15/09/2026 e reformulada após a revisão do usuário; integra o ciclo ativo.
+
+- [ ] T014a Histórico por data, filtros de pessoa/área/ação/período e painel lateral acessível.
+- [ ] T014b Detalhes completos em linguagem simples, antes/depois e suporte técnico recolhido.
+- [ ] T014c Validar permissões da busca de pessoas, tradução, filtros, teclado, celular e screenshots sintéticos; atualizar preview com limites de recursos.
 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026

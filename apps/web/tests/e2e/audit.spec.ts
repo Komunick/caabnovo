@@ -25,9 +25,10 @@ test("auditor searches combined filters and starts an authorized export", async 
   ).toHaveCount(0);
   await expectWcag22AA(page);
 
-  await page.getByLabel("Ação", { exact: true }).selectOption("user.updated");
-  await page.getByRole("button", { name: /^Filtros/ }).click();
+  await expect(page.getByRole("combobox", { name: "Pessoa", exact: true })).toHaveCount(0);
+  expect((await page.request.get("/api/v1/audit-actors?q=Gestor")).status()).toBe(403);
   await page.getByLabel("Área", { exact: true }).selectOption("user");
+  await page.getByLabel("Ação", { exact: true }).selectOption("user.updated");
   await page.getByRole("button", { name: "Aplicar filtros" }).click();
   await expect(
     page
@@ -38,9 +39,17 @@ test("auditor searches combined filters and starts an authorized export", async 
       .first(),
   ).toBeVisible();
   await expect(page.getByText("user.updated", { exact: true }).first()).toBeHidden();
-  await page.getByText("Detalhes técnicos", { exact: true }).first().click();
-  await expect(page.getByText("user.updated", { exact: true }).first()).toBeVisible();
+  await page
+    .getByRole("button", { name: /^Ver atividade:/ })
+    .first()
+    .click();
+  const detail = page.getByRole("dialog", { name: "Detalhes da atividade" });
+  await expect(detail.getByRole("heading", { name: "O que foi registrado" })).toBeVisible();
+  await expect(detail.getByText("user.updated", { exact: true })).toBeHidden();
+  await detail.getByText("Informações para suporte", { exact: true }).click();
+  await expect(detail.getByText("user.updated", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Editar|Excluir/ })).toHaveCount(0);
+  await page.keyboard.press("Escape");
 
   await page.getByRole("button", { name: "Exportar auditoria" }).click();
   await expect(page.getByLabel("Justificativa da exportação")).toHaveCount(0);
@@ -73,7 +82,7 @@ test("ordinary user cannot access audit search or export", async ({ page }) => {
   await expect(page.getByText("Você não tem permissão para acessar processamentos.")).toBeVisible();
 });
 
-test("authorized administrator reads plain descriptions and opens original details on mobile", async ({
+test("administrator reads complete human details with support codes collapsed on desktop and mobile", async ({
   page,
 }, testInfo) => {
   await signIn(page, syntheticUsers.administrator.email, syntheticUsers.administrator.password);
@@ -83,27 +92,49 @@ test("authorized administrator reads plain descriptions and opens original detai
   await expect(page.getByText("user.updated", { exact: true }).first()).toBeHidden();
   await expectWcag22AA(page);
   await page.screenshot({ path: testInfo.outputPath("audit-plain-desktop.png"), fullPage: true });
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  const person = page.getByRole("combobox", { name: "Pessoa", exact: true });
+  await person.fill("Gestor de Acesso");
+  await expect(
+    page.getByRole("option", { name: "Gestor de Acesso Sintético", exact: true }),
+  ).toBeVisible();
+  await person.press("ArrowDown");
+  await person.press("Enter");
+  await page.getByLabel("Período", { exact: true }).selectOption("week");
+  await page.getByRole("button", { name: "Aplicar filtros" }).click();
+  await expect(page).toHaveURL(/actorId=/);
+  await expect(page).toHaveURL(/period=week/);
   const details = page
-    .getByText(description, { exact: true })
-    .first()
-    .locator("xpath=ancestor::tr")
-    .locator("summary");
+    .getByRole("button", { name: `Ver atividade: ${description}`, exact: true })
+    .first();
   await details.focus();
   await page.keyboard.press("Enter");
-  await expect(
-    page
-      .getByText(description, { exact: true })
-      .first()
-      .locator("xpath=ancestor::tr")
-      .getByText("user.updated", { exact: true }),
-  ).toBeVisible();
+  const panel = page.getByRole("dialog", { name: "Detalhes da atividade" });
+  await expect(panel).toBeVisible();
+  await expect(panel.getByText("Antes", { exact: true }).first()).toBeVisible();
+  await expect(panel.getByText("Depois", { exact: true }).first()).toBeVisible();
+  await expect(panel.getByText("Nome anterior sintético", { exact: true })).toBeVisible();
+  await expect(panel.getByText("user.updated", { exact: true })).toBeHidden();
+  await expect(panel.locator("pre").first()).toBeHidden();
+  expect(await panel.innerText()).not.toMatch(/roleId|requestId|[0-9a-f]{8}-[0-9a-f]{4}-/);
   await expectWcag22AA(page);
-  const descriptionCell = page.getByText(description, { exact: true }).first().locator("..");
-  expect(
-    await descriptionCell.evaluate((element) => element.getBoundingClientRect().width),
-  ).toBeGreaterThan(250);
+  await page.screenshot({
+    path: testInfo.outputPath("audit-plain-detail-desktop.png"),
+    fullPage: true,
+  });
+  await page.keyboard.press("Escape");
+  await expect(details).toBeFocused();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  await page.screenshot({
+    path: testInfo.outputPath("audit-plain-list-mobile-dark.png"),
+    fullPage: true,
+  });
+  await details.click();
+  await expect(panel.getByText("user.updated", { exact: true })).toBeHidden();
+  await expectWcag22AA(page);
+  expect(await panel.evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThan(
+    350,
+  );
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
@@ -112,13 +143,14 @@ test("authorized administrator reads plain descriptions and opens original detai
     path: testInfo.outputPath("audit-plain-mobile-dark.png"),
     fullPage: true,
   });
+  await panel.getByText("Informações para suporte", { exact: true }).click();
+  await expect(panel.getByText("user.updated", { exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
   await page.goto("/audit?action=legacy.unknown&entityType=legacy_record");
   await expect(page.getByLabel("Ação", { exact: true })).toHaveValue("legacy.unknown");
-  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  await page.getByRole("button", { name: "Aplicar filtros", exact: true }).click();
   await expect(page).toHaveURL(/action=legacy.unknown&entityType=legacy_record/);
-  await expect(
-    page.getByText("Nenhum evento encontrado para os filtros informados."),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Nenhuma atividade encontrada" })).toBeVisible();
 });
 
 test("auditor cannot inspect processing data through the consolidated routes", async ({ page }) => {

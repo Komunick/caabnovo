@@ -5,6 +5,7 @@ import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { listAuditEvents } from "@caab/db/repositories/audit-query";
+import { listAuditActors } from "@caab/db/repositories/audit-names";
 import { searchAuditEvents } from "../../modules/audit/audit-query-service";
 import { inAuditedTransaction } from "../../modules/audit/audit-writer";
 import {
@@ -67,6 +68,33 @@ beforeEach(async () => {
 });
 
 describe.sequential("append-only audit investigation", () => {
+  it("searches only event authors with escaped literal names and stable pagination", async () => {
+    const firstId = await seedUser("first@example.test");
+    const secondId = await seedUser("second@example.test");
+    await seedUser("no-events@example.test");
+    await admin.query(`UPDATE "user" SET name='Nome_% sintético' WHERE id=$1`, [firstId]);
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, event(firstId, "user.updated", firstId));
+      await writeAuditEvent(client, event(firstId, "user.updated", firstId));
+      await writeAuditEvent(client, event(secondId, "user.updated", secondId));
+    } finally {
+      client.release();
+    }
+    const literal = await listAuditActors(database.pool, { q: "_%", limit: 20 });
+    expect(literal.items).toEqual([{ id: firstId, name: "Nome_% sintético" }]);
+    const first = await listAuditActors(database.pool, { q: "", limit: 1 });
+    expect(first.nextCursor).toBeTypeOf("string");
+    const next = await listAuditActors(database.pool, {
+      q: "",
+      limit: 1,
+      cursor: first.nextCursor!,
+    });
+    expect(next.nextCursor).toBeNull();
+    expect(new Set([...first.items, ...next.items].map((item) => item.id))).toEqual(
+      new Set([firstId, secondId]),
+    );
+  });
   it("resolves current names only with existing read permissions and preserves original evidence", async () => {
     const actorId = await seedUser("actor@example.test");
     const targetId = await seedUser("target@example.test");

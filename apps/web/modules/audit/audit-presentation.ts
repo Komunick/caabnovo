@@ -1,5 +1,6 @@
 import type { AuditEvent } from "@caab/contracts";
 import { accessLabels } from "../users/access-labels";
+import { describeAuditDetails } from "./audit-details";
 
 // Shared by the filters and summaries. Values in the audit trail never change.
 export const auditActions: Record<string, string> = {
@@ -89,7 +90,12 @@ export const auditOrigins = {
   system: "Sistema",
 };
 
-type Names = { actorName?: string; targetName?: string; roleName?: string };
+type Names = {
+  actorName?: string;
+  targetName?: string;
+  roleName?: string;
+  canReadUserNames?: boolean;
+};
 type Event = Pick<
   AuditEvent,
   "action" | "entityType" | "actorUserId" | "origin" | "before" | "after"
@@ -161,5 +167,17 @@ export function presentAuditEvent(event: Event, names: Names = {}) {
       if (removed.length) changes.push(`Acessos removidos: ${labels(removed)}`);
     }
   }
-  return { description, changes };
+  const details = describeAuditDetails(event, names.canReadUserNames);
+  if (names.roleName) details.unshift({ label: "Perfil de acesso", after: names.roleName });
+  return {
+    description,
+    changes,
+    actorLabel: actor,
+    targetLabel:
+      names.targetName ??
+      (Object.hasOwn(auditEntities, event.entityType)
+        ? auditEntities[event.entityType]!
+        : "Registro"),
+    details,
+  };
 }

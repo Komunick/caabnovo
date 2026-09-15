@@ -59,6 +59,7 @@ export async function searchAuditEvents(pool: Pool, actor: RequestActor, query: 
         actorName: event.actorUserId ? users.get(event.actorUserId) : undefined,
         targetName: event.entityType === "user" ? users.get(event.entityId) : undefined,
         roleName: isId(roleId(event)) ? roles.get(roleId(event) as string) : undefined,
+        canReadUserNames: actor.permissions.has(PERMISSIONS.usersRead),
       }),
     })),
     nextCursor: page.nextCursor,
