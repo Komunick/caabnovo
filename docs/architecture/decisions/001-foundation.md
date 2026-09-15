@@ -2,6 +2,9 @@
 
 - Status: Accepted
 - Date: 2026-09-08
+- Armazenamento desta decisão superado em 15/09/2026: backend exclusivo PostgreSQL,
+  conteúdo bytea e upload/download pelo painel. As referências a S3 abaixo são históricas.
+  Ver [configuração vigente](../../DATABASE-FILE-STORAGE.md).
 
 ## Contexto
 

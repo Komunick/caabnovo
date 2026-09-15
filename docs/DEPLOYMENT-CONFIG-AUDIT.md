@@ -1,5 +1,9 @@
 # Revisão da dev: correções e mudança de domínio ou repositório
 
+**Atualização de 15/09/2026:** as instruções S3 abaixo são histórico da revisão.
+O suporte foi retirado; usar exclusivamente [arquivos no PostgreSQL](DATABASE-FILE-STORAGE.md).
+Não configurar endpoints, buckets ou credenciais S3 na versão atual.
+
 Data: 10/09/2026. Branch de trabalho: `fix/news-draft-proxy-origin`.
 Base remota conferida: `origin/dev` em `951c103` (Configurações da Conta, PR #13).
 

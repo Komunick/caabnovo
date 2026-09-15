@@ -1,6 +1,6 @@
 # Runbook operacional — Fundação CAAB
 
-Este runbook cobre o monólito web, worker, PostgreSQL, storage S3-compatible, ClamAV e coletor OTEL.
+Este runbook cobre o monólito web, worker, PostgreSQL (incluindo arquivos), ClamAV e coletor OTEL.
 Nunca copie tokens, cookies, senhas, payloads pessoais ou stacks completas para tickets ou chats.
 
 ## Triagem inicial
@@ -26,7 +26,7 @@ Nunca copie tokens, cookies, senhas, payloads pessoais ou stacks completas para 
 
 1. Revogue/rotacione o segredo no provedor responsável; não registre o valor antigo ou novo.
 2. Para sessões, revogue os registros ativos do usuário e confirme 401 no próximo request.
-3. Para S3, substitua access key/secret, revogue a anterior e confirme buckets sem acesso anônimo.
+3. Para capacidades de arquivos, tratar a chave de assinatura do painel; URLs emitidas expiram em cinco minutos.
 4. Para banco, crie credencial nova de menor privilégio, atualize o ambiente e revogue a anterior.
 5. Para MFA, invalide recuperação/TOTP comprometido e refaça o enrollment por canal verificado.
 6. Procure o identificador, nunca o segredo, em logs/auditoria e acione resposta a incidente/DPO quando
@@ -52,12 +52,12 @@ Nunca copie tokens, cookies, senhas, payloads pessoais ou stacks completas para 
 
 ## Storage indisponível ou divergente
 
-- Confirme healthcheck, credenciais e existência dos buckets `caab-quarantine`, `caab-private` e
-  `caab-public`.
-- Quarentena e bucket privado devem negar acesso anônimo. URLs assinadas expiram em cinco minutos.
-- Execute o reconciliador; ele conclui promoções interrompidas e contabiliza objetos ausentes.
-- Não copie arquivos diretamente para o bucket privado sem MIME/magic bytes, tamanho, checksum e scan
-  limpos registrados no banco.
+- Confirme acesso à tabela stored_file_content, espaço livre e vínculo com stored_file.
+- Quarentena e arquivos indisponíveis não recebem download; capacidades HMAC expiram em cinco minutos.
+- Execute o reconciliador; ele conclui promoções interrompidas e contabiliza conteúdo ausente.
+- Não promova bytes sem MIME/assinatura real, tamanho, checksum e scan limpos registrados no banco.
+- Chaves anteriores sem database/ não possuem fallback. Reenviar os antigos arquivos de teste
+  conforme decisão de retirada; não adulterar metadados para fingir conteúdo disponível.
 
 ## Encerramento
 

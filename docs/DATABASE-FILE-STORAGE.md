@@ -1,77 +1,58 @@
 # Arquivos no banco principal
 
-Decisão de 14/09/2026: novos arquivos usam o PostgreSQL indicado em `DATABASE_URL`, o mesmo
-da aplicação. `stored_file` conserva os metadados e `stored_file_content.body` guarda bytes
-em `bytea`. O fluxo compartilhado inclui imagens JPG/PNG, documentos PDF e exportações
-de auditoria. Nenhum banco, volume de imagens ou domínio de storage novo é necessário.
+## Configuração vigente — 15/09/2026
 
-No Compose, MinIO e sua inicialização pertencem ao perfil opcional `legacy-storage`.
-O início padrão dos serviços não inicia esse armazenamento; os volumes existentes permanecem
-declarados e preservados. Quando for necessário acessar o legado local, e somente após
-autorizar a retomada dos serviços, usar `docker compose --profile legacy-storage up -d storage`.
-Não executar `storage-init` contra buckets existentes como parte da migração.
+PostgreSQL é o único backend de arquivos. `stored_file` guarda metadados e
+`stored_file_content.body` guarda os bytes em `bytea`, no mesmo `DATABASE_URL` da aplicação.
+Imagens JPG/PNG, documentos PDF e exportações de auditoria passam por essa estrutura.
+MinIO, adaptadores/SDKs S3 e a ferramenta de cópia do legado foram retirados do projeto.
 
-## Configuração e implantação
+O usuário informou que o site contém apenas dois arquivos de teste e dispensou sua
+migração. Arquivos antigos que só existam no MinIO deixam de ser lidos; reenviá-los pelo
+formulário quando necessários. A atualização não apaga registros, buckets ou volumes.
 
-1. Fazer e verificar backup do PostgreSQL e preservar o armazenamento anterior.
-2. Aplicar a migration aditiva `0018_database_file_content.sql` pelo comando de migrations
-   do projeto. Ela não altera arquivos, tabelas anteriores ou buckets.
-3. Implantar esta versão no web e no worker com `FILE_STORAGE_BACKEND=database` (padrão).
-   Usar o mesmo `DATABASE_URL` e `BETTER_AUTH_SECRET` do ambiente. `BETTER_AUTH_URL` deve ser
-   a origem HTTPS real do painel. DEV e PROD continuam separados.
-4. Manter ClamAV acessível e o worker funcionando. O fluxo preserva MIME/assinatura real,
-   hash, quarentena, rejeição de vírus e promoção somente após aprovação.
-5. Configurar o proxy do painel para aceitar PUT e corpos de pelo menos 25 MiB na rota
-   `/api/v1/files/content` (ex.: limite de 26 MiB). A aplicação limita cada corpo ao tamanho
-   autorizado, até 25 MiB, mesmo sem Content-Length. Configurar timeout de upload no proxy.
-6. Não registrar query strings dessa rota: `grant` é uma credencial temporária, como as antigas
-   URLs S3 assinadas. A emissão continua protegida pelas permissões/CSRF dos endpoints existentes.
-7. Validar envio e reabertura de JPG/PNG em rascunho, foto de associado, documento privado
-   e exportação. Para uma notícia já publicada de teste, verificar acesso e retirada por canal.
+## Implantação
 
-O navegador envia os bytes para o próprio painel; DNS/CORS/HTTPS de `files-*` não participam
-dos novos uploads. A rota aceita somente capacidades HMAC vinculadas a método/chave e válidas
-por cinco minutos. Download recusa conteúdo não disponível ou excluído. Após finalização,
-o PUT é recusado; ele não pode substituir conteúdo já inspecionado.
+1. Confirmar a migration aditiva `0018_database_file_content.sql` aplicada pelo comando
+   de migrations do projeto; não reescrever migrations existentes. Aplicar as demais
+   migrations pendentes da versão implantada conforme o fluxo de entrega.
+2. Atualizar web e worker juntos, preservando `DATABASE_URL`, `BETTER_AUTH_SECRET` e a
+   origem HTTPS real em `BETTER_AUTH_URL`. Manter DEV e PROD separados.
+3. Omitir `FILE_STORAGE_BACKEND` ou usar `database`. O antigo valor `s3` agora é recusado
+   na inicialização. Retirar variáveis `S3_*`: elas não são lidas e não habilitam fallback.
+4. Manter ClamAV acessível e o worker ativo. Quarentena, assinatura/MIME real, tamanho,
+   SHA-256, rejeição de vírus e promoção após aprovação continuam obrigatórios.
+5. No proxy, permitir PUT e corpos de pelo menos 25 MiB em `/api/v1/files/content`
+   (ex.: limite de 26 MiB) e configurar timeout de upload. A aplicação mantém o limite
+   autorizado mesmo quando Content-Length não é informado.
+6. Não registrar query strings dessa rota: `grant` é uma credencial HMAC temporária,
+   vinculada ao método/chave e válida por cinco minutos. Emissão exige as permissões
+   e controles CSRF existentes. Download recusa conteúdo excluído ou não disponível.
+7. Validar novos envios/reabertura de imagens, foto de associado, documento privado e
+   exportação. Conferir permissão, conteúdo e processamento; não usar dados pessoais
+   reais em testes automatizados. Reenviar os dois arquivos antigos de teste se necessário.
 
-## Transição dos arquivos existentes
+## Retirada do serviço antigo
 
-As chaves anteriores continuam sendo lidas pelo adaptador S3. Conservar `S3_ENDPOINT`,
-credenciais e nomes dos buckets anteriores enquanto existirem arquivos legados. Para acesso
-via navegador antes da cópia, o antigo endpoint público ainda precisa funcionar.
+O Compose já não declara MinIO, inicializador, portas 9000/9001 ou seu volume.
+Alterar o Compose não remove contêineres/serviços já criados em outro ambiente.
+Após implantar web/worker com PostgreSQL e validar os fluxos, o operador da hospedagem
+deve conferir que o MinIO atende somente este projeto e retirar seu serviço, rotas e
+configuração do painel. Não remover um MinIO compartilhado com outros projetos.
+Não executar prune, remoção genérica de volumes ou alteração de outros bancos.
 
-Executar na VM, com o ambiente correto e esta versão instalada:
+A retirada remota exige acesso à VM/painel. Esta entrega não afirma que um serviço
+remoto foi parado apenas porque sua declaração foi removida do repositório.
 
-```sh
-pnpm --filter @caab/worker storage:migrate
-pnpm --filter @caab/worker storage:migrate --apply
-```
+## Backup e rollback
 
-O primeiro comando apresenta somente contagens por estado. O segundo copia arquivos
-`available`/`clean` um a um (páginas de 20), valida tamanho e SHA-256 do S3 e novamente no
-PostgreSQL, e troca a chave na mesma transação. Preserva ID, vínculos, metadados e objetos
-S3 de origem. Repetir o comando retoma os arquivos ainda não copiados. Erros de acesso ou
-integridade interrompem a cópia sem descartar a origem. Não imprimir credenciais ou nomes
-pessoais nos relatórios. O limite operacional da cópia é 100 MiB por arquivo; arquivos maiores
-exigem outro lote planejado, sem aumentar automaticamente o limite de upload da aplicação.
+Os backups do PostgreSQL incluem os binários. Monitorar espaço, WAL, memória e duração
+dos backups. Testar restauração em banco isolado e comparar tamanho/SHA-256 com os
+metadados; não restaurar backup antigo sobre dados novos.
 
-Quarentenas em processamento continuam no backend original: deixar o worker concluí-las
-e repetir a cópia. Contagens de `initiated`/`rejected`/`scan_error` exigem avaliação; não apagar
-esses objetos nem desligar definitivamente o legado apenas porque os disponíveis foram copiados.
-Conservar backups do S3 até validar leitura, restauração e a retenção aplicável.
+Rollback da aplicação exige uma versão que compreenda `database/` e a migration 0018.
+Não retirar `stored_file_content`. O MinIO não é recriado automaticamente, e os bytes
+novos não são copiados para ele. Manter arquivos de backup conforme a retenção existente.
 
-## Operação e rollback
-
-O backup do banco agora inclui as imagens e os demais binários. Monitorar espaço livre, WAL,
-tempo/tamanho dos backups e memória do web/worker; não foi realizado benchmark da VM.
-Listagens consultam apenas metadados. Testar restauração em banco isolado e comparar hashes
-com `stored_file.checksum_sha256` antes de considerar o backup validado.
-
-Para redirecionar apenas os próximos uploads ao S3, configurar `FILE_STORAGE_BACKEND=s3`
-com os endpoints/credenciais válidos em web e worker, mantendo esta versão. A leitura escolhe
-o backend por chave, portanto os arquivos já gravados no banco continuam acessíveis. Não
-reverter para uma versão anterior sem suporte a database/, não remover a tabela nem restaurar
-um backup antigo sobre dados novos. Os bytes do banco não são copiados automaticamente ao S3.
-
-Nenhuma alteração de configuração remota ou migração de arquivos reais é implícita na
-validação de CI. Servidores locais permanecem desligados conforme instrução do usuário.
+Servidores locais permanecem desligados conforme a decisão do usuário. Validação de
+CI usa PostgreSQL e ClamAV descartáveis, sem MinIO ou credenciais de storage externo.

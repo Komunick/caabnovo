@@ -70,3 +70,7 @@ T014 registrada para implementação posterior, a pedido do usuário; não faz p
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+## Retirada do armazenamento legado — 15/09/2026
+
+- [ ] SR01 Remover saída S3 das exportações e validar conteúdo privado/idempotência no PostgreSQL; evidências compartilhadas com a fundação.

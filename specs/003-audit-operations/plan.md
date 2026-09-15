@@ -47,3 +47,7 @@ colaterais e paginação com mais de 100 registros. Nenhuma mudança desta fase 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+## Retirada do armazenamento legado — 15/09/2026
+
+Retirar parâmetros/cliente S3 do job de exportação; adaptar regressão de repetição para consultar os bytes privados do banco e verificar redação e uma única cópia. Validação coordenada pela SR03 da fundação.

@@ -1,35 +1,39 @@
-import { describe, expect, it, vi } from "vitest";
-import { S3Client } from "@aws-sdk/client-s3";
-import { S3WebObjectStorage } from "./object-storage";
+import { describe, expect, it } from "vitest";
+import type { Pool } from "pg";
+import { DatabaseWebObjectStorage } from "./object-storage";
+import { verifyContentGrant } from "./content-grant";
+
+const secret = "synthetic-storage-secret-at-least-32-characters";
+const storage = new DatabaseWebObjectStorage({} as Pool, "https://panel.example.test", secret);
+const uploadInput = { contentType: "image/png", sizeBytes: 12, checksumSha256: "a".repeat(64) };
 
 describe("browser storage URLs", () => {
-  it("signs uploads and downloads on the public endpoint and inspects on the private endpoint", async () => {
-    const options = {
-      region: "us-east-1",
-      forcePathStyle: true,
-      credentials: { accessKeyId: "synthetic", secretAccessKey: "synthetic" },
-    };
-    const internal = new S3Client({ ...options, endpoint: "http://storage:9000" });
-    const external = new S3Client({ ...options, endpoint: "https://files.example.test" });
-    const send = vi.spyOn(internal, "send").mockResolvedValue({ ContentLength: 12 } as never);
-    const storage = new S3WebObjectStorage(internal, "quarantine", "private", external);
-    try {
-      const upload = await storage.createQuarantineUpload("quarantine/test", {
-        contentType: "image/png",
-        sizeBytes: 12,
-        checksumSha256: "a".repeat(64),
-      });
-      const download = await storage.createPrivateDownload("private/test");
-      for (const value of [upload.uploadUrl, download.url]) {
-        const url = new URL(value);
-        expect(url.origin).toBe("https://files.example.test");
-        expect(url.searchParams.get("X-Amz-Signature")).toMatch(/^[a-f0-9]{64}$/);
-      }
-      expect(await storage.inspectQuarantine("quarantine/test")).toEqual({ sizeBytes: 12 });
-      expect(send).toHaveBeenCalledOnce();
-    } finally {
-      internal.destroy();
-      external.destroy();
+  it("issues upload and download grants on the panel with the correct method and key", async () => {
+    const upload = await storage.createQuarantineUpload("database/quarantine/test", uploadInput);
+    const download = await storage.createPrivateDownload("database/private/test");
+    expect(storage.keyPrefix).toBe("database/");
+    expect(upload.requiredHeaders).toEqual({ "content-type": "image/png" });
+    for (const [value, method, key] of [
+      [upload.uploadUrl, "PUT", "database/quarantine/test"],
+      [download.url, "GET", "database/private/test"],
+    ]) {
+      const url = new URL(value!);
+      expect(url.origin).toBe("https://panel.example.test");
+      expect(url.pathname).toBe("/api/v1/files/content");
+      expect(verifyContentGrant(secret, url.searchParams.get("grant"), method!)).toBe(key);
+      expect(() =>
+        verifyContentGrant(secret, url.searchParams.get("grant"), method === "PUT" ? "GET" : "PUT"),
+      ).toThrow();
     }
+  });
+  it("rejects obsolete keys without signing a link or querying an external backend", async () => {
+    await expect(
+      storage.createQuarantineUpload("quarantine/test", uploadInput),
+    ).rejects.toMatchObject({ code: "NOT_FOUND", status: 404 });
+    await expect(storage.createPrivateDownload("private/test")).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      status: 404,
+    });
+    expect(await storage.inspectQuarantine("quarantine/test")).toBeNull();
   });
 });

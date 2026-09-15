@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import type { S3Client } from "@aws-sdk/client-s3";
+import { readDatabaseContent } from "@caab/db/repositories/file-content";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
@@ -219,13 +219,6 @@ describe.sequential("append-only audit investigation", () => {
     } finally {
       client.release();
     }
-    const uploads: Array<{ Bucket?: string; Key?: string; Body?: unknown }> = [];
-    const s3 = {
-      send: async (command: { input: { Bucket?: string; Key?: string; Body?: unknown } }) => {
-        uploads.push(command.input);
-        return {};
-      },
-    } as unknown as S3Client;
     const payload = {
       schemaVersion: 1 as const,
       jobId: crypto.randomUUID(),
@@ -236,15 +229,15 @@ describe.sequential("append-only audit investigation", () => {
       to: new Date(Date.now() + 60_000).toISOString(),
     };
 
-    await runAuditExport(database.pool, s3, "caab-private", payload);
-    await runAuditExport(database.pool, s3, "caab-private", payload);
+    await runAuditExport(database.pool, payload);
+    await runAuditExport(database.pool, payload);
 
-    expect(uploads).toHaveLength(1);
-    expect(uploads[0]).toMatchObject({
-      Bucket: "caab-private",
-      Key: `audit-exports/${payload.jobId}.jsonl`,
-    });
-    const body = String(uploads[0]?.Body);
+    const file = await readDatabaseContent(
+      database.pool,
+      `database/audit-exports/${payload.jobId}.jsonl`,
+    );
+    expect(file.mime).toBe("application/x-ndjson");
+    const body = file.body.toString("utf8");
     expect(body).toContain(eventId);
     expect(body).not.toContain("Synthetic-Password-Canary");
     expect(body).not.toContain("synthetic-token-canary");
@@ -252,16 +245,23 @@ describe.sequential("append-only audit investigation", () => {
 
     const persisted = await admin.query<{
       files: string;
+      contents: string;
       events: string;
       visibility: string;
     }>(
       `SELECT
         (SELECT count(*) FROM stored_file WHERE owner_id = $1)::text AS files,
+        (SELECT count(*) FROM stored_file_content c JOIN stored_file f ON f.id=c.file_id WHERE f.owner_id=$1)::text AS contents,
         (SELECT count(*) FROM audit_event
           WHERE action = 'audit.export.completed' AND entity_id = $1)::text AS events,
         (SELECT visibility::text FROM stored_file WHERE owner_id = $1) AS visibility`,
       [payload.jobId],
     );
-    expect(persisted.rows[0]).toEqual({ files: "1", events: "1", visibility: "private" });
+    expect(persisted.rows[0]).toEqual({
+      files: "1",
+      contents: "1",
+      events: "1",
+      visibility: "private",
+    });
   });
 });
