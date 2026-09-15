@@ -133,6 +133,8 @@ export function presentAuditEvent(event: Event, names: Names = {}) {
     description = Object.hasOwn(verbs, event.action)
       ? `${actor} ${verbs[event.action]} ${target}`
       : `${description} — ${target}`;
+  } else if (names.targetName) {
+    description = `${description} — ${names.targetName}`;
   }
   const changes: string[] = [];
   if (event.entityType === "user" && event.before && event.after) {

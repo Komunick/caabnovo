@@ -8,7 +8,11 @@ import {
 import { requirePermission } from "../auth/authorize";
 import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
-import { findAuditUserNames, findAuditRoleNames } from "@caab/db/repositories/audit-names";
+import {
+  findAuditUserNames,
+  findAuditRoleNames,
+  findAuditTargetNames,
+} from "@caab/db/repositories/audit-names";
 import { presentAuditEvent } from "./audit-presentation";
 
 export function serializeAuditEvent(event: AuditEventRecord) {
@@ -52,12 +56,20 @@ export async function searchAuditEvents(pool: Pool, actor: RequestActor, query: 
   const roles = actor.permissions.has(PERMISSIONS.rolesRead)
     ? await findAuditRoleNames(pool, roleIds)
     : new Map<string, string>();
+  const targets = await findAuditTargetNames(
+    pool,
+    actor,
+    page.items.filter((event) => isId(event.entityId)),
+  );
   return {
     items: page.items.map((event) => ({
       ...serializeAuditEvent(event),
       presentation: presentAuditEvent(event, {
         actorName: event.actorUserId ? users.get(event.actorUserId) : undefined,
-        targetName: event.entityType === "user" ? users.get(event.entityId) : undefined,
+        targetName:
+          event.entityType === "user"
+            ? users.get(event.entityId)
+            : targets.get(`${event.entityType}:${event.entityId}`),
         roleName: isId(roleId(event)) ? roles.get(roleId(event) as string) : undefined,
         canReadUserNames: actor.permissions.has(PERMISSIONS.usersRead),
       }),
