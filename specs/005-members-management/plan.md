@@ -124,3 +124,29 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 Dimensionar os controles de abertura/histórico de documentos independentemente do texto
 opcional do motivo. Reexecutar a jornada com download real, Axe em desktop/celular e
 abertura do histórico por teclado; preservar capturas sintéticas no CI para revisão.
+
+## Plano: configuração OAB para deploy — proposta inicial substituída, 15/09/2026
+
+Histórico do PR25; seguir o **Ajuste final: remover controle de ativação** abaixo.
+
+1. Comparar APIs oficiais com o contrato STATUS CAAB e registrar fontes/limites.
+2. Tornar a flag opcional no adaptador em execução, preservando desativação explícita
+   e bloqueio de valores inválidos. Atualizar exemplo e contrato, sem segredos.
+3. Cobrir consulta sem flag, precedência de false e configuração incompleta em testes
+   do adaptador; validar regressões da rota e contrato. CI executa banco/build/navegador.
+4. Registrar evidências e entregar PR da branch isolada; deploy pelo fluxo existente.
+
+### Ajuste final: remover controle de ativação — 15/09/2026
+
+Substituir a condição de ativação por verificação exclusiva das duas credenciais.
+Retirar a flag do exemplo e documentar que valores legados são ignorados. Cobrir false,
+vazio e valores antigos nos testes; preservar recusa de credenciais incompletas.
+Executar regressões/CI e entregar em nova branch/PR que substitui PR25, já congelado.
+
+## Conferência do workflow — 15/09/2026
+
+Publicar a entrega no prefixo fix, retirar a exceção codex do CI, identificar propostas
+substituídas e alinhar STACK/LEG-001 ao contrato vigente. Preservar implementação e
+referências dos PRs anteriores; novo PR com template/checklist e rollback explícitos.
+Conferir igualdade da aplicação e do workflow com as bases validadas. Limites remotos
+registrados em evidence/workflow-compliance-2026-09-15.md; não presumir homologação.

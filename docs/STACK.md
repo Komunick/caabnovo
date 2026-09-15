@@ -221,7 +221,10 @@ solicitante.
 
 ## 12. Verificação da OAB
 
-Fonte oficial atual: Cadastro Nacional da OAB/ConfirmADV.
+Consulta institucional implementada: OAB-BA/Implanta, relatório STATUS CAAB, conforme
+[contrato da spec005](../specs/005-members-management/contracts/oab-query.md) e
+[registro LEG-001](LEGACY-REUSE.md). CNA/ConfirmADV são referências oficiais para
+conferência nacional; não substituem automaticamente o relatório CAAB.
 
 Regras:
 

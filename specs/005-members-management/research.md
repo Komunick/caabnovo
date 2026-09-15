@@ -74,3 +74,37 @@ Referência oficial consultada em 15/09/2026: [WCAG 2.2, 2.5.8](https://www.w3.o
 Decisão: dar área mínima de 44 px ao link de abertura e ao resumo do histórico, preservando
 semântica, foco e quebra de texto. Validar com Axe em desktop e celular, histórico aberto
 por teclado e capturas sintéticas. A validação automática não substitui homologação humana.
+
+## APIs oficiais e configuração OAB — 15/09/2026
+
+- [CNA ConsultaAdvogado](https://www5.oab.org.br/cnaws/service.asmx?op=ConsultaAdvogado):
+  documentação SOAP exige Authentication/Key e retorna XML como string. Não documenta
+  neste contrato os campos de inadimplência, CPF e detalhe do STATUS CAAB nem uma data
+  que comprove ser substituta mais recente. Não reutilizar credenciais Implanta ali.
+- [CNA Integration](https://www5.oab.org.br/Integracao/CNA.svc): serviço WCF publica
+  referência WSDL. Sua página não comprova equivalência com STATUS CAAB nem disponibilidade
+  de credenciais para a CAAB. Não adotar fallback automático.
+- [ConfirmADV](https://www.oab.org.br/noticia/64127/plataforma-confirmadv-completa-um-ano-com-mais-de-32-mil-verificacoes-contra-falsos-advogados)
+  e [fluxo oficial](https://confirmadv.oab.org.br/expired): confirmação de identidade
+  por e-mail do profissional; não é uma API documentada equivalente ao relatório CAAB.
+- [Implanta SISCAF](https://implanta.net.br/solucoes/siscaf/): produto atual inclui gestão
+  cadastral/financeira e relatórios personalizados.
+- [Implanta Visão Nacional](https://implanta.net.br/solucoes/visao-nacional/): anuncia API
+  e webservices, mas não apresenta contrato público específico substituto do STATUS CAAB.
+- Guia de variáveis da versão instalada do Next.js, em
+  apps/web/node_modules/next/dist/docs/01-app/02-guides/environment-variables.md:
+  credenciais privadas no servidor; não usar NEXT_PUBLIC_ nem valores embutidos no build.
+
+Conclusão limitada às fontes consultadas: não foi encontrada API oficial mais recente
+com equivalência demonstrada dos sete campos selecionados. Manter OAB-BA/Implanta.
+O código atual bloqueia credenciais completas sem a flag exatamente true; corrigir esse
+caso de configuração, sem afirmar que ele é a causa confirmada do ambiente remoto.
+
+### Ativação automática — decisão final de 15/09/2026
+
+O usuário pediu funcionamento sem tela nova, acesso à VM ou controle de desativação.
+A exigência de OAB_API_ENABLED, inclusive false herdado, é retirada do código.
+A pesquisa oficial acima e a escolha OAB-BA/Implanta permanecem válidas para esta
+entrega; nenhuma evidência nova de API substituta equivalente foi encontrada.
+Credenciais continuam privadas no servidor. A remoção da flag não fornece nem
+valida credenciais ausentes; mantém-se a autenticação exigida pelo provedor.

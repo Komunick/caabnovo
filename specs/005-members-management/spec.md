@@ -239,3 +239,31 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 
 Abrir documento e expandir seu histórico devem manter áreas clicáveis suficientes quando
 a análise não tiver motivo escrito, com teclado e celular, sem sobreposição ou rolagem horizontal.
+
+## Configuração OAB para deploy — proposta inicial substituída, 15/09/2026
+
+Histórico do PR25. A regra vigente está em **Decisão final: consulta sempre habilitada**
+abaixo e no contrato oab-query.md; false não desativa mais a integração.
+
+Pedido expresso: corrigir pelo código em branch própria, preservando a instância de
+Agendamentos, e pesquisar API oficial mais recente. Deploy fica com o fluxo existente.
+Com API_OAB_KEY e API_OAB_PASSWORD não vazias, a omissão de OAB_API_ENABLED permite
+consulta institucional. true continua permitido; false desativa explicitamente.
+Normalizar espaços/caixa da flag; valores não reconhecidos bloqueiam a integração.
+Segredos continuam apenas no servidor e são lidos em execução. A falta de credenciais
+continua sendo erro de configuração; código não fornece credenciais embutidas.
+Preservar endpoint, campos selecionados, permissões, auditoria, limites e avaliações.
+Aceite com fixtures sintéticas: credenciais sem flag permitem consulta, configuração
+incompleta/desativada/inválida não chama o provedor, falhas externas não viram sucesso.
+Esta entrega não afirma diagnóstico da configuração remota nem homologação real T028.
+
+### Decisão final: consulta sempre habilitada — 15/09/2026
+
+Usuário rejeitou tela nova e controle de desativação. Esta decisão substitui a semântica
+anterior da flag: a aplicação usa as credenciais do servidor quando ambas existem,
+independentemente de OAB_API_ENABLED, inclusive false ou valor vazio/antigo/inválido.
+Não adicionar interface de configuração ou nova variável obrigatória. A autenticação
+institucional continua exigindo chave/senha privadas válidas; nenhuma credencial será
+embutida na aplicação. Preservar consulta individual, campos, permissões e auditoria.
+Aceite: mesmas credenciais funcionam com flag ausente, true, false ou qualquer valor;
+credenciais ausentes/incompletas continuam bloqueando o HTTP.

@@ -174,3 +174,33 @@ Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../00
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+## Configuração OAB para deploy — histórico substituído, 15/09/2026
+
+OC01–OC03 registram a proposta inicial do PR25. A regra vigente é ON01–ON03 abaixo:
+OAB_API_ENABLED é ignorada, inclusive false. Não reaplicar a regra inicial.
+
+- [x] OC01 Pesquisar APIs oficiais equivalentes e registrar decisão na spec/plan/research.
+- [x] OC02 Permitir credenciais completas sem flag, preservando false e recusa de configuração inválida; atualizar contrato e exemplo.
+- [x] OC03 Executar regressões sintéticas e gates; registrar evidências para entrega em PR isolado.
+
+T028 permanece separada: consulta real não foi executada nesta correção de código.
+
+Evidências OC01–OC03: [configuração OAB](evidence/oab-config-2026-09-15.md).
+
+## Decisão final: OAB sem flag de ativação — 15/09/2026
+
+- [x] ON01 Remover dependência da flag, atualizar exemplo e contrato vigente.
+- [x] ON02 Validar consulta com qualquer flag legada e recusa sem credenciais; executar CI.
+- [x] ON03 Registrar evidências e preparar entrega substituta do PR25 em branch nova.
+
+Evidências ON01–ON03: [OAB sem flag](evidence/oab-always-on-2026-09-15.md).
+
+## Conferência dos padrões de entrega — 15/09/2026
+
+- [x] WF01 Transferir entrega para prefixo fix e restaurar filtros de branch do CI.
+- [x] WF02 Rever constituição, princípios, workflow, stack, spec/plan/tasks/contratos e template; corrigir referências vigentes.
+- [x] WF03 Validar ajustes documentais/workflow e preparar PR substituto com checklist completo.
+
+Relatório: [conferência dos padrões](evidence/workflow-compliance-2026-09-15.md).
+Proteções remotas e homologação mantêm seus limites explícitos no relatório.
