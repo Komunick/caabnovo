@@ -32,6 +32,17 @@ jobs:
       - run: pnpm test:contract
       - run: pnpm test:integration
       - run: pnpm build
+      - name: Preserve compiled preview for low-memory local review
+        uses: actions/upload-artifact@v7
+        with:
+          name: compiled-web-preview
+          path: |
+            apps/web/.next/**
+            !apps/web/.next/cache/**
+            !apps/web/.next/dev/**
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
 
   browser:
     runs-on: ubuntu-latest
