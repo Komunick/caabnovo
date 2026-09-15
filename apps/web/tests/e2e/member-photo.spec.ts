@@ -44,8 +44,7 @@ test("member photo uploads privately, persists, replaces and removes at mobile w
       buffer: filename.endsWith(".JPG") ? jpeg : image,
     });
     await expect(photo.getByText("Prévia · ainda não salva")).toBeVisible();
-    if (await photo.getByLabel("Motivo da alteração da foto").isVisible())
-      await photo.getByLabel("Motivo da alteração da foto").fill("Atualização sintética da foto");
+    await expect(photo.getByLabel("Motivo da alteração da foto")).toHaveCount(0);
     await photo.getByRole("button", { name: "Salvar foto", exact: true }).click();
     await expect(photo.getByRole("status")).toHaveText("Foto de perfil atualizada.", {
       timeout: 65_000,
@@ -73,7 +72,7 @@ test("member photo uploads privately, persists, replaces and removes at mobile w
     ).toBe(true);
     await photo.getByRole("button", { name: "Trocar foto" }).scrollIntoViewIfNeeded();
   }
-  await photo.getByLabel("Motivo da alteração da foto").fill("Remoção sintética da foto");
+  await expect(photo.getByLabel("Motivo da alteração da foto")).toHaveCount(0);
   await photo.getByRole("button", { name: "Remover foto", exact: true }).click();
   await expect(photo.getByRole("status")).toHaveText("Foto removida.");
   await page.goto(profileUrl);

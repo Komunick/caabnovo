@@ -20,7 +20,7 @@ export const newsDeliveryDocumentSchema = z.strictObject({
   category: z.string().max(80),
   tags: z.array(z.string().min(1).max(80)).max(20),
   highlight: newsHighlightSchema,
-  cover: newsCoverSchema.extend({ alt: z.string().trim().min(1).max(500) }).nullable(),
+  cover: newsCoverSchema.nullable(),
   body: newsBodySchema.refine((body) => newsBodyImages(body).every((image) => !!image.alt), {
     message: "Imagens publicadas precisam de descrição.",
   }),

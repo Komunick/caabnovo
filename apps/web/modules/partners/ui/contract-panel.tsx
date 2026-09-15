@@ -166,7 +166,6 @@ export function ContractPanel({
                       action: "contract-status",
                       contractId: contract.id,
                       status: decision.status,
-                      justification: String(new FormData(event.currentTarget).get("justification")),
                     })
                   )
                     setDecision(null);
@@ -183,9 +182,7 @@ export function ContractPanel({
                       ? "Confirme que as condições foram aprovadas antes de disponibilizar benefícios."
                       : "O encerramento retira imediatamente os benefícios vinculados de exibição."}
                   </p>
-                  <FormField id="contract-decision-reason" label="Justificativa da decisão">
-                    <textarea name="justification" required minLength={3} maxLength={1000} />
-                  </FormField>
+
                   <div className={styles.actions}>
                     <Button
                       type="submit"

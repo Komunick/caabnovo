@@ -34,7 +34,6 @@ const create = (name = "Pessoa sintética", extra = {}) =>
 const command = (id: string, version: number, input: Record<string, unknown>) =>
   commandMember(pool, nextContext(), id, {
     expectedVersion: version,
-    justification: "Decisão sintética",
     ...input,
   });
 beforeAll(async () => {
@@ -102,26 +101,28 @@ async function file(memberId: string, status = "available") {
   return id;
 }
 describe.sequential("member persistence", () => {
-  it("audits creation without a reason and refuses blank edits without a mutation", async () => {
+  it("audits creation and edits without requiring a written reason", async () => {
     const person = await create();
     expect((await memberHistory(pool, context.actor, person.id)).items[0]).toMatchObject({
-      reason: "Cadastro inicial de associado",
+      reason: null,
     });
+    let version = 1;
     for (const justification of [undefined, "", "   "]) {
-      await expect(
-        commandMember(pool, nextContext(), person.id, {
-          action: "update",
-          profile: { name: "Tentativa recusada" },
-          expectedVersion: 1,
-          justification,
-        }),
-      ).rejects.toThrow();
+      await commandMember(pool, nextContext(), person.id, {
+        action: "update",
+        profile: { name: "Atualizado sem motivo" },
+        expectedVersion: version++,
+        justification,
+      });
+      expect((await memberHistory(pool, context.actor, person.id)).items[0]).toMatchObject({
+        reason: null,
+      });
     }
     expect(await getMember(pool, context.actor, person.id)).toMatchObject({
-      version: 1,
-      profile: { name: person.profile.name },
+      version: 4,
+      profile: { name: "Atualizado sem motivo" },
     });
-    await command(person.id, 1, {
+    await command(person.id, version, {
       action: "update",
       profile: { name: "Atualizado" },
       justification: "Correção cadastral autorizada",
@@ -150,17 +151,6 @@ describe.sequential("member persistence", () => {
     expect(await memberFileStatus(pool, context.actor, person.id, first)).toMatchObject({
       status: "available",
       scanStatus: "clean",
-    });
-    await expect(
-      commandMember(pool, nextContext(), person.id, {
-        action: "photo",
-        fileId: second,
-        expectedVersion: 2,
-      }),
-    ).rejects.toThrow();
-    expect(await getMember(pool, context.actor, person.id)).toMatchObject({
-      version: 2,
-      photoFileId: first,
     });
     expect(await command(person.id, 2, { action: "photo", fileId: second })).toMatchObject({
       photoFileId: second,

@@ -21,7 +21,7 @@ export const jobSchema = z.object({
 });
 
 export const redriveJobRequestSchema = z.object({
-  reason: nonEmptyReasonSchema.max(500),
+  reason: nonEmptyReasonSchema.max(500).default(""),
 });
 
 export type JobReference = z.infer<typeof jobReferenceSchema>;

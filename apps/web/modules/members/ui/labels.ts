@@ -80,7 +80,7 @@ export const memberErrors: Record<string, string> = {
   MEMBER_DOCUMENT_REPLACED: "Este documento já foi substituído. Analise a evidência atual.",
   AUTHENTICATION_REQUIRED: "Sua sessão terminou. Entre novamente.",
   PERMISSION_DENIED: "Sua conta não possui permissão para esta operação em Associados.",
-  VALIDATION_FAILED: "Confira os campos, CPF, datas, fonte e justificativa.",
+  VALIDATION_FAILED: "Confira os campos, CPF, datas e fonte.",
   IDEMPOTENCY_CONFLICT: "Esta tentativa difere da anterior. Recarregue o cadastro.",
 };
 export const administrativeStatusLabels = {

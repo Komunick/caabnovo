@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import type { MemberRecord } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
 import { administrativeStatusLabels, formatMemberDate } from "./labels";
 import styles from "./members.module.css";
 
@@ -62,8 +61,7 @@ export function MemberAdministrativeStatus({
             onSubmit={async (event) => {
               event.preventDefault();
               if (busy) return;
-              const justification = String(new FormData(event.currentTarget).get("justification"));
-              if (await command({ action: choice.action, justification })) setConfirming(false);
+              if (await command({ action: choice.action })) setConfirming(false);
             }}
           >
             <fieldset disabled={busy || !hydrated}>
@@ -72,9 +70,7 @@ export function MemberAdministrativeStatus({
                 Confirme a alteração de {administrativeStatusLabels[member.administrativeStatus]}{" "}
                 para {choice.action === "block" ? "Bloqueado" : "Ativo"}.
               </p>
-              <FormField id="administrative-reason" label="Justificativa da mudança de situação">
-                <textarea name="justification" required minLength={3} maxLength={1000} />
-              </FormField>
+
               <div className={styles.actions}>
                 <Button type="submit" intent={choice.action === "block" ? "danger" : "primary"}>
                   {choice.confirm}

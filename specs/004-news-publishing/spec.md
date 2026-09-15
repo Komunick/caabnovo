@@ -220,3 +220,18 @@ são alterações cadastrais. Preservar autorização, idempotência e controle 
 Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
 recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
 mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+
+## Descrição opcional da capa — 14/09/2026
+
+Decisão posterior do usuário: descrever a capa é opcional. Salvar, pré-visualizar,
+publicar e agendar publicação aceitam capa com descrição ausente ou vazia. Quando
+fornecida, continua limitada a 500 caracteres e é preservada na apresentação.
+A interface informa a opcionalidade e recomenda descrever informação relevante.
+Sem descrição, renderizar `alt=""`, sem inventar uma descrição ou anunciar erro.
+Esta decisão substitui a exigência anterior apenas para a capa; não altera imagens
+inseridas no corpo, verificação dos arquivos, autorização ou propriedade da mídia.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.

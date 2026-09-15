@@ -21,12 +21,12 @@ describe("editor field validation feedback", () => {
     expect(
       newsFieldErrors([
         { path: "title", code: "TITLE_REQUIRED" },
-        { path: "cover.alt", code: "COVER_ALT_REQUIRED" },
+        { path: "cover.alt", code: "too_big" },
         { path: "content.files", code: "FILE_UNAVAILABLE" },
       ]),
     ).toEqual({
       title: "Informe um título antes de publicar.",
-      coverAlt: "Descreva a capa antes de publicar.",
+      coverAlt: "Use uma descrição da capa de até 500 caracteres.",
       body: "Há uma imagem indisponível no conteúdo. Aguarde a liberação ou substitua a imagem.",
     });
     expect(newsFieldErrors([{ path: "metadata.slug", code: "NEWS_SLUG_CONFLICT" }]).slug).toContain(

@@ -171,7 +171,6 @@ export function MemberDocuments({
             fileId: data.get("fileId"),
             category: data.get("category"),
             replacesId: data.get("replacesId") || null,
-            ...(replacesId ? { justification: data.get("reason") } : {}),
           });
         }}
       >
@@ -215,11 +214,7 @@ export function MemberDocuments({
               </select>
             </FormField>
           </div>
-          {replacesId && (
-            <FormField id="document-reason" label="Motivo da substituição">
-              <textarea name="reason" required minLength={3} maxLength={1000} />
-            </FormField>
-          )}
+
           <Button type="submit">Anexar documento</Button>
         </fieldset>
       </form>
@@ -234,6 +229,7 @@ export function MemberDocuments({
               {replaced ? " · Substituído" : ""}
               <p>Enviado em {formatMemberDate(doc.createdAt)}</p>
               <a
+                className={styles.documentLink}
                 href={`/api/v1/members/${member.id}/files/${doc.fileId}`}
                 target="_blank"
                 rel="noreferrer"
@@ -246,7 +242,7 @@ export function MemberDocuments({
                 </p>
               )}
               {doc.reviews.length > 0 && (
-                <details>
+                <details className={styles.documentHistory}>
                   <summary>Histórico de análises do documento</summary>
                   <ul>
                     {doc.reviews.map((review) => (
@@ -267,7 +263,6 @@ export function MemberDocuments({
                       action: "review",
                       documentId: doc.id,
                       result: d.get("result"),
-                      justification: d.get("reason"),
                     });
                   }}
                 >
@@ -278,12 +273,7 @@ export function MemberDocuments({
                         <option value="correction_requested">Solicitar correção</option>
                       </select>
                     </FormField>
-                    <FormField
-                      id={`review-reason-${doc.id}`}
-                      label="Motivo da análise ou correção solicitada"
-                    >
-                      <textarea name="reason" required minLength={3} maxLength={1000} />
-                    </FormField>
+
                     <Button type="submit">Registrar análise do documento</Button>
                   </fieldset>
                 </form>

@@ -14,6 +14,20 @@ const published = {
   internalNotes: "Dado que não pertence ao consumidor",
 };
 describe("news delivery document", () => {
+  it.each([undefined, "", "Capa descrita"])(
+    "delivers a cover with optional description: %s",
+    (alt) => {
+      const fileId = crypto.randomUUID();
+      const document = newsDeliveryDocument(
+        {
+          ...published,
+          metadata: { ...published.metadata, cover: { fileId, alt } },
+        },
+        "app",
+      );
+      expect(document.cover).toEqual({ fileId, alt: alt ?? "" });
+    },
+  );
   it("includes only the selected channel and editorial content", () => {
     const document = newsDeliveryDocument(published, "app");
     expect(document).toMatchObject({

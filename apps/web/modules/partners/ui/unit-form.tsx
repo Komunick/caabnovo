@@ -49,9 +49,7 @@ export function UnitForm({
         if (
           await command({
             action: "unit",
-            ...(unit
-              ? { unitId: unit.id, justification: String(data.get("justification") ?? "") }
-              : {}),
+            ...(unit ? { unitId: unit.id } : {}),
             profile: parsed.data,
             active: data.get("active") === "on",
           })
@@ -105,11 +103,7 @@ export function UnitForm({
             Unidade ativa
           </label>
         </div>
-        {unit && (
-          <FormField id="unit-reason" label="Motivo da alteração">
-            <textarea name="justification" required minLength={3} maxLength={1000} />
-          </FormField>
-        )}
+
         <div className={styles.actions}>
           <Button type="submit" intent="primary">
             Salvar unidade

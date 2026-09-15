@@ -13,6 +13,24 @@ existentes atualizam seus próprios specs; não criam novas especificações.
 
 ## User Scenarios & Testing
 
+### Revisão de escopo — 14/09/2026
+
+**Esclarecimento posterior:** o produto permitirá aos profissionais configurar suas
+reservas para barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba.
+Restaurantes são apenas possibilidade futura. A autorização atual é exclusivamente
+pesquisa e registro de conclusões para revisão posterior. Não implementar o módulo.
+Ver [pesquisa de mercado](pesquisa-mercado-agendamentos-2026-09-14.md).
+
+- O nome correto de US4 é **Agendamentos**. O usuário solicitou novo brainstorming
+  porque a evolução será ampla. O desenho anterior é referência histórica, não escopo
+  aprovado para implementação. Ver [brainstorming-agendamentos.md](brainstorming-agendamentos.md).
+- US8 / **CAASSH está desativado — pendente de revisão**, por decisão do usuário.
+  T041–T045 ficam suspensas. O painel informa esse estado sem link ou ação operacional;
+  não criar concessões, saldo, rotas ou permissões durante a suspensão.
+- Aceite: o painel identifica Agendamentos como “Em revisão de escopo” e CAASSH
+  como “Desativado — pendente de revisão”, sem ações de navegação nos cartões.
+  Os demais módulos mantêm seu estado de planejamento.
+
 Prioridades indicam dependências internas; todas as histórias pertencem à mesma entrega. Testes de
 autorização, integridade, contratos e acessibilidade são obrigatórios conforme o risco.
 
@@ -21,7 +39,7 @@ autorização, integridade, contratos e acessibilidade são obrigatórios confor
 | US1 / P1 — Auditoria e Processamentos | Encontrar eventos e jobs numa área; elimina duplicação existente e permite início imediato.                             | Com eventos e jobs, uma área e duas subáreas; só jobs acessa Processamentos e não eventos; só eventos não acessa jobs; nenhum não vê a área. URLs anteriores chegam ao mesmo registro. Exportação mantém sua autorização própria. |
 | US2 / P1 — Conteúdo                   | Criar notícias, mídia, destaques, versões e publicar/programar; usa fundação pronta.                                    | Rascunho não altera versão pública; prévia é privada; publicação segue política editorial, canal e vigência; repetição não duplica distribuição e falha é acompanhável.                                                           |
 | US3 / P1 — Pessoas                    | Cadastrar associados/dependentes, analisar documentos, explicar situação; sustenta atendimento e comunicação.           | Correção documental preserva evidências válidas; vínculo possui histórico; cadastro, vínculo, OAB, situação financeira, credencial e restrições são dimensões distintas; sem política/fonte não há decisão automática presumida.  |
-| US4 / P2 — Atendimentos               | Configurar oferta, unidade, recursos e exceções; reservar, remarcar e registrar desfecho; depende de Pessoas.           | Disputa simultânea não excede capacidade; alteração de disponibilidade revela reservas afetadas; cancelamento/remarcação/presença/falta preservam motivo/histórico; avaliação mantém opinião original.                            |
+| US4 / P2 — Agendamentos               | Configurar oferta, unidade, recursos e exceções; reservar, remarcar e registrar desfecho; depende de Pessoas.           | Disputa simultânea não excede capacidade; alteração de disponibilidade revela reservas afetadas; cancelamento/remarcação/presença/falta preservam motivo/histórico; avaliação mantém opinião original.                            |
 | US5 / P2 — Benefícios                 | Manter parceiros, unidades, contratos, ofertas e avaliações; prepara o portal.                                          | Oferta sem condições obrigatórias não publica; vencida não aparece vigente; ocultar não exclui histórico; moderação não reescreve opinião.                                                                                        |
 | US6 / P2 — Equipe e acesso            | Colaborador, conta, grupos/funções e escopo; reutiliza acesso existente.                                                | Colaborador pode existir sem login; vincular conta existente não cria duplicata; permissões efetivas são explicáveis e restritas; recuperação e sessões preservam segurança.                                                      |
 | US7 / P2 — Mensagens                  | Público, modelos, prévia, programação e resultados; depende de contatos/eventos.                                        | Exclusões/preferências são revalidadas ao enviar; repetição não duplica; aceitação/entrega/leitura têm evidências distintas; canal não configurado não confirma envio real.                                                       |
@@ -112,3 +130,8 @@ API ou migration para essa renomeação.
 
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.

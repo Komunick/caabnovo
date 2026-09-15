@@ -17,10 +17,10 @@ export function NewPartner() {
       {error && <p role="alert">{error}</p>}
       <ProfileForm
         disabled={busy}
-        onSave={async (profile, justification) => {
+        onSave={async (profile) => {
           setBusy(true);
           setError("");
-          const body = JSON.stringify({ profile, justification });
+          const body = JSON.stringify({ profile });
           if (retry.current.body !== body) retry.current = { body, key: crypto.randomUUID() };
           try {
             const record = await partnerRequest<PartnerRecord>("/api/v1/partners", {

@@ -105,3 +105,14 @@ Reutilizar oabNumberSchema em memberProfileSchema e máscara oab no componente c
 3. Renderizar os sete campos selecionados com lista de descrições sem repetir inscrição; preservar mensagens de falha e fonte/horário.
 4. Validar projeção, descarte de campos não selecionados, dados ausentes/desconhecidos, auditoria sem novos dados pessoais e apresentação acessível em desktop/mobile com fixtures sintéticas. Executar integração/navegador no CI, sem localhost.
 5. Entregar na branch ativa do ciclo junto à padronização, sem abrir outra branch antes do PR. Nenhuma migration, dependência ou configuração adicional.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+### Correção de acessibilidade da RM03 — 15/09/2026
+
+Dimensionar os controles de abertura/histórico de documentos independentemente do texto
+opcional do motivo. Reexecutar a jornada com download real, Axe em desktop/celular e
+abertura do histórico por teclado; preservar capturas sintéticas no CI para revisão.

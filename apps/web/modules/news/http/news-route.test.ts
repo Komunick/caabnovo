@@ -94,7 +94,7 @@ describe("news HTTP boundary", () => {
     service.publish.mockRejectedValue(
       new NewsPolicyError("NEWS_NOT_READY", 422, "Internal details", [
         { field: "title", code: "TITLE_REQUIRED" },
-        { field: "cover.alt", code: "COVER_ALT_REQUIRED" },
+        { field: "cover.fileId", code: "FILE_UNAVAILABLE" },
       ]),
     );
     const response = await routes.publish(
@@ -110,7 +110,7 @@ describe("news HTTP boundary", () => {
     const data = await response.json();
     expect(data.fields).toEqual([
       { path: "title", code: "TITLE_REQUIRED" },
-      { path: "cover.alt", code: "COVER_ALT_REQUIRED" },
+      { path: "cover.fileId", code: "FILE_UNAVAILABLE" },
     ]);
     expect(JSON.stringify(data)).not.toContain("Internal details");
     service.publish.mockRejectedValue(new NewsPolicyError("NEWS_SLUG_CONFLICT", 409, "Duplicate"));
@@ -223,7 +223,7 @@ describe("news HTTP boundary", () => {
     expect(service.create).toHaveBeenCalledTimes(1);
   });
 
-  it("rejects edits and action changes without a reason before calling the service", async () => {
+  it("accepts edits and action changes without a reason", async () => {
     const { routes, service } = setup();
     for (const justification of [undefined, "", "   "]) {
       expect(
@@ -233,7 +233,7 @@ describe("news HTTP boundary", () => {
             newsId,
           )
         ).status,
-      ).toBe(422);
+      ).toBe(200);
       for (const action of ["publish", "unpublish"] as const)
         expect(
           (
@@ -243,15 +243,15 @@ describe("news HTTP boundary", () => {
               action,
             )
           ).status,
-        ).toBe(422);
+        ).toBe(200);
       for (const action of ["cancel", "retry"] as const)
         expect(
           (await routes.cancel(mutation({ justification }), newsId, crypto.randomUUID(), action))
             .status,
-        ).toBe(422);
+        ).toBe(200);
     }
     for (const action of ["update", "publish", "unpublish", "cancel", "retry"] as const)
-      expect(service[action]).not.toHaveBeenCalled();
+      expect(service[action]).toHaveBeenCalledTimes(3);
   });
 
   it("rejects cross-origin, missing CSRF and missing idempotency before writes", async () => {

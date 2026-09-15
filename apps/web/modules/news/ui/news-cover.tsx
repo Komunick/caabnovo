@@ -170,7 +170,7 @@ export function NewsCover({
       onChange({ fileId: intent.fileId, alt: "" });
       setMessage(
         purpose === "cover"
-          ? "Imagem enviada para verificação. Descreva a capa antes de publicar."
+          ? "Imagem enviada para verificação. A descrição da capa é opcional."
           : "Imagem enviada para verificação. Descreva a imagem antes de inseri-la.",
       );
       await refresh(undefined, ownerId);
@@ -332,7 +332,11 @@ export function NewsCover({
             id={`${prefix}-alt`}
             error={altError}
             label={purpose === "cover" ? "Descrição da capa" : "Descrição da imagem"}
-            hint="Descreva o que a imagem comunica. Obrigatória antes de publicar."
+            hint={
+              purpose === "cover"
+                ? "Opcional. Descreva a imagem se ela trouxer informações importantes para entender a notícia."
+                : "Descreva o que a imagem comunica. Obrigatória antes de publicar."
+            }
           >
             <textarea
               rows={2}

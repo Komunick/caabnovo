@@ -77,38 +77,45 @@ afterAll(async () => {
 });
 
 describe.sequential("news persistence with Payload", () => {
-  it("requires and atomically audits the reason for editing an existing draft", async () => {
+  it("edits without a written reason and still audits each change", async () => {
     const draft = await createNewsDraft(payload, context, {
       metadata: { title: "Criação sem motivo" },
       body: emptyNewsBody,
     });
+    let revision = draft.revision;
     for (const justification of [undefined, "", "   "]) {
-      await expect(
-        updateNewsDraft(payload, context, draft.id, {
-          metadata: { title: "Recusado" },
-          body: emptyNewsBody,
-          expectedVersion: draft.revision,
-          justification,
-        }),
-      ).rejects.toThrow();
+      const changed = await updateNewsDraft(payload, context, draft.id, {
+        metadata: { title: "Atualizado sem motivo" },
+        body: emptyNewsBody,
+        expectedVersion: revision,
+        justification,
+      });
+      revision = changed.revision;
     }
     expect(await getNewsDraft(payload, context.actor, draft.id)).toMatchObject({
-      revision: 1,
-      metadata: { title: "Criação sem motivo" },
+      revision: 4,
+      metadata: { title: "Atualizado sem motivo" },
     });
     await updateNewsDraft(payload, context, draft.id, {
       metadata: { title: "Atualizado" },
       body: emptyNewsBody,
-      expectedVersion: 1,
+      expectedVersion: revision,
       justification: "Correção editorial aprovada",
     });
     const events = await admin.query(
       "SELECT reason,actor_user_id FROM audit_event WHERE entity_id=$1 AND action='news.draft.updated'",
       [draft.id],
     );
-    expect(events.rows).toEqual([
-      { reason: "Correção editorial aprovada", actor_user_id: context.actor!.userId },
+    expect(events.rows).toHaveLength(4);
+    expect(events.rows.filter((event) => event.reason === null)).toEqual([
+      { reason: null, actor_user_id: context.actor!.userId },
+      { reason: null, actor_user_id: context.actor!.userId },
+      { reason: null, actor_user_id: context.actor!.userId },
     ]);
+    expect(events.rows).toContainEqual({
+      reason: "Correção editorial aprovada",
+      actor_user_id: context.actor!.userId,
+    });
   });
   it("enforces individual read, edit and publish permissions even with a stale actor", async () => {
     const article = await createNewsDraft(payload, context, {

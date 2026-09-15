@@ -54,7 +54,7 @@ test("operator follows progress, sees safe failure and performs an authorized re
     await expect(page.getByText(/stack|password|token/i)).toHaveCount(0);
 
     await page.getByRole("button", { name: "Reenviar processamento" }).click();
-    await page.getByLabel("Justificativa").fill("Nova tentativa aprovada no cenário sintético E2E");
+    await expect(page.getByLabel("Justificativa")).toHaveCount(0);
     const redriveResponsePromise = page.waitForResponse(
       (response) =>
         response.url().endsWith(`/api/v1/jobs/${jobId}/redrive`) &&

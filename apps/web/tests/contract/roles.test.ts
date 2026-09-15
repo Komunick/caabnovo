@@ -18,7 +18,7 @@ describe("roles contracts", () => {
         validUntil: new Date(Date.now() + 60_000).toISOString(),
       }).success,
     ).toBe(true);
-    expect(roleChangeRequestSchema.safeParse({ justification: " " }).success).toBe(false);
+    expect(roleChangeRequestSchema.safeParse({ justification: " " }).success).toBe(true);
   });
 
   it("returns a contract-valid role list and rejects an invalid page limit", async () => {

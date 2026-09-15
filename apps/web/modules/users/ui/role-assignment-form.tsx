@@ -45,7 +45,7 @@ export function RoleAssignmentForm({
       const response = await fetch(`/api/v1/users/${userId}/roles/${roleId}`, {
         method: "PUT",
         headers: headers(),
-        body: JSON.stringify({ justification: data.get("justification") }),
+        body: JSON.stringify({}),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => null);
@@ -58,9 +58,8 @@ export function RoleAssignmentForm({
     }
   }
 
-  async function revoke(roleId: string, reason: string) {
+  async function revoke(roleId: string) {
     const url = new URL(`/api/v1/users/${userId}/roles/${roleId}`, window.location.origin);
-    url.searchParams.set("justification", reason);
     const response = await fetch(url, { method: "DELETE", headers: headers() });
     if (!response.ok) throw new Error("Role revocation failed");
     router.refresh();
@@ -78,9 +77,8 @@ export function RoleAssignmentForm({
                 <SensitiveActionDialog
                   triggerLabel={`Revogar ${role.name}`}
                   title={`Revogar ${role.name}`}
-                  fieldLabel="Motivo da revogação"
                   confirmLabel="Confirmar revogação"
-                  onConfirm={(reason) => revoke(role.id, reason)}
+                  onConfirm={() => revoke(role.id)}
                 />
               ) : null}
             </li>
@@ -103,9 +101,7 @@ export function RoleAssignmentForm({
               ))}
             </select>
           </FormField>
-          <FormField id="role-justification" label="Justificativa da função">
-            <textarea id="role-justification" name="justification" rows={3} required />
-          </FormField>
+
           {error ? <p role="alert">{error}</p> : null}
           <button
             className="primary-button button--add"

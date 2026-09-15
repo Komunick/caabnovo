@@ -44,3 +44,8 @@ O teste local usa Mailpit, com interface e SMTP expostos somente em loopback. [D
 
 A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
 Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.

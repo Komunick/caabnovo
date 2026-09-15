@@ -169,3 +169,18 @@ drizzle-kit>esbuild 0.28.2, comprovado por peers sem erros e geração offline d
 
 A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
 Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+
+## Descrição opcional da capa — pesquisa de 14/09/2026
+
+A regra de produto foi definida explicitamente pelo usuário. A orientação oficial
+[W3C WAI para imagens decorativas](https://www.w3.org/WAI/tutorials/images/decorative/)
+recomenda `alt=""` quando a imagem não acrescenta informação ao texto; omitir o
+atributo pode fazer leitores anunciarem o arquivo. Imagens informativas se beneficiam
+de descrição, portanto a ajuda recomenda seu preenchimento quando relevante.
+Decisão: campo opcional, preservação do texto fornecido e atributo vazio quando
+omitido, sem alegar que toda capa é decorativa ou gerar texto sem conhecer a imagem.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   emptyNewsBody,
   createNewsDraftRequestSchema,
-  changeJustificationSchema,
   newsDraftMetadataSchema,
   updateNewsDraftRequestSchema,
   type NewsDraftMetadata,
@@ -72,8 +71,6 @@ export function NewsEditor({
   const [dirty, setDirty] = useState(false);
   const [pending, setPending] = useState(false);
   const [mediaUploading, setMediaUploading] = useState(false);
-  const [justification, setJustification] = useState("");
-  const [commandReason, setCommandReason] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<NewsFieldErrors>({});
@@ -125,14 +122,13 @@ export function NewsEditor({
     event?: FormEvent,
     preview = false,
     silent = false,
-    changeReason = justification,
   ): Promise<NewsRecord | undefined> {
     event?.preventDefault();
     if (busy.current || (mediaUploading && !silent)) return;
     if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
     const parsed = (record ? updateNewsDraftRequestSchema : createNewsDraftRequestSchema).safeParse(
       {
-        ...(record ? { expectedVersion: record.revision, justification: changeReason } : {}),
+        ...(record ? { expectedVersion: record.revision } : {}),
         metadata: {
           ...metadata,
           slug: metadata.slug || newsSlugFromTitle(metadata.title, slugSeed.current),
@@ -143,12 +139,14 @@ export function NewsEditor({
     if (!parsed.success) {
       setFieldErrors(newsFieldErrors(parsed.error.issues));
       focusNewsError();
-      setError("Confira os campos indicados e o motivo da alteração, quando solicitado.");
+      setError("Confira os campos indicados antes de salvar.");
       return;
     }
-    const input = JSON.stringify(
-      record ? parsed.data : { metadata: parsed.data.metadata, body: parsed.data.body },
-    );
+    const input = JSON.stringify({
+      ...(record ? { expectedVersion: record.revision } : {}),
+      metadata: parsed.data.metadata,
+      body: parsed.data.body,
+    });
     if (retry.current?.input !== input) retry.current = { input, key: crypto.randomUUID() };
     busy.current = true;
     setPending(true);
@@ -168,7 +166,7 @@ export function NewsEditor({
       if (!response.ok) throw new Error(await responseError(response, setFieldErrors));
       const saved = (await response.json()) as NewsRecord;
       setDirty(false);
-      setJustification("");
+
       setRecord(saved);
       setMetadata(saved.metadata);
       retry.current = undefined;
@@ -193,16 +191,11 @@ export function NewsEditor({
   }
   async function command(action: "duplicate" | "archive" | "restore", versionId?: string) {
     if (!record || busy.current || mediaUploading || dirty) return;
-    if (action !== "duplicate" && !changeJustificationSchema.safeParse(commandReason).success) {
-      setError("Informe o motivo da alteração (3 a 1000 caracteres).");
-      return;
-    }
     busy.current = true;
     setPending(true);
     setError("");
     const input = JSON.stringify({
       expectedVersion: record.revision,
-      ...(action !== "duplicate" ? { justification: commandReason } : {}),
       ...(versionId ? { versionId } : {}),
     });
     const fingerprint = `${action}:${record.id}:${input}`;
@@ -222,7 +215,7 @@ export function NewsEditor({
       const saved = (await response.json()) as NewsRecord;
       retry.current = undefined;
       setConfirm(undefined);
-      setCommandReason("");
+
       if (action === "duplicate") {
         router.push(`/news/${saved.id}`);
         return;
@@ -302,22 +295,6 @@ export function NewsEditor({
           </div>
         </div>
         <form id="news-draft-form" onSubmit={save} noValidate>
-          {record && (
-            <FormField
-              id="news-reason"
-              label="Motivo da alteração"
-              error={fieldErrors.justification}
-            >
-              <textarea
-                value={justification}
-                onChange={(event) => setJustification(event.target.value)}
-                required
-                minLength={3}
-                maxLength={1000}
-                disabled={pending || mediaUploading}
-              />
-            </FormField>
-          )}
           <fieldset
             disabled={!ready || pending || mediaUploading || record?.archived}
             className="news-fields"
@@ -528,7 +505,7 @@ export function NewsEditor({
             focusNewsError();
           }}
           record={record}
-          onPrepare={(reason) => save(undefined, false, true, reason)}
+          onPrepare={() => save(undefined, false, true)}
           dirty={dirty}
           disabled={!ready || pending || mediaUploading}
           onBusyChange={setMediaUploading}
@@ -604,16 +581,7 @@ export function NewsEditor({
           }
         >
           {error ? <p role="alert">{error}</p> : null}
-          <FormField id="news-command-reason" label="Motivo da alteração">
-            <textarea
-              value={commandReason}
-              onChange={(event) => setCommandReason(event.target.value)}
-              required
-              minLength={3}
-              maxLength={1000}
-              disabled={pending}
-            />
-          </FormField>
+
           <div className="news-actions">
             <DialogClose asChild>
               <Button disabled={pending}>Cancelar</Button>

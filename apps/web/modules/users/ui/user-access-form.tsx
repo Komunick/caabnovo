@@ -1,5 +1,4 @@
 "use client";
-import { FormField } from "@/components/ui/form-field";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -83,7 +82,7 @@ const errors: Record<string, string> = {
   ROLE_REVOKE_DENIED: "Você não tem permissão para remover acessos.",
   AUTHENTICATION_REQUIRED: "Sua sessão expirou. Entre novamente.",
   USER_NOT_FOUND: "O colaborador não foi encontrado ou está desativado.",
-  VALIDATION_FAILED: "Confira a seleção e informe uma justificativa.",
+  VALIDATION_FAILED: "Confira a seleção de acessos.",
 };
 export function UserAccessForm({
   userId,
@@ -101,7 +100,6 @@ export function UserAccessForm({
   const router = useRouter();
   const [snapshot, setSnapshot] = useState(initial);
   const [selected, setSelected] = useState(new Set(initial.permissions));
-  const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
@@ -154,7 +152,6 @@ export function UserAccessForm({
           permissions: [...selected],
           expectedPermissions: snapshot.permissions,
           version: snapshot.version,
-          justification: reason,
         }),
       });
       const body = await response.json();
@@ -164,7 +161,7 @@ export function UserAccessForm({
       }
       setSnapshot(body);
       setSelected(new Set(body.permissions));
-      setReason("");
+
       setSaved(true);
       router.refresh();
     } catch {
@@ -215,18 +212,8 @@ export function UserAccessForm({
               Ao salvar, esta seleção passa a definir todos os acessos da conta. Início,
               configurações pessoais e notícias públicas continuam disponíveis.
             </p>
-            <FormField id="access-reason" label="Justificativa dos acessos">
-              <textarea
-                id="access-reason"
-                rows={2}
-                required
-                maxLength={1000}
-                value={reason}
-                onChange={(event) => setReason(event.target.value)}
-                disabled={pending}
-              />
-            </FormField>
-            <Button intent="primary" type="submit" disabled={pending || !changed || !reason.trim()}>
+
+            <Button intent="primary" type="submit" disabled={pending || !changed}>
               <Check size={18} aria-hidden="true" />
               {pending ? "Salvando…" : "Salvar acessos"}
             </Button>

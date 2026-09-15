@@ -41,3 +41,8 @@ aprovação. Migrations anteriores não são editadas, banco não é resetado ne
 Rollback de aplicação pode ocultar as ações preservando campos/decisões/auditoria. Não apagar
 a migration aplicada nem executar reversão destrutiva. Integração futura deve manter leitura
 da restrição até uma decisão explícita de liberação.
+
+
+## Regra final de justificativas — 14/09/2026
+
+Nenhuma operação desta função exige motivo escrito. Campos de justificativa foram retirados da interface. Contratos aceitam omissão e vazio; texto legado opcional mantém seu limite. As exigências anteriores de justificativa estão substituídas. Histórico permanece preservado, e novos eventos registram autoria, data, ação e alterações automaticamente, sem motivo inventado. Fonte, resultado, autenticação, permissões, versão e dados necessários à operação continuam obrigatórios.

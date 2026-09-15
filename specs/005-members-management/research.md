@@ -51,3 +51,16 @@ Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em 
 Os sete campos são escolha expressa do usuário. Não inferir elegibilidade nem situação financeira interna a partir deles. A consulta de validação foi única e seus valores não são fixtures, documentação nem dados de cadastro.
 
 - [GitHub upload-artifact](https://github.com/actions/upload-artifact): guardar somente screenshots OAB de fixtures sintéticas como artefato por sete dias, antes de a segunda execução Playwright limpar a pasta. Permite inspeção visual sem iniciar localhost; nenhum trace, ambiente ou resposta real é enviado.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
+
+## Alvos de documentos sem motivo — 15/09/2026
+
+O CI identificou alvo de 19 px adjacente ao histórico após retirar o parágrafo do motivo.
+Referência oficial consultada em 15/09/2026: [WCAG 2.2, 2.5.8](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html).
+Decisão: dar área mínima de 44 px ao link de abertura e ao resumo do histórico, preservando
+semântica, foco e quebra de texto. Validar com Axe em desktop e celular, histórico aberto
+por teclado e capturas sintéticas. A validação automática não substitui homologação humana.

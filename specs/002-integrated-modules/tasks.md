@@ -1,4 +1,4 @@
-﻿# Tasks: Módulos integrados CAAB
+# Tasks: Módulos integrados CAAB
 
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
 Obrigatórios por risco conforme especificação. Todos os módulos no escopo, com PR por função pronta.
@@ -98,7 +98,24 @@ Execução detalhada e evidências: [spec 005](../005-members-management/tasks.m
 pendente quanto às políticas institucionais; o incremento entregue registra decisões manuais com
 fonte e motivo, sem inventar a matriz. Credencial nesta entrega é situação/validade, sem emissão.
 
-## Phase 6 — US4 Atendimentos (P2)
+## Phase 6 — US4 Agendamentos (P2)
+
+**Revisão em 14/09/2026:** o módulo se chama **Agendamentos**. T022–T026 são propostas
+anteriores e estão suspensas até o novo brainstorming solicitado pelo usuário.
+Não iniciar implementação com regras presumidas. Consultar
+[brainstorming-agendamentos.md](brainstorming-agendamentos.md).
+
+- [ ] AG-B01 Levantar com o usuário o fluxo atual e os objetivos da grande evolução.
+      Objetivo esclarecido: reservas configuráveis por profissionais em áreas diversas.
+      Recorte: barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba.
+      Restaurantes somente como possibilidade futura; fluxo detalhado ainda não definido.
+- [x] AG-R01 Pesquisar soluções atuais em fontes oficiais e registrar evidências,
+      conclusões e dúvidas em `pesquisa-mercado-agendamentos-2026-09-14.md`, sem implementar.
+- [ ] AG-R02 Revisar posteriormente as conclusões com o usuário; nenhuma proposta
+      de funcionamento, política ou primeira entrega foi aprovada pela pesquisa.
+- [ ] AG-B02 Explorar jornadas, atores, oferta, disponibilidade, exceções e integrações;
+      distinguir decisões confirmadas de opções ainda em discussão.
+- [ ] AG-B03 Consolidar o escopo resultante em spec própria, plano e tarefas antes do código.
 
 Objetivo: oferta e operação sem conflitos. Teste independente: concorrência pela capacidade,
 exceções, remarcação/desfecho e avaliação preservada.
@@ -163,6 +180,9 @@ Objetivo: público correto e entrega rastreável. Teste independente: exclusão,
       validar em `apps/web/tests/e2e/messages.spec.ts`.
 
 ## Phase 10 — US8 Créditos (P2)
+
+**Desativado — pendente de revisão, por decisão do usuário em 14/09/2026.**
+T041–T045 ficam suspensas, sem implementação ou ativação até nova decisão.
 
 Objetivo: programa configurado e extrato consistente. Teste independente: concessão/lote/correção
 sob política explícita, sem duplicidade nem edição direta de saldo.
@@ -239,3 +259,12 @@ Incrementos locais completos, começando por US1. O usuário pediu planejamento 
 início imediato, não conclusão instantânea nem telas demonstrativas. Marcar [x] apenas trabalho
 executado/verificado. Manter decisões de negócio pendentes visíveis, avançando nas tarefas
 independentes.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+- [x] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [x] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
+
+Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).

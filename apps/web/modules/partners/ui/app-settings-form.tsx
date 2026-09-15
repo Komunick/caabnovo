@@ -2,7 +2,6 @@
 import { useState } from "react";
 import type { PartnerAppSettings, PartnerCategory } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
 import { usePartnerMutation } from "./use-partner-mutation";
 import { partnerRequest } from "./client";
 import styles from "./partners.module.css";
@@ -15,7 +14,6 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
       ? initial.categories.filter((c) => c.active).map((c) => c.id)
       : initial.settings.categoryIds,
   );
-  const [reason, setReason] = useState("");
   const mutation = usePartnerMutation();
   const active = data.categories.filter((category) => category.active);
   const visibleCount =
@@ -64,13 +62,11 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
               mode,
               categoryIds:
                 mode === "selected" ? selected.filter((id) => active.some((c) => c.id === id)) : [],
-              justification: reason,
             },
             "Configuração do app salva.",
           );
           if (result) {
             setData(result);
-            setReason("");
           }
         }}
       >
@@ -142,15 +138,7 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
               catálogo do app.
             </p>
           )}
-          <FormField id="app-settings-reason" label="Justificativa da configuração">
-            <textarea
-              value={reason}
-              onChange={(event) => setReason(event.target.value)}
-              required
-              minLength={3}
-              maxLength={1000}
-            />
-          </FormField>
+
           <Button type="submit" intent="primary">
             Salvar configuração do app
           </Button>

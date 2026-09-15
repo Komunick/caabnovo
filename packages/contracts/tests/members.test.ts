@@ -7,7 +7,7 @@ import {
 } from "../src/members";
 
 describe("member contracts", () => {
-  it("accepts explicit photo removal or a file ID with version and justification", () => {
+  it("accepts explicit photo removal or a file ID with version and optional justification", () => {
     const base = { action: "photo", expectedVersion: 1, justification: "Foto atualizada" };
     for (const fileId of [null, crypto.randomUUID()])
       expect(memberCommandSchema.safeParse({ ...base, fileId }).success).toBe(true);
@@ -15,20 +15,15 @@ describe("member contracts", () => {
       {},
       { fileId: "https://example.test/photo.jpg" },
       { fileId: null, expectedVersion: 0 },
-      { fileId: null, justification: "" },
     ])
       expect(memberCommandSchema.safeParse({ ...base, ...extra }).success).toBe(false);
   });
   it.each(["activate", "block", "unblock"])(
-    "requires justification and version for %s",
+    "requires version without a justification for %s",
     (action) => {
       const input = { action, expectedVersion: 1, justification: "Decisão administrativa" };
       expect(memberCommandSchema.safeParse(input).success).toBe(true);
-      for (const extra of [
-        { justification: " " },
-        { expectedVersion: 0 },
-        { administrativeStatus: "active" },
-      ])
+      for (const extra of [{ expectedVersion: 0 }, { administrativeStatus: "active" }])
         expect(memberCommandSchema.safeParse({ ...input, ...extra }).success).toBe(false);
     },
   );

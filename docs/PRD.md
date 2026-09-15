@@ -159,7 +159,7 @@ Integrações reais dependem de contrato e responsável. Os módulos adicionais 
 entrega integrada, inclusive os anteriormente ausentes ou adiados:
 
 - Pessoas: dependentes, análise documental, correções, credencial e elegibilidade por finalidade.
-- Atendimentos: avaliações e acompanhamento de qualidade, além de oferta e agenda.
+- Agendamentos: avaliações e acompanhamento de qualidade, além de oferta e agenda.
 - Benefícios: condições, contratos, ofertas e avaliações de parceiros.
 - Comunicação: notícias/destaques, públicos, campanhas e modelos automáticos com acompanhamento.
 - Créditos: Caassh, configuração do programa, concessões individuais/em lote, extrato e correções.
@@ -526,7 +526,7 @@ terminal; correções administrativas exigem permissão especial e justificativa
 ### Entrega integrada — todos os módulos
 
 O [planejamento geral](../specs/002-integrated-modules/plan.md) inclui Conteúdo, Pessoas,
-Atendimentos, Benefícios, Equipe, Comunicação, Créditos, Portal e Relatórios. Começar pela
+Agendamentos, Benefícios, Equipe, Comunicação, Créditos, Portal e Relatórios. Começar pela
 consolidação da fundação em [Auditoria e Processamentos](../specs/003-audit-operations/spec.md),
 seguida das dependências internas.
 
@@ -624,3 +624,13 @@ API ou migration para essa renomeação.
 
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
+
+## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+
+O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
+solicitou novo brainstorming para uma grande evolução antes da implementação.
+Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
+
+**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
+são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
+A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.

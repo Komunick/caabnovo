@@ -221,3 +221,13 @@ Decisão do usuário após consulta individual autorizada somente para leitura:
 - Preservar fonte, horário, ausência de registro, erros, permissões e a auditoria existente. Nenhum novo campo pessoal do retorno é persistido ou copiado para cadastro/avaliações.
 - Documentar os dez nomes de campos efetivamente retornados, com tipos e uso, sem inscrição, nome, CPF ou demais valores pessoais da consulta real.
 - Testes automatizados usam exclusivamente dados sintéticos e um provedor simulado; não repetir a consulta real.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+
+### Aceite de documentos sem motivo — 15/09/2026
+
+Abrir documento e expandir seu histórico devem manter áreas clicáveis suficientes quando
+a análise não tiver motivo escrito, com teclado e celular, sem sobreposição ou rolagem horizontal.

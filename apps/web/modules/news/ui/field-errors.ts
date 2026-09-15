@@ -1,6 +1,5 @@
 export type NewsFieldErrors = Partial<
   Record<
-    | "justification"
     | "title"
     | "summary"
     | "slug"
@@ -25,9 +24,7 @@ export function newsFieldErrors(issues: readonly Issue[]): NewsFieldErrors {
       Array.isArray(issue.path) ? issue.path.join(".") : String(issue.path ?? issue.field ?? "")
     ).replace(/^metadata\./, "");
     const field = path.split(".")[0];
-    if (field === "justification")
-      errors.justification = "Informe o motivo da alteração (3 a 1000 caracteres).";
-    else if (field === "title")
+    if (field === "title")
       errors.title =
         issue.code === "TITLE_REQUIRED"
           ? "Informe um título antes de publicar."
@@ -52,10 +49,7 @@ export function newsFieldErrors(issues: readonly Issue[]): NewsFieldErrors {
       errors.runAt = "Escolha um horário futuro de Brasília, dentro dos próximos 365 dias.";
     else if (field === "cover") {
       if (path === "cover.alt")
-        errors.coverAlt =
-          issue.code === "COVER_ALT_REQUIRED"
-            ? "Descreva a capa antes de publicar."
-            : "Use uma descrição da capa de até 500 caracteres.";
+        errors.coverAlt = "Use uma descrição da capa de até 500 caracteres.";
       else
         errors.cover =
           "Escolha uma imagem PNG, JPG ou JPEG desta notícia e aguarde a liberação do arquivo.";

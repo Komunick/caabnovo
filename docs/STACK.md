@@ -386,3 +386,13 @@ responsabilidade definida.
 - Conteúdo de arquivos no PostgreSQL; compatibilidade S3 para o legado.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.
+
+## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+
+O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
+solicitou novo brainstorming para uma grande evolução antes da implementação.
+Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
+
+**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
+são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
+A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.

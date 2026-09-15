@@ -159,3 +159,12 @@ T025 concluída localmente em 10/09/2026; T028 reaberta na revisão após o escl
 - [x] OR04 Concluir CI e evidências na branch única ativa, sem consultar novamente os dados reais.
 
 Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../001-project-foundation/evidence/justification-oab.md).
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+- [x] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [x] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
+
+Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).

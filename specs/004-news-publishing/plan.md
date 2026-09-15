@@ -91,3 +91,15 @@ URL interna e rejeição de origens externas, preservando CSRF e idempotência. 
 4. Executar formatação, lint, typecheck e testes sem serviços locais; CI executa banco,
    navegador e build. Abrir PR somente após validar a branch nova. Esta entrega é uma
    regra compartilhada coesa, coordenada pela spec 001, sem criar spec duplicada.
+
+## Descrição opcional da capa — 14/09/2026
+
+Retirar COVER_ALT_REQUIRED da política compartilhada de publicação imediata e
+agendada. Manter o contrato atual que já normaliza descrição ausente para vazia.
+Atualizar ajuda do seletor e apresentação da notícia. Validar a publicação direta
+com capa sem descrição no E2E existente e a política com texto vazio/ausente.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.

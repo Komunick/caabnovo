@@ -31,6 +31,14 @@ function snapshot(): NewsPublicationSnapshot {
 }
 
 describe("news publication policy", () => {
+  it.each([undefined, "", "   "])("allows an optional cover description: %s", (alt) => {
+    const current = snapshot();
+    current.metadata = newsDraftMetadataSchema.parse({
+      ...current.metadata,
+      cover: { fileId, alt },
+    });
+    expect(validateNewsPublication(actor, command, current).expectedVersion).toBe(3);
+  });
   it("allows direct publication preparation with panel access and no extra permission", () => {
     const current = snapshot();
     const before = structuredClone(current);
@@ -75,7 +83,6 @@ describe("news publication policy", () => {
         issues: expect.arrayContaining([
           { field: "title", code: "TITLE_REQUIRED" },
           { field: "slug", code: "SLUG_REQUIRED" },
-          { field: "cover.alt", code: "COVER_ALT_REQUIRED" },
           { field: "content", code: "CONTENT_REQUIRED" },
         ]),
       }),

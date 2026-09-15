@@ -23,8 +23,8 @@ describe("individual access contract", () => {
   ])("rejects invalid selection %j", (...permissions) => {
     expect(userAccessChangeSchema.safeParse({ ...input, permissions }).success).toBe(false);
   });
-  it("requires reason, expected version and rejects injected fields", () => {
-    expect(userAccessChangeSchema.safeParse({ ...input, justification: " " }).success).toBe(false);
+  it("requires expected version without a reason and rejects injected fields", () => {
+    expect(userAccessChangeSchema.safeParse({ ...input, justification: " " }).success).toBe(true);
     expect(userAccessChangeSchema.safeParse({ ...input, version: -1 }).success).toBe(false);
     expect(userAccessChangeSchema.safeParse({ ...input, administrator: true }).success).toBe(false);
   });

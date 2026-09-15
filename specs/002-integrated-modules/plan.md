@@ -67,6 +67,26 @@ módulos já implementados. Sem packages ou tabelas genéricas para antecipar ab
 
 ## Implementation Sequence
 
+### Prioridade vigente — 14/09/2026
+
+Etapa atual limitada a pesquisa de mercado e documentação por solicitação expressa.
+Recorte: barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba;
+restaurantes somente como possibilidade futura. Consultar o relatório de pesquisa
+antes de retomar o brainstorming. Não produzir implementação durante esta etapa.
+
+Reabrir o levantamento de **Agendamentos** antes de produzir sua spec funcional ou código.
+As propostas anteriores de US4 não definem a grande evolução solicitada pelo usuário.
+Registrar fluxo atual, problemas e decisões no brainstorming deste programa; depois
+consolidar uma spec própria com plano, tarefas e critérios de aceite.
+
+**CAASSH: desativado — pendente de revisão.** Suspender US8/T041–T045 e suas
+dependências de crédito. Atualizar apenas a indicação no painel e o planejamento;
+não existem operações implementadas para desligar. Preservar o contrato de leitura
+de Associados como referência histórica. Não há migration ou exclusão de dados.
+
+As alterações permanecem na única branch ativa, ainda sem PR. Otimização da navegação
+continua registrada separadamente; o brainstorming definirá o escopo de Agendamentos.
+
 Cada funcionalidade possui spec próprio, plano e tarefas antes do código. Este é o mapa geral de
 dependências, não um spec único para todas as implementações. A fusão inicia em
 [003-audit-operations](../003-audit-operations/plan.md). Correções e melhorias, inclusive
@@ -109,3 +129,8 @@ API ou migration para essa renomeação.
 
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.

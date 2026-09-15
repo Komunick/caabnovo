@@ -39,18 +39,18 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await expect(saveButton).toBeEnabled();
   await expectWcag22AA(page);
   await page.getByLabel("Nome").fill(updatedName);
-  await page.getByLabel("Justificativa", { exact: true }).fill("Correção cadastral sintética");
+  await expect(page.getByLabel("Justificativa", { exact: true })).toHaveCount(0);
   await saveButton.click();
   await expect(page.getByRole("heading", { name: updatedName })).toBeVisible();
 
   const grantButton = page.getByRole("button", { name: "Conceder função" });
   await expect(grantButton).toBeEnabled();
   await page.getByLabel("Função", { exact: true }).selectOption({ label: "Consulta de usuários" });
-  await page.getByLabel("Justificativa da função").fill("Consulta temporária aprovada");
+  await expect(page.getByLabel("Justificativa da função")).toHaveCount(0);
   await grantButton.click();
   await expect(page.getByText("Consulta de usuários", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Revogar Consulta de usuários" }).click();
-  await page.getByLabel("Motivo da revogação").fill("Atividade concluída");
+  await expect(page.getByLabel("Motivo da revogação")).toHaveCount(0);
   await page.getByRole("button", { name: "Confirmar revogação" }).click();
   await expect(page.getByRole("button", { name: "Revogar Consulta de usuários" })).toHaveCount(0);
 
@@ -59,9 +59,7 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await expect(
     accesses.getByRole("checkbox", { name: "Publicar, programar e arquivar notícias" }),
   ).not.toBeChecked();
-  await accesses
-    .getByLabel("Justificativa dos acessos")
-    .fill("Acesso somente de consulta para teste");
+  await expect(accesses.getByLabel("Justificativa dos acessos")).toHaveCount(0);
   await accesses.getByRole("button", { name: "Salvar acessos" }).click();
   await expect(accesses.getByRole("status")).toHaveText("Acessos atualizados.");
   await page.reload();
@@ -74,7 +72,7 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await expectWcag22AA(page);
 
   await page.getByRole("button", { name: "Desativar colaborador" }).click();
-  await page.getByLabel("Justificativa da desativação").fill("Conta sintética concluída");
+  await expect(page.getByLabel("Justificativa da desativação")).toHaveCount(0);
   await page.getByRole("button", { name: "Confirmar desativação" }).click();
   await expect(page.getByText("Desativado", { exact: true })).toBeVisible();
 });

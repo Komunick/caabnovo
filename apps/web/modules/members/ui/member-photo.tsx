@@ -4,7 +4,6 @@ import { Camera, Check, Trash2, UserRound, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IMAGE_FILE_ACCEPT, MAX_MEMBER_PHOTO_BYTES, type MemberRecord } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
 import { uploadMemberPhoto, type PreparedPhoto } from "./photo-upload";
 import styles from "./members.module.css";
 
@@ -131,7 +130,6 @@ export function MemberPhoto({
 }) {
   const [file, setFile] = useState<File>();
   const [preview, setPreview] = useState<string>();
-  const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
@@ -167,13 +165,7 @@ export function MemberPhoto({
   }
 
   async function save(remove = false) {
-    if (
-      pending ||
-      disabled ||
-      (!!member.photoFileId && reason.trim().length < 3) ||
-      (!remove && !file)
-    )
-      return;
+    if (pending || disabled || (!remove && !file)) return;
     setPending(true);
     onBusyChange(true);
     setError("");
@@ -196,11 +188,11 @@ export function MemberPhoto({
       window.clearTimeout(timeout);
       setCommitting(true);
       setNotice(remove ? "Removendo a foto…" : "Salvando a foto…");
-      if (await command({ action: "photo", fileId, justification: reason.trim() })) {
+      if (await command({ action: "photo", fileId })) {
         setFile(undefined);
         prepared.current = null;
         uploadKey.current = crypto.randomUUID();
-        setReason("");
+
         setNotice(remove ? "Foto removida." : "Foto de perfil atualizada.");
       } else setNotice("");
     } catch (e) {
@@ -280,37 +272,15 @@ export function MemberPhoto({
           )}
           {(!disabled || pending) && (canUpload || member.photoFileId) && (
             <>
-              {member.photoFileId && (
-                <FormField id="photo-reason" label="Motivo da alteração da foto">
-                  <textarea
-                    value={reason}
-                    onChange={(event) => setReason(event.target.value)}
-                    required
-                    minLength={3}
-                    maxLength={1000}
-                    disabled={pending}
-                    rows={2}
-                  />
-                </FormField>
-              )}
               <div className={styles.actions}>
                 {canUpload && (
-                  <Button
-                    type="submit"
-                    intent="primary"
-                    disabled={
-                      !file || pending || (!!member.photoFileId && reason.trim().length < 3)
-                    }
-                  >
+                  <Button type="submit" intent="primary" disabled={!file || pending}>
                     <Check size={18} aria-hidden="true" />
                     Salvar foto
                   </Button>
                 )}
                 {member.photoFileId && (
-                  <Button
-                    disabled={pending || (!!member.photoFileId && reason.trim().length < 3)}
-                    onClick={() => void save(true)}
-                  >
+                  <Button disabled={pending} onClick={() => void save(true)}>
                     <Trash2 size={18} aria-hidden="true" />
                     Remover foto
                   </Button>

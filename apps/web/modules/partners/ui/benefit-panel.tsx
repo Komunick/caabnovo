@@ -82,9 +82,6 @@ function BenefitForm({
             ...(benefit
               ? {
                   benefitId: benefit.id,
-                  justification: String(
-                    new FormData(event.currentTarget).get("justification") ?? "",
-                  ),
                 }
               : {}),
             draft: parsed.data,
@@ -192,11 +189,7 @@ function BenefitForm({
           ))}
         </fieldset>
         <BenefitPreview draft={draft} partner={partner} />
-        {benefit && (
-          <FormField id="benefit-reason" label="Motivo da alteração">
-            <textarea name="justification" required minLength={3} maxLength={1000} />
-          </FormField>
-        )}
+
         <div className={styles.actions}>
           <Button type="submit" intent="primary">
             Salvar rascunho
@@ -332,7 +325,6 @@ export function BenefitPanel({
                     await command({
                       action: decision.action,
                       benefitId: benefit.id,
-                      justification: String(new FormData(event.currentTarget).get("justification")),
                     })
                   )
                     setDecision(null);
@@ -355,9 +347,7 @@ export function BenefitPanel({
                       <BenefitPreview draft={benefit.draft} partner={partner} />
                     </>
                   )}
-                  <FormField id="benefit-publish-reason" label="Justificativa da decisão">
-                    <textarea name="justification" required minLength={3} maxLength={1000} />
-                  </FormField>
+
                   <div className={styles.actions}>
                     <Button type="submit" intent="primary">
                       {decision.action === "publish"

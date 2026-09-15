@@ -135,3 +135,10 @@ Falhas de validação e pré-requisitos editoriais retornam `fields: [{ path, co
 geral. `path` identifica o controle (`metadata.slug`, `title`, `cover.alt`, `content`, etc.).
 Conflito de endereço publicado retorna 409 com campo `metadata.slug`. Mensagens internas e dados
 de exceção não são expostos; a interface traduz os códigos e mantém o texto editado.
+
+
+## Regra final de justificativas — 14/09/2026
+
+Nenhuma operação desta função exige motivo escrito. Campos de justificativa foram retirados da interface. Contratos aceitam omissão e vazio; texto legado opcional mantém seu limite. As exigências anteriores de justificativa estão substituídas. Histórico permanece preservado, e novos eventos registram autoria, data, ação e alterações automaticamente, sem motivo inventado. Fonte, resultado, autenticação, permissões, versão e dados necessários à operação continuam obrigatórios.
+
+A descrição da capa também é opcional, com limite de 500 caracteres e normalização de ausência para texto vazio. Não existe estado especial de criação para dispensar motivo.

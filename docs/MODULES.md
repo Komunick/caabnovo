@@ -45,7 +45,7 @@ deste repositório. Não foram consultados código, telas ou contratos do sistem
 | Filas, idempotência e worker            | `apps/worker`, `job_execution`, `idempotency_record`                                         | Infraestrutura comum.                                          | Publicação, mensagens e demais tarefas específicas com seus contratos.                                                                           |
 | Notícias e mídia editorial | Editor, mídia, destaques, histórico, publicação, agenda e API pública v1 em /news, spec 004 | Comunicação → Conteúdo e destaques. | Função concluída no painel; interfaces externas integram o contrato público de consulta. |
 | Associados e dependentes                | Sem cadastro de domínio correspondente                                                       | Pessoas.                                                       | Cadastro, vínculo, análise documental, credencial, verificações e elegibilidade. Não reutilizar a tabela de login como cadastro de beneficiário. |
-| Oferta e agendamento                    | Sem domínio correspondente                                                                   | Atendimentos.                                                  | Unidades próprias, serviços, profissionais/recursos, disponibilidade, reservas, desfechos e avaliações.                                          |
+| Oferta e agendamento                    | Sem domínio correspondente                                                                   | Agendamentos.                                                  | Unidades próprias, serviços, profissionais/recursos, disponibilidade, reservas, desfechos e avaliações.                                          |
 | Parceiros e benefícios                  | Sem domínio correspondente                                                                   | Benefícios.                                                    | Organizações parceiras, unidades, contratos, ofertas, condições e avaliações.                                                                    |
 | Colaboradores                           | Sem cadastro de domínio correspondente                                                       | Equipe e acesso, junto das contas existentes.                  | Dados administrativos e relação opcional com conta. Não recriar usuários ou papéis.                                                              |
 | Campanhas e automações de comunicação   | Sem domínio correspondente                                                                   | Comunicação → Mensagens.                                       | Públicos, modelos, prévia, agendamento e acompanhamento por canal. Reutilizar worker e jobs.                                                     |
@@ -59,7 +59,7 @@ deste repositório. Não foram consultados código, telas ou contratos do sistem
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Meu trabalho       | Pendências, próximos atendimentos e falhas que o perfil pode resolver.                                                                               |
 | Pessoas            | Associados, dependentes, análise documental, verificações, credencial e elegibilidade.                                                               |
-| Atendimentos       | Agenda, oferta de serviços, unidades próprias, profissionais/recursos, horários, exceções, presença/falta e avaliações.                              |
+| Agendamentos       | Agenda, oferta de serviços, unidades próprias, profissionais/recursos, horários, exceções, presença/falta e avaliações.                              |
 | Benefícios         | Parceiros, unidades de parceiros, ofertas, categorias/tags, condições, contratos, visibilidade e avaliações.                                         |
 | Comunicação        | Notícias, mídia, destaques, versões, publicação, campanhas, segmentos e mensagens automáticas.                                                       |
 | Créditos           | Caassh, regras configuradas, concessões individuais/em lote, extrato, conversão e correções rastreáveis.                                             |
@@ -191,3 +191,13 @@ API ou migration para essa renomeação.
 
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
+
+## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+
+O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
+solicitou novo brainstorming para uma grande evolução antes da implementação.
+Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
+
+**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
+são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
+A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.

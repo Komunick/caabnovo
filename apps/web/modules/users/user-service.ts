@@ -68,7 +68,7 @@ export async function createUser(
   overrides: ServiceDependencies = {},
 ) {
   requirePermission(command.actor, PERMISSIONS.usersCreate);
-  const reason = command.justification?.trim() || "Cadastro inicial de colaborador e acessos";
+  const reason = command.justification?.trim() || "";
   const deps = dependencies(overrides);
   try {
     return await withTransaction(pool, async (client) => {
@@ -197,7 +197,6 @@ export async function changeUser(
     command.status === "disabled" ? PERMISSIONS.usersDisable : PERMISSIONS.usersUpdate,
   );
   const reason = command.justification.trim();
-  if (!reason) throw new UserAccessError("JUSTIFICATION_REQUIRED", 422, "Justification required");
   const deps = dependencies(overrides);
   return withTransaction(pool, async (client: PoolClient) => {
     const before = await findUserById(client, command.userId);

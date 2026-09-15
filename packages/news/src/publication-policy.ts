@@ -48,9 +48,6 @@ export function validateNewsPublication(
   const issues: { field: string; code: string }[] = [];
   if (!metadata.title) issues.push({ field: "title", code: "TITLE_REQUIRED" });
   if (!metadata.slug) issues.push({ field: "slug", code: "SLUG_REQUIRED" });
-  if (metadata.cover && !metadata.cover.alt) {
-    issues.push({ field: "cover.alt", code: "COVER_ALT_REQUIRED" });
-  }
   if (snapshot.content.status !== "valid") {
     issues.push({
       field: "content",

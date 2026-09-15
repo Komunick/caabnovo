@@ -42,3 +42,12 @@ Detalhes históricos e resolução em [review.md](review.md). Correções verifi
 - [x] JP04 Concluir gates e evidências da entrega compartilhada em branch nova antes do PR.
 
 Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../001-project-foundation/evidence/justification-oab.md).
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+- [x] RM01 Remover exigências de justificativa nos contratos, serviços e persistência desta função.
+- [x] RM02 Retirar campos e bloqueios de motivo em todas as telas da função.
+- [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
+
+Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).

@@ -36,7 +36,7 @@ export const updateUserRequestSchema = z
     name: z.string().trim().min(1).max(160).optional(),
     status: userStatusSchema.optional(),
     version: z.number().int().positive(),
-    justification: nonEmptyReasonSchema,
+    justification: nonEmptyReasonSchema.max(1000).default(""),
   })
   .strict()
   .refine(({ name, status }) => name !== undefined || status !== undefined, {

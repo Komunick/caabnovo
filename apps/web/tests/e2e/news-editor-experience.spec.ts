@@ -1,4 +1,4 @@
-import { justifyNewsChange } from "./news-justification";
+import { expectNoNewsReasonFields } from "./news-justification";
 import AxeBuilder from "@axe-core/playwright";
 import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
 const expect = baseExpect.configure({ timeout: 15000 });
@@ -31,7 +31,7 @@ test("familiar text tools preserve formatting and preview both devices with an a
   await page.getByRole("button", { name: "Centralizar", exact: true }).click();
   await page.getByRole("combobox", { name: "Estilo do texto" }).selectOption("h2");
   await expect(body.locator("h2")).toContainText("Texto com formatação preservada.");
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("button", { name: "Salvar e visualizar", exact: true }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}\/preview$/);
   const id = page.url().split("/").at(-2)!;
@@ -68,7 +68,7 @@ test("familiar text tools preserve formatting and preview both devices with an a
   await page.screenshot({ path: testInfo.outputPath("news-preview-mobile.png"), fullPage: true });
   await page.getByRole("link", { name: "Voltar ao editor", exact: true }).click();
   await page.getByLabel("Título", { exact: true }).fill("Título revisado sem mudar o link");
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Rascunho salvo" })).toBeVisible();
   expect((await (await page.request.get(`/api/v1/news/${id}`)).json()).metadata.slug).toBe(
@@ -76,7 +76,7 @@ test("familiar text tools preserve formatting and preview both devices with an a
   );
   await page.getByText("Quer personalizar o endereço?", { exact: true }).click();
   await page.getByLabel("Endereço legível", { exact: true }).fill(`personalizado-${id}`);
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Rascunho salvo" })).toBeVisible();
   expect((await (await page.request.get(`/api/v1/news/${id}`)).json()).metadata.slug).toBe(

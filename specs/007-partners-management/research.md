@@ -86,3 +86,8 @@ ou transmissão de dados reais foi realizada nesta pesquisa.
 ## Campos de todo o sistema — 14/09/2026
 
 Pesquisa oficial em 14/09/2026: https://viacep.com.br/ distingue logradouro/bairro de complemento postal. https://www.w3.org/WAI/tutorials/forms/validation/ e https://www.w3.org/WAI/tutorials/forms/notifications/ sustentam mensagens próximas ao campo e validação no servidor. Número/complemento manuais; conversão explícita de legado. Fundação documenta os componentes compartilhados.
+
+
+## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+
+Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.

@@ -1,4 +1,4 @@
-import { justifyNewsChange } from "./news-justification";
+import { expectNoNewsReasonFields } from "./news-justification";
 import AxeBuilder from "@axe-core/playwright";
 import { expect as baseExpect, syntheticUsers, test } from "./fixtures";
 
@@ -13,7 +13,7 @@ test("body images can be uploaded, described, moved and restored without losing 
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/news/new");
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
   const newsId = page.url().split("/").at(-1)!;
@@ -49,7 +49,7 @@ test("body images can be uploaded, described, moved and restored without losing 
   await block.getByText("Descrição e legenda", { exact: true }).click();
   await block.getByLabel("Legenda da imagem").fill("Legenda <script>inofensiva</script>");
   await block.getByRole("button", { name: "Mover imagem para cima" }).click();
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 2" }),
@@ -90,13 +90,13 @@ test("body images can be uploaded, described, moved and restored without losing 
   await page.getByRole("button", { name: "Desfazer", exact: true }).click();
   await expect(block).toBeVisible();
   await block.getByRole("button", { name: "Remover imagem do corpo" }).click();
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("button", { name: "Salvar rascunho" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 3" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Recuperar revisão 2", exact: true }).click();
-  await justifyNewsChange(page);
+  await expectNoNewsReasonFields(page);
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
   await block.getByText("Descrição e legenda", { exact: true }).click();

@@ -256,6 +256,17 @@
 .card p {
   margin-block: 0.5rem;
 }
+.documentLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  max-width: 100%;
+}
+.documentHistory > summary {
+  min-height: 2.75rem;
+  align-content: center;
+  cursor: pointer;
+}
 .notice {
   padding: 1rem;
   border: 1px solid var(--color-border);

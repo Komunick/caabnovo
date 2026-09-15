@@ -12,7 +12,7 @@ import {
 import { accessPermissionSchema, userAccessChangeSchema } from "../src/user-access";
 
 describe("partner contracts", () => {
-  it("allows creation without a reason but requires one for partner and unit edits", () => {
+  it("allows creation, partner edits and unit edits without a reason", () => {
     const profile = { name: "Parceiro sintético", category: "Teste" };
     expect(createPartnerSchema.safeParse({ profile }).success).toBe(true);
     const unit = {
@@ -23,11 +23,11 @@ describe("partner contracts", () => {
     };
     expect(partnerCommandSchema.safeParse(unit).success).toBe(true);
     expect(partnerCommandSchema.safeParse({ ...unit, unitId: crypto.randomUUID() }).success).toBe(
-      false,
+      true,
     );
     expect(
       partnerCommandSchema.safeParse({ action: "update", profile, expectedVersion: 1 }).success,
-    ).toBe(false);
+    ).toBe(true);
     expect(
       partnerUnitSchema.parse({
         ...unit.profile,
@@ -117,7 +117,7 @@ describe("partner contracts", () => {
       true,
     );
   });
-  it("requires reasons for benefit edits and every state transition, but not new drafts", () => {
+  it("allows benefit edits and state transitions without reasons", () => {
     const id = crypto.randomUUID();
     const draft = { action: "benefit", expectedVersion: 1, draft: { title: "Oferta" } };
     expect(partnerCommandSchema.safeParse(draft).success).toBe(true);
@@ -135,7 +135,7 @@ describe("partner contracts", () => {
       for (const justification of [undefined, "", "  ", "ab"])
         expect(
           partnerCommandSchema.safeParse({ expectedVersion: 1, ...edit, justification }).success,
-        ).toBe(false);
+        ).toBe(true);
       expect(
         partnerCommandSchema.safeParse({
           expectedVersion: 1,

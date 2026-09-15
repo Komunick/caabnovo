@@ -52,7 +52,7 @@ export const userAccessChangeSchema = z
     permissions,
     expectedPermissions: z.array(z.string().regex(/^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$/)).max(100),
     version: z.number().int().min(0),
-    justification: nonEmptyReasonSchema.max(1000),
+    justification: nonEmptyReasonSchema.max(1000).default(""),
   })
   .strict()
   .refine(
