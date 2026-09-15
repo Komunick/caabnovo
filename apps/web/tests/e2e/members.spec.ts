@@ -241,7 +241,7 @@ test("selection filters apply immediately and preserve search, pagination and hi
 
 test("documents use real upload, scan, review, replacement and private download", async ({
   page,
-}) => {
+}, testInfo) => {
   test.setTimeout(150000);
   await signIn(page);
   await create(page, `Documentos ${randomUUID().slice(0, 8)}`);
@@ -304,6 +304,22 @@ test("documents use real upload, scan, review, replacement and private download"
   expect(download.headers()["content-type"]).toContain("image/jpeg");
   expect(await download.body()).toEqual(jpeg);
   await expectWcag22AA(page);
+  await page.getByRole("heading", { name: "Evidências registradas" }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("member-documents-desktop.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("html").evaluate((element) => {
+    element.dataset.theme = "dark";
+  });
+  await expectWcag22AA(page);
+  const history = page.getByText("Histórico de análises do documento", { exact: true });
+  await keyboardActivate(page, history);
+  await expect(page.locator("details[open]")).toContainText("Correção solicitada");
+  await expectWcag22AA(page);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+  await page.getByRole("heading", { name: "Evidências registradas" }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("member-documents-mobile-dark.png") });
 });
 
 test("ordinary account cannot list, create, read or download members", async ({ page }) => {

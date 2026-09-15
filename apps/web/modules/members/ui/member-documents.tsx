@@ -229,6 +229,7 @@ export function MemberDocuments({
               {replaced ? " · Substituído" : ""}
               <p>Enviado em {formatMemberDate(doc.createdAt)}</p>
               <a
+                className={styles.documentLink}
                 href={`/api/v1/members/${member.id}/files/${doc.fileId}`}
                 target="_blank"
                 rel="noreferrer"
@@ -241,7 +242,7 @@ export function MemberDocuments({
                 </p>
               )}
               {doc.reviews.length > 0 && (
-                <details>
+                <details className={styles.documentHistory}>
                   <summary>Histórico de análises do documento</summary>
                   <ul>
                     {doc.reviews.map((review) => (

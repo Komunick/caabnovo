@@ -110,3 +110,9 @@ Reutilizar oabNumberSchema em memberProfileSchema e máscara oab no componente c
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+### Correção de acessibilidade da RM03 — 15/09/2026
+
+Dimensionar os controles de abertura/histórico de documentos independentemente do texto
+opcional do motivo. Reexecutar a jornada com download real, Axe em desktop/celular e
+abertura do histórico por teclado; preservar capturas sintéticas no CI para revisão.

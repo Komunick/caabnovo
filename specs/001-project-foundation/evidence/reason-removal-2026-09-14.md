@@ -70,3 +70,12 @@ texto obrigatório é mudança de regra de produto, não etapa automática de ro
   local. Nenhuma credencial/configuração remota foi alterada.
 - Otimização da navegação e migração dos arquivos reais/retirada do MinIO na VM
   continuam pendentes; não estão sendo declaradas concluídas por esta entrega.
+
+## Diagnóstico e correção na retomada — 15/09/2026
+
+CI `34962584611` de `75a3ec3`: quality/security aprovados; 59 E2E passaram.
+A única falha foi WCAG 2.2 target-size em documentos: link de 19 px adjacente ao
+histórico após retirar o motivo. Upload, análise, substituição e download já passaram.
+Correção: link de abertura e resumo do histórico com área mínima de 44 px. A jornada
+agora também valida celular escuro, expansão por teclado e gera capturas sintéticas.
+Aguardando novo CI antes de concluir RM03. Correções de Parceiros passaram sem retry.
