@@ -1,12 +1,28 @@
 # Implementation Plan: Agendamentos em três etapas
 
-**Branch**: `codex/scheduling-planning-20260915` | **Date**: 2026-09-15
+**Branch**: `feature/scheduling-management-20260915` | **Date**: 2026-09-15
 **Spec**: [spec.md](spec.md)
-**Status**: planejamento completo do recorte inicial para revisão; sem código.
+**Status**: implementação autorizada da etapa 1 (US1 + US2); validação em andamento.
 O setup-plan resolveu os caminhos da spec; seu campo BRANCH inferiu o nome da pasta.
 A branch real foi conferida com git e é a indicada acima.
 
 ## Summary
+
+### Implementação autorizada em 15/09/2026
+
+Branch atual feature/scheduling-management-20260915, mesma worktree do planejamento.
+T001–T020 autorizadas pelo pedido de execução. Hipóteses da primeira versão mantidas
+conforme recorte apresentado: lista diária, reservas individuais futuras, Agendado/Cancelado.
+Migration0020; envelopes de erro seguem padrão existente (validação422, não400).
+Escritas da agenda e mudanças de elegibilidade usam o advisory lock transacional5010/1,
+já existente para vínculos de Associados, antes de locks de linhas. Esta primeira
+versão serializa escritas curtas para eliminar corridas entre catálogo, horários,
+titulares e reservas; leituras continuam concorrentes. GiST impede sobreposição também
+no banco. Otimização por profissional só se medição posterior justificar complexidade.
+Horários semanais têm uma faixa por dia; almoço divide a jornada e reinicia a grade
+de vagas pela duração do procedimento. Alterar pai de um cadastro existente é recusado;
+criar vínculo/cadastro novo preserva referências e histórico. Busca mínima de pessoas
+retorna nome, ano de nascimento e OAB quando disponível, sem CPF/contato/documentos.
 
 Primeiro entregar catálogo mínimo + horários + lista diária + criar/consultar/remarcar/
 cancelar no painel. Após essa primeira versão validada, o próximo passo do produto

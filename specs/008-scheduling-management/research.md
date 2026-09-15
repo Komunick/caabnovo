@@ -1,5 +1,16 @@
 # Pesquisa e decisões — entrega incremental
 
+## Revisão técnica antes do código — 15/09/2026
+
+Reconsultadas fontes oficiais: [PostgreSQL intervalos](https://www.postgresql.org/docs/current/rangetypes.html),
+[locks](https://www.postgresql.org/docs/current/explicit-locking.html) e
+[Fresha criação manual](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1).
+Mantido domínio próprio com intervalos semiabertos e exclusão GiST. Reutilizar lock
+de vínculos elimina a leitura obsoleta de titulares em confirmações simultâneas.
+Transação armazena resultado da idempotência para replay fiel, inclusive após edição.
+Limites de concorrência e simplificação de expediente estão descritos no plano;
+sem regras comerciais adicionais, integração com fornecedores ou cópia de código legado.
+
 Consulta: 15/09/2026. Fontes oficiais públicas, sem conta, integração ou teste de
 fornecedor. Inspeção da stack local e pesquisa delegada pela skill speckit-plan.
 Data de consulta não significa lançamento recente. Não há prova de superioridade

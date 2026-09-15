@@ -1,8 +1,10 @@
 # Tasks: Agendamentos — primeira entrega funcional
 
-Data: 15/09/2026. Branch codex/scheduling-planning-20260915.
+Data: 15/09/2026. Branch feature/scheduling-management-20260915.
 Entrada: spec.md, plan.md, research.md, data-model.md e contracts/admin.md.
-**Nenhuma tarefa de implementação foi executada ou autorizada nesta etapa.**
+**T001–T020 autorizadas em 15/09/2026. Implementação em validação.**
+Testes transacionais reunidos em apps/web/tests/integration/scheduling.test.ts para
+compartilhar o banco descartável; jornadas US1/US2 em tests/e2e/scheduling.spec.ts.
 Testes exigidos pelos cenários da spec e pelo fluxo de entrega, especialmente agenda,
 dados, autorização e acessibilidade. Etapas do produto estão em roadmap.md.
 

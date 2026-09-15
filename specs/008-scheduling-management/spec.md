@@ -1,8 +1,8 @@
 # Feature Specification: Agendamentos — evolução incremental
 
-**Feature Branch**: `codex/scheduling-planning-20260915`
+**Feature Branch**: `feature/scheduling-management-20260915`
 **Created**: 2026-09-15
-**Status**: Planejamento para revisão; implementação não iniciada.
+**Status**: Primeira versão autorizada em 15/09/2026; implementação e validação em andamento.
 **Input**: Começar com básico funcional, evoluir até o legado e depois novas funções.
 **Confirmação do usuário**: primeira entrega opera pelo painel; conexão real ao app/site na etapa seguinte.
 

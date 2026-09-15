@@ -1,6 +1,6 @@
-# Contratos propostos — painel de Agendamentos
+# Contratos — painel de Agendamentos
 
-Base futura: /api/v1/scheduling. Autorização de todas as rotas: sessão ativa e acesso
+Base: /api/v1/scheduling. Autorização de todas as rotas: sessão ativa e acesso
 válido ao painel pelo mecanismo existente. Sem scheduling:read/write ou escopo por
 unidade. Sem API anônima, sem token Cal.com e sem autenticação do app nesta fase.
 
@@ -20,12 +20,22 @@ servidor. POSTs de criação/remarcação/cancelamento usam Idempotency-Key. Nã
 id de ator, situação de bloqueio ou papéis enviados pelo cliente. Conferir Origin/CSRF
 com o padrão do projeto em todas as mutações.
 
-Respostas: 201 criação; 200 leitura/alteração/replay; 400 formato inválido; 401 sessão
+Respostas: 201 criação; 200 leitura/alteração/replay; 422 formato inválido; 401 sessão
 ausente/inválida; 403 acesso administrativo negado; 404 registro inexistente;
 409 conflito de horário, versão ou chave reutilizada; 422 combinação/horário/
-beneficiário impedido. Envelope {code,message,fieldErrors?,requestId}; sem stack SQL.
+beneficiário impedido; 413 corpo maior que 64 KiB. Envelope {code,message,fields?,requestId};
+fields contém path/code. Sem stack SQL.
 Listas: {items,page,pageSize,total}; 25 padrão e até 100. Intervalos fora da faixa
 e data inválida são recusados; nenhuma consulta sem limite.
+
+POST/PATCH de catálogo também exigem Idempotency-Key. PUT de horários exige
+expectedVersion; retorna {version,rows}. Cada linha: weekday (0 domingo a 6 sábado),
+start/end HH:mm e lunchStart/lunchEnd nulos ou HH:mm (somente profissionais).
+Catálogos: id/name/active/version e referências correspondentes; procedimentos
+incluem description/durationMinutes; unidades incluem address/phone opcionais.
+Detalhes: {booking,history:{items,page,pageSize,total}}. Histórico usa created,
+rescheduled e cancelled, actorName, occurredAt e snapshots before/after.
+Disponibilidade aceita excludeBookingId para remarcação; confirmar revalida a vaga.
 
 Remarcação preserva id e usa rollback integral no conflito; cancelamento repetido
 retorna estado já cancelado sem duplicar efeito. Chave igual com payload diferente
