@@ -182,5 +182,7 @@ Evidências OC01–OC03: [configuração OAB](evidence/oab-config-2026-09-15.md)
 ## Decisão final: OAB sem flag de ativação — 15/09/2026
 
 - [x] ON01 Remover dependência da flag, atualizar exemplo e contrato vigente.
-- [ ] ON02 Validar consulta com qualquer flag legada e recusa sem credenciais; executar CI.
-- [ ] ON03 Registrar evidências e preparar entrega substituta do PR25 em branch nova.
+- [x] ON02 Validar consulta com qualquer flag legada e recusa sem credenciais; executar CI.
+- [x] ON03 Registrar evidências e preparar entrega substituta do PR25 em branch nova.
+
+Evidências ON01–ON03: [OAB sem flag](evidence/oab-always-on-2026-09-15.md).

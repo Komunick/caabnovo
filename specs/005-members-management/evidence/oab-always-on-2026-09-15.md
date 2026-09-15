@@ -18,7 +18,10 @@ campos, autenticação, permissões, limites e auditoria são preservados.
   false, caixa/espaços, vazio, erro de digitação e valor numérico legado.
 - Falta de chave/senha continua interrompendo antes do HTTP.
 - Lint e formatação dos arquivos alterados aprovados; git diff --check aprovado.
-- CI completo em acompanhamento antes do PR substituto.
+- CI completo aprovado para abe436d:
+  https://github.com/Komunick/caabnovo/actions/runs/35013653279
+- 293 unitários, 105 contratos, 160 integrações, 67 E2E e 6 a11y: 631 testes aprovados.
+  Build, lint, tipos, formatação e segurança passaram. Sem falhas ou flakies nos resumos.
 
 ## Limites
 
