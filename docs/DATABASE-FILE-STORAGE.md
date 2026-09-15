@@ -56,3 +56,6 @@ novos não são copiados para ele. Manter arquivos de backup conforme a retenç�
 
 Servidores locais permanecem desligados conforme a decisão do usuário. Validação de
 CI usa PostgreSQL e ClamAV descartáveis, sem MinIO ou credenciais de storage externo.
+# Observabilidade após a retirada do S3
+
+O contador sem consumidores `storage.operation.errors` foi retirado com o adaptador legado. Falhas de requisições de arquivos no painel continuam cobertas por `CaabApiHighErrorRate`; falhas do scanner mantêm `CaabScannerUnavailable`. O alerta `CaabWorkerJobErrors` usa o contador real de jobs com falha, abrangendo varredura, promoção e exportação. A hospedagem deve recarregar as regras de alertas ao aplicar esta versão.

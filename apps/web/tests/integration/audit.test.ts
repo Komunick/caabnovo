@@ -5,6 +5,7 @@ import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { listAuditEvents } from "@caab/db/repositories/audit-query";
+import { searchAuditEvents } from "../../modules/audit/audit-query-service";
 import { inAuditedTransaction } from "../../modules/audit/audit-writer";
 import {
   requestAuditExport,
@@ -66,6 +67,100 @@ beforeEach(async () => {
 });
 
 describe.sequential("append-only audit investigation", () => {
+  it("resolves current names only with existing read permissions and preserves original evidence", async () => {
+    const actorId = await seedUser("actor@example.test");
+    const targetId = await seedUser("target@example.test");
+    await admin.query(
+      `UPDATE "user" SET name = CASE WHEN id = $1 THEN 'Gabriel' ELSE 'Felipe' END WHERE id = ANY($2::uuid[])`,
+      [actorId, [actorId, targetId]],
+    );
+    const role = await admin.query<{ id: string }>(
+      "INSERT INTO role(code,name,description) VALUES('admin','Administrador','Synthetic') RETURNING id",
+    );
+    const original = {
+      ...event(actorId, "user.role.revoked", targetId),
+      before: { roleId: role.rows[0]!.id, assigned: true },
+      after: { roleId: role.rows[0]!.id, assigned: false },
+    };
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, original);
+    } finally {
+      client.release();
+    }
+    const reader = {
+      userId: actorId,
+      sessionId: crypto.randomUUID(),
+      permissions: new Set([PERMISSIONS.auditRead]),
+    };
+    const restricted = await searchAuditEvents(database.pool, reader, { limit: 25 });
+    expect(JSON.stringify(restricted.items[0]!.presentation)).not.toMatch(
+      /Gabriel|Felipe|Administrador/,
+    );
+    const usersOnly = await searchAuditEvents(
+      database.pool,
+      { ...reader, permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead]) },
+      { limit: 25 },
+    );
+    expect(usersOnly.items[0]!.presentation.description).toBe(
+      "Gabriel removeu um perfil de acesso de Felipe",
+    );
+    const authorized = await searchAuditEvents(
+      database.pool,
+      {
+        ...reader,
+        permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead, PERMISSIONS.rolesRead]),
+      },
+      { limit: 25 },
+    );
+    expect(authorized.items[0]!.presentation.description).toBe(
+      "Gabriel removeu o perfil de Administrador de Felipe",
+    );
+    expect(authorized.items[0]!.before).toEqual(original.before);
+    expect(authorized.items[0]!.action).toBe(original.action);
+    await admin.query(`UPDATE "user" SET name = 'Felipe atual' WHERE id = $1`, [targetId]);
+    const renamed = await searchAuditEvents(
+      database.pool,
+      { ...reader, permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead]) },
+      { limit: 25 },
+    );
+    expect(renamed.items[0]!.presentation.description).toContain("Felipe atual");
+    expect(renamed.items[0]!.before).toEqual(original.before);
+    await expect(
+      searchAuditEvents(
+        database.pool,
+        { ...reader, permissions: new Set([PERMISSIONS.usersRead]) },
+        { limit: 25 },
+      ),
+    ).rejects.toMatchObject({ status: 403 });
+  });
+
+  it("accepts old non-UUID targets and missing roles without attributing an identity", async () => {
+    const actorId = await seedUser("legacy@example.test");
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, {
+        ...event(actorId, "role.revoked", "old-target"),
+        after: { roleId: "legacy-role" },
+      });
+    } finally {
+      client.release();
+    }
+    const page = await searchAuditEvents(
+      database.pool,
+      {
+        userId: actorId,
+        sessionId: crypto.randomUUID(),
+        permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead, PERMISSIONS.rolesRead]),
+      },
+      { limit: 25 },
+    );
+    expect(page.items[0]!.presentation.description).toContain(
+      "um perfil de acesso de colaborador não identificado",
+    );
+    expect(page.items[0]!.entityId).toBe("old-target");
+  });
+
   it("filters allowlisted redacted events with stable cursor pagination", async () => {
     const actorId = await seedUser("auditor@example.test");
     await database.pool.connect().then(async (client) => {

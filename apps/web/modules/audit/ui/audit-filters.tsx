@@ -2,10 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { SearchField, FilterToggle } from "@/components/ui/search-controls";
+import { FilterToggle } from "@/components/ui/search-controls";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
+import { auditActions, auditEntities } from "../audit-presentation";
 
 type FilterValues = {
   actorId?: string;
@@ -45,13 +46,23 @@ export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
   return (
     <form role="search" aria-label="Filtros de auditoria" onSubmit={submit}>
       <div className="filter-toolbar">
-        <SearchField
-          id="audit-action"
-          label="Ação"
-          name="action"
-          maxLength={120}
-          defaultValue={values.action}
-        />
+        <FormField id="audit-action" label="Ação" className="search-field">
+          <select name="action" defaultValue={values.action ?? ""}>
+            <option value="">Todas as ações</option>
+            {values.action && !Object.hasOwn(auditActions, values.action) && (
+              <option value={values.action}>Ação do link atual</option>
+            )}
+            {Object.entries(auditActions).map(([code, label]) => (
+              <option key={code} value={code}>
+                {label}
+                {code.startsWith("role.") ? " (registro antigo)" : ""}
+              </option>
+            ))}
+          </select>
+        </FormField>
+        <Button type="submit" intent="primary" size="compact">
+          Buscar
+        </Button>
         <FilterToggle
           expanded={expanded}
           controls="audit-filter-options"
@@ -65,7 +76,7 @@ export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
         )}
       </div>
       <div className="list-filters" id="audit-filter-options" hidden={!expanded}>
-        <FormField id="audit-actor" label="ID do ator">
+        <FormField id="audit-actor" label="Identificador de quem realizou a ação">
           <Input
             name="actorId"
             maxLength={36}
@@ -73,8 +84,18 @@ export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
             defaultValue={values.actorId}
           />
         </FormField>
-        <FormField id="audit-entity-type" label="Tipo de entidade">
-          <Input name="entityType" maxLength={80} defaultValue={values.entityType} />
+        <FormField id="audit-entity-type" label="Área">
+          <select name="entityType" defaultValue={values.entityType ?? ""}>
+            <option value="">Todas as áreas</option>
+            {values.entityType && !Object.hasOwn(auditEntities, values.entityType) && (
+              <option value={values.entityType}>Área do link atual</option>
+            )}
+            {Object.entries(auditEntities).map(([code, label]) => (
+              <option key={code} value={code}>
+                {label}
+              </option>
+            ))}
+          </select>
         </FormField>
         <FormField id="audit-from" label="A partir de">
           <Input name="from" type="datetime-local" defaultValue={localDateTime(values.from)} />

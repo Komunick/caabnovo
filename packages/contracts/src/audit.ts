@@ -24,6 +24,12 @@ export const auditEventSchema = z.object({
   origin: z.enum(["web", "worker", "system"]),
   requestId: idSchema,
   correlationId: idSchema,
+  presentation: z
+    .object({
+      description: z.string(),
+      changes: z.array(z.string()),
+    })
+    .optional(),
 });
 
 export const auditPageSchema = pageSchema(auditEventSchema);

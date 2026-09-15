@@ -51,3 +51,7 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 ## Retirada do armazenamento legado — 15/09/2026
 
 Retirar parâmetros/cliente S3 do job de exportação; adaptar regressão de repetição para consultar os bytes privados do banco e verificar redação e uma única cópia. Validação coordenada pela SR03 da fundação.
+
+## T014 — Plano de implementação, 15/09/2026
+
+Adicionar catálogo único de ações/tipos e apresentação derivada no serviço de consulta, sem alterar o writer ou exportador. Consultar apenas id/name de colaboradores e perfis em lotes por página, após audit:read e sob users:read/roles:read. Acrescentar apresentação opcional ao contrato para compatibilidade. A tabela exibe frases e mudanças reconhecidas; dados técnicos ficam em details. Filtros usam select com rótulos e preservam opções desconhecidas de URLs antigas. Validar funções puras, consulta/autorização com PostgreSQL real no CI e E2E com evidência visual sintética; manter servidores locais desligados.

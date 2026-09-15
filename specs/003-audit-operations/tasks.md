@@ -74,3 +74,6 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 ## Retirada do armazenamento legado — 15/09/2026
 
 - [ ] SR01 Remover saída S3 das exportações e validar conteúdo privado/idempotência no PostgreSQL; evidências compartilhadas com a fundação.
+# Andamento T014 — 15/09/2026
+
+Implementação na branch ativa: catálogo de frases e filtros em português, resumo de campos/acessos alterados, nomes consultados por página com users:read/roles:read, fallback neutro e detalhes técnicos originais. 262 testes unitários e 89 de contrato aprovados localmente; integração, E2E com screenshots e acessibilidade aguardam CI. T014 só será concluída após essas verificações.

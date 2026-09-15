@@ -22,3 +22,8 @@ Fonte de negócio: instrução expressa do usuário nesta data para remover moti
 ## Retirada do armazenamento legado — 15/09/2026
 
 Decisão de 15/09/2026: backend único PostgreSQL, conforme pesquisa da [fundação](../001-project-foundation/research.md). Mantém a transação já existente dos bytes/metadados e reduz infraestrutura, sem mudar finalidade ou acesso à exportação.
+# Pesquisa T014 — 15/09/2026
+
+Fontes oficiais consultadas: [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html) orienta registrar momento, autoria, ação e alvo, proteger acesso e excluir dados sensíveis. [GOV.UK, Style and formatting](https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/466003/Research_Publication_-_Formatting_and_Style_guide.pdf) recomenda escrita clara e evitar jargão desnecessário.
+
+Decisão: derivar frases em português de códigos conhecidos, conservar evidência original nos detalhes e no JSONL e limitar enriquecimento aos nomes autorizados. Nomes atuais não provam nomes históricos: esclarecer isso na tela. Não usar geração livre de texto, inferir identidades ou inserir valores privados na frase. Não expandir a pesquisa para retenção ou regras jurídicas, fora desta mudança de apresentação.

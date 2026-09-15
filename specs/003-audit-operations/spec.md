@@ -105,3 +105,11 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 ## Retirada do armazenamento legado — 15/09/2026
 
 Exportações usam exclusivamente stored_file_content no PostgreSQL, com bytes e metadados na mesma transação; preservam idempotência, redação e autorização. Não há upload S3.
+
+## US4 — Auditoria em linguagem simples (T014, 15/09/2026)
+
+A leitura principal deve informar quem fez a ação, o que mudou e quem foi afetado em português. Exemplo: “Gabriel removeu o perfil de Administrador de Felipe”. Códigos, identificadores e snapshots continuam disponíveis em detalhes técnicos; registros e exportações permanecem originais, com a redação existente.
+
+Nomes atuais de colaboradores exigem users:read; nomes de perfis exigem roles:read. A tela explica que os nomes consultados são atuais, não uma reconstrução histórica. Ausência de nome ou permissão produz indicação neutra, sem atribuir autoria ao sistema quando o ator é desconhecido. Não consultar cadastros de associados, arquivos ou parceiros para enriquecer a lista. Eventos sem tradução específica recebem descrição neutra e detalhes completos.
+
+Aceite: concessão/remoção de perfis, criação/alteração/desativação de colaboradores e demais ações conhecidas têm descrições em português; mudanças de campos reconhecidos são explicadas; filtros de ação e tipo oferecem rótulos em português preservando valores técnicos e links antigos. Testes cobrem permissões, nomes ausentes, eventos antigos/desconhecidos, imutabilidade, filtros, teclado, celular e acessibilidade.

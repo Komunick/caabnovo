@@ -6,7 +6,6 @@ const tracer = trace.getTracer("caab-worker");
 const jobDuration = meter.createHistogram("worker.job.duration", { unit: "ms" });
 const jobFailures = meter.createCounter("worker.job.failures");
 const scannerFailures = meter.createCounter("scanner.operation.failures");
-const storageFailures = meter.createCounter("storage.operation.errors");
 const queueDepths = new Map<string, number>();
 
 meter.createObservableGauge("worker.queue.depth").addCallback((result) => {
@@ -46,10 +45,6 @@ export function recordJobCompletion(
 
 export function recordScannerFailure(reason: "unavailable" | "protocol"): void {
   scannerFailures.add(1, { reason });
-}
-
-export function recordStorageFailure(operation: string): void {
-  storageFailures.add(1, { "storage.operation": operation });
 }
 
 export async function withWorkerSpan<T>(

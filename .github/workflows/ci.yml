@@ -113,6 +113,14 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
       - run: pnpm test:a11y --project=chromium
+      - name: Preserve plain-language audit screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: audit-plain-synthetic-screenshots
+          path: apps/web/test-results/**/audit-plain-*.png
+          retention-days: 7
+          if-no-files-found: warn
 
   security:
     runs-on: ubuntu-latest

@@ -22,13 +22,12 @@ consulta bytes reais do banco, verifica redação e uma única cópia ao repetir
 
 - Formatação, lint, tipos e integridade do diff aprovados localmente.
 - 253 unitários e 89 contratos aprovados (342 testes).
-- Integração, navegador, build e segurança: aguardando execução de CI desta entrega.
+- CI inicial de armazenamento aprovado: [34966205236](https://github.com/Komunick/caabnovo/actions/runs/34966205236). Verificação final conjunta com T014 ainda pendente.
 - Sem servidores/Docker locais, sem migration ou mudança no banco remoto.
 
 ## Implantação e limites
 
-O código do PR #21 ainda é pré-requisito desta branch até sua integração em dev.
-Nenhum merge, deploy, remoção de contêiner ou exclusão de volume realizada.
+PR #21 integrado pelo usuário em dev (1a23ad6); branch ativa conciliada sem alterar a árvore de código. Nenhum deploy, remoção de contêiner ou exclusão de volume realizada nesta sessão.
 A VM/painel não está acessível nesta sessão. O endpoint público /readyz confirmou apenas
 banco/worker disponíveis, sem confirmar versão/arquivo/backend. Os dois arquivos de teste
 poderão precisar de novo envio após implantação; sua contagem foi informada pelo usuário.
