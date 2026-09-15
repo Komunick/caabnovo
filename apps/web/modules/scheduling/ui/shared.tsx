@@ -183,6 +183,7 @@ export function Choice({
   selectedLabel?: string;
 }) {
   const id = useId();
+  const [selectionLabel, setSelectionLabel] = useState(selectedLabel);
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
   const result = useSchedulingData<
@@ -212,11 +213,14 @@ export function Choice({
         <select
           required={required}
           value={value}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => {
+            setSelectionLabel(event.target.selectedOptions[0]?.textContent ?? undefined);
+            onChange(event.target.value);
+          }}
         >
           <option value="">Selecione</option>
           {value && !result.data?.items.some((item) => item.id === value) && (
-            <option value={value}>{selectedLabel ?? "Seleção atual"}</option>
+            <option value={value}>{selectionLabel ?? "Seleção atual"}</option>
           )}
           {result.data?.items.map((item) => (
             <option key={item.id} value={item.id}>
@@ -228,10 +232,15 @@ export function Choice({
           ))}
         </select>
       </FormField>
+      {resource === "beneficiaries" && value && selectionLabel && (
+        <p>Selecionado: {selectionLabel}</p>
+      )}
       {!disabled &&
         (result.data ? (
           <>
-            <Pagination {...result.data} onPage={setPage} />
+            {(result.data.total > result.data.pageSize || page > 1) && (
+              <Pagination {...result.data} onPage={setPage} />
+            )}
             {!result.data.total && <p>Nenhum registro encontrado.</p>}
           </>
         ) : (

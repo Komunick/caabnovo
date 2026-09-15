@@ -27,6 +27,13 @@ async function keyboardSelect(page: Page, target: Locator, index = 1) {
   for (let n = 0; n < index; n++) await page.keyboard.press("ArrowDown");
   await page.keyboard.press("Tab");
 }
+async function screenshot(page: Page, path: string) {
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement)?.blur();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  });
+  await page.screenshot({ path, fullPage: true });
+}
 test("configure and manage a real reservation through the panel at 390px, without scheduling grants", async ({
   page,
   context,
@@ -80,10 +87,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await choose(page, "Procedimento", procedure);
   await choose(page, "Profissional", professional);
   await save();
-  await page.screenshot({
-    path: testInfo.outputPath("scheduling-catalog-mobile-light.png"),
-    fullPage: true,
-  });
+  await screenshot(page, testInfo.outputPath("scheduling-catalog-mobile-light.png"));
   const date = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
   const weekday = new Date(`${date}T12:00:00-03:00`).getUTCDay();
   const day = [
@@ -120,10 +124,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await keyboardSelect(page, slot);
   const firstSlot = await slot.inputValue();
   await expectWcag22AA(page);
-  await page.screenshot({
-    path: testInfo.outputPath("scheduling-reserve-mobile-light.png"),
-    fullPage: true,
-  });
+  await screenshot(page, testInfo.outputPath("scheduling-reserve-mobile-light.png"));
   await keyboardActivate(
     page,
     page.getByRole("button", { name: "Confirmar reserva", exact: true }),
@@ -159,10 +160,16 @@ test("configure and manage a real reservation through the panel at 390px, withou
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
-  await page.screenshot({
-    path: testInfo.outputPath("scheduling-detail-mobile-dark.png"),
-    fullPage: true,
+  await screenshot(page, testInfo.outputPath("scheduling-detail-mobile-dark.png"));
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await screenshot(page, testInfo.outputPath("scheduling-detail-desktop-dark.png"));
+  await page.locator("html").evaluate((element) => {
+    element.dataset.theme = "light";
+    element.style.colorScheme = "light";
   });
+  await expectWcag22AA(page);
+  await screenshot(page, testInfo.outputPath("scheduling-detail-desktop-light.png"));
+  await page.setViewportSize({ width: 390, height: 844 });
   const cancel = page.getByRole("button", { name: "Cancelar reserva", exact: true });
   await keyboardActivate(page, cancel);
   const dialog = page.getByRole("dialog", { name: "Cancelar esta reserva?" });
@@ -203,7 +210,9 @@ test("agenda handles an empty result and retry without exposing server messages"
     }),
   );
   await page.goto("/scheduling");
-  await expect(page.getByRole("alert")).toContainText("Não foi possível concluir");
+  await expect(page.locator(".scheduling-workspace").getByRole("alert")).toContainText(
+    "Não foi possível concluir",
+  );
   await expect(page.getByText("postgres secret technical detail")).toHaveCount(0);
   await page.unroute("**/api/v1/scheduling/bookings?**");
   await page.getByRole("button", { name: "Tentar novamente", exact: true }).click();
