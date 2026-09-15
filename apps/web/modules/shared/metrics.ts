@@ -5,7 +5,6 @@ const meter = metrics.getMeter("caab-web");
 const tracer = trace.getTracer("caab-web");
 const requestDuration = meter.createHistogram("http.server.request.duration", { unit: "ms" });
 const requestErrors = meter.createCounter("http.server.request.errors");
-const storageErrors = meter.createCounter("storage.operation.errors");
 
 export function recordHttpRequest(
   route: string,
@@ -37,10 +36,6 @@ export async function observeHttpRequest(
       return response;
     },
   );
-}
-
-export function recordStorageError(operation: string): void {
-  storageErrors.add(1, { "storage.operation": operation });
 }
 
 export async function withServerSpan<T>(

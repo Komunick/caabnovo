@@ -1,4 +1,5 @@
 import { expect, syntheticUsers, test } from "./fixtures";
+import { expectWcag22AA } from "./accessibility";
 
 async function signIn(
   page: import("@playwright/test").Page,
@@ -28,9 +29,52 @@ test("theme preference persists and quick navigation respects permissions", asyn
   await expect(dialog.getByRole("link", { name: /Sessões/ })).toBeVisible();
   await expect(dialog.getByRole("link", { name: /Colaboradores/ })).toHaveCount(0);
 
-  await dialog.getByLabel("Buscar área").fill("sessões");
+  for (const query of ["OAB", "beneficios"]) {
+    await dialog.getByLabel("Buscar funções e áreas").fill(query);
+    await expect(dialog.getByRole("link")).toHaveCount(0);
+  }
+
+  await dialog.getByLabel("Buscar funções e áreas").fill("sessões");
   await dialog.getByRole("link", { name: /Sessões/ }).click();
   await expect(page).toHaveURL(/\/sessions$/);
+});
+
+test("global search opens OAB, benefits and account functions by name and keyboard", async ({
+  page,
+}, testInfo) => {
+  await signIn(page, syntheticUsers.administrator);
+  await page.keyboard.press("Control+k");
+  const dialog = page.getByRole("dialog", { name: "Navegação rápida" });
+  const search = dialog.getByLabel("Buscar funções e áreas");
+  await search.fill("OAB");
+  await expect(dialog.getByRole("link").first()).toHaveAttribute("href", "/members/oab");
+  await expectWcag22AA(page);
+  await page.screenshot({
+    animations: "disabled",
+    path: testInfo.outputPath("workspace-function-oab.png"),
+    fullPage: true,
+  });
+  await search.press("Enter");
+  await expect(page).toHaveURL(/\/members\/oab$/);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Buscar no site", exact: true }).click();
+  await search.fill("beneficios");
+  await expect(dialog.getByRole("link").first()).toHaveAttribute("href", "/partners/benefits");
+  await search.press("ArrowDown");
+  await expect(dialog.getByRole("link").first()).toBeFocused();
+  await expectWcag22AA(page);
+  await page.screenshot({
+    animations: "disabled",
+    path: testInfo.outputPath("workspace-function-benefits-mobile.png"),
+    fullPage: true,
+  });
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/partners\/benefits$/);
+  await page.keyboard.press("Control+k");
+  await search.fill("alterar senha");
+  await search.press("Enter");
+  await expect(page).toHaveURL(/\/settings#password-title$/);
+  await expect(page.getByRole("heading", { name: "Alterar senha", exact: true })).toBeInViewport();
 });
 
 test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page }) => {
@@ -54,10 +98,10 @@ test("sidebar collapses on desktop and opens as a mobile drawer", async ({ page 
   await expect(page.getByRole("button", { name: "Expandir menu lateral" })).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("button", { name: "Buscar área", exact: true }).click();
+  await page.getByRole("button", { name: "Buscar no site", exact: true }).click();
   const quickNavigation = page.getByRole("dialog", { name: "Navegação rápida" });
   await expect(quickNavigation).toBeVisible();
-  await quickNavigation.getByLabel("Buscar área").fill("operações");
+  await quickNavigation.getByLabel("Buscar funções e áreas").fill("operações");
   await expect(quickNavigation.getByRole("link")).toHaveCount(1);
   await expect(quickNavigation.getByRole("link", { name: /Auditoria/ })).toBeVisible();
   await page.keyboard.press("Escape");

@@ -300,3 +300,24 @@ deve verificar hashes. Guia local Next consultado: route handlers aceitam Reques
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
+
+## Backend único de arquivos — 15/09/2026
+
+Fontes oficiais consultadas: [PostgreSQL 18: bytea](https://www.postgresql.org/docs/18/datatype-binary.html)
+e [backup por dump](https://www.postgresql.org/docs/18/backup-dump.html). bytea armazena
+bytes binários e integra o backup transacional do banco. Decisão: manter a implementação
+PostgreSQL já validada, removendo o custo de dois backends após o usuário dispensar a
+migração de dois arquivos de teste. Não adicionar banco ou dependências. ClamAV, limites,
+HMAC e autorização continuam necessários. A pesquisa não demonstra capacidade da VM;
+espaço e backup permanecem responsabilidade operacional. Não se executará limpeza de
+registros históricos ou volumes para eliminar referências obsoletas.
+
+## Pesquisa: busca geral por funções — 15/09/2026
+
+Fontes oficiais: [GitHub Command Palette](https://docs.github.com/en/enterprise-cloud%40latest/get-started/accessibility/github-command-palette)
+organiza navegação e ações acessíveis ao usuário; [Windows Terminal Command Palette](https://learn.microsoft.com/en-us/windows/terminal/command-palette)
+oferece busca das ações disponíveis e operação por teclado. Adaptação ao CAAB: catálogo leve de funções
+existentes, com destino, contexto e permissões declarados. Busca normaliza acentos e termos; funções
+específicas têm prioridade sobre área genérica. Não executar mutações ao selecionar um resultado.
+Para funções dependentes de cadastro, abrir a lista e informar que é necessário selecionar um registro.
+Reutilizar dialog/links existentes; sem indexador de dados pessoais, biblioteca nova ou serviço adicional.

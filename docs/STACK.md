@@ -120,18 +120,15 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 
 ### 7.1 Decisão
 
-O núcleo de agendamentos será implementado no domínio CAAB. Cal.com não será a fonte de verdade
-inicial.
+Direção: avaliar núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário
+em 15/09/2026: Cal.com é referência de pesquisa e **não deve ser integrado, salvo
+se nenhuma outra possibilidade for encontrada**. A abertura anterior para integração
+futura foi substituída por essa condição; conveniência não a satisfaz.
 
-Cal.com poderá ser integrado no futuro para:
-
-- Sincronização com Google/Outlook.
-- Reservas públicas.
-- Round-robin.
-- Roteamento avançado.
-- Lembretes e integrações já suportadas.
-
-Antes de uso self-hosted ou incorporação do código, revisar AGPL e alternativas comerciais.
+A pesquisa não demonstrou esgotamento de alternativas. Não instalar SDK, incorporar
+código, subir serviço ou integrar API/iframe do Cal.com nesta etapa. Registrar
+requisitos, alternativas e impedimentos se a exceção vier a ser investigada.
+Detalhes em [pesquisa de Agendamentos](../specs/002-integrated-modules/pesquisa-gestao-agendamentos-2026-09-15.md).
 
 ### 7.2 Integridade
 
@@ -178,7 +175,7 @@ O usuário autenticado nunca fornece o próprio papel ou escopo como fonte confi
 ## 10. Arquivos e mídia
 
 - Conteúdo bytea e metadados no mesmo PostgreSQL, em tabelas separadas (decisão de 14/09/2026).
-- S3-compatible permanece como adaptador para arquivos legados durante a transição.
+- PostgreSQL é o único backend; arquivos de teste legados devem ser reenviados quando necessários.
 - Quarentena e conteúdo liberado separados por chave e estado, com autorização no painel.
 - URLs assinadas e curtas para conteúdo privado.
 - Nome físico gerado pelo sistema.
@@ -346,7 +343,7 @@ Modelo inicial:
 
 - Containers Docker para web, worker e serviços necessários.
 - PostgreSQL gerenciado ou self-hosted com operação madura.
-- Armazenamento no PostgreSQL; S3 opcional para leitura e migração do legado.
+- Armazenamento exclusivo no PostgreSQL, incluindo imagens, documentos e exportações.
 - Caddy como reverse proxy quando self-hosted.
 - Ambientes separados: local, DEV e PROD.
 - Banco e credenciais separados por ambiente.
@@ -356,7 +353,7 @@ responsabilidade definida.
 
 ## 19. Observabilidade e operação
 
-- Health checks de web, worker, banco e antivírus; S3 enquanto houver arquivos legados.
+- Health checks de web, worker, banco e antivírus.
 - Métricas de latência, erro e saturação.
 - Profundidade e idade da fila.
 - Falhas e tentativas de distribuição.
@@ -382,8 +379,8 @@ responsabilidade definida.
 - TanStack Table/Query.
 - React Hook Form + Zod.
 - FullCalendar Standard para a interface da agenda.
-- Agenda própria; Cal.com apenas após prova de adequação e revisão de licença.
-- Conteúdo de arquivos no PostgreSQL; compatibilidade S3 para o legado.
+- Agenda própria em avaliação; Cal.com somente se nenhuma outra possibilidade for encontrada.
+- Conteúdo de arquivos exclusivamente no PostgreSQL; adaptadores legados retirados.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.
 

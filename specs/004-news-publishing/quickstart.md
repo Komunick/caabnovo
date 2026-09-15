@@ -1,6 +1,6 @@
 # Validação — Notícias
 
-Node 24, pnpm e Docker. Dependências: PostgreSQL, MinIO e ClamAV do compose existente.
+Node 24, pnpm e Docker. Dependências: PostgreSQL e ClamAV do compose existente.
 Configurar .env conforme .env.example, sem usar credenciais de produção.
 
 Atrás de proxy, `BETTER_AUTH_URL` deve conter a URL pública do painel (esquema, domínio e

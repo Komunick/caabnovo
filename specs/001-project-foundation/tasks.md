@@ -429,3 +429,15 @@ Resultados e limites: [evidências do armazenamento](evidence/database-files.md)
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+## Retirada do MinIO — 15/09/2026
+
+- [x] SR01 Retirar backend/adaptadores/CLI/SDKs S3, mantendo PostgreSQL e proteção dos arquivos.
+- [x] SR02 Atualizar Compose, configuração, documentação e testes para o backend único.
+- [x] SR03 Validar gates, documentar limitações de implantação e concluir evidências.
+
+## Busca geral por funções — 15/09/2026
+
+- [x] BS01 Catalogar rotas/funções existentes e suas permissões, incluindo OAB e benefícios.
+- [x] BS02 Busca por palavras sem acentos, resultados com contexto e navegação por teclado.
+- [x] BS03 Validar destinos, permissões, teclado/celular e evidências; atualizar localhost limitado.

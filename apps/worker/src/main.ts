@@ -3,11 +3,10 @@ import { logger } from "./logger.js";
 import { createQueue, startQueue } from "./queue.js";
 import { QUEUES } from "./queues.js";
 import { createDatabaseClient } from "@caab/db";
-import { S3Client } from "@aws-sdk/client-s3";
+import { DatabaseWorkerObjectStorage } from "@caab/db/repositories/file-content";
 import { executeTrackedJob } from "./job-runtime.js";
 import { runAuditExport } from "./jobs/audit-export.js";
 import { startWorkerHealth } from "./health.js";
-import { S3WorkerObjectStorage, RoutedWorkerObjectStorage } from "./object-storage.js";
 import { ClamAvScanner } from "./clamav.js";
 import { runFileScan } from "./jobs/scan-file.js";
 import { promoteFile, purgeRejectedFile } from "./jobs/promote-file.js";
@@ -21,20 +20,7 @@ const env = loadServerEnv();
 const boss = await startQueue(createQueue(env.DATABASE_URL));
 const database = createDatabaseClient(env.DATABASE_URL);
 const workerId = `worker-${process.pid}-${crypto.randomUUID()}`;
-function legacyS3() {
-  if (!env.S3_ENDPOINT || !env.S3_ACCESS_KEY || !env.S3_SECRET_KEY)
-    throw new Error("Legacy S3 storage is not configured");
-  return new S3Client({
-    endpoint: env.S3_ENDPOINT,
-    region: env.S3_REGION,
-    forcePathStyle: true,
-    credentials: { accessKeyId: env.S3_ACCESS_KEY, secretAccessKey: env.S3_SECRET_KEY },
-  });
-}
-const fileStorage = new RoutedWorkerObjectStorage(
-  database.pool,
-  () => new S3WorkerObjectStorage(legacyS3(), env.S3_QUARANTINE_BUCKET, env.S3_PRIVATE_BUCKET),
-);
+const fileStorage = new DatabaseWorkerObjectStorage(database.pool);
 const antivirus = new ClamAvScanner(env.CLAMAV_HOST, env.CLAMAV_PORT);
 
 await boss.work(QUEUES.newsPublication, async (jobs) => {
@@ -69,12 +55,7 @@ await boss.work(QUEUES.auditExport, async (jobs) => {
     },
     async ({ progress }) => {
       await progress(10);
-      await runAuditExport(
-        database.pool,
-        env.FILE_STORAGE_BACKEND === "s3" ? legacyS3() : null,
-        env.S3_PRIVATE_BUCKET,
-        payload,
-      );
+      await runAuditExport(database.pool, payload);
       await progress(95);
     },
   );

@@ -8,6 +8,12 @@ import {
 import { requirePermission } from "../auth/authorize";
 import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
+import {
+  findAuditUserNames,
+  findAuditRoleNames,
+  findAuditTargetNames,
+} from "@caab/db/repositories/audit-names";
+import { presentAuditEvent } from "./audit-presentation";
 
 export function serializeAuditEvent(event: AuditEventRecord) {
   return {
@@ -29,8 +35,45 @@ export function serializeAuditEvent(event: AuditEventRecord) {
 export async function searchAuditEvents(pool: Pool, actor: RequestActor, query: AuditQuery) {
   requirePermission(actor, PERMISSIONS.auditRead);
   const page = await listAuditEvents(pool, query);
+  const isId = (value: unknown): value is string =>
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+  const userIds = [
+    ...new Set(
+      page.items
+        .flatMap((event) => [
+          event.actorUserId,
+          event.entityType === "user" ? event.entityId : null,
+        ])
+        .filter(isId),
+    ),
+  ];
+  const roleId = (event: AuditEventRecord) => event.after?.roleId ?? event.before?.roleId;
+  const roleIds = [...new Set(page.items.map(roleId).filter(isId))];
+  const users = actor.permissions.has(PERMISSIONS.usersRead)
+    ? await findAuditUserNames(pool, userIds)
+    : new Map<string, string>();
+  const roles = actor.permissions.has(PERMISSIONS.rolesRead)
+    ? await findAuditRoleNames(pool, roleIds)
+    : new Map<string, string>();
+  const targets = await findAuditTargetNames(
+    pool,
+    actor,
+    page.items.filter((event) => isId(event.entityId)),
+  );
   return {
-    items: page.items.map(serializeAuditEvent),
+    items: page.items.map((event) => ({
+      ...serializeAuditEvent(event),
+      presentation: presentAuditEvent(event, {
+        actorName: event.actorUserId ? users.get(event.actorUserId) : undefined,
+        targetName:
+          event.entityType === "user"
+            ? users.get(event.entityId)
+            : targets.get(`${event.entityType}:${event.entityId}`),
+        roleName: isId(roleId(event)) ? roles.get(roleId(event) as string) : undefined,
+        canReadUserNames: actor.permissions.has(PERMISSIONS.usersRead),
+      }),
+    })),
     nextCursor: page.nextCursor,
   };
 }

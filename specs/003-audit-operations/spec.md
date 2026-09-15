@@ -101,3 +101,29 @@ foram implementadas; não invalidam nem repetem a evidência da fusão já concl
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+
+## Retirada do armazenamento legado — 15/09/2026
+
+Exportações usam exclusivamente stored_file_content no PostgreSQL, com bytes e metadados na mesma transação; preservam idempotência, redação e autorização. Não há upload S3.
+
+## US4 — Auditoria em linguagem simples (T014, 15/09/2026)
+
+A leitura principal deve informar quem fez a ação, o que mudou e quem foi afetado em português. Exemplo: “Gabriel removeu o perfil de Administrador de Felipe”. Códigos, identificadores e snapshots continuam disponíveis em detalhes técnicos; registros e exportações permanecem originais, com a redação existente.
+
+Nomes atuais de colaboradores exigem users:read; nomes de perfis exigem roles:read. A tela explica que os nomes consultados são atuais, não uma reconstrução histórica. Ausência de nome ou permissão produz indicação neutra, sem atribuir autoria ao sistema quando o ator é desconhecido. Enriquecer a identificação do alvo com nome do associado/convênio, título da notícia e nome do arquivo somente sob leitura da área; arquivos também exigem files:read e leitura da área proprietária. Consultar somente nome/título e revalidar sessão/permissões atuais; não copiar contato ou documento pessoal. Eventos sem tradução específica recebem descrição neutra e detalhes completos.
+
+Aceite: concessão/remoção de perfis, criação/alteração/desativação de colaboradores e demais ações conhecidas têm descrições em português; mudanças de campos reconhecidos são explicadas; filtros de ação e tipo oferecem rótulos em português preservando valores técnicos e links antigos. Testes cobrem permissões, nomes ausentes, eventos antigos/desconhecidos, imutabilidade, filtros, teclado, celular e acessibilidade.
+## US4 revisada — histórico de atividades, 15/09/2026
+
+A revisão inicial de T014 foi rejeitada pelo usuário. Reformular a interface com base na pesquisa registrada: histórico por data, frases com autoria e alvo, horário e área identificáveis sem códigos; filtros diretos por pessoa, área, ação e período. A consulta de pessoas exige audit:read e users:read, usa nomes atuais e deve alcançar resultados além da primeira página. Perfis sem leitura de colaboradores mantêm consulta dos eventos sem expor o catálogo de nomes.
+
+Selecionar um evento abre painel lateral (tela cheia no celular), com resumo legível, valores anteriores/novos para mudanças reconhecidas e dados técnicos recolhidos. Fechar com Escape devolve foco à linha e preserva filtros/posição. A lista mostra a quantidade da página, nunca um total global não consultado. Códigos desconhecidos e registros antigos continuam acessíveis. Sem mudanças no armazenamento original e no JSONL exportado.
+### Esclarecimento decisivo do usuário — 15/09/2026
+
+O principal problema é a leitura em forma de código. **Também os detalhes devem ser uma versão humana e mais completa do registro.** Códigos/IDs/JSON aparecem somente em último caso, numa seção “Informações para suporte” recolhida dentro do painel de detalhes. O primeiro nível do detalhe mostra quem/quando/onde/alvo e informações específicas da ação com antes/depois. Traduzir situações, perfis, permissões, formatos de arquivo, canais, prazos, resultados e versões presentes; não expor chaves desconhecidas como rótulos nem valores de enum sem tradução. Ausência de dados históricos deve ser informada claramente, sem completar fatos a partir do estado atual. Preservar redação/permissões e valores originais para suporte.
+
+Pedido adicional: filtros de área e ação permitem digitar e selecionar, seguindo o input/datalist
+do campo Estado de Parceiros. Opções mostram somente português; códigos ficam no contrato/URL.
+Aceitar rótulos completos sem distinguir acentos/maiúsculas, impedir aplicação de texto sem
+correspondência e permitir limpar o campo. Busca por pessoa também permite digitação e seleção,
+com paginação no servidor e autorização própria.

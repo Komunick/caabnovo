@@ -1,12 +1,11 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { Pool } from "pg";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { runMigrations } from "@caab/db";
 import {
   DatabaseWorkerObjectStorage,
-  importLegacyFile,
   readDatabaseContent,
 } from "@caab/db/repositories/file-content";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
@@ -31,9 +30,6 @@ let container: StartedPostgreSqlContainer,
   admin: Pool,
   actor: RequestActor,
   storage: DatabaseWebObjectStorage;
-const legacy = vi.fn(() => {
-  throw new Error("S3 must not be used for database files");
-});
 const route = createContentRoute({ pool: () => pool, secret: () => secret });
 beforeAll(async () => {
   container = await startPostgres();
@@ -54,7 +50,7 @@ beforeAll(async () => {
     permissions: new Set(["files:create", "files:read"]),
     mfaVerified: false,
   };
-  storage = new DatabaseWebObjectStorage(pool, "https://panel.example.test", secret, legacy);
+  storage = new DatabaseWebObjectStorage(pool, "https://panel.example.test", secret);
 }, 120_000);
 afterAll(async () => {
   await pool?.end();
@@ -139,7 +135,6 @@ describe("files in the application PostgreSQL", () => {
       grant.fileId,
     ]);
     expect((await route(new Request(download.url))).status).toBe(404);
-    expect(legacy).not.toHaveBeenCalled();
   });
   it("rejects wrong MIME, oversized content and checksum mismatch before persistence", async () => {
     const grant = await intent();
@@ -164,7 +159,7 @@ describe("files in the application PostgreSQL", () => {
         .rowCount,
     ).toBe(0);
   });
-  it("copies legacy bytes atomically after validating checksum, preserving file identity", async () => {
+  it("reports unavailable legacy files without changing their identity or contacting external storage", async () => {
     const id = crypto.randomUUID(),
       key = `private/${id}`;
     await pool.query(
@@ -172,24 +167,24 @@ describe("files in the application PostgreSQL", () => {
       VALUES($1::uuid,'legacy',$1::uuid::text,'synthetic.jpg',$2,$3,'image/jpeg',$4,$5,'available','clean',$6)`,
       [id, key, `quarantine/${id}`, jpeg.length, hash, actor.userId],
     );
-    await expect(importLegacyFile(pool, id, key, Buffer.alloc(jpeg.length))).rejects.toThrow();
+    await expect(createDownloadGrant(pool, storage, actor, id)).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      status: 404,
+    });
+    expect(await storage.inspectQuarantine(`quarantine/${id}`)).toBeNull();
+    const worker = new DatabaseWorkerObjectStorage(pool);
+    expect(await worker.privateExists(key)).toBe(false);
+    expect(await worker.quarantineExists(`quarantine/${id}`)).toBe(false);
     expect(
       (await pool.query("SELECT object_key FROM stored_file WHERE id=$1", [id])).rows[0].object_key,
     ).toBe(key);
-    await importLegacyFile(pool, id, key, jpeg);
-    expect((await readDatabaseContent(pool, `database/private/${id}`)).body).toEqual(jpeg);
     expect(
-      (
-        await pool.query(
-          "SELECT count(*)::int AS count FROM stored_file_content WHERE file_id=$1",
-          [id],
-        )
-      ).rows[0].count,
-    ).toBe(1);
+      (await pool.query("SELECT 1 FROM stored_file_content WHERE file_id=$1", [id])).rowCount,
+    ).toBe(0);
   });
   it("writes an audit export and its content in the same database transaction", async () => {
     const jobId = crypto.randomUUID();
-    await runAuditExport(pool, null, "unused", {
+    await runAuditExport(pool, {
       schemaVersion: 1,
       jobId,
       requestId: crypto.randomUUID(),

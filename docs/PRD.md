@@ -568,7 +568,7 @@ PRs separados acompanham as funcionalidades/specs concluídos e validados, confo
 | Upload malicioso                       | Validação em camadas, storage isolado e antivírus.                                                                     |
 | Permissões se tornarem inconsistentes  | Matriz central e testes automatizados de autorização.                                                                  |
 | Dependência excessiva do CMS           | Limitar Payload ao conteúdo e cadastros adequados; regras críticas ficam no domínio.                                   |
-| Cal.com duplicar a fonte de verdade    | Não adotá-lo como núcleo nesta fase; avaliar integração posterior.                                                     |
+| Cal.com duplicar a fonte de verdade    | Referência de pesquisa; integrar somente se nenhuma outra possibilidade for encontrada (15/09/2026).                  |
 
 ## 19. Entradas necessárias antes da construção
 
@@ -594,7 +594,7 @@ PRs separados acompanham as funcionalidades/specs concluídos e validados, confo
 - Lucide React será a biblioteca padrão de ícones.
 - Payload CMS e Lexical são a escolha inicial para notícias.
 - PostgreSQL será a fonte de verdade dos domínios operacionais.
-- Agendamentos serão domínio próprio; Cal.com permanece como opção de integração futura.
+- Agendamentos: avaliar domínio próprio; Cal.com é referência, com integração somente se nenhuma outra possibilidade for encontrada (15/09/2026).
 - Consulta à OAB será manual até existir integração oficial autorizada.
 - O sistema será um monólito modular com worker, não um conjunto prematuro de microserviços.
 
@@ -626,6 +626,14 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
 ## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+
+**Atualização de Agendamentos em 15/09/2026:** a CAAB gerencia no painel o serviço
+de reservas do app/site. Qualquer pessoa com acesso válido ao painel pode consultar
+e alterar Agendamentos, sem concessão adicional do módulo. Escopo confirmado:
+unidades com um ou mais serviços, profissionais, procedimentos, funcionamento e
+consulta/gestão de avaliações. Autenticação e auditoria permanecem; outros módulos
+mantêm suas permissões. Ações específicas de avaliações e regras operacionais ainda
+em brainstorming. Cal.com somente como referência, salvo se nenhuma alternativa for encontrada.
 
 O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
 solicitou novo brainstorming para uma grande evolução antes da implementação.

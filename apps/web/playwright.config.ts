@@ -42,13 +42,6 @@ export default defineConfig({
       BETTER_AUTH_SECRET:
         process.env.BETTER_AUTH_SECRET ?? "e2e-only-secret-with-at-least-32-characters",
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
-      S3_ENDPOINT: process.env.S3_ENDPOINT ?? "http://127.0.0.1:9000",
-      S3_REGION: process.env.S3_REGION ?? "us-east-1",
-      S3_ACCESS_KEY: process.env.S3_ACCESS_KEY ?? "caab-local",
-      S3_SECRET_KEY: process.env.S3_SECRET_KEY ?? "e2e-only-storage-secret",
-      S3_QUARANTINE_BUCKET: process.env.S3_QUARANTINE_BUCKET ?? "caab-quarantine",
-      S3_PRIVATE_BUCKET: process.env.S3_PRIVATE_BUCKET ?? "caab-private",
-      S3_PUBLIC_BUCKET: process.env.S3_PUBLIC_BUCKET ?? "caab-public",
       CLAMAV_HOST: process.env.CLAMAV_HOST ?? "127.0.0.1",
       CLAMAV_PORT: process.env.CLAMAV_PORT ?? "3310",
       OTEL_EXPORTER_OTLP_ENDPOINT:

@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import type { Pool } from "pg";
 import { auditExportJobPayloadSchema, type AuditExportJobPayload } from "@caab/contracts";
 import { withTransaction } from "@caab/db";
@@ -8,8 +7,6 @@ import { listAuditEvents } from "@caab/db/repositories/audit-query";
 
 export async function runAuditExport(
   pool: Pool,
-  s3: S3Client | null,
-  bucket: string,
   untrustedPayload: AuditExportJobPayload,
 ): Promise<void> {
   const payload = auditExportJobPayloadSchema.parse(untrustedPayload);
@@ -55,16 +52,7 @@ export async function runAuditExport(
   } while (cursor);
 
   const body = `${lines.join("\n")}${lines.length ? "\n" : ""}`;
-  const objectKey = `${s3 ? "" : "database/"}audit-exports/${payload.jobId}.jsonl`;
-  if (s3)
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: bucket,
-        Key: objectKey,
-        Body: body,
-        ContentType: "application/x-ndjson",
-      }),
-    );
+  const objectKey = `database/audit-exports/${payload.jobId}.jsonl`;
   await withTransaction(pool, async (client) => {
     const inserted = await client.query(
       `INSERT INTO stored_file
@@ -84,11 +72,10 @@ export async function runAuditExport(
       ],
     );
     if (inserted.rowCount === 0) return;
-    if (!s3)
-      await client.query(
-        "INSERT INTO stored_file_content(file_id,object_key,body) VALUES($1,$2,$3)",
-        [inserted.rows[0].id, objectKey, Buffer.from(body)],
-      );
+    await client.query(
+      "INSERT INTO stored_file_content(file_id,object_key,body) VALUES($1,$2,$3)",
+      [inserted.rows[0].id, objectKey, Buffer.from(body)],
+    );
     await writeAuditEvent(client, {
       actorUserId: payload.requestedBy,
       effectiveIdentity: `user:${payload.requestedBy}`,

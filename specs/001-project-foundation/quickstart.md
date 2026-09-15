@@ -11,7 +11,7 @@ O compose e os endereços locais deste guia não representam a configuração do
 
 - Git repository with protected `dev` and `main` branches.
 - Node.js 24 LTS and Corepack/pnpm.
-- Docker-compatible runtime for PostgreSQL, S3-compatible storage, ClamAV and test containers.
+- Docker-compatible runtime for PostgreSQL, ClamAV and test containers.
 - Local `.env` derived from `.env.example`, containing only development credentials.
 - No production secrets or real personal data.
 
@@ -31,7 +31,7 @@ must be a human-approved Pull Request from `dev` to `main`; direct pushes remain
 ```powershell
 corepack enable
 pnpm install --frozen-lockfile
-docker compose up -d postgres storage clamav otel-collector
+docker compose up -d postgres clamav otel-collector
 pnpm db:migrate
 pnpm db:seed:dev
 pnpm dev

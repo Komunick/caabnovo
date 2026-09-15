@@ -33,13 +33,13 @@ groups:
           severity: critical
         annotations:
           summary: "The antivirus scanner is unavailable; uploads remain quarantined"
-      - alert: CaabStorageErrors
-        expr: increase(storage_operation_errors_total[5m]) > 5
+      - alert: CaabWorkerJobErrors
+        expr: sum(increase(worker_job_failures_total[5m])) > 5
         for: 5m
         labels:
           severity: critical
         annotations:
-          summary: "Object storage operations are repeatedly failing"
+          summary: "Worker jobs are repeatedly failing; inspect file and audit export processing"
       - alert: CaabWorkerHeartbeatMissing
         expr: caab_worker_ready == 0
         for: 2m

@@ -4,17 +4,16 @@
 
 A Fundação é um monorepo TypeScript com duas unidades de execução: Next.js para HTTP/UI e um worker
 Node para tarefas assíncronas. PostgreSQL é a fonte de verdade transacional; pg-boss usa um schema
-isolado no mesmo banco. Binários ficam em storage S3-compatible e passam por ClamAV antes da promoção.
+isolado no mesmo banco. Binários ficam em stored_file_content no PostgreSQL e passam por ClamAV antes da promoção.
 
 ```text
 Browser -> Next.js (UI + /api/v1)
-               |-> PostgreSQL (identidade, autorização, auditoria, estados)
+               |-> PostgreSQL (identidade, autorização, auditoria, estados, binários)
                |-> pg-boss (enqueue na mesma transação causal)
-               |-> S3 quarantine/private (URLs assinadas curtas)
+               |-> /api/v1/files/content (capacidades HMAC curtas)
 
 pg-boss -> Worker -> ClamAV
-                  -> S3 quarantine/private
-                  -> PostgreSQL (progresso, resultado, heartbeat, auditoria)
+                  -> PostgreSQL (quarentena/privado, progresso, resultado, heartbeat, auditoria)
 
 Web + Worker -> OpenTelemetry Collector -> métricas/traces/alertas
 ```

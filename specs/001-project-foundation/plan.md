@@ -251,3 +251,27 @@ no CI sem S3 para arquivos novos; manter testes legados do adaptador S3.
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+## Plano de retirada do MinIO — 15/09/2026
+
+1. Retirar adaptadores S3 e roteamento legado de web/worker; fixar as chaves novas em database/.
+2. Persistir exportações somente na mesma transação PostgreSQL e preservar sua idempotência.
+3. Retirar serviço/init/declaração de volume MinIO do Compose, SDKs, variáveis S3 e CLI de cópia.
+   A retirada da declaração não apaga volumes existentes. Não alterar migrations históricas.
+4. Adaptar testes para backend único, ausência controlada de conteúdo legado e exportação
+   com bytes/privacidade/idempotência verificados; manter regressões de upload/scan/permissões.
+5. Atualizar documentação operacional e contratos. Validar tipos/lint/formatação/unitários
+   localmente; integração/E2E/build/segurança no CI, mantendo serviços locais desligados.
+6. Entregar na branch ativa feature/admin-cycle-20260915; informar efeito nos dois arquivos
+   de teste e distinguir remoção do projeto de desligamento remoto sem acesso à VM.
+7. Retirar contadores exclusivos do adaptador S3, observar respostas HTTP do conteúdo PostgreSQL
+   e substituir o alerta sem consumidores por falhas reais de jobs. Manter alertas de scanner,
+   fila e heartbeat; não incluir chaves ou capacidades de download nos atributos de métricas.
+
+## Plano: busca geral por funções — 15/09/2026
+
+1. Inventariar rotas e permissões dos módulos existentes; derivar áreas do catálogo atual.
+2. Acrescentar catálogo de funções com rótulos, sinônimos, descrição de contexto e destino real.
+3. Filtrar por todas as permissões necessárias, normalizar palavras e priorizar a função específica.
+4. Atualizar busca geral para Buscar no site, com setas/Enter/Escape e resultados contextualizados.
+5. Validar destinos OAB/benefícios, negações, ausência de acentos, teclado/mobile e atualização do preview.

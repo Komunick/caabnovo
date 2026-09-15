@@ -8,7 +8,9 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/
 
 export function AuditExportDialog({
   filters,
-}: Readonly<{ filters: { actorId?: string; action?: string; entityType?: string } }>) {
+}: Readonly<{
+  filters: { actorId?: string; action?: string; entityType?: string; from?: string; to?: string };
+}>) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -51,9 +53,7 @@ export function AuditExportDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button intent="primary" size="compact">
-          Exportar auditoria
-        </Button>
+        <Button size="compact">Exportar auditoria</Button>
       </DialogTrigger>
       <DialogContent
         title="Exportar auditoria"
@@ -65,7 +65,7 @@ export function AuditExportDialog({
               id="audit-export-from"
               name="from"
               type="datetime-local"
-              defaultValue={localValue(yesterday)}
+              defaultValue={localValue(filters.from ? new Date(filters.from) : yesterday)}
               required
             />
           </FormField>
@@ -74,7 +74,7 @@ export function AuditExportDialog({
               id="audit-export-to"
               name="to"
               type="datetime-local"
-              defaultValue={localValue(now)}
+              defaultValue={localValue(filters.to ? new Date(filters.to) : now)}
               required
             />
           </FormField>

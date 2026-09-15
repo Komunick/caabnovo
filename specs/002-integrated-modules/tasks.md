@@ -106,13 +106,24 @@ Não iniciar implementação com regras presumidas. Consultar
 [brainstorming-agendamentos.md](brainstorming-agendamentos.md).
 
 - [ ] AG-B01 Levantar com o usuário o fluxo atual e os objetivos da grande evolução.
-      Objetivo esclarecido: reservas configuráveis por profissionais em áreas diversas.
+      Em 15/09: CAAB administra o serviço de reservas do app/site pelo painel; qualquer
+      pessoa com acesso válido ao painel pode alterar Agendamentos, sem concessão extra.
+      Unidades com vários serviços, profissionais, procedimentos, funcionamento e avaliações.
       Recorte: barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba.
       Restaurantes somente como possibilidade futura; fluxo detalhado ainda não definido.
 - [x] AG-R01 Pesquisar soluções atuais em fontes oficiais e registrar evidências,
       conclusões e dúvidas em `pesquisa-mercado-agendamentos-2026-09-14.md`, sem implementar.
 - [ ] AG-R02 Revisar posteriormente as conclusões com o usuário; nenhuma proposta
-      de funcionamento, política ou primeira entrega foi aprovada pela pesquisa.
+      de mercado ou primeira entrega foi aprovada pela pesquisa. Revisão iniciada em
+      15/09 com administração/catálogo/canais definidos pelo usuário; demais opções abertas.
+- [x] AG-D01 Registrar decisões de 15/09 sobre gestão pela CAAB, acesso de todos os
+      usuários do painel, unidade com múltiplos serviços, profissionais/procedimentos,
+      funcionamento e avaliações; Cal.com apenas como referência, integração só se
+      nenhuma outra possibilidade for encontrada.
+- [x] AG-R03 Pesquisar Cal.com e referências de gestão de serviços presenciais em
+      fontes oficiais; registrar resultados em `pesquisa-gestao-agendamentos-2026-09-15.md`.
+- [ ] AG-B04 Validar organização serviço/procedimento, vínculos entre unidades e
+      profissionais, ações de avaliações e efeito de mudanças de horário nas reservas.
 - [ ] AG-B02 Explorar jornadas, atores, oferta, disponibilidade, exceções e integrações;
       distinguir decisões confirmadas de opções ainda em discussão.
 - [ ] AG-B03 Consolidar o escopo resultante em spec própria, plano e tarefas antes do código.

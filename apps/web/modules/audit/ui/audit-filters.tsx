@@ -2,10 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { SearchField, FilterToggle } from "@/components/ui/search-controls";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
+import { auditActions, auditEntities } from "../audit-presentation";
+import { AuditPersonFilter } from "./audit-person-filter";
+import { AuditChoiceFilter } from "./audit-choice-filter";
 
 type FilterValues = {
   actorId?: string;
@@ -13,78 +15,161 @@ type FilterValues = {
   entityType?: string;
   from?: string;
   to?: string;
+  period?: string;
 };
-
-function localDateTime(value?: string): string {
-  if (!value) return "";
+function localDateTime(value?: string) {
+  if (!value || Number.isNaN(Date.parse(value))) return "";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+}
+function actionArea(code: string) {
+  if (code === "partner.category-saved") return "partner_category";
+  if (code === "partner.app-settings") return "partner_app_settings";
+  if (code.startsWith("role.")) return "user";
+  if (code.startsWith("file.")) return "stored_file";
+  if (code.startsWith("audit.")) return "audit_export";
+  if (code.startsWith("job.")) return "job_execution";
+  return code.split(".")[0]!;
 }
 
-export function AuditFilters({ values }: Readonly<{ values: FilterValues }>) {
+export function AuditFilters({
+  values,
+  canReadPeople,
+  selectedActorName,
+}: Readonly<{ values: FilterValues; canReadPeople: boolean; selectedActorName?: string }>) {
   const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
-  const count = [values.actorId, values.entityType, values.from, values.to].filter(Boolean).length;
+  const [actorId, setActorId] = useState(values.actorId ?? "");
+  const [area, setArea] = useState(values.entityType ?? "");
+  const [action, setAction] = useState(values.action ?? "");
+  const [period, setPeriod] = useState(
+    values.period && ["all", "day", "week", "month", "custom"].includes(values.period)
+      ? values.period
+      : values.from || values.to
+        ? "custom"
+        : "all",
+  );
+  const [error, setError] = useState("");
+  const hasFilters = Boolean(
+    values.actorId || values.action || values.entityType || values.from || values.to,
+  );
+  const actionOptions = [{ value: "", label: "Todas as ações" }];
+  if (values.action && !Object.hasOwn(auditActions, values.action))
+    actionOptions.push({ value: values.action, label: "Atividade do registro antigo" });
+  for (const [code, label] of Object.entries(auditActions)) {
+    const group = actionArea(code);
+    if (
+      area &&
+      group !== area &&
+      !(area === "oab_lookup" && code.startsWith("member.oab_")) &&
+      code !== action
+    )
+      continue;
+    actionOptions.push({
+      value: code,
+      label:
+        label +
+        (code.startsWith("role.") || code === "member.create" || code === "partner.create"
+          ? " (registro antigo)"
+          : ""),
+    });
+  }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
     const form = new FormData(event.currentTarget);
+    if (String(form.get("personSearch") ?? "").trim() && !actorId) {
+      setError("Selecione uma pessoa na lista ou limpe a busca pelo nome.");
+      return;
+    }
     const query = new URLSearchParams();
-    for (const key of ["actorId", "action", "entityType"] as const) {
-      const value = String(form.get(key) ?? "").trim();
-      if (value) query.set(key, value);
+    if (actorId) query.set("actorId", actorId);
+    if (action) query.set("action", action);
+    if (area) query.set("entityType", area);
+    if (period === "custom") {
+      const from = String(form.get("from") ?? "");
+      const to = String(form.get("to") ?? "");
+      if (from && to && Date.parse(from) > Date.parse(to)) {
+        setError("O fim do período deve ser posterior ao início.");
+        return;
+      }
+      if (from) query.set("from", new Date(from).toISOString());
+      if (to) query.set("to", new Date(to).toISOString());
+    } else if (period !== "all") {
+      const days = { day: 1, week: 7, month: 30 }[period];
+      if (days) {
+        const now = Date.now();
+        query.set("from", new Date(now - days * 86400000).toISOString());
+        query.set("to", new Date(now).toISOString());
+      }
     }
-    for (const key of ["from", "to"] as const) {
-      const value = String(form.get(key) ?? "");
-      if (value) query.set(key, new Date(value).toISOString());
-    }
+    if (period !== "all") query.set("period", period);
     router.push(`/audit${query.size ? `?${query}` : ""}`);
   }
-
   return (
     <form role="search" aria-label="Filtros de auditoria" onSubmit={submit}>
-      <div className="filter-toolbar">
-        <SearchField
+      <div className="audit-filter-grid">
+        {canReadPeople && (
+          <AuditPersonFilter value={actorId} name={selectedActorName} onChange={setActorId} />
+        )}
+        <AuditChoiceFilter
+          id="audit-entity-type"
+          label="Área"
+          value={area}
+          placeholder="Todas as áreas"
+          options={[
+            { value: "", label: "Todas as áreas" },
+            ...(values.entityType && !Object.hasOwn(auditEntities, values.entityType)
+              ? [{ value: values.entityType, label: "Área do registro antigo" }]
+              : []),
+            ...Object.entries(auditEntities).map(([value, label]) => ({ value, label })),
+          ]}
+          onChange={(value) => {
+            setArea(value);
+            setAction("");
+          }}
+        />
+        <AuditChoiceFilter
+          key={area}
           id="audit-action"
           label="Ação"
-          name="action"
-          maxLength={120}
-          defaultValue={values.action}
+          value={action}
+          placeholder="Todas as ações"
+          options={actionOptions}
+          onChange={setAction}
         />
-        <FilterToggle
-          expanded={expanded}
-          controls="audit-filter-options"
-          count={count}
-          onClick={() => setExpanded(!expanded)}
-        />
-        {(expanded || count > 0 || values.action) && (
-          <Button type="reset" onClick={() => router.push("/audit")}>
+        <FormField id="audit-period" label="Período">
+          <select value={period} onChange={(event) => setPeriod(event.target.value)}>
+            <option value="all">Todo o histórico</option>
+            <option value="day">Últimas 24 horas</option>
+            <option value="week">Últimos 7 dias</option>
+            <option value="month">Últimos 30 dias</option>
+            <option value="custom">Escolher datas</option>
+          </select>
+        </FormField>
+      </div>
+      {period === "custom" && (
+        <div className="audit-date-range">
+          <FormField id="audit-from" label="A partir de">
+            <Input name="from" type="datetime-local" defaultValue={localDateTime(values.from)} />
+          </FormField>
+          <FormField id="audit-to" label="Até">
+            <Input name="to" type="datetime-local" defaultValue={localDateTime(values.to)} />
+          </FormField>
+        </div>
+      )}
+      <div className="audit-filter-actions">
+        <Button type="submit" intent="primary" size="compact">
+          Aplicar filtros
+        </Button>
+        {hasFilters && (
+          <Button type="button" size="compact" onClick={() => router.push("/audit")}>
             Limpar filtros
           </Button>
         )}
-      </div>
-      <div className="list-filters" id="audit-filter-options" hidden={!expanded}>
-        <FormField id="audit-actor" label="ID do ator">
-          <Input
-            name="actorId"
-            maxLength={36}
-            pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
-            defaultValue={values.actorId}
-          />
-        </FormField>
-        <FormField id="audit-entity-type" label="Tipo de entidade">
-          <Input name="entityType" maxLength={80} defaultValue={values.entityType} />
-        </FormField>
-        <FormField id="audit-from" label="A partir de">
-          <Input name="from" type="datetime-local" defaultValue={localDateTime(values.from)} />
-        </FormField>
-        <FormField id="audit-to" label="Até">
-          <Input name="to" type="datetime-local" defaultValue={localDateTime(values.to)} />
-        </FormField>
-        <Button intent="primary" size="compact" type="submit">
-          Aplicar filtros
-        </Button>
+        {values.actorId && !canReadPeople && (
+          <span className="muted">Filtro de pessoa aplicado pelo link.</span>
+        )}
+        {error && <p role="alert">{error}</p>}
       </div>
     </form>
   );

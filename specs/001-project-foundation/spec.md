@@ -423,3 +423,26 @@ Serviços locais permanecem desligados; validação com banco descartável e nav
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+
+## Armazenamento exclusivo no PostgreSQL — 15/09/2026
+
+Decisão final do usuário substitui a transição S3 de 14/09: o site contém apenas dois
+arquivos de teste e sua migração foi dispensada. Retirar MinIO, clientes S3, buckets,
+configuração, ferramentas de migração e dependências obsoletas. PostgreSQL é o único
+backend de upload/download e exportação. Preservar assinatura temporária, quarentena,
+antivírus, autorização, limites, integridade e auditoria. Não modificar migrations já
+aplicadas nem apagar registros/volumes como parte da atualização do código. Referências
+legadas sem conteúdo no banco devem falhar de forma controlada; reenviar os arquivos de
+teste se necessário. Remover o serviço remoto exige acesso operacional e conferência de
+que não atende outros projetos; não declarar desligamento da VM por remover Compose.
+
+## Busca geral por funções — 15/09/2026
+
+Pedido do usuário: ampliar Buscar área para localizar qualquer função existente, incluindo OAB e benefícios.
+Mostrar destinos específicos, rótulos em português e área de origem; reconhecer termos sem acentos,
+maiúsculas/minúsculas e palavras em qualquer ordem. A consulta é sobre funções, não sobre dados pessoais.
+Indexar subpáginas e tarefas que exigem escolha de cadastro, explicando essa etapa no resultado.
+Somente destinos existentes e permitidos; cadastrar exige também escrita, leitura não concede mutação.
+Manter Ctrl+K, teclado, celular e tema; nenhum serviço adicional nem consulta pesada no banco.
+Aceite: OAB abre /members/oab; beneficios abre /partners/benefits; perfis sem leitura não encontram
+essas funções; funções de conta e demais módulos existentes são encontráveis; Enter acessa o resultado.

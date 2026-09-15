@@ -13,7 +13,28 @@ existentes atualizam seus próprios specs; não criam novas especificações.
 
 ## User Scenarios & Testing
 
+### Definições vigentes de Agendamentos — 15/09/2026
+
+US4 administra pela CAAB o serviço de agendamentos do app/site. Qualquer pessoa
+com acesso válido ao painel administrativo pode consultar e alterar o módulo,
+sem permissão adicional específica, papel de gestor ou restrição por unidade.
+Autenticação e auditoria permanecem; não ampliar permissões dos demais módulos.
+
+Escopo confirmado: unidades com um ou mais serviços, profissionais, procedimentos,
+configuração de funcionamento/abertura e consulta/gestão de avaliações. Relações
+detalhadas, políticas, ações de avaliação e primeira entrega ainda em discussão.
+Cal.com é referência; não integrar salvo se nenhuma outra possibilidade for encontrada.
+Esta decisão substitui a hipótese de administração independente por profissionais.
+
+Ver [decisões do brainstorming](brainstorming-agendamentos.md) e
+[pesquisa complementar](pesquisa-gestao-agendamentos-2026-09-15.md).
+Ainda sem implementação autorizada; T022–T026 continuam suspensas. A futura spec
+deve validar acesso ao módulo por qualquer conta com acesso administrativo válido,
+recusa sem esse acesso e auditoria de alterações, sem inventar concessão de Agendamentos.
+
 ### Revisão de escopo — 14/09/2026
+
+Referência histórica; as definições de 15/09 acima prevalecem.
 
 **Esclarecimento posterior:** o produto permitirá aos profissionais configurar suas
 reservas para barbearia, medicina, futevôlei, fisioterapia, psicologia, spa e zumba.

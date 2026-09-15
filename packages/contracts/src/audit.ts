@@ -24,9 +24,33 @@ export const auditEventSchema = z.object({
   origin: z.enum(["web", "worker", "system"]),
   requestId: idSchema,
   correlationId: idSchema,
+  presentation: z
+    .object({
+      description: z.string(),
+      changes: z.array(z.string()),
+      actorLabel: z.string().optional(),
+      targetLabel: z.string().optional(),
+      details: z
+        .array(
+          z.object({
+            label: z.string(),
+            before: z.string().optional(),
+            after: z.string().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
 });
 
 export const auditPageSchema = pageSchema(auditEventSchema);
+
+export const auditActorQuerySchema = z.object({
+  q: z.string().trim().max(160).default(""),
+  cursor: idSchema.optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
+export const auditActorPageSchema = pageSchema(z.object({ id: idSchema, name: z.string() }));
 
 const auditFilterSchema = z.object({
   actorId: idSchema.optional(),

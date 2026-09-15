@@ -1,10 +1,12 @@
 import { Client } from "pg";
-import type { S3Client } from "@aws-sdk/client-s3";
+import { readDatabaseContent } from "@caab/db/repositories/file-content";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { listAuditEvents } from "@caab/db/repositories/audit-query";
+import { listAuditActors, findAuditTargetNames } from "@caab/db/repositories/audit-names";
+import { searchAuditEvents } from "../../modules/audit/audit-query-service";
 import { inAuditedTransaction } from "../../modules/audit/audit-writer";
 import {
   requestAuditExport,
@@ -66,6 +68,233 @@ beforeEach(async () => {
 });
 
 describe.sequential("append-only audit investigation", () => {
+  it("identifies targets with current domain grants and protects filenames after revocation", async () => {
+    const userId = await seedUser("target-reader@example.test");
+    const sessionId = crypto.randomUUID();
+    await admin.query(
+      "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$2,now()+interval '1 hour')",
+      [sessionId, userId],
+    );
+    const role = (
+      await admin.query<{ id: string }>(
+        "INSERT INTO role(code,name,description) VALUES('target-reader','Leitor de alvos','Teste') RETURNING id",
+      )
+    ).rows[0]!.id;
+    await admin.query(
+      "INSERT INTO permission(resource,action,description) VALUES('members','read','Teste'),('partners','read','Teste'),('news','read','Teste'),('files','read','Teste')",
+    );
+    await admin.query(
+      "INSERT INTO role_permission(role_id,permission_id) SELECT $1,id FROM permission",
+      [role],
+    );
+    await admin.query(
+      "INSERT INTO user_role(user_id,role_id,granted_by,justification) VALUES($1,$2,$1,'Teste')",
+      [userId, role],
+    );
+    const memberId = (
+      await admin.query<{ id: string }>(
+        "INSERT INTO member(name,email) VALUES('Associado sintético','private-contact-canary') RETURNING id",
+      )
+    ).rows[0]!.id;
+    const partnerId = (
+      await admin.query<{ id: string }>(
+        `WITH category AS (INSERT INTO partner_category(name) VALUES('Categoria de auditoria') RETURNING id)
+         INSERT INTO partner(profile,category_id) SELECT '{"name":"Convênio sintético","category":"Categoria de auditoria"}',id FROM category RETURNING id`,
+      )
+    ).rows[0]!.id;
+    const newsId = (
+      await admin.query<{ id: string }>(
+        "INSERT INTO news(metadata_title) VALUES('Notícia sintética') RETURNING id",
+      )
+    ).rows[0]!.id;
+    const fileId = (
+      await admin.query<{ id: string }>(
+        `INSERT INTO stored_file(owner_type,owner_id,original_name,object_key,quarantine_key,declared_mime,uploaded_by) VALUES('member',$1,'Documento sintético.pdf',$2,$3,'application/pdf',$4) RETURNING id`,
+        [memberId, crypto.randomUUID(), crypto.randomUUID(), userId],
+      )
+    ).rows[0]!.id;
+    const targets = [
+      { entityType: "member", entityId: memberId },
+      { entityType: "partner", entityId: partnerId },
+      { entityType: "news", entityId: newsId },
+      { entityType: "stored_file", entityId: fileId },
+    ];
+    const actor = {
+      userId,
+      sessionId,
+      permissions: new Set([
+        PERMISSIONS.auditRead,
+        PERMISSIONS.membersRead,
+        PERMISSIONS.partnersRead,
+        PERMISSIONS.newsRead,
+        PERMISSIONS.filesRead,
+      ]),
+    };
+    expect(
+      (
+        await findAuditTargetNames(
+          database.pool,
+          { ...actor, permissions: new Set([PERMISSIONS.auditRead]) },
+          targets,
+        )
+      ).size,
+    ).toBe(0);
+    const names = await findAuditTargetNames(database.pool, actor, targets);
+    expect([...names.values()]).toEqual(
+      expect.arrayContaining([
+        "Associado sintético",
+        "Convênio sintético",
+        "Notícia sintética",
+        "Documento sintético.pdf",
+      ]),
+    );
+    expect(JSON.stringify([...names])).not.toContain("private-contact-canary");
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, {
+        ...event(userId, "member.photo", memberId),
+        entityType: "member",
+        before: undefined,
+        after: { previousPhotoFileId: null, photoFileId: fileId, version: 2 },
+      });
+    } finally {
+      client.release();
+    }
+    const page = await searchAuditEvents(database.pool, actor, { limit: 25 });
+    expect(page.items[0]!.presentation.targetLabel).toBe("Associado sintético");
+    expect(page.items[0]!.presentation.description).toContain("Associado sintético");
+    await admin.query(
+      "DELETE FROM role_permission WHERE role_id=$1 AND permission_id IN (SELECT id FROM permission WHERE resource='members')",
+      [role],
+    );
+    const revoked = await findAuditTargetNames(database.pool, actor, targets);
+    expect(revoked.has(`member:${memberId}`)).toBe(false);
+    expect(revoked.has(`stored_file:${fileId}`)).toBe(false);
+    expect(revoked.size).toBe(2);
+    await admin.query("UPDATE session SET revoked_at=now() WHERE id=$1", [sessionId]);
+    expect((await findAuditTargetNames(database.pool, actor, targets)).size).toBe(0);
+  });
+  it("searches only event authors with escaped literal names and stable pagination", async () => {
+    const firstId = await seedUser("first@example.test");
+    const secondId = await seedUser("second@example.test");
+    await seedUser("no-events@example.test");
+    await admin.query(`UPDATE "user" SET name='Nome_% sintético' WHERE id=$1`, [firstId]);
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, event(firstId, "user.updated", firstId));
+      await writeAuditEvent(client, event(firstId, "user.updated", firstId));
+      await writeAuditEvent(client, event(secondId, "user.updated", secondId));
+    } finally {
+      client.release();
+    }
+    const literal = await listAuditActors(database.pool, { q: "_%", limit: 20 });
+    expect(literal.items).toEqual([{ id: firstId, name: "Nome_% sintético" }]);
+    const first = await listAuditActors(database.pool, { q: "", limit: 1 });
+    expect(first.nextCursor).toBeTypeOf("string");
+    const next = await listAuditActors(database.pool, {
+      q: "",
+      limit: 1,
+      cursor: first.nextCursor!,
+    });
+    expect(next.nextCursor).toBeNull();
+    expect(new Set([...first.items, ...next.items].map((item) => item.id))).toEqual(
+      new Set([firstId, secondId]),
+    );
+  });
+  it("resolves current names only with existing read permissions and preserves original evidence", async () => {
+    const actorId = await seedUser("actor@example.test");
+    const targetId = await seedUser("target@example.test");
+    await admin.query(
+      `UPDATE "user" SET name = CASE WHEN id = $1 THEN 'Gabriel' ELSE 'Felipe' END WHERE id = ANY($2::uuid[])`,
+      [actorId, [actorId, targetId]],
+    );
+    const role = await admin.query<{ id: string }>(
+      "INSERT INTO role(code,name,description) VALUES('admin','Administrador','Synthetic') RETURNING id",
+    );
+    const original = {
+      ...event(actorId, "user.role.revoked", targetId),
+      before: { roleId: role.rows[0]!.id, assigned: true },
+      after: { roleId: role.rows[0]!.id, assigned: false },
+    };
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, original);
+    } finally {
+      client.release();
+    }
+    const reader = {
+      userId: actorId,
+      sessionId: crypto.randomUUID(),
+      permissions: new Set([PERMISSIONS.auditRead]),
+    };
+    const restricted = await searchAuditEvents(database.pool, reader, { limit: 25 });
+    expect(JSON.stringify(restricted.items[0]!.presentation)).not.toMatch(
+      /Gabriel|Felipe|Administrador/,
+    );
+    const usersOnly = await searchAuditEvents(
+      database.pool,
+      { ...reader, permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead]) },
+      { limit: 25 },
+    );
+    expect(usersOnly.items[0]!.presentation.description).toBe(
+      "Gabriel removeu um perfil de acesso de Felipe",
+    );
+    const authorized = await searchAuditEvents(
+      database.pool,
+      {
+        ...reader,
+        permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead, PERMISSIONS.rolesRead]),
+      },
+      { limit: 25 },
+    );
+    expect(authorized.items[0]!.presentation.description).toBe(
+      "Gabriel removeu o perfil de Administrador de Felipe",
+    );
+    expect(authorized.items[0]!.before).toEqual(original.before);
+    expect(authorized.items[0]!.action).toBe(original.action);
+    await admin.query(`UPDATE "user" SET name = 'Felipe atual' WHERE id = $1`, [targetId]);
+    const renamed = await searchAuditEvents(
+      database.pool,
+      { ...reader, permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead]) },
+      { limit: 25 },
+    );
+    expect(renamed.items[0]!.presentation.description).toContain("Felipe atual");
+    expect(renamed.items[0]!.before).toEqual(original.before);
+    await expect(
+      searchAuditEvents(
+        database.pool,
+        { ...reader, permissions: new Set([PERMISSIONS.usersRead]) },
+        { limit: 25 },
+      ),
+    ).rejects.toMatchObject({ status: 403 });
+  });
+
+  it("accepts old non-UUID targets and missing roles without attributing an identity", async () => {
+    const actorId = await seedUser("legacy@example.test");
+    const client = await database.pool.connect();
+    try {
+      await writeAuditEvent(client, {
+        ...event(actorId, "role.revoked", "old-target"),
+        after: { roleId: "legacy-role" },
+      });
+    } finally {
+      client.release();
+    }
+    const page = await searchAuditEvents(
+      database.pool,
+      {
+        userId: actorId,
+        sessionId: crypto.randomUUID(),
+        permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.usersRead, PERMISSIONS.rolesRead]),
+      },
+      { limit: 25 },
+    );
+    expect(page.items[0]!.presentation.description).toContain(
+      "um perfil de acesso de colaborador não identificado",
+    );
+    expect(page.items[0]!.entityId).toBe("old-target");
+  });
+
   it("filters allowlisted redacted events with stable cursor pagination", async () => {
     const actorId = await seedUser("auditor@example.test");
     await database.pool.connect().then(async (client) => {
@@ -219,13 +448,6 @@ describe.sequential("append-only audit investigation", () => {
     } finally {
       client.release();
     }
-    const uploads: Array<{ Bucket?: string; Key?: string; Body?: unknown }> = [];
-    const s3 = {
-      send: async (command: { input: { Bucket?: string; Key?: string; Body?: unknown } }) => {
-        uploads.push(command.input);
-        return {};
-      },
-    } as unknown as S3Client;
     const payload = {
       schemaVersion: 1 as const,
       jobId: crypto.randomUUID(),
@@ -236,15 +458,15 @@ describe.sequential("append-only audit investigation", () => {
       to: new Date(Date.now() + 60_000).toISOString(),
     };
 
-    await runAuditExport(database.pool, s3, "caab-private", payload);
-    await runAuditExport(database.pool, s3, "caab-private", payload);
+    await runAuditExport(database.pool, payload);
+    await runAuditExport(database.pool, payload);
 
-    expect(uploads).toHaveLength(1);
-    expect(uploads[0]).toMatchObject({
-      Bucket: "caab-private",
-      Key: `audit-exports/${payload.jobId}.jsonl`,
-    });
-    const body = String(uploads[0]?.Body);
+    const file = await readDatabaseContent(
+      database.pool,
+      `database/audit-exports/${payload.jobId}.jsonl`,
+    );
+    expect(file.mime).toBe("application/x-ndjson");
+    const body = file.body.toString("utf8");
     expect(body).toContain(eventId);
     expect(body).not.toContain("Synthetic-Password-Canary");
     expect(body).not.toContain("synthetic-token-canary");
@@ -252,16 +474,23 @@ describe.sequential("append-only audit investigation", () => {
 
     const persisted = await admin.query<{
       files: string;
+      contents: string;
       events: string;
       visibility: string;
     }>(
       `SELECT
         (SELECT count(*) FROM stored_file WHERE owner_id = $1)::text AS files,
+        (SELECT count(*) FROM stored_file_content c JOIN stored_file f ON f.id=c.file_id WHERE f.owner_id=$1)::text AS contents,
         (SELECT count(*) FROM audit_event
           WHERE action = 'audit.export.completed' AND entity_id = $1)::text AS events,
         (SELECT visibility::text FROM stored_file WHERE owner_id = $1) AS visibility`,
       [payload.jobId],
     );
-    expect(persisted.rows[0]).toEqual({ files: "1", events: "1", visibility: "private" });
+    expect(persisted.rows[0]).toEqual({
+      files: "1",
+      contents: "1",
+      events: "1",
+      visibility: "private",
+    });
   });
 });

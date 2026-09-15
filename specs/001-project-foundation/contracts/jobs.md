@@ -58,3 +58,7 @@ retention and dead-letter behavior. Defaults are not accepted without explicit r
 ## Regra final de justificativas — 14/09/2026
 
 Nenhuma operação desta função exige motivo escrito. Campos de justificativa foram retirados da interface. Contratos aceitam omissão e vazio; texto legado opcional mantém seu limite. As exigências anteriores de justificativa estão substituídas. Histórico permanece preservado, e novos eventos registram autoria, data, ação e alterações automaticamente, sem motivo inventado. Fonte, resultado, autenticação, permissões, versão e dados necessários à operação continuam obrigatórios.
+
+## Retirada do armazenamento legado — 15/09/2026
+
+Jobs de arquivos e exportações usam apenas PostgreSQL. Scan/promoção/reconciliação mantêm permissões, idempotência e quarentena; adaptadores S3 retirados. Referências legadas sem conteúdo disponível não são promovidas.

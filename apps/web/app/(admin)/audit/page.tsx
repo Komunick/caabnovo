@@ -5,7 +5,7 @@ import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { PERMISSIONS } from "@/modules/auth/permissions";
 import { getDatabase } from "@/modules/shared/database";
 import { searchAuditEvents } from "@/modules/audit/audit-query-service";
-import { AuditTable } from "@/modules/audit/ui/audit-table";
+import { AuditTimeline } from "@/modules/audit/ui/audit-timeline";
 import { AuditExportDialog } from "@/modules/audit/ui/audit-export-dialog";
 import { AuditFilters } from "@/modules/audit/ui/audit-filters";
 import { AuditNavigation } from "@/modules/audit/ui/audit-navigation";
@@ -36,6 +36,7 @@ export default async function AuditPage({
     from: single(raw.from),
     to: single(raw.to),
     limit: single(raw.limit),
+    period: single(raw.period),
   };
   const parsed = auditListQuerySchema.safeParse(
     Object.fromEntries(Object.entries(values).filter(([, value]) => value)),
@@ -53,17 +54,20 @@ export default async function AuditPage({
   );
 
   return (
-    <div className="page-stack">
-      <header>
-        <p className="eyebrow">Integridade e rastreabilidade</p>
-        <h1>Auditoria</h1>
-        <p>Consulte eventos críticos redigidos. Esta área é somente leitura.</p>
+    <div className="page-stack audit-page">
+      <header className="audit-page-heading">
+        <div>
+          <h1>Auditoria</h1>
+          <p>Quem fez, o que mudou e quando aconteceu.</p>
+        </div>
         {actor.permissions.has(PERMISSIONS.auditExport) ? (
           <AuditExportDialog
             filters={{
               ...(query.actorId ? { actorId: query.actorId } : {}),
               ...(query.action ? { action: query.action } : {}),
               ...(query.entityType ? { entityType: query.entityType } : {}),
+              ...(query.from ? { from: query.from } : {}),
+              ...(query.to ? { to: query.to } : {}),
             }}
           />
         ) : null}
@@ -72,14 +76,24 @@ export default async function AuditPage({
         events={actor.permissions.has(PERMISSIONS.auditRead)}
         jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
       />
-      <section className="panel" aria-labelledby="audit-filters-title">
-        <h2 id="audit-filters-title">Filtros</h2>
+      <section className="audit-filter-panel" aria-labelledby="audit-filters-title">
+        <h2 id="audit-filters-title" className="sr-only">
+          Filtros de atividades
+        </h2>
         {!parsed.success ? (
           <p role="alert">Um ou mais filtros foram ignorados por serem inválidos.</p>
         ) : null}
-        <AuditFilters key={JSON.stringify(values)} values={values} />
+        <AuditFilters
+          key={JSON.stringify(values)}
+          values={values}
+          canReadPeople={actor.permissions.has(PERMISSIONS.usersRead)}
+          selectedActorName={
+            page.items.find((event) => event.actorUserId === values.actorId)?.presentation
+              .actorLabel
+          }
+        />
       </section>
-      <AuditTable
+      <AuditTimeline
         events={page.items}
         nextHref={page.nextCursor ? `/audit?${nextParams.toString()}` : undefined}
       />
