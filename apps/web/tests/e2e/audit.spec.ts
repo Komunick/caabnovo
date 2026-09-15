@@ -27,8 +27,13 @@ test("auditor searches combined filters and starts an authorized export", async 
 
   await expect(page.getByRole("combobox", { name: "Pessoa", exact: true })).toHaveCount(0);
   expect((await page.request.get("/api/v1/audit-actors?q=Gestor")).status()).toBe(403);
-  await page.getByLabel("Área", { exact: true }).selectOption("user");
-  await page.getByLabel("Ação", { exact: true }).selectOption("user.updated");
+  await page.getByLabel("Área", { exact: true }).fill("Colaborador");
+  const actionField = page.getByLabel("Ação", { exact: true });
+  await expect(actionField).toHaveAttribute("list", "audit-action-options");
+  await actionField.fill("opção inexistente");
+  await page.getByRole("button", { name: "Aplicar filtros" }).click();
+  await expect(page.getByText("Escolha uma opção da lista ou limpe o campo.")).toBeVisible();
+  await actionField.fill("Alterou um colaborador");
   await page.getByRole("button", { name: "Aplicar filtros" }).click();
   await expect(
     page
@@ -112,7 +117,9 @@ test("administrator reads complete human details with support codes collapsed on
   await expect(panel).toBeVisible();
   await expect(panel.getByText("Antes", { exact: true }).first()).toBeVisible();
   await expect(panel.getByText("Depois", { exact: true }).first()).toBeVisible();
-  await expect(panel.getByText("Nome anterior sintético", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Inativo", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Ativo", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Nome anterior sintético", { exact: true })).toHaveCount(0);
   await expect(panel.getByText("user.updated", { exact: true })).toBeHidden();
   await expect(panel.locator("pre").first()).toBeHidden();
   expect(await panel.innerText()).not.toMatch(/roleId|requestId|[0-9a-f]{8}-[0-9a-f]{4}-/);
@@ -147,7 +154,9 @@ test("administrator reads complete human details with support codes collapsed on
   await expect(panel.getByText("user.updated", { exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
   await page.goto("/audit?action=legacy.unknown&entityType=legacy_record");
-  await expect(page.getByLabel("Ação", { exact: true })).toHaveValue("legacy.unknown");
+  await expect(page.getByLabel("Ação", { exact: true })).toHaveValue(
+    "Atividade do registro antigo",
+  );
   await page.getByRole("button", { name: "Aplicar filtros", exact: true }).click();
   await expect(page).toHaveURL(/action=legacy.unknown&entityType=legacy_record/);
   await expect(page.getByRole("heading", { name: "Nenhuma atividade encontrada" })).toBeVisible();

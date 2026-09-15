@@ -7,6 +7,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { auditActions, auditEntities } from "../audit-presentation";
 import { AuditPersonFilter } from "./audit-person-filter";
+import { AuditChoiceFilter } from "./audit-choice-filter";
 
 type FilterValues = {
   actorId?: string;
@@ -51,7 +52,9 @@ export function AuditFilters({
   const hasFilters = Boolean(
     values.actorId || values.action || values.entityType || values.from || values.to,
   );
-  const groupedActions = new Map<string, [string, string][]>();
+  const actionOptions = [{ value: "", label: "Todas as ações" }];
+  if (values.action && !Object.hasOwn(auditActions, values.action))
+    actionOptions.push({ value: values.action, label: "Atividade do registro antigo" });
   for (const [code, label] of Object.entries(auditActions)) {
     const group = actionArea(code);
     if (
@@ -61,7 +64,14 @@ export function AuditFilters({
       code !== action
     )
       continue;
-    groupedActions.set(group, [...(groupedActions.get(group) ?? []), [code, label]]);
+    actionOptions.push({
+      value: code,
+      label:
+        label +
+        (code.startsWith("role.") || code === "member.create" || code === "partner.create"
+          ? " (registro antigo)"
+          : ""),
+    });
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -101,47 +111,32 @@ export function AuditFilters({
         {canReadPeople && (
           <AuditPersonFilter value={actorId} name={selectedActorName} onChange={setActorId} />
         )}
-        <FormField id="audit-entity-type" label="Área">
-          <select
-            value={area}
-            onChange={(event) => {
-              setArea(event.target.value);
-              setAction("");
-            }}
-          >
-            <option value="">Todas as áreas</option>
-            {area && !Object.hasOwn(auditEntities, area) && (
-              <option value={area}>Área do registro antigo</option>
-            )}
-            {Object.entries(auditEntities).map(([code, label]) => (
-              <option key={code} value={code}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </FormField>
-        <FormField id="audit-action" label="Ação">
-          <select value={action} onChange={(event) => setAction(event.target.value)}>
-            <option value="">Todas as ações</option>
-            {action && !Object.hasOwn(auditActions, action) && (
-              <option value={action}>Atividade do registro antigo</option>
-            )}
-            {[...groupedActions].map(([group, actions]) => (
-              <optgroup key={group} label={auditEntities[group] ?? "Outras atividades"}>
-                {actions.map(([code, label]) => (
-                  <option key={code} value={code}>
-                    {label}
-                    {code.startsWith("role.") ||
-                    code === "member.create" ||
-                    code === "partner.create"
-                      ? " (registro antigo)"
-                      : ""}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </FormField>
+        <AuditChoiceFilter
+          id="audit-entity-type"
+          label="Área"
+          value={area}
+          placeholder="Todas as áreas"
+          options={[
+            { value: "", label: "Todas as áreas" },
+            ...(values.entityType && !Object.hasOwn(auditEntities, values.entityType)
+              ? [{ value: values.entityType, label: "Área do registro antigo" }]
+              : []),
+            ...Object.entries(auditEntities).map(([value, label]) => ({ value, label })),
+          ]}
+          onChange={(value) => {
+            setArea(value);
+            setAction("");
+          }}
+        />
+        <AuditChoiceFilter
+          key={area}
+          id="audit-action"
+          label="Ação"
+          value={action}
+          placeholder="Todas as ações"
+          options={actionOptions}
+          onChange={setAction}
+        />
         <FormField id="audit-period" label="Período">
           <select value={period} onChange={(event) => setPeriod(event.target.value)}>
             <option value="all">Todo o histórico</option>

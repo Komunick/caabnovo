@@ -311,3 +311,13 @@ migração de dois arquivos de teste. Não adicionar banco ou dependências. Cla
 HMAC e autorização continuam necessários. A pesquisa não demonstra capacidade da VM;
 espaço e backup permanecem responsabilidade operacional. Não se executará limpeza de
 registros históricos ou volumes para eliminar referências obsoletas.
+
+## Pesquisa: busca geral por funções — 15/09/2026
+
+Fontes oficiais: [GitHub Command Palette](https://docs.github.com/en/enterprise-cloud%40latest/get-started/accessibility/github-command-palette)
+organiza navegação e ações acessíveis ao usuário; [Windows Terminal Command Palette](https://learn.microsoft.com/en-us/windows/terminal/command-palette)
+oferece busca das ações disponíveis e operação por teclado. Adaptação ao CAAB: catálogo leve de funções
+existentes, com destino, contexto e permissões declarados. Busca normaliza acentos e termos; funções
+específicas têm prioridade sobre área genérica. Não executar mutações ao selecionar um resultado.
+Para funções dependentes de cadastro, abrir a lista e informar que é necessário selecionar um registro.
+Reutilizar dialog/links existentes; sem indexador de dados pessoais, biblioteca nova ou serviço adicional.

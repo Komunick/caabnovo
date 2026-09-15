@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { auditActorPageSchema } from "@caab/contracts";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,11 @@ export function AuditPersonFilter({
   const [active, setActive] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const optionsRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (open && active >= 0)
+      optionsRef.current?.children[active]?.scrollIntoView({ block: "nearest" });
+  }, [active, open]);
   useEffect(() => {
     if (!open) return;
     const controller = new AbortController();
@@ -70,7 +75,7 @@ export function AuditPersonFilter({
           aria-controls={open ? "audit-person-options" : undefined}
           aria-autocomplete="list"
           aria-activedescendant={
-            active >= 0 && items[active] ? `audit-person-${items[active]!.id}` : undefined
+            open && active >= 0 && items[active] ? `audit-person-${items[active]!.id}` : undefined
           }
           onFocus={() => {
             setOpen(true);
@@ -83,6 +88,7 @@ export function AuditPersonFilter({
             setPageCursor(undefined);
             setActive(-1);
             setItems([]);
+            setCursor(null);
           }}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
@@ -110,6 +116,7 @@ export function AuditPersonFilter({
         <div className="audit-person-options">
           <ul
             role="listbox"
+            ref={optionsRef}
             id="audit-person-options"
             aria-label="Pessoas que realizaram atividades"
           >
@@ -118,7 +125,7 @@ export function AuditPersonFilter({
                 key={person.id}
                 role="option"
                 id={`audit-person-${person.id}`}
-                aria-selected={active === index || value === person.id}
+                aria-selected={active >= 0 ? active === index : value === person.id}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => choose(person)}
               >

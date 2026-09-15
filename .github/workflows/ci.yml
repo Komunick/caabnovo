@@ -132,6 +132,15 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+      - name: Preserve global function search screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: workspace-function-synthetic-screenshots
+          path: apps/web/test-results/**/workspace-function-*.png
+          retention-days: 7
+          if-no-files-found: warn
+
       - run: pnpm test:a11y --project=chromium
 
   security:

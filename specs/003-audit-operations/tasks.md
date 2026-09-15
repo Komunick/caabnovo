@@ -65,6 +65,7 @@ T014 autorizada em 15/09/2026 e reformulada após a revisão do usuário; integr
 - [ ] T014a Histórico por data, filtros de pessoa/área/ação/período e painel lateral acessível.
 - [ ] T014b Detalhes completos em linguagem simples, antes/depois e suporte técnico recolhido.
 - [ ] T014c Validar permissões da busca de pessoas, tradução, filtros, teclado, celular e screenshots sintéticos; atualizar preview com limites de recursos.
+- [ ] T014d Área/ação digitáveis e selecionáveis como o Estado de Parceiros; validar rótulos, limpeza, texto inválido e compatibilidade dos links antigos.
 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026

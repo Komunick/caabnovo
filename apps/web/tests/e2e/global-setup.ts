@@ -195,7 +195,7 @@ export default async function globalSetup() {
         [
           managerId,
           `user:${managerId}`,
-          JSON.stringify({ name: "Nome anterior sintético", status: "active" }),
+          JSON.stringify({ name: "Nome anterior sintético", status: "inactive" }),
           JSON.stringify({ name: "Gestor de Acesso Sintético", status: "active", version: 1 }),
         ],
       );

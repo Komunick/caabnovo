@@ -121,3 +121,9 @@ Selecionar um evento abre painel lateral (tela cheia no celular), com resumo leg
 ### Esclarecimento decisivo do usuário — 15/09/2026
 
 O principal problema é a leitura em forma de código. **Também os detalhes devem ser uma versão humana e mais completa do registro.** Códigos/IDs/JSON aparecem somente em último caso, numa seção “Informações para suporte” recolhida dentro do painel de detalhes. O primeiro nível do detalhe mostra quem/quando/onde/alvo e informações específicas da ação com antes/depois. Traduzir situações, perfis, permissões, formatos de arquivo, canais, prazos, resultados e versões presentes; não expor chaves desconhecidas como rótulos nem valores de enum sem tradução. Ausência de dados históricos deve ser informada claramente, sem completar fatos a partir do estado atual. Preservar redação/permissões e valores originais para suporte.
+
+Pedido adicional: filtros de área e ação permitem digitar e selecionar, seguindo o input/datalist
+do campo Estado de Parceiros. Opções mostram somente português; códigos ficam no contrato/URL.
+Aceitar rótulos completos sem distinguir acentos/maiúsculas, impedir aplicação de texto sem
+correspondência e permitir limpar o campo. Busca por pessoa também permite digitação e seleção,
+com paginação no servidor e autorização própria.

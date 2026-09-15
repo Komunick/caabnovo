@@ -23,11 +23,25 @@ consulta bytes reais do banco, verifica redação e uma única cópia ao repetir
 - Formatação, lint, tipos e integridade do diff aprovados localmente.
 - 253 unitários e 89 contratos aprovados (342 testes).
 - CI inicial de armazenamento aprovado: [34966205236](https://github.com/Komunick/caabnovo/actions/runs/34966205236). Verificação final conjunta com T014 ainda pendente.
-- Sem servidores/Docker locais, sem migration ou mudança no banco remoto.
+- Preview local reativado a pedido do usuário, com limites de memória/CPU; sem mudança no banco remoto.
+
+## Preservação do preview local
+
+O banco local existente tinha 66 arquivos disponíveis ainda no MinIO. Após backup verificado,
+as migrations aditivas 0018/0019 foram aplicadas e o migrador preservado da entrega anterior
+copiou os 66 arquivos, conferindo tamanho e SHA-256 antes de trocar as referências.
+Verificação independente em 15/09/2026: 66 disponíveis, 66 conteúdos PostgreSQL, zero
+falhas de tamanho/hash/chave e zero referências disponíveis legadas. O MinIO local foi
+desligado após a cópia; fontes e volumes preservados. Nenhum seed E2E no banco do preview.
+
+Web em localhost:3107 usa build de produção gerado no CI: heap máximo 384 MB, duas CPUs
+e prioridade baixa. PostgreSQL limitado a 256 MB/uma CPU; WSL a 768 MB/duas CPUs.
+Worker/scanner ficam pausados para reduzir recursos; novos processamentos e exportações
+locais aguardam sua retomada. Essa migração local não comprova mudança na hospedagem.
 
 ## Implantação e limites
 
-PR #21 integrado pelo usuário em dev (1a23ad6); branch ativa conciliada sem alterar a árvore de código. Nenhum deploy, remoção de contêiner ou exclusão de volume realizada nesta sessão.
+PR #21 integrado pelo usuário em dev (1a23ad6); branch ativa conciliada sem alterar a árvore de código. Nenhum deploy remoto ou exclusão de volume realizada nesta sessão.
 A VM/painel não está acessível nesta sessão. O endpoint público /readyz confirmou apenas
 banco/worker disponíveis, sem confirmar versão/arquivo/backend. Os dois arquivos de teste
 poderão precisar de novo envio após implantação; sua contagem foi informada pelo usuário.

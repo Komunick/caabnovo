@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Moon, Search, Sun } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { getWorkspaceAreas } from "@/modules/workspace/areas";
+import { getWorkspaceDestinations, searchWorkspaceDestinations } from "@/modules/workspace/search";
 
 type Theme = "light" | "dark";
 
@@ -13,13 +13,9 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<Theme>("light");
   const searchRef = useRef<HTMLInputElement>(null);
-  const items = useMemo(() => getWorkspaceAreas(permissions), [permissions]);
-  const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
-  const results = items.filter(
-    ({ label, description, keywords }) =>
-      !normalizedQuery ||
-      `${label} ${description} ${keywords}`.toLocaleLowerCase("pt-BR").includes(normalizedQuery),
-  );
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const items = useMemo(() => getWorkspaceDestinations(permissions), [permissions]);
+  const results = searchWorkspaceDestinations(items, query);
 
   useEffect(() => {
     const active = document.documentElement.dataset.theme;
@@ -54,11 +50,11 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
       <button
         className="command-trigger"
         type="button"
-        aria-label="Buscar área"
+        aria-label="Buscar no site"
         onClick={() => setOpen(true)}
       >
         <Search size={17} aria-hidden="true" />
-        <span>Buscar área...</span>
+        <span>Buscar no site...</span>
         <kbd>Ctrl + K</kbd>
       </button>
       <button
@@ -78,7 +74,7 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
           title="Navegação rápida"
-          description="Busque e acesse uma área permitida para seu perfil."
+          description="Encontre funções e áreas do site. Use as setas e Enter para acessar."
         >
           <div className="command-search">
             <Search size={19} aria-hidden="true" />
@@ -86,14 +82,38 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
               ref={searchRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Digite o nome de uma área"
-              aria-label="Buscar área"
+              placeholder="Ex.: OAB, benefícios, alterar senha"
+              aria-label="Buscar funções e áreas"
+              onKeyDown={(event) => {
+                const links = resultsRef.current?.querySelectorAll<HTMLAnchorElement>("a");
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  links?.[0]?.click();
+                }
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                  event.preventDefault();
+                  links?.[event.key === "ArrowDown" ? 0 : links.length - 1]?.focus();
+                }
+              }}
             />
           </div>
-          <div className="command-results" aria-live="polite">
+          <div
+            className="command-results"
+            aria-live="polite"
+            ref={resultsRef}
+            onKeyDown={(event) => {
+              if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+              event.preventDefault();
+              const links = [...event.currentTarget.querySelectorAll<HTMLAnchorElement>("a")];
+              const index = links.indexOf(event.target as HTMLAnchorElement);
+              const next = index + (event.key === "ArrowDown" ? 1 : -1);
+              if (next < 0 || next >= links.length) searchRef.current?.focus();
+              else links[next]?.focus();
+            }}
+          >
             {results.length ? (
-              results.map(({ href, label, description, icon: Icon }) => (
-                <Link href={href} key={href} onClick={() => setOpen(false)}>
+              results.map(({ id, href, label, description, icon: Icon }) => (
+                <Link href={href} key={id} prefetch={false} onClick={() => setOpen(false)}>
                   <span className="command-result__icon" aria-hidden="true">
                     <Icon size={18} />
                   </span>
@@ -105,7 +125,7 @@ export function WorkspaceControls({ permissions }: Readonly<{ permissions: reado
                 </Link>
               ))
             ) : (
-              <p className="command-empty">Nenhuma área encontrada.</p>
+              <p className="command-empty">Nenhuma função encontrada. Tente outro nome.</p>
             )}
           </div>
         </DialogContent>

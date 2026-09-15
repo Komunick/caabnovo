@@ -267,3 +267,11 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 7. Retirar contadores exclusivos do adaptador S3, observar respostas HTTP do conteúdo PostgreSQL
    e substituir o alerta sem consumidores por falhas reais de jobs. Manter alertas de scanner,
    fila e heartbeat; não incluir chaves ou capacidades de download nos atributos de métricas.
+
+## Plano: busca geral por funções — 15/09/2026
+
+1. Inventariar rotas e permissões dos módulos existentes; derivar áreas do catálogo atual.
+2. Acrescentar catálogo de funções com rótulos, sinônimos, descrição de contexto e destino real.
+3. Filtrar por todas as permissões necessárias, normalizar palavras e priorizar a função específica.
+4. Atualizar busca geral para Buscar no site, com setas/Enter/Escape e resultados contextualizados.
+5. Validar destinos OAB/benefícios, negações, ausência de acentos, teclado/mobile e atualização do preview.

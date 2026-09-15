@@ -435,3 +435,14 @@ aplicadas nem apagar registros/volumes como parte da atualização do código. R
 legadas sem conteúdo no banco devem falhar de forma controlada; reenviar os arquivos de
 teste se necessário. Remover o serviço remoto exige acesso operacional e conferência de
 que não atende outros projetos; não declarar desligamento da VM por remover Compose.
+
+## Busca geral por funções — 15/09/2026
+
+Pedido do usuário: ampliar Buscar área para localizar qualquer função existente, incluindo OAB e benefícios.
+Mostrar destinos específicos, rótulos em português e área de origem; reconhecer termos sem acentos,
+maiúsculas/minúsculas e palavras em qualquer ordem. A consulta é sobre funções, não sobre dados pessoais.
+Indexar subpáginas e tarefas que exigem escolha de cadastro, explicando essa etapa no resultado.
+Somente destinos existentes e permitidos; cadastrar exige também escrita, leitura não concede mutação.
+Manter Ctrl+K, teclado, celular e tema; nenhum serviço adicional nem consulta pesada no banco.
+Aceite: OAB abre /members/oab; beneficios abre /partners/benefits; perfis sem leitura não encontram
+essas funções; funções de conta e demais módulos existentes são encontráveis; Enter acessa o resultado.
