@@ -1,5 +1,13 @@
 # Decisões e entradas por domínio
 
+## Contraste durante troca de tema — 15/09/2026
+
+Fonte oficial reconsultada antes da correção: [W3C, WCAG 2.2, contraste mínimo](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
+O E2E da agenda encontrou contraste de 3,83:1 no texto pequeno do menu da conta
+durante a animação do fundo. Decisão: cores do texto e fundo mudam juntas;
+preservar somente a animação da borda, conforme os botões compartilhados existentes.
+Validar transição por amostras em frames e Axe, sem desativar a regra de contraste.
+
 ## Planejamento incremental — 15/09/2026
 
 Pesquisa complementar e decisões da primeira entrega em

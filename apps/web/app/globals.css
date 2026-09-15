@@ -1503,9 +1503,8 @@ body {
   border: 1px solid rgb(255 255 255 / 8%);
   border-radius: 0.85rem;
   background: var(--color-sidebar-hover);
-  transition:
-    border-color 180ms ease,
-    background 180ms ease;
+  /* Keep foreground and background in the same theme throughout the change. */
+  transition: border-color 180ms ease;
   border-color: var(--color-border);
 }
 

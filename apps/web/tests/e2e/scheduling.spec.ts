@@ -182,6 +182,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
   );
   await screenshot(page, testInfo.outputPath("scheduling-detail-mobile-dark.png"));
   await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(page.locator(".topbar-context strong")).toHaveText("Agendamentos");
   await screenshot(page, testInfo.outputPath("scheduling-detail-desktop-dark.png"));
   await page.locator("html").evaluate((element) => {
     element.dataset.theme = "light";

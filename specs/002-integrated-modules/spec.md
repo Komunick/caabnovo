@@ -13,6 +13,12 @@ existentes atualizam seus próprios specs; não criam novas especificações.
 
 ## User Scenarios & Testing
 
+### Integração da agenda e contraste — 15/09/2026
+
+O cabeçalho identifica Agendamentos nas rotas /scheduling. O menu da conta deve
+manter contraste legível também durante a troca de tema, sem animar seu fundo
+separadamente dos textos. Essa correção compartilhada foi identificada no E2E da spec 008.
+
 ### Prioridade após Agendamentos — 15/09/2026
 
 Decisão do usuário: após a primeira versão funcional de Agendamentos no painel,

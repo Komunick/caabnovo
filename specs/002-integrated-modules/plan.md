@@ -5,6 +5,11 @@
 
 ## Summary
 
+Revisão de integração da spec 008 em 15/09/2026: retirar Agendamentos das áreas
+futuras da home, incluir seu título no cabeçalho e manter cor/fundo do menu da
+conta no mesmo tema. Preservar transição de borda; ampliar o teste de contraste
+durante a troca de temas com os textos do perfil, além do Axe da jornada.
+
 Escopo integrado em monólito modular. PRs acompanham funções/specs concluídos, conforme orientação
 de 09/09/2026. Começar pela fusão de navegação Auditoria/Processamentos, sem migração nem ampliação de
 permissões. Demais domínios seguem dependências e regras institucionais definidas, nunca inventadas.
