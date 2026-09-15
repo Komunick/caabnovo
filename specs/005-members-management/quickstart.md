@@ -41,3 +41,17 @@ para o serviço. Não criar/remover fixtures do banco compartilhado nem consulta
 na OAB para validar este fluxo.
 
 Este roteiro não declara gates aprovados. Evidências serão preenchidas após execução real.
+
+## Configuração da consulta OAB — 15/09/2026
+
+No serviço web, fornecer API_OAB_KEY e API_OAB_PASSWORD do relatório STATUS CAAB.
+A flag OAB_API_ENABLED é opcional: omitida ou true permite consulta com os dois segredos;
+false mantém a desativação explícita. A flag aceita espaços externos e caixa diferente;
+vazia ou desconhecida bloqueia. O exemplo .env.example mantém ambos os segredos vazios.
+Configuração existente com false não é ignorada por esta correção. O deploy deve fornecer
+as credenciais privadas válidas; esta alteração não incorpora nem transporta segredos.
+
+Validação do código: pnpm exec vitest run --project unit oab-provider oab-route.
+Os testes simulam o provedor e não consultam inscrições reais. Após o deploy pelo fluxo
+existente, a consulta operacional deve usar inscrição autorizada; T028 não é concluída
+com testes simulados. O acesso à VM não é requisito para entregar esta correção.

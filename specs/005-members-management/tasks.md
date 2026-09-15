@@ -168,3 +168,11 @@ Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../00
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+## Configuração OAB para deploy — 15/09/2026
+
+- [x] OC01 Pesquisar APIs oficiais equivalentes e registrar decisão na spec/plan/research.
+- [x] OC02 Permitir credenciais completas sem flag, preservando false e recusa de configuração inválida; atualizar contrato e exemplo.
+- [ ] OC03 Executar regressões sintéticas, gates e registrar evidências; entregar PR isolado.
+
+T028 permanece separada: consulta real não foi executada nesta correção de código.

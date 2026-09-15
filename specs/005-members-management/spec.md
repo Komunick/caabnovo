@@ -231,3 +231,17 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 
 Abrir documento e expandir seu histórico devem manter áreas clicáveis suficientes quando
 a análise não tiver motivo escrito, com teclado e celular, sem sobreposição ou rolagem horizontal.
+
+## Configuração OAB para deploy — 15/09/2026
+
+Pedido expresso: corrigir pelo código em branch própria, preservando a instância de
+Agendamentos, e pesquisar API oficial mais recente. Deploy fica com o fluxo existente.
+Com API_OAB_KEY e API_OAB_PASSWORD não vazias, a omissão de OAB_API_ENABLED permite
+consulta institucional. true continua permitido; false desativa explicitamente.
+Normalizar espaços/caixa da flag; valores não reconhecidos bloqueiam a integração.
+Segredos continuam apenas no servidor e são lidos em execução. A falta de credenciais
+continua sendo erro de configuração; código não fornece credenciais embutidas.
+Preservar endpoint, campos selecionados, permissões, auditoria, limites e avaliações.
+Aceite com fixtures sintéticas: credenciais sem flag permitem consulta, configuração
+incompleta/desativada/inválida não chama o provedor, falhas externas não viram sucesso.
+Esta entrega não afirma diagnóstico da configuração remota nem homologação real T028.

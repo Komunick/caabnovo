@@ -62,12 +62,16 @@ como situação irregular, nem deixa um resultado anterior parecendo atualizado.
 
 ## Configuração e ativação
 
-No ambiente do servidor web: `OAB_API_ENABLED=true`, `API_OAB_KEY` e `API_OAB_PASSWORD`.
+No ambiente do servidor web: `API_OAB_KEY` e `API_OAB_PASSWORD` não vazias.
+Desde a correção de 15/09/2026, omitir `OAB_API_ENABLED` permite a integração quando
+ambos os segredos estão presentes. `true` continua aceito; `false` a desativa, mesmo
+com credenciais. Espaços externos e caixa são normalizados na flag. Valor vazio ou
+desconhecido bloqueia a integração. Configuração é lida no servidor em execução.
 Os dois segredos pertencem ao relatório **STATUS CAAB**, não ao relatório financeiro.
 O endpoint HTTPS é fixo e os segredos vão em headers; redirecionamentos são recusados.
 Não há variáveis públicas, edição de credenciais na conta do usuário ou scraping.
 
-O exemplo versionado mantém `OAB_API_ENABLED=false` e segredos vazios. Configurar somente
+O exemplo versionado omite a flag e mantém segredos vazios (integração indisponível). Configurar somente
 no ambiente escolhido, sem copiar segredos para Git, mensagens ou evidências. Validar as
 credenciais históricas antes de adotá-las. Credenciais da hospedagem devem ser configuradas
 no gerenciador de segredos/ambiente do serviço, não copiadas do localhost automaticamente.
