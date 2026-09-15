@@ -13,7 +13,30 @@ existentes atualizam seus próprios specs; não criam novas especificações.
 
 ## User Scenarios & Testing
 
+### Prioridade após Agendamentos — 15/09/2026
+
+Decisão do usuário: após a primeira versão funcional de Agendamentos no painel,
+o próximo passo será a primeira versão da interface do usuário no app/site.
+Essa etapa terá especificação própria antes do código e prioridade sobre as demais
+expansões e módulos ainda pendentes. Reutilizar os dados e serviços existentes;
+detalhar jornadas e contratos dos canais sem duplicar cadastros. Ver a sequência
+vigente em [plan.md](plan.md). Este registro autoriza o planejamento da prioridade,
+sem iniciar implementação ou alterar a suspensão de CAASSH.
+
 ### Definições vigentes de Agendamentos — 15/09/2026
+
+**Planejamento incremental posterior:** a função agora tem spec própria
+[008 — Agendamentos](../008-scheduling-management/spec.md). Etapa 1: operação
+funcional no painel com oferta e horários, criação, consulta, remarcação e cancelamento.
+Etapa 2: equivalência com legado e conexão real ao app/site. Etapa 3: novas funções
+selecionadas entre sugestões. Implementação não iniciada; 002 mantém somente o mapa.
+
+Correção posterior do usuário: funcionalidades ausentes do site antigo ficam como
+sugestões (exemplo: controle de salas), sem aprovação implícita pela pesquisa.
+Gerenciamento de horários deve explicitar funcionamento, expediente, almoço,
+indisponibilidades, agenda extra, antecedência e janela de reservas. Conferir o
+[inventário do legado](horarios-legado-2026-09-15.md); presença no código não comprova
+funcionamento publicado nem aprova a cópia de regras ou falhas antigas.
 
 US4 administra pela CAAB o serviço de agendamentos do app/site. Qualquer pessoa
 com acesso válido ao painel administrativo pode consultar e alterar o módulo,

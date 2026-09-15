@@ -194,6 +194,10 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 
 ## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
 
+**Planejamento incremental em 15/09:** [spec 008](../specs/008-scheduling-management/spec.md)
+passa a responder por Agendamentos: primeiro painel básico funcional, depois legado
+com app/site, por último novas funções escolhidas. Sem implementação nesta etapa.
+
 **Atualização de Agendamentos em 15/09/2026:** administração pela CAAB da oferta e
 das reservas do app/site. Qualquer pessoa com acesso válido ao painel administrativo
 pode consultar e alterar Agendamentos, sem concessão extra ou restrição por unidade.

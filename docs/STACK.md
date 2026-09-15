@@ -120,6 +120,10 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 
 ### 7.1 Decisão
 
+Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md):
+primeira entrega usa lista diária com componentes existentes. FullCalendar citado
+abaixo é opção para evolução visual; não adicionar biblioteca de calendário no básico.
+
 Direção: avaliar núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário
 em 15/09/2026: Cal.com é referência de pesquisa e **não deve ser integrado, salvo
 se nenhuma outra possibilidade for encontrada**. A abertura anterior para integração

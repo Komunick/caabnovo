@@ -1,5 +1,25 @@
 # Decisões e entradas por domínio
 
+## Planejamento incremental — 15/09/2026
+
+Pesquisa complementar e decisões da primeira entrega em
+[spec 008/research.md](../008-scheduling-management/research.md). Usuário escolheu
+operar primeiro pelo painel; conexão real app/site depois. Pesquisa apoia lista
+diária com ações, catálogo e horários mínimos; essa escolha é inferência de adequação
+ao recorte, não superioridade universal de lista sobre calendário. Três etapas em
+[roadmap](../008-scheduling-management/roadmap.md). Nenhuma implementação nesta etapa.
+
+## Horários e separação entre legado e sugestões — 15/09/2026
+
+O usuário determinou deixar funções ausentes do site antigo como sugestões,
+citando controle de salas, e pediu detalhamento do gerenciamento de horários.
+Inspeção somente leitura do código local anterior: horários semanais da unidade
+e profissional, almoço, indisponibilidades por período e agenda extra possuem
+modelos e telas; antecedência mínima e limite futuro foram confirmados na API.
+Não houve validação do site publicado. [Fontes e limites](horarios-legado-2026-09-15.md).
+Recursos e práticas de mercado sem confirmação no legado não integram automaticamente
+o escopo. Administração, acesso amplo ao painel e restrição sobre Cal.com permanecem.
+
 ## Gestão de Agendamentos pela CAAB — 15/09/2026
 
 O usuário definiu administração pela CAAB no painel, acessível para consulta e

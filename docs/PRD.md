@@ -14,6 +14,14 @@
 
 **Escopo desta versão:** todos os módulos do painel e portal do parceiro
 
+**Prioridade atualizada em 15/09/2026:** após concluir e validar a primeira versão
+funcional de Agendamentos no painel, o próximo passo será a primeira versão da
+interface do usuário no app/site, antes das demais expansões e módulos pendentes.
+Essa etapa terá spec, plano, tarefas e critérios próprios, reutilizando os dados e
+serviços do painel. A exclusão de refazer app/site na seção 5 limita a entrega
+administrativa inicial; não exclui essa próxima etapa confirmada do produto.
+Ver [sequência vigente](../specs/002-integrated-modules/plan.md).
+
 O aplicativo e o site externo participam do desenho dos contratos de conteúdo, benefícios, cadastro,
 credencial, agenda e mensagens. Alterações nesses consumidores, contratação de serviços e migração
 de dados exigem escopo próprio. A implementação desta entrega concentra-se no novo painel e portal.
