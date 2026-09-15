@@ -34,7 +34,11 @@ export function AuditTable({
       </p>
       {events.length ? (
         <TableContainer aria-label="Tabela de eventos; use as setas para percorrer horizontalmente">
-          <Table caption="Eventos de auditoria encontrados">
+          <Table
+            className="audit-events-table"
+            role="table"
+            caption="Eventos de auditoria encontrados"
+          >
             <thead>
               <tr>
                 <th scope="col">Data e hora</th>
@@ -47,10 +51,10 @@ export function AuditTable({
             <tbody>
               {events.map((event) => (
                 <tr key={event.id}>
-                  <td>
+                  <td data-label="Data e hora">
                     <time dateTime={event.occurredAt}>{formatTimestamp(event.occurredAt)}</time>
                   </td>
-                  <td>
+                  <td data-label="O que aconteceu">
                     <p>{(event.presentation ?? presentAuditEvent(event)).description}</p>
                     {(event.presentation ?? presentAuditEvent(event)).changes.map((change) => (
                       <p key={change} className="muted">
@@ -58,13 +62,13 @@ export function AuditTable({
                       </p>
                     ))}
                   </td>
-                  <td>
+                  <td data-label="Área">
                     {Object.hasOwn(auditEntities, event.entityType)
                       ? auditEntities[event.entityType]
                       : "Outro registro"}
                   </td>
-                  <td>{auditOrigins[event.origin]}</td>
-                  <td>
+                  <td data-label="Origem">{auditOrigins[event.origin]}</td>
+                  <td data-label="Detalhes">
                     <details>
                       <summary>Detalhes técnicos</summary>
                       <dl className="audit-metadata">

@@ -100,6 +100,14 @@ test("authorized administrator reads plain descriptions and opens original detai
       .getByText("user.updated", { exact: true }),
   ).toBeVisible();
   await expectWcag22AA(page);
+  const descriptionCell = page.getByText(description, { exact: true }).first().locator("..");
+  expect(
+    await descriptionCell.evaluate((element) => element.getBoundingClientRect().width),
+  ).toBeGreaterThan(250);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
     path: testInfo.outputPath("audit-plain-mobile-dark.png"),
     fullPage: true,

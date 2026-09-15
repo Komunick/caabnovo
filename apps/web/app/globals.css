@@ -4235,3 +4235,69 @@ thead th {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.audit-events-table th {
+  white-space: nowrap;
+}
+
+.audit-events-table td {
+  vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+.audit-events-table td:nth-child(2) {
+  min-width: 18rem;
+}
+
+.audit-events-table details[open] {
+  min-width: 22rem;
+}
+
+@media (max-width: 700px) {
+  .audit-events-table,
+  .audit-events-table tbody,
+  .audit-events-table tr,
+  .audit-events-table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .audit-events-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .audit-events-table tr {
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .audit-events-table td {
+    padding: 0.5rem 0;
+    border: 0;
+  }
+
+  .audit-events-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+    color: var(--color-muted-strong);
+  }
+
+  .audit-events-table td:nth-child(2),
+  .audit-events-table details[open] {
+    min-width: 0;
+  }
+
+  .audit-events-table td p {
+    margin-block: 0.3rem;
+  }
+
+  .audit-events-table .audit-metadata {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
