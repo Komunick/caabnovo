@@ -4616,3 +4616,48 @@ thead th {
     flex-direction: column;
   }
 }
+
+/* Navigation feedback occupies no additional space in the link. */
+.navigation-pending {
+  position: relative;
+  display: inline-block;
+  width: 0;
+  height: 1em;
+  flex: 0 0 0;
+}
+.navigation-pending__dot {
+  position: absolute;
+  inset-inline-start: -0.35rem;
+  top: 0.3em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+}
+.navigation-pending[data-pending] .navigation-pending__dot {
+  opacity: 1;
+}
+.page-loading {
+  padding: var(--space-5);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  min-height: 12rem;
+}
+.page-loading p {
+  color: var(--color-text);
+}
+.page-loading__skeleton {
+  display: grid;
+  gap: 1rem;
+}
+.page-loading__skeleton span {
+  height: 1rem;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--color-control-bg);
+}
+.page-loading__skeleton span:last-child {
+  width: 65%;
+}

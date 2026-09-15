@@ -1,4 +1,8 @@
-﻿import Link from "next/link";
+import { Suspense } from "react";
+import type { RequestActor } from "@/modules/shared/request-context";
+import { PageLoading } from "@/components/ui/page-loading";
+import { NavigationPending } from "@/components/ui/navigation-pending";
+import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
@@ -69,24 +73,6 @@ export default async function AdminHomePage() {
   const canReadMembers = actor.permissions.has("members:read");
   const canReadNews = actor.permissions.has("news:read");
   const canWriteNews = actor.permissions.has("news:write");
-  const [published, drafts, members] = await Promise.allSettled([
-    getNewsPayload().then(listLatestPublicNews),
-    canReadNews
-      ? getNewsPayload().then((payload) =>
-          listNewsDrafts(payload, actor, {
-            collection: "drafts",
-            state: "active",
-            sort: "updated-desc",
-          }),
-        )
-      : Promise.resolve(null),
-    canReadMembers
-      ? listMembers(getDatabase().pool, actor, {
-          registrationStatus: "unknown",
-          archived: "active",
-        })
-      : Promise.resolve(null),
-  ]);
   return (
     <div className="page-stack home-page">
       <header className="home-header">
@@ -103,9 +89,10 @@ export default async function AdminHomePage() {
 
       <nav className="home-shortcuts" aria-label="Atalhos de trabalho">
         {areas.map(({ id, href, label, icon: Icon }) => (
-          <Link key={id} href={href} className="home-shortcut module-card">
+          <Link key={id} href={href} aria-label={label} className="home-shortcut module-card">
             <Icon size={21} aria-hidden="true" />
             <span>{label}</span>
+            <NavigationPending />
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
         ))}
@@ -123,45 +110,9 @@ export default async function AdminHomePage() {
             </Link>
           )}
         </div>
-        {published.status === "rejected" ? (
-          <p className="home-empty" role="status">
-            Não foi possível carregar as publicações. Acesse Notícias para tentar novamente.
-          </p>
-        ) : published.value.length ? (
-          <div className="home-news-grid">
-            {published.value.map((item) => (
-              <Link
-                key={item.id}
-                className="home-news-card"
-                href={`/content/${item.channel}/news/${item.id}`}
-              >
-                <NewsThumbnail
-                  src={
-                    item.cover
-                      ? `/api/v1/content/${item.channel}/news/${item.id}/media/${item.cover.fileId}`
-                      : undefined
-                  }
-                />
-                <div className="home-news-copy">
-                  <div className="home-news-meta">
-                    <span>{item.category || "Notícia"}</span>
-                    <time dateTime={item.publishedAt}>{date(item.publishedAt)}</time>
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.summary}</p>
-                  <span className="home-news-read">
-                    Ler notícia <ArrowRight size={15} aria-hidden="true" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="home-empty">
-            <p>Ainda não há notícias publicadas.</p>
-            {canWriteNews && <Link href="/news/new">Preparar a primeira notícia</Link>}
-          </div>
-        )}
+        <Suspense fallback={<PageLoading label="Carregando publicações…" />}>
+          <PublishedNews canWriteNews={canWriteNews} />
+        </Suspense>
       </section>
 
       {(canReadNews || canReadMembers) && (
@@ -174,101 +125,14 @@ export default async function AdminHomePage() {
           </div>
           <div className="home-work-grid">
             {canReadNews && (
-              <article className="panel home-work-card">
-                <div className="home-card-heading">
-                  <span className="home-card-icon">
-                    <FilePenLine size={21} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h3>Notícias em preparação</h3>
-                    <p>Rascunhos atualizados mais recentemente.</p>
-                  </div>
-                </div>
-                {drafts.status === "rejected" ? (
-                  <p className="home-empty" role="status">
-                    Rascunhos indisponíveis no momento.
-                  </p>
-                ) : drafts.value?.items.length ? (
-                  <ul className="home-work-list">
-                    {drafts.value.items.slice(0, 4).map((item) => (
-                      <li key={item.id}>
-                        <Link href={`/news/${item.id}`}>
-                          <span>
-                            <strong>{item.metadata.title || "Notícia sem título"}</strong>
-                            <small>Atualizada em {date(item.updatedAt)}</small>
-                          </span>
-                          <ArrowRight size={16} aria-hidden="true" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="home-empty">Nenhum rascunho em preparação.</p>
-                )}
-                <div className="home-card-actions">
-                  <Link className={buttonVariants({ size: "compact" })} href="/news/drafts">
-                    Ver rascunhos
-                  </Link>
-                  {canWriteNews && (
-                    <Link
-                      className={buttonVariants({ intent: "primary", size: "add" })}
-                      href="/news/new"
-                    >
-                      <Plus size={16} aria-hidden="true" /> Nova notícia
-                    </Link>
-                  )}
-                </div>
-              </article>
+              <Suspense fallback={<PageLoading label="Carregando rascunhos…" />}>
+                <DraftNews actor={actor} canWriteNews={canWriteNews} />
+              </Suspense>
             )}
             {canReadMembers && (
-              <article className="panel home-work-card">
-                <div className="home-card-heading">
-                  <span className="home-card-icon">
-                    <UsersRound size={21} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h3>Cadastros sem análise</h3>
-                    <p>Associados com análise cadastral não avaliada.</p>
-                  </div>
-                </div>
-                {members.status === "rejected" ? (
-                  <p className="home-empty" role="status">
-                    Cadastros indisponíveis no momento.
-                  </p>
-                ) : members.value?.items.length ? (
-                  <ul className="home-work-list">
-                    {members.value.items.slice(0, 4).map((item) => (
-                      <li key={item.id}>
-                        <Link href={`/members/${item.id}`}>
-                          <span>
-                            <strong>{item.name}</strong>
-                            <small>Análise não avaliada</small>
-                          </span>
-                          <ArrowRight size={16} aria-hidden="true" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="home-empty">Nenhum cadastro sem análise.</p>
-                )}
-                <div className="home-card-actions">
-                  <Link
-                    className={buttonVariants({ size: "compact" })}
-                    href="/members?registrationStatus=unknown"
-                  >
-                    Ver cadastros
-                  </Link>
-                  {actor.permissions.has("members:write") && (
-                    <Link
-                      className={buttonVariants({ intent: "primary", size: "add" })}
-                      href="/members/new"
-                    >
-                      <Plus size={16} aria-hidden="true" /> Novo associado
-                    </Link>
-                  )}
-                </div>
-              </article>
+              <Suspense fallback={<PageLoading label="Carregando cadastros…" />}>
+                <PendingMembers actor={actor} />
+              </Suspense>
             )}
           </div>
         </section>
@@ -293,5 +157,162 @@ export default async function AdminHomePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+async function PublishedNews({ canWriteNews }: { canWriteNews: boolean }) {
+  const [published] = await Promise.allSettled([getNewsPayload().then(listLatestPublicNews)]);
+  return (
+    <>
+      {" "}
+      {published.status === "rejected" ? (
+        <p className="home-empty" role="status">
+          Não foi possível carregar as publicações. Acesse Notícias para tentar novamente.
+        </p>
+      ) : published.value.length ? (
+        <div className="home-news-grid">
+          {published.value.map((item) => (
+            <Link
+              key={item.id}
+              className="home-news-card"
+              href={`/content/${item.channel}/news/${item.id}`}
+            >
+              <NewsThumbnail
+                src={
+                  item.cover
+                    ? `/api/v1/content/${item.channel}/news/${item.id}/media/${item.cover.fileId}`
+                    : undefined
+                }
+              />
+              <div className="home-news-copy">
+                <div className="home-news-meta">
+                  <span>{item.category || "Notícia"}</span>
+                  <time dateTime={item.publishedAt}>{date(item.publishedAt)}</time>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+                <span className="home-news-read">
+                  Ler notícia <ArrowRight size={15} aria-hidden="true" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="home-empty">
+          <p>Ainda não há notícias publicadas.</p>
+          {canWriteNews && <Link href="/news/new">Preparar a primeira notícia</Link>}
+        </div>
+      )}
+    </>
+  );
+}
+
+async function DraftNews({ actor, canWriteNews }: { actor: RequestActor; canWriteNews: boolean }) {
+  const [drafts] = await Promise.allSettled([
+    getNewsPayload().then((payload) =>
+      listNewsDrafts(payload, actor, {
+        collection: "drafts",
+        state: "active",
+        sort: "updated-desc",
+      }),
+    ),
+  ]);
+  return (
+    <article className="panel home-work-card">
+      <div className="home-card-heading">
+        <span className="home-card-icon">
+          <FilePenLine size={21} aria-hidden="true" />
+        </span>
+        <div>
+          <h3>Notícias em preparação</h3>
+          <p>Rascunhos atualizados mais recentemente.</p>
+        </div>
+      </div>
+      {drafts.status === "rejected" ? (
+        <p className="home-empty" role="status">
+          Rascunhos indisponíveis no momento.
+        </p>
+      ) : drafts.value?.items.length ? (
+        <ul className="home-work-list">
+          {drafts.value.items.slice(0, 4).map((item) => (
+            <li key={item.id}>
+              <Link href={`/news/${item.id}`}>
+                <span>
+                  <strong>{item.metadata.title || "Notícia sem título"}</strong>
+                  <small>Atualizada em {date(item.updatedAt)}</small>
+                </span>
+                <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="home-empty">Nenhum rascunho em preparação.</p>
+      )}
+      <div className="home-card-actions">
+        <Link className={buttonVariants({ size: "compact" })} href="/news/drafts">
+          Ver rascunhos
+        </Link>
+        {canWriteNews && (
+          <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/news/new">
+            <Plus size={16} aria-hidden="true" /> Nova notícia
+          </Link>
+        )}
+      </div>
+    </article>
+  );
+}
+
+async function PendingMembers({ actor }: { actor: RequestActor }) {
+  const [members] = await Promise.allSettled([
+    listMembers(getDatabase().pool, actor, { registrationStatus: "unknown", archived: "active" }),
+  ]);
+  return (
+    <article className="panel home-work-card">
+      <div className="home-card-heading">
+        <span className="home-card-icon">
+          <UsersRound size={21} aria-hidden="true" />
+        </span>
+        <div>
+          <h3>Cadastros sem análise</h3>
+          <p>Associados com análise cadastral não avaliada.</p>
+        </div>
+      </div>
+      {members.status === "rejected" ? (
+        <p className="home-empty" role="status">
+          Cadastros indisponíveis no momento.
+        </p>
+      ) : members.value?.items.length ? (
+        <ul className="home-work-list">
+          {members.value.items.slice(0, 4).map((item) => (
+            <li key={item.id}>
+              <Link href={`/members/${item.id}`}>
+                <span>
+                  <strong>{item.name}</strong>
+                  <small>Análise não avaliada</small>
+                </span>
+                <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="home-empty">Nenhum cadastro sem análise.</p>
+      )}
+      <div className="home-card-actions">
+        <Link
+          className={buttonVariants({ size: "compact" })}
+          href="/members?registrationStatus=unknown"
+        >
+          Ver cadastros
+        </Link>
+        {actor.permissions.has("members:write") && (
+          <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/members/new">
+            <Plus size={16} aria-hidden="true" /> Novo associado
+          </Link>
+        )}
+      </div>
+    </article>
   );
 }

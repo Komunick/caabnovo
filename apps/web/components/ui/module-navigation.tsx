@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavigationPending } from "@/components/ui/navigation-pending";
 import { buttonVariants } from "./button";
 
 export function ModuleNavigation({
@@ -14,10 +15,12 @@ export function ModuleNavigation({
         <Link
           key={item.href}
           href={item.href}
+          aria-label={item.label}
           className={buttonVariants({ intent: item.active ? "primary" : "secondary" })}
           aria-current={item.active ? "page" : undefined}
         >
           {item.label}
+          <NavigationPending />
         </Link>
       ))}
     </nav>

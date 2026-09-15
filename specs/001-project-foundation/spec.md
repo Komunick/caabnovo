@@ -446,3 +446,11 @@ Somente destinos existentes e permitidos; cadastrar exige também escrita, leitu
 Manter Ctrl+K, teclado, celular e tema; nenhum serviço adicional nem consulta pesada no banco.
 Aceite: OAB abre /members/oab; beneficios abre /partners/benefits; perfis sem leitura não encontram
 essas funções; funções de conta e demais módulos existentes são encontráveis; Enter acessa o resultado.
+
+## Navegação responsiva — 15/09/2026
+
+- NV-F01 Ao abrir uma área dinâmica, mostrar carregamento acessível enquanto os dados chegam; manter o menu disponível e permitir escolher outro destino.
+- NV-F02 A inicial deve disponibilizar cabeçalho/atalhos após autenticação e carregar publicações, rascunhos e associados independentemente. Uma consulta lenta ou falha não deve segurar as outras áreas.
+- NV-F03 Quando a resposta de navegação ainda não chegou, indicar abertura no link acionado sem deslocar controles, bloquear teclado ou alterar comportamento de nova aba.
+- NV-F04 Preservar conteúdo, permissões, validação atual de sessões, filtros, erros e recursos aceitos. Estados temporários não exibem dados pessoais nem concedem acesso.
+- Aceite: testes com atraso controlado provam feedback antes da conclusão, independência dos blocos, navegação interrompível e manutenção do shell; validar teclado,390px, claro/escuro, motion reduzido e regressões de autorização no CI.

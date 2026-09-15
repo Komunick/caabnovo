@@ -275,3 +275,13 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 3. Filtrar por todas as permissões necessárias, normalizar palavras e priorizar a função específica.
 4. Atualizar busca geral para Buscar no site, com setas/Enter/Escape e resultados contextualizados.
 5. Validar destinos OAB/benefícios, negações, ausência de acentos, teclado/mobile e atualização do preview.
+
+## Plano de navegação — 15/09/2026
+
+1. Registrar diagnóstico e práticas do Next instalado; manter guardas e sem cache persistente de autorização.
+2. Criar fallback compartilhado de página e limites loading por área; usar feedback nativo de Link no menu/abas/atalhos.
+3. Separar os três blocos de consultas da inicial com Suspense, preservando tratamentos independentes de falhas e regras de exibição.
+4. Cobrir espera real de consulta em banco sintético, resposta RSC atrasada, interrupção, acessibilidade e persistência do shell no CI.
+5. Validar qualidade/segurança/build/navegador; atualizar preview3107 usando artefato do CI com limites existentes e registrar evidências. Abrir PR somente com a entrega validada; congelar a branch ao abrir.
+
+Sem schema, migration, dependência ou configuração nova de cache. Reverter componentes/limites restaura a renderização anterior sem mudança de dados.

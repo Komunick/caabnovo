@@ -321,3 +321,15 @@ existentes, com destino, contexto e permissões declarados. Busca normaliza acen
 específicas têm prioridade sobre área genérica. Não executar mutações ao selecionar um resultado.
 Para funções dependentes de cadastro, abrir a lista e informar que é necessário selecionar um registro.
 Reutilizar dialog/links existentes; sem indexador de dados pessoais, biblioteca nova ou serviço adicional.
+
+## Abertura de telas e navegação — 15/09/2026
+
+Fontes oficiais consultadas: [Next.js: Linking and Navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating), [loading](https://nextjs.org/docs/app/api-reference/file-conventions/loading), [useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status) e os guias distribuídos com Next16.3.4 instalado em apps/web/node_modules/next/dist/docs.
+
+Diagnóstico do código45e22b3: nenhuma loading.tsx no painel; rotas dinâmicas aguardam consultas antes de mostrar o destino. A inicial aguarda Promise.allSettled de publicações, rascunhos e associados antes de renderizar até os atalhos. Links já usam next/link; não há motivo para introduzir roteador ou dependência nova. Layout autenticado deve continuar validando acesso antes de mostrar o painel.
+
+Decisão: limites loading por área, feedback discreto nos links centrais quando ainda não houver resposta e carregamento independente dos três blocos da inicial via Suspense. Manter prefetch automático parcial, sem forçar pré-carga completa de dados privados e sem cache persistente de sessão/permissões. Medir separadamente disponibilidade do conteúdo útil e conclusão das consultas, sem prometer redução percentual sem medição.
+
+Validação causal em CI com dados sintéticos: bloquear temporariamente leitura de member em transação do teste; verificar que o destino exibe carregamento e que a inicial mostra atalhos/publicações antes do desbloqueio. Liberar sempre em finally. Simular espera da resposta RSC para conferir feedback e interrupção. Nunca aplicar bloqueio ou seed no banco do preview. Revisão visual local é leve; build/E2E somente no CI.
+
+Limite do diagnóstico local: preview apresentou timeout de conexão na autenticação durante a primeira observação; não usar essa amostra como baseline de desempenho da aplicação. Worker/scanner continuam pausados por restrição de memória.
