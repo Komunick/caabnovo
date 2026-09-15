@@ -50,6 +50,7 @@ test("global search opens OAB, benefits and account functions by name and keyboa
   await expect(dialog.getByRole("link").first()).toHaveAttribute("href", "/members/oab");
   await expectWcag22AA(page);
   await page.screenshot({
+    animations: "disabled",
     path: testInfo.outputPath("workspace-function-oab.png"),
     fullPage: true,
   });
@@ -63,6 +64,7 @@ test("global search opens OAB, benefits and account functions by name and keyboa
   await expect(dialog.getByRole("link").first()).toBeFocused();
   await expectWcag22AA(page);
   await page.screenshot({
+    animations: "disabled",
     path: testInfo.outputPath("workspace-function-benefits-mobile.png"),
     fullPage: true,
   });

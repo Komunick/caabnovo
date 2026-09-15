@@ -96,7 +96,11 @@ test("administrator reads complete human details with support codes collapsed on
   await expect(page.getByText(description, { exact: true }).first()).toBeVisible();
   await expect(page.getByText("user.updated", { exact: true }).first()).toBeHidden();
   await expectWcag22AA(page);
-  await page.screenshot({ path: testInfo.outputPath("audit-plain-desktop.png"), fullPage: true });
+  await page.screenshot({
+    animations: "disabled",
+    path: testInfo.outputPath("audit-plain-desktop.png"),
+    fullPage: true,
+  });
   const person = page.getByRole("combobox", { name: "Pessoa", exact: true });
   await person.fill("Gestor de Acesso");
   await expect(
@@ -125,6 +129,7 @@ test("administrator reads complete human details with support codes collapsed on
   expect(await panel.innerText()).not.toMatch(/roleId|requestId|[0-9a-f]{8}-[0-9a-f]{4}-/);
   await expectWcag22AA(page);
   await page.screenshot({
+    animations: "disabled",
     path: testInfo.outputPath("audit-plain-detail-desktop.png"),
     fullPage: true,
   });
@@ -133,6 +138,7 @@ test("administrator reads complete human details with support codes collapsed on
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
   await page.screenshot({
+    animations: "disabled",
     path: testInfo.outputPath("audit-plain-list-mobile-dark.png"),
     fullPage: true,
   });
@@ -147,6 +153,7 @@ test("administrator reads complete human details with support codes collapsed on
   );
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
+    animations: "disabled",
     path: testInfo.outputPath("audit-plain-mobile-dark.png"),
     fullPage: true,
   });

@@ -98,7 +98,8 @@ describe.sequential("append-only audit investigation", () => {
     ).rows[0]!.id;
     const partnerId = (
       await admin.query<{ id: string }>(
-        `INSERT INTO partner(profile) VALUES('{"name":"Convênio sintético","category":"Teste"}') RETURNING id`,
+        `WITH category AS (INSERT INTO partner_category(name) VALUES('Categoria de auditoria') RETURNING id)
+         INSERT INTO partner(profile,category_id) SELECT '{"name":"Convênio sintético","category":"Categoria de auditoria"}',id FROM category RETURNING id`,
       )
     ).rows[0]!.id;
     const newsId = (

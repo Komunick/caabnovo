@@ -60,3 +60,8 @@ Atualização do usuário: reativar localhost:3107 para revisão com uso reduzid
 ## T014 — reformulação após feedback de 15/09/2026
 
 Reaproveitar serviço de apresentação e traduções; enriquecer contrato opcional com autoria/alvo e diferenças permitidas. Reutilizar Dialog Radix para detalhe lateral e foco, sem nova dependência. Substituir tabela/expansões por lista semântica agrupada por dia. Filtros agrupam ações por área, oferecem períodos rápidos e busca paginada de autores pelo nome com endpoint específico que devolve somente id/name e exige ambas as permissões. A seleção continua enviando actorId, compatível com exportação e links existentes. Dados técnicos ficam recolhidos no detalhe. Testar busca restrita, paginação, estados vazios, seleção e Escape/foco, largura mobile, filtros combinados e exportação. Build/E2E exclusivamente no CI; reusar artefato compilado no preview limitado.
+
+Identificação dos alvos: consultar nomes de associado/convênio, título de notícia e nome de arquivo
+em lote por página; exigir leitura da área e, para arquivo, também files:read e área proprietária.
+A consulta cruza permissões recebidas com concessões atuais e sessão ativa; nenhuma busca de
+contatos ou reconstrução de valores históricos. Cobrir revogação, sessão encerrada e nome indisponível.
