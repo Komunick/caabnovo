@@ -155,3 +155,19 @@ test("an unprefetched link acknowledges a slow response without reloading the sh
   await expect(page.locator(".admin-shell")).toHaveClass(/admin-shell--collapsed/);
   await expect(target.locator("[data-pending]")).toHaveCount(0);
 });
+
+test("direct settings anchors remain visible after the page streams on mobile", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const [id, name] of [
+    ["profile-title", "Perfil"],
+    ["email-title", "E-mail de acesso"],
+    ["password-title", "Alterar senha"],
+  ]) {
+    await page.goto("/sessions");
+    await page.goto(`/settings#${id}`, { waitUntil: "commit" });
+    await expect(page.getByRole("heading", { name, exact: true })).toBeInViewport();
+  }
+});
