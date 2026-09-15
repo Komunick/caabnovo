@@ -1,8 +1,7 @@
 # Remoção dos motivos escritos em todas as áreas
 
-**Retomado em 14/09/2026, 17:46 de Brasília.** Quality e security do CI final
-`34894257595` aprovados; navegador e acessibilidade ainda em acompanhamento.
-Nenhum PR/implantação. Checkpoint local atualizado a cada etapa.
+**Concluído em 15/09/2026.** Quality, security e browser aprovados no CI de "52fe5f8". Capturas sintéticas revisadas; entrega pronta para revisão por PR.
+Nenhuma implantação ou merge executado.
 
 Data: 14/09/2026. Branch única da entrega: `feature/navigation-performance-20260914`.
 Decisão vigente do usuário substitui a padronização de justificativas do PR #20.
@@ -26,29 +25,43 @@ Texto informado é preservado; ausência resulta em `alt=""`. A regra das imagen
 corpo permanece. O contrato público recebeu regressão específica após o teste de
 navegador identificar uma segunda exigência de descrição nessa camada.
 
-## Validação
+## Validação final
 
-- 260 testes unitários e 89 de contratos aprovados no commit `ba76628`, incluindo
-  os três casos adicionais de leitura pública da capa.
-- Tipos e lint aprovados localmente. Formatação e integridade do diff conferidas.
-- 148 testes de integração aprovados no CI de `ba76628`, com a migration em banco descartável.
-- Qualidade, integração, build e segurança do commit `ba76628` aprovados no
-  [CI final 34894257595](https://github.com/Komunick/caabnovo/actions/runs/34894257595).
-  Navegador ainda não aprovado: documentos de associados falhou e três testes de
-  parceiros conservavam o segundo salvamento que antes seguia a exigência de motivo.
-  Essas sequências de parceiros foram corrigidas em 14/09/2026; aguardam nova execução.
-  Criação/publicação direta de notícias com capa sem descrição, corpo e sem imagem
-  passaram no log ao vivo. Um caso OAB sintético passou somente após repetição.
-  Atualizar com resultado final de navegador, acessibilidade e captura antes do PR.
+[CI 34963464044](https://github.com/Komunick/caabnovo/actions/runs/34963464044), commit
+`52fe5f8`, concluído com quality, security e browser aprovados:
 
-As jornadas existentes foram atualizadas para verificar ausência dos campos e concluir
-as mesmas operações. Os testes de banco verificam ausência de motivo com auditoria,
-substituição/remoção de foto, documentos, avaliações, categorias, contratos e benefícios.
-Testes de compatibilidade preservam texto enviado por clientes antigos. Testes negativos
-de campos inválidos, permissões, concorrência e falha de auditoria continuam executados.
+- 260 testes unitários, 89 contratos e 148 integrações aprovados.
+- 60 E2E Chromium e 6 testes de acessibilidade aprovados, sem retries ou flakies.
+- Formatação, lint, tipos, build de produção e testes de proteção de branches aprovados.
+- Verificação de dependências e segredos aprovada.
+- Migration 0019 validada em banco descartável; controles de autorização, CSRF,
+  idempotência, concorrência e falha de auditoria preservados pelos testes existentes.
 
-Servidores e Docker locais permaneceram desligados. Banco/navegador/build executados
-em ambientes descartáveis de CI, com dados sintéticos. Nenhuma alteração aplicada à VM.
+A jornada de documentos conclui upload real, antivírus, análise sem motivo, substituição
+e download privado JPG com comparação dos bytes. Também verifica Axe em desktop e
+celular escuro, expansão do histórico por teclado e ausência de rolagem horizontal.
+As jornadas de Parceiros foram alinhadas ao salvamento único sem motivo e passaram.
+Notícias cobre publicação direta com capa sem descrição, corpo e sem imagem, além da
+leitura pública e preservação do texto após falha. Contratos cobrem compatibilidade
+com motivos legados opcionais.
+
+## Evidências visuais
+
+Capturas sintéticas revisadas em 15/09/2026: descrição opcional da capa visível;
+consulta OAB em desktop claro/celular escuro com os sete campos legíveis; documentos
+com links que quebram no celular e foco visível no histórico aberto por teclado.
+
+Artefatos do CI final (retenção de sete dias):
+
+- [Documentos](https://github.com/Komunick/caabnovo/actions/runs/34963464044/artifacts/10394392172).
+- [Capa opcional](https://github.com/Komunick/caabnovo/actions/runs/34963464044/artifacts/10394392163).
+- [Consulta OAB sintética](https://github.com/Komunick/caabnovo/actions/runs/34963464044/artifacts/10394601422).
+
+As capturas de Notícias/OAB também foram revisadas no CI precedente `34962584611`,
+com a mesma implementação dessas telas. Cópias locais preservadas em
+`.cache/review-20260915` na principal, fora do PR. Servidores e Docker locais
+permaneceram desligados; banco/navegador/build rodaram no CI com dados sintéticos.
+Nenhuma alteração aplicada à VM ou aos dados reais.
 
 ## Migration e rollback
 
@@ -78,4 +91,4 @@ A única falha foi WCAG 2.2 target-size em documentos: link de 19 px adjacente a
 histórico após retirar o motivo. Upload, análise, substituição e download já passaram.
 Correção: link de abertura e resumo do histórico com área mínima de 44 px. A jornada
 agora também valida celular escuro, expansão por teclado e gera capturas sintéticas.
-Aguardando novo CI antes de concluir RM03. Correções de Parceiros passaram sem retry.
+Correção aprovada no CI final acima; RM03 concluída nas specs 001–007.
