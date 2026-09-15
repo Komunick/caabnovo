@@ -91,8 +91,10 @@ export default async function AdminHomePage() {
         {areas.map(({ id, href, label, icon: Icon }) => (
           <Link key={id} href={href} aria-label={label} className="home-shortcut module-card">
             <Icon size={21} aria-hidden="true" />
-            <span>{label}</span>
-            <NavigationPending />
+            <span>
+              {label}
+              <NavigationPending />
+            </span>
             <ArrowRight size={16} aria-hidden="true" />
           </Link>
         ))}

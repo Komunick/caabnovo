@@ -56,4 +56,3 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 
 - [x] AN01 Restaurar posição das seções após montagem da tela progressiva.
 - [ ] AN02 Validar atalho de senha móvel e âncoras diretas no CI, registrando evidência no spec001/evidence/navigation-speed-2026-09-15.md.
-

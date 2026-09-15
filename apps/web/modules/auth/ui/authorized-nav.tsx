@@ -26,8 +26,10 @@ export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly 
                 aria-current={isAreaActive(area, pathname) ? "page" : undefined}
               >
                 <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-                <span>{label}</span>
-                <NavigationPending />
+                <span>
+                  {label}
+                  <NavigationPending />
+                </span>
               </Link>
             </MenuItem>
           );

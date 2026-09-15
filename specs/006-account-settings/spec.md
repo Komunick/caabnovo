@@ -163,4 +163,3 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 ## Navegação para seções — 15/09/2026
 
 Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção correspondente deve ficar visível mesmo quando a página chegar por carregamento progressivo. Preservar navegação nativa entre âncoras já presentes e o foco atual.
-

@@ -50,4 +50,3 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 ## Âncoras e streaming — 15/09/2026
 
 Após montagem do AccountSettingsForm, verificar somente profile-title/email-title/password-title no hash e posicionar a seção no próximo frame. Cancelar frame ao desmontar. Validar pesquisa geral até a seção de senha em390px e entrada direta nas três seções. Incremento junto à navegação na branch única; nenhum contrato ou dado alterado.
-
