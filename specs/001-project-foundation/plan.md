@@ -264,3 +264,6 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
    localmente; integração/E2E/build/segurança no CI, mantendo serviços locais desligados.
 6. Entregar na branch ativa feature/admin-cycle-20260915; informar efeito nos dois arquivos
    de teste e distinguir remoção do projeto de desligamento remoto sem acesso à VM.
+7. Retirar contadores exclusivos do adaptador S3, observar respostas HTTP do conteúdo PostgreSQL
+   e substituir o alerta sem consumidores por falhas reais de jobs. Manter alertas de scanner,
+   fila e heartbeat; não incluir chaves ou capacidades de download nos atributos de métricas.

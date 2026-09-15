@@ -57,7 +57,10 @@ export default async function AuditPage({
       <header>
         <p className="eyebrow">Integridade e rastreabilidade</p>
         <h1>Auditoria</h1>
-        <p>Consulte eventos críticos redigidos. Esta área é somente leitura.</p>
+        <p>
+          Acompanhe quem realizou cada ação e o que mudou. Os registros desta área não podem ser
+          editados.
+        </p>
         {actor.permissions.has(PERMISSIONS.auditExport) ? (
           <AuditExportDialog
             filters={{
