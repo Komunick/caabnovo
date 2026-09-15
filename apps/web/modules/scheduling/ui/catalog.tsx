@@ -2,6 +2,8 @@
 import { useState, type FormEvent } from "react";
 import {
   schedulingKinds,
+  brazilianPhoneSchema,
+  contactFieldMessages,
   type SchedulingCatalogItem,
   type SchedulingKind,
   type SchedulingPage,
@@ -9,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { BrazilianAddressFields } from "@/components/ui/brazilian-address-fields";
+import { ValidatedTextField } from "@/components/ui/validated-text-field";
 import {
   Choice,
   DataState,
@@ -147,15 +150,18 @@ function CatalogForm({
           {kind === "units" && (
             <>
               <BrazilianAddressFields prefix="scheduling-unit" initial={item?.address} />
-              <FormField id="catalog-phone" label="Telefone (opcional)">
-                <input
-                  name="phone"
-                  type="tel"
-                  maxLength={20}
-                  placeholder="(71) 99999-9999"
-                  defaultValue={item?.phone}
-                />
-              </FormField>
+              <ValidatedTextField
+                id="catalog-phone"
+                label="Telefone (opcional)"
+                mask="phone"
+                schema={brazilianPhoneSchema}
+                message={contactFieldMessages.phone}
+                name="phone"
+                type="tel"
+                maxLength={20}
+                placeholder="(71) 99999-9999"
+                defaultValue={item?.phone}
+              />
             </>
           )}
           {kind === "procedures" && (

@@ -605,4 +605,90 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
       `scheduling daily list: ${Math.round(elapsed)}ms / 10000 synthetic rows / 25 returned`,
     );
   });
+  it("orders actual block, link and unlink commands before a waiting reservation", async () => {
+    const roleId = (
+      await admin.query(
+        "INSERT INTO role(code,name,description) VALUES('scheduling-race-test','Corrida sintética','Teste') RETURNING id",
+      )
+    ).rows[0].id;
+    await admin.query(
+      "INSERT INTO role_permission(role_id,permission_id) SELECT $1,id FROM permission WHERE resource='members'",
+      [roleId],
+    );
+    await admin.query(
+      "INSERT INTO user_role(user_id,role_id,granted_by,justification) VALUES($1,$2,$1,'Sintético')",
+      [context.actor.userId, roleId],
+    );
+    for (const action of ["block", "link", "unlink"] as const) {
+      const data = await offer();
+      const holder = await person();
+      await admin.query(
+        "UPDATE member SET administrative_status=CASE WHEN id=$1 THEN 'active' ELSE 'blocked' END,administrative_changed_at=now(),administrative_changed_by=$3 WHERE id IN ($1,$2)",
+        [data.memberId, holder, context.actor.userId],
+      );
+      let relationshipId: string | undefined;
+      if (action === "unlink")
+        relationshipId = (
+          await admin.query(
+            "INSERT INTO member_relationship(holder_id,dependent_id,relationship,starts_on,created_by) VALUES($1,$2,'Sintético',current_date,$3) RETURNING id",
+            [holder, data.memberId, context.actor.userId],
+          )
+        ).rows[0].id;
+      const blocker = await pool.connect();
+      await blocker.query("BEGIN");
+      await blocker.query("SELECT pg_advisory_xact_lock(5010,1)");
+      const command = commandMember(
+        pool,
+        {
+          ...next(),
+          actor: {
+            ...context.actor,
+            permissions: new Set(["members:read", "members:write", "members:review"]),
+          },
+        },
+        action === "block" ? data.memberId : holder,
+        {
+          action,
+          expectedVersion: 1,
+          ...(action === "link"
+            ? {
+                dependentId: data.memberId,
+                relationship: "Sintético",
+                startsOn: new Date().toISOString().slice(0, 10),
+              }
+            : action === "unlink"
+              ? { relationshipId }
+              : {}),
+        },
+      ).then(
+        (value) => ({ value, error: null }),
+        (error) => ({ value: null, error }),
+      );
+      let waiting = false;
+      for (let attempt = 0; attempt < 100; attempt++) {
+        waiting = !!(
+          await admin.query(
+            "SELECT 1 FROM pg_locks WHERE locktype='advisory' AND classid=5010 AND objid=1 AND NOT granted",
+          )
+        ).rowCount;
+        if (waiting) break;
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+      const reservation = reserve(data).then(
+        (value) => ({ value, error: null }),
+        (error) => ({ value: null, error }),
+      );
+      await blocker.query("COMMIT");
+      blocker.release();
+      expect(waiting).toBe(true);
+      expect((await command).error).toBeNull();
+      const result = await reservation;
+      if (action === "unlink") expect(result.value?.value.status).toBe("scheduled");
+      else expect(result.error).toMatchObject({ code: "SCHEDULING_BENEFICIARY_BLOCKED" });
+    }
+    await admin.query(
+      "UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1 AND role_id=$2",
+      [context.actor.userId, roleId],
+    );
+  });
 });

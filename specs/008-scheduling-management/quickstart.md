@@ -1,31 +1,31 @@
-# Roteiro de validação futura
+# Roteiro de validação
 
-**Estado atual:** somente planejamento. Rotas e testes abaixo ainda não existem.
+**Estado atual:** código implementado; gates e evidências em validação.
 Não executar contra dados reais nem reativar localhost/PostgreSQL por este documento.
 
 ## Preparação
 
-Após implementação autorizada: usar branch vigente sem PR, ambiente descartável/CI,
+Usar branch vigente sem PR, ambiente descartável/CI,
 banco vazio separado do preview, aplicar migrations pelo procedimento do projeto.
 Dados sintéticos: duas unidades, dois serviços numa unidade, dois procedimentos de
 30/60 minutos, dois profissionais, duas contas administrativas e associados/dependentes
 sintéticos. Uma conta sem concessões de módulos deve ter acesso administrativo válido.
 
-## Comandos previstos
+## Comandos
 
 Da raiz da worktree, com dependências e variáveis do CI configuradas:
 
 - corepack pnpm format:check
 - corepack pnpm lint
 - corepack pnpm typecheck
-- corepack pnpm exec vitest run --project contract scheduling
+- corepack pnpm exec vitest run --project unit scheduling --maxWorkers=1
 - corepack pnpm exec vitest run --project integration scheduling
-- corepack pnpm exec playwright test --config apps/web/playwright.config.ts scheduling.spec.ts scheduling-create.spec.ts
+- corepack pnpm --filter @caab/web exec playwright test scheduling.spec.ts --project=chromium
 - corepack pnpm test:a11y
 - corepack pnpm build
 - corepack pnpm security:scan
 
-Esses filtros devem encontrar os testes da feature após criação; zero testes não é
+Esses filtros encontram os testes da feature; zero testes não é
 aprovação. Integração/build/E2E no CI enquanto vigorar a suspensão dos serviços locais.
 
 ## Provas de aceite

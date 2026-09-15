@@ -44,6 +44,7 @@ describe("database foundation migrations", () => {
       "0017_partner_directory.sql",
       "0018_database_file_content.sql",
       "0019_optional_action_reasons.sql",
+      "0020_scheduling.sql",
     ]);
   });
 

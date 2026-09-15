@@ -22,7 +22,7 @@ universal de um formato de agenda; as escolhas abaixo são inferências para a C
 conexão real ao app/site na segunda etapa. **Fonte:** resposta explícita do usuário.
 **Racional:** permite validar a operação completa antes da integração externa.
 **Alternativa:** autosserviço desde a primeira entrega foi oferecido e não escolhido.
-Não existe autorização de implementar código nesta conversa de planejamento.
+A conversa de planejamento não autorizava código. Após a revisão, o pedido de execução de 15/09/2026 autorizou T001–T020.
 
 ## Decisão 2 — lista diária como primeira apresentação
 
@@ -99,4 +99,4 @@ não demonstra esse esgotamento. Nenhum SDK, serviço ou integração está plan
 
 Pesquisa sustenta o desenho proposto, não comprova desempenho nem entrega. A estrutura
 é tecnicamente planejada usando a base atual; código, migrations, testes e homologação
-ainda não existem. Políticas detalhadas da etapa 2 serão fechadas antes de cada incremento.
+estão em validação; resultados reais ficam em evidence/. Políticas da etapa 2 serão fechadas antes de cada incremento.

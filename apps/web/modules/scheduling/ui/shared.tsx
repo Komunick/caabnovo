@@ -12,10 +12,10 @@ const messages: Record<string, string> = {
   SCHEDULING_FUTURE_BOOKINGS:
     "A alteração afetaria reservas futuras. Remarque ou cancele essas reservas antes de alterar a configuração.",
   SCHEDULING_BENEFICIARY_BLOCKED:
-    "O beneficiário ou seu titular está bloqueado. Confira o cadastro antes de reservar.",
+    "O cadastro está arquivado ou o beneficiário ou seu titular está bloqueado. Confira o cadastro antes de reservar.",
   SCHEDULING_BENEFICIARY_ARCHIVED: "O cadastro está arquivado. Confira o beneficiário.",
   SCHEDULING_PAST: "Escolha um horário futuro. Reservas passadas não podem ser alteradas.",
-  SCHEDULING_INACTIVE: "A oferta está inativa. Selecione outra opção.",
+  SCHEDULING_OFFER_UNAVAILABLE: "A oferta está inativa. Selecione outra opção.",
   SCHEDULING_DUPLICATE: "Esse vínculo já existe. Localize-o na lista para editar.",
   HOURS_OUTSIDE_UNIT:
     "O expediente do profissional deve estar dentro do horário da unidade. Ajuste primeiro o profissional para reduzir o horário da unidade.",
@@ -24,8 +24,15 @@ const messages: Record<string, string> = {
   AUTHENTICATION_REQUIRED: "Sua sessão terminou. Entre novamente para continuar.",
 };
 export async function schedulingRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`/api/v1/scheduling/${path}`, { ...options, cache: "no-store" });
-  const data = await response.json();
+  let response: Response;
+  let data;
+  try {
+    response = await fetch(`/api/v1/scheduling/${path}`, { ...options, cache: "no-store" });
+    data = await response.json();
+  } catch (error) {
+    if (options.signal?.aborted) throw error;
+    throw new Error("Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.");
+  }
   if (!response.ok)
     throw new Error(
       messages[data.error?.code ?? data.code] ??
@@ -45,7 +52,9 @@ export function useSchedulingData<T>(path: string | null) {
     const controller = new AbortController();
     setState({ path });
     void schedulingRequest<T>(path, { signal: controller.signal })
-      .then((data) => setState({ path, data }))
+      .then((data) => {
+        if (!controller.signal.aborted) setState({ path, data });
+      })
       .catch((error) => {
         if (!controller.signal.aborted) setState({ path, error: String(error.message) });
       });

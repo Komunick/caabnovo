@@ -1,5 +1,5 @@
 import type { Pool } from "pg";
-import { idSchema, schedulingKindSchema } from "@caab/contracts";
+import { apiError, idSchema, schedulingKindSchema } from "@caab/contracts";
 import type { RequestActor } from "../../shared/request-context";
 import { readJson } from "../../members/http/routes";
 import {
@@ -35,8 +35,10 @@ export function createSchedulingRoute(deps: {
       if (path.length > 3 || !resource) throw new SchedulingError("NOT_FOUND", 404);
       const id = rawId ? idSchema.parse(rawId) : undefined;
       const query: Record<string, string> = {};
+      const seen = new Set<string>();
       for (const [key, value] of new URL(request.url).searchParams) {
-        if (key in query) throw new SchedulingError("VALIDATION_FAILED", 422);
+        if (seen.has(key)) throw new SchedulingError("VALIDATION_FAILED", 422);
+        seen.add(key);
         if (value !== "") query[key] = value;
       }
       const kind = schedulingKindSchema.safeParse(resource);
@@ -98,16 +100,9 @@ export function createSchedulingRoute(deps: {
     } catch (error) {
       response =
         typeof error === "object" && error && "status" in error && error.status === 413
-          ? Response.json(
-              {
-                error: {
-                  code: "BODY_TOO_LARGE",
-                  message: "Corpo excede o limite permitido",
-                  requestId: rid,
-                },
-              },
-              { status: 413 },
-            )
+          ? Response.json(apiError("BODY_TOO_LARGE", "Corpo excede o limite permitido", rid), {
+              status: 413,
+            })
           : routeErrorResponse(error, rid);
     }
     response.headers.set("Cache-Control", "no-store");
