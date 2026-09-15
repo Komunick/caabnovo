@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createOabProvider, isOabConfigured } from "./oab-provider";
 
-const env = { OAB_API_ENABLED: "true", API_OAB_KEY: "test-key", API_OAB_PASSWORD: "test-password" };
+const env = { API_OAB_KEY: "test-key", API_OAB_PASSWORD: "test-password" };
 const row = {
   Nome: "Pessoa sintética",
   OAB: "001234",
@@ -19,11 +19,6 @@ describe("OAB provider boundary", () => {
   afterEach(() => vi.unstubAllEnvs());
   it.each([
     {},
-    { ...env, OAB_API_ENABLED: "false" },
-    { ...env, OAB_API_ENABLED: " FALSE " },
-    { ...env, OAB_API_ENABLED: "" },
-    { ...env, OAB_API_ENABLED: "treu" },
-    { ...env, OAB_API_ENABLED: "1" },
     { ...env, API_OAB_KEY: " " },
     { ...env, API_OAB_PASSWORD: "" },
     { API_OAB_KEY: "test-key" },
@@ -34,8 +29,8 @@ describe("OAB provider boundary", () => {
     expect(() => createOabProvider(source, fetcher)).toThrow("OAB_NOT_CONFIGURED");
     expect(fetcher).not.toHaveBeenCalled();
   });
-  it.each([undefined, "true", " TRUE "])(
-    "queries with server credentials and optional activation flag %s",
+  it.each([undefined, "true", " TRUE ", "false", " FALSE ", "", "treu", "1"])(
+    "queries with server credentials regardless of legacy activation flag %s",
     async (flag) => {
       const source = {
         API_OAB_KEY: " test-key ",
@@ -57,13 +52,13 @@ describe("OAB provider boundary", () => {
       ]);
     },
   );
-  it("reads activation from the running server environment without caching configuration", () => {
+  it("reads current server credentials and ignores the legacy disable switch", () => {
     vi.stubEnv("OAB_API_ENABLED", undefined);
     vi.stubEnv("API_OAB_KEY", "runtime-test-key");
     vi.stubEnv("API_OAB_PASSWORD", "runtime-test-password");
     expect(isOabConfigured()).toBe(true);
     vi.stubEnv("OAB_API_ENABLED", "false");
-    expect(isOabConfigured()).toBe(false);
+    expect(isOabConfigured()).toBe(true);
     vi.stubEnv("OAB_API_ENABLED", "true");
     vi.stubEnv("API_OAB_PASSWORD", "");
     expect(isOabConfigured()).toBe(false);

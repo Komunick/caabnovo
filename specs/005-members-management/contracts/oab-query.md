@@ -63,10 +63,9 @@ como situação irregular, nem deixa um resultado anterior parecendo atualizado.
 ## Configuração e ativação
 
 No ambiente do servidor web: `API_OAB_KEY` e `API_OAB_PASSWORD` não vazias.
-Desde a correção de 15/09/2026, omitir `OAB_API_ENABLED` permite a integração quando
-ambos os segredos estão presentes. `true` continua aceito; `false` a desativa, mesmo
-com credenciais. Espaços externos e caixa são normalizados na flag. Valor vazio ou
-desconhecido bloqueia a integração. Configuração é lida no servidor em execução.
+Decisão final de 15/09/2026: a integração fica habilitada sempre que ambos os segredos
+estão presentes. `OAB_API_ENABLED` foi retirada do controle de ativação: qualquer valor
+legado, inclusive `false` ou vazio, é ignorado. Configuração é lida no servidor em execução.
 Os dois segredos pertencem ao relatório **STATUS CAAB**, não ao relatório financeiro.
 O endpoint HTTPS é fixo e os segredos vão em headers; redirecionamentos são recusados.
 Não há variáveis públicas, edição de credenciais na conta do usuário ou scraping.
@@ -75,7 +74,7 @@ O exemplo versionado omite a flag e mantém segredos vazios (integração indisp
 no ambiente escolhido, sem copiar segredos para Git, mensagens ou evidências. Validar as
 credenciais históricas antes de adotá-las. Credenciais da hospedagem devem ser configuradas
 no gerenciador de segredos/ambiente do serviço, não copiadas do localhost automaticamente.
-Para desativar, voltar a flag para false e reiniciar/recarregar o serviço conforme a hospedagem.
+Não existe controle de ativação/desativação nem tela de configuração, por decisão do usuário.
 Não remover dados, auditoria ou avaliações para trocar essa configuração.
 
 Conexão ativada somente no localhost. T028 permanece pendente: o teste real foi descartado após o usuário esclarecer a falta de autorização e não serve como homologação. Seus resultados foram removidos e não devem ser reutilizados em testes. Nenhuma avaliação, situação financeira,

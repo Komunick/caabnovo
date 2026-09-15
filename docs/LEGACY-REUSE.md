@@ -43,8 +43,10 @@ ambientes configurados e condições para revisão ou desativação.
   resposta divergente/ambígua, nova UF ou tipo de inscrição, necessidade de critérios
   institucionais ou implantação em outro ambiente. Essas extensões exigem contrato e testes
   próprios; não inferir regras a partir de campos financeiros do legado.
-- **Desativação:** `OAB_API_ENABLED=false` no ambiente do servidor, com recarga/reinício
-  conforme a hospedagem. Preservar auditoria e avaliações manuais existentes.
+- **Decisão final de 15/09/2026:** o usuário retirou o controle de ativação/desativação.
+  A consulta usa as duas credenciais privadas quando presentes; `OAB_API_ENABLED`
+  é ignorada, inclusive se um ambiente antigo ainda tiver `false`. Não há nova tela
+  de configuração. Auditoria, avaliações e autenticação institucional são preservadas.
 
 ## LEG-002 — Pesquisa de ativação e bloqueio (sem cópia de regra)
 

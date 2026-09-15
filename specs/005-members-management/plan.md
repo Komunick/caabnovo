@@ -125,3 +125,10 @@ abertura do histórico por teclado; preservar capturas sintéticas no CI para re
 3. Cobrir consulta sem flag, precedência de false e configuração incompleta em testes
    do adaptador; validar regressões da rota e contrato. CI executa banco/build/navegador.
 4. Registrar evidências e entregar PR da branch isolada; deploy pelo fluxo existente.
+
+### Ajuste final: remover controle de ativação — 15/09/2026
+
+Substituir a condição de ativação por verificação exclusiva das duas credenciais.
+Retirar a flag do exemplo e documentar que valores legados são ignorados. Cobrir false,
+vazio e valores antigos nos testes; preservar recusa de credenciais incompletas.
+Executar regressões/CI e entregar em nova branch/PR que substitui PR25, já congelado.

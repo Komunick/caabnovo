@@ -245,3 +245,14 @@ Preservar endpoint, campos selecionados, permissões, auditoria, limites e avali
 Aceite com fixtures sintéticas: credenciais sem flag permitem consulta, configuração
 incompleta/desativada/inválida não chama o provedor, falhas externas não viram sucesso.
 Esta entrega não afirma diagnóstico da configuração remota nem homologação real T028.
+
+### Decisão final: consulta sempre habilitada — 15/09/2026
+
+Usuário rejeitou tela nova e controle de desativação. Esta decisão substitui a semântica
+anterior da flag: a aplicação usa as credenciais do servidor quando ambas existem,
+independentemente de OAB_API_ENABLED, inclusive false ou valor vazio/antigo/inválido.
+Não adicionar interface de configuração ou nova variável obrigatória. A autenticação
+institucional continua exigindo chave/senha privadas válidas; nenhuma credencial será
+embutida na aplicação. Preservar consulta individual, campos, permissões e auditoria.
+Aceite: mesmas credenciais funcionam com flag ausente, true, false ou qualquer valor;
+credenciais ausentes/incompletas continuam bloqueando o HTTP.

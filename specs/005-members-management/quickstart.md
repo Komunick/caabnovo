@@ -45,10 +45,9 @@ Este roteiro não declara gates aprovados. Evidências serão preenchidas após 
 ## Configuração da consulta OAB — 15/09/2026
 
 No serviço web, fornecer API_OAB_KEY e API_OAB_PASSWORD do relatório STATUS CAAB.
-A flag OAB_API_ENABLED é opcional: omitida ou true permite consulta com os dois segredos;
-false mantém a desativação explícita. A flag aceita espaços externos e caixa diferente;
-vazia ou desconhecida bloqueia. O exemplo .env.example mantém ambos os segredos vazios.
-Configuração existente com false não é ignorada por esta correção. O deploy deve fornecer
+OAB_API_ENABLED não controla mais a consulta. Qualquer valor legado, inclusive false,
+é ignorado; não é necessário alterar essa variável na hospedagem.
+O exemplo .env.example mantém ambos os segredos vazios. O deploy deve fornecer
 as credenciais privadas válidas; esta alteração não incorpora nem transporta segredos.
 
 Validação do código: pnpm exec vitest run --project unit oab-provider oab-route.

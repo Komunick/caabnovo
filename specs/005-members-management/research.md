@@ -89,3 +89,12 @@ Conclusão limitada às fontes consultadas: não foi encontrada API oficial mais
 com equivalência demonstrada dos sete campos selecionados. Manter OAB-BA/Implanta.
 O código atual bloqueia credenciais completas sem a flag exatamente true; corrigir esse
 caso de configuração, sem afirmar que ele é a causa confirmada do ambiente remoto.
+
+### Ativação automática — decisão final de 15/09/2026
+
+O usuário pediu funcionamento sem tela nova, acesso à VM ou controle de desativação.
+A exigência de OAB_API_ENABLED, inclusive false herdado, é retirada do código.
+A pesquisa oficial acima e a escolha OAB-BA/Implanta permanecem válidas para esta
+entrega; nenhuma evidência nova de API substituta equivalente foi encontrada.
+Credenciais continuam privadas no servidor. A remoção da flag não fornece nem
+valida credenciais ausentes; mantém-se a autenticação exigida pelo provedor.
