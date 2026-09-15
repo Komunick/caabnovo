@@ -1,6 +1,6 @@
 # Roteiro de validação
 
-**Estado atual:** código implementado; gates e evidências em validação.
+**Estado atual:** código implementado e gates aprovados; [resultados e capturas](evidence/release-review.md).
 Não executar contra dados reais nem reativar localhost/PostgreSQL por este documento.
 
 ## Preparação

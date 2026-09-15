@@ -2,7 +2,7 @@
 
 **Feature Branch**: `feature/scheduling-management-20260915`
 **Created**: 2026-09-15
-**Status**: Primeira versão autorizada em 15/09/2026; implementação e validação em andamento.
+**Status**: Primeira versão (US1 + US2) implementada e validada em 15/09/2026; evidências em evidence/release-review.md.
 **Input**: Começar com básico funcional, evoluir até o legado e depois novas funções.
 **Confirmação do usuário**: primeira entrega opera pelo painel; conexão real ao app/site na etapa seguinte.
 

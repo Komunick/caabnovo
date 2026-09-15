@@ -103,11 +103,11 @@ fonte e motivo, sem inventar a matriz. Credencial nesta entrega é situação/va
 
 ## Phase 6 — US4 Agendamentos (P2)
 
-- [ ] AG-N01 Validar cabeçalho/atalho de Agendamentos e contraste do menu da conta
+- [x] AG-N01 Validar cabeçalho/atalho de Agendamentos e contraste do menu da conta
       durante a troca de tema; registrar junto às evidências da spec 008.
 
-- [ ] AG-I01 Concluir a etapa 1 administrativa da spec 008 (US1 + US2, T001–T020),
-      com gates/evidências e PR. Código implementado; validação final em andamento.
+- [x] AG-I01 Concluir a etapa 1 administrativa da spec 008 (US1 + US2, T001–T020),
+      com gates/evidências e PR. Código implementado e validado; entrega preparada para PR, com resultados em spec 008/evidence/release-review.md.
       As tarefas antigas T022–T026 abaixo abrangem mais que este recorte e permanecem
       substituídas pelo planejamento incremental da spec 008.
 

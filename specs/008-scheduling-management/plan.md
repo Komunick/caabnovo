@@ -2,7 +2,7 @@
 
 **Branch**: `feature/scheduling-management-20260915` | **Date**: 2026-09-15
 **Spec**: [spec.md](spec.md)
-**Status**: implementação autorizada da etapa 1 (US1 + US2); validação em andamento.
+**Status**: etapa 1 (US1 + US2) implementada e validada; resultados em [evidence/release-review.md](evidence/release-review.md).
 O setup-plan resolveu os caminhos da spec; seu campo BRANCH inferiu o nome da pasta.
 A branch real foi conferida com git e é a indicada acima.
 

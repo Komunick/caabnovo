@@ -2,7 +2,7 @@
 
 Data: 15/09/2026. Branch feature/scheduling-management-20260915.
 Entrada: spec.md, plan.md, research.md, data-model.md e contracts/admin.md.
-**T001–T020 autorizadas em 15/09/2026. Implementação em validação.**
+**T001–T020 autorizadas em 15/09/2026. Implementação e validação concluídas; evidências em evidence/release-review.md.**
 Testes transacionais reunidos em apps/web/tests/integration/scheduling.test.ts para
 compartilhar o banco descartável; jornadas US1/US2 em tests/e2e/scheduling.spec.ts.
 Testes exigidos pelos cenários da spec e pelo fluxo de entrega, especialmente agenda,
@@ -42,12 +42,12 @@ localizar → remarcar → conferir histórico → cancelar e liberar horário.
 - [x] T015 [US2] Implementar listagem/detalhes, remarcação atômica e cancelamento em apps/web/modules/scheduling/booking-service.ts e apps/web/app/api/v1/scheduling/bookings/.
 - [x] T016 [US2] Implementar lista diária paginada, filtros na URL, detalhes, ações e confirmação em apps/web/modules/scheduling/ui/ e apps/web/app/(admin)/scheduling/.
 - [x] T017 [US2] Integrar navegação/busca e eventos humanos de auditoria em apps/web/modules/workspace/ e apps/web/modules/audit/, sem liberar dados de outros módulos.
-- [ ] T018 [US2] Validar gestão por teclado, mobile claro/escuro e estados vazios/erro em apps/web/tests/e2e/scheduling.spec.ts; capturas sintéticas em specs/008-scheduling-management/evidence/.
+- [x] T018 [US2] Validar gestão por teclado, mobile claro/escuro e estados vazios/erro em apps/web/tests/e2e/scheduling.spec.ts; capturas sintéticas em specs/008-scheduling-management/evidence/.
 
 ## Phase 5 — Polish e saída da etapa 1
 
-- [ ] T019 Executar roteiro e gates do CI (contratos, integração, E2E, a11y, lint, tipos, build e segurança), registrar resultados reais em specs/008-scheduling-management/evidence/ e atualizar quickstart.md.
-- [ ] T020 Conferir limites da etapa 1, ausência de chamadas a Cal.com/legado/canais e integridade do rollback; registrar revisão em specs/008-scheduling-management/evidence/release-review.md antes de preparar PR.
+- [x] T019 Executar roteiro e gates do CI (contratos, integração, E2E, a11y, lint, tipos, build e segurança), registrar resultados reais em specs/008-scheduling-management/evidence/ e atualizar quickstart.md.
+- [x] T020 Conferir limites da etapa 1, ausência de chamadas a Cal.com/legado/canais e integridade do rollback; registrar revisão em specs/008-scheduling-management/evidence/release-review.md antes de preparar PR.
 
 ## Phase 6 — US3: planejamento dos incrementos da etapa 2
 
