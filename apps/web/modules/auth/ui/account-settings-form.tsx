@@ -67,6 +67,13 @@ export function AccountSettingsForm({
     error: boolean;
   } | null>(null);
   useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    // The route's loading fallback can arrive before these anchored sections exist.
+    const section = window.location.hash.slice(1);
+    if (!["profile-title", "email-title", "password-title"].includes(section)) return;
+    const frame = requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView());
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   async function submit(
     event: FormEvent<HTMLFormElement>,

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { NavigationPending } from "@/components/ui/navigation-pending";
 import { usePathname } from "next/navigation";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import { getWorkspaceAreas, isAreaActive } from "@/modules/workspace/areas";
@@ -19,9 +20,16 @@ export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly 
           const { href, label, icon: Icon } = area;
           return (
             <MenuItem key={area.id}>
-              <Link href={href} aria-current={isAreaActive(area, pathname) ? "page" : undefined}>
+              <Link
+                href={href}
+                aria-label={label}
+                aria-current={isAreaActive(area, pathname) ? "page" : undefined}
+              >
                 <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-                <span>{label}</span>
+                <span>
+                  {label}
+                  <NavigationPending />
+                </span>
               </Link>
             </MenuItem>
           );

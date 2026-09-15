@@ -51,3 +51,8 @@ Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../00
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+## Âncoras e streaming — 15/09/2026
+
+- [x] AN01 Restaurar posição das seções após montagem da tela progressiva.
+- [x] AN02 Validar atalho de senha móvel e âncoras diretas no CI, registrando evidência no spec001/evidence/navigation-speed-2026-09-15.md. CI34990339186 aprovado.

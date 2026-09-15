@@ -46,3 +46,7 @@ Entrega transversal nas tarefas CF01–CF03 da fundação.
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+## Âncoras e streaming — 15/09/2026
+
+Após montagem do AccountSettingsForm, verificar somente profile-title/email-title/password-title no hash e posicionar a seção no próximo frame. Cancelar frame ao desmontar. Validar pesquisa geral até a seção de senha em390px e entrada direta nas três seções. Incremento junto à navegação na branch única; nenhum contrato ou dado alterado.

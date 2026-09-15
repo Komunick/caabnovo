@@ -159,3 +159,7 @@ mostra o campo somente quando necessário. Nenhuma migration ou alteração de d
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+
+## Navegação para seções — 15/09/2026
+
+Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção correspondente deve ficar visível mesmo quando a página chegar por carregamento progressivo. Preservar navegação nativa entre âncoras já presentes e o foco atual.

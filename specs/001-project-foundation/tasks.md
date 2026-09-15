@@ -441,3 +441,14 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] BS01 Catalogar rotas/funções existentes e suas permissões, incluindo OAB e benefícios.
 - [x] BS02 Busca por palavras sem acentos, resultados com contexto e navegação por teclado.
 - [x] BS03 Validar destinos, permissões, teclado/celular e evidências; atualizar localhost limitado.
+
+## Abertura de telas e navegação — 15/09/2026
+
+- [x] NV01 Recuperar diagnóstico, pesquisar guias oficiais e definir escopo/plano.
+- [x] NV02 Implementar limites de carregamento e feedback dos links centrais.
+- [x] NV03 Carregar blocos da inicial independentemente preservando conteúdo/permissões.
+- [x] NV04 Validar atraso controlado, interrupção, shell, acessibilidade e regressões no CI.
+- [x] NV05 Revisar capturas sintéticas do build remoto, registrar evidências e preparar PR.
+  Preview local adiado por pedido posterior do usuário: web e banco desligados; não reativar.
+  Código 7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações,
+  66 E2E e6 a11y; evidências em evidence/navigation-speed-2026-09-15.md.

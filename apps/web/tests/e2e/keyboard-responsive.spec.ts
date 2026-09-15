@@ -35,7 +35,7 @@ test("audit export dialog receives and traps keyboard focus", async ({ page }) =
   await page.keyboard.press("Enter");
   const dialog = page.getByRole("dialog", { name: "Exportar auditoria" });
   await expect(dialog).toBeVisible();
-  await expect(page.getByLabel("Início")).toBeFocused();
+  await expect(dialog.getByLabel("Início")).toBeFocused();
   await page.keyboard.press("Shift+Tab");
   await expect(page.getByRole("button", { name: "Fechar" })).toBeFocused();
   await page.keyboard.press("Escape");

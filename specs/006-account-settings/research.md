@@ -49,3 +49,7 @@ Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
+
+## Âncoras após carregamento progressivo — 15/09/2026
+
+Fonte: Next.js loading e navegação, pesquisados no spec001/research.md. Evidência CI34988897595: com a tela temporária de carregamento, a navegação para #password-title termina antes da seção existir. Inferência confirmada pelo teste de viewport: é necessário posicionar a âncora quando o formulário estiver montado. Usar efeito local e requestAnimationFrame para os três IDs existentes, sem alterar foco, credenciais, salvamento ou política de acesso.
