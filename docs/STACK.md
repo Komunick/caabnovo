@@ -1,4 +1,14 @@
 # CAAB — Referência de Stack e Arquitetura
+## Agendamentos — implementação da etapa 1 em 15/09/2026
+
+A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
+oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
+e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
+[evidências](../specs/008-scheduling-management/evidence/release-review.md).
+Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
+Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
+primeira interface do usuário no app/site; CAASSH continua desativado.
 
 ## 1. Contexto
 

@@ -87,7 +87,7 @@ CAASSH permanece desativado e pendente de revisão.
 **Atualização posterior:** planejamento próprio na [spec 008](../008-scheduling-management/plan.md)
 com três etapas e primeira entrega administrativa confirmada pelo usuário. Ver
 [tarefas](../008-scheduling-management/tasks.md); não executar T022–T026 antigas.
-O passo de criar spec indicado abaixo foi concluído; nenhum código implementado.
+Spec e primeira versão administrativa implementadas; gates finais em validação. As instruções de brainstorming abaixo são histórico das etapas posteriores.
 
 Separar funcionalidades comprovadas no legado de sugestões novas; o usuário
 citou controle de salas como sugestão. Não promover opções da pesquisa a requisitos.

@@ -28,12 +28,6 @@ import { NewsThumbnail } from "@/modules/workspace/ui/news-thumbnail";
 
 const upcoming = [
   {
-    name: "Agendamentos",
-    description: "Nova proposta de agenda e reservas em revisão.",
-    status: "Em revisão de escopo",
-    icon: CalendarDays,
-  },
-  {
     name: "CAASSH",
     description: "Módulo desativado até a revisão de sua proposta.",
     status: "Desativado — pendente de revisão",

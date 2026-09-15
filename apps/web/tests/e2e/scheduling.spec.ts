@@ -53,6 +53,12 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await expect(page.getByRole("heading", { name: member, exact: true })).toBeVisible();
   await context.clearCookies();
   await signIn(page);
+  await expect(
+    page
+      .getByRole("navigation", { name: "Atalhos de trabalho" })
+      .getByRole("link", { name: "Agendamentos", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Agendamentos", exact: true })).toHaveCount(0);
   await page.goto("/scheduling/catalog");
   async function open(kind: string) {
     await page.getByLabel("Cadastro", { exact: true }).selectOption(kind);

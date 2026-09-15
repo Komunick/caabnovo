@@ -103,6 +103,11 @@ fonte e motivo, sem inventar a matriz. Credencial nesta entrega é situação/va
 
 ## Phase 6 — US4 Agendamentos (P2)
 
+- [ ] AG-I01 Concluir a etapa 1 administrativa da spec 008 (US1 + US2, T001–T020),
+      com gates/evidências e PR. Código implementado; validação final em andamento.
+      As tarefas antigas T022–T026 abaixo abrangem mais que este recorte e permanecem
+      substituídas pelo planejamento incremental da spec 008.
+
 Planejamento incremental agora pertence à [spec 008](../008-scheduling-management/spec.md),
 com [tarefas próprias](../008-scheduling-management/tasks.md). Primeiro painel funcional;
 depois nível do legado/app/site; por último sugestões selecionadas. O usuário confirmou
