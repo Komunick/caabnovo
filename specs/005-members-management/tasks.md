@@ -173,6 +173,8 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 
 - [x] OC01 Pesquisar APIs oficiais equivalentes e registrar decisão na spec/plan/research.
 - [x] OC02 Permitir credenciais completas sem flag, preservando false e recusa de configuração inválida; atualizar contrato e exemplo.
-- [ ] OC03 Executar regressões sintéticas, gates e registrar evidências; entregar PR isolado.
+- [x] OC03 Executar regressões sintéticas e gates; registrar evidências para entrega em PR isolado.
 
 T028 permanece separada: consulta real não foi executada nesta correção de código.
+
+Evidências OC01–OC03: [configuração OAB](evidence/oab-config-2026-09-15.md).

@@ -22,7 +22,13 @@ não a atribuição de uma causa comprovada ao site remoto.
 - Regressões existentes: autenticação/permissões, endpoint fixo, sem redirects/cache,
   mapeamento de campos, resposta inválida, timeout, ausência de resultado e número inválido.
 - Lint dos arquivos alterados, formatação geral e git diff --check aprovados.
-- Tipos e CI completo: em acompanhamento antes da abertura do PR.
+- Tipos locais e CI completo aprovados para o código 2906c67:
+  https://github.com/Komunick/caabnovo/actions/runs/35011578859
+- CI: 293 unitários, 105 contratos, 160 integrações (14 da OAB), 67 E2E e 6 de
+  acessibilidade: 631 testes aprovados. Build, lint, tipos, formatação, regras de
+  branches, auditoria de dependências e scan de segredos aprovados.
+- Browser: 67 passed e 6 passed; sem falhas ou flakies nos resumos finais.
+- Nenhuma interface alterada; validação visual já existente usa fixtures sintéticas.
 
 O workflow CI passa a aceitar pushes codex/** para validar esta branch antes de congelá-la
 em PR, com os mesmos jobs/gates já usados pelo repositório. Nenhum gate removido.
