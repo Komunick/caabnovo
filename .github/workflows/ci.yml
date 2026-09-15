@@ -141,6 +141,15 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+      - name: Preserve navigation loading screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: navigation-synthetic-screenshots
+          path: apps/web/test-results/**/navigation-*.png
+          retention-days: 7
+          if-no-files-found: warn
+
       - run: pnpm test:a11y --project=chromium
 
   security:

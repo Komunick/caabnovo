@@ -445,7 +445,7 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 ## Abertura de telas e navegação — 15/09/2026
 
 - [x] NV01 Recuperar diagnóstico, pesquisar guias oficiais e definir escopo/plano.
-- [ ] NV02 Implementar limites de carregamento e feedback dos links centrais.
-- [ ] NV03 Carregar blocos da inicial independentemente preservando conteúdo/permissões.
+- [x] NV02 Implementar limites de carregamento e feedback dos links centrais.
+- [x] NV03 Carregar blocos da inicial independentemente preservando conteúdo/permissões.
 - [ ] NV04 Validar atraso controlado, interrupção, shell, acessibilidade e regressões no CI.
 - [ ] NV05 Atualizar preview limitado via build remoto, revisar e registrar evidências/PR.
