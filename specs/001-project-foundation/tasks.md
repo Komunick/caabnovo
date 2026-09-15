@@ -447,5 +447,8 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] NV01 Recuperar diagnóstico, pesquisar guias oficiais e definir escopo/plano.
 - [x] NV02 Implementar limites de carregamento e feedback dos links centrais.
 - [x] NV03 Carregar blocos da inicial independentemente preservando conteúdo/permissões.
-- [ ] NV04 Validar atraso controlado, interrupção, shell, acessibilidade e regressões no CI.
-- [ ] NV05 Atualizar preview limitado via build remoto, revisar e registrar evidências/PR.
+- [x] NV04 Validar atraso controlado, interrupção, shell, acessibilidade e regressões no CI.
+- [x] NV05 Revisar capturas sintéticas do build remoto, registrar evidências e preparar PR.
+  Preview local adiado por pedido posterior do usuário: web e banco desligados; não reativar.
+  Código 7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações,
+  66 E2E e6 a11y; evidências em evidence/navigation-speed-2026-09-15.md.

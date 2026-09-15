@@ -282,6 +282,6 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 2. Criar fallback compartilhado de página e limites loading por área; usar feedback nativo de Link no menu/abas/atalhos.
 3. Separar os três blocos de consultas da inicial com Suspense, preservando tratamentos independentes de falhas e regras de exibição.
 4. Cobrir espera real de consulta em banco sintético, resposta RSC atrasada, interrupção, acessibilidade e persistência do shell no CI.
-5. Validar qualidade/segurança/build/navegador; atualizar preview3107 usando artefato do CI com limites existentes e registrar evidências. Abrir PR somente com a entrega validada; congelar a branch ao abrir.
+5. Validar qualidade/segurança/build/navegador e revisar capturas sintéticas do CI. Usuário pediu desligar localhost e depois autorizou parar o banco local; manter ambos desligados e adiar preview. Abrir PR somente com a entrega validada; congelar a branch ao abrir.
 
 Sem schema, migration, dependência ou configuração nova de cache. Reverter componentes/limites restaura a renderização anterior sem mudança de dados.
