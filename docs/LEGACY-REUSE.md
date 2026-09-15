@@ -37,8 +37,9 @@ ambientes configurados e condições para revisão ou desativação.
   `http/oab-route.ts`, `ui/oab-lookup.tsx`, `/members/oab` e `/api/v1/members/oab-query`.
   Contratos e detalhes em [spec 005](../specs/005-members-management/contracts/oab-query.md)
   e [evidências do legado](../specs/005-members-management/contracts/oab-legacy.md).
-- **Configuração:** restrita ao servidor local; não implica configuração ou deploy em DEV
-  hospedado. O `.env.example` mantém a integração desativada e os campos de segredo vazios.
+- **Configuração:** a configuração local anterior não comprova configuração ou deploy em
+  DEV hospedado. O `.env.example` mantém os dois segredos vazios, sem flag de ativação.
+  A consulta exige as duas credenciais privadas no servidor; os valores não são versionados.
 - **Revisar quando:** houver troca/recusa de credenciais, mudança do endpoint/relatório,
   resposta divergente/ambígua, nova UF ou tipo de inscrição, necessidade de critérios
   institucionais ou implantação em outro ambiente. Essas extensões exigem contrato e testes

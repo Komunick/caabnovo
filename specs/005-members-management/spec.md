@@ -232,7 +232,10 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 Abrir documento e expandir seu histórico devem manter áreas clicáveis suficientes quando
 a análise não tiver motivo escrito, com teclado e celular, sem sobreposição ou rolagem horizontal.
 
-## Configuração OAB para deploy — 15/09/2026
+## Configuração OAB para deploy — proposta inicial substituída, 15/09/2026
+
+Histórico do PR25. A regra vigente está em **Decisão final: consulta sempre habilitada**
+abaixo e no contrato oab-query.md; false não desativa mais a integração.
 
 Pedido expresso: corrigir pelo código em branch própria, preservando a instância de
 Agendamentos, e pesquisar API oficial mais recente. Deploy fica com o fluxo existente.
