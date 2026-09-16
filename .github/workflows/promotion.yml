@@ -10,11 +10,26 @@ permissions:
 jobs:
   validate-source:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Require dev as promotion source
+      - name: Require same-repository dev as promotion source
         env:
           HEAD_REF: ${{ github.head_ref }}
-        run: test "$HEAD_REF" = "dev"
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.repository }}
+        run: test "$HEAD_REF" = "dev" && test "$HEAD_REPOSITORY" = "$BASE_REPOSITORY"
       - uses: actions/checkout@v4
-      - name: Require approved privacy and retention controls
-        run: 'grep -Fx "Status: APPROVED" specs/001-project-foundation/evidence/privacy.md'
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Require approved policy and implemented retention controls
+        env:
+          PROMOTION_HEAD_REF: ${{ github.head_ref }}
+          PROMOTION_BASE_REF: ${{ github.base_ref }}
+          PROMOTION_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PROMOTION_BASE_REPOSITORY: ${{ github.repository }}
+        run: pnpm --filter @caab/worker check:production

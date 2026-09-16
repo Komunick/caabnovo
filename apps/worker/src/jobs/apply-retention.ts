@@ -26,7 +26,12 @@ export function requireApprovedRetentionPolicy(value: unknown): ApprovedRetentio
   return parsed.data;
 }
 
+/** Shared by the runtime and promotion gate: document approval alone cannot enable disposal. */
+export function requireImplementedRetentionControls(): never {
+  throw new Error("Approved retention controls have not been implemented; production is blocked");
+}
+
 export async function applyRetention(untrustedPolicy: unknown): Promise<never> {
   requireApprovedRetentionPolicy(untrustedPolicy);
-  throw new Error("Approved retention controls have not been implemented; production is blocked");
+  return requireImplementedRetentionControls();
 }

@@ -4,6 +4,15 @@ import { describeAuditDetails } from "./audit-details";
 
 // Shared by the filters and summaries. Values in the audit trail never change.
 export const auditActions: Record<string, string> = {
+  "message.saved": "Salvou um registro de mensagens",
+  "message.duplicated": "Duplicou uma campanha",
+  "message.send": "Solicitou envio de uma campanha",
+  "message.schedule": "Programou uma campanha",
+  "message.cancel": "Cancelou uma programação de campanha",
+  "message.archive": "Arquivou um registro de mensagens",
+  "message.restore": "Restaurou um registro de mensagens",
+  "message.preference.updated": "Alterou uma preferência de comunicação",
+  "message.execution.completed": "Concluiu a conferência de uma campanha programada",
   "scheduling.units.created": "Cadastrou uma unidade de atendimento",
   "scheduling.units.updated": "Alterou uma unidade de atendimento",
   "scheduling.services.created": "Cadastrou um serviço de atendimento",
@@ -85,6 +94,8 @@ export const auditActions: Record<string, string> = {
 };
 
 export const auditEntities: Record<string, string> = {
+  message: "Mensagem",
+  messaging_preference: "Preferência de comunicação",
   scheduling_units: "Unidade de atendimento",
   scheduling_services: "Serviço de atendimento",
   scheduling_procedures: "Procedimento",

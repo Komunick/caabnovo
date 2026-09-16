@@ -5,8 +5,9 @@ Status: DRAFT — sem aprovação Jurídico/DPO e sem prazos executáveis.
 ## Regra fail-closed
 
 Nenhum job automático pode anonimizar, excluir ou mover dado pessoal enquanto esta política não tiver
-aprovação nominal, data, versão e prazos por categoria. A promoção para produção verifica a evidência
-de privacidade e falha enquanto o status não for `APPROVED`.
+aprovação nominal, data, versão e prazos por categoria. A promoção para produção valida `retention-approval.json`, a origem do PR e o mesmo
+bloqueio de implementação usado pelo worker. Uma linha `Status: APPROVED` na evidência
+não libera a promoção nem autoriza descarte.
 
 ## Decisões que exigem aprovação
 
@@ -28,3 +29,11 @@ decisão humana auditada; não pode ser inferida por expiração silenciosa.
 A política aprovada será traduzida para configuração versionada validada por schema. O job processará
 lotes pequenos, usará transação e idempotência, produzirá contagens/IDs de correlação e suportará dry
 run. Testes usarão apenas registros sintéticos expirados, não expirados e sob hold.
+
+## Revisão de 16/09/2026
+
+A [inspeção do legado](legacy-retention-review-2026-09-16.md) encontrou exclusão lógica e
+expiração de sessão, mas não política completa de retenção aprovada. O arquivo
+`retention-approval.json` permanece PENDING, sem aprovador ou prazos inventados.
+O runtime e a promoção recusam até uma aprovação estruturalmente válida enquanto os
+controles por categoria não estiverem implementados. Não há job de descarte habilitado.

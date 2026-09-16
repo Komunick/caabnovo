@@ -2,6 +2,8 @@
 param(
   [ValidatePattern('^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')]
   [string]$Repository,
+  [ValidateSet("dev", "main")]
+  [string]$Branch = "dev",
   [switch]$Apply
 )
 
@@ -18,7 +20,7 @@ if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
 function Invoke-GitHubApi([string[]]$Arguments) {
   $response = & gh api @Arguments
   if ($LASTEXITCODE -ne 0) {
-    throw "GitHub API failed (exit $LASTEXITCODE). Stopped; inspect the remote dev ruleset before retrying."
+    throw "GitHub API failed (exit $LASTEXITCODE). Stopped; inspect the remote $Branch ruleset before retrying."
   }
   return ($response -join "`n") | ConvertFrom-Json
 }
@@ -27,8 +29,8 @@ function Invoke-GitHubApi([string[]]$Arguments) {
 $pages = Invoke-GitHubApi @("repos/$Repository/rulesets?includes_parents=false&per_page=100", "--paginate", "--slurp")
 $existingRulesets = @($pages | ForEach-Object { $_ })
 
-# This maintenance entry point is deliberately limited to dev.
-$path = Join-Path $PSScriptRoot "rulesets/dev.json"
+# Explicit branch selection; default remains dev.
+$path = Join-Path $PSScriptRoot "rulesets/$Branch.json"
 $body = Get-Content -LiteralPath $path -Raw -Encoding utf8 | ConvertFrom-Json
 $existing = @($existingRulesets | Where-Object { $_.name -eq $body.name })
 if ($existing.Count -gt 1) {
@@ -46,18 +48,18 @@ if ($existing.Count -eq 1) {
 # Do not overwrite a similarly named rule that also protects another branch.
 foreach ($target in $targets) {
   $include = @($target.conditions.ref_name.include)
-  if ($target.target -ne "branch" -or $include.Count -ne 1 -or $include[0] -ne "refs/heads/dev" -or @($target.conditions.ref_name.exclude).Count -ne 0) {
-    throw "The local and existing rulesets must target only refs/heads/dev without exclusions."
+  if ($target.target -ne "branch" -or $include.Count -ne 1 -or $include[0] -ne "refs/heads/$Branch" -or @($target.conditions.ref_name.exclude).Count -ne 0) {
+    throw "The local and existing rulesets must target only refs/heads/$Branch without exclusions."
   }
 }
 
 $applied = $false
-if ($Apply -and $PSCmdlet.ShouldProcess("$Repository / $($body.name)", "$method dev ruleset")) {
+if ($Apply -and $PSCmdlet.ShouldProcess("$Repository / $($body.name)", "$method $Branch ruleset")) {
   Invoke-GitHubApi @("--method", $method, $endpoint, "--input", $path) | Out-Null
   $applied = $true
 }
 [PSCustomObject]@{
-  Branch = "dev"
+  Branch = $Branch
   Method = $method
   Endpoint = $endpoint
   RequiredChecks = (($body.rules | Where-Object type -eq "required_status_checks").parameters.required_status_checks.context) -join ", "

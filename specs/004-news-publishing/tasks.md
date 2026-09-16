@@ -122,7 +122,7 @@ Contexto e plano de retomada: [standby-origin-fix.md](standby-origin-fix.md).
 - [x] T026 Preparar rascunho local de origem confiável usando BETTER_AUTH_URL nos validadores
       compartilhados e testar gravação por proxy, origens externas, CSRF e idempotência.
 - [ ] T027 Após retomada autorizada, revisão e implantação em DEV, salvar e reabrir rascunho pelo domínio público,
-      confirmando POST 201 e PUT 200 no navegador.
+      confirmando POST 201 e PUT 200 no navegador. Em 16/09, criação/edição/reabertura com imagem confirmadas pela UI; captura dos códigos HTTP ainda não realizada. Ver evidence/readiness-2026-09-16.md.
 
 - [x] T028 Revisar a dev atual, configuração pública, links/storage, e-mail, modo de teste,
       conexões e referências ao repositório; corrigir problemas confirmados e registrar o
@@ -161,3 +161,9 @@ Evidências desta correção: [validação e revisão visual](evidence/withdrawa
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
 - [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.
+
+## Homologação e prontidão — 16/09/2026
+
+- [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
+- [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
+- [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.

@@ -72,6 +72,7 @@ export default async function globalSetup() {
     );
     const userIds = new Map(users.rows.map(({ email, id }) => [email, id]));
     const memberPermissions = [
+      "messages:access",
       "members:read",
       "members:write",
       "members:review",

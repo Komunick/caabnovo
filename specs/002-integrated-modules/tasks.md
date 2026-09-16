@@ -2,10 +2,13 @@
 
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
 Obrigatórios por risco conforme especificação. Todos os módulos no escopo, com PR por função pronta.
-**Status**: US1 integrada pelo PR #11 e Notícias pelo PR #12. Associados (spec 005) possui incremento
-implementado com testes locais, mas ainda não está funcionalmente pronto nem autorizado para PR.
-Regras institucionais e emissão de
-credencial verificável continuam dependências explícitas. US6 ainda não foi implementada.
+**Status em 16/09/2026**: Auditoria/Processamentos, Notícias, Associados, Parceiros,
+contas/acessos e Agendamentos administrativos iniciais estão entregues em dev, incluindo
+as correções dos PRs #29 e #30. Pessoas/elegibilidade institucional (T017) permanece
+parcial, distinta do cadastro implementado. Mensagens, Portal, Relatórios e interface
+app/site permanecem futuros; CAASSH/Créditos suspenso. A validação final de todo o
+programa (T055–T057) depende dessas histórias futuras.
+
 
 Este arquivo acompanha o programa. A execução detalhada de cada funcionalidade ocorre no seu spec
 próprio; [003-audit-operations/tasks.md](../003-audit-operations/tasks.md) é o primeiro. Antes de
@@ -200,6 +203,12 @@ Parceiros são externos; não haverá módulo separado de equipe interna/RH.
 
 ## Phase 9 — US7 Mensagens (P2)
 
+Atualização 16/09/2026: implementação autorizada antes dos canais, no spec próprio
+[009-messaging](../009-messaging/spec.md). T036–T039 cobrem também entrega real e
+permanecem parciais; a preparação é acompanhada em M001–M008. Meios de envio adiados
+expressamente pelo usuário. Qualquer operador com acesso ao módulo pode preparar/solicitar.
+
+
 Objetivo: público correto e entrega rastreável. Teste independente: exclusão, falha/retry e estados.
 
 - [ ] T036 [US7] Definir público/preferências/canais/contratos e política de envio em
@@ -210,8 +219,8 @@ Objetivo: público correto e entrega rastreável. Teste independente: exclusão,
       `apps/web/modules/messaging/messaging-service.test.ts`.
 - [ ] T039 [US7] Implementar serviços/adaptadores/worker em `apps/web/modules/messaging/`,
       `app/api/v1/messages/` e `apps/worker/src/jobs/send-message.ts`.
-- [ ] T040 [US7] Implementar prévia/programação/acompanhamento em `apps/web/app/(admin)/messages/` e
-      validar em `apps/web/tests/e2e/messages.spec.ts`.
+- [x] T040 [US7] Implementar prévia/programação/acompanhamento em `apps/web/app/(admin)/messages/` e
+      validar em `apps/web/tests/e2e/messaging.spec.ts`.
 
 ## Phase 10 — US8 Créditos (P2)
 
@@ -313,3 +322,9 @@ independentes.
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+## Homologação e prontidão — 16/09/2026
+
+- [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
+- [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
+- [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.

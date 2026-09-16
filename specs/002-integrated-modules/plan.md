@@ -188,3 +188,14 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+## Plano da homologação — 16/09/2026
+
+1. Conferir DEV, permissões GitHub, configuração versionada e entradas institucionais.
+2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
+3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
+4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.
+
+## Execução de US7 — 16/09/2026
+
+Preparação de Mensagens concluída no [plano 009](../009-messaging/plan.md), no mesmo ciclo/PR ativo. Adapters e entrega real foram adiados expressamente; não bloqueiam campanhas, modelos, públicos e programação preparatória. Reutiliza associados, RBAC, auditoria, worker e shell.

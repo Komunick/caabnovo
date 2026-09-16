@@ -26,7 +26,9 @@ export async function findAuditTargetNames(
   targets: { entityType: string; entityId: string }[],
 ) {
   const supported = targets.filter((target) =>
-    ["member", "partner", "news", "stored_file"].includes(target.entityType),
+    ["member", "partner", "news", "message", "messaging_preference", "stored_file"].includes(
+      target.entityType,
+    ),
   );
   if (!supported.length) return new Map<string, string>();
   const result = await pool.query<{ type: string; id: string; name: string }>(
@@ -44,6 +46,12 @@ export async function findAuditTargetNames(
      UNION ALL
      SELECT t.type,p.id,p.profile->>'name' FROM targets t JOIN partner p ON t.type='partner' AND t.id=p.id
        WHERE EXISTS (SELECT 1 FROM grants WHERE permission='partners:read')
+     UNION ALL
+     SELECT t.type,r.id,r.data->>'name' FROM targets t JOIN messaging_resource r ON t.type='message' AND t.id=r.id
+       WHERE EXISTS (SELECT 1 FROM grants WHERE permission='messages:access')
+     UNION ALL
+     SELECT t.type,m.id,m.name FROM targets t JOIN member m ON t.type='messaging_preference' AND t.id=m.id
+       WHERE EXISTS (SELECT 1 FROM grants WHERE permission='messages:access')
      UNION ALL
      SELECT t.type,n.id,n.metadata_title FROM targets t JOIN news n ON t.type='news' AND t.id=n.id
        WHERE EXISTS (SELECT 1 FROM grants WHERE permission='news:read')

@@ -1,4 +1,5 @@
 export const PERMISSIONS = {
+  messagesAccess: "messages:access",
   partnersRead: "partners:read",
   partnersWrite: "partners:write",
   partnersPublish: "partners:publish",

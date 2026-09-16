@@ -370,7 +370,7 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - [x] Adotar Colaboradores para a gestão de contas existente e remover proposta de RH.
 - [x] Conferir visualmente desktop/390 px, teclado e temas claro/escuro.
 - [x] Abrir [PR #16](https://github.com/Komunick/caabnovo/pull/16), dependente de Associados #15.
-- [ ] Registrar resultado final dos gates isolados de CI.
+- [x] Conciliar o registro histórico: PR #16 integrado; validação atual consolidada em [evidence/readiness-2026-09-16.md](evidence/readiness-2026-09-16.md).
 
 ## Seleção individual de acessos e ajustes da marca — 11/09/2026
 
@@ -381,7 +381,7 @@ Only a human maintainer applies T095 and later merges `dev` into `main`.
 - [x] Validar contrato, rota, revogação, concorrência, rollback de auditoria e último administrador em banco descartável.
 - [x] Corrigir cores do login e centralizar Gestão Interna abaixo da logo, preservando a imagem original.
 - [x] Concluir inspeção do painel autenticado nos dois temas.
-- [ ] Atualizar o PR #16 e registrar resultados finais do CI do navegador.
+- [x] Conciliar a entrega do PR #16 já integrado, sem reabrir a branch; CI posterior do painel documentado em [evidence/readiness-2026-09-16.md](evidence/readiness-2026-09-16.md).
 
 ## Campos comuns — revisão de 11/09/2026
 
@@ -457,10 +457,20 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 
 - [x] TH01 Diagnosticar browser/push do PR #28 e registrar pesquisa e critérios de aceite.
 - [x] TH02 Corrigir transições do menu/busca e ampliar a regressão por quadros.
-- [ ] TH03 Validar qualidade, segurança, build, E2E e acessibilidade no CI e registrar evidências em evidence/theme-contrast-2026-09-16.md.
+- [x] TH03 Conciliar validação de contraste já integrada: CI do PR #30 aprovado, incluindo navegador/acessibilidade; ver [evidence/readiness-2026-09-16.md](evidence/readiness-2026-09-16.md). Não reaplicar documentos da branch histórica.
 
 
 ## Navegação sem perda de edição — 16/09/2026
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
 - [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.
+
+## Homologação e prontidão — 16/09/2026
+
+- [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
+- [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
+- [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.
+
+## Integração de Mensagens — 16/09/2026
+
+- [x] MG01 Registrar a área autorizada, atalhos e cabeçalho conforme spec 009; conferir as capturas de navegador no mesmo ciclo.

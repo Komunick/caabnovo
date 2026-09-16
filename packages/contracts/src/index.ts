@@ -20,3 +20,5 @@ export * from "./oab-lookup";
 export * from "./user-access";
 export * from "./partners";
 export * from "./partner-directory";
+
+export * from "./messaging";

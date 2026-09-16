@@ -210,3 +210,11 @@ Proteções remotas e homologação mantêm seus limites explícitos no relatór
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
 - [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.
+
+## Homologação e prontidão — 16/09/2026
+
+- [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
+- [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
+- [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.
+
+Consulta individual autorizada em 16/09 no DEV retornou OAB_NOT_CONFIGURED; T028 permanece aberta. Sem resultado pessoal armazenado em evidência. Ver evidence/readiness-2026-09-16.md.

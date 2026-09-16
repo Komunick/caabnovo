@@ -1,6 +1,7 @@
 import type { AccessPermission } from "@caab/contracts";
 
 export const accessGroups: { name: string; actions: [AccessPermission, string][] }[] = [
+  { name: "Mensagens", actions: [["messages:access", "Acessar, preparar e solicitar envios"]] },
   {
     name: "Parceiros",
     actions: [

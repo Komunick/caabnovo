@@ -1,5 +1,6 @@
 import {
   CalendarDays,
+  MessageSquare,
   ContactRound,
   FileClock,
   House,
@@ -44,6 +45,17 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       paths: ["/scheduling"],
     },
   ];
+  if (allowed.has(PERMISSIONS.messagesAccess)) {
+    areas.push({
+      id: "messages",
+      href: "/messages",
+      label: "Mensagens",
+      description: "Campanhas, públicos e comunicações.",
+      keywords: "mensagem campanha comunicação público modelo envio",
+      icon: MessageSquare,
+      paths: ["/messages"],
+    });
+  }
   if (allowed.has(PERMISSIONS.newsRead)) {
     areas.push({
       id: "news",

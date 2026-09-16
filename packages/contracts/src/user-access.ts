@@ -2,6 +2,7 @@ import { z } from "zod";
 import { nonEmptyReasonSchema } from "./common";
 
 export const accessPermissionSchema = z.enum([
+  "messages:access",
   "partners:read",
   "partners:write",
   "partners:publish",
