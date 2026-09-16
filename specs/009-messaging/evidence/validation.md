@@ -1,3 +1,25 @@
+## Correção final aprovada — 16/09/2026
+
+Código 2f157cb: [CI completo aprovado](https://github.com/Komunick/caabnovo/actions/runs/35144150881),
+344 unitários, 115 contratos, 201 integrações, 78 E2E e 6 verificações separadas de
+acessibilidade. Qualidade, build e segurança aprovados. M011–M014 concluídos.
+Testes com 100 cadastros sintéticos conforme instrução do usuário; sem benchmark
+ou seed de 40 mil. Público contado integralmente no banco e sem teto de seleção.
+
+Capturas revisadas após o ajuste de legibilidade dos agendamentos no celular:
+
+- [Filtros em 390px, tema claro](messages-segmentation-mobile-light.png).
+- [Agendamentos em 390px, tema escuro](messages-schedules-mobile-dark.png).
+- [Agendamentos e ordem dos módulos em desktop](messages-schedules-desktop.png).
+
+A lista móvel preserva cabeçalhos/semântica, mostra campos em blocos legíveis e
+mantém Reagendar/Cancelar acessíveis sem overflow horizontal. A jornada valida
+largura útil, acessibilidade, data preservada no primeiro salvamento e histórico
+após reagendamento/cancelamento. Commit documental posterior acrescenta estas
+capturas e encerra as tarefas; checks correspondentes acompanham o PR.
+
+---
+
 ## Correção de públicos e agendamentos — 16/09/2026
 
 Na branch feature/messaging-audiences-20260916, commit 8c17bfd, a validação remota

@@ -1,6 +1,6 @@
 # Mensagens — preparação e acompanhamento
 
-**Data:** 16/09/2026. **Estado:** preparação implementada e validada; meios de envio adiados. Responsável funcional: US7 do plano integrado.
+**Data:** 16/09/2026. **Estado:** preparação, segmentação e agendamentos implementados e validados; meios de envio adiados. Responsável funcional: US7 do plano integrado.
 
 ## Escopo e decisão do usuário
 

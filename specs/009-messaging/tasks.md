@@ -14,11 +14,11 @@
 - [ ] M009 Definir meios/provedores, finalidade/consentimento, limites, conteúdo por canal, credenciais e homologação real.
 - [ ] M010 Implementar entrega por destinatário/canal e callbacks autenticados com deduplicação e métricas comprovadas.
 
-Evidências e execuções de CI: [validation.md](evidence/validation.md). Entrega anterior revisada pelo usuário; segmentação e agendamentos reabertos; M009/M010 são a próxima etapa expressamente adiada pelo usuário.
+Evidências e execuções de CI: [validation.md](evidence/validation.md). Entrega anterior revisada pelo usuário; segmentação e agendamentos completados e validados; M009/M010 são a próxima etapa expressamente adiada pelo usuário.
 
-## Correção solicitada — escopo reaberto
+## Correção solicitada — concluída
 
-- [x] M011 Cadastro e filtros por categoria, gênero, vínculo, cidade, idade, UF e situação ativa.
+- [x] M011 Cadastro e filtros por categoria, gênero, vínculo, cidade, idade, UF e situação Ativa/Inativa.
 - [x] M012 Remover teto de seleção e provar contagem integral com 100 registros sintéticos, com payload e UI controlados.
 - [x] M013 Aba Agendamentos, criação visível, cancelamento e reagendamento auditado.
-- [ ] M014 Testes de contrato/integração/navegador, evidências e CI completo.
+- [x] M014 Testes de contrato/integração/navegador, evidências e CI completo.
