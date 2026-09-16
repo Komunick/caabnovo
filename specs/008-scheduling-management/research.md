@@ -100,3 +100,11 @@ não demonstra esse esgotamento. Nenhum SDK, serviço ou integração está plan
 Pesquisa sustenta o desenho proposto, não comprova desempenho nem entrega. A estrutura
 é tecnicamente planejada usando a base atual; código, migrations, testes e homologação
 estão em validação; resultados reais ficam em evidence/. Políticas da etapa 2 serão fechadas antes de cada incremento.
+
+## Padrão visual e ações de inclusão — 16/09/2026
+
+Referência principal: páginas existentes de Parceiros/Associados e componentes compartilhados do próprio projeto. O catálogo atual escondia cinco cadastros em um select genérico e a navegação usava links avulsos. A agenda não tinha a ação de inclusão no cabeçalho padronizado.
+
+Fontes oficiais: [GOV.UK Button](https://design-system.service.gov.uk/components/button/) orienta texto que descreva a ação e hierarquia clara entre ações; [W3C, rótulos de controles](https://www.w3.org/WAI/tutorials/forms/labels/) fundamenta associação explícita entre rótulo e campo. Guias de CSS/Link do Next instalado consultados na dependência da principal (mesmo lockfile da nova worktree).
+
+Decisão: aplicar componentes e tokens já usados no projeto, não a aparência externa dessas referências. Uma inclusão principal por área, abas com destino identificado, tabelas/busca existentes, contexto na URL e controles rotulados. Avaliação por jornada real de inclusão, capturas e axe; referências não substituem a revisão visual nem autorizam ampliar o produto.

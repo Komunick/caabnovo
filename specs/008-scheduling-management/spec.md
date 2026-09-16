@@ -151,3 +151,13 @@ Hipóteses de recorte para revisão, sem fingir que todas vieram do usuário:
   filas, turmas/recorrência não comprovadas e distribuição automática.
 - Cal.com somente referência; integrar apenas se nenhuma outra possibilidade existir.
 
+
+## Revisão de UI/UX e inclusão — 16/09/2026
+
+Pedido do usuário após PR28: padronizar todas as telas de Agendamentos com as demais páginas e tornar as inclusões encontráveis. Nova branch fix/scheduling-ui-20260916.
+
+- UI-F01 Reutilizar page-header, Button/buttonVariants (inclusão size=add com Plus), ModuleNavigation, SearchField/FilterToggle, Table/TableContainer e tokens existentes, tomando Parceiros/Associados como referência. Nenhuma identidade visual nova.
+- UI-F02 Mostrar Nova reserva no cabeçalho da agenda. Expor Unidades, Serviços, Procedimentos, Profissionais, Habilitações e Horários em abas identificadas, com ação específica de inclusão em cada cadastro, disponível mesmo sem resultados.
+- UI-F03 Abas e filtros devem manter contexto na URL/recarga. Formulários de cadastro identificam a ação e oferecem salvar/cancelar, com foco de entrada e retorno. Não perder dados após erro de envio.
+- UI-F04 Reduzir ruído dos filtros e seletores; usar listagens tabulares, estados vazios orientados à ação e formulário de reserva organizado por beneficiário, atendimento e horário.
+- UI-F05 Validar inclusão de todos os tipos, edição, reserva/remarcação/cancelamento, teclado, 390px/desktop, temas e contraste transitório. Preservar contratos, permissões e integridade atuais; não criar novas funções do roadmap.

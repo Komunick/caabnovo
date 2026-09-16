@@ -3,7 +3,9 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SchedulingBooking, SchedulingPage } from "@caab/contracts";
-import { Button } from "@/components/ui/button";
+import { Table, TableContainer } from "@/components/ui/table";
+import { SearchField, FilterToggle } from "@/components/ui/search-controls";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { schedulingDate } from "../availability";
 import {
@@ -30,40 +32,73 @@ export function SchedulingAgenda() {
   return (
     <SchedulingShell
       title="Agenda diária"
-      description="Consulte os atendimentos por dia e acompanhe cada reserva. Horário de Salvador (America/Bahia)."
+      description="Consulte os atendimentos, crie reservas e acompanhe a agenda do dia."
     >
-      <AgendaFilters key={query.toString()} initial={new URLSearchParams(query)} date={date} />
       <section className="panel">
-        <h2>Reservas do dia</h2>
+        <h2>Encontrar reserva</h2>
+        <AgendaFilters key={query.toString()} initial={new URLSearchParams(query)} date={date} />
         {result.data ? (
           <>
-            <ul className="scheduling-list">
-              {result.data.items.map((booking) => (
-                <li key={booking.id}>
-                  <div>
-                    <strong>
-                      {timeLabel(booking.startsAt)} às {timeLabel(booking.endsAt)} ·{" "}
-                      {booking.memberName}
-                    </strong>
-                    <p>
-                      {booking.serviceName} · {booking.procedureName} · {booking.professionalName}
-                    </p>
-                    <p>
-                      {booking.unitName} ·{" "}
-                      {booking.status === "scheduled" ? "Agendado" : "Cancelado"}
-                    </p>
-                  </div>
-                  <Link href={`/scheduling/${booking.id}`}>
-                    Ver reserva
-                    <span className="sr-only">
-                      {" "}
-                      de {booking.memberName} às {timeLabel(booking.startsAt)}
-                    </span>
+            {result.data.items.length ? (
+              <TableContainer aria-label="Reservas do dia">
+                <Table className="scheduling-table" caption="Reservas por horário e beneficiário">
+                  <thead>
+                    <tr>
+                      <th scope="col">Horário</th>
+                      <th scope="col">Beneficiário</th>
+                      <th scope="col">Atendimento</th>
+                      <th scope="col">Situação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.data.items.map((booking) => (
+                      <tr key={booking.id} className="linked-table-row">
+                        <td className="scheduling-time">
+                          {timeLabel(booking.startsAt)} às {timeLabel(booking.endsAt)}
+                        </td>
+                        <td>
+                          <Link
+                            className="linked-table-row__link"
+                            aria-label={`Ver reserva de ${booking.memberName} às ${timeLabel(booking.startsAt)}`}
+                            href={`/scheduling/${booking.id}`}
+                          >
+                            {booking.memberName}
+                          </Link>
+                        </td>
+                        <td>
+                          <strong>{booking.procedureName}</strong>
+                          <span className="scheduling-muted">{booking.professionalName}</span>
+                          <span className="scheduling-muted">
+                            {booking.unitName} · {booking.serviceName}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="status-badge">
+                            {booking.status === "scheduled" ? "Agendado" : "Cancelado"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <div className="scheduling-empty">
+                <h3>Nenhuma reserva encontrada para esses filtros.</h3>
+                <p>
+                  Escolha outra data ou crie uma reserva. Para começar a configurar os atendimentos,
+                  acesse Unidades.
+                </p>
+                <div className="scheduling-actions">
+                  <Link className={buttonVariants()} href="/scheduling/new">
+                    Criar reserva
                   </Link>
-                </li>
-              ))}
-            </ul>
-            {!result.data.total && <p>Nenhuma reserva encontrada para esses filtros.</p>}
+                  <Link className={buttonVariants()} href="/scheduling/catalog?kind=units">
+                    Configurar atendimentos
+                  </Link>
+                </div>
+              </div>
+            )}
             <Pagination {...result.data} onPage={changePage} />
           </>
         ) : (
@@ -76,6 +111,9 @@ export function SchedulingAgenda() {
 function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: string }) {
   const router = useRouter();
   const [unitId, setUnitId] = useState(initial.get("unitId") ?? "");
+  const [expanded, setExpanded] = useState(
+    !!(initial.get("unitId") || initial.get("professionalId") || initial.get("status")),
+  );
   const [professionalId, setProfessionalId] = useState(initial.get("professionalId") ?? "");
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -90,34 +128,51 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
     router.push(`/scheduling?${next}`);
   }
   return (
-    <form className="panel page-stack" onSubmit={submit}>
-      <div className="scheduling-grid">
+    <form
+      role="search"
+      aria-label="Filtros de reservas"
+      className="scheduling-filters"
+      onSubmit={submit}
+    >
+      <div className="filter-toolbar">
         <FormField id="agenda-date" label="Data">
           <input name="date" type="date" required defaultValue={date} />
         </FormField>
-        <FormField id="agenda-person" label="Nome do beneficiário">
-          <input name="q" type="search" maxLength={160} defaultValue={initial.get("q") ?? ""} />
-        </FormField>
-        <FormField id="agenda-status" label="Estado">
-          <select name="status" defaultValue={initial.get("status") ?? ""}>
-            <option value="">Todos</option>
-            <option value="scheduled">Agendado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-        </FormField>
-        <Choice label="Unidade" resource="units" value={unitId} onChange={setUnitId} />
-        <Choice
-          label="Profissional"
-          resource="professionals"
-          value={professionalId}
-          onChange={setProfessionalId}
+        <SearchField
+          id="agenda-person"
+          label="Nome do beneficiário"
+          name="q"
+          maxLength={160}
+          defaultValue={initial.get("q") ?? ""}
         />
+        <FilterToggle
+          expanded={expanded}
+          controls="agenda-extra-filters"
+          count={[unitId, professionalId, initial.get("status")].filter(Boolean).length}
+          onClick={() => setExpanded(!expanded)}
+        />
+        <Button type="submit">Aplicar filtros</Button>
+        <Link className={buttonVariants({ size: "compact" })} href="/scheduling">
+          Limpar filtros
+        </Link>
       </div>
-      <div className="scheduling-actions">
-        <Button intent="primary" type="submit">
-          Aplicar filtros
-        </Button>
-        <Link href="/scheduling">Limpar filtros</Link>
+      <div id="agenda-extra-filters" hidden={!expanded}>
+        <div className="scheduling-grid">
+          <FormField id="agenda-status" label="Estado">
+            <select name="status" defaultValue={initial.get("status") ?? ""}>
+              <option value="">Todos</option>
+              <option value="scheduled">Agendado</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+          </FormField>
+          <Choice label="Unidade" resource="units" value={unitId} onChange={setUnitId} />
+          <Choice
+            label="Profissional"
+            resource="professionals"
+            value={professionalId}
+            onChange={setProfessionalId}
+          />
+        </div>
       </div>
     </form>
   );

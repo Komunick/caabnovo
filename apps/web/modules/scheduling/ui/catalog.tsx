@@ -1,5 +1,10 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Plus, ArrowLeft, Pencil } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SearchField } from "@/components/ui/search-controls";
+import { Table, TableContainer } from "@/components/ui/table";
+import { catalogLabels } from "./catalog-labels";
 import {
   schedulingKinds,
   brazilianPhoneSchema,
@@ -21,13 +26,6 @@ import {
   useSchedulingMutation,
 } from "./shared";
 
-const labels: Record<SchedulingKind, string> = {
-  units: "Unidades",
-  services: "Serviços",
-  procedures: "Procedimentos",
-  professionals: "Profissionais",
-  assignments: "Habilitações",
-};
 function CatalogForm({
   kind,
   item,
@@ -44,6 +42,10 @@ function CatalogForm({
   const [procedureId, setProcedureId] = useState(item?.procedureId ?? "");
   const [professionalId, setProfessionalId] = useState(item?.professionalId ?? "");
   const mutation = useSchedulingMutation();
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    formRef.current?.querySelector<HTMLInputElement>("input:not([disabled])")?.focus();
+  }, []);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -79,10 +81,8 @@ function CatalogForm({
   }
   return (
     <section className="panel">
-      <h2>
-        {item ? "Editar registro" : "Novo registro"} · {labels[kind]}
-      </h2>
-      <form onSubmit={submit} className="page-stack">
+      <h2>Dados do cadastro</h2>
+      <form ref={formRef} onSubmit={submit} className="scheduling-form">
         <fieldset disabled={mutation.pending} className="scheduling-fields">
           {kind !== "assignments" && (
             <FormField id="catalog-name" label="Nome">
@@ -207,109 +207,174 @@ function CatalogForm({
   );
 }
 export function SchedulingCatalog() {
-  const [kind, setKind] = useState<SchedulingKind>("units");
-  const [page, setPage] = useState(1);
-  const [q, setQ] = useState("");
+  const query = useSearchParams();
+  const selected = query.get("kind") as SchedulingKind;
+  const kind = schedulingKinds.includes(selected) ? selected : "units";
+  return <CatalogPage key={kind} kind={kind} />;
+}
+function CatalogPage({ kind }: { kind: SchedulingKind }) {
+  const router = useRouter();
+  const query = useSearchParams();
+  const page = Math.max(1, Number(query.get("page")) || 1);
+  const q = query.get("q") ?? "";
   const [editing, setEditing] = useState<SchedulingCatalogItem | "new" | null>(null);
   const [notice, setNotice] = useState("");
+  const addRef = useRef<HTMLButtonElement>(null);
   const result = useSchedulingData<SchedulingPage<SchedulingCatalogItem>>(
     `${kind}?page=${page}&q=${encodeURIComponent(q)}`,
   );
+  const label = catalogLabels[kind];
+  function navigate(nextPage: number, search = q) {
+    router.push(
+      `/scheduling/catalog?${new URLSearchParams({ kind, page: String(nextPage), q: search })}`,
+      { scroll: false },
+    );
+  }
+  function close() {
+    setEditing(null);
+    requestAnimationFrame(() => addRef.current?.focus());
+  }
   return (
     <SchedulingShell
-      title="Oferta de atendimento"
-      description="Cadastre unidades, serviços, procedimentos e profissionais. Depois habilite cada profissional e configure os horários."
+      title={editing ? (editing === "new" ? label.add : label.edit) : label.title}
+      description={label.description}
+      action={
+        editing ? (
+          <Button onClick={close}>
+            <ArrowLeft aria-hidden="true" size={18} /> Voltar para{" "}
+            {label.title.toLocaleLowerCase("pt-BR")}
+          </Button>
+        ) : (
+          <Button
+            ref={addRef}
+            intent="primary"
+            size="add"
+            onClick={() => {
+              setEditing("new");
+              setNotice("");
+            }}
+          >
+            <Plus aria-hidden="true" /> {label.add}
+          </Button>
+        )
+      }
     >
-      <section className="panel">
-        <div className="scheduling-grid">
-          <FormField id="catalog-kind" label="Cadastro">
-            <select
-              value={kind}
-              onChange={(event) => {
-                setKind(event.target.value as SchedulingKind);
-                setPage(1);
-                setQ("");
-                setEditing(null);
-                setNotice("");
-              }}
-            >
-              {schedulingKinds.map((key) => (
-                <option key={key} value={key}>
-                  {labels[key]}
-                </option>
-              ))}
-            </select>
-          </FormField>
-          <FormField id="catalog-search" label="Buscar registros">
-            <input
-              type="search"
-              value={q}
-              onChange={(event) => {
-                setQ(event.target.value);
-                setPage(1);
-              }}
-            />
-          </FormField>
-        </div>
-        <Button
-          intent="primary"
-          onClick={() => {
-            setEditing("new");
-            setNotice("");
-          }}
-        >
-          Novo registro
-        </Button>
-      </section>
-      {notice && <p role="status">{notice}</p>}
-      {editing && (
+      {notice && (
+        <p className="scheduling-notice" role="status">
+          {notice}
+        </p>
+      )}
+      {editing ? (
         <CatalogForm
           key={`${kind}-${typeof editing === "string" ? editing : editing.id}`}
           kind={kind}
           item={editing === "new" ? undefined : editing}
-          onClose={() => setEditing(null)}
+          onClose={close}
           onSaved={() => {
-            setEditing(null);
+            close();
             result.reload();
             setNotice("Registro salvo.");
           }}
         />
-      )}
-      <section className="panel">
-        <h2>{labels[kind]}</h2>
-        {result.data ? (
-          <>
-            <ul className="scheduling-list">
-              {result.data.items.map((item) => (
-                <li key={item.id}>
-                  <div>
-                    <strong>{item.name}</strong>
-                    {item.unitName && (
-                      <p>
-                        {item.unitName}
-                        {item.serviceName ? ` · ${item.serviceName}` : ""}
-                      </p>
-                    )}
-                    <p>
-                      {item.active ? "Ativo" : "Inativo"}
-                      {item.durationMinutes ? ` · ${item.durationMinutes} min` : ""}
-                    </p>
-                  </div>
-                  <Button aria-label={`Editar ${item.name}`} onClick={() => setEditing(item)}>
-                    Editar
+      ) : (
+        <section className="panel">
+          <h2>Encontrar {label.title.toLocaleLowerCase("pt-BR")}</h2>
+          <form
+            role="search"
+            aria-label={`Buscar ${label.title.toLocaleLowerCase("pt-BR")}`}
+            onSubmit={(event) => {
+              event.preventDefault();
+              navigate(1, String(new FormData(event.currentTarget).get("q") ?? ""));
+            }}
+          >
+            <div className="filter-toolbar">
+              <SearchField
+                key={q}
+                id="catalog-search"
+                label="Buscar registros"
+                name="q"
+                maxLength={160}
+                defaultValue={q}
+              />
+              <Button onClick={() => navigate(1, "")}>Limpar filtros</Button>
+            </div>
+          </form>
+          {result.data ? (
+            <>
+              {result.data.items.length ? (
+                <TableContainer aria-label={`Lista de ${label.title.toLocaleLowerCase("pt-BR")}`}>
+                  <Table className="scheduling-table" caption={`${label.title} de atendimento`}>
+                    <thead>
+                      <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">
+                          {kind === "procedures" ? "Serviço e duração" : "Unidade e serviço"}
+                        </th>
+                        <th scope="col">Situação</th>
+                        <th scope="col">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.data.items.map((item) => (
+                        <tr key={item.id}>
+                          <td>
+                            <strong>{item.name}</strong>
+                          </td>
+                          <td>
+                            {[
+                              item.unitName,
+                              item.serviceName,
+                              item.durationMinutes ? `${item.durationMinutes} min` : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" · ") || "—"}
+                          </td>
+                          <td>
+                            <span className="status-badge">
+                              {item.active ? "Ativo" : "Inativo"}
+                            </span>
+                          </td>
+                          <td>
+                            <Button
+                              size="compact"
+                              aria-label={`Editar ${item.name}`}
+                              onClick={() => {
+                                setEditing(item);
+                                setNotice("");
+                              }}
+                            >
+                              <Pencil size={16} aria-hidden="true" /> Editar
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </TableContainer>
+              ) : (
+                <div className="scheduling-empty">
+                  <p>
+                    {q
+                      ? "Nenhum registro encontrado para essa busca."
+                      : `Nenhum cadastro em ${label.title.toLocaleLowerCase("pt-BR")} ainda.`}
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setEditing("new");
+                      setNotice("");
+                    }}
+                  >
+                    <Plus size={18} aria-hidden="true" /> {label.add}
                   </Button>
-                </li>
-              ))}
-            </ul>
-            {!result.data.total && (
-              <p>Nenhum registro encontrado. Use “Novo registro” para começar.</p>
-            )}
-            <Pagination {...result.data} onPage={setPage} />
-          </>
-        ) : (
-          <DataState error={result.error} reload={result.reload} />
-        )}
-      </section>
+                </div>
+              )}
+              <Pagination {...result.data} onPage={navigate} />
+            </>
+          ) : (
+            <DataState error={result.error} reload={result.reload} />
+          )}
+        </section>
+      )}
     </SchedulingShell>
   );
 }

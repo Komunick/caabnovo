@@ -1,9 +1,13 @@
 "use client";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import type { SchedulingPage } from "@caab/contracts";
-import { Button } from "@/components/ui/button";
+import { schedulingKinds, type SchedulingPage, type SchedulingKind } from "@caab/contracts";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ModuleNavigation } from "@/components/ui/module-navigation";
 import { FormField } from "@/components/ui/form-field";
+import { catalogLabels } from "./catalog-labels";
 
 const messages: Record<string, string> = {
   SCHEDULING_CONFLICT: "Essa vaga não está mais disponível. Escolha outro horário.",
@@ -105,25 +109,54 @@ export function useSchedulingMutation() {
 export function SchedulingShell({
   title,
   description,
+  action,
   children,
 }: {
   title: string;
   description: string;
+  action?: ReactNode;
   children: ReactNode;
 }) {
+  const pathname = usePathname();
+  const query = useSearchParams();
+  const selectedKind = query.get("kind") as SchedulingKind;
+  const kind = schedulingKinds.includes(selectedKind) ? selectedKind : "units";
   return (
     <div className="page-stack scheduling-workspace">
-      <header>
+      <header className="page-header">
         <p className="eyebrow">Agendamentos</p>
         <h1>{title}</h1>
         <p>{description}</p>
+        {action ??
+          (pathname !== "/scheduling/new" && (
+            <Link
+              href="/scheduling/new"
+              className={buttonVariants({ intent: "primary", size: "add" })}
+            >
+              <Plus aria-hidden="true" /> Nova reserva
+            </Link>
+          ))}
       </header>
-      <nav className="scheduling-actions" aria-label="Agendamentos">
-        <Link href="/scheduling">Agenda diária</Link>
-        <Link href="/scheduling/new">Nova reserva</Link>
-        <Link href="/scheduling/catalog">Oferta</Link>
-        <Link href="/scheduling/hours">Horários</Link>
-      </nav>
+      <ModuleNavigation
+        label="Agendamentos"
+        items={[
+          {
+            href: "/scheduling",
+            label: "Agenda diária",
+            active: !pathname.includes("/catalog") && !pathname.includes("/hours"),
+          },
+          ...schedulingKinds.map((item) => ({
+            href: `/scheduling/catalog?kind=${item}`,
+            label: catalogLabels[item].title,
+            active: pathname === "/scheduling/catalog" && kind === item,
+          })),
+          {
+            href: "/scheduling/hours",
+            label: "Horários",
+            active: pathname === "/scheduling/hours",
+          },
+        ]}
+      />
       {children}
     </div>
   );
@@ -150,17 +183,17 @@ export function Pagination({
   onPage(page: number): void;
 }) {
   return (
-    <div className="scheduling-actions">
+    <nav className="pagination scheduling-pagination" aria-label="Paginação de registros">
       <span role="status">
         {total} registro(s) · Página {page} de {Math.max(1, Math.ceil(total / pageSize))}
       </span>
       <Button disabled={page <= 1} onClick={() => onPage(page - 1)}>
-        Anterior
+        <ChevronLeft aria-hidden="true" size={18} /> Anterior
       </Button>
       <Button disabled={page * pageSize >= total} onClick={() => onPage(page + 1)}>
-        Próxima
+        Próxima <ChevronRight aria-hidden="true" size={18} />
       </Button>
-    </div>
+    </nav>
   );
 }
 export function Choice({
@@ -198,9 +231,14 @@ export function Choice({
   return (
     <fieldset className="scheduling-choice" disabled={disabled}>
       <legend>{label}</legend>
-      <FormField id={`${id}-search`} label={`Buscar ${label.toLocaleLowerCase("pt-BR")}`}>
+      <FormField
+        id={`${id}-search`}
+        label={`Buscar ${label.toLocaleLowerCase("pt-BR")}`}
+        className="scheduling-choice-search"
+      >
         <input
           type="search"
+          placeholder="Digite para filtrar as opções"
           maxLength={160}
           value={q}
           onChange={(event) => {

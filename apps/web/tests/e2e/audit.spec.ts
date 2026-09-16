@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { expectWcag22AA } from "./accessibility";
 import { expect, syntheticUsers, test } from "./fixtures";
 
@@ -119,6 +120,7 @@ test("administrator reads complete human details with support codes collapsed on
   await page.keyboard.press("Enter");
   const panel = page.getByRole("dialog", { name: "Detalhes da atividade" });
   await expect(panel).toBeVisible();
+  await expectDialogAboveHeader(page, "backdrop");
   await expect(panel.getByText("Antes", { exact: true }).first()).toBeVisible();
   await expect(panel.getByText("Depois", { exact: true }).first()).toBeVisible();
   await expect(panel.getByText("Inativo", { exact: true })).toBeVisible();
@@ -143,6 +145,7 @@ test("administrator reads complete human details with support codes collapsed on
     fullPage: true,
   });
   await details.click();
+  await expectDialogAboveHeader(page, "dialog");
   await expect(panel.getByText("user.updated", { exact: true })).toBeHidden();
   await expectWcag22AA(page);
   expect(await panel.evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThan(
@@ -180,3 +183,23 @@ test("auditor cannot inspect processing data through the consolidated routes", a
   ).toBeVisible();
   expect((await page.request.get(`/api/v1/jobs/${jobId}`)).status()).toBe(403);
 });
+
+async function expectDialogAboveHeader(page: Page, expectedLayer: string) {
+  const layer = await page.locator(".admin-topbar").evaluate((header) => {
+    const previous = header.style.pointerEvents;
+    // Enable hit testing briefly so an incorrectly painted, inert header cannot hide the regression.
+    header.style.pointerEvents = "auto";
+    try {
+      const bounds = header.getBoundingClientRect();
+      const top = document.elementFromPoint(bounds.left + 8, bounds.top + 8);
+      return top?.closest(".dialog-card")
+        ? "dialog"
+        : top?.closest(".dialog-backdrop")
+          ? "backdrop"
+          : "header";
+    } finally {
+      header.style.pointerEvents = previous;
+    }
+  });
+  expect(layer).toBe(expectedLayer);
+}

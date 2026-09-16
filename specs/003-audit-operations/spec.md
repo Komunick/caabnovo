@@ -131,3 +131,7 @@ do campo Estado de Parceiros. Opções mostram somente português; códigos fica
 Aceitar rótulos completos sem distinguir acentos/maiúsculas, impedir aplicação de texto sem
 correspondência e permitir limpar o campo. Busca por pessoa também permite digitação e seleção,
 com paginação no servidor e autorização própria.
+
+## Sobreposição dos detalhes — 16/09/2026
+
+AD-F01 Ao abrir um log, todo o shell, inclusive Portal Administrativo/Auditoria e navegação móvel, deve ficar atrás do fundo escurecido. O painel de detalhes permanece acima desse fundo, com foco contido e retorno ao acionador ao fechar. Validar desktop/celular, claro/escuro e posição de pintura real no cabeçalho.

@@ -126,3 +126,15 @@ segurança e revisão humana conforme DELIVERY-WORKFLOW. Executar no CI quando h
 código; não reativar localhost/banco sem pedido. Resultados em evidence/;
 tarefas atualizadas conforme implementação e validação.
 
+
+## Revisão autorizada de UI/UX — 16/09/2026
+
+Branch fix/scheduling-ui-20260916, criada de dev96ea6f6 após PR28 integrado. Worktree .cache/pr-scheduling-ui-20260916. Este ciclo substitui a indicação de branch ativa no cabeçalho histórico.
+
+1. Comparar UI atual com Parceiros/Associados e reutilizar componentes/layout existentes; registrar orientação permanente no AGENTS local.
+2. Cabeçalho com inclusão e abas por cadastro; catálogo com kind na URL, busca e tabela; formulários com título específico, salvar/cancelar e foco acessível.
+3. Agenda com busca/data e filtros adicionais recolhíveis; tabela com link de reserva, vazio com ação. Melhorar organização da reserva, horários, detalhes e histórico no mesmo padrão.
+4. Atualizar a jornada E2E para navegar pelas ações visíveis e provar inclusões/persistência, filtros, teclado/390px/temas; revisar capturas no CI.
+5. Qualidade/build/banco/navegador/segurança no CI; sem build ou E2E no PC. Abrir novo PR após revisão, sem aprovação ou merge pelo agente. Conferir estado do PR antes de qualquer atualização posterior.
+
+Sem migration, dependência ou alteração de dados existentes. Rollback somente da UI/testes.
