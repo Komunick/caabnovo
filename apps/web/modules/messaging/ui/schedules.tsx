@@ -140,28 +140,42 @@ export function MessageSchedulesPage() {
               <p>Nenhum agendamento encontrado. Crie um novo ou escolha uma campanha existente.</p>
             ) : (
               <TableContainer aria-label="Agendamentos de mensagens">
-                <Table caption="Campanhas por horário de Brasília">
-                  <thead>
-                    <tr>
-                      <th scope="col">Campanha</th>
-                      <th scope="col">Horário</th>
-                      <th scope="col">Situação</th>
-                      <th scope="col">Ações</th>
+                <Table
+                  className={styles.scheduleTable}
+                  role="table"
+                  caption="Campanhas por horário de Brasília"
+                >
+                  <thead role="rowgroup">
+                    <tr role="row">
+                      <th role="columnheader" scope="col">
+                        Campanha
+                      </th>
+                      <th role="columnheader" scope="col">
+                        Horário
+                      </th>
+                      <th role="columnheader" scope="col">
+                        Situação
+                      </th>
+                      <th role="columnheader" scope="col">
+                        Ações
+                      </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody role="rowgroup">
                     {result.data.items.map((item) => (
-                      <tr key={item.id}>
-                        <td>
+                      <tr role="row" key={item.id}>
+                        <td role="cell" data-label="Campanha">
                           <Link href={`/messages/campaigns/${item.campaignId}`}>{item.name}</Link>
                         </td>
-                        <td>{messageDate(item.scheduledAt)}</td>
-                        <td>
+                        <td role="cell" data-label="Horário">
+                          {messageDate(item.scheduledAt)}
+                        </td>
+                        <td role="cell" data-label="Situação">
                           {item.status === "scheduled"
                             ? "Agendada"
                             : (executionReasons[item.reason ?? ""] ?? item.status)}
                         </td>
-                        <td>
+                        <td role="cell" data-label="Ações">
                           {item.status === "scheduled" ? (
                             <div className={styles.actions}>
                               <Button

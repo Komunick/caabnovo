@@ -1,3 +1,26 @@
+## Correção de públicos e agendamentos — 16/09/2026
+
+Na branch feature/messaging-audiences-20260916, commit 8c17bfd, a validação remota
+[35143077196](https://github.com/Komunick/caabnovo/actions/runs/35143077196) aprovou qualidade,
+344 unitários, 115 contratos, 201 integrações, 78 E2E e segurança. A massa principal
+usa 100 cadastros sintéticos por instrução do usuário; não foi realizado benchmark
+com 40 mil pessoas. As consultas não truncam a audiência nem impõem teto de IDs.
+
+Integrações comprovam filtros combinados, idade nas fronteiras, estado de residência
+separado da OAB, vínculo vigente sem duplicação, situação Ativa/Inativa, exclusões,
+reavaliação na data programada, reagendamento atômico e recusa de versão antiga.
+Criação/edição/arquivo de Associados preservam os novos campos. A primeira execução
+identificou o teste novo após revogação de sessão na suíte; corrigida a ordem sem
+alterar a proteção do produto. Tipos, lint e formatação passaram localmente; a suíte
+geral local sofreu ENOMEM no subprocesso Windows de prontidão e passou no CI Linux.
+
+Revisão visual encontrou estreitamento de colunas no celular. Refinamento posterior
+organiza cada linha de agendamento verticalmente no mobile, preservando semântica
+acessível e tabela em desktop. Jornada inclui assertion de largura útil e ausência
+de overflow horizontal. As capturas finais e CI correspondente acompanham o PR.
+
+---
+
 # Validação — 16/09/2026
 
 ## Preparação

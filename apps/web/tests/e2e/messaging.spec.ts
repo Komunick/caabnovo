@@ -333,6 +333,15 @@ test("demographic audience and visible scheduling support creation, rescheduling
   await page.getByRole("button", { name: "Buscar", exact: true }).click();
   const row = page.getByRole("row").filter({ has: page.getByRole("link", { name, exact: true }) });
   await expect(row).toBeVisible();
+  expect(
+    await row
+      .locator("td")
+      .first()
+      .evaluate((element) => element.getBoundingClientRect().width),
+  ).toBeGreaterThan(200);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
   await page.evaluate(() => {
     document.documentElement.dataset.theme = "dark";
   });
