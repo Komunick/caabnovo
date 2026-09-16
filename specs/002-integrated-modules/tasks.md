@@ -219,8 +219,8 @@ Objetivo: público correto e entrega rastreável. Teste independente: exclusão,
       `apps/web/modules/messaging/messaging-service.test.ts`.
 - [ ] T039 [US7] Implementar serviços/adaptadores/worker em `apps/web/modules/messaging/`,
       `app/api/v1/messages/` e `apps/worker/src/jobs/send-message.ts`.
-- [ ] T040 [US7] Implementar prévia/programação/acompanhamento em `apps/web/app/(admin)/messages/` e
-      validar em `apps/web/tests/e2e/messages.spec.ts`.
+- [x] T040 [US7] Implementar prévia/programação/acompanhamento em `apps/web/app/(admin)/messages/` e
+      validar em `apps/web/tests/e2e/messaging.spec.ts`.
 
 ## Phase 10 — US8 Créditos (P2)
 

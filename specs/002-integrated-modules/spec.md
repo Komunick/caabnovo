@@ -189,3 +189,7 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 ## Homologação e prontidão — 16/09/2026
 
 Pedido atual: matriz de validação das jornadas já entregues, distinguindo módulos futuros. Validar evidências reais, preservar dados existentes e não declarar concluída uma aprovação institucional ausente. Homologação da OAB depende da inscrição autorizada e do resultado esperado; descarte não executa sem política aprovada.
+
+## Mensagens — entrega de preparação em 16/09/2026
+
+A pedido do usuário, US7 avançou antes da definição dos meios de envio. [Spec 009](../009-messaging/spec.md) implementa campanhas, modelos, públicos, preferências, prévia, programação e acompanhamento com permissão única messages:access. Entrega real, fornecedores e consentimento por canal permanecem etapa posterior. Não considerar callbacks ou métricas de entrega implementados.

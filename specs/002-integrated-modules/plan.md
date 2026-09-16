@@ -195,3 +195,7 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
 3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
 4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.
+
+## Execução de US7 — 16/09/2026
+
+Preparação de Mensagens concluída no [plano 009](../009-messaging/plan.md), no mesmo ciclo/PR ativo. Adapters e entrega real foram adiados expressamente; não bloqueiam campanhas, modelos, públicos e programação preparatória. Reutiliza associados, RBAC, auditoria, worker e shell.

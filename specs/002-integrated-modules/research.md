@@ -129,3 +129,7 @@ Fonte de negócio: instrução expressa do usuário nesta data para remover moti
 GitHub documenta rulesets públicos, checks vinculados ao GitHub App e exigência de PR: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets . A API do repositório confirmou acesso administrativo e ruleset ativo de dev nesta data; conferir main e promoção sem push direto nem merge.
 
 O guia da ANPD identifica os papéis de agentes de tratamento e encarregado: https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-orientativo-para-definicoes-dos-agentes-de-tratamento-de-dados-pessoais-e-do-encarregado . Esta pesquisa não define prazos da CAAB nem substitui aprovação nominal exigida pelo projeto.
+
+## Mensagens — 16/09/2026
+
+Pesquisa oficial e decisões em [009-messaging/research.md](../009-messaging/research.md): revalidação de segmentos/preferências na programação e distinção entre solicitação e evidência de entrega. A decisão do usuário adia canais e dispensa um papel separado de aprovação/envio dentro do módulo.

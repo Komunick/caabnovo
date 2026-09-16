@@ -6,10 +6,12 @@
 - [x] M004 Rotas autenticadas e scheduler durável sem envio fictício.
 - [x] M005 UI completa no padrão do painel e persistência das edições.
 - [x] M006 Testes de contrato, autorização, concorrência, exclusões e programação.
-- [ ] M007 Navegador, acessibilidade e evidências responsivas no CI.
-- [ ] M008 Documentação integrada, PR atualizado, checks finais e principal sincronizada.
+- [x] M007 Navegador, acessibilidade e evidências responsivas no CI.
+- [x] M008 Documentação integrada, PR atualizado, checks finais e principal sincronizada.
 
 ## Etapa posterior acordada
 
 - [ ] M009 Definir meios/provedores, finalidade/consentimento, limites, conteúdo por canal, credenciais e homologação real.
 - [ ] M010 Implementar entrega por destinatário/canal e callbacks autenticados com deduplicação e métricas comprovadas.
+
+Evidências e execuções de CI: [validation.md](evidence/validation.md). Implementação atual concluída; M009/M010 são a próxima etapa expressamente adiada pelo usuário.
