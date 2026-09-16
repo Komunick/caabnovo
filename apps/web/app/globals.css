@@ -1537,10 +1537,9 @@ body {
   border: 1px solid transparent;
   border-radius: 0.72rem;
   color: var(--color-sidebar-muted);
+  /* Apply theme foregrounds and backgrounds together, without low-contrast frames. */
   transition:
-    color 160ms ease,
     border-color 160ms ease,
-    background 160ms ease,
     transform 160ms ease;
 }
 
@@ -1682,10 +1681,9 @@ body {
   color: var(--color-muted-strong);
   background: var(--color-surface);
   cursor: pointer;
+  /* Child labels change theme immediately; their surface must do the same. */
   transition:
-    color 160ms ease,
     border-color 160ms ease,
-    background 160ms ease,
     transform 160ms ease;
 }
 

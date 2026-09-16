@@ -452,3 +452,9 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
   Preview local adiado por pedido posterior do usuário: web e banco desligados; não reativar.
   Código 7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações,
   66 E2E e6 a11y; evidências em evidence/navigation-speed-2026-09-15.md.
+
+## Contraste do shell durante troca de tema — 16/09/2026
+
+- [x] TH01 Diagnosticar browser/push do PR #28 e registrar pesquisa e critérios de aceite.
+- [x] TH02 Corrigir transições do menu/busca e ampliar a regressão por quadros.
+- [ ] TH03 Validar qualidade, segurança, build, E2E e acessibilidade no CI e registrar evidências em evidence/theme-contrast-2026-09-16.md.

@@ -454,3 +454,8 @@ essas funções; funções de conta e demais módulos existentes são encontráv
 - NV-F03 Quando a resposta de navegação ainda não chegou, indicar abertura no link acionado sem deslocar controles, bloquear teclado ou alterar comportamento de nova aba.
 - NV-F04 Preservar conteúdo, permissões, validação atual de sessões, filtros, erros e recursos aceitos. Estados temporários não exibem dados pessoais nem concedem acesso.
 - Aceite: testes com atraso controlado provam feedback antes da conclusão, independência dos blocos, navegação interrompível e manutenção do shell; validar teclado,390px, claro/escuro, motion reduzido e regressões de autorização no CI.
+
+## Contraste durante troca de tema — 16/09/2026
+
+- TH-F01 Textos do menu lateral (incluindo item ativo) e da busca devem manter contraste de pelo menos 4,5:1 em cada quadro da troca claro/escuro, além dos estados finais.
+- Aceite: medir ambos os sentidos da troca com requestAnimationFrame e repetir o fluxo móvel/desktop de Agendamentos com axe, sem suprimir regras nem adicionar espera para ocultar a falha.

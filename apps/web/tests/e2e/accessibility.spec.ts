@@ -38,12 +38,14 @@ test("user administration meets the automated WCAG 2.2 AA baseline", async ({ pa
   await expectWcag22AA(page);
 });
 
-test("news buttons and account menu retain readable contrast throughout theme changes", async ({
+test("news buttons, account menu, navigation and search retain contrast throughout theme changes", async ({
   page,
 }) => {
   await signIn(page, syntheticUsers.ordinary.email, syntheticUsers.ordinary.password);
   await page.goto("/news/drafts");
   await expect(page.getByRole("link", { name: "Nova notícia", exact: true })).toBeVisible();
+  await expect(page.locator('.admin-sidebar a[aria-current="page"] > span')).toBeVisible();
+  await expect(page.locator(".command-trigger > span")).toBeVisible();
   const result = await page.locator("body").evaluate(async (module) => {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = 1;
@@ -85,7 +87,7 @@ test("news buttons and account menu retain readable contrast throughout theme ch
       do {
         await new Promise(requestAnimationFrame);
         for (const button of module.querySelectorAll(
-          ".news-module .button, .sidebar-profile__copy strong, .sidebar-profile__copy span",
+          ".news-module .button, .sidebar-profile__copy strong, .sidebar-profile__copy span, .sidebar-navigation a > span, .command-trigger > span",
         )) {
           if (!button.getClientRects().length || button.matches(":disabled")) continue;
           const style = getComputedStyle(button);

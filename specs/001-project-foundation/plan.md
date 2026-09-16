@@ -285,3 +285,10 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 5. Validar qualidade/segurança/build/navegador e revisar capturas sintéticas do CI. Usuário pediu desligar localhost e depois autorizou parar o banco local; manter ambos desligados e adiar preview. Abrir PR somente com a entrega validada; congelar a branch ao abrir.
 
 Sem schema, migration, dependência ou configuração nova de cache. Reverter componentes/limites restaura a renderização anterior sem mudança de dados.
+
+## Correção do browser/push do PR #28 — 16/09/2026
+
+1. Usar o log CI35019277298: contraste transitório 4:1 no item ativo e 4,24:1 no texto da busca; falha nas três tentativas do cenário de Agendamentos.
+2. Aplicar texto/fundo de tema simultaneamente nos links do menu e controles superiores, preservando transições de borda e movimento.
+3. Ampliar a regressão por quadros existente e executar os gates completos em CI, incluindo o fluxo de Agendamentos; não executar build/E2E no PC.
+4. Corrigir na mesma branch/worktree do PR #28, conforme regra vigente de 15/09; sem aprovação ou merge. Registrar o resultado remoto em evidence/theme-contrast-2026-09-16.md.
