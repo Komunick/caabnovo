@@ -29,11 +29,26 @@ function useControl<T extends Control>(props: {
   const cache = useDraftCache();
   const node = useRef<T | null>(null);
   const initial = useRef(props);
+  const restored = useRef(false);
   const key = `field:${props.id ?? props.name ?? ""}${["radio", "checkbox"].includes(props.type ?? "") ? `:${String(props.value)}` : ""}`;
   const controlled =
     props.checked !== undefined ||
     (props.value !== undefined && !["checkbox", "radio"].includes(props.type ?? ""));
   const stored = controlled ? undefined : (cache.read(key) as Stored | undefined);
+  // Options backed by an API can arrive after the select mounts.
+  useLayoutEffect(() => {
+    const element = node.current;
+    if (
+      !controlled &&
+      !restored.current &&
+      stored &&
+      element instanceof HTMLSelectElement &&
+      Array.from(element.options).some((option) => option.value === stored.value)
+    ) {
+      element.value = stored.value;
+      restored.current = true;
+    }
+  });
   useLayoutEffect(() => {
     const element = node.current;
     if (!element || controlled) return;
@@ -43,6 +58,7 @@ function useControl<T extends Control>(props: {
       element.files = transfer.files;
     }
     const reset = () => {
+      restored.current = true;
       cache.remove(key);
       if (element instanceof HTMLInputElement) {
         element.defaultChecked = initial.current.defaultChecked ?? false;
@@ -85,6 +101,7 @@ function useControl<T extends Control>(props: {
       queueMicrotask(() => remember(element));
     },
     onChange: (event: ChangeEvent<T>) => {
+      restored.current = true;
       props.onChange?.(event);
       remember(event.currentTarget);
     },

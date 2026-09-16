@@ -160,3 +160,60 @@ describe("workspace edits", () => {
     expect(sessionStorage.length).toBe(0);
   });
 });
+
+it("restores a select after its options arrive asynchronously", async () => {
+  async function options(loaded: boolean, shown = true) {
+    await act(() =>
+      root.render(
+        <WorkspaceDrafts>
+          {shown && (
+            <DraftForm draftKey="async">
+              <DraftSelect name="fileId" defaultValue="">
+                <option value="">Selecione</option>
+                {loaded && <option value="document">Documento disponível</option>}
+              </DraftSelect>
+            </DraftForm>
+          )}
+        </WorkspaceDrafts>,
+      ),
+    );
+  }
+  await options(true);
+  await act(() => {
+    const select = container.querySelector("select")!;
+    select.value = "document";
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await options(false, false);
+  await options(false);
+  await options(true);
+  expect(container.querySelector("select")!.value).toBe("document");
+});
+it("restores a pending file without repeating its upload handler", async () => {
+  const changed = vi.fn();
+  async function show(visible: boolean) {
+    await act(() =>
+      root.render(
+        <WorkspaceDrafts>
+          {visible && (
+            <DraftForm draftKey="file">
+              <DraftInput name="attachment" type="file" onChange={changed} />
+            </DraftForm>
+          )}
+        </WorkspaceDrafts>,
+      ),
+    );
+  }
+  await show(true);
+  await act(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(["synthetic"], "document.txt", { type: "text/plain" }));
+    const file = container.querySelector("input")!;
+    file.files = transfer.files;
+    file.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await show(false);
+  await show(true);
+  expect(container.querySelector("input")!.files![0]!.name).toBe("document.txt");
+  expect(changed).toHaveBeenCalledTimes(1);
+});

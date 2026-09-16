@@ -142,9 +142,92 @@ test("preserves member edits across inner tabs, other records and failed saves w
   await page.goBack();
   await page.getByRole("button", { name: "Salvar cadastro", exact: true }).click();
   await expect(
-    page.getByRole("alert").filter({ hasText: /alterado|versão|atualiz/i }),
+    page.getByRole("alert").filter({ hasText: /cadastro mudou em outra operação/i }),
   ).toBeVisible();
   await expect(page.getByLabel("Nome social (opcional)")).toHaveValue("Nome social pendente");
   await page.getByRole("button", { name: "Documentos", exact: true }).click();
   await expect(page.getByLabel("Categoria do documento")).toHaveValue("Comprovante pendente");
+});
+
+test("partner sections keep independent edits when another form is saved or cancelled", async ({
+  page,
+}, info) => {
+  test.setTimeout(120000);
+  await signIn(page);
+  const response = await page.request.post("/api/v1/partners", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": randomUUID(),
+      "idempotency-key": randomUUID(),
+    },
+    data: {
+      profile: { name: `Parceiro navegação ${randomUUID().slice(0, 8)}`, category: "Bem-estar" },
+    },
+  });
+  expect(response.ok()).toBe(true);
+  const record = await response.json();
+  await page.goto(`/partners/${record.id}`);
+  await page.getByLabel("Pessoa de contato (opcional)").fill("Contato pendente");
+  await page.getByRole("button", { name: "Unidades", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar unidade", exact: true }).click();
+  await page.getByLabel("Nome da unidade", { exact: true }).fill("Unidade pendente");
+  await page.locator("#unit-city").fill("Salvador");
+  await page.getByRole("button", { name: "Contratos", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar contrato", exact: true }).click();
+  await page.getByLabel("Referência do contrato").fill("Contrato pendente");
+  await page.getByRole("button", { name: "Benefícios", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar benefício", exact: true }).click();
+  await page.getByLabel("Título", { exact: true }).fill("Benefício pendente");
+  await area(page, "/members");
+  await page.goBack();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Benefício pendente");
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await page.getByRole("button", { name: "Adicionar benefício", exact: true }).click();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("");
+  await page.getByRole("button", { name: "Unidades", exact: true }).click();
+  await expect(page.getByLabel("Nome da unidade", { exact: true })).toHaveValue("Unidade pendente");
+  await expect(page.locator("#unit-city")).toHaveValue("Salvador");
+  await page.getByRole("button", { name: "Salvar unidade", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Unidade pendente", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cadastro", exact: true }).click();
+  await expect(page.getByLabel("Pessoa de contato (opcional)")).toHaveValue("Contato pendente");
+  await page.getByRole("button", { name: "Contratos", exact: true }).click();
+  await expect(page.getByLabel("Referência do contrato")).toHaveValue("Contrato pendente");
+  await page.screenshot({
+    path: info.outputPath("workspace-drafts-partner-restored.png"),
+    fullPage: true,
+  });
+});
+
+test("account forms survive module navigation and logout ends the editing session", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await signIn(page);
+  async function settings() {
+    await page.getByRole("button", { name: /^Menu da conta de/ }).click();
+    await page.getByRole("link", { name: "Configurações da conta", exact: true }).click();
+    await expect(page).toHaveURL(/\/settings$/);
+  }
+  await settings();
+  await page.locator("#settings-name").fill("Nome em edição");
+  await page.locator('input[name="newEmail"]').fill("email-pendente@example.test");
+  const passwords = page.locator('input[name="currentPassword"]');
+  await passwords.nth(0).fill("Senha pendente email");
+  await passwords.nth(1).fill("Senha pendente troca");
+  await area(page, "/members");
+  await settings();
+  await expect(page.locator("#settings-name")).toHaveValue("Nome em edição");
+  await expect(page.locator('input[name="newEmail"]')).toHaveValue("email-pendente@example.test");
+  await expect(passwords.nth(0)).toHaveValue("Senha pendente email");
+  await expect(passwords.nth(1)).toHaveValue("Senha pendente troca");
+  await page.getByRole("button", { name: /^Menu da conta de/ }).click();
+  await page.getByRole("button", { name: "Sair", exact: true }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await signIn(page);
+  await settings();
+  await expect(page.locator("#settings-name")).not.toHaveValue("Nome em edição");
+  await expect(page.locator('input[name="newEmail"]')).toHaveValue("");
+  await expect(passwords.nth(0)).toHaveValue("");
+  await expect(passwords.nth(1)).toHaveValue("");
 });

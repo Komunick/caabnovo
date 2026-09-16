@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect } from "@/components/ui/draft-controls";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DOCUMENT_FILE_ACCEPT, uploadIntentSchema, type PartnerFile } from "@caab/contracts";
@@ -21,7 +22,7 @@ export function ContractFiles({
   onSelect: (id: string) => void;
 }) {
   const [files, setFiles] = useState<FilePage>({ items: [], page: 1, hasNextPage: false });
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useDraftState("contract-files:page", 1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");

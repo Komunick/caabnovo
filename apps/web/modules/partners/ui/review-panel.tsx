@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useState } from "react";
 import type { PartnerReview } from "@caab/contracts";
@@ -23,8 +24,8 @@ export function ReviewPanel({
   canModerate: boolean;
 }) {
   const [result, setResult] = useState<Reviews | null>(null);
-  const [status, setStatus] = useState("all");
-  const [page, setPage] = useState(1);
+  const [status, setStatus] = useDraftState("review-panel:status", "all");
+  const [page, setPage] = useDraftState("review-panel:page", 1);
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

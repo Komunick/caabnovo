@@ -42,7 +42,7 @@ export function AuditChoiceFilter({
     input.current?.setCustomValidity(
       !text.trim() || options.some((option) => normalize(option.label) === normalize(text))
         ? ""
-        : "Escolha uma op��o da lista ou limpe o campo.",
+        : "Escolha uma opção da lista ou limpe o campo.",
     );
   }, [text, options]);
   return (

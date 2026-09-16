@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
@@ -78,12 +79,12 @@ export function NewsList({
   useEffect(() => setReady(true), []);
   const defaults = newsListQuerySchema.parse({ collection: initialQuery.collection });
   const basePath = initialQuery.collection === "drafts" ? "/news/drafts" : "/news";
-  const [query, setQuery] = useState(initialQuery);
-  const [expanded, setExpanded] = useState(false);
-  const [search, setSearch] = useState(initialQuery.search);
+  const [query, setQuery] = useDraftState("news-list:query", initialQuery);
+  const [expanded, setExpanded] = useDraftState("news-list:expanded", false);
+  const [search, setSearch] = useDraftState("news-list:search", initialQuery.search);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const current = useRef(initialQuery);
+  const current = useRef(query);
   const request = useRef<AbortController | null>(null);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useCallback(
@@ -118,8 +119,12 @@ export function NewsList({
         if (!controller.signal.aborted) setLoading(false);
       }
     },
-    [basePath],
+    [basePath, setQuery],
   );
+  useEffect(() => {
+    if (JSON.stringify(current.current) !== JSON.stringify(initialQuery))
+      void navigate(current.current);
+  }, [navigate, initialQuery]);
   useEffect(() => {
     const back = () => {
       const parsed = newsListQuerySchema.safeParse({
