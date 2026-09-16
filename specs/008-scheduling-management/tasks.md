@@ -83,3 +83,13 @@ técnica; não exige múltiplos agentes nem muda a política de branch.
 Uma entrega pequena e completa primeiro; testes de invariantes antes dos serviços;
 revisão do resultado antes de ampliar. Preservar dados, histórico e disponibilidade
 ao adicionar funcionalidades. Não usar demo, fixture ou página vazia como entrega.
+
+## Correção UI/UX e inclusão — 16/09/2026
+
+- [x] UI01 Comparar padrão local e registrar pesquisa, requisitos e plano da correção na nova branch.
+- [x] UI02 Padronizar cabeçalho/abas e expor as inclusões específicas por cadastro.
+- [x] UI03 Padronizar catálogo, agenda, formulários, horários, detalhes e estados vazios preservando operações reais.
+- [x] UI04 Validar jornada de inclusão, edição, filtros/URL, teclado/390px/temas e contraste no CI; revisar capturas.
+- [x] UI05 Concluir evidências e abrir novo PR para dev após checks aprovados; não aprovar/integrar.
+
+Evidências desta correção: [validação e revisão visual](evidence/ui-2026-09-16.md).

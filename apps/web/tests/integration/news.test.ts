@@ -716,7 +716,7 @@ describe.sequential("news persistence with Payload", () => {
       (
         await listNewsDrafts(payload, context.actor, {
           collection: "published",
-          search: "Rascunho privado",
+          search: "Publicar",
         })
       ).items.map((item) => item.id),
     ).toContain(created.id);
@@ -740,6 +740,118 @@ describe.sequential("news persistence with Payload", () => {
     await expect(
       getNewsDeliverySnapshot(payload, context.actor, created.id, "app"),
     ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it("withdraws all channels and saves edits atomically, including schedule cancellation and stale-publication checks", async () => {
+    const title = `Retirada ${crypto.randomUUID()}`;
+    const body = {
+      root: {
+        type: "root",
+        version: 1,
+        children: [
+          {
+            type: "paragraph",
+            version: 1,
+            children: [{ type: "text", version: 1, text: "Conteúdo original" }],
+          },
+        ],
+      },
+    };
+    const created = await createNewsDraft(payload, context, {
+      metadata: { title, slug: `retirada-${crypto.randomUUID()}` },
+      body,
+    });
+    await publishNews(payload, context, created.id, {
+      expectedVersion: 1,
+      channels: ["app", "site"],
+    });
+    // A retained private revision must never replace live data in the published list or its filters.
+    await updateNewsDraft(payload, context, created.id, {
+      expectedVersion: 2,
+      metadata: { title: `${title} privado` },
+      body,
+    });
+    expect(
+      (await listNewsDrafts(payload, context.actor, { collection: "published", search: title }))
+        .items,
+    ).toMatchObject([{ id: created.id, revision: 2, metadata: { title } }]);
+    expect(
+      (
+        await listNewsDrafts(payload, context.actor, {
+          collection: "published",
+          search: `${title} privado`,
+        })
+      ).items,
+    ).toEqual([]);
+    const jobs: NewsActionJobPayload[] = [];
+    const scheduled = await scheduleNews(
+      payload,
+      {
+        enqueue: async (_db, job) => {
+          jobs.push(job);
+        },
+      },
+      { ...context, idempotencyKey: crypto.randomUUID() },
+      created.id,
+      {
+        expectedVersion: 3,
+        action: "unpublish",
+        channels: ["app", "site"],
+        runAt: new Date(Date.now() + 60000).toISOString(),
+      },
+    );
+    const input = {
+      expectedVersion: 3,
+      withdrawPublishedVersion: 2,
+      metadata: { title: `${title} editado` },
+      body,
+    };
+    await expect(
+      updateNewsDraft(payload, context, created.id, { ...input, withdrawPublishedVersion: 1 }),
+    ).rejects.toMatchObject({ code: "NEWS_VERSION_CONFLICT" });
+    await admin.query("REVOKE INSERT ON audit_event FROM caab_runtime");
+    try {
+      await expect(updateNewsDraft(payload, context, created.id, input)).rejects.toThrow();
+    } finally {
+      await admin.query("GRANT INSERT ON audit_event TO caab_runtime");
+    }
+    expect((await getNewsDraft(payload, context.actor, created.id)).revision).toBe(3);
+    expect((await readPublicNews(payload, "site", created.id)).title).toBe(title);
+    expect(
+      (await admin.query("SELECT status FROM news_action WHERE id=$1", [scheduled.id])).rows[0]
+        .status,
+    ).toBe("pending");
+    const saved = await updateNewsDraft(payload, context, created.id, input);
+    expect(saved).toMatchObject({ revision: 4, metadata: { title: `${title} editado` } });
+    for (const channel of ["app", "site"])
+      await expect(readPublicNews(payload, channel, created.id)).rejects.toMatchObject({
+        status: 404,
+      });
+    expect((await listLatestPublicNews(payload)).map((item) => item.id)).not.toContain(created.id);
+    expect(
+      (await listNewsDrafts(payload, context.actor, { collection: "published", search: title }))
+        .items,
+    ).toEqual([]);
+    expect(
+      (await listNewsDrafts(payload, context.actor, { collection: "drafts", search: title })).items,
+    ).toMatchObject([{ id: created.id, revision: 4, metadata: { title: `${title} editado` } }]);
+    expect(
+      (await admin.query("SELECT status FROM news_action WHERE id=$1", [scheduled.id])).rows[0]
+        .status,
+    ).toBe("cancelled");
+    await expect(updateNewsDraft(payload, context, created.id, input)).rejects.toMatchObject({
+      code: "NEWS_VERSION_CONFLICT",
+    });
+    await runNewsAction(payload, jobs[0]!);
+    expect((await getNewsDraft(payload, context.actor, created.id)).revision).toBe(4);
+    const events = await admin.query(
+      "SELECT action FROM audit_event WHERE entity_id=$1 AND after->>'revision'='4'",
+      [created.id],
+    );
+    expect(events.rows.map((row) => row.action).sort()).toEqual([
+      "news.draft.updated",
+      "news.unpublished",
+    ]);
   });
 
   it("refuses incomplete content and unsafe media and rolls publication back on audit failure", async () => {

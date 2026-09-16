@@ -131,7 +131,7 @@ test("the worker releases a real image and publishes the scheduled revision for 
     });
   }
 });
-test("publishes publicly, keeps edits private, schedules, cancels and withdraws per channel", async ({
+test("publishes, explicitly withdraws and saves a draft, schedules and withdraws per channel", async ({
   page,
   request,
   browser,
@@ -171,13 +171,63 @@ test("publishes publicly, keeps edits private, schedules, cancels and withdraws 
   await page.getByLabel("Título", { exact: true }).fill("Edição privada posterior");
   await expect(page.getByRole("button", { name: "Publicar agora", exact: true })).toBeEnabled();
   await expectNoNewsReasonFields(page);
-  await page.getByRole("button", { name: "Salvar rascunho" }).click();
+  const withdraw = page.getByRole("button", {
+    name: "Retirar publicação e salvar rascunho",
+    exact: true,
+  });
+  await expect(withdraw).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salvar rascunho", exact: true })).toHaveCount(0);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: testInfo.outputPath("news-withdraw-draft-desktop.png"),
+    fullPage: true,
+    animations: "disabled",
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(withdraw).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({
+    path: testInfo.outputPath("news-withdraw-draft-mobile.png"),
+    fullPage: true,
+    animations: "disabled",
+  });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.route(`**/api/v1/news/${id}`, async (route) => {
+    if (route.request().method() === "PUT") await route.fulfill({ status: 500, body: "{}" });
+    else await route.continue();
+  });
+  await withdraw.click();
   await expect(
-    page.getByRole("status").filter({ hasText: "Rascunho salvo. Revisão 3." }),
+    page.getByRole("alert").filter({ hasText: "Não foi possível concluir" }),
   ).toBeVisible();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Edição privada posterior");
   expect((await (await request.get(`/api/v1/content/app/news/${id}`)).json()).title).toBe(
     "Notícia pública sintética",
   );
+  await page.unroute(`**/api/v1/news/${id}`);
+  await withdraw.click();
+  await expect(
+    page.getByRole("status").filter({ hasText: "Publicação retirada. Rascunho salvo. Revisão 3." }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salvar rascunho", exact: true })).toBeEnabled();
+  expect((await request.get(`/api/v1/content/app/news/${id}`)).status()).toBe(404);
+  expect(
+    (
+      await (
+        await page.request.get(
+          `/api/v1/news?collection=published&search=Edição%20privada%20posterior`,
+        )
+      ).json()
+    ).items,
+  ).toEqual([]);
+  await page.goto("/news/drafts?search=Edição%20privada%20posterior");
+  await expect(page.locator(`a[href="/news/${id}"]`)).toContainText("Edição privada posterior");
+  await page.goto("/");
+  // Home has separate published cards and an administrative "Para continuar" draft section.
+  await expect(page.locator(`.home-news-card[href$="/news/${id}"]`)).toHaveCount(0);
+  await expect(page.locator(`a[href="/news/${id}"]`)).toContainText("Edição privada posterior");
+  await page.goto(`/news/${id}`);
   const future = new Date(Date.now() + 10 * 60000 - 3 * 3600000).toISOString().slice(0, 16);
   await page.getByLabel("Data e horário de Brasília", { exact: true }).fill(future);
   await page.getByRole("button", { name: "Agendar", exact: true }).click();

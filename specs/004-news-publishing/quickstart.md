@@ -9,8 +9,9 @@ porta pública, quando houver), e não o endereço interno do contêiner. A orig
 esperar POST `/api/v1/news` com 201 e PUT com 200. Um 403 `ORIGIN_DENIED` exige conferir
 essa configuração; não liberar origens arbitrárias nem remover a proteção CSRF.
 
-Na listagem, `/news` reúne notícias com publicação no histórico; o botão Rascunhos abre
-`/news/drafts` com conteúdos ainda não publicados. Digite para buscar automaticamente e
+Na listagem ativa, `/news` exibe a versão publicada também usada pela inicial; Rascunhos abre
+`/news/drafts` com notícias sem publicação vigente, inclusive retiradas. Arquivadas preservam
+a localização histórica no filtro Exibir. Digite para buscar automaticamente e
 abra Mais filtros e ordenação para combinar categoria, destino previsto, destaque, capa,
 período e ordenação. Nenhum botão Filtrar é necessário. Ao publicar pela primeira vez,
 a notícia passa para a lista principal; edições posteriores não duplicam seu cadastro.
@@ -20,7 +21,9 @@ a notícia passa para a lista principal; edições posteriores não duplicam seu
 3. Executar corepack pnpm dev e corepack pnpm dev:worker em terminais separados.
 4. Em /news, criar título/endereço/conteúdo, enviar imagens e aguardar liberação, salvar e
    conferir prévia. Marcar destaque/ordem quando desejado. Publicar em site/app/ambos.
-5. Abrir a publicação sem login. Editar rascunho e confirmar que a publicação não muda.
+5. Abrir a publicação sem login. Editar e usar “Retirar publicação e salvar rascunho”: a notícia
+   sai dos cards publicados da inicial e dos canais, e o texto salvo aparece em Rascunhos
+   e em “Para continuar”. Conferir que agendas pendentes foram canceladas.
 6. Agendar publicação futura em Brasília, editar posteriormente e conferir revisão fixa.
    Cancelar outra ação pendente. Retirar somente um canal; arquivar retira todos.
 7. Falhas aparecem na agenda e em Auditoria → Processamentos conforme acesso existente.

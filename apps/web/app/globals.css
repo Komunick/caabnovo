@@ -1094,7 +1094,8 @@ progress {
 
 .dialog-backdrop {
   position: fixed;
-  z-index: 10;
+  /* Modals cover the topbar (20) and mobile navigation (60). */
+  z-index: 80;
   inset: 0;
   background: rgb(6 24 15 / 62%);
   backdrop-filter: blur(0.2rem);
@@ -1102,7 +1103,7 @@ progress {
 
 .dialog-card {
   position: fixed;
-  z-index: 20;
+  z-index: 90;
   top: 50%;
   left: 50%;
   width: min(100%, 32rem);
@@ -4694,10 +4695,6 @@ thead th {
   align-items: center;
   gap: 0.75rem;
 }
-.scheduling-actions a {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
 .scheduling-fields {
   border: 0;
   padding: 0;
@@ -4705,7 +4702,6 @@ thead th {
   display: grid;
   gap: 1.25rem;
 }
-.scheduling-choice,
 .scheduling-day {
   border: 1px solid var(--color-border);
   border-radius: 0.75rem;
@@ -4713,7 +4709,96 @@ thead th {
   display: grid;
   gap: 0.75rem;
 }
-.scheduling-choice legend,
+.scheduling-choice {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.scheduling-choice legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  color: var(--color-muted-strong);
+  font-size: 0.87rem;
+  font-weight: 720;
+}
+.scheduling-choice .form-field,
+.scheduling-day .form-field,
+.scheduling-form > .form-field,
+.scheduling-fields .address-fields .form-field,
+.scheduling-fields > .form-field,
+.scheduling-grid > .form-field,
+.scheduling-filters .filter-toolbar > .form-field {
+  margin: 0;
+}
+.scheduling-fields .address-fields {
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+}
+.scheduling-fields > p:empty {
+  display: none;
+}
+.scheduling-choice .form-field > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.scheduling-choice-search input {
+  min-height: 2.5rem;
+}
+.scheduling-form,
+.scheduling-filters {
+  display: grid;
+  gap: 1.25rem;
+}
+.scheduling-form > .button {
+  justify-self: start;
+}
+.scheduling-table {
+  min-width: 38rem;
+}
+.scheduling-table td,
+.scheduling-table th {
+  overflow-wrap: normal;
+}
+.scheduling-time {
+  white-space: nowrap;
+}
+.scheduling-muted {
+  display: block;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+.scheduling-pagination {
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 1rem;
+}
+.scheduling-pagination > span {
+  margin-right: auto;
+  color: var(--color-muted);
+}
+.scheduling-count {
+  margin: 1rem 0 0;
+  color: var(--color-muted);
+}
+.scheduling-empty {
+  padding: 1.5rem 0;
+}
+.scheduling-notice {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-action);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
 .scheduling-day legend {
   font-weight: 650;
   padding: 0 0.25rem;

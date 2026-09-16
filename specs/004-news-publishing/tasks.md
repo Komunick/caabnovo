@@ -144,3 +144,14 @@ Validação de justificativas e resultado OAB: [evidências de 14/09/2026](../00
 - [x] RM03 Validar fluxos sem motivo, auditoria preservada e controles de autorização; registrar evidências da entrega compartilhada.
 
 Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/evidence/reason-removal-2026-09-14.md).
+
+
+## Correção da publicação ao salvar — 16/09/2026
+
+- [x] NP01 Alinhar spec/plano e registrar a causa da divergência entre Publicadas e inicial.
+- [x] NP02 Implementar retirada e salvamento atômicos, revisão pública esperada e auditoria.
+- [x] NP03 Exibir ação específica somente em notícias publicadas e preservar texto em erro.
+- [x] NP04 Consultar a versão vigente em Publicadas e mover retiradas para Rascunhos.
+- [x] NP05 Executar contrato, integração e browser no CI, revisar evidências e documentar PR.
+
+Evidências desta correção: [validação e revisão visual](evidence/withdrawal-2026-09-16.md).

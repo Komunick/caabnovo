@@ -78,3 +78,7 @@ Identificação dos alvos: consultar nomes de associado/convênio, título de no
 em lote por página; exigir leitura da área e, para arquivo, também files:read e área proprietária.
 A consulta cruza permissões recebidas com concessões atuais e sessão ativa; nenhuma busca de
 contatos ou reconstrução de valores históricos. Cobrir revogação, sessão encerrada e nome indisponível.
+
+## Correção de sobreposição — 16/09/2026
+
+Incluída por pedido do usuário no ciclo fix/scheduling-ui-20260916, mantendo spec própria. Elevar a camada compartilhada do backdrop acima do cabeçalho20/menu60 e o diálogo acima do backdrop (80/90). Não modificar autenticação/dados. Cobrir o empilhamento real por elementsFromPoint no teste de abertura de log, foco/Escape e capturas de desktop/mobile. Gates no CI.

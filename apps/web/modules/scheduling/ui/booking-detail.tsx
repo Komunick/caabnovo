@@ -37,10 +37,14 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
       title="Detalhes da reserva"
       description="Confira o atendimento e o histórico de alterações."
     >
-      {notice && <p role="status">{notice}</p>}
+      {notice && (
+        <p className="scheduling-notice" role="status">
+          {notice}
+        </p>
+      )}
       {booking && result.data ? (
         <>
-          <section className="panel page-stack">
+          <section className="panel scheduling-form">
             <h2>{booking.memberName}</h2>
             <dl className="scheduling-details">
               <div>

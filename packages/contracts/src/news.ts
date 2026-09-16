@@ -46,6 +46,8 @@ export const createNewsDraftRequestSchema = z.strictObject({
 export const updateNewsDraftRequestSchema = z.strictObject({
   justification: changeJustificationSchema,
   expectedVersion: versionSchema,
+  // Explicit withdrawal and draft save share one transaction and compare the live revision.
+  withdrawPublishedVersion: versionSchema.optional(),
   metadata: newsDraftMetadataSchema,
   body: newsBodySchema,
 });

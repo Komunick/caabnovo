@@ -60,6 +60,9 @@ export function NewsEditor({
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   const [record, setRecord] = useState(initial);
+  const [publishedVersion, setPublishedVersion] = useState<number | null | undefined>(
+    initial && canPublish ? undefined : null,
+  );
   const [customSlug, setCustomSlug] = useState(false);
   const slugSeed = useRef(initial?.id ?? "");
   const [metadata, setMetadata] = useState(initial?.metadata ?? newsDraftMetadataSchema.parse({}));
@@ -125,10 +128,14 @@ export function NewsEditor({
   ): Promise<NewsRecord | undefined> {
     event?.preventDefault();
     if (busy.current || (mediaUploading && !silent)) return;
+    if (record && !silent && publishedVersion === undefined) return;
+    const withdrawal =
+      !silent && publishedVersion != null ? { withdrawPublishedVersion: publishedVersion } : {};
     if (!slugSeed.current) slugSeed.current = crypto.randomUUID();
     const parsed = (record ? updateNewsDraftRequestSchema : createNewsDraftRequestSchema).safeParse(
       {
         ...(record ? { expectedVersion: record.revision } : {}),
+        ...withdrawal,
         metadata: {
           ...metadata,
           slug: metadata.slug || newsSlugFromTitle(metadata.title, slugSeed.current),
@@ -144,6 +151,7 @@ export function NewsEditor({
     }
     const input = JSON.stringify({
       ...(record ? { expectedVersion: record.revision } : {}),
+      ...withdrawal,
       metadata: parsed.data.metadata,
       body: parsed.data.body,
     });
@@ -168,10 +176,13 @@ export function NewsEditor({
       setDirty(false);
 
       setRecord(saved);
+      if (withdrawal.withdrawPublishedVersion !== undefined) setPublishedVersion(null);
       setMetadata(saved.metadata);
       retry.current = undefined;
       if (silent) return saved;
-      setMessage(`Rascunho salvo. Revisão ${saved.revision}.`);
+      setMessage(
+        `${withdrawal.withdrawPublishedVersion !== undefined ? "Publicação retirada. " : ""}Rascunho salvo. Revisão ${saved.revision}.`,
+      );
       if (preview) router.push(`/news/${saved.id}/preview`);
       else if (!initial) router.replace(`/news/${saved.id}`);
       else await loadHistory();
@@ -252,7 +263,10 @@ export function NewsEditor({
         <p role="status">
           {dirty
             ? "Alterações ainda não salvas."
-            : message || "Salvar rascunho mantém a publicação atual."}
+            : message ||
+              (publishedVersion != null
+                ? "Salvar como rascunho retira a notícia de todos os destinos e cancela seus agendamentos pendentes."
+                : "O rascunho fica privado até você publicar.")}
         </p>
         {error ? (
           <p role="alert">
@@ -270,7 +284,11 @@ export function NewsEditor({
           </p>
         ) : null}
         <div className="news-command-bar">
-          <span>Escreva, revise e depois publique.</span>
+          <span>
+            {publishedVersion != null
+              ? "Salvar como rascunho retira a notícia de todos os destinos e cancela seus agendamentos pendentes."
+              : "Escreva, revise e depois publique."}
+          </span>
           <div className="news-command-actions">
             {record && !dirty && !pending && !mediaUploading ? (
               <Link className={buttonVariants()} href={`/news/${record.id}/preview`}>
@@ -278,19 +296,37 @@ export function NewsEditor({
               </Link>
             ) : (
               <Button
-                disabled={!ready || pending || mediaUploading || !!record?.archived}
+                disabled={
+                  !ready ||
+                  pending ||
+                  mediaUploading ||
+                  !!record?.archived ||
+                  publishedVersion === undefined
+                }
                 onClick={(event) => void save(event, true)}
               >
-                Salvar e visualizar
+                {publishedVersion != null
+                  ? "Retirar publicação, salvar e visualizar"
+                  : "Salvar e visualizar"}
               </Button>
             )}
             <Button
               form="news-draft-form"
               type="submit"
               intent="primary"
-              disabled={!ready || pending || mediaUploading || !!record?.archived}
+              disabled={
+                !ready ||
+                pending ||
+                mediaUploading ||
+                !!record?.archived ||
+                publishedVersion === undefined
+              }
             >
-              {pending ? "Salvando…" : "Salvar rascunho"}
+              {pending
+                ? "Salvando…"
+                : publishedVersion != null
+                  ? "Retirar publicação e salvar rascunho"
+                  : "Salvar rascunho"}
             </Button>
           </div>
         </div>
@@ -500,6 +536,7 @@ export function NewsEditor({
       </section>
       {canPublish && (
         <NewsPublishing
+          onPublicationChange={setPublishedVersion}
           onFieldErrors={(fields) => {
             setFieldErrors(fields);
             focusNewsError();

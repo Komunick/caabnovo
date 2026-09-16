@@ -2068,6 +2068,11 @@ components:
           type: integer
           minimum: 1
           maximum: 9007199254740991
+        withdrawPublishedVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+          description: Optional live revision to withdraw atomically while saving the draft. Cancels pending schedules and returns 409 if either revision changed.
         metadata:
           $ref: "#/components/schemas/Metadata"
         body:

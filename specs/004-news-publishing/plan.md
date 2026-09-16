@@ -50,8 +50,9 @@ Refinamento FR-013–FR-018: `NewsIndex` compartilha a composição das rotas `/
 350ms e URL persistida. Controles adicionais são expansíveis para reduzir a altura inicial.
 Miniatura usa o endpoint privado existente; erro/ausência têm placeholder. Resumo usa clamp
 de duas linhas; revisão continua no detalhe. Links de ação usam Button variants e estilo
-restrito ao módulo. `list-query.ts` lê a última versão e usa histórico publicado para separar
-as listas. Filtros JSONB, ordenação e contagem/paginação compartilham uma consulta parametrizada
+restrito ao módulo. `list-query.ts` lê a publicação vigente em `news` e a última revisão
+de itens sem publicação para separar as listas. Arquivadas mantêm a localização histórica
+no filtro Exibir, conforme a gestão anterior. Filtros JSONB, ordenação e contagem/paginação compartilham uma consulta parametrizada
 na transação com sessão ativa. Nenhuma alteração de schema, API pública ou permissões.
 
 
@@ -103,3 +104,17 @@ com capa sem descrição no E2E existente e a política com texto vazio/ausente.
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+
+## Correção de publicação e rascunhos — 16/09/2026
+
+Na branch `fix/scheduling-ui-20260916`, estender PUT editorial com
+`withdrawPublishedVersion` opcional e inteiro positivo. A operação explícita usa a transação
+existente de publicação, valida sessão e revisões, verifica mídia, cancela ações pendentes,
+salva com `draft:false`/`_status:draft` e registra retirada e edição atomicamente.
+A preparação interna para Publicar/Agendar continua privada até confirmar o destino.
+O editor recebe a revisão pública do painel de publicação, bloqueia o salvamento manual até
+consultá-la e altera seus rótulos conforme esse estado. Listagem usa o documento público
+para conteúdo, busca, ordenação e classificação; após retirada usa a última versão privada.
+Validar contrato, rollback de auditoria, revisão obsoleta, worker cancelado, lista/inicial,
+consumo app/site, erro recuperável no editor e rótulos específicos no browser do CI.

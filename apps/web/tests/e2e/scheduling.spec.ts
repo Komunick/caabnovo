@@ -59,20 +59,75 @@ test("configure and manage a real reservation through the panel at 390px, withou
       .getByRole("link", { name: "Agendamentos", exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Agendamentos", exact: true })).toHaveCount(0);
-  await page.goto("/scheduling/catalog");
+  await page.goto("/scheduling");
+  const addReservation = page
+    .locator(".page-header")
+    .getByRole("link", { name: "Nova reserva", exact: true });
+  await expect(addReservation).toBeVisible();
+  await expect(addReservation).toHaveClass(/button--add/);
+  await expectWcag22AA(page);
+  await screenshot(page, testInfo.outputPath("scheduling-agenda-mobile-light.png"));
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await screenshot(page, testInfo.outputPath("scheduling-agenda-desktop-light.png"));
+  await page.setViewportSize({ width: 390, height: 844 });
+  const areas: Record<string, [string, string]> = {
+    units: ["Unidades", "Nova unidade"],
+    services: ["Serviços", "Novo serviço"],
+    procedures: ["Procedimentos", "Novo procedimento"],
+    professionals: ["Profissionais", "Novo profissional"],
+    assignments: ["Habilitações", "Nova habilitação"],
+  };
   async function open(kind: string) {
-    await page.getByLabel("Cadastro", { exact: true }).selectOption(kind);
-    await page.getByRole("button", { name: "Novo registro", exact: true }).click();
+    const [area, action] = areas[kind]!;
+    await keyboardActivate(
+      page,
+      page
+        .getByRole("navigation", { name: "Agendamentos", exact: true })
+        .getByRole("link", { name: area, exact: true }),
+    );
+    await expect(page).toHaveURL(new RegExp(`kind=${kind}`));
+    await page.reload();
+    await expect(
+      page
+        .getByRole("navigation", { name: "Agendamentos", exact: true })
+        .getByRole("link", { name: area, exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+    const add = page.locator(".page-header").getByRole("button", { name: action, exact: true });
+    await expect(add).toHaveClass(/button--add/);
+    await keyboardActivate(page, add);
+    await expect(page.getByRole("heading", { name: action, exact: true })).toBeVisible();
   }
   async function save() {
     await keyboardActivate(
       page,
-      page.getByRole("button", { name: "Salvar registro", exact: true }),
+      page.getByRole("button", {
+        name: /^Criar (unidade|serviço|procedimento|profissional|habilitação)$/,
+      }),
     );
     await expect(page.getByText("Registro salvo.", { exact: true })).toBeVisible();
   }
   await open("units");
   await keyboardType(page, page.getByLabel("Nome", { exact: true }), unit);
+  await screenshot(page, testInfo.outputPath("scheduling-new-unit-mobile-light.png"));
+  await page.route("**/api/v1/scheduling/units", (route) =>
+    route.request().method() === "POST"
+      ? route.fulfill({
+          status: 500,
+          contentType: "application/json",
+          body: JSON.stringify({ error: { code: "INTERNAL_ERROR" } }),
+        })
+      : route.continue(),
+  );
+  await page
+    .getByRole("button", {
+      name: /^Criar (unidade|serviço|procedimento|profissional|habilitação)$/,
+    })
+    .click();
+  await expect(page.locator(".scheduling-workspace").getByRole("alert")).toContainText(
+    "Não foi possível concluir",
+  );
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue(unit);
+  await page.unroute("**/api/v1/scheduling/units");
   await save();
   await open("services");
   await page.getByLabel("Nome", { exact: true }).fill(service);
@@ -94,6 +149,14 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await choose(page, "Profissional", professional);
   await save();
   await screenshot(page, testInfo.outputPath("scheduling-catalog-mobile-light.png"));
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await screenshot(page, testInfo.outputPath("scheduling-catalog-desktop-light.png"));
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  const catalogTable = page.locator(".scheduling-workspace .table-scroll");
+  await catalogTable.focus();
+  await page.keyboard.press("End");
+  await expect(catalogTable).toBeFocused();
   await page
     .getByRole("button", { name: `Editar ${professional} — ${procedure}`, exact: true })
     .click();
@@ -103,7 +166,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await expect(
     page.getByLabel("Selecionar serviço", { exact: true }).locator("option:checked"),
   ).toHaveText(service);
-  await page.getByRole("button", { name: "Fechar formulário", exact: true }).click();
+  await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   const date = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
   const weekday = new Date(`${date}T12:00:00-03:00`).getUTCDay();
   const day = [
@@ -132,7 +195,11 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await keyboardActivate(page, page.getByRole("button", { name: "Salvar horários" }));
   await expect(page.getByText("Horários salvos.", { exact: true })).toBeVisible();
   await expectWcag22AA(page);
-  await page.goto("/scheduling/new");
+  await screenshot(page, testInfo.outputPath("scheduling-hours-mobile-light.png"));
+  await page
+    .locator(".page-header")
+    .getByRole("link", { name: "Nova reserva", exact: true })
+    .click();
   await choose(page, "Beneficiário", member);
   await choose(page, "Unidade", unit);
   await choose(page, "Serviço", service);
@@ -155,7 +222,8 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await expect(page.getByRole("heading", { name: member, exact: true })).toBeVisible();
   await expect(page.getByText("Reserva criada", { exact: true })).toBeVisible();
   await page.goto(`/scheduling?date=${date}&q=${encodeURIComponent(member)}`);
-  await expect(page.getByText(new RegExp(`08:00 às 09:00.*${member}`))).toBeVisible();
+  await expect(page.getByRole("row").filter({ hasText: member })).toContainText("08:00 às 09:00");
+  await expect(page.getByRole("row").filter({ hasText: member })).toContainText(professional);
   await page.reload();
   await expect(page.getByLabel("Nome do beneficiário")).toHaveValue(member);
   await keyboardActivate(

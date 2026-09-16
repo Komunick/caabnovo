@@ -92,3 +92,10 @@ Histórico, detalhes humanos, nomes autorizados dos alvos e filtros digitáveis 
 CI final591cf00 /34976399886 aprovado:276unitários,94contratos,152integrações,62E2E,6a11y.
 Preview3107 atualizado com build remoto e conferido no Chrome, com banco e limites preservados.
 [Evidências finais](evidence/audit-readable-2026-09-15.md). US3 continua pendente; não ampliada nesta entrega.
+
+## Correção da sobreposição de log — 16/09/2026
+
+- [x] AD01 Diagnosticar camadas do cabeçalho/modal e registrar critério/plano/pesquisa.
+- [x] AD02 Corrigir ordem visual e validar backdrop/painel acima de todo o shell, foco e capturas no CI.
+
+Evidências AD02: [fundo do log e cabeçalho](evidence/modal-2026-09-16.md).

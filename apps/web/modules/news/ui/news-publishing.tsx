@@ -44,6 +44,7 @@ export function NewsPublishing({
   onSaved,
   onBusyChange,
   onFieldErrors,
+  onPublicationChange,
 }: Readonly<{
   record?: NewsRecord;
   onPrepare(): Promise<NewsRecord | undefined>;
@@ -52,6 +53,7 @@ export function NewsPublishing({
   onSaved(record: NewsRecord): void;
   onBusyChange(busy: boolean): void;
   onFieldErrors(errors: NewsFieldErrors): void;
+  onPublicationChange(revision: number | null | undefined): void;
 }>) {
   const [state, setState] = useState<PublicationState>({ publication: null, actions: [] });
   const [channels, setChannels] = useState<string[]>(record?.metadata.channels ?? []);
@@ -68,10 +70,17 @@ export function NewsPublishing({
     async (newsId = record?.id) => {
       if (!newsId) return;
       const response = await fetch(`/api/v1/news/${newsId}/publication`, { cache: "no-store" });
-      if (!response.ok) throw new Error("Não foi possível consultar a publicação.");
-      setState((await response.json()) as PublicationState);
+      if (!response.ok) {
+        onPublicationChange(undefined);
+        throw new Error(
+          "Não foi possível consultar a publicação. Recarregue a página antes de salvar um rascunho.",
+        );
+      }
+      const next = (await response.json()) as PublicationState;
+      setState(next);
+      onPublicationChange(next.publication?.revision ?? null);
     },
-    [record?.id],
+    [record?.id, onPublicationChange],
   );
   useEffect(() => {
     void reload().catch((error: Error) => setError(error.message));

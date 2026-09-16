@@ -80,7 +80,7 @@ function HoursEditor({
     }
   }
   return (
-    <form className="page-stack" onSubmit={submit}>
+    <form className="scheduling-form" onSubmit={submit}>
       <p>
         Horário de Salvador (America/Bahia). Desmarque os dias sem atendimento. Uma faixa por dia,
         sem virar a noite.
@@ -159,30 +159,36 @@ export function SchedulingHours() {
       title="Horários de atendimento"
       description="Configure primeiro o expediente da unidade e depois a jornada e o almoço de cada profissional nessa unidade."
     >
-      <section className="panel page-stack">
-        <FormField id="hours-kind" label="Configurar">
-          <select value={kind} onChange={(event) => setKind(event.target.value)}>
-            <option value="units">Expediente da unidade</option>
-            <option value="professionals">Jornada do profissional</option>
-          </select>
-        </FormField>
-        <Choice
-          label="Unidade"
-          resource="units"
-          value={unitId}
-          onChange={(value) => {
-            setUnitId(value);
-            setProfessionalId("");
-          }}
-        />
-        {kind === "professionals" && (
+      <section className="panel scheduling-form">
+        <h2>Selecionar atendimento</h2>
+        <div className="scheduling-grid">
+          <FormField id="hours-kind" label="Configurar">
+            <select value={kind} onChange={(event) => setKind(event.target.value)}>
+              <option value="units">Expediente da unidade</option>
+              <option value="professionals">Jornada do profissional</option>
+            </select>
+          </FormField>
           <Choice
-            label="Profissional"
-            resource="professionals"
-            value={professionalId}
-            onChange={setProfessionalId}
+            label="Unidade"
+            resource="units"
+            value={unitId}
+            onChange={(value) => {
+              setUnitId(value);
+              setProfessionalId("");
+            }}
           />
-        )}
+          {kind === "professionals" && (
+            <Choice
+              label="Profissional"
+              resource="professionals"
+              value={professionalId}
+              onChange={setProfessionalId}
+            />
+          )}
+        </div>
+      </section>
+      <section className="panel scheduling-form">
+        <h2>{kind === "units" ? "Expediente da unidade" : "Jornada do profissional"}</h2>
         {id && unitId ? (
           <HoursForm
             key={`${kind}-${id}-${unitId}`}
