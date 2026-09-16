@@ -459,3 +459,5 @@ essas funções; funções de conta e demais módulos existentes são encontráv
 
 - TH-F01 Textos do menu lateral (incluindo item ativo) e da busca devem manter contraste de pelo menos 4,5:1 em cada quadro da troca claro/escuro, além dos estados finais.
 - Aceite: medir ambos os sentidos da troca com requestAnimationFrame e repetir o fluxo móvel/desktop de Agendamentos com axe, sem suprimir regras nem adicionar espera para ocultar a falha.
+
+- TH-F02 Textos herdados da página, incluindo detalhes e histórico de reserva, devem acompanhar imediatamente as superfícies do tema. Cobrir esses textos na medição por quadros da jornada real de Agendamentos.

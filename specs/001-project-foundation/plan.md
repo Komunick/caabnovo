@@ -292,3 +292,5 @@ Sem schema, migration, dependência ou configuração nova de cache. Reverter co
 2. Aplicar texto/fundo de tema simultaneamente nos links do menu e controles superiores, preservando transições de borda e movimento.
 3. Ampliar a regressão por quadros existente e executar os gates completos em CI, incluindo o fluxo de Agendamentos; não executar build/E2E no PC.
 4. Corrigir na mesma branch/worktree do PR #28, conforme regra vigente de 15/09; sem aprovação ou merge. Registrar o resultado remoto em evidence/theme-contrast-2026-09-16.md.
+
+5. Remover a transição global herdada de body identificada no CI do PR e compartilhar o medidor de contraste entre a regressão do shell e a jornada real de reserva.

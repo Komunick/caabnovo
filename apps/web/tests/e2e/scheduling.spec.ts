@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { Locator, Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
 import { keyboardActivate, keyboardType, tabTo } from "./keyboard";
-import { expectWcag22AA } from "./accessibility";
+import { expectThemeContrast, expectWcag22AA } from "./accessibility";
 
 async function signIn(page: Page, admin = false) {
   const user = admin ? syntheticUsers.administrator : syntheticUsers.ordinary;
@@ -172,6 +172,10 @@ test("configure and manage a real reservation through the panel at 390px, withou
   );
   await expect(page.getByText("Reserva remarcada.", { exact: true })).toBeVisible();
   await expect(page.getByText("Reserva remarcada", { exact: true })).toBeVisible();
+  await expectThemeContrast(
+    page,
+    ".scheduling-workspace dt, .scheduling-workspace dd, .scheduling-workspace li p, .scheduling-workspace li strong, .scheduling-workspace [role=status]",
+  );
   await page.locator("html").evaluate((element) => {
     element.dataset.theme = "dark";
     element.style.colorScheme = "dark";

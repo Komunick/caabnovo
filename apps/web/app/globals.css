@@ -1413,13 +1413,6 @@ progress {
 }
 
 /* Modern workspace experience */
-body {
-  background: var(--color-canvas);
-  transition:
-    color 220ms ease,
-    background-color 220ms ease;
-}
-
 .brand__mark {
   border: 1px solid rgb(255 255 255 / 18%);
   border-radius: 0.9rem;
