@@ -461,3 +461,12 @@ essas funções; funções de conta e demais módulos existentes são encontráv
 - Aceite: medir ambos os sentidos da troca com requestAnimationFrame e repetir o fluxo móvel/desktop de Agendamentos com axe, sem suprimir regras nem adicionar espera para ocultar a falha.
 
 - TH-F02 Textos herdados da página, incluindo detalhes e histórico de reserva, devem acompanhar imediatamente as superfícies do tema. Cobrir esses textos na medição por quadros da jornada real de Agendamentos.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.

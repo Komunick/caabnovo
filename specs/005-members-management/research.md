@@ -108,3 +108,13 @@ A pesquisa oficial acima e a escolha OAB-BA/Implanta permanecem válidas para es
 entrega; nenhuma evidência nova de API substituta equivalente foi encontrada.
 Credenciais continuam privadas no servidor. A remoção da flag não fornece nem
 valida credenciais ausentes; mantém-se a autenticação exigida pelo provedor.
+
+
+## Estado ao navegar — 16/09/2026
+
+Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
+à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
+identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
+usa input/list: [MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
+Sugestões não validam sozinhas a seleção; conferir identificador válido antes de enviar.

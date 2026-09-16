@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import type { PartnerRecord } from "@caab/contracts";
@@ -25,8 +27,14 @@ export function ContractPanel({
   canUpload: boolean;
   command: PartnerCommandHandler;
 }) {
-  const [adding, setAdding] = useState(false);
-  const [fileId, setFileId] = useState("");
+  const drafts = useDraftCache();
+  const close = () => {
+    drafts.clear("partners-contract-panel-1:");
+    setFileId("");
+    setAdding(false);
+  };
+  const [adding, setAdding] = useDraftState("contract-panel:adding", false);
+  const [fileId, setFileId] = useDraftState("contract-panel:fileId", "");
   const [decision, setDecision] = useState<{ id: string; status: "approved" | "ended" } | null>(
     null,
   );
@@ -52,7 +60,8 @@ export function ContractPanel({
         </Button>
       )}
       {adding && (
-        <form
+        <DraftForm
+          draftKey="partners-contract-panel-1"
           onSubmit={async (event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -69,20 +78,20 @@ export function ContractPanel({
                 },
               })
             )
-              setAdding(false);
+              close();
           }}
         >
           <fieldset disabled={disabled}>
             <legend>Novo contrato</legend>
             <FormField id="contract-reference" label="Referência do contrato">
-              <input name="reference" required minLength={2} maxLength={160} />
+              <DraftInput name="reference" required minLength={2} maxLength={160} />
             </FormField>
             <FormField id="contract-terms" label="Condições do contrato">
-              <textarea name="terms" required minLength={3} maxLength={5000} />
+              <DraftTextarea name="terms" required minLength={3} maxLength={5000} />
             </FormField>
             <div className={styles.grid}>
               <FormField id="contract-start" label="Início da vigência">
-                <input
+                <DraftInput
                   type="date"
                   name="startsOn"
                   required
@@ -93,7 +102,7 @@ export function ContractPanel({
                 />
               </FormField>
               <FormField id="contract-end" label="Fim da vigência">
-                <input type="date" name="endsOn" required />
+                <DraftInput type="date" name="endsOn" required />
               </FormField>
             </div>
             {canReadFiles ? (
@@ -111,12 +120,12 @@ export function ContractPanel({
               <Button type="submit" intent="primary">
                 Registrar contrato
               </Button>
-              <Button type="button" onClick={() => setAdding(false)}>
+              <Button type="button" onClick={close}>
                 Cancelar
               </Button>
             </div>
           </fieldset>
-        </form>
+        </DraftForm>
       )}
       {!partner.contracts.length && !adding && <p>Nenhum contrato registrado.</p>}
       <ul className={styles.list}>
@@ -158,7 +167,8 @@ export function ContractPanel({
               )}
             </div>
             {decision?.id === contract.id && (
-              <form
+              <DraftForm
+                draftKey="partners-contract-panel-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
                   if (
@@ -195,7 +205,7 @@ export function ContractPanel({
                     </Button>
                   </div>
                 </fieldset>
-              </form>
+              </DraftForm>
             )}
           </li>
         ))}

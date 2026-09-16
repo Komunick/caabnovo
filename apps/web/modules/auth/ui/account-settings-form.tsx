@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { PasswordInput } from "@/components/ui/password-input";
@@ -55,9 +57,10 @@ export async function saveSettings(input: z.input<typeof accountSettingsRequestS
 export function AccountSettingsForm({
   name,
   email,
-  version,
+  version: initialVersion,
   localMail,
 }: Readonly<{ name: string; email: string; version: number; localMail: boolean }>) {
+  const [version, setVersion] = useDraftState("account:version", initialVersion);
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const [pending, setPending] = useState<string | null>(null);
@@ -111,7 +114,8 @@ export function AccountSettingsForm({
         throw new Error(errors.PASSWORD_MISMATCH);
       if (input.action === "password" && !newPasswordSchema.safeParse(input.newPassword).success)
         throw new Error("Escolha uma senha mais forte. " + PASSWORD_REQUIREMENTS);
-      await saveSettings(input);
+      const saved = await saveSettings(input);
+      setVersion(saved.version);
       form.reset();
       setFeedback({
         action,
@@ -149,9 +153,12 @@ export function AccountSettingsForm({
     <div className="settings-panels">
       <section className="panel" aria-labelledby="profile-title">
         <h2 id="profile-title">Perfil</h2>
-        <form onSubmit={(event) => submit(event, "profile")}>
+        <DraftForm
+          draftKey="auth-account-settings-form-1"
+          onSubmit={(event) => submit(event, "profile")}
+        >
           <FormField id="settings-name" label="Nome">
-            <input
+            <DraftInput
               key={name}
               id="settings-name"
               name="name"
@@ -166,7 +173,7 @@ export function AccountSettingsForm({
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "profile" ? "Salvando…" : "Salvar nome"}
           </button>
-        </form>
+        </DraftForm>
       </section>
       <section className="panel" aria-labelledby="email-title">
         <h2 id="email-title">E-mail de acesso</h2>
@@ -184,7 +191,10 @@ export function AccountSettingsForm({
             , sem envio externo.
           </p>
         ) : null}
-        <form onSubmit={(event) => submit(event, "request-email")}>
+        <DraftForm
+          draftKey="auth-account-settings-form-2"
+          onSubmit={(event) => submit(event, "request-email")}
+        >
           <ValidatedTextField
             id="settings-email"
             label="Novo e-mail"
@@ -211,7 +221,7 @@ export function AccountSettingsForm({
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "request-email" ? "Enviando…" : "Enviar confirmação"}
           </button>
-        </form>
+        </DraftForm>
       </section>
       <section className="panel" aria-labelledby="password-title">
         <h2 id="password-title">Alterar senha</h2>
@@ -220,7 +230,10 @@ export function AccountSettingsForm({
         <p>
           <Link href="/forgot-password">Redefinir senha por e-mail</Link>
         </p>
-        <form onSubmit={(event) => submit(event, "password")}>
+        <DraftForm
+          draftKey="auth-account-settings-form-3"
+          onSubmit={(event) => submit(event, "password")}
+        >
           <FormField id="password-current" label="Senha atual para trocar senha">
             <PasswordInput
               id="password-current"
@@ -258,7 +271,7 @@ export function AccountSettingsForm({
           <button className="primary-button compact-button" type="submit" disabled={disabled}>
             {pending === "password" ? "Salvando…" : "Alterar senha"}
           </button>
-        </form>
+        </DraftForm>
       </section>
     </div>
   );

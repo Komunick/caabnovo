@@ -1,4 +1,5 @@
 "use client";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { useState, type FormEvent } from "react";
@@ -59,9 +60,9 @@ export function AuditExportDialog({
         title="Exportar auditoria"
         description="O arquivo será privado e o endereço de download terá duração limitada."
       >
-        <form onSubmit={submit}>
+        <DraftForm draftKey="audit-audit-export-dialog-1" onSubmit={submit}>
           <FormField id="audit-export-from" label="Início">
-            <input
+            <DraftInput
               id="audit-export-from"
               name="from"
               type="datetime-local"
@@ -70,7 +71,7 @@ export function AuditExportDialog({
             />
           </FormField>
           <FormField id="audit-export-to" label="Fim">
-            <input
+            <DraftInput
               id="audit-export-to"
               name="to"
               type="datetime-local"
@@ -88,7 +89,7 @@ export function AuditExportDialog({
               {pending ? "Aguarde…" : "Iniciar exportação"}
             </Button>
           </div>
-        </form>
+        </DraftForm>
       </DialogContent>
     </Dialog>
   );

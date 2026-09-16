@@ -1,4 +1,5 @@
 "use client";
+import { DraftInput } from "./draft-controls";
 
 import type { ComponentProps } from "react";
 
@@ -46,7 +47,7 @@ export function MaskedContactInput({
   onValueChange?: (input: HTMLInputElement) => void;
 }) {
   return (
-    <input
+    <DraftInput
       {...props}
       type="text"
       inputMode={kind === "cnpj" ? "text" : "numeric"}

@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { useEffect, useRef, useState } from "react";
@@ -14,10 +16,10 @@ export function OabLookup({
 }: {
   member?: { id: string; name: string; number: string; compatible: boolean };
 }) {
-  const [number, setNumber] = useState(member?.number ?? "");
+  const [number, setNumber] = useDraftState("oab-lookup:number", member?.number ?? "");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  const [result, setResult] = useState<OabLookupResult | null>(null);
+  const [result, setResult] = useDraftState<OabLookupResult | null>("oab-lookup:result", null);
   const inFlight = useRef(false);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
@@ -47,7 +49,8 @@ export function OabLookup({
           não são cobertas.
         </p>
       )}
-      <form
+      <DraftForm
+        draftKey="members-oab-lookup-1"
         aria-label="Consulta OAB"
         onSubmit={async (event) => {
           event.preventDefault();
@@ -87,7 +90,7 @@ export function OabLookup({
         <fieldset disabled={!hydrated || pending || !supported}>
           <div className={styles.grid}>
             <FormField id="oab-query-number" label="Número da OAB">
-              <input
+              <DraftInput
                 id="oab-query-number"
                 value={number}
                 readOnly={!!member}
@@ -117,7 +120,7 @@ export function OabLookup({
               />
             </FormField>
             <FormField id="oab-query-state" label="Estado da OAB">
-              <input id="oab-query-state" value="Bahia (BA)" readOnly />
+              <DraftInput id="oab-query-state" value="Bahia (BA)" readOnly />
             </FormField>
           </div>
           <Button type="submit" intent="primary">
@@ -125,7 +128,7 @@ export function OabLookup({
             {pending ? "Consultando…" : "Consultar OAB"}
           </Button>
         </fieldset>
-      </form>
+      </DraftForm>
       <p role="status" aria-live="polite">
         {pending
           ? "Aguardando a OAB-BA. A consulta pode levar até 95 segundos."

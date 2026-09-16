@@ -1,4 +1,5 @@
 "use client";
+import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useState } from "react";
 import type { PartnerReview } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -71,7 +72,7 @@ export function ReviewPanel({
         ambiente. Não há cadastro manual de avaliações.
       </p>
       <FormField id="partner-review-status" label="Situação das avaliações">
-        <select
+        <DraftSelect
           value={status}
           disabled={loading || mutation.busy || !!decision}
           onChange={(event) => {
@@ -85,7 +86,7 @@ export function ReviewPanel({
               {label}
             </option>
           ))}
-        </select>
+        </DraftSelect>
       </FormField>
       <p role="status">{loading ? "Carregando avaliações…" : mutation.notice}</p>
       {(error || mutation.error) && (
@@ -150,7 +151,8 @@ export function ReviewPanel({
                   </div>
                 )}
                 {decision?.review.id === review.id && (
-                  <form
+                  <DraftForm
+                    draftKey="partners-review-panel-1"
                     onSubmit={async (event) => {
                       event.preventDefault();
                       const saved = await mutation.save(
@@ -189,7 +191,7 @@ export function ReviewPanel({
                         </Button>
                       </div>
                     </fieldset>
-                  </form>
+                  </DraftForm>
                 )}
               </li>
             ))}

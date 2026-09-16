@@ -118,3 +118,11 @@ consultá-la e altera seus rótulos conforme esse estado. Listagem usa o documen
 para conteúdo, busca, ordenação e classificação; após retirada usa a última versão privada.
 Validar contrato, rollback de auditoria, revisão obsoleta, worker cancelado, lista/inicial,
 consumo app/site, erro recuperável no editor e rótulos específicos no browser do CI.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.

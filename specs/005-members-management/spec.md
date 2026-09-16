@@ -267,3 +267,12 @@ institucional continua exigindo chave/senha privadas válidas; nenhuma credencia
 embutida na aplicação. Preservar consulta individual, campos, permissões e auditoria.
 Aceite: mesmas credenciais funcionam com flag ausente, true, false ou qualquer valor;
 credenciais ausentes/incompletas continuam bloqueando o HTTP.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.

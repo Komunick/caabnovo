@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import Image from "next/image";
 import { Camera, Check, Trash2, UserRound, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -47,7 +49,7 @@ export function NewMemberPhoto({
           <span>{file ? "Prévia · ainda não salva" : "Sem foto"}</span>
         </div>
         <div>
-          <input
+          <DraftInput
             ref={input}
             tabIndex={-1}
             className="sr-only"
@@ -128,7 +130,7 @@ export function MemberPhoto({
   command: (input: Record<string, unknown>) => Promise<boolean>;
   onBusyChange: (busy: boolean) => void;
 }) {
-  const [file, setFile] = useState<File>();
+  const [file, setFile] = useDraftState<File | undefined>("member-photo:file", undefined);
   const [preview, setPreview] = useState<string>();
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -234,7 +236,8 @@ export function MemberPhoto({
             {file ? "Prévia · ainda não salva" : member.photoFileId ? "Foto atual" : "Sem foto"}
           </span>
         </div>
-        <form
+        <DraftForm
+          draftKey="members-member-photo-1"
           onSubmit={(event) => {
             event.preventDefault();
             void save();
@@ -242,7 +245,7 @@ export function MemberPhoto({
         >
           {canUpload && (
             <>
-              <input
+              <DraftInput
                 ref={input}
                 tabIndex={-1}
                 className="sr-only"
@@ -297,7 +300,7 @@ export function MemberPhoto({
           <p role="status" aria-live="polite">
             {notice}
           </p>
-        </form>
+        </DraftForm>
       </div>
     </section>
   );

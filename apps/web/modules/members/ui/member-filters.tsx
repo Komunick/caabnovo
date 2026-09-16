@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { useEffect, useState, useTransition } from "react";
@@ -15,8 +17,8 @@ export function MemberFilters({ query }: { query: Query }) {
   const [pending, startTransition] = useTransition();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
-  const [filters, setFilters] = useState(query);
-  const [expanded, setExpanded] = useState(false);
+  const [filters, setFilters] = useDraftState("member-filters:filters", query);
+  const [expanded, setExpanded] = useDraftState("member-filters:expanded", false);
   const queryKey = JSON.stringify(query);
   const [previousQuery, setPreviousQuery] = useState(queryKey);
   // Keep controls in sync with pagination and browser back/forward without remounting them.
@@ -44,7 +46,8 @@ export function MemberFilters({ query }: { query: Query }) {
     filters.archived !== "active",
   ].filter(Boolean).length;
   return (
-    <form
+    <DraftForm
+      draftKey="members-member-filters-1"
       action="/members"
       role="search"
       aria-label="Filtros de associados"
@@ -78,7 +81,7 @@ export function MemberFilters({ query }: { query: Query }) {
         </div>
         <div id="member-filter-options" className="list-filters" hidden={!expanded}>
           <FormField id="member-oab-filter" label="Estado da OAB">
-            <select
+            <DraftSelect
               id="member-oab-filter"
               name="oabState"
               value={filters.oabState ?? ""}
@@ -95,10 +98,10 @@ export function MemberFilters({ query }: { query: Query }) {
                   {uf}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="member-filter" label="Análise cadastral">
-            <select
+            <DraftSelect
               id="member-filter"
               name="registrationStatus"
               value={filters.registrationStatus ?? ""}
@@ -117,10 +120,10 @@ export function MemberFilters({ query }: { query: Query }) {
                   {resultLabels[result]}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="member-archived" label="Exibir">
-            <select
+            <DraftSelect
               id="member-archived"
               name="archived"
               value={filters.archived}
@@ -134,10 +137,10 @@ export function MemberFilters({ query }: { query: Query }) {
               <option value="active">Não arquivados</option>
               <option value="archived">Arquivados</option>
               <option value="all">Todos</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="member-administrative-filter" label="Situação administrativa">
-            <select
+            <DraftSelect
               id="member-administrative-filter"
               name="administrativeStatus"
               value={filters.administrativeStatus ?? ""}
@@ -156,11 +159,11 @@ export function MemberFilters({ query }: { query: Query }) {
                   {label}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
         </div>
         <span role="status">{pending ? "Atualizando cadastros…" : ""}</span>
       </fieldset>
-    </form>
+    </DraftForm>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { DraftForm } from "@/components/ui/draft-controls";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,7 @@ export function SensitiveActionDialog({
         </Button>
       </DialogTrigger>
       <DialogContent title={title} description="Confirme para concluir esta ação.">
-        <form onSubmit={submit}>
+        <DraftForm draftKey="users-sensitive-action-dialog-1" onSubmit={submit}>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>
@@ -54,7 +55,7 @@ export function SensitiveActionDialog({
               {pending ? "Aguarde…" : confirmLabel}
             </Button>
           </div>
-        </form>
+        </DraftForm>
       </DialogContent>
     </Dialog>
   );

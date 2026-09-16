@@ -1,4 +1,5 @@
 "use client";
+import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { Plus } from "lucide-react";
@@ -39,7 +40,8 @@ export function RoleAssignmentForm({
     event.preventDefault();
     setPending(true);
     setError("");
-    const data = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const data = new FormData(form);
     const roleId = String(data.get("roleId") ?? "");
     try {
       const response = await fetch(`/api/v1/users/${userId}/roles/${roleId}`, {
@@ -50,7 +52,10 @@ export function RoleAssignmentForm({
       if (!response.ok) {
         const body = await response.json().catch(() => null);
         setError(roleGrantError(body?.code));
-      } else router.refresh();
+      } else {
+        form.reset();
+        router.refresh();
+      }
     } catch {
       setError("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.");
     } finally {
@@ -88,9 +93,9 @@ export function RoleAssignmentForm({
         <p>Nenhuma função ativa.</p>
       )}
       {canGrant && available.length ? (
-        <form onSubmit={grant}>
+        <DraftForm draftKey="users-role-assignment-form-1" onSubmit={grant}>
           <FormField id="role-id" label="Função">
-            <select id="role-id" name="roleId" required defaultValue="">
+            <DraftSelect id="role-id" name="roleId" required defaultValue="">
               <option value="" disabled>
                 Selecione
               </option>
@@ -99,7 +104,7 @@ export function RoleAssignmentForm({
                   {role.name}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
 
           {error ? <p role="alert">{error}</p> : null}
@@ -111,7 +116,7 @@ export function RoleAssignmentForm({
             <Plus size={20} aria-hidden="true" />
             {pending ? "Aguarde…" : "Conceder função"}
           </button>
-        </form>
+        </DraftForm>
       ) : null}
     </section>
   );

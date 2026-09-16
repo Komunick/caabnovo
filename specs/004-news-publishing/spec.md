@@ -247,3 +247,12 @@ Refinamento solicitado pelo usuário em 16/09/2026:
   para que uma publicação programada não a publique novamente. Explicar esse efeito no editor.
 - **NP-03**: Após sucesso, o texto salvo fica em Rascunhos e a notícia sai das publicações da inicial, da aba Publicadas
   e dos consumidores públicos. Histórico e auditoria são preservados; erro mantém o texto no editor.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.

@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 
 import { useEffect, useRef, useState } from "react";
 import { auditActorPageSchema } from "@caab/contracts";
@@ -10,7 +11,10 @@ export function AuditPersonFilter({
   name,
   onChange,
 }: Readonly<{ value: string; name?: string; onChange: (id: string) => void }>) {
-  const [text, setText] = useState(value ? (name ?? "Pessoa selecionada") : "");
+  const [text, setText] = useDraftState(
+    "audit-person:text",
+    value ? (name ?? "Pessoa selecionada") : "",
+  );
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<{ id: string; name: string }[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);

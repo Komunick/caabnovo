@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -52,16 +54,19 @@ export function MemberEditor({
   canWrite: boolean;
   canReview: boolean;
 }) {
-  const [member, setMember] = useState(initial);
-  const [tab, setTab] = useState("Situações");
+  const [member, setMember] = useDraftState("member-editor:member", initial);
+  const [tab, setTab] = useDraftState("member-editor:tab", "Situações");
   const [commandBusy, setBusy] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const busy = commandBusy || photoBusy;
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [dimension, setDimension] = useState<MemberDimension>("registration");
-  const [matches, setMatches] = useState<MemberListItem[]>([]);
-  const [searched, setSearched] = useState(false);
+  const [dimension, setDimension] = useDraftState<MemberDimension>(
+    "member-editor:dimension",
+    "registration",
+  );
+  const [matches, setMatches] = useDraftState<MemberListItem[]>("member-editor:matches", []);
+  const [searched, setSearched] = useDraftState("member-editor:searched", false);
   const [history, setHistory] = useState<HistoryPage | null>(null);
   const retry = useRef({ body: "", key: "" });
   async function command(input: Record<string, unknown>) {
@@ -172,16 +177,19 @@ export function MemberEditor({
             profile={member.profile}
             disabled={busy || !!member.archivedAt || !canWrite}
             onSave={async (profile) => {
-              await command({ action: "update", profile });
+              return command({ action: "update", profile });
             }}
           />
           <hr />
-          <form
-            onSubmit={(e) => {
+          <DraftForm
+            draftKey="members-member-editor-1"
+            onSubmit={async (e) => {
               e.preventDefault();
-              void command({
+              const form = e.currentTarget;
+              const saved = await command({
                 action: member.archivedAt ? "restore" : "archive",
               });
+              if (saved) form.reset();
             }}
           >
             <Button
@@ -191,7 +199,7 @@ export function MemberEditor({
             >
               {member.archivedAt ? "Restaurar cadastro" : "Arquivar cadastro"}
             </Button>
-          </form>
+          </DraftForm>
         </section>
       )}
       {tab === "Situações" && (
@@ -266,13 +274,15 @@ export function MemberEditor({
               </a>
               . Registre o resultado observado; nenhuma consulta é feita automaticamente.
             </p>
-            <form
-              onSubmit={(e) => {
+            <DraftForm
+              draftKey="members-member-editor-2"
+              onSubmit={async (e) => {
                 e.preventDefault();
+                const form = e.currentTarget;
                 const d = new FormData(e.currentTarget);
                 const observed = String(d.get("observed"));
                 const until = String(d.get("until"));
-                void command({
+                const saved = await command({
                   action: "assess",
                   dimension,
                   result: d.get("result"),
@@ -281,12 +291,13 @@ export function MemberEditor({
                   observedAt: new Date(`${observed}T00:00:00-03:00`).toISOString(),
                   validUntil: until ? new Date(`${until}T23:59:59-03:00`).toISOString() : null,
                 });
+                if (saved) form.reset();
               }}
             >
               <fieldset disabled={busy || !!member.archivedAt || !canReview}>
                 <div className={styles.grid}>
                   <FormField id="assessment-dimension" label="Dimensão">
-                    <select
+                    <DraftSelect
                       value={dimension}
                       onChange={(e) => setDimension(e.target.value as MemberDimension)}
                     >
@@ -295,19 +306,23 @@ export function MemberEditor({
                           {dimensionLabels[key]}
                         </option>
                       ))}
-                    </select>
+                    </DraftSelect>
                   </FormField>
-                  <FormField id="assessment-result" label="Resultado">
-                    <select key={dimension} name="result">
+                  <FormField id={`assessment-result-${dimension}`} label="Resultado">
+                    <DraftSelect
+                      key={dimension}
+                      id={`assessment-result-${dimension}`}
+                      name="result"
+                    >
                       {memberDimensions[dimension].map((r) => (
                         <option key={r} value={r}>
                           {resultLabels[r]}
                         </option>
                       ))}
-                    </select>
+                    </DraftSelect>
                   </FormField>
                   <FormField id="assessment-observed" label="Data da conferência">
-                    <input
+                    <DraftInput
                       name="observed"
                       type="date"
                       required
@@ -319,18 +334,18 @@ export function MemberEditor({
                     id="assessment-until"
                     label="Validade até (obrigatória para credencial válida)"
                   >
-                    <input name="until" type="date" />
+                    <DraftInput name="until" type="date" />
                   </FormField>
                 </div>
                 <FormField id="assessment-source" label="Fonte ou regra aplicada">
-                  <input name="source" required minLength={3} maxLength={300} />
+                  <DraftInput name="source" required minLength={3} maxLength={300} />
                 </FormField>
 
                 <Button type="submit" intent="primary">
                   Registrar avaliação
                 </Button>
               </fieldset>
-            </form>
+            </DraftForm>
           </section>
           {member.assessments.length > 0 && (
             <details className="panel">
@@ -368,26 +383,30 @@ export function MemberEditor({
                   {r.endedAt ? `Encerrado em ${formatMemberDate(r.endedAt)}` : "Vínculo ativo"}
                 </p>
                 {!r.endedAt && r.holderId === member.id && (
-                  <form
-                    onSubmit={(e) => {
+                  <DraftForm
+                    draftKey="members-member-editor-3"
+                    onSubmit={async (e) => {
                       e.preventDefault();
-                      void command({
+                      const form = e.currentTarget;
+                      const saved = await command({
                         action: "unlink",
                         relationshipId: r.id,
                       });
+                      if (saved) form.reset();
                     }}
                   >
                     <Button type="submit" disabled={busy || !!member.archivedAt || !canWrite}>
                       Encerrar vínculo
                     </Button>
-                  </form>
+                  </DraftForm>
                 )}
               </li>
             ))}
           </ul>
           {!member.relationships.length && <p>Nenhum vínculo registrado.</p>}
           <h3>Vincular dependente existente</h3>
-          <form
+          <DraftForm
+            draftKey="members-member-editor-4"
             onSubmit={(e) => {
               e.preventDefault();
               const q = String(new FormData(e.currentTarget).get("q"));
@@ -402,40 +421,43 @@ export function MemberEditor({
             }}
           >
             <FormField id="dependent-search" label="Buscar pessoa pelo nome">
-              <input name="q" required minLength={2} maxLength={160} />
+              <DraftInput name="q" required minLength={2} maxLength={160} />
             </FormField>
             <Button type="submit">Buscar pessoa</Button>
-          </form>
+          </DraftForm>
           {searched && !matches.length && (
             <p>
               Nenhuma pessoa encontrada. <Link href="/members/new">Cadastrar pessoa</Link>
             </p>
           )}
           {matches.length > 0 && (
-            <form
-              onSubmit={(e) => {
+            <DraftForm
+              draftKey="members-member-editor-5"
+              onSubmit={async (e) => {
                 e.preventDefault();
+                const form = e.currentTarget;
                 const d = new FormData(e.currentTarget);
-                void command({
+                const saved = await command({
                   action: "link",
                   dependentId: d.get("dependentId"),
                   relationship: d.get("relationship"),
                   startsOn: d.get("startsOn"),
                 });
+                if (saved) form.reset();
               }}
             >
               <fieldset disabled={busy || !!member.archivedAt || !canWrite}>
                 <FormField id="dependent-id" label="Pessoa encontrada">
-                  <select name="dependentId">
+                  <DraftSelect name="dependentId">
                     {matches.map((m) => (
                       <option key={m.id} value={m.id}>
                         {m.name}
                       </option>
                     ))}
-                  </select>
+                  </DraftSelect>
                 </FormField>
                 <FormField id="dependent-type" label="Relação declarada">
-                  <input
+                  <DraftInput
                     name="relationship"
                     required
                     minLength={2}
@@ -444,7 +466,7 @@ export function MemberEditor({
                   />
                 </FormField>
                 <FormField id="dependent-start" label="Início do vínculo">
-                  <input
+                  <DraftInput
                     name="startsOn"
                     type="date"
                     required
@@ -457,7 +479,7 @@ export function MemberEditor({
                   Vincular dependente
                 </Button>
               </fieldset>
-            </form>
+            </DraftForm>
           )}
         </section>
       )}

@@ -93,3 +93,9 @@ ao adicionar funcionalidades. Não usar demo, fixture ou página vazia como entr
 - [x] UI05 Concluir evidências e abrir novo PR para dev após checks aprovados; não aprovar/integrar.
 
 Evidências desta correção: [validação e revisão visual](evidence/ui-2026-09-16.md).
+
+
+## Navegação sem perda de edição — 16/09/2026
+
+- [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
+- [ ] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar evidências no PR.

@@ -1,6 +1,8 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SchedulingBooking, SchedulingPage } from "@caab/contracts";
 import { Table, TableContainer } from "@/components/ui/table";
@@ -109,12 +111,17 @@ export function SchedulingAgenda() {
   );
 }
 function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: string }) {
+  const drafts = useDraftCache();
   const router = useRouter();
-  const [unitId, setUnitId] = useState(initial.get("unitId") ?? "");
-  const [expanded, setExpanded] = useState(
+  const [unitId, setUnitId] = useDraftState("agenda:unitId", initial.get("unitId") ?? "");
+  const [expanded, setExpanded] = useDraftState(
+    "agenda:expanded",
     !!(initial.get("unitId") || initial.get("professionalId") || initial.get("status")),
   );
-  const [professionalId, setProfessionalId] = useState(initial.get("professionalId") ?? "");
+  const [professionalId, setProfessionalId] = useDraftState(
+    "agenda:professionalId",
+    initial.get("professionalId") ?? "",
+  );
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -128,7 +135,8 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
     router.push(`/scheduling?${next}`);
   }
   return (
-    <form
+    <DraftForm
+      draftKey="scheduling-agenda-1"
       role="search"
       aria-label="Filtros de reservas"
       className="scheduling-filters"
@@ -136,7 +144,7 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
     >
       <div className="filter-toolbar">
         <FormField id="agenda-date" label="Data">
-          <input name="date" type="date" required defaultValue={date} />
+          <DraftInput name="date" type="date" required defaultValue={date} />
         </FormField>
         <SearchField
           id="agenda-person"
@@ -152,18 +160,26 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
           onClick={() => setExpanded(!expanded)}
         />
         <Button type="submit">Aplicar filtros</Button>
-        <Link className={buttonVariants({ size: "compact" })} href="/scheduling">
+        <Link
+          className={buttonVariants({ size: "compact" })}
+          href="/scheduling"
+          onClick={() => {
+            drafts.clear("scheduling-agenda-1:");
+            setUnitId("");
+            setProfessionalId("");
+          }}
+        >
           Limpar filtros
         </Link>
       </div>
       <div id="agenda-extra-filters" hidden={!expanded}>
         <div className="scheduling-grid">
           <FormField id="agenda-status" label="Estado">
-            <select name="status" defaultValue={initial.get("status") ?? ""}>
+            <DraftSelect name="status" defaultValue={initial.get("status") ?? ""}>
               <option value="">Todos</option>
               <option value="scheduled">Agendado</option>
               <option value="cancelled">Cancelado</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <Choice label="Unidade" resource="units" value={unitId} onChange={setUnitId} />
           <Choice
@@ -174,6 +190,6 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
           />
         </div>
       </div>
-    </form>
+    </DraftForm>
   );
 }

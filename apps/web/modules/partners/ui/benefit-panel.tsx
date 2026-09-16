@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import {
@@ -64,10 +66,14 @@ function BenefitForm({
   command: PartnerCommandHandler;
   onClose: () => void;
 }) {
-  const [draft, setDraft] = useState(benefit?.draft ?? benefitDraftSchema.parse({}));
+  const [draft, setDraft] = useDraftState(
+    `benefit-panel:draft:${benefit?.id ?? "new"}`,
+    benefit?.draft ?? benefitDraftSchema.parse({}),
+  );
   const [error, setError] = useState("");
   return (
-    <form
+    <DraftForm
+      draftKey="partners-benefit-panel-1"
       onSubmit={async (event) => {
         event.preventDefault();
         setError("");
@@ -98,7 +104,7 @@ function BenefitForm({
         </p>
         {error && <p role="alert">{error}</p>}
         <FormField id="benefit-title" label="Título">
-          <input
+          <DraftInput
             maxLength={160}
             value={draft.title}
             onChange={(event) => setDraft({ ...draft, title: event.target.value })}
@@ -112,7 +118,7 @@ function BenefitForm({
           ] as const
         ).map(([key, label, max]) => (
           <FormField key={key} id={`benefit-${key}`} label={label}>
-            <textarea
+            <DraftTextarea
               maxLength={max}
               value={draft[key]}
               onChange={(event) => setDraft({ ...draft, [key]: event.target.value })}
@@ -121,7 +127,7 @@ function BenefitForm({
         ))}
         <div className={styles.grid}>
           <FormField id="benefit-unit" label="Unidade">
-            <select
+            <DraftSelect
               value={draft.unitId ?? ""}
               onChange={(event) => setDraft({ ...draft, unitId: event.target.value || null })}
             >
@@ -132,10 +138,10 @@ function BenefitForm({
                   {unit.active ? "" : " (inativa)"}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="benefit-contract" label="Contrato">
-            <select
+            <DraftSelect
               value={draft.contractId ?? ""}
               onChange={(event) => setDraft({ ...draft, contractId: event.target.value || null })}
             >
@@ -150,17 +156,17 @@ function BenefitForm({
                       : "aguardando aprovação"}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="benefit-start" label="Início da oferta">
-            <input
+            <DraftInput
               type="date"
               value={draft.startsOn ?? ""}
               onChange={(event) => setDraft({ ...draft, startsOn: event.target.value || null })}
             />
           </FormField>
           <FormField id="benefit-end" label="Fim da oferta">
-            <input
+            <DraftInput
               type="date"
               min={draft.startsOn ?? undefined}
               value={draft.endsOn ?? ""}
@@ -172,7 +178,7 @@ function BenefitForm({
           <legend>Canais de exibição</legend>
           {(["site", "app"] as const).map((channel) => (
             <label key={channel}>
-              <input
+              <DraftInput
                 type="checkbox"
                 checked={draft.channels.includes(channel)}
                 onChange={(event) =>
@@ -199,7 +205,7 @@ function BenefitForm({
           </Button>
         </div>
       </fieldset>
-    </form>
+    </DraftForm>
   );
 }
 export function BenefitPanel({
@@ -215,7 +221,11 @@ export function BenefitPanel({
   canPublish: boolean;
   command: PartnerCommandHandler;
 }) {
-  const [editing, setEditing] = useState<PartnerBenefit | "new" | null>(null);
+  const drafts = useDraftCache();
+  const [editing, setEditing] = useDraftState<PartnerBenefit | "new" | null>(
+    "benefit-panel:editing",
+    null,
+  );
   const [preview, setPreview] = useState<string | null>(null);
   const [publishedPreview, setPublishedPreview] = useState<string | null>(null);
   const [decision, setDecision] = useState<{ id: string; action: "publish" | "hide" } | null>(null);
@@ -239,7 +249,10 @@ export function BenefitPanel({
           benefit={editing === "new" ? null : editing}
           disabled={disabled}
           command={command}
-          onClose={() => setEditing(null)}
+          onClose={() => {
+            drafts.remove(`benefit-panel:draft:${editing === "new" ? "new" : editing?.id}`);
+            setEditing(null);
+          }}
         />
       )}
       {!partner.benefits.length && !editing && <p>Nenhum benefício cadastrado.</p>}
@@ -318,7 +331,8 @@ export function BenefitPanel({
               <BenefitPreview draft={benefit.published} partner={partner} published />
             )}
             {decision?.id === benefit.id && (
-              <form
+              <DraftForm
+                draftKey="partners-benefit-panel-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
                   if (
@@ -359,7 +373,7 @@ export function BenefitPanel({
                     </Button>
                   </div>
                 </fieldset>
-              </form>
+              </DraftForm>
             )}
           </li>
         ))}

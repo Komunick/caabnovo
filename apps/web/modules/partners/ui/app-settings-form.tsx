@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import type { PartnerAppSettings, PartnerCategory } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { usePartnerMutation } from "./use-partner-mutation";
@@ -7,9 +8,10 @@ import { partnerRequest } from "./client";
 import styles from "./partners.module.css";
 type Data = { settings: PartnerAppSettings; categories: PartnerCategory[] };
 export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPublish: boolean }) {
-  const [data, setData] = useState(initial);
-  const [mode, setMode] = useState(initial.settings.mode);
-  const [selected, setSelected] = useState(
+  const [data, setData] = useDraftState("app-settings-form:data", initial);
+  const [mode, setMode] = useDraftState("app-settings-form:mode", initial.settings.mode);
+  const [selected, setSelected] = useDraftState(
+    "app-settings-form:selected",
     initial.settings.mode === "all"
       ? initial.categories.filter((c) => c.active).map((c) => c.id)
       : initial.settings.categoryIds,
@@ -52,7 +54,8 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
         </div>
       )}
       <p role="status">{mutation.notice}</p>
-      <form
+      <DraftForm
+        draftKey="partners-app-settings-form-1"
         onSubmit={async (event) => {
           event.preventDefault();
           const result = await mutation.save<Data>(
@@ -74,7 +77,7 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
           <legend>Exibição de categorias</legend>
           <div className={styles.checks}>
             <label>
-              <input
+              <DraftInput
                 type="radio"
                 name="category-mode"
                 checked={mode === "all"}
@@ -83,7 +86,7 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
               Todas as categorias ativas
             </label>
             <label>
-              <input
+              <DraftInput
                 type="radio"
                 name="category-mode"
                 checked={mode === "selected"}
@@ -100,7 +103,7 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
               <div className={styles.categoryChoices}>
                 {active.map((category) => (
                   <label key={category.id} className={styles.card}>
-                    <input
+                    <DraftInput
                       type="checkbox"
                       disabled={mode === "all"}
                       checked={mode === "all" || selected.includes(category.id)}
@@ -143,7 +146,7 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
             Salvar configuração do app
           </Button>
         </fieldset>
-      </form>
+      </DraftForm>
     </section>
   );
 }

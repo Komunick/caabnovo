@@ -1,5 +1,10 @@
 import Link from "next/link";
-import Form from "next/form";
+import {
+  DraftResetLink,
+  DraftSearchForm,
+  DraftInput,
+  DraftSelect,
+} from "@/components/ui/draft-controls";
 import { jobListQuerySchema } from "@caab/contracts";
 import { AuditNavigation } from "@/modules/audit/ui/audit-navigation";
 import { headers } from "next/headers";
@@ -77,7 +82,8 @@ export default async function JobsPage({
         events={actor.permissions.has(PERMISSIONS.auditRead)}
         jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
       />
-      <Form
+      <DraftSearchForm
+        draftKey="job-filters"
         action="/audit/jobs"
         className="filter-grid"
         key={JSON.stringify(query)}
@@ -85,18 +91,18 @@ export default async function JobsPage({
       >
         <div className="form-field">
           <label htmlFor="job-status">Estado</label>
-          <select id="job-status" name="status" defaultValue={query.status ?? ""}>
+          <DraftSelect id="job-status" name="status" defaultValue={query.status ?? ""}>
             <option value="">Todos os estados</option>
             {Object.entries(statusLabel).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
-          </select>
+          </DraftSelect>
         </div>
         <div className="form-field">
           <label htmlFor="job-type">Tipo</label>
-          <input
+          <DraftInput
             id="job-type"
             name="jobType"
             list="job-types"
@@ -110,16 +116,16 @@ export default async function JobsPage({
             ))}
           </datalist>
         </div>
-        <input type="hidden" name="limit" value={query.limit} />
+        <DraftInput type="hidden" name="limit" value={query.limit} />
         <div className="jobs-filter-actions">
           <Button type="submit" intent="primary">
             Aplicar filtros
           </Button>
-          <Link className={buttonVariants({ intent: "ghost" })} href="/audit/jobs">
+          <DraftResetLink className={buttonVariants({ intent: "ghost" })} href="/audit/jobs">
             Limpar filtros
-          </Link>
+          </DraftResetLink>
         </div>
-      </Form>
+      </DraftSearchForm>
       <section className="panel jobs-panel" aria-labelledby="job-list-title">
         <h2 id="job-list-title">Execuções</h2>
         <p>

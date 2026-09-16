@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect } from "@/components/ui/draft-controls";
 
 import { useEffect, useId, useRef, useState } from "react";
 import { CalendarDays } from "lucide-react";
@@ -38,7 +40,7 @@ export function BirthDateField({
   disabled: boolean;
 }) {
   const calendarId = useId();
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useDraftState(`birth-date:${id}`, defaultValue);
   const inputRef = useRef<HTMLInputElement>(null);
   // Calendar choices and clearing must refresh the same feedback as typing.
   useEffect(() => {
@@ -70,7 +72,7 @@ export function BirthDateField({
 
   return (
     <div className={`${styles.birthDateField} field-with-action`}>
-      <input
+      <DraftInput
         {...aria}
         ref={inputRef}
         id={id}
@@ -100,16 +102,16 @@ export function BirthDateField({
         >
           <div className={styles.calendarControls}>
             <FormField id={`${calendarId}-month`} label="Mês">
-              <select value={month} onChange={(event) => setMonth(Number(event.target.value))}>
+              <DraftSelect value={month} onChange={(event) => setMonth(Number(event.target.value))}>
                 {months.map((label, index) => (
                   <option key={label} value={index}>
                     {label}
                   </option>
                 ))}
-              </select>
+              </DraftSelect>
             </FormField>
             <FormField id={`${calendarId}-year`} label="Ano">
-              <input
+              <DraftInput
                 type="number"
                 min={1}
                 max={today.getFullYear()}

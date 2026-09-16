@@ -163,3 +163,12 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 ## Navegação para seções — 15/09/2026
 
 Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção correspondente deve ficar visível mesmo quando a página chegar por carregamento progressivo. Preservar navegação nativa entre âncoras já presentes e o foco atual.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.

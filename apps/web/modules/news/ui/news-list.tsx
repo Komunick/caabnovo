@@ -1,4 +1,5 @@
 "use client";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import Link from "next/link";
@@ -164,7 +165,8 @@ export function NewsList({
         <h2 id="news-list-title">
           {initialQuery.collection === "drafts" ? "Seus rascunhos" : "Suas notícias"}
         </h2>
-        <form
+        <DraftForm
+          draftKey="news-news-list-1"
           className="filter-toolbar"
           role="search"
           aria-label="Filtros de notícias"
@@ -197,7 +199,7 @@ export function NewsList({
             onClick={() => setExpanded(!expanded)}
           />
           {(expanded || hasFilters) && <Button onClick={clear}>Limpar filtros</Button>}
-        </form>
+        </DraftForm>
         <fieldset
           id="news-filter-options"
           hidden={!expanded}
@@ -206,16 +208,19 @@ export function NewsList({
           aria-label="Opções de filtro de notícias"
         >
           <FormField id="news-filter-1" label="Exibir">
-            <select value={query.state} onChange={(event) => select("state", event.target.value)}>
+            <DraftSelect
+              value={query.state}
+              onChange={(event) => select("state", event.target.value)}
+            >
               {states.map((state) => (
                 <option key={state.value} value={state.value}>
                   {state.label}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="news-filter-2" label="Categoria">
-            <input
+            <DraftInput
               value={query.category}
               maxLength={80}
               placeholder="Todas as categorias"
@@ -223,34 +228,37 @@ export function NewsList({
             />
           </FormField>
           <FormField id="news-filter-3" label="Destino previsto">
-            <select
+            <DraftSelect
               value={query.channel}
               onChange={(event) => select("channel", event.target.value)}
             >
               <option value="all">Todos os destinos</option>
               <option value="app">Aplicativo</option>
               <option value="site">Site</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="news-filter-4" label="Destaque">
-            <select
+            <DraftSelect
               value={query.highlight}
               onChange={(event) => select("highlight", event.target.value)}
             >
               <option value="all">Com ou sem destaque</option>
               <option value="yes">Em destaque</option>
               <option value="no">Sem destaque</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="news-filter-5" label="Imagem de capa">
-            <select value={query.cover} onChange={(event) => select("cover", event.target.value)}>
+            <DraftSelect
+              value={query.cover}
+              onChange={(event) => select("cover", event.target.value)}
+            >
               <option value="all">Com ou sem capa</option>
               <option value="yes">Com capa</option>
               <option value="no">Sem capa</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="news-filter-6" label="Atualização">
-            <select
+            <DraftSelect
               value={query.updatedWithin}
               onChange={(event) => select("updatedWithin", event.target.value)}
             >
@@ -258,17 +266,20 @@ export function NewsList({
               <option value="7">Últimos 7 dias</option>
               <option value="30">Últimos 30 dias</option>
               <option value="90">Últimos 90 dias</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="news-filter-7" label="Ordenar por">
-            <select value={query.sort} onChange={(event) => select("sort", event.target.value)}>
+            <DraftSelect
+              value={query.sort}
+              onChange={(event) => select("sort", event.target.value)}
+            >
               <option value="updated-desc">Atualização: mais recentes</option>
               <option value="updated-asc">Atualização: mais antigas</option>
               <option value="created-desc">Criação: mais recentes</option>
               <option value="created-asc">Criação: mais antigas</option>
               <option value="title-asc">Título: A–Z</option>
               <option value="title-desc">Título: Z–A</option>
-            </select>
+            </DraftSelect>
           </FormField>
         </fieldset>
       </div>

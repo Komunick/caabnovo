@@ -108,3 +108,23 @@ Referência principal: páginas existentes de Parceiros/Associados e componentes
 Fontes oficiais: [GOV.UK Button](https://design-system.service.gov.uk/components/button/) orienta texto que descreva a ação e hierarquia clara entre ações; [W3C, rótulos de controles](https://www.w3.org/WAI/tutorials/forms/labels/) fundamenta associação explícita entre rótulo e campo. Guias de CSS/Link do Next instalado consultados na dependência da principal (mesmo lockfile da nova worktree).
 
 Decisão: aplicar componentes e tokens já usados no projeto, não a aparência externa dessas referências. Uma inclusão principal por área, abas com destino identificado, tabelas/busca existentes, contexto na URL e controles rotulados. Avaliação por jornada real de inclusão, capturas e axe; referências não substituem a revisão visual nem autorizam ampliar o produto.
+
+
+## Estado ao navegar — 16/09/2026
+
+Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
+à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
+identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
+usa input/list: [MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
+Sugestões não validam sozinhas a seleção; conferir identificador válido antes de enviar.
+
+### Combobox editável — implementação de16/09/2026
+
+Consulta oficial: https://www.w3.org/WAI/ARIA/apg/patterns/combobox/.
+Um campo editável com lista de sugestões permite digitar, percorrer opções com setas,
+confirmar com Enter e fechar com Escape. Em Agendamentos a confirmação usa o ID,
+inclusive com nomes iguais; texto avulso não é um vínculo válido. A lista conserva
+busca remota, paginação e cancelamento de respostas antigas, usando os tokens e
+estilo de sugestões existentes na Auditoria. O campo UF nativo continua adequado
+ao conjunto fixo de estados, cujos códigos são únicos.

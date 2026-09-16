@@ -161,3 +161,15 @@ Pedido do usuário após PR28: padronizar todas as telas de Agendamentos com as 
 - UI-F03 Abas e filtros devem manter contexto na URL/recarga. Formulários de cadastro identificam a ação e oferecem salvar/cancelar, com foco de entrada e retorno. Não perder dados após erro de envio.
 - UI-F04 Reduzir ruído dos filtros e seletores; usar listagens tabulares, estados vazios orientados à ação e formulário de reserva organizado por beneficiário, atendimento e horário.
 - UI-F05 Validar inclusão de todos os tipos, edição, reserva/remarcação/cancelamento, teclado, 390px/desktop, temas e contraste transitório. Preservar contratos, permissões e integridade atuais; não criar novas funções do roadmap.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.
+
+- **SL01**: Substituir busca e select separados por um único controle editável de seleção,
+  como UF; preservar filtros dependentes, pesquisa real, paginação, identidade e validação.

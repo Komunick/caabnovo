@@ -1,4 +1,5 @@
 "use client";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { useState } from "react";
 import { partnerUnitSchema, contactFieldMessages, type PartnerUnit } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,8 @@ export function UnitForm({
 }) {
   const [error, setError] = useState("");
   return (
-    <form
+    <DraftForm
+      draftKey={`partners-unit-form:${unit?.id ?? "new"}`}
       onSubmit={async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -73,16 +75,16 @@ export function UnitForm({
             message="Informe o nome da unidade com pelo menos dois caracteres."
           />
           <FormField id="unit-mode" label="Atendimento">
-            <select name="mode" defaultValue={unit?.profile.mode ?? "presential"}>
+            <DraftSelect name="mode" defaultValue={unit?.profile.mode ?? "presential"}>
               <option value="presential">Presencial</option>
               <option value="remote">Remoto</option>
-            </select>
+            </DraftSelect>
           </FormField>
         </div>
         <BrazilianAddressFields prefix="unit" initial={unit?.profile} className={styles.grid} />
         <div className={styles.grid}>
           <FormField id="unit-region" label="Região atendida (opcional)">
-            <input name="region" maxLength={300} defaultValue={unit?.profile.region} />
+            <DraftInput name="region" maxLength={300} defaultValue={unit?.profile.region} />
           </FormField>
           <ValidatedTextField
             id="unit-phone"
@@ -99,7 +101,7 @@ export function UnitForm({
         </div>
         <div className={styles.checks}>
           <label>
-            <input type="checkbox" name="active" defaultChecked={unit?.active ?? true} />
+            <DraftInput type="checkbox" name="active" defaultChecked={unit?.active ?? true} />
             Unidade ativa
           </label>
         </div>
@@ -113,6 +115,6 @@ export function UnitForm({
           </Button>
         </div>
       </fieldset>
-    </form>
+    </DraftForm>
   );
 }

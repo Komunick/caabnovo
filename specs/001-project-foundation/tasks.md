@@ -458,3 +458,9 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] TH01 Diagnosticar browser/push do PR #28 e registrar pesquisa e critérios de aceite.
 - [x] TH02 Corrigir transições do menu/busca e ampliar a regressão por quadros.
 - [ ] TH03 Validar qualidade, segurança, build, E2E e acessibilidade no CI e registrar evidências em evidence/theme-contrast-2026-09-16.md.
+
+
+## Navegação sem perda de edição — 16/09/2026
+
+- [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
+- [ ] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar evidências no PR.

@@ -1,3 +1,4 @@
+import { DraftInput } from "./draft-controls";
 import type { InputHTMLAttributes } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "./button";
@@ -29,7 +30,7 @@ export function SearchField({
         </Button>
       }
     >
-      <input {...props} id={id} type="search" />
+      <DraftInput {...props} id={id} type="search" />
     </FormField>
   );
 }

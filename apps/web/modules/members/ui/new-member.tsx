@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MemberRecord } from "@caab/contracts";
@@ -9,12 +10,16 @@ import { uploadMemberPhoto, type PreparedPhoto } from "./photo-upload";
 import { Button } from "@/components/ui/button";
 import styles from "./members.module.css";
 export function NewMember({ canUpload }: { canUpload: boolean }) {
+  const drafts = useDraftCache();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const [file, setFile] = useState<File>();
-  const [created, setCreated] = useState<MemberRecord>();
+  const [file, setFile] = useDraftState<File | undefined>("new-member:file", undefined);
+  const [created, setCreated] = useDraftState<MemberRecord | undefined>(
+    "new-member:created",
+    undefined,
+  );
   const prepared = useRef<PreparedPhoto | null>(null);
   const uploadKey = useRef(crypto.randomUUID());
   const photoKey = useRef({ body: "", key: "" });
@@ -23,6 +28,7 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
   const retry = useRef({ body: "", key: "" });
   async function finishPhoto(record: MemberRecord) {
     if (!file) {
+      drafts.clear();
       router.push(`/members/${record.id}`);
       return;
     }
@@ -54,6 +60,7 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
         headers: mutationHeaders(photoKey.current.key),
         body,
       });
+      drafts.clear();
       router.push(`/members/${record.id}`);
     } catch (e) {
       setNotice("");
@@ -114,6 +121,7 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
               });
               setCreated(record);
               await finishPhoto(record);
+              return true;
             } catch (e) {
               setError(e instanceof Error ? e.message : "Falha ao cadastrar.");
             } finally {

@@ -1,4 +1,5 @@
 "use client";
+import { DraftInput } from "./draft-controls";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { FormField } from "./form-field";
 import { MaskedContactInput, type ContactMask } from "./masked-contact-input";
@@ -56,7 +57,7 @@ export function ValidatedTextField({
           onValueChange={change}
         />
       ) : (
-        <input
+        <DraftInput
           {...props}
           {...events}
           ref={inputRef}

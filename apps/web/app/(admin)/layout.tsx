@@ -7,6 +7,7 @@ import { AppShell } from "@/components/app-shell";
 import { Brand } from "@/components/brand";
 import { WorkspaceControls } from "@/components/workspace-controls";
 import { AccountMenu } from "@/modules/auth/ui/account-menu";
+import { WorkspaceDrafts } from "@/components/workspace-drafts";
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
   const requestHeaders = await headers();
@@ -33,7 +34,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
         </div>
       }
     >
-      {children}
+      <WorkspaceDrafts key={identity.id}>{children}</WorkspaceDrafts>
     </AppShell>
   );
 }

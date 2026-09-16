@@ -155,3 +155,9 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] NP05 Executar contrato, integração e browser no CI, revisar evidências e documentar PR.
 
 Evidências desta correção: [validação e revisão visual](evidence/withdrawal-2026-09-16.md).
+
+
+## Navegação sem perda de edição — 16/09/2026
+
+- [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
+- [ ] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar evidências no PR.

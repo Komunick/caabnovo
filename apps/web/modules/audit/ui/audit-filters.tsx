@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -38,10 +40,11 @@ export function AuditFilters({
   selectedActorName,
 }: Readonly<{ values: FilterValues; canReadPeople: boolean; selectedActorName?: string }>) {
   const router = useRouter();
-  const [actorId, setActorId] = useState(values.actorId ?? "");
-  const [area, setArea] = useState(values.entityType ?? "");
-  const [action, setAction] = useState(values.action ?? "");
-  const [period, setPeriod] = useState(
+  const [actorId, setActorId] = useDraftState("audit-filters:actorId", values.actorId ?? "");
+  const [area, setArea] = useDraftState("audit-filters:area", values.entityType ?? "");
+  const [action, setAction] = useDraftState("audit-filters:action", values.action ?? "");
+  const [period, setPeriod] = useDraftState(
+    "audit-filters:period",
     values.period && ["all", "day", "week", "month", "custom"].includes(values.period)
       ? values.period
       : values.from || values.to
@@ -106,7 +109,12 @@ export function AuditFilters({
     router.push(`/audit${query.size ? `?${query}` : ""}`);
   }
   return (
-    <form role="search" aria-label="Filtros de auditoria" onSubmit={submit}>
+    <DraftForm
+      draftKey="audit-audit-filters-1"
+      role="search"
+      aria-label="Filtros de auditoria"
+      onSubmit={submit}
+    >
       <div className="audit-filter-grid">
         {canReadPeople && (
           <AuditPersonFilter value={actorId} name={selectedActorName} onChange={setActorId} />
@@ -138,13 +146,13 @@ export function AuditFilters({
           onChange={setAction}
         />
         <FormField id="audit-period" label="Período">
-          <select value={period} onChange={(event) => setPeriod(event.target.value)}>
+          <DraftSelect value={period} onChange={(event) => setPeriod(event.target.value)}>
             <option value="all">Todo o histórico</option>
             <option value="day">Últimas 24 horas</option>
             <option value="week">Últimos 7 dias</option>
             <option value="month">Últimos 30 dias</option>
             <option value="custom">Escolher datas</option>
-          </select>
+          </DraftSelect>
         </FormField>
       </div>
       {period === "custom" && (
@@ -171,6 +179,6 @@ export function AuditFilters({
         )}
         {error && <p role="alert">{error}</p>}
       </div>
-    </form>
+    </DraftForm>
   );
 }

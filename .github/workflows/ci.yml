@@ -99,6 +99,14 @@ jobs:
           pnpm db:seed:dev
           pnpm dev:worker > /tmp/caab-e2e-worker.log 2>&1 &
       - run: pnpm test:e2e --project=chromium
+      - name: Preserve workspace draft review evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: workspace-drafts-synthetic-evidence
+          path: apps/web/test-results/workspace-drafts-*/**
+          retention-days: 7
+          if-no-files-found: warn
       - name: Preserve scheduling review evidence
         if: always()
         uses: actions/upload-artifact@v7
