@@ -256,3 +256,7 @@ Refinamento solicitado pelo usuário em 16/09/2026:
 - Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
   Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
 - Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.
+
+## Homologação e prontidão — 16/09/2026
+
+Pedido atual: salvar, reabrir e editar rascunho com imagem sintética no DEV publicado. Validar evidências reais, preservar dados existentes e não declarar concluída uma aprovação institucional ausente. Homologação da OAB depende da inscrição autorizada e do resultado esperado; descarte não executa sem política aprovada.

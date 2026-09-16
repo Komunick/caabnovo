@@ -316,3 +316,10 @@ Não usar cache público, localStorage ou salvamento automático no banco.
 - Filtros GET usam navegação cliente (`DraftSearchForm`), preservando edições em outras rotas.
   Logout desmonta o armazenamento em memória. Não há gravação automática, localStorage,
   sessionStorage ou promessa de recuperação após fechar/recarregar a página inteira.
+
+## Plano da homologação — 16/09/2026
+
+1. Conferir DEV, permissões GitHub, configuração versionada e entradas institucionais.
+2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
+3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
+4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.

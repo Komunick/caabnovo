@@ -1,3 +1,29 @@
+# Estado atual — 16/09/2026
+
+Pedido do usuário incluiu proteção das branches no item 9. Repositório público e acesso
+administrativo confirmados. [Protect dev](https://github.com/Komunick/caabnovo/rules/22635784)
+preservado; [Protect main](https://github.com/Komunick/caabnovo/rules/23551500) criado e relido.
+Main exige PR, uma aprovação, CODEOWNERS, aprovação do último push, resolução de conversas
+e quality/browser/security/validate-source vinculados ao GitHub Actions (15368).
+Enforcement ativo, alvo somente refs/heads/main, exclusões e bypass vazios, bypass atual never.
+Bloqueios de exclusão e force-push ativos. Nenhuma branch de código foi escrita ou integrada.
+
+O script aceita -Repository explícito e -Branch dev|main; default dev, preview sem escrita.
+Testes simulados verificaram 12 grupos, incluindo alvo main explícito, recusa de alvo divergente,
+paginação, falhas, ambiguidade e checks. Leitura de API comprova configuração, não tentativa
+de push. Não houve push direto nem promoção inválida real; T095 permanece parcial por essas
+provas. Consulta ao histórico de rejeições de dev retornou lista vazia nesta data.
+
+Os registros de 09/09 abaixo são históricos; a exclusão de main daquele ciclo foi superada
+pelo pedido atual. Comandos atuais:
+
+```powershell
+pwsh -File infra/github/test-rulesets.ps1
+pwsh -File infra/github/apply-rulesets.ps1 -Repository Komunick/caabnovo -Branch main
+```
+
+---
+
 # Branch protection validation
 
 Date: 2026-09-09

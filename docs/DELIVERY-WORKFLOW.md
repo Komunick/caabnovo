@@ -10,11 +10,11 @@ Este documento define como alterações passam do desenvolvimento à produção.
 
 Nunca realizar commits ou pushes diretos em `dev` ou `main`.
 
-Regra final do usuário em 14/09/2026: manter uma única branch de trabalho ativa
-para todas as alterações até a abertura do Pull Request, mesmo envolvendo funções
-ou áreas diferentes. Ao abrir o PR, congelar essa branch; as alterações seguintes
-começam em uma nova branch. Não reutilizar ou sincronizar branches que já tiveram PR.
-Preservar branches anteriores e os controles de CI, autorização e revisão.
+Regra vigente do usuário em 15/09/2026: manter uma única branch/worktree por entrega.
+PRs ainda não integrados podem receber correções, commits e pushes na mesma branch.
+A abertura do PR não congela a branch. Após a integração, preservar a worktree e
+começar trabalho novo em outra branch. Isolamento adicional somente quando solicitado.
+Não aprovar ou integrar PR por iniciativa do agente; checks não são aprovação humana.
 
 ## 2. Política de merge
 
@@ -28,8 +28,7 @@ Preservar branches anteriores e os controles de CI, autorização e revisão.
   oficiais e registrar data, referências, decisões e limites da pesquisa no `research.md` existente.
 - Reunir as alterações autorizadas na única branch ativa até o PR. Cada função mantém
   spec, plano, tarefas, testes e evidências próprios dentro dessa mesma entrega.
-- Abrir o PR quando o conjunto estiver pronto para revisão. Se houver alterações
-  posteriores, inclusive correções, usar a próxima branch e referenciar a anterior.
+- Abrir o PR quando o conjunto estiver pronto para revisão. Correções posteriores usam a mesma branch enquanto o PR não estiver integrado.
 - Produção recebe apenas PR de promoção `dev` → `main`.
 - Merge em `main` é exclusivamente humano.
 - Não contornar CI, reviews ou proteções de branch.
@@ -46,12 +45,12 @@ DEV e PROD devem ter bancos, storages, segredos e integrações separados.
 ## 4. Fluxo padrão
 
 1. Conferir e sincronizar a pasta principal em `dev`, preservando o trabalho local.
-2. Reutilizar a única branch ativa enquanto ela não tiver PR; criar outra somente após o PR da anterior.
+2. Reutilizar a branch da entrega enquanto seu PR não tiver sido integrado.
 3. Reunir nessa branch as alterações autorizadas, com seus respectivos specs e tarefas.
 4. Adicionar ou atualizar testes e documentação.
 5. Executar os gates locais possíveis.
 6. Criar PR para `dev` usando o template.
-7. Corrigir falhas de CI e observações da revisão em branch nova se a anterior já teve PR.
+7. Corrigir falhas de CI e observações da revisão na mesma branch do PR ainda aberto.
 8. Após merge, validar a implantação em DEV.
 9. Quando solicitado, preparar promoção `dev` → `main`.
 10. Um mantenedor humano revisa, aprova e executa o merge de produção.
@@ -96,7 +95,7 @@ Exigem revisão humana específica:
 
 A IA pode:
 
-1. Criar ou atualizar a única branch de trabalho ativa, respeitando o congelamento após o PR.
+1. Criar ou atualizar a única branch de trabalho ativa enquanto o PR não estiver integrado.
 2. Implementar mudanças pequenas e revisáveis.
 3. Executar lint, typecheck, testes e build.
 4. Preparar migrations e documentação.

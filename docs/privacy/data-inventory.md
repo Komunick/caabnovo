@@ -1,19 +1,29 @@
 # Inventário de dados pessoais — pendente de aprovação
 
-Status: DRAFT — Jurídico/DPO ainda não aprovou este inventário.
+Status: DRAFT — revisão técnica em 16/09/2026; sem aprovação Jurídico/DPO.
 
-| Categoria | Exemplos mínimos | Finalidade | Acesso técnico | Retenção/descarte |
+| Categoria | Dados tratados no produto atual | Finalidade técnica | Acesso | Retenção/descarte |
 | --- | --- | --- | --- | --- |
-| Identidade interna | nome, e-mail, estado da conta | autenticação e administração de acesso | próprio usuário; gestores autorizados | PENDENTE DPO |
-| Autenticação | hash de senha, segredo TOTP, códigos de recuperação | provar identidade e MFA | serviço de autenticação; nunca UI/log/auditoria | PENDENTE DPO |
-| Sessão | token com hash/identificador, expiração, IP/user-agent minimizados | manter/revogar sessão e investigar abuso | autenticação e segurança | PENDENTE DPO |
-| Autorização | funções, permissões, concessor e justificativa | menor privilégio e responsabilização | gestores e auditoria autorizados | PENDENTE DPO |
-| Auditoria | ator, ação, entidade, razão, request/correlation IDs | integridade, investigação e obrigação legal | auditores autorizados; append-only | PENDENTE DPO / possível preservação legal |
-| Arquivos privados | conteúdo enviado, nome de exibição, proprietário lógico | evidência/documento do domínio futuro | proprietário lógico e perfis autorizados | PENDENTE DPO / quarentena rejeitada separada |
-| Operações | tipo/estado do job, tentativas, erro seguro, correlação | suporte, resiliência e diagnóstico | operadores autorizados | PENDENTE DPO |
+| Identidade interna | Nome, e-mail, estado da conta | Autenticação e administração | Próprio usuário e gestão autorizada | PENDENTE CAAB/DPO |
+| Autenticação e sessão | Hash de senha, sessões, verificações, IP/user-agent | Login, recuperação, revogação e investigação de abuso | Serviço de autenticação e segurança | PENDENTE CAAB/DPO |
+| Autorização | Papéis, concessões e versões | Controle de acesso | Gestores autorizados e auditoria | PENDENTE CAAB/DPO |
+| Associados e dependentes | Identificação, contato, endereço, nascimento e vínculos | Cadastro e atendimento | Perfis autorizados de Associados | PENDENTE CAAB/DPO |
+| Consulta OAB | Consulta autorizada e resultado institucional | Conferência solicitada pelo operador | Permissão específica de consulta | PENDENTE CAAB/DPO; não inferir elegibilidade |
+| Fotos e documentos privados | Bytes, metadados, responsável e versões | Evidências cadastrais e documentos de contrato | Permissões do domínio e arquivos | PENDENTE CAAB/DPO |
+| Notícias | Autoria, conteúdo, revisões, imagens e publicação | Comunicação nos canais autorizados | Editores; público somente após publicação | PENDENTE CAAB/DPO |
+| Parceiros | Contatos, unidades, contratos, benefícios e avaliações | Gestão da rede conveniada | Perfis autorizados | PENDENTE CAAB/DPO |
+| Agendamentos | Beneficiário, profissional, reserva e eventos | Operação do atendimento | Acesso autenticado ao painel conforme regra do módulo | PENDENTE CAAB/DPO |
+| Auditoria | Ator, ação, entidade e correlação | Rastreabilidade e investigação | Auditores; histórico protegido | PENDENTE CAAB/DPO e preservação legal |
+| Operações e arquivos rejeitados | Jobs, tentativas, erro seguro e quarentena | Processamento e diagnóstico | Operadores e worker | PENDENTE CAAB/DPO |
+| Backups e evidências de descarte | Cópias do PostgreSQL e registros de execução | Recuperação e comprovação de controles | Operação restrita | PENDENTE CAAB/DPO |
 
-Não são finalidades permitidas: marketing implícito, enriquecimento externo ou reutilização sem nova
-base legal. Dados reais não entram em DEV, testes, logs ou evidências automatizadas.
+MFA/TOTP foi retirado do fluxo do produto. A existência de tabela histórica não autoriza
+reutilizar segredos nem adicioná-los ao fluxo atual. Remanescentes e backups precisam entrar
+na decisão institucional de retenção, sem exclusão automática nesta revisão.
 
-Antes da aprovação, o DPO deve preencher base legal, controlador/operador, compartilhamentos,
-localização, prazo por categoria, evento inicial do prazo e ação final verificável.
+Antes da aprovação: preencher controlador/operador, base/finalidade aprovada, compartilhamento,
+localização, prazo, evento inicial, ação final, campos, exceções, responsáveis e tratamento de
+backups por categoria. Dados pessoais reais e credenciais não entram em testes, logs ou evidências.
+
+[Pesquisa do legado](legacy-retention-review-2026-09-16.md) não encontrou política aprovada;
+comportamentos antigos não substituem essas decisões.

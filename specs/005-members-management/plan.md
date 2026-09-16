@@ -158,3 +158,10 @@ Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenam
 em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
 React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
 Não usar cache público, localStorage ou salvamento automático no banco.
+
+## Plano da homologação — 16/09/2026
+
+1. Conferir DEV, permissões GitHub, configuração versionada e entradas institucionais.
+2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
+3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
+4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.

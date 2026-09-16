@@ -31,7 +31,7 @@ function gh {
   Assert-True (Test-Path -LiteralPath $path) "The request must use a versioned JSON file."
   $payload = Get-Content -LiteralPath $path -Raw -Encoding utf8
   $target = $payload | ConvertFrom-Json
-  Assert-True ($target.conditions.ref_name.include.Count -eq 1 -and $target.conditions.ref_name.include[0] -eq "refs/heads/dev") "Writes must target dev exclusively."
+  Assert-True ($target.conditions.ref_name.include.Count -eq 1 -and $target.conditions.ref_name.include[0] -eq "refs/heads/$($global:RulesetTestState.ExpectedBranch)") "Writes must target the selected branch exclusively."
   return $payload
 }
 
@@ -39,6 +39,7 @@ function Reset-TestState {
   $global:RulesetTestState = @{
     Calls = [System.Collections.Generic.List[object]]::new()
     List = '[[]]'
+    ExpectedBranch = "dev"
     FailRead = $false
     FailWrite = $false
     Existing = '{"target":"branch","conditions":{"ref_name":{"include":["refs/heads/dev"],"exclude":[]}}}'
@@ -103,19 +104,38 @@ try {
   Write-Host "PASS: ambiguous rulesets block the entire application"
 
   $ci = Get-Content (Join-Path $PSScriptRoot "../../.github/workflows/ci.yml") -Raw
-  foreach ($branch in @("dev")) {
+  foreach ($branch in @("dev", "main")) {
     $ruleset = Get-Content (Join-Path $PSScriptRoot "rulesets/$branch.json") -Raw | ConvertFrom-Json
     $checks = @(($ruleset.rules | Where-Object type -eq "required_status_checks").parameters.required_status_checks)
     $expected = @("quality", "browser", "security")
+    if ($branch -eq "main") { $expected += "validate-source" }
     Assert-True (-not (Compare-Object $expected @($checks.context))) "$branch is missing mandatory CI gates."
     foreach ($check in $checks) {
       Assert-True ($check.integration_id -eq 15368) "Checks must originate from GitHub Actions."
-      Assert-True ($ci -match "(?m)^  $([regex]::Escape($check.context)):") "Required check has no workflow job."
+      $workflow = $ci
+      if ($check.context -eq "validate-source") { $workflow = Get-Content (Join-Path $PSScriptRoot "../../.github/workflows/promotion.yml") -Raw }
+      Assert-True ($workflow -match "(?m)^  $([regex]::Escape($check.context)):") "Required check has no workflow job."
     }
     Assert-True ($ruleset.bypass_actors.Count -eq 0) "Rules must not allow bypass."
     Assert-True ($ruleset.enforcement -eq "active") "Rules must be active."
   }
   Write-Host "PASS: required gates match workflows and trusted check provider"
+
+  Reset-TestState
+  $global:RulesetTestState.ExpectedBranch = "main"
+  $preview = @(& $applyScript -Repository "Example/project" -Branch main)
+  Assert-True ($preview[0].Branch -eq "main" -and -not $preview[0].Applied) "Main preview must be read-only."
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 1) "Main preview must not write."
+  & $applyScript -Repository "Example/project" -Branch main -Apply | Out-Null
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 3) "Explicit main selection must write only main."
+  Write-Host "PASS: explicit main selection supports preview and creation"
+
+  Reset-TestState
+  $global:RulesetTestState.ExpectedBranch = "main"
+  $global:RulesetTestState.List = '[[{"id":22,"name":"Protect main"}]]'
+  Assert-Failure { & $applyScript -Repository "Example/project" -Branch main -Apply } "must target only refs/heads/main"
+  Assert-True ($global:RulesetTestState.Calls.Count -eq 2) "Main selection must not overwrite dev."
+  Write-Host "PASS: main rejects an existing dev target"
 
   foreach ($include in @('["refs/heads/main"]', '["refs/heads/dev","refs/heads/main"]', '["~ALL"]')) {
     Reset-TestState

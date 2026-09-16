@@ -1,7 +1,7 @@
 # Feature Specification: Módulos integrados CAAB
 
 **Feature Branch**: `feature/product-direction` **Created**: 2026-09-09 **Status**: Escopo
-consolidado; implementação começa por US1; regras institucionais são entradas por história.
+consolidado; módulos administrativos existentes entregues; expansões e regras institucionais seguem por história.
 **Input**: Incluir todos os módulos, evitar duplicatas, fundir Operações com Auditoria, atualizar
 planejamento e começar implementação cedo.
 
@@ -35,7 +35,7 @@ sem iniciar implementação ou alterar a suspensão de CAASSH.
 [008 — Agendamentos](../008-scheduling-management/spec.md). Etapa 1: operação
 funcional no painel com oferta e horários, criação, consulta, remarcação e cancelamento.
 Etapa 2: equivalência com legado e conexão real ao app/site. Etapa 3: novas funções
-selecionadas entre sugestões. Etapa 1 implementada e em validação; 002 mantém o mapa.
+selecionadas entre sugestões. Etapa 1 integrada em dev; 002 mantém o mapa e as expansões futuras.
 
 Correção posterior do usuário: funcionalidades ausentes do site antigo ficam como
 sugestões (exemplo: controle de salas), sem aprovação implícita pela pesquisa.
@@ -185,3 +185,7 @@ Esta decisão substitui as propostas anteriores de cadastro funcional separado n
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos segue agora a entrega incremental da spec 008; OAB-BA permanece pendente da hospedagem.
+
+## Homologação e prontidão — 16/09/2026
+
+Pedido atual: matriz de validação das jornadas já entregues, distinguindo módulos futuros. Validar evidências reais, preservar dados existentes e não declarar concluída uma aprovação institucional ausente. Homologação da OAB depende da inscrição autorizada e do resultado esperado; descarte não executa sem política aprovada.

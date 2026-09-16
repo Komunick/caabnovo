@@ -123,3 +123,9 @@ Essas entradas são tarefas por história e não bloqueiam US1. T089/T095 contin
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
+
+## Revisão de homologação — 16/09/2026
+
+GitHub documenta rulesets públicos, checks vinculados ao GitHub App e exigência de PR: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets . A API do repositório confirmou acesso administrativo e ruleset ativo de dev nesta data; conferir main e promoção sem push direto nem merge.
+
+O guia da ANPD identifica os papéis de agentes de tratamento e encarregado: https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-orientativo-para-definicoes-dos-agentes-de-tratamento-de-dados-pessoais-e-do-encarregado . Esta pesquisa não define prazos da CAAB nem substitui aprovação nominal exigida pelo projeto.
