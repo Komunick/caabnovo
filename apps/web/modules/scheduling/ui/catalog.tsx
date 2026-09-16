@@ -1,5 +1,5 @@
 "use client";
-import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftScope, useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Plus, ArrowLeft, Pencil } from "lucide-react";
@@ -30,7 +30,7 @@ import {
 
 function CatalogForm({
   kind,
-  item,
+  item: currentItem,
   onSaved,
   onClose,
 }: {
@@ -39,6 +39,7 @@ function CatalogForm({
   onSaved(): void;
   onClose(): void;
 }) {
+  const [item] = useDraftState("baseline", currentItem);
   const [unitId, setUnitId] = useDraftState("catalog:unitId", item?.unitId ?? "");
   const [serviceId, setServiceId] = useDraftState("catalog:serviceId", item?.serviceId ?? "");
   const [procedureId, setProcedureId] = useDraftState(
@@ -268,8 +269,7 @@ function CatalogPage({ kind }: { kind: SchedulingKind }) {
     );
   }
   function close() {
-    drafts.clear("catalog:");
-    drafts.clear("scheduling-catalog-1:");
+    drafts.clear(`catalog-record:${editing === "new" ? "new" : editing?.id}:`);
     setEditing(null);
     requestAnimationFrame(() => addRef.current?.focus());
   }
@@ -279,7 +279,7 @@ function CatalogPage({ kind }: { kind: SchedulingKind }) {
       description={label.description}
       action={
         editing ? (
-          <Button onClick={close}>
+          <Button onClick={() => setEditing(null)}>
             <ArrowLeft aria-hidden="true" size={18} /> Voltar para{" "}
             {label.title.toLocaleLowerCase("pt-BR")}
           </Button>
@@ -304,17 +304,19 @@ function CatalogPage({ kind }: { kind: SchedulingKind }) {
         </p>
       )}
       {editing ? (
-        <CatalogForm
-          key={`${kind}-${typeof editing === "string" ? editing : editing.id}`}
-          kind={kind}
-          item={editing === "new" ? undefined : editing}
-          onClose={close}
-          onSaved={() => {
-            close();
-            result.reload();
-            setNotice("Registro salvo.");
-          }}
-        />
+        <DraftScope name={`catalog-record:${editing === "new" ? "new" : editing.id}`}>
+          <CatalogForm
+            key={`${kind}-${typeof editing === "string" ? editing : editing.id}`}
+            kind={kind}
+            item={editing === "new" ? undefined : editing}
+            onClose={close}
+            onSaved={() => {
+              close();
+              result.reload();
+              setNotice("Registro salvo.");
+            }}
+          />
+        </DraftScope>
       ) : (
         <section className="panel">
           <h2>Encontrar {label.title.toLocaleLowerCase("pt-BR")}</h2>

@@ -40,6 +40,8 @@ export function MemberDocuments({
   canReview: boolean;
   command: (input: Record<string, unknown>) => Promise<boolean>;
 }) {
+  // Reuse the category for successive documents and replacements, as before.
+  const [category, setCategory] = useDraftState("member-documents:category", "");
   const [replacesId, setReplacesId] = useDraftState("member-documents:replacesId", "");
   const [files, setFiles] = useState<FilesPage>({ items: [], page: 1, hasNextPage: false });
   const [page, setPage] = useDraftState("member-documents:page", 1);
@@ -203,7 +205,14 @@ export function MemberDocuments({
               </DraftSelect>
             </FormField>
             <FormField id="document-category" label="Categoria do documento">
-              <DraftInput name="category" required minLength={2} maxLength={80} />
+              <DraftInput
+                name="category"
+                required
+                minLength={2}
+                maxLength={80}
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+              />
             </FormField>
             <FormField id="document-replaces" label="Documento substituído (opcional)">
               <DraftSelect

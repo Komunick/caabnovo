@@ -43,14 +43,20 @@ test("keeps unfinished forms through all workspace modules and clears completed 
     .getByRole("navigation", { name: "Agendamentos", exact: true })
     .getByRole("link", { name: "Serviços", exact: true })
     .click();
-  await page.getByRole("button", { name: "Novo serviço", exact: true }).click();
+  await page
+    .locator(".page-header")
+    .getByRole("button", { name: "Novo serviço", exact: true })
+    .click();
   await page.getByLabel("Nome", { exact: true }).fill("Serviço ainda em edição");
   await page.getByRole("combobox", { name: "Unidade", exact: true }).fill("Consulta incompleta");
   await page
     .getByRole("navigation", { name: "Agendamentos", exact: true })
     .getByRole("link", { name: "Unidades", exact: true })
     .click();
-  await page.getByRole("button", { name: "Nova unidade", exact: true }).click();
+  await page
+    .locator(".page-header")
+    .getByRole("button", { name: "Nova unidade", exact: true })
+    .click();
   await page.getByLabel("Nome", { exact: true }).fill("Unidade ainda em edição");
   await area(page, "/audit");
   await page.getByLabel("Pessoa", { exact: true }).fill("Pessoa consultada");
@@ -78,8 +84,17 @@ test("keeps unfinished forms through all workspace modules and clears completed 
       .getByRole("combobox", { name: "Unidade", exact: true })
       .evaluate((el) => (el as HTMLInputElement).validity.valid),
   ).toBe(false);
+  await page.getByRole("button", { name: "Voltar para serviços", exact: true }).click();
+  await page
+    .locator(".page-header")
+    .getByRole("button", { name: "Novo serviço", exact: true })
+    .click();
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue("Serviço ainda em edição");
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
-  await page.getByRole("button", { name: "Novo serviço", exact: true }).click();
+  await page
+    .locator(".page-header")
+    .getByRole("button", { name: "Novo serviço", exact: true })
+    .click();
   await expect(page.getByLabel("Nome", { exact: true })).toHaveValue("");
   await expect(page.getByRole("combobox", { name: "Unidade", exact: true })).toHaveValue("");
   await tabs.getByRole("link", { name: "Unidades", exact: true }).click();
