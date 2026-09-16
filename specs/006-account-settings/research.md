@@ -53,3 +53,13 @@ Fonte de negócio: instrução expressa do usuário nesta data para remover moti
 ## Âncoras após carregamento progressivo — 15/09/2026
 
 Fonte: Next.js loading e navegação, pesquisados no spec001/research.md. Evidência CI34988897595: com a tela temporária de carregamento, a navegação para #password-title termina antes da seção existir. Inferência confirmada pelo teste de viewport: é necessário posicionar a âncora quando o formulário estiver montado. Usar efeito local e requestAnimationFrame para os três IDs existentes, sem alterar foco, credenciais, salvamento ou política de acesso.
+
+
+## Estado ao navegar — 16/09/2026
+
+Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
+à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
+identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
+usa input/list: [MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
+Sugestões não validam sozinhas a seleção; conferir identificador válido antes de enviar.

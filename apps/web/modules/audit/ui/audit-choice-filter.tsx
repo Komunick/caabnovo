@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef } from "react";
+import { useDraftState } from "@/components/workspace-drafts";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 
@@ -28,13 +29,27 @@ export function AuditChoiceFilter({
   placeholder: string;
   onChange: (value: string) => void;
 }>) {
-  const [text, setText] = useState(
-    options.find((option) => value && option.value === value)?.label ?? "",
-  );
+  const input = useRef<HTMLInputElement>(null);
+  const [selection, setSelection] = useDraftState(`audit-choice:${id}`, {
+    value,
+    text: options.find((option) => value && option.value === value)?.label ?? "",
+  });
+  const text =
+    selection.value === value
+      ? selection.text
+      : (options.find((option) => value && option.value === value)?.label ?? "");
+  useEffect(() => {
+    input.current?.setCustomValidity(
+      !text.trim() || options.some((option) => normalize(option.label) === normalize(text))
+        ? ""
+        : "Escolha uma opção da lista ou limpe o campo.",
+    );
+  }, [text, options]);
   return (
     <div>
       <FormField id={id} label={label}>
         <Input
+          ref={input}
           list={`${id}-options`}
           autoComplete="off"
           placeholder={placeholder}
@@ -45,7 +60,7 @@ export function AuditChoiceFilter({
             event.target.setCustomValidity(
               !next.trim() || match ? "" : "Escolha uma opção da lista ou limpe o campo.",
             );
-            setText(next);
+            setSelection({ value: match?.value ?? "", text: next });
             onChange(match?.value ?? "");
           }}
         />

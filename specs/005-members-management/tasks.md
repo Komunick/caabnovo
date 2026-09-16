@@ -204,3 +204,9 @@ Evidências ON01–ON03: [OAB sem flag](evidence/oab-always-on-2026-09-15.md).
 
 Relatório: [conferência dos padrões](evidence/workflow-compliance-2026-09-15.md).
 Proteções remotas e homologação mantêm seus limites explícitos no relatório.
+
+
+## Navegação sem perda de edição — 16/09/2026
+
+- [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
+- [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.

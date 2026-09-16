@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect } from "@/components/ui/draft-controls";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NewsRecord } from "../news-service";
 import { Button } from "@/components/ui/button";
@@ -56,9 +58,15 @@ export function NewsPublishing({
   onPublicationChange(revision: number | null | undefined): void;
 }>) {
   const [state, setState] = useState<PublicationState>({ publication: null, actions: [] });
-  const [channels, setChannels] = useState<string[]>(record?.metadata.channels ?? []);
-  const [runAt, setRunAt] = useState("");
-  const [scheduleAction, setScheduleAction] = useState("publish");
+  const [channels, setChannels] = useDraftState<string[]>(
+    "news-publishing:channels",
+    record?.metadata.channels ?? [],
+  );
+  const [runAt, setRunAt] = useDraftState("news-publishing:runAt", "");
+  const [scheduleAction, setScheduleAction] = useDraftState(
+    "news-publishing:scheduleAction",
+    "publish",
+  );
   const [pending, setPending] = useState(false);
   const [confirm, setConfirm] = useState<"publish" | "unpublish" | "schedule">();
   const [error, setError] = useState("");
@@ -184,6 +192,7 @@ export function NewsPublishing({
       }
       if (action === "publish" || action === "unpublish")
         onSaved((await response.json()) as NewsRecord);
+      if (action === "schedule") setRunAt("");
       retry.current = undefined;
 
       setConfirm(undefined);
@@ -256,7 +265,7 @@ export function NewsPublishing({
         <legend>Destinos da ação</legend>
         {(["site", "app"] as const).map((channel) => (
           <label key={channel} className="checkbox-field">
-            <input
+            <DraftInput
               type="checkbox"
               checked={channels.includes(channel)}
               onChange={(event) => {
@@ -293,13 +302,13 @@ export function NewsPublishing({
           </Button>
         </div>
         <FormField id="news-schedule-action" label="Ação agendada">
-          <select
+          <DraftSelect
             value={scheduleAction}
             onChange={(event) => setScheduleAction(event.target.value)}
           >
             <option value="publish">Publicar o conteúdo atual</option>
             <option value="unpublish">Retirar a publicação atual</option>
-          </select>
+          </DraftSelect>
         </FormField>
         <FormField
           id="news-run-at"
@@ -307,7 +316,7 @@ export function NewsPublishing({
           label="Data e horário de Brasília"
           hint="Horário de Brasília (UTC−03:00), nos próximos 12 meses."
         >
-          <input
+          <DraftInput
             type="datetime-local"
             value={runAt}
             onChange={(event) => {

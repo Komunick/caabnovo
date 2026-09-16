@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useDraftState } from "@/components/workspace-drafts";
 import { Monitor, Smartphone, Columns2 } from "lucide-react";
 import type { NewsRecord } from "../news-service";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ export function NewsPreview({
   draft: NewsRecord;
   availableFileIds: string[];
 }) {
-  const [mode, setMode] = useState<"site" | "mobile" | "both">("site");
+  const [mode, setMode] = useDraftState<"site" | "mobile" | "both">("news-preview:mode", "site");
   return (
     <section className={styles.preview} aria-label="Prévia por dispositivo">
       <div className={styles.controls}>

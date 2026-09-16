@@ -1,7 +1,9 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { SchedulingBooking, SchedulingSlot } from "@caab/contracts";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -23,14 +25,28 @@ export function BookingForm({
   booking?: SchedulingBooking;
   onSaved?(booking: SchedulingBooking): void;
 }) {
+  const drafts = useDraftCache();
+  const [baseline] = useDraftState("booking-form:baseline", booking);
   const router = useRouter();
-  const [memberId, setMemberId] = useState(booking?.memberId ?? "");
-  const [unitId, setUnitId] = useState(booking?.unitId ?? "");
-  const [serviceId, setServiceId] = useState(booking?.serviceId ?? "");
-  const [procedureId, setProcedureId] = useState(booking?.procedureId ?? "");
-  const [assignmentId, setAssignmentId] = useState(booking?.assignmentId ?? "");
-  const [date, setDate] = useState(booking ? schedulingDate(booking.startsAt) : schedulingDate());
-  const [startsAt, setStartsAt] = useState("");
+  const [memberId, setMemberId] = useDraftState("booking-form:memberId", booking?.memberId ?? "");
+  const [unitId, setUnitId] = useDraftState("booking-form:unitId", booking?.unitId ?? "");
+  const [serviceId, setServiceId] = useDraftState(
+    "booking-form:serviceId",
+    booking?.serviceId ?? "",
+  );
+  const [procedureId, setProcedureId] = useDraftState(
+    "booking-form:procedureId",
+    booking?.procedureId ?? "",
+  );
+  const [assignmentId, setAssignmentId] = useDraftState(
+    "booking-form:assignmentId",
+    booking?.assignmentId ?? "",
+  );
+  const [date, setDate] = useDraftState(
+    "booking-form:date",
+    booking ? schedulingDate(booking.startsAt) : schedulingDate(),
+  );
+  const [startsAt, setStartsAt] = useDraftState("booking-form:startsAt", "");
   const mutation = useSchedulingMutation();
   const slots = useSchedulingData<{ items: SchedulingSlot[]; durationMinutes: number }>(
     assignmentId && date
@@ -45,16 +61,18 @@ export function BookingForm({
       {
         assignmentId,
         startsAt,
-        ...(booking ? { expectedVersion: booking.version } : { memberId }),
+        ...(booking ? { expectedVersion: baseline!.version } : { memberId }),
       },
     );
     if (saved) {
+      drafts.clear("booking-form:");
+      drafts.clear("scheduling-booking-form-1:");
       if (onSaved) onSaved(saved);
       else router.push(`/scheduling/${saved.id}`);
     } else slots.reload();
   }
   return (
-    <form className="scheduling-form" onSubmit={submit}>
+    <DraftForm draftKey="scheduling-booking-form-1" className="scheduling-form" onSubmit={submit}>
       <fieldset disabled={mutation.pending} className="scheduling-fields">
         <div>
           <h2>Dados da reserva</h2>
@@ -140,7 +158,7 @@ export function BookingForm({
         <section aria-labelledby="booking-time-heading" className="scheduling-form">
           <h2 id="booking-time-heading">Data e horário</h2>
           <FormField id="booking-date" label="Data do atendimento">
-            <input
+            <DraftInput
               type="date"
               required
               min={schedulingDate()}
@@ -159,7 +177,7 @@ export function BookingForm({
             slots.data ? (
               <>
                 <FormField id="booking-slot" label="Vaga disponível">
-                  <select
+                  <DraftSelect
                     required
                     value={startsAt}
                     onChange={(event) => setStartsAt(event.target.value)}
@@ -175,7 +193,7 @@ export function BookingForm({
                         {timeLabel(slot.startsAt)} às {timeLabel(slot.endsAt)}
                       </option>
                     ))}
-                  </select>
+                  </DraftSelect>
                 </FormField>
                 <p>
                   {slots.data.durationMinutes} minutos por atendimento.
@@ -204,7 +222,7 @@ export function BookingForm({
       >
         {mutation.pending ? "Confirmando…" : booking ? "Confirmar remarcação" : "Confirmar reserva"}
       </Button>
-    </form>
+    </DraftForm>
   );
 }
 export function SchedulingNewBooking() {

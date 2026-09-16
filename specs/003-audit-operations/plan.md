@@ -82,3 +82,11 @@ contatos ou reconstrução de valores históricos. Cobrir revogação, sessão e
 ## Correção de sobreposição — 16/09/2026
 
 Incluída por pedido do usuário no ciclo fix/scheduling-ui-20260916, mantendo spec própria. Elevar a camada compartilhada do backdrop acima do cabeçalho20/menu60 e o diálogo acima do backdrop (80/90). Não modificar autenticação/dados. Cobrir o empilhamento real por elementsFromPoint no teste de abertura de log, foco/Escape e capturas de desktop/mobile. Gates no CI.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.

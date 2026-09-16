@@ -99,3 +99,9 @@ Preview3107 atualizado com build remoto e conferido no Chrome, com banco e limit
 - [x] AD02 Corrigir ordem visual e validar backdrop/painel acima de todo o shell, foco e capturas no CI.
 
 Evidências AD02: [fundo do log e cabeçalho](evidence/modal-2026-09-16.md).
+
+
+## Navegação sem perda de edição — 16/09/2026
+
+- [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
+- [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.

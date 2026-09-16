@@ -1,3 +1,4 @@
+import { DraftResetLink, DraftSearchForm, DraftSelect } from "@/components/ui/draft-controls";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -65,7 +66,12 @@ export async function DirectoryPage({
       <section className="panel">
         <h2>Encontrar unidade</h2>
         {!parsed.success && <p role="alert">Filtros inválidos. Exibindo a primeira página.</p>}
-        <form role="search" aria-label="Filtros de unidades" action="/partners/units">
+        <DraftSearchForm
+          draftKey="unit-directory"
+          role="search"
+          aria-label="Filtros de unidades"
+          action="/partners/units"
+        >
           <div className="filter-toolbar">
             <SearchField
               id="unit-directory-search"
@@ -75,18 +81,18 @@ export async function DirectoryPage({
               maxLength={160}
             />
             <FormField id="unit-directory-status" label="Situação da unidade">
-              <select name="status" defaultValue={query.status}>
+              <DraftSelect name="status" defaultValue={query.status}>
                 <option value="all">Todas</option>
                 <option value="active">Ativas</option>
                 <option value="inactive">Inativas</option>
-              </select>
+              </DraftSelect>
             </FormField>
             <Button type="submit">Aplicar filtros</Button>
-            <Link href="/partners/units" className={buttonVariants({ size: "compact" })}>
+            <DraftResetLink href="/partners/units" className={buttonVariants({ size: "compact" })}>
               Limpar
-            </Link>
+            </DraftResetLink>
           </div>
-        </form>
+        </DraftSearchForm>
         {!result.items.length ? (
           <p>Nenhuma unidade encontrada. Adicione unidades no cadastro do parceiro.</p>
         ) : (

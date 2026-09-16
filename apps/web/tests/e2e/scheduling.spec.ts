@@ -13,13 +13,17 @@ async function signIn(page: Page, admin = false) {
   await expect(page).toHaveURL(/\/$/);
 }
 async function choose(page: Page, label: string, name: string) {
-  const search = page.getByLabel(`Buscar ${label.toLocaleLowerCase("pt-BR")}`, { exact: true });
-  await search.fill(name);
-  const select = page.getByLabel(`Selecionar ${label.toLocaleLowerCase("pt-BR")}`, { exact: true });
-  const option = select.locator("option").filter({ hasText: name }).first();
-  await expect(option).toHaveCount(1);
-  const value = await option.getAttribute("value");
-  await select.selectOption(value!);
+  const input = page.getByRole("combobox", { name: label, exact: true });
+  await input.fill(name);
+  const options = page.getByRole("listbox", {
+    name: `Opções de ${label.toLocaleLowerCase("pt-BR")}`,
+    exact: true,
+  });
+  await expect(options.getByRole("option").filter({ hasText: name }).first()).toBeVisible();
+  await input.press("ArrowDown");
+  await input.press("Enter");
+  await expect(input).toHaveValue(new RegExp(name));
+  await expect(input).toHaveAttribute("aria-expanded", "false");
 }
 async function keyboardSelect(page: Page, target: Locator, index = 1) {
   await tabTo(page, target);
@@ -132,6 +136,14 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await open("services");
   await page.getByLabel("Nome", { exact: true }).fill(service);
   await choose(page, "Unidade", unit);
+  await page.getByRole("combobox", { name: "Unidade", exact: true }).click();
+  await expect(page.getByRole("option").filter({ hasText: unit }).first()).toBeVisible();
+  await expectWcag22AA(page);
+  await page.screenshot({
+    path: testInfo.outputPath("scheduling-combobox-mobile-light.png"),
+    fullPage: true,
+  });
+  await page.keyboard.press("Escape");
   await save();
   await open("procedures");
   await page.getByLabel("Nome", { exact: true }).fill(procedure);
@@ -160,12 +172,8 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await page
     .getByRole("button", { name: `Editar ${professional} — ${procedure}`, exact: true })
     .click();
-  await expect(
-    page.getByLabel("Selecionar unidade", { exact: true }).locator("option:checked"),
-  ).toHaveText(unit);
-  await expect(
-    page.getByLabel("Selecionar serviço", { exact: true }).locator("option:checked"),
-  ).toHaveText(service);
+  await expect(page.getByRole("combobox", { name: "Unidade", exact: true })).toHaveValue(unit);
+  await expect(page.getByRole("combobox", { name: "Serviço", exact: true })).toHaveValue(service);
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   const date = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
   const weekday = new Date(`${date}T12:00:00-03:00`).getUTCDay();

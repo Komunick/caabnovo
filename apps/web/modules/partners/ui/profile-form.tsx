@@ -1,4 +1,6 @@
 "use client";
+import { useDraftCache } from "@/components/workspace-drafts";
+import { DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { partnerProfileSchema, contactFieldMessages, type PartnerProfile } from "@caab/contracts";
@@ -16,7 +18,7 @@ export function ProfileForm({
 }: {
   profile?: PartnerProfile;
   disabled: boolean;
-  onSave: (profile: PartnerProfile) => Promise<void>;
+  onSave: (profile: PartnerProfile) => Promise<boolean | void>;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [categories, setCategories] = useState<PartnerCategory[]>([]);
@@ -39,9 +41,11 @@ export function ProfileForm({
     { name: "phone", label: "Telefone administrativo (opcional)", type: "tel", max: 15 },
     { name: "website", label: "Site do parceiro (opcional)", type: "url", max: 500 },
   ];
+  const drafts = useDraftCache();
   return (
-    <form
-      onSubmit={(event) => {
+    <DraftForm
+      draftKey="partners-profile-form-1"
+      onSubmit={async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const raw = Object.fromEntries([
@@ -73,7 +77,7 @@ export function ProfileForm({
           return;
         }
         setErrors({});
-        void onSave(parsed.data);
+        if (await onSave(parsed.data)) drafts.clear("partners-profile-form-1:");
       }}
     >
       <fieldset disabled={disabled}>
@@ -114,7 +118,11 @@ export function ProfileForm({
             ))}
         </datalist>
         <FormField id="partner-description" label="Descrição (opcional)">
-          <textarea name="description" maxLength={3000} defaultValue={profile?.description ?? ""} />
+          <DraftTextarea
+            name="description"
+            maxLength={3000}
+            defaultValue={profile?.description ?? ""}
+          />
         </FormField>
 
         <Button type="submit" intent="primary" size={profile ? "default" : "add"}>
@@ -122,6 +130,6 @@ export function ProfileForm({
           {profile ? "Salvar cadastro" : "Criar parceiro"}
         </Button>
       </fieldset>
-    </form>
+    </DraftForm>
   );
 }

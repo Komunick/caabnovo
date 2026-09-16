@@ -150,3 +150,11 @@ substituídas e alinhar STACK/LEG-001 ao contrato vigente. Preservar implementa�
 referências dos PRs anteriores; novo PR com template/checklist e rollback explícitos.
 Conferir igualdade da aplicação e do workflow com as bases validadas. Limites remotos
 registrados em evidence/workflow-compliance-2026-09-15.md; não presumir homologação.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.

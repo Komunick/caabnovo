@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { useState } from "react";
 import type { SchedulingBooking, SchedulingEvent, SchedulingPage } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ import {
 type Details = { booking: SchedulingBooking; history: SchedulingPage<SchedulingEvent> };
 export function SchedulingBookingDetail({ id }: { id: string }) {
   const [page, setPage] = useState(1);
-  const [rescheduling, setRescheduling] = useState(false);
+  const [rescheduling, setRescheduling] = useDraftState("booking-detail:rescheduling", false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const result = useSchedulingData<Details>(`bookings/${id}?page=${page}`);

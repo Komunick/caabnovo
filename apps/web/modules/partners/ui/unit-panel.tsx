@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { Plus } from "lucide-react";
 import type { PartnerRecord, PartnerUnit } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,11 @@ export function UnitPanel({
   canWrite: boolean;
   command: PartnerCommandHandler;
 }) {
-  const [editing, setEditing] = useState<PartnerUnit | "new" | null>(null);
+  const [editing, setEditing] = useDraftState<PartnerUnit | "new" | null>(
+    "unit-panel:editing",
+    null,
+  );
+  const drafts = useDraftCache();
   const unit = editing && editing !== "new" ? editing : null;
   return (
     <section className="panel">
@@ -36,7 +40,10 @@ export function UnitPanel({
           unit={unit}
           disabled={disabled}
           command={command}
-          onClose={() => setEditing(null)}
+          onClose={() => {
+            drafts.clear(`partners-unit-form:${unit?.id ?? "new"}:`);
+            setEditing(null);
+          }}
         />
       )}
       {!partner.units.length && !editing && <p>Nenhuma unidade cadastrada.</p>}

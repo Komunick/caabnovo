@@ -1,4 +1,5 @@
 "use client";
+import { DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useState } from "react";
 import type { MemberRecord } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,8 @@ export function MemberAdministrativeStatus({
       ) : (
         canReview &&
         (confirming ? (
-          <form
+          <DraftForm
+            draftKey="members-member-administrative-status-1"
             onSubmit={async (event) => {
               event.preventDefault();
               if (busy) return;
@@ -80,7 +82,7 @@ export function MemberAdministrativeStatus({
                 </Button>
               </div>
             </fieldset>
-          </form>
+          </DraftForm>
         ) : (
           <Button
             disabled={busy || !hydrated}

@@ -1,6 +1,8 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, ShieldCheck } from "lucide-react";
 import { accessPrerequisites, type AccessPermission } from "@caab/contracts";
@@ -35,15 +37,14 @@ export function UserAccessForm({
   active: boolean;
 }>) {
   const router = useRouter();
-  const [snapshot, setSnapshot] = useState(initial);
-  const [selected, setSelected] = useState(new Set(initial.permissions));
+  const [snapshot, setSnapshot] = useDraftState(`user-access-form:${userId}:snapshot`, initial);
+  const [selected, setSelected] = useDraftState(
+    `user-access-form:${userId}:selected`,
+    new Set(initial.permissions),
+  );
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  useEffect(() => {
-    setSnapshot(initial);
-    setSelected(new Set(initial.permissions));
-  }, [initial]);
   const editable =
     !self && active && (authority.includes("roles:grant") || authority.includes("roles:revoke"));
   const changed = [...selected].sort().join() !== [...snapshot.permissions].sort().join();
@@ -124,14 +125,14 @@ export function UserAccessForm({
         <p className="muted-text">Outro administrador deve alterar os acessos da sua conta.</p>
       ) : null}
       {!active ? <p className="muted-text">Reative a conta antes de alterar os acessos.</p> : null}
-      <form onSubmit={save}>
+      <DraftForm draftKey="users-user-access-form-1" onSubmit={save}>
         <div className="access-grid">
           {groups.map((group) => (
             <fieldset className="access-group" key={group.name}>
               <legend>{group.name}</legend>
               {group.actions.map(([key, label]) => (
                 <label className="checkbox-field access-option" key={key}>
-                  <input
+                  <DraftInput
                     type="checkbox"
                     checked={selected.has(key)}
                     disabled={!canToggle(key, selected.has(key))}
@@ -158,7 +159,7 @@ export function UserAccessForm({
         ) : null}
         {error ? <p role="alert">{error}</p> : null}
         {saved ? <p role="status">Acessos atualizados.</p> : null}
-      </form>
+      </DraftForm>
     </section>
   );
 }

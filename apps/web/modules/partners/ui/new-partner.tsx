@@ -1,4 +1,5 @@
 "use client";
+import { useDraftCache } from "@/components/workspace-drafts";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PartnerRecord } from "@caab/contracts";
@@ -6,6 +7,7 @@ import { ProfileForm } from "./profile-form";
 import { partnerRequest, mutationHeaders } from "./client";
 import styles from "./partners.module.css";
 export function NewPartner() {
+  const drafts = useDraftCache();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +30,9 @@ export function NewPartner() {
               headers: mutationHeaders(retry.current.key),
               body,
             });
+            drafts.clear();
             router.push(`/partners/${record.id}`);
+            return true;
           } catch (e) {
             setError(e instanceof Error ? e.message : "Falha ao cadastrar.");
           } finally {

@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { useState, type FormEvent } from "react";
 import type { SchedulingHoursRow } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -54,8 +56,8 @@ function HoursEditor({
   professional: boolean;
   data: { version: number; rows: SchedulingHoursRow[] };
 }) {
-  const [rows, setRows] = useState(data.rows);
-  const [version, setVersion] = useState(data.version);
+  const [rows, setRows] = useDraftState(`hours:${path}:${unitId}:rows`, data.rows);
+  const [version, setVersion] = useDraftState(`hours:${path}:${unitId}:version`, data.version);
   const mutation = useSchedulingMutation();
   const [notice, setNotice] = useState("");
   const change = (weekday: number, field: string, value: string) =>
@@ -80,7 +82,7 @@ function HoursEditor({
     }
   }
   return (
-    <form className="scheduling-form" onSubmit={submit}>
+    <DraftForm draftKey="scheduling-hours-1" className="scheduling-form" onSubmit={submit}>
       <p>
         Horário de Salvador (America/Bahia). Desmarque os dias sem atendimento. Uma faixa por dia,
         sem virar a noite.
@@ -92,7 +94,7 @@ function HoursEditor({
             <fieldset key={day} className="scheduling-day">
               <legend>{day}</legend>
               <label className="checkbox-field">
-                <input
+                <DraftInput
                   type="checkbox"
                   checked={!!row}
                   onChange={(event) =>
@@ -127,7 +129,7 @@ function HoursEditor({
                       : []),
                   ].map(([field, label]) => (
                     <FormField key={field} id={`hours-${weekday}-${field}`} label={label}>
-                      <input
+                      <DraftInput
                         type="time"
                         required={field === "start" || field === "end"}
                         value={String(row[field as keyof SchedulingHoursRow] ?? "")}
@@ -146,13 +148,13 @@ function HoursEditor({
       <Button type="submit" intent="primary" disabled={mutation.pending}>
         {mutation.pending ? "Salvando…" : "Salvar horários"}
       </Button>
-    </form>
+    </DraftForm>
   );
 }
 export function SchedulingHours() {
-  const [unitId, setUnitId] = useState("");
-  const [professionalId, setProfessionalId] = useState("");
-  const [kind, setKind] = useState("units");
+  const [unitId, setUnitId] = useDraftState("hours:unitId", "");
+  const [professionalId, setProfessionalId] = useDraftState("hours:professionalId", "");
+  const [kind, setKind] = useDraftState("hours:kind", "units");
   const id = kind === "units" ? unitId : professionalId;
   return (
     <SchedulingShell
@@ -163,10 +165,10 @@ export function SchedulingHours() {
         <h2>Selecionar atendimento</h2>
         <div className="scheduling-grid">
           <FormField id="hours-kind" label="Configurar">
-            <select value={kind} onChange={(event) => setKind(event.target.value)}>
+            <DraftSelect value={kind} onChange={(event) => setKind(event.target.value)}>
               <option value="units">Expediente da unidade</option>
               <option value="professionals">Jornada do profissional</option>
-            </select>
+            </DraftSelect>
           </FormField>
           <Choice
             label="Unidade"

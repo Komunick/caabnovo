@@ -1,4 +1,5 @@
 "use client";
+import { DraftInput, DraftTextarea } from "@/components/ui/draft-controls";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -209,7 +210,7 @@ export function NewsCover({
             label="Enviar imagem"
             hint="PNG, JPG ou JPEG, até 25 MB. A imagem passa por verificação antes de ficar disponível."
           >
-            <input
+            <DraftInput
               type="file"
               className="news-file-input"
               accept={IMAGE_FILE_ACCEPT}
@@ -338,7 +339,7 @@ export function NewsCover({
                 : "Descreva o que a imagem comunica. Obrigatória antes de publicar."
             }
           >
-            <textarea
+            <DraftTextarea
               rows={2}
               maxLength={500}
               value={cover.alt}

@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect } from "@/components/ui/draft-controls";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DOCUMENT_FILE_ACCEPT, uploadIntentSchema, type PartnerFile } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -20,7 +22,7 @@ export function ContractFiles({
   onSelect: (id: string) => void;
 }) {
   const [files, setFiles] = useState<FilePage>({ items: [], page: 1, hasNextPage: false });
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useDraftState("contract-files:page", 1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -110,7 +112,7 @@ export function ContractFiles({
       <p role="status">{notice}</p>
       {canUpload && (
         <FormField id="contract-upload" label="Enviar PDF, PNG, JPG ou JPEG, até 25 MB">
-          <input
+          <DraftInput
             type="file"
             accept={DOCUMENT_FILE_ACCEPT}
             disabled={disabled || busy}
@@ -122,7 +124,7 @@ export function ContractFiles({
         </FormField>
       )}
       <FormField id="contract-file" label="Documento do contrato">
-        <select
+        <DraftSelect
           disabled={disabled || busy}
           value={value}
           onChange={(event) => onSelect(event.target.value)}
@@ -140,7 +142,7 @@ export function ContractFiles({
               {file.name} — {labels[file.status] ?? "Indisponível"}
             </option>
           ))}
-        </select>
+        </DraftSelect>
       </FormField>
       <div className={styles.actions}>
         <Button

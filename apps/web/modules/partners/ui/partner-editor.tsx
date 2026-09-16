@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
@@ -28,8 +30,9 @@ export function PartnerEditor({
   canPublish: boolean;
 }) {
   const searchParams = useSearchParams();
-  const [partner, setPartner] = useState(initial);
-  const [tab, setTab] = useState(
+  const [partner, setPartner] = useDraftState("partner-editor:partner", initial);
+  const [tab, setTab] = useDraftState(
+    "partner-editor:tab",
     (
       {
         units: "Unidades",
@@ -155,13 +158,14 @@ export function PartnerEditor({
             profile={partner.profile}
             disabled={disabled || !canWrite}
             onSave={async (profile) => {
-              await command({ action: "update", profile });
+              return command({ action: "update", profile });
             }}
           />
           {canWrite && (
             <>
               <hr />
-              <form
+              <DraftForm
+                draftKey="partners-partner-editor-1"
                 onSubmit={async (event) => {
                   event.preventDefault();
                   const data = new FormData(event.currentTarget);
@@ -180,7 +184,7 @@ export function PartnerEditor({
                   <legend>Situação do parceiro</legend>
                   <p>Suspender ou arquivar retira os benefícios de exibição.</p>
                   <FormField id="partner-state-action" label="Alterar situação">
-                    <select name="action" key={`${partner.archivedAt}-${partner.status}`}>
+                    <DraftSelect name="action" key={`${partner.archivedAt}-${partner.status}`}>
                       {partner.archivedAt ? (
                         <option value="restore">Restaurar cadastro</option>
                       ) : (
@@ -193,12 +197,12 @@ export function PartnerEditor({
                           <option value="archive">Arquivar cadastro</option>
                         </>
                       )}
-                    </select>
+                    </DraftSelect>
                   </FormField>
 
                   <Button type="submit">Confirmar alteração de situação</Button>
                 </fieldset>
-              </form>
+              </DraftForm>
             </>
           )}
         </section>

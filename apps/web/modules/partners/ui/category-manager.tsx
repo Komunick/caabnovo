@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -18,9 +20,17 @@ export function CategoryManager({
   canWrite: boolean;
 }) {
   const [items, setItems] = useState(initial);
-  const [editing, setEditing] = useState<PartnerCategory | "new" | null>(null);
-  const [q, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [editing, setEditing] = useDraftState<PartnerCategory | "new" | null>(
+    "category-manager:editing",
+    null,
+  );
+  const [q, setQuery] = useDraftState("category-manager:q", "");
+  const [page, setPage] = useDraftState("category-manager:page", 1);
+  const drafts = useDraftCache();
+  const close = () => {
+    drafts.clear(`partners-category-manager:${editing === "new" ? "new" : editing?.id}:`);
+    setEditing(null);
+  };
   const mutation = usePartnerMutation();
   const filtered = items.filter((item) =>
     item.name.toLocaleLowerCase("pt-BR").includes(q.toLocaleLowerCase("pt-BR")),
@@ -72,7 +82,8 @@ export function CategoryManager({
         )}
       </div>
       {editing && (
-        <form
+        <DraftForm
+          draftKey={`partners-category-manager:${editing === "new" ? "new" : editing.id}`}
           key={editing === "new" ? "new" : editing.id}
           onSubmit={async (event) => {
             event.preventDefault();
@@ -89,14 +100,14 @@ export function CategoryManager({
             );
             if (result) {
               setItems(result.items);
-              setEditing(null);
+              close();
             }
           }}
         >
           <fieldset disabled={mutation.busy}>
             <legend>{editing === "new" ? "Nova categoria" : "Editar categoria"}</legend>
             <FormField id="category-name" label="Nome da categoria">
-              <input
+              <DraftInput
                 name="name"
                 required
                 minLength={2}
@@ -106,7 +117,7 @@ export function CategoryManager({
             </FormField>
             <div className={styles.checks}>
               <label>
-                <input
+                <DraftInput
                   type="checkbox"
                   name="active"
                   defaultChecked={editing === "new" || editing.active}
@@ -120,12 +131,12 @@ export function CategoryManager({
               <Button intent="primary" type="submit">
                 Salvar categoria
               </Button>
-              <Button type="button" onClick={() => setEditing(null)}>
+              <Button type="button" onClick={close}>
                 Cancelar
               </Button>
             </div>
           </fieldset>
-        </form>
+        </DraftForm>
       )}
       {!filtered.length ? (
         <p>Nenhuma categoria encontrada.</p>

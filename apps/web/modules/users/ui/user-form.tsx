@@ -1,4 +1,6 @@
 "use client";
+import { useDraftCache, useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { Plus } from "lucide-react";
@@ -28,6 +30,8 @@ async function errorMessage(response: Response) {
 }
 
 export function UserForm(props: Readonly<UserFormProps>) {
+  const drafts = useDraftCache();
+  const [version, setVersion] = useDraftState("user-form:version", props.user?.version);
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const [pending, setPending] = useState(false);
@@ -51,7 +55,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
         editing
           ? {
               name: data.get("name"),
-              version: props.user.version,
+              version,
             }
           : {
               name: data.get("name"),
@@ -63,6 +67,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
     if (!response.ok) {
       setError(await errorMessage(response));
     } else {
+      drafts.clear("users-user-form-1:");
       if (!editing) {
         const created = (await response.json()) as { id?: string };
         if (!created.id) {
@@ -73,6 +78,8 @@ export function UserForm(props: Readonly<UserFormProps>) {
         router.push(`/users/${created.id}`);
         return;
       }
+      const saved = await response.json();
+      setVersion(saved.version);
       setMessage("Alterações salvas.");
       router.refresh();
     }
@@ -86,7 +93,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
       headers: mutationHeaders(),
       body: JSON.stringify({
         status: "disabled",
-        version: props.user.version,
+        version,
       }),
     });
     if (!response.ok) throw new Error(await errorMessage(response));
@@ -98,9 +105,13 @@ export function UserForm(props: Readonly<UserFormProps>) {
       <h2 id={`${props.mode}-user-title`}>
         {props.mode === "create" ? "Criar colaborador" : "Dados da conta"}
       </h2>
-      <form className={props.mode === "create" ? "user-create-form" : undefined} onSubmit={submit}>
+      <DraftForm
+        draftKey="users-user-form-1"
+        className={props.mode === "create" ? "user-create-form" : undefined}
+        onSubmit={submit}
+      >
         <FormField id={`${props.mode}-name`} label="Nome">
-          <input
+          <DraftInput
             id={`${props.mode}-name`}
             name="name"
             defaultValue={props.mode === "edit" ? props.user.name : ""}
@@ -125,7 +136,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
                 <legend>Funções iniciais</legend>
                 {props.roles.map((role) => (
                   <label className="checkbox-field" key={role.id}>
-                    <input name="roleIds" type="checkbox" value={role.id} /> {role.name}
+                    <DraftInput name="roleIds" type="checkbox" value={role.id} /> {role.name}
                   </label>
                 ))}
               </fieldset>
@@ -147,7 +158,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
               ? "Criar colaborador"
               : "Salvar alterações"}
         </button>
-      </form>
+      </DraftForm>
       {props.mode === "edit" && props.canDisable && props.user.status === "active" ? (
         <div className="user-danger-action">
           <SensitiveActionDialog

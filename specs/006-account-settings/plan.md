@@ -50,3 +50,11 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 ## Âncoras e streaming — 15/09/2026
 
 Após montagem do AccountSettingsForm, verificar somente profile-title/email-title/password-title no hash e posicionar a seção no próximo frame. Cancelar frame ao desmontar. Validar pesquisa geral até a seção de senha em390px e entrada direta nas três seções. Incremento junto à navegação na branch única; nenhum contrato ou dado alterado.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.

@@ -165,3 +165,12 @@ Todos os controles das sete páginas e seis abas adotam validação e mensagens 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.

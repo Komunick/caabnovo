@@ -1,4 +1,6 @@
 "use client";
+import { useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { Plus } from "lucide-react";
 import {
   memberProfileSchema,
@@ -19,16 +21,18 @@ export function ProfileForm({
 }: {
   profile?: MemberProfile;
   disabled: boolean;
-  onSave: (profile: unknown) => Promise<void>;
+  onSave: (profile: unknown) => Promise<boolean | void>;
 }) {
   const initial = profile ?? memberProfileSchema.parse({ name: "Novo cadastro" });
+  const drafts = useDraftCache();
   return (
-    <form
-      onSubmit={(event) => {
+    <DraftForm
+      draftKey="members-profile-form-1"
+      onSubmit={async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const str = (key: string) => String(data.get(key) ?? "");
-        void onSave({
+        const saved = await onSave({
           name: str("name"),
           socialName: str("socialName"),
           cpf: str("cpf"),
@@ -39,13 +43,14 @@ export function ProfileForm({
             ? { number: str("oabNumber"), state: str("oabState"), type: str("oabType") }
             : null,
         });
+        if (saved) drafts.clear("members-profile-form-1:");
       }}
     >
       <fieldset disabled={disabled}>
         <legend>Identificação e contato</legend>
         <div className={styles.grid}>
           <FormField id="member-name" label="Nome completo">
-            <input
+            <DraftInput
               name="name"
               required
               minLength={2}
@@ -54,7 +59,7 @@ export function ProfileForm({
             />
           </FormField>
           <FormField id="member-social" label="Nome social (opcional)">
-            <input name="socialName" maxLength={160} defaultValue={initial.socialName} />
+            <DraftInput name="socialName" maxLength={160} defaultValue={initial.socialName} />
           </FormField>
           <ValidatedTextField
             id="member-cpf"
@@ -105,21 +110,21 @@ export function ProfileForm({
             message="Informe uma inscrição válida com até seis números."
           />
           <FormField id="member-oab-state" label="Estado da OAB">
-            <select name="oabState" defaultValue={initial.oab?.state ?? "BA"}>
+            <DraftSelect name="oabState" defaultValue={initial.oab?.state ?? "BA"}>
               {memberProfileSchema.shape.oab
                 .unwrap()
                 .unwrap()
                 .shape.state.options.map((uf) => (
                   <option key={uf}>{uf}</option>
                 ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="member-oab-type" label="Tipo de inscrição">
-            <select name="oabType" defaultValue={initial.oab?.type ?? "lawyer"}>
+            <DraftSelect name="oabType" defaultValue={initial.oab?.type ?? "lawyer"}>
               <option value="lawyer">Advogado(a)</option>
               <option value="trainee">Estagiário(a)</option>
               <option value="supplementary">Suplementar</option>
-            </select>
+            </DraftSelect>
           </FormField>
         </div>
 
@@ -128,6 +133,6 @@ export function ProfileForm({
           {profile ? "Salvar cadastro" : "Criar cadastro"}
         </Button>
       </fieldset>
-    </form>
+    </DraftForm>
   );
 }

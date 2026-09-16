@@ -1,4 +1,5 @@
 "use client";
+import { DraftForm } from "@/components/ui/draft-controls";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -38,7 +39,7 @@ export function RedriveDialog({ jobId }: Readonly<{ jobId: string }>) {
         title="Reenviar processamento"
         description="Uma nova tentativa será auditada e manterá a mesma chave idempotente."
       >
-        <form onSubmit={submit}>
+        <DraftForm draftKey="jobs-redrive-dialog-1" onSubmit={submit}>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>
@@ -48,7 +49,7 @@ export function RedriveDialog({ jobId }: Readonly<{ jobId: string }>) {
               {pending ? "Reenviando…" : "Confirmar reenvio"}
             </Button>
           </div>
-        </form>
+        </DraftForm>
       </DialogContent>
     </Dialog>
   );

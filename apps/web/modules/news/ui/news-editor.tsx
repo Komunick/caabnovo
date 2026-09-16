@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftInput, DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
@@ -9,6 +11,7 @@ import {
   newsDraftMetadataSchema,
   updateNewsDraftRequestSchema,
   type NewsDraftMetadata,
+  type NewsBody,
 } from "@caab/contracts";
 import type { NewsRecord, listNewsVersions } from "../news-service";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -56,22 +59,29 @@ export function NewsEditor({
   canUploadMedia?: boolean;
   canPublish?: boolean;
 }>) {
+  const drafts = useDraftCache();
   const router = useRouter();
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
-  const [record, setRecord] = useState(initial);
+  const [record, setRecord] = useDraftState("news-editor:record", initial);
   const [publishedVersion, setPublishedVersion] = useState<number | null | undefined>(
     initial && canPublish ? undefined : null,
   );
-  const [customSlug, setCustomSlug] = useState(false);
+  const [customSlug, setCustomSlug] = useDraftState("news-editor:customSlug", false);
   const slugSeed = useRef(initial?.id ?? "");
-  const [metadata, setMetadata] = useState(initial?.metadata ?? newsDraftMetadataSchema.parse({}));
-  const [body, setBody] = useState<unknown>(initial?.body ?? emptyNewsBody);
+  const [metadata, setMetadata] = useDraftState(
+    "news-editor:metadata",
+    initial?.metadata ?? newsDraftMetadataSchema.parse({}),
+  );
+  const [body, setBody] = useDraftState<NewsBody>(
+    "news-editor:body",
+    initial?.body ?? emptyNewsBody,
+  );
   const [history, setHistory] = useState<History>(
     initialHistory ?? { items: [], page: 1, totalPages: 1 },
   );
   const [editorKey, setEditorKey] = useState(0);
-  const [dirty, setDirty] = useState(false);
+  const [dirty, setDirty] = useDraftState("news-editor:dirty", false);
   const [pending, setPending] = useState(false);
   const [mediaUploading, setMediaUploading] = useState(false);
   const [message, setMessage] = useState("");
@@ -80,11 +90,14 @@ export function NewsEditor({
   const [confirm, setConfirm] = useState<{ action: "archive" | "restore"; versionId?: string }>();
   const retry = useRef<{ input: string; key: string } | undefined>(undefined);
   const busy = useRef(false);
-  const bodyChanged = useCallback((value: unknown) => {
-    setBody(value);
-    setDirty(true);
-    setFieldErrors((old) => ({ ...old, body: undefined }));
-  }, []);
+  const bodyChanged = useCallback(
+    (value: NewsBody) => {
+      setBody(value);
+      setDirty(true);
+      setFieldErrors((old) => ({ ...old, body: undefined }));
+    },
+    [setBody, setDirty],
+  );
   useEffect(() => {
     if (!dirty && !mediaUploading) return;
     const prevent = (event: BeforeUnloadEvent) => event.preventDefault();
@@ -179,6 +192,7 @@ export function NewsEditor({
       if (withdrawal.withdrawPublishedVersion !== undefined) setPublishedVersion(null);
       setMetadata(saved.metadata);
       retry.current = undefined;
+      if (!initial && !silent) drafts.clear();
       if (silent) return saved;
       setMessage(
         `${withdrawal.withdrawPublishedVersion !== undefined ? "Publicação retirada. " : ""}Rascunho salvo. Revisão ${saved.revision}.`,
@@ -330,7 +344,7 @@ export function NewsEditor({
             </Button>
           </div>
         </div>
-        <form id="news-draft-form" onSubmit={save} noValidate>
+        <DraftForm draftKey="news-news-editor-1" id="news-draft-form" onSubmit={save} noValidate>
           <fieldset
             disabled={!ready || pending || mediaUploading || record?.archived}
             className="news-fields"
@@ -339,14 +353,14 @@ export function NewsEditor({
             <div className="news-editor-layout">
               <section className="news-writing-card" aria-label="Texto da notícia">
                 <FormField id="news-title" label="Título" error={fieldErrors.title}>
-                  <input
+                  <DraftInput
                     value={metadata.title}
                     maxLength={200}
                     onChange={(e) => change("title", e.target.value)}
                   />
                 </FormField>
                 <FormField id="news-summary" label="Resumo" error={fieldErrors.summary}>
-                  <textarea
+                  <DraftTextarea
                     value={metadata.summary}
                     maxLength={500}
                     rows={3}
@@ -361,7 +375,7 @@ export function NewsEditor({
                   <RichTextEditor
                     error={fieldErrors.body}
                     key={editorKey}
-                    initialBody={record?.body ?? emptyNewsBody}
+                    initialBody={body}
                     disabled={!ready || pending || mediaUploading || !!record?.archived}
                     onChange={bodyChanged}
                     newsId={record?.id}
@@ -406,7 +420,7 @@ export function NewsEditor({
                       invalidMessage="Use letras minúsculas, números e hífens, sem espaços ou acentos."
                       hint="Letras minúsculas, números e hífens. Ex.: atendimento-em-setembro"
                     >
-                      <input
+                      <DraftInput
                         value={metadata.slug}
                         pattern="(?:[a-z0-9]+(?:-[a-z0-9]+)*)?"
                         maxLength={180}
@@ -416,7 +430,7 @@ export function NewsEditor({
                   </details>
                   <div className="news-meta-grid">
                     <FormField id="news-category" label="Categoria" error={fieldErrors.category}>
-                      <input
+                      <DraftInput
                         value={metadata.category}
                         maxLength={80}
                         onChange={(e) => change("category", e.target.value)}
@@ -429,7 +443,7 @@ export function NewsEditor({
                       hint="Separe por vírgulas; até 20 tags."
                       error={fieldErrors.tags}
                     >
-                      <input
+                      <DraftInput
                         value={metadata.tags.join(",")}
                         maxLength={1619}
                         onBlur={(event) => {
@@ -455,7 +469,7 @@ export function NewsEditor({
                     </FormField>
                   </div>
                   <label className="checkbox-field">
-                    <input
+                    <DraftInput
                       type="checkbox"
                       checked={!!metadata.highlight}
                       onChange={(event) =>
@@ -472,7 +486,7 @@ export function NewsEditor({
                       invalidMessage="Informe uma ordem de 1 a 100."
                       hint="De 1 a 100. Números menores aparecem primeiro; empates usam a publicação mais recente."
                     >
-                      <input
+                      <DraftInput
                         type="number"
                         min={1}
                         max={100}
@@ -491,7 +505,7 @@ export function NewsEditor({
                     <legend>Destinos previstos</legend>
                     {(["site", "app"] as const).map((channel) => (
                       <label key={channel} className="checkbox-field">
-                        <input
+                        <DraftInput
                           type="checkbox"
                           checked={metadata.channels.includes(channel)}
                           onChange={(e) =>
@@ -511,7 +525,7 @@ export function NewsEditor({
               </aside>
             </div>
           </fieldset>
-        </form>
+        </DraftForm>
         {record ? (
           <div className="news-actions">
             <Button
@@ -552,8 +566,10 @@ export function NewsEditor({
             setBody(saved.body);
             setEditorKey((key) => key + 1);
             setDirty(false);
-            if (!initial) router.replace(`/news/${saved.id}`);
-            else void loadHistory();
+            if (!initial) {
+              drafts.clear();
+              router.replace(`/news/${saved.id}`);
+            } else void loadHistory();
           }}
         />
       )}

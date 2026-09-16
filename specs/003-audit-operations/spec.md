@@ -135,3 +135,12 @@ com paginação no servidor e autorização própria.
 ## Sobreposição dos detalhes — 16/09/2026
 
 AD-F01 Ao abrir um log, todo o shell, inclusive Portal Administrativo/Auditoria e navegação móvel, deve ficar atrás do fundo escurecido. O painel de detalhes permanece acima desse fundo, com foco contido e retorno ao acionador ao fechar. Validar desktop/celular, claro/escuro e posição de pintura real no cabeçalho.
+
+
+## Edições durante navegação — decisão de 16/09/2026
+
+- Preservar campos, seleções e alterações pendentes ao consultar outra aba ou módulo e voltar,
+  separados por formulário e registro, sem gravação automática no servidor.
+- Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
+  Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
+- Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.

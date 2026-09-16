@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
 import { useState, useTransition } from "react";
@@ -17,8 +19,8 @@ export function PartnerFilters({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [filters, setFilters] = useState(query);
-  const [expanded, setExpanded] = useState(false);
+  const [filters, setFilters] = useDraftState("partner-filters:filters", query);
+  const [expanded, setExpanded] = useDraftState("partner-filters:expanded", false);
   const queryKey = JSON.stringify(query);
   const [previous, setPrevious] = useState(queryKey);
   if (previous !== queryKey) {
@@ -55,7 +57,8 @@ export function PartnerFilters({
         ["archived", "Arquivados"],
       ];
   return (
-    <form
+    <DraftForm
+      draftKey="partners-partner-filters-1"
       action={path}
       role="search"
       aria-label={benefits ? "Filtros de benefícios" : "Filtros de parceiros"}
@@ -93,7 +96,7 @@ export function PartnerFilters({
         </div>
         <div id="partner-filter-options" className="list-filters" hidden={!expanded}>
           <FormField id="partner-category-filter" label="Categoria">
-            <select
+            <DraftSelect
               id="partner-category-filter"
               value={filters.category}
               onChange={(event) => apply({ ...filters, category: event.target.value })}
@@ -102,10 +105,10 @@ export function PartnerFilters({
               {categories.map((category) => (
                 <option key={category}>{category}</option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           <FormField id="partner-status-filter" label="Situação">
-            <select
+            <DraftSelect
               id="partner-status-filter"
               value={filters.status}
               onChange={(event) => apply({ ...filters, status: event.target.value })}
@@ -115,11 +118,11 @@ export function PartnerFilters({
                   {label}
                 </option>
               ))}
-            </select>
+            </DraftSelect>
           </FormField>
           {benefits && (
             <FormField id="partner-channel-filter" label="Canal">
-              <select
+              <DraftSelect
                 id="partner-channel-filter"
                 value={filters.channel}
                 onChange={(event) => apply({ ...filters, channel: event.target.value })}
@@ -127,12 +130,12 @@ export function PartnerFilters({
                 <option value="all">Todos os canais</option>
                 <option value="site">Site</option>
                 <option value="app">Aplicativo</option>
-              </select>
+              </DraftSelect>
             </FormField>
           )}
         </div>
         <span role="status">{pending ? "Atualizando resultados…" : ""}</span>
       </fieldset>
-    </form>
+    </DraftForm>
   );
 }

@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
+import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DOCUMENT_FILE_ACCEPT,
@@ -38,9 +40,11 @@ export function MemberDocuments({
   canReview: boolean;
   command: (input: Record<string, unknown>) => Promise<boolean>;
 }) {
-  const [replacesId, setReplacesId] = useState("");
+  // Reuse the category for successive documents and replacements, as before.
+  const [category, setCategory] = useDraftState("member-documents:category", "");
+  const [replacesId, setReplacesId] = useDraftState("member-documents:replacesId", "");
   const [files, setFiles] = useState<FilesPage>({ items: [], page: 1, hasNextPage: false });
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useDraftState("member-documents:page", 1);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState("");
@@ -129,7 +133,7 @@ export function MemberDocuments({
           id="member-upload"
           label="Enviar arquivo privado (PDF, PNG, JPG ou JPEG, até 25 MB)"
         >
-          <input
+          <DraftInput
             type="file"
             accept={DOCUMENT_FILE_ACCEPT}
             disabled={disabled || uploading || !canWrite}
@@ -162,23 +166,29 @@ export function MemberDocuments({
           </li>
         ))}
       </ul>
-      <form
-        onSubmit={(e) => {
+      <DraftForm
+        draftKey="members-member-documents-1"
+        onSubmit={async (e) => {
           e.preventDefault();
+          const form = e.currentTarget;
           const data = new FormData(e.currentTarget);
-          void command({
+          const saved = await command({
             action: "document",
             fileId: data.get("fileId"),
             category: data.get("category"),
             replacesId: data.get("replacesId") || null,
           });
+          if (saved) {
+            form.reset();
+            setReplacesId("");
+          }
         }}
       >
         <fieldset disabled={disabled || uploading || !canWrite}>
           <legend>Anexar evidência ao cadastro</legend>
           <div className={styles.grid}>
             <FormField id="document-file" label="Arquivo liberado">
-              <select name="fileId" required defaultValue="">
+              <DraftSelect name="fileId" required defaultValue="">
                 <option value="">Selecione um arquivo</option>
                 {files.items
                   .filter(
@@ -192,13 +202,20 @@ export function MemberDocuments({
                       {f.name}
                     </option>
                   ))}
-              </select>
+              </DraftSelect>
             </FormField>
             <FormField id="document-category" label="Categoria do documento">
-              <input name="category" required minLength={2} maxLength={80} />
+              <DraftInput
+                name="category"
+                required
+                minLength={2}
+                maxLength={80}
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+              />
             </FormField>
             <FormField id="document-replaces" label="Documento substituído (opcional)">
-              <select
+              <DraftSelect
                 name="replacesId"
                 value={replacesId}
                 onChange={(event) => setReplacesId(event.target.value)}
@@ -211,13 +228,13 @@ export function MemberDocuments({
                       {d.category} · {formatMemberDate(d.createdAt)}
                     </option>
                   ))}
-              </select>
+              </DraftSelect>
             </FormField>
           </div>
 
           <Button type="submit">Anexar documento</Button>
         </fieldset>
-      </form>
+      </DraftForm>
       <h3>Evidências registradas</h3>
       {!member.documents.length && <p>Nenhum documento anexado.</p>}
       <ul className={styles.list}>
@@ -255,28 +272,31 @@ export function MemberDocuments({
                 </details>
               )}
               {!replaced && (
-                <form
-                  onSubmit={(e) => {
+                <DraftForm
+                  draftKey={`members-document-review:${doc.id}`}
+                  onSubmit={async (e) => {
                     e.preventDefault();
+                    const form = e.currentTarget;
                     const d = new FormData(e.currentTarget);
-                    void command({
+                    const saved = await command({
                       action: "review",
                       documentId: doc.id,
                       result: d.get("result"),
                     });
+                    if (saved) form.reset();
                   }}
                 >
                   <fieldset disabled={disabled || !canReview}>
                     <FormField id={`review-result-${doc.id}`} label="Resultado da análise">
-                      <select name="result">
+                      <DraftSelect name="result">
                         <option value="accepted">Aceitar documento</option>
                         <option value="correction_requested">Solicitar correção</option>
-                      </select>
+                      </DraftSelect>
                     </FormField>
 
                     <Button type="submit">Registrar análise do documento</Button>
                   </fieldset>
-                </form>
+                </DraftForm>
               )}
             </li>
           );

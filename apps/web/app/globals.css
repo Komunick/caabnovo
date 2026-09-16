@@ -4716,13 +4716,6 @@ thead th {
   display: grid;
   gap: 0.5rem;
 }
-.scheduling-choice legend {
-  padding: 0;
-  margin-bottom: 0.5rem;
-  color: var(--color-muted-strong);
-  font-size: 0.87rem;
-  font-weight: 720;
-}
 .scheduling-choice .form-field,
 .scheduling-day .form-field,
 .scheduling-form > .form-field,
@@ -4739,18 +4732,6 @@ thead th {
 }
 .scheduling-fields > p:empty {
   display: none;
-}
-.scheduling-choice .form-field > label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-.scheduling-choice-search input {
-  min-height: 2.5rem;
 }
 .scheduling-form,
 .scheduling-filters {

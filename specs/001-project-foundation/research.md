@@ -341,3 +341,13 @@ Fontes oficiais: [WCAG 2.2, contraste mínimo](https://www.w3.org/WAI/WCAG22/Und
 Diagnóstico local do código e log CI35019277298: o item ativo interpola texto e fundo através de combinações de baixo contraste; na busca, o texto filho muda imediatamente enquanto o fundo interpola. Estados finais aprovados não garantem os quadros intermediários. Decisão: retirar interpolação de texto/fundo desses controles, mantendo borda/movimento e medindo contraste por quadros em ambos os sentidos. Não alterar paleta nem enfraquecer axe. Limite: regressão automatizada de cores não substitui toda a avaliação manual de acessibilidade.
 
 Complemento da validação: CI35089210281 aprovou todos os gates de5740428, mas CI35089213112 revelou interpolação de color herdada de body nos detalhes/histórico de reserva, com contraste2,09–2,26:1 sobre superfícies já claras. Remover também a transição global de texto/fundo e reutilizar o medidor por quadros na jornada real de Agendamentos.
+
+
+## Estado ao navegar — 16/09/2026
+
+Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
+à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
+identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
+usa input/list: [MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
+Sugestões não validam sozinhas a seleção; conferir identificador válido antes de enviar.

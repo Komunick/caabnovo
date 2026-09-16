@@ -294,3 +294,25 @@ Sem schema, migration, dependência ou configuração nova de cache. Reverter co
 4. Corrigir na mesma branch/worktree do PR #28, conforme regra vigente de 15/09; sem aprovação ou merge. Registrar o resultado remoto em evidence/theme-contrast-2026-09-16.md.
 
 5. Remover a transição global herdada de body identificada no CI do PR e compartilhar o medidor de contraste entre a regressão do shell e a jornada real de reserva.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.
+
+### Padrão para formulários do painel
+
+- `WorkspaceDrafts` vive no layout autenticado; a identidade, a rota e a aba de catálogo
+  delimitam as edições. `DraftScope` separa registros editáveis dentro da mesma página.
+- Campos nativos usam `DraftForm` com chave estável e `DraftInput`, `DraftSelect` ou
+  `DraftTextarea`. Valores controlados, conteúdo estruturado e seleções usam
+  `useDraftState` com chave própria; estados de envio, erros e confirmações continuam locais.
+- Guardar a versão original com a edição permite ao servidor detectar concorrência.
+  A gravação confirmada ou o cancelamento limpa somente o formulário correspondente.
+  Na inclusão sucessiva de documentos, a categoria continua reutilizável, como antes.
+- Filtros GET usam navegação cliente (`DraftSearchForm`), preservando edições em outras rotas.
+  Logout desmonta o armazenamento em memória. Não há gravação automática, localStorage,
+  sessionStorage ou promessa de recuperação após fechar/recarregar a página inteira.

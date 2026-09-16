@@ -1,4 +1,6 @@
 "use client";
+import { useDraftState } from "../workspace-drafts";
+import { DraftInput } from "./draft-controls";
 import { useEffect, useRef, useState } from "react";
 import {
   brazilianStateCodes,
@@ -25,7 +27,7 @@ export function BrazilianAddressFields({
   initial?: Partial<BrazilianAddress>;
   className?: string;
 }) {
-  const [address, setAddress] = useState<Address>({
+  const [address, setAddress] = useDraftState<Address>(`address:${prefix}`, {
     street: initial?.street ?? "",
     neighborhood: initial?.neighborhood ?? "",
     number: initial?.number ?? "",
@@ -41,7 +43,7 @@ export function BrazilianAddressFields({
   ].some(Boolean)
     ? (initial?.address ?? "")
     : "";
-  const [converting, setConverting] = useState(!legacy);
+  const [converting, setConverting] = useDraftState(`address-converting:${prefix}`, !legacy);
   const [lookup, setLookup] = useState("");
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -152,7 +154,7 @@ export function BrazilianAddressFields({
           <div>
             <p id={`${prefix}-legacy`}>Endereço anterior: {legacy}</p>
             <label className="checkbox-field">
-              <input
+              <DraftInput
                 type="checkbox"
                 checked={converting}
                 onChange={(event) => setConverting(event.target.checked)}
@@ -161,7 +163,7 @@ export function BrazilianAddressFields({
             </label>
           </div>
         )}
-        <input
+        <DraftInput
           type="hidden"
           name="address"
           value={converting ? formatBrazilianAddress(address) : legacy}
@@ -180,7 +182,7 @@ export function BrazilianAddressFields({
             label={label}
             hint={name === "number" ? "Ex.: 123, 12A ou s/n." : undefined}
           >
-            <input
+            <DraftInput
               name={name}
               maxLength={max}
               autoComplete={autoComplete}
@@ -191,7 +193,7 @@ export function BrazilianAddressFields({
           </FormField>
         ))}
         <FormField id={`${prefix}-city`} label="Cidade (opcional)">
-          <input
+          <DraftInput
             name="city"
             autoComplete="address-level2"
             maxLength={100}
@@ -200,7 +202,7 @@ export function BrazilianAddressFields({
           />
         </FormField>
         <FormField id={`${prefix}-state`} label="Estado (UF) (opcional)" error={stateError}>
-          <input
+          <DraftInput
             ref={stateInput}
             name="state"
             list={`${prefix}-state-options`}

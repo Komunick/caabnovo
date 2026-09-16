@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
@@ -223,9 +224,22 @@ export function Choice({
   selectedLabel?: string;
 }) {
   const id = useId();
-  const [selectionLabel, setSelectionLabel] = useState(selectedLabel);
-  const [q, setQ] = useState("");
+  const input = useRef<HTMLInputElement>(null);
+  const options = useRef<HTMLUListElement>(null);
+  const [selection, setSelection] = useDraftState(`choice:${resource}:${filters}`, {
+    id: value,
+    text: selectedLabel ?? "",
+  });
+  const text = selection.id === value ? selection.text : value ? (selectedLabel ?? "") : "";
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const query = value ? "" : text;
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(query), 250);
+    return () => clearTimeout(timer);
+  }, [query]);
   const result = useSchedulingData<
     SchedulingPage<{
       id: string;
@@ -234,66 +248,131 @@ export function Choice({
       oabNumber?: string | null;
       oabState?: string | null;
     }>
-  >(disabled ? null : `${resource}?page=${page}&q=${encodeURIComponent(q)}&${filters}`);
+  >(
+    disabled || !open || query !== search
+      ? null
+      : `${resource}?page=${page}&q=${encodeURIComponent(search)}&${filters}`,
+  );
+  const items = result.data?.items ?? [];
+  const optionLabel = (item: (typeof items)[number]) =>
+    item.name +
+    (resource === "beneficiaries"
+      ? ` · ${item.birthYear ?? "ano não informado"}${item.oabNumber ? ` · OAB ${item.oabState ?? ""} ${item.oabNumber}` : ""}`
+      : "");
+  useEffect(() => {
+    input.current?.setCustomValidity(text && !value ? "Selecione uma opção da lista." : "");
+    input.current?.dispatchEvent(new Event("input", { bubbles: true }));
+  }, [text, value]);
+  useEffect(() => {
+    if (open && active >= 0)
+      options.current?.children[active]?.scrollIntoView({ block: "nearest" });
+  }, [active, open]);
+  function choose(item: (typeof items)[number]) {
+    setSelection({ id: item.id, text: optionLabel(item) });
+    onChange(item.id);
+    input.current?.focus();
+    setOpen(false);
+    setActive(-1);
+  }
   return (
-    <fieldset className="scheduling-choice" disabled={disabled}>
-      <legend>{label}</legend>
-      <FormField
-        id={`${id}-search`}
-        label={`Buscar ${label.toLocaleLowerCase("pt-BR")}`}
-        className="scheduling-choice-search"
-      >
+    <div
+      className="scheduling-choice audit-person-filter"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <FormField id={id} label={label}>
         <input
-          type="search"
-          placeholder="Digite para filtrar as opções"
-          maxLength={160}
-          value={q}
-          onChange={(event) => {
-            setQ(event.target.value);
+          ref={input}
+          role="combobox"
+          aria-autocomplete="list"
+          autoComplete="off"
+          aria-expanded={open && !disabled}
+          aria-controls={open && !disabled ? `${id}-options` : undefined}
+          aria-activedescendant={open && items[active] ? `${id}-${items[active]!.id}` : undefined}
+          placeholder="Selecione ou digite"
+          disabled={disabled}
+          required={required}
+          maxLength={240}
+          value={text}
+          onClick={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
             setPage(1);
+            setActive(-1);
+          }}
+          onChange={(event) => {
+            setSelection({ id: "", text: event.target.value });
+            onChange("");
+            setOpen(true);
+            setPage(1);
+            setActive(-1);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              setOpen(false);
+            }
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              setOpen(true);
+              setActive((index) =>
+                Math.max(
+                  0,
+                  Math.min(items.length - 1, index + (event.key === "ArrowDown" ? 1 : -1)),
+                ),
+              );
+            }
+            if (event.key === "Enter" && open) {
+              event.preventDefault();
+              if (items[active]) choose(items[active]!);
+            }
           }}
         />
       </FormField>
-      <FormField id={id} label={`Selecionar ${label.toLocaleLowerCase("pt-BR")}`}>
-        <select
-          required={required}
-          value={value}
-          onChange={(event) => {
-            setSelectionLabel(event.target.selectedOptions[0]?.textContent ?? undefined);
-            onChange(event.target.value);
-          }}
-        >
-          <option value="">Selecione</option>
-          {value && !result.data?.items.some((item) => item.id === value) && (
-            <option value={value}>{selectionLabel ?? "Seleção atual"}</option>
+      {open && !disabled && (
+        <div className="audit-person-options">
+          <ul
+            ref={options}
+            id={`${id}-options`}
+            role="listbox"
+            aria-label={`Opções de ${label.toLocaleLowerCase("pt-BR")}`}
+          >
+            {items.map((item, index) => (
+              <li
+                key={item.id}
+                role="option"
+                id={`${id}-${item.id}`}
+                aria-selected={active >= 0 ? active === index : value === item.id}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => choose(item)}
+              >
+                {optionLabel(item)}
+              </li>
+            ))}
+          </ul>
+          {result.data ? (
+            <>
+              {!result.data.total && <p>Nenhum registro encontrado.</p>}
+              {(result.data.total > result.data.pageSize || page > 1) && (
+                <Pagination
+                  {...result.data}
+                  onPage={(next) => {
+                    setPage(next);
+                    setActive(-1);
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <DataState error={result.error} reload={result.reload} />
           )}
-          {result.data?.items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-              {resource === "beneficiaries"
-                ? ` · ${item.birthYear ?? "ano não informado"}${item.oabNumber ? ` · OAB ${item.oabState ?? ""} ${item.oabNumber}` : ""}`
-                : ""}
-            </option>
-          ))}
-        </select>
-      </FormField>
-      {resource === "beneficiaries" && value && selectionLabel && (
-        <p>Selecionado: {selectionLabel}</p>
+        </div>
       )}
-      {!disabled &&
-        (result.data ? (
-          <>
-            {(result.data.total > result.data.pageSize || page > 1) && (
-              <Pagination {...result.data} onPage={setPage} />
-            )}
-            {!result.data.total && <p>Nenhum registro encontrado.</p>}
-          </>
-        ) : (
-          <DataState error={result.error} reload={result.reload} />
-        ))}
-    </fieldset>
+    </div>
   );
 }
+
 export function timeLabel(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Bahia",

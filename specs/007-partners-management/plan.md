@@ -114,3 +114,11 @@ Consumir a evolução do PR #19. Espalhar brazilianAddressSchema.shape nos perfi
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de justificativa das telas. Normalizar ausência para vazio nas colunas históricas não nulas e para null na auditoria; preservar autoria, resultado e datas. Migration aditiva de política retira somente restrições de texto obrigatório, mantendo consistência das decisões. Não são necessários estados especiais de criação de notícia. Cobrir ausência em contratos, autorização, integração e E2E; executar banco/navegador/build no CI com serviços locais desligados.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.

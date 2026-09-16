@@ -138,3 +138,11 @@ Branch fix/scheduling-ui-20260916, criada de dev96ea6f6 após PR28 integrado. Wo
 5. Qualidade/build/banco/navegador/segurança no CI; sem build ou E2E no PC. Abrir novo PR após revisão, sem aprovação ou merge pelo agente. Conferir estado do PR antes de qualquer atualização posterior.
 
 Sem migration, dependência ou alteração de dados existentes. Rollback somente da UI/testes.
+
+
+## Preservação compartilhada — 16/09/2026
+
+Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenamento temporário
+em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
+React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
+Não usar cache público, localStorage ou salvamento automático no banco.
