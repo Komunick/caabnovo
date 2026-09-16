@@ -4,7 +4,7 @@
 - [x] M002 Contratos e migration com permissão única, catálogos, supressões e execuções.
 - [x] M003 Serviços transacionais, público, prévia, idempotência, versões e auditoria.
 - [x] M004 Rotas autenticadas e scheduler durável sem envio fictício.
-- [x] M005 UI completa no padrão do painel e persistência das edições.
+- [x] M005 UI completa no padrão do painel, persistência das edições e limpeza isolada de inclusões concluídas.
 - [x] M006 Testes de contrato, autorização, concorrência, exclusões e programação.
 - [x] M007 Navegador, acessibilidade e evidências responsivas no CI.
 - [x] M008 Documentação integrada, PR atualizado, checks finais e principal sincronizada.

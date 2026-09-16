@@ -22,7 +22,7 @@ interno do Next), corrigida restringindo a asserção ao conteúdo principal. N�
 a verificação HTTP 403. Capturas revelaram o título de seção genérico no shell: registrado
 Mensagens explicitamente. Capturas finais reposicionam a página no topo após os testes de teclado.
 
-## Resultado final do código
+## Resultado de base e revisão visual
 
 Commit befaa2b: [CI do PR](https://github.com/Komunick/caabnovo/actions/runs/35132031970)
 e [CI do push](https://github.com/Komunick/caabnovo/actions/runs/35132026951) aprovados integralmente.
@@ -41,3 +41,7 @@ nova tentativa; o fluxo principal exercita modelos, público salvo, persistênci
 preview, preferência, solicitação bloqueada, programação/cancelamento, duplicação e arquivo/restauração.
 A migration 0022 e a proteção de resultados concluídos passaram com o papel restrito do banco.
 Principal dev 1fd8521 limpa, com fetch/ff-only confirmado; PR #31 aberto, sem aprovação ou merge.
+
+## Regressão adicional de conclusão de formulários
+
+Revisão posterior identificou limpeza de cache antes de useDraftState voltar a gravá-lo. Correção aplicada no editor compartilhado de campanhas/modelos/públicos. Nova jornada E2E verifica duas inclusões sucessivas de cada tipo, preservação da programação ao salvar conteúdo e navegar, retorno ao original após duplicação e descarte explícito. Resultado desta extensão acompanha os checks do HEAD atual do PR; as capturas acima continuam representativas, pois o layout não mudou.

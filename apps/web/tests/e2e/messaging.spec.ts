@@ -203,3 +203,58 @@ test("a failed list offers retry without losing filters", async ({ page }) => {
   await page.getByRole("button", { name: "Tentar novamente", exact: true }).click();
   await expect(page.getByRole("navigation", { name: "Paginação", exact: true })).toBeVisible();
 });
+
+test("completed creations reset independently and campaign saves preserve the unconfirmed schedule", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await login(page);
+  await page.goto("/messages");
+  const suffix = randomUUID().slice(0, 8);
+  for (const [area, add] of [
+    ["Modelos", "Novo modelo"],
+    ["Públicos", "Novo público"],
+    ["Campanhas", "Nova campanha"],
+  ] as const) {
+    await page
+      .getByRole("navigation", { name: "Áreas de mensagens" })
+      .getByRole("link", { name: area, exact: true })
+      .click();
+    await page.getByRole("link", { name: add, exact: true }).click();
+    await page.getByLabel("Nome interno", { exact: true }).fill(`Primeiro ${area} ${suffix}`);
+    await save(page);
+    const originalUrl = page.url();
+    await page.getByRole("link", { name: "Voltar à lista", exact: true }).click();
+    await page.getByRole("link", { name: add, exact: true }).click();
+    await expect(page.getByLabel("Nome interno", { exact: true })).toHaveValue("");
+    await page.getByLabel("Nome interno", { exact: true }).fill(`Segundo ${area} ${suffix}`);
+    await save(page);
+    await expect(page).not.toHaveURL(originalUrl);
+  }
+  const name = `Segundo Campanhas ${suffix}`;
+  const future = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 16);
+  await page.getByLabel("Programar para", { exact: true }).fill(future);
+  await page.getByLabel("Assunto", { exact: true }).fill("Conteúdo preservado");
+  await save(page);
+  await page
+    .getByRole("navigation", { name: "Áreas de mensagens" })
+    .getByRole("link", { name: "Modelos", exact: true })
+    .click();
+  await page
+    .getByRole("navigation", { name: "Áreas de mensagens" })
+    .getByRole("link", { name: "Campanhas", exact: true })
+    .click();
+  await page.getByRole("link", { name, exact: true }).click();
+  await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue(future);
+  await expect(page.getByLabel("Assunto", { exact: true })).toHaveValue("Conteúdo preservado");
+  await page.getByRole("button", { name: "Duplicar campanha", exact: true }).click();
+  await expect(page.getByRole("heading", { name: `Cópia de ${name}`, exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Voltar à lista", exact: true }).click();
+  await page.getByRole("link", { name, exact: true }).click();
+  await expect(page.getByLabel("Nome interno", { exact: true })).toHaveValue(name);
+  await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue(future);
+  await expect(page.getByText("Alterações ainda não salvas", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Descartar edições", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
+  await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue("");
+});

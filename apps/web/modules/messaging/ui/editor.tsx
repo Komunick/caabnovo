@@ -89,11 +89,14 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
       { expectedVersion: edit.version, data: edit.data },
     );
     if (!result) return;
-    cache.clear();
     setSaved(result);
     setEdit(result);
     setNotice("Alterações salvas.");
-    if (saved.id === "new") router.replace(`/messages/${kind}/${result.id}`);
+    if (saved.id === "new") {
+      // Clear after updating React: useDraftState writes synchronously to the cache.
+      cache.clear();
+      router.replace(`/messages/${kind}/${result.id}`);
+    }
   }
   async function review(action?: "send" | "schedule") {
     setNotice("");
@@ -113,14 +116,15 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
     });
     if (!result) return;
     setConfirm(null);
-    cache.clear();
-    setSaved(result);
-    setEdit(result);
-    setHistoryRevision((n) => n + 1);
     if (action === "duplicate") {
+      // The new record must not replace the original record's cached form.
       router.push(`/messages/${kind}/${result.id}`);
       return;
     }
+    setSaved(result);
+    setEdit(result);
+    if (action === "schedule" || action === "cancel") setSchedule("");
+    setHistoryRevision((n) => n + 1);
     setNotice(
       action === "send"
         ? "Solicitação registrada como bloqueada. Nenhuma mensagem foi enviada."
@@ -143,8 +147,11 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
       setSaved(current);
       setEdit(current);
       setNames(Object.fromEntries((current.people ?? []).map((p) => [p.id, p.name])));
+      setSchedule("");
+      setTab("content");
       setPreview(null);
       setConfirm(null);
+      setHistoryRevision((n) => n + 1);
       setNotice("Versão atual carregada.");
     } catch {
       setNotice("Não foi possível carregar. Suas edições foram preservadas.");

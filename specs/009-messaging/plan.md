@@ -8,3 +8,7 @@
 6. Contratos, integração PostgreSQL descartável, navegador e acessibilidade no CI. Não iniciar serviços nem build/E2E local por preferência do usuário.
 
 Rollback: retirar navegação e handler/worker novos; manter tabelas aditivas e registros. Sem remoção de dados ou mudanças em módulos anteriores.
+
+## Conclusão de formulários
+
+Limpar o cache de inclusão depois da atualização de React, pois useDraftState grava no cache de forma síncrona. Salvar conteúdo de registro existente preserva a programação não confirmada. Duplicar não substitui o cache do registro original. Descarte explícito limpa também o horário não confirmado.
