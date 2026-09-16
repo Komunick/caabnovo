@@ -220,7 +220,9 @@ test("publishes, explicitly withdraws and saves a draft, schedules and withdraws
   await page.goto("/news/drafts?search=Edição%20privada%20posterior");
   await expect(page.locator(`a[href="/news/${id}"]`)).toContainText("Edição privada posterior");
   await page.goto("/");
-  await expect(page.locator(`a[href$="/news/${id}"]`)).toHaveCount(0);
+  // Home has separate published cards and an administrative "Para continuar" draft section.
+  await expect(page.locator(`.home-news-card[href$="/news/${id}"]`)).toHaveCount(0);
+  await expect(page.locator(`a[href="/news/${id}"]`)).toContainText("Edição privada posterior");
   await page.goto(`/news/${id}`);
   const future = new Date(Date.now() + 10 * 60000 - 3 * 3600000).toISOString().slice(0, 16);
   await page.getByLabel("Data e horário de Brasília", { exact: true }).fill(future);
