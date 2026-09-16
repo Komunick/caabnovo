@@ -32,4 +32,4 @@ jobs:
           PROMOTION_BASE_REF: ${{ github.base_ref }}
           PROMOTION_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
           PROMOTION_BASE_REPOSITORY: ${{ github.repository }}
-        run: pnpm exec tsx apps/worker/src/check-production-readiness.ts
+        run: pnpm --filter @caab/worker check:production

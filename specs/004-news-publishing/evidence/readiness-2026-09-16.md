@@ -17,7 +17,7 @@
 [CI integrado do PR #30](https://github.com/Komunick/caabnovo/actions/runs/35108754282):
 314 unitários, 105 contratos, 182 integrações, 73 E2E e 6 verificações de acessibilidade,
 além de qualidade/build/segurança. Essa é evidência do código integrado anterior à presente correção.
-O PR desta entrega registra o CI do commit final, incluindo 13 testes novos de promoção e
+O PR desta entrega registra o CI do commit final, incluindo 14 testes novos de promoção, incluindo execução real do comando e
 os 12 grupos do tooling de rulesets. Nenhum build ou E2E foi executado no computador.
 
 A conciliação do PR #16 usa o merge confirmado em 11/09 e as verificações posteriores do

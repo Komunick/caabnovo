@@ -1,3 +1,5 @@
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { requireProductionReadiness, requirePromotionSource } from "../src/production-readiness";
 import { applyRetention } from "../src/jobs/apply-retention";
@@ -46,4 +48,29 @@ describe("production promotion", () => {
   it("keeps the same implementation gate in the runtime", async () => {
     await expect(applyRetention(syntheticApproval)).rejects.toThrow("not been implemented");
   });
+});
+
+it("runs the actual promotion entry point from the worker directory and fails for the pending policy", () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      fileURLToPath(new URL("../node_modules/tsx/dist/cli.mjs", import.meta.url)),
+      "src/check-production-readiness.ts",
+    ],
+    {
+      cwd: fileURLToPath(new URL("../", import.meta.url)),
+      env: {
+        ...process.env,
+        PROMOTION_HEAD_REF: "dev",
+        PROMOTION_BASE_REF: "main",
+        PROMOTION_HEAD_REPOSITORY: "Example/project",
+        PROMOTION_BASE_REPOSITORY: "Example/project",
+      },
+      encoding: "utf8",
+      timeout: 15000,
+    },
+  );
+  expect(result.error).toBeUndefined();
+  expect(result.status).toBe(1);
+  expect(result.stderr).toContain("Retention policy is not approved");
 });

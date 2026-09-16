@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 import { requireProductionReadiness } from "./production-readiness";
 
 try {
-  const policy: unknown = JSON.parse(readFileSync("docs/privacy/retention-approval.json", "utf8"));
+  const policy: unknown = JSON.parse(
+    readFileSync(new URL("../../../docs/privacy/retention-approval.json", import.meta.url), "utf8"),
+  );
   requireProductionReadiness(
     {
       headRef: process.env.PROMOTION_HEAD_REF,
