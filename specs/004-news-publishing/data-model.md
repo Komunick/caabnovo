@@ -27,6 +27,9 @@ com advisory lock. Slug público duplicado é rejeitado. expectedVersion fixa a 
 usa latestRevision+1. Ao publicar revisão agendada antiga, grava a publicação e recoloca o
 rascunho mais recente como outra revisão na mesma transação. Retirada parcial preserva demais
 canais e conteúdo privado. Arquivar retira todos os canais e cancela ações pendentes atomicamente.
+No salvamento manual de uma publicada, withdrawPublishedVersion compara a revisão pública,
+enquanto expectedVersion compara a editorial. A transação retira todos os destinos, grava os
+novos dados como rascunho, cancela a agenda e audita as duas ações. O histórico é preservado.
 
 ## Mídia
 

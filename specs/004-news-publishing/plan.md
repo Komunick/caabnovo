@@ -50,8 +50,9 @@ Refinamento FR-013–FR-018: `NewsIndex` compartilha a composição das rotas `/
 350ms e URL persistida. Controles adicionais são expansíveis para reduzir a altura inicial.
 Miniatura usa o endpoint privado existente; erro/ausência têm placeholder. Resumo usa clamp
 de duas linhas; revisão continua no detalhe. Links de ação usam Button variants e estilo
-restrito ao módulo. `list-query.ts` lê a publicação vigente em `news` e a última revisão de itens sem publicação para separar
-as listas. Filtros JSONB, ordenação e contagem/paginação compartilham uma consulta parametrizada
+restrito ao módulo. `list-query.ts` lê a publicação vigente em `news` e a última revisão
+de itens sem publicação para separar as listas. Arquivadas mantêm a localização histórica
+no filtro Exibir, conforme a gestão anterior. Filtros JSONB, ordenação e contagem/paginação compartilham uma consulta parametrizada
 na transação com sessão ativa. Nenhuma alteração de schema, API pública ou permissões.
 
 

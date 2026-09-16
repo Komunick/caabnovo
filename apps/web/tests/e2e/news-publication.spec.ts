@@ -181,6 +181,7 @@ test("publishes, explicitly withdraws and saves a draft, schedules and withdraws
   await page.screenshot({
     path: testInfo.outputPath("news-withdraw-draft-desktop.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -189,6 +190,7 @@ test("publishes, explicitly withdraws and saves a draft, schedules and withdraws
   await page.screenshot({
     path: testInfo.outputPath("news-withdraw-draft-mobile.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.route(`**/api/v1/news/${id}`, async (route) => {

@@ -198,3 +198,6 @@ esse comportamento no arquivamento. Reutilizar transação e bloqueio existentes
 requisições parcialmente concluídas. A revisão pública esperada impede retirar uma publicação
 concorrente. Manter os agendamentos pendentes permitiria republicar após a retirada;
 cancelá-los atomicamente e informar no editor evita essa surpresa.
+
+A classificação de notícias arquivadas continua baseada na publicação histórica para preservar
+o filtro Exibir já aceito; a mudança de coleção após retirada aplica-se às notícias ativas.

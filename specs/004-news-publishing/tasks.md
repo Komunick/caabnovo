@@ -152,4 +152,6 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] NP02 Implementar retirada e salvamento atômicos, revisão pública esperada e auditoria.
 - [x] NP03 Exibir ação específica somente em notícias publicadas e preservar texto em erro.
 - [x] NP04 Consultar a versão vigente em Publicadas e mover retiradas para Rascunhos.
-- [ ] NP05 Executar contrato, integração e browser no CI, revisar evidências e documentar PR.
+- [x] NP05 Executar contrato, integração e browser no CI, revisar evidências e documentar PR.
+
+Evidências desta correção: [validação e revisão visual](evidence/withdrawal-2026-09-16.md).

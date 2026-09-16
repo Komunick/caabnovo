@@ -96,4 +96,6 @@ Preview3107 atualizado com build remoto e conferido no Chrome, com banco e limit
 ## Correção da sobreposição de log — 16/09/2026
 
 - [x] AD01 Diagnosticar camadas do cabeçalho/modal e registrar critério/plano/pesquisa.
-- [ ] AD02 Corrigir ordem visual e validar backdrop/painel acima de todo o shell, foco e capturas no CI.
+- [x] AD02 Corrigir ordem visual e validar backdrop/painel acima de todo o shell, foco e capturas no CI.
+
+Evidências AD02: [fundo do log e cabeçalho](evidence/modal-2026-09-16.md).

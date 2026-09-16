@@ -245,5 +245,5 @@ Refinamento solicitado pelo usuário em 16/09/2026:
   bloqueio da notícia; falha de validação, concorrência ou auditoria desfaz toda a operação.
 - **NP-02**: Retirar e salvar cancela agendamentos pendentes da notícia na mesma transação,
   para que uma publicação programada não a publique novamente. Explicar esse efeito no editor.
-- **NP-03**: Após sucesso, o texto salvo fica em Rascunhos e a notícia sai da inicial, Publicadas
+- **NP-03**: Após sucesso, o texto salvo fica em Rascunhos e a notícia sai das publicações da inicial, da aba Publicadas
   e dos consumidores públicos. Histórico e auditoria são preservados; erro mantém o texto no editor.

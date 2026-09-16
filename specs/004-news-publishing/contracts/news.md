@@ -16,7 +16,7 @@ limite de 1 MiB inclusive streaming. Cache private, no-store e noindex. Autor ve
 | GET /news | page (1–100000), state active/archived/all, search até 200; 25 itens e totalPages |
 | POST /news | metadata e body opcional; Idempotency-Key 16–128; retorna 201 |
 | GET /news/{id} | Último rascunho, inclusive arquivado |
-| PUT /news/{id} | expectedVersion, metadata e body completos; retorna 200 |
+| PUT /news/{id} | expectedVersion, metadata e body completos; withdrawPublishedVersion opcional retira a publicação e salva atomicamente; retorna 200 |
 | GET /news/{id}/versions | page; histórico paginado da mesma notícia |
 | POST /news/{id}/duplicate | expectedVersion e chave idempotente; retorna novo rascunho 201 |
 | POST /news/{id}/archive | expectedVersion; retira todos os canais e cancela agenda atomicamente |
@@ -37,7 +37,10 @@ conjunto completo. expectedVersion é inteiro positivo seguro. Rascunho admite c
 Publicação exige título, slug exclusivo entre notícias publicadas, conteúdo válido e ao menos
 um canal. Publicar substitui o conjunto público de canais pelos escolhidos; retirar remove só
 os escolhidos. Cada ação registra autor, revisão de origem/resultante, destinos e correlação.
-Edição e recuperação não alteram publicação existente. Duplicar remove slug, mídia, destaque,
+Preparação interna de edição e recuperação não alteram publicação existente. No salvamento manual
+de uma publicada, withdrawPublishedVersion indica a revisão pública a retirar de todos os canais: compara
+ambas as revisões sob lock, cancela agendas pendentes e registra retirada/edição na mesma transação.
+Falha desfaz tudo; versão obsoleta retorna 409. Sem esse campo, PUT apenas prepara a revisão privada. Duplicar remove slug, mídia, destaque,
 canais e agenda; texto/histórico originais são preservados.
 
 Agenda fixa versão Payload, canais e responsável. Horário deve estar no futuro dentro de 365

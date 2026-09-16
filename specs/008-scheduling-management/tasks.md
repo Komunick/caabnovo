@@ -89,5 +89,7 @@ ao adicionar funcionalidades. Não usar demo, fixture ou página vazia como entr
 - [x] UI01 Comparar padrão local e registrar pesquisa, requisitos e plano da correção na nova branch.
 - [x] UI02 Padronizar cabeçalho/abas e expor as inclusões específicas por cadastro.
 - [x] UI03 Padronizar catálogo, agenda, formulários, horários, detalhes e estados vazios preservando operações reais.
-- [ ] UI04 Validar jornada de inclusão, edição, filtros/URL, teclado/390px/temas e contraste no CI; revisar capturas.
-- [ ] UI05 Concluir evidências e abrir novo PR para dev após checks aprovados; não aprovar/integrar.
+- [x] UI04 Validar jornada de inclusão, edição, filtros/URL, teclado/390px/temas e contraste no CI; revisar capturas.
+- [x] UI05 Concluir evidências e abrir novo PR para dev após checks aprovados; não aprovar/integrar.
+
+Evidências desta correção: [validação e revisão visual](evidence/ui-2026-09-16.md).
