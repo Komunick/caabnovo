@@ -104,4 +104,4 @@ Evidências AD02: [fundo do log e cabeçalho](evidence/modal-2026-09-16.md).
 ## Navegação sem perda de edição — 16/09/2026
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
-- [ ] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar evidências no PR.
+- [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.

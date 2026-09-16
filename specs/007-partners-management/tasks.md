@@ -115,4 +115,4 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 ## Navegação sem perda de edição — 16/09/2026
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
-- [ ] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar evidências no PR.
+- [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.

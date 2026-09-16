@@ -261,6 +261,7 @@ export function Choice({
       : "");
   useEffect(() => {
     input.current?.setCustomValidity(text && !value ? "Selecione uma opção da lista." : "");
+    input.current?.dispatchEvent(new Event("input", { bubbles: true }));
   }, [text, value]);
   useEffect(() => {
     if (open && active >= 0)

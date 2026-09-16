@@ -13,7 +13,7 @@ beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   vi.useFakeTimers();
   vi.stubGlobal("fetch", fetchMock);
-  fetchMock.mockReset().mockResolvedValue(
+  fetchMock.mockReset().mockImplementation(async () =>
     Response.json({
       items: [
         { id: "a", name: "Unidade" },
@@ -102,4 +102,21 @@ it("aborts an obsolete search and hides its options while the new query is pendi
   expect(container.textContent).toContain("Nenhum registro encontrado");
   await key(input, "Escape");
   expect(input.getAttribute("aria-expanded")).toBe("false");
+});
+
+it("clears field feedback when a valid option replaces invalid text", async () => {
+  const input = await render();
+  await act(() => input.focus());
+  await type(input, "Texto sem seleção");
+  await tick();
+  await act(() => {
+    input.reportValidity();
+  });
+  expect(container.querySelector('[role="alert"]')!.textContent).toBe(
+    "Selecione uma opção da lista.",
+  );
+  await key(input, "ArrowDown");
+  await key(input, "Enter");
+  expect(input.validity.valid).toBe(true);
+  expect(container.querySelector('[role="alert"]')).toBeNull();
 });

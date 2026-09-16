@@ -18,6 +18,13 @@ async function create(page: Page, path: string) {
   await page.locator(`a[href="${path}/new"]`).first().click();
   await expect(page).toHaveURL(new RegExp(`${path}/new$`));
 }
+async function capture(page: Page, path: string) {
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement)?.blur();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  });
+  await page.screenshot({ path, fullPage: true, animations: "disabled" });
+}
 test("keeps unfinished forms through all workspace modules and clears completed creations", async ({
   page,
 }, info) => {
@@ -106,10 +113,7 @@ test("keeps unfinished forms through all workspace modules and clears completed 
   await expect(page.getByLabel("Resumo", { exact: true })).toHaveValue("Resumo ainda não salvo");
   await expect(page.locator("#news-body")).toContainText("Conteúdo ainda não salvo");
   await expectWcag22AA(page);
-  await page.screenshot({
-    path: info.outputPath("workspace-drafts-news-restored.png"),
-    fullPage: true,
-  });
+  await capture(page, info.outputPath("workspace-drafts-news-restored.png"));
   await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
   await expect(page).toHaveURL(/\/news\/[0-9a-f-]{36}$/);
   await create(page, "/news");
@@ -208,10 +212,7 @@ test("partner sections keep independent edits when another form is saved or canc
   await expect(page.getByLabel("Pessoa de contato (opcional)")).toHaveValue("Contato pendente");
   await page.getByRole("button", { name: "Contratos", exact: true }).click();
   await expect(page.getByLabel("Referência do contrato")).toHaveValue("Contrato pendente");
-  await page.screenshot({
-    path: info.outputPath("workspace-drafts-partner-restored.png"),
-    fullPage: true,
-  });
+  await capture(page, info.outputPath("workspace-drafts-partner-restored.png"));
 });
 
 test("account forms survive module navigation and logout ends the editing session", async ({
