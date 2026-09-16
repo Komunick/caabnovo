@@ -27,3 +27,7 @@ backups por categoria. Dados pessoais reais e credenciais não entram em testes,
 
 [Pesquisa do legado](legacy-retention-review-2026-09-16.md) não encontrou política aprovada;
 comportamentos antigos não substituem essas decisões.
+
+## Mensagens — 16/09/2026
+
+Campanhas/modelos/públicos em messaging_resource, preferências de bloqueio em messaging_suppression, snapshots e contagens em messaging_execution, idempotência em messaging_request. Acesso único messages:access; seleção retorna apenas id/nome/preferência, sem CPF/documentos/contatos completos. Auditoria geral registra ação/versão/contagens, sem corpo da mensagem. Não há envio a terceiros nesta etapa. Retenção continua pendente de aprovação institucional; não inventar prazo de descarte.

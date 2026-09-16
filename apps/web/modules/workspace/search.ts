@@ -17,6 +17,30 @@ export type WorkspaceDestination = Pick<
 // Only implemented destinations. Contextual tasks explicitly ask the person to choose a record.
 const functions: readonly FunctionDefinition[] = [
   {
+    id: "messages-new",
+    area: "messages",
+    href: "/messages/campaigns/new",
+    label: "Preparar mensagem",
+    description: "Criar campanha e conferir o público.",
+    keywords: "nova campanha envio comunicação",
+  },
+  {
+    id: "messages-templates",
+    area: "messages",
+    href: "/messages/templates",
+    label: "Modelos de mensagens",
+    description: "Reutilizar conteúdo de comunicação.",
+    keywords: "modelo texto assunto",
+  },
+  {
+    id: "messages-audiences",
+    area: "messages",
+    href: "/messages/audiences",
+    label: "Públicos de mensagens",
+    description: "Preparar segmentos e exclusões.",
+    keywords: "público segmento destinatário",
+  },
+  {
     id: "scheduling-new",
     area: "scheduling",
     href: "/scheduling/new",

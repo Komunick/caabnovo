@@ -224,3 +224,11 @@ Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
 **CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
 são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
 A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.
+
+## Mensagens — preparação em 16/09/2026
+
+Spec [009-messaging](../specs/009-messaging/spec.md), entrada `/messages`: campanhas,
+modelos, públicos, preferências, prévia, programação cancelável e histórico. Permissão
+única `messages:access`, administrável na gestão de acessos existente. Meios de envio
+adiados pelo usuário; não há transmissão, métricas de entrega ou automações de eventos.
+A linha de comunicação acima descreve a visão final, além desta etapa de preparação.

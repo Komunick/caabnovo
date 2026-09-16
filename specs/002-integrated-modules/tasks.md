@@ -203,6 +203,12 @@ Parceiros são externos; não haverá módulo separado de equipe interna/RH.
 
 ## Phase 9 — US7 Mensagens (P2)
 
+Atualização 16/09/2026: implementação autorizada antes dos canais, no spec próprio
+[009-messaging](../009-messaging/spec.md). T036–T039 cobrem também entrega real e
+permanecem parciais; a preparação é acompanhada em M001–M008. Meios de envio adiados
+expressamente pelo usuário. Qualquer operador com acesso ao módulo pode preparar/solicitar.
+
+
 Objetivo: público correto e entrega rastreável. Teste independente: exclusão, falha/retry e estados.
 
 - [ ] T036 [US7] Definir público/preferências/canais/contratos e política de envio em

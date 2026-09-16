@@ -1,3 +1,4 @@
+import { prepareScheduledMessages } from "./jobs/prepare-messages.js";
 import { loadServerEnv, loadWorkspaceEnv } from "@caab/config";
 import { logger } from "./logger.js";
 import { createQueue, startQueue } from "./queue.js";
@@ -22,6 +23,11 @@ const database = createDatabaseClient(env.DATABASE_URL);
 const workerId = `worker-${process.pid}-${crypto.randomUUID()}`;
 const fileStorage = new DatabaseWorkerObjectStorage(database.pool);
 const antivirus = new ClamAvScanner(env.CLAMAV_HOST, env.CLAMAV_PORT);
+
+await boss.work(QUEUES.messagePreparation, async () => {
+  await prepareScheduledMessages(database.pool);
+});
+await boss.schedule(QUEUES.messagePreparation, "* * * * *", {});
 
 await boss.work(QUEUES.newsPublication, async (jobs) => {
   const data = jobs[0]?.data;

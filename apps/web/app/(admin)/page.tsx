@@ -9,7 +9,6 @@ import {
   ArrowRight,
   CalendarDays,
   WalletCards,
-  MessageSquare,
   ChartNoAxesCombined,
   Plus,
   FilePenLine,
@@ -32,12 +31,6 @@ const upcoming = [
     description: "Módulo desativado até a revisão de sua proposta.",
     status: "Desativado — pendente de revisão",
     icon: WalletCards,
-  },
-  {
-    name: "Mensagens",
-    status: "Em planejamento",
-    description: "Campanhas e comunicações aos associados.",
-    icon: MessageSquare,
   },
   {
     name: "Relatórios",
