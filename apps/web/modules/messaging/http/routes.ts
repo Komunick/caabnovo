@@ -4,11 +4,14 @@ import {
   messageKindSchema,
   messagePreviewSchema,
   messageQuerySchema,
+  messageScheduleQuerySchema,
 } from "@caab/contracts";
 import {
   commandMessage,
   getMessage,
   listMessages,
+  listMessageSchedules,
+  messageAudienceOptions,
   messageHistory,
   messagePeople,
   previewMessage,
@@ -42,10 +45,24 @@ export function createMessagingRoute(deps: {
         if (key in query) throw { code: "VALIDATION_FAILED", status: 422 };
         query[key] = value;
       }
-      const q = messageQuerySchema.parse(query);
+      const q =
+        resource === "schedules"
+          ? messageScheduleQuerySchema.parse(query)
+          : messageQuerySchema.parse(query);
       const id = rawId ? idSchema.parse(rawId) : null;
       if (request.method === "GET") {
-        if (!id && (resource === "recipients" || resource === "preferences"))
+        if (!id && resource === "schedules")
+          response = Response.json(await listMessageSchedules(deps.pool, actor, q));
+        else if (!id && (resource === "categories" || resource === "cities"))
+          response = Response.json(
+            await messageAudienceOptions(
+              deps.pool,
+              actor,
+              resource === "categories" ? "category" : "city",
+              q,
+            ),
+          );
+        else if (!id && (resource === "recipients" || resource === "preferences"))
           response = Response.json(
             await messagePeople(deps.pool, actor, q, resource === "preferences"),
           );
@@ -63,7 +80,7 @@ export function createMessagingRoute(deps: {
         }
       } else {
         const { idempotencyKey } = validateMutationRequest(request, { idempotency: true });
-        const input = await readJson(request);
+        const input = await readJson(request, 8 * 1024 * 1024);
         const context = {
           actor,
           requestId: rid,

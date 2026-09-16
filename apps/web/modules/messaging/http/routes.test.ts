@@ -38,6 +38,9 @@ describe("messages HTTP boundary", () => {
     ["audiences"],
     ["preferences"],
     ["recipients"],
+    ["schedules"],
+    ["categories"],
+    ["cities"],
     ["campaigns", id],
     ["campaigns", id, "history"],
   ])("protects %s", async (...path) => {
@@ -62,7 +65,8 @@ describe("messages HTTP boundary", () => {
   it("rejects oversized payload before opening a database transaction", async () => {
     const { route, connect } = setup();
     expect(
-      (await route(request("POST", {}, { data: "x".repeat(70000) }), ["campaigns"])).status,
+      (await route(request("POST", {}, { data: "x".repeat(8 * 1024 * 1024 + 1) }), ["campaigns"]))
+        .status,
     ).toBe(413);
     expect(connect).not.toHaveBeenCalled();
   });

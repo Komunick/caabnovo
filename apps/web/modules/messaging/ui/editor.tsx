@@ -17,6 +17,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useMessageData, useMessageMutation, messageRequest } from "./client";
 import { MessageShell, MessageDataState, labels, listPath, messageDate } from "./shared";
 import { MessageChoice } from "./choice";
+import { AudienceSummary } from "./audience-summary";
 import { AudienceFields } from "./audience-fields";
 import { MessagePreviewView } from "./preview";
 import { MessageHistory } from "./history";
@@ -69,7 +70,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
   const [schedule, setSchedule] = useDraftState(`schedule:${initial.id}`, "");
   const [preview, setPreview] = useState<{ source: string; value: MessagePreview } | null>(null);
   const [confirm, setConfirm] = useState<
-    "send" | "schedule" | "archive" | "restore" | "cancel" | "discard" | null
+    "send" | "schedule" | "reschedule" | "archive" | "restore" | "cancel" | "discard" | null
   >(null);
   const [notice, setNotice] = useState("");
   const [historyRevision, setHistoryRevision] = useState(0);
@@ -95,10 +96,12 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
     if (saved.id === "new") {
       // Clear after updating React: useDraftState writes synchronously to the cache.
       cache.clear();
+      cache.writeForRoute(`/messages/${kind}/${result.id}`, `schedule:${result.id}`, schedule);
+      cache.writeForRoute(`/messages/${kind}/${result.id}`, `tab:${result.id}`, tab);
       router.replace(`/messages/${kind}/${result.id}`);
     }
   }
-  async function review(action?: "send" | "schedule") {
+  async function review(action?: "send" | "schedule" | "reschedule") {
     setNotice("");
     const result = await mutation.mutate<MessagePreview>("preview", "POST", { data: edit.data });
     if (!result) return;
@@ -110,7 +113,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
     const result = await mutation.mutate<MessageRecord>(`${kind}/${saved.id}/command`, "POST", {
       action,
       expectedVersion: edit.version,
-      ...(action === "schedule"
+      ...(action === "schedule" || action === "reschedule"
         ? { scheduledAt: new Date(`${schedule}:00-03:00`).toISOString() }
         : {}),
     });
@@ -123,12 +126,12 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
     }
     setSaved(result);
     setEdit(result);
-    if (action === "schedule" || action === "cancel") setSchedule("");
+    if (action === "schedule" || action === "reschedule" || action === "cancel") setSchedule("");
     setHistoryRevision((n) => n + 1);
     setNotice(
       action === "send"
         ? "Solicitação registrada como bloqueada. Nenhuma mensagem foi enviada."
-        : action === "schedule"
+        : action === "schedule" || action === "reschedule"
           ? "Programação registrada. No horário, a falta de meio de envio será registrada como bloqueio."
           : action === "cancel"
             ? "Programação cancelada."
@@ -196,7 +199,12 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
         <div className={styles.actions} role="group" aria-label="Etapas da mensagem">
           {(kind === "audiences"
             ? ["content", "preview"]
-            : ["content", ...(kind === "campaigns" ? ["audience"] : []), "preview"]
+            : [
+                "content",
+                ...(kind === "campaigns" ? ["audience"] : []),
+                "preview",
+                ...(kind === "campaigns" ? ["schedule"] : []),
+              ]
           ).map((value) => (
             <Button
               key={value}
@@ -210,7 +218,9 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                   : "Conteúdo"
                 : value === "audience"
                   ? "Público"
-                  : "Prévia"}
+                  : value === "schedule"
+                    ? "Agendamento"
+                    : "Prévia"}
             </Button>
           ))}
         </div>
@@ -308,7 +318,13 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                 Atualizar prévia
               </Button>
               {visiblePreview ? (
-                <MessagePreviewView preview={visiblePreview} audienceOnly={kind === "audiences"} />
+                <>
+                  <AudienceSummary audience={edit.data.audience} />
+                  <MessagePreviewView
+                    preview={visiblePreview}
+                    audienceOnly={kind === "audiences"}
+                  />
+                </>
               ) : (
                 <p>Atualize a prévia para conferir o conteúdo e o público atual.</p>
               )}
@@ -332,9 +348,9 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           </div>
         </form>
       </section>
-      {saved.id !== "new" && (
-        <section className="panel">
-          <h2>{kind === "campaigns" ? "Envio e organização" : "Organização"}</h2>
+      {(saved.id !== "new" || kind === "campaigns") && (
+        <section className="panel" id="message-scheduling">
+          <h2>{kind === "campaigns" ? "Agendamento e envio" : "Organização"}</h2>
           {kind === "campaigns" && (
             <>
               <p className={styles.notice}>
@@ -342,7 +358,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                 solicitações ficarão bloqueadas até que os meios sejam definidos. Não serão
                 reenviadas automaticamente.
               </p>
-              {!locked && (
+              {!saved.archivedAt && (
                 <>
                   <FormField
                     id="message-schedule"
@@ -358,24 +374,30 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                   <div className={styles.actions}>
                     <Button
                       intent="primary"
-                      disabled={dirty || mutation.pending}
+                      disabled={saved.id === "new" || locked || dirty || mutation.pending}
                       onClick={() => void review("send")}
                     >
                       Solicitar envio agora
                     </Button>
                     <Button
                       disabled={
+                        saved.id === "new" ||
                         dirty ||
                         mutation.pending ||
                         !schedule ||
                         !Number.isFinite(new Date(`${schedule}:00-03:00`).getTime())
                       }
-                      onClick={() => void review("schedule")}
+                      onClick={() => void review(saved.scheduledAt ? "reschedule" : "schedule")}
                     >
-                      Revisar programação
+                      {saved.scheduledAt ? "Revisar reagendamento" : "Revisar programação"}
                     </Button>
                   </div>
-                  {dirty && <p>Salve suas edições antes de solicitar ou programar.</p>}
+                  {(dirty || saved.id === "new") && (
+                    <p>
+                      Salve o rascunho para revisar e confirmar o agendamento. O horário digitado
+                      será preservado.
+                    </p>
+                  )}
                 </>
               )}
               {saved.scheduledAt && (
@@ -386,7 +408,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
             </>
           )}
           <div className={styles.actions}>
-            {kind === "campaigns" && (
+            {kind === "campaigns" && saved.id !== "new" && (
               <Button
                 disabled={mutation.pending || dirty}
                 onClick={() => void command("duplicate")}
@@ -394,7 +416,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                 Duplicar campanha
               </Button>
             )}
-            {!saved.scheduledAt && (
+            {saved.id !== "new" && !saved.scheduledAt && (
               <Button
                 disabled={mutation.pending || dirty}
                 onClick={() => setConfirm(saved.archivedAt ? "restore" : "archive")}
@@ -418,7 +440,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           title={
             confirm === "send"
               ? "Confirmar solicitação"
-              : confirm === "schedule"
+              : confirm === "schedule" || confirm === "reschedule"
                 ? "Confirmar programação"
                 : confirm === "discard"
                   ? "Descartar edições?"
@@ -430,15 +452,24 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
               : "Confira os dados antes de continuar."
           }
         >
-          {(confirm === "send" || confirm === "schedule") && visiblePreview && (
-            <>
-              <p>
-                <strong>{saved.data.name}</strong> · Versão {edit.version}
-              </p>
-              {confirm === "schedule" && <p>Horário de Brasília: {schedule.replace("T", " ")}</p>}
-              <MessagePreviewView preview={visiblePreview} audienceOnly={kind === "audiences"} />
-            </>
-          )}
+          {(confirm === "send" || confirm === "schedule" || confirm === "reschedule") &&
+            visiblePreview && (
+              <>
+                <p>
+                  <strong>{saved.data.name}</strong> · Versão {edit.version}
+                </p>
+                {(confirm === "schedule" || confirm === "reschedule") && (
+                  <p>Horário de Brasília: {schedule.replace("T", " ")}</p>
+                )}
+                <>
+                  <AudienceSummary audience={edit.data.audience} />
+                  <MessagePreviewView
+                    preview={visiblePreview}
+                    audienceOnly={kind === "audiences"}
+                  />
+                </>
+              </>
+            )}
           {confirm === "archive" && (
             <p>Arquivar retira este registro da lista de ativos. O histórico será preservado.</p>
           )}
@@ -463,7 +494,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                 ? "Processando…"
                 : confirm === "send"
                   ? "Confirmar solicitação sem canal"
-                  : confirm === "schedule"
+                  : confirm === "schedule" || confirm === "reschedule"
                     ? "Confirmar programação"
                     : "Confirmar"}
             </Button>

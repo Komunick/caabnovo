@@ -8,6 +8,8 @@ import {
   messageCommandSchema,
   messagePreferenceSchema,
   messageQuerySchema,
+  messageScheduleQuerySchema,
+  type MessageSchedule,
   messageContentIssues,
   personalizeMessage,
   type MessageKind,
@@ -119,6 +121,7 @@ async function record(client: PoolClient, kind: MessageKind, id: string, lock = 
   );
   if (!result.rows[0]) throw new MessagingError("MESSAGE_NOT_FOUND", 404);
   const saved = result.rows[0];
+  saved.data = messageDataSchema.parse(saved.data);
   const ids = [...new Set([...saved.data.audience.memberIds, ...saved.data.audience.excludedIds])];
   saved.people = ids.length
     ? (
@@ -150,7 +153,7 @@ export async function listMessages(
         `SELECT ${columns} FROM messaging_resource r WHERE ${where} ORDER BY r.updated_at DESC,r.id LIMIT $4 OFFSET $5`,
         [...params, q.pageSize, (q.page - 1) * q.pageSize],
       )
-    ).rows;
+    ).rows.map((item) => ({ ...item, data: messageDataSchema.parse(item.data) }));
     return { items, total, page: q.page, hasNextPage: q.page * q.pageSize < total };
   });
 }
@@ -204,10 +207,33 @@ async function audiencePreview(client: PoolClient, data: MessageData): Promise<M
  WHERE m.archived_at IS NULL AND ($1='' OR m.oab_state=$1)
  AND ($2='any' OR ($2='email' AND btrim(m.email)<>'') OR ($2='phone' AND btrim(m.phone)<>''))
  AND (cardinality($3::uuid[])=0 OR m.id=ANY($3::uuid[]))
+ AND ($5='' OR m.residence_state=$5)
+ AND ($6='' OR lower(btrim(m.category))=lower($6))
+ AND ($7='' OR m.gender=$7)
+ AND ($8='any' OR ($8='dependent')=EXISTS(SELECT 1 FROM member_relationship rel
+   WHERE rel.dependent_id=m.id AND rel.ended_at IS NULL
+   AND rel.starts_on <= (clock_timestamp() AT TIME ZONE 'America/Bahia')::date))
+ AND ($9='' OR lower(btrim(m.city))=lower($9))
+ AND ($10::int IS NULL OR extract(year FROM age((clock_timestamp() AT TIME ZONE 'America/Bahia')::date,m.birth_date)) >= $10)
+ AND ($11::int IS NULL OR extract(year FROM age((clock_timestamp() AT TIME ZONE 'America/Bahia')::date,m.birth_date)) <= $11)
+ AND ($12='any' OR m.administrative_status=$12)
  ) SELECT jsonb_build_object('matched',count(*),'excluded',count(*) FILTER(WHERE excluded),
  'suppressed',count(*) FILTER(WHERE NOT excluded AND suppressed),'eligible',count(*) FILTER(WHERE NOT excluded AND NOT suppressed)) AS counts,
  COALESCE((SELECT jsonb_agg(v) FROM (SELECT id,name FROM matched WHERE NOT excluded AND NOT suppressed ORDER BY name,id LIMIT 10) v),'[]') AS sample FROM matched`,
-    [a.state, a.contact, a.memberIds, a.excludedIds],
+    [
+      a.state,
+      a.contact,
+      a.memberIds,
+      a.excludedIds,
+      a.residenceState,
+      a.category,
+      a.gender,
+      a.relationship,
+      a.city,
+      a.minAge,
+      a.maxAge,
+      a.administrativeStatus,
+    ],
   );
   const { counts, sample } = selected.rows[0]!;
   return {
@@ -267,15 +293,23 @@ export async function commandMessage(
         );
         if (!changed.rowCount) throw new MessagingError("INVALID_STATE");
       } else {
-        if (before.scheduledAt) throw new MessagingError("MESSAGE_LOCKED");
+        if (input.action === "reschedule") {
+          if (!before.scheduledAt) throw new MessagingError("INVALID_STATE");
+        } else if (before.scheduledAt) throw new MessagingError("MESSAGE_LOCKED");
         const preview = await audiencePreview(client, before.data);
         if (preview.issues.length) throw new MessagingError("CONTENT_INCOMPLETE", 422);
         await validateAudience(client, before.data.audience);
-        const scheduled = input.action === "schedule";
+        const scheduled = input.action === "schedule" || input.action === "reschedule";
         if (scheduled) {
           const delay = new Date(input.scheduledAt!).getTime() - Date.now();
           if (delay < 60000 || delay > 366 * 86400000)
             throw new MessagingError("INVALID_SCHEDULE", 422);
+        }
+        if (input.action === "reschedule") {
+          await client.query(
+            "UPDATE messaging_execution SET status='canceled',reason='RESCHEDULED',completed_at=clock_timestamp() WHERE campaign_id=$1 AND status='scheduled'",
+            [id],
+          );
         }
         await client.query(
           `INSERT INTO messaging_execution(campaign_id,campaign_version,snapshot,requested_by,status,reason,scheduled_at,completed_at,counts)
@@ -431,3 +465,54 @@ export async function processScheduledMessages(pool: Pool, limit = 25) {
     return due.rowCount ?? 0;
   });
 }
+
+/** Return choices only, not member demographic records or contact details. */
+export const messageAudienceOptions = (
+  pool: Pool,
+  actor: MessagingActor,
+  field: "category" | "city",
+  raw: unknown,
+) =>
+  read(pool, actor, async (client) => {
+    const q = messageQuerySchema.parse(raw);
+    // field is selected by the route from this fixed union, never a request SQL identifier.
+    const column = field === "category" ? "category" : "city";
+    const result = await client.query<{ name: string }>(
+      `SELECT min(btrim(${column})) AS name FROM member
+      WHERE archived_at IS NULL AND btrim(${column})<>'' AND ${column} ILIKE $1
+      GROUP BY lower(btrim(${column})) ORDER BY lower(btrim(${column})) LIMIT $2 OFFSET $3`,
+      [pattern(q.q), q.pageSize + 1, (q.page - 1) * q.pageSize],
+    );
+    return {
+      items: result.rows.slice(0, q.pageSize),
+      hasNextPage: result.rows.length > q.pageSize,
+    };
+  });
+export const listMessageSchedules = (pool: Pool, actor: MessagingActor, raw: unknown) =>
+  read(pool, actor, async (client) => {
+    const q = messageScheduleQuerySchema.parse(raw);
+    const where = `(e.snapshot->>'name' ILIKE $1 OR r.data->>'name' ILIKE $1)
+    AND ($2='all' OR e.status=$2)
+    AND ($3::date IS NULL OR e.scheduled_at >= ($3::date::timestamp AT TIME ZONE 'America/Bahia'))
+    AND ($4::date IS NULL OR e.scheduled_at < (($4::date+1)::timestamp AT TIME ZONE 'America/Bahia'))`;
+    const params = [pattern(q.q), q.status, q.from ?? null, q.to ?? null];
+    const total = Number(
+      (
+        await client.query(
+          `SELECT count(*) FROM messaging_execution e JOIN messaging_resource r ON r.id=e.campaign_id WHERE ${where}`,
+          params,
+        )
+      ).rows[0].count,
+    );
+    const items = (
+      await client.query<MessageSchedule>(
+        `SELECT e.id,e.campaign_id AS "campaignId",e.campaign_version AS "campaignVersion",
+    e.snapshot->>'name' AS name,r.version AS "currentVersion",e.status,e.reason,e.scheduled_at AS "scheduledAt",
+    e.created_at AS "createdAt",e.completed_at AS "completedAt",e.counts
+    FROM messaging_execution e JOIN messaging_resource r ON r.id=e.campaign_id WHERE ${where}
+    ORDER BY e.scheduled_at,e.id LIMIT $5 OFFSET $6`,
+        [...params, q.pageSize, (q.page - 1) * q.pageSize],
+      )
+    ).rows;
+    return { items, total, page: q.page, hasNextPage: q.page * q.pageSize < total };
+  });

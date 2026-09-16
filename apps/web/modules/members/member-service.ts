@@ -65,6 +65,7 @@ const memberSelect = `SELECT jsonb_build_object(
  'reason',m.administrative_reason,'changedAt',m.administrative_changed_at,
  'actorName',(SELECT name FROM "user" WHERE id=m.administrative_changed_by)) END,
  'profile',jsonb_build_object('name',m.name,'socialName',m.social_name,'cpf',COALESCE(m.cpf,''),
+ 'category',m.category,'gender',m.gender,'city',m.city,'residenceState',m.residence_state,
  'birthDate',m.birth_date,'email',m.email,'phone',m.phone,'oab',CASE WHEN m.oab_number IS NULL THEN NULL ELSE
  jsonb_build_object('number',m.oab_number,'state',m.oab_state,'type',m.oab_type) END),
  'assessments',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',a.id,'dimension',a.dimension,'result',a.result,
@@ -191,6 +192,10 @@ function profileValues(p: MemberProfile) {
     p.oab?.number ?? null,
     p.oab?.state ?? null,
     p.oab?.type ?? null,
+    p.category,
+    p.gender,
+    p.city,
+    p.residenceState,
   ];
 }
 function conflict(error: unknown): never {
@@ -211,8 +216,8 @@ export async function createMember(pool: Pool, context: MemberContext, raw: unkn
         const claim = await idempotency(client, context, "create", input);
         if (claim.prior) return record(client, claim.prior);
         const created = await client.query<{ id: string }>(
-          `INSERT INTO member(name,social_name,cpf,birth_date,email,phone,oab_number,oab_state,oab_type)
-        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
+          `INSERT INTO member(name,social_name,cpf,birth_date,email,phone,oab_number,oab_state,oab_type,category,gender,city,residence_state)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,
           profileValues(input.profile),
         );
         return finish(
@@ -332,7 +337,7 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
             const changed = identity(old) !== identity(input.profile);
             await client.query(
               `UPDATE member SET name=$2,social_name=$3,cpf=$4,birth_date=$5,email=$6,phone=$7,
-            oab_number=$8,oab_state=$9,oab_type=$10,profile_version=profile_version+$11 WHERE id=$1`,
+            oab_number=$8,oab_state=$9,oab_type=$10,category=$11,gender=$12,city=$13,residence_state=$14,profile_version=profile_version+$15 WHERE id=$1`,
               [id, ...profileValues(input.profile), changed ? 1 : 0],
             );
             after.identificationChanged = changed;

@@ -124,3 +124,15 @@ Sugestões não validam sozinhas a seleção; conferir identificador válido ant
 GitHub documenta rulesets públicos, checks vinculados ao GitHub App e exigência de PR: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets . A API do repositório confirmou acesso administrativo e ruleset ativo de dev nesta data; conferir main e promoção sem push direto nem merge.
 
 O guia da ANPD identifica os papéis de agentes de tratamento e encarregado: https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-orientativo-para-definicoes-dos-agentes-de-tratamento-de-dados-pessoais-e-do-encarregado . Esta pesquisa não define prazos da CAAB nem substitui aprovação nominal exigida pelo projeto.
+
+## Segmentação e escala — 16/09/2026
+
+Pesquisa oficial: [Mailchimp](https://mailchimp.com/help/all-the-segmenting-options/)
+organiza segmentos por dados de contato; [ActiveCampaign](https://help.activecampaign.com/hc/en-us/articles/115001324324-Create-and-save-segments)
+reavalia condições na execução programada. [PostgreSQL](https://www.postgresql.org/docs/16/tutorial-agg.html)
+permite contagens condicionais no servidor sem transferir a base ao navegador.
+Decisão: regras combinadas por E, contagem integral sem limite de pessoas, prévia com amostra
+limitada explicitamente, exclusões/supressões prevalecem, idade completa na data em Bahia.
+Categoria, gênero, cidade e UF de residência precisam de campos próprios no cadastro atual:
+não inferir gênero pelo nome nem residência pela OAB. Dados antigos ficam não informados.
+Não há integração/migração automática com a base antiga nesta alteração.

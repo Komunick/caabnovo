@@ -280,3 +280,10 @@ credenciais ausentes/incompletas continuam bloqueando o HTTP.
 ## Homologação e prontidão — 16/09/2026
 
 Pedido atual: configuração publicada e homologação institucional da OAB com dado explicitamente autorizado. Validar evidências reais, preservar dados existentes e não declarar concluída uma aprovação institucional ausente. Homologação da OAB depende da inscrição autorizada e do resultado esperado; descarte não executa sem política aprovada.
+
+## Dados para segmentação de Mensagens — 16/09/2026
+
+Adicionar categoria, gênero, cidade e UF de residência opcionais, com validação,
+persistência e edição nas permissões/versões/auditoria existentes. Registros atuais
+permanecem sem esses dados até preenchimento explícito. Não confundir residência e OAB.
+Validar criação/edição/consulta e preservar dados nas demais operações de cadastro.

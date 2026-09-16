@@ -10,6 +10,8 @@ const errors: Record<string, string> = {
   AUTHENTICATION_REQUIRED: "Sua sessão terminou. Entre novamente para continuar.",
   INVALID_STATE: "A situação mudou. Atualize o registro e confira a operação.",
   INVALID_RECIPIENT: "Um destinatário não está disponível. Confira o público.",
+  BODY_TOO_LARGE:
+    "A seleção ficou muito grande para uma única gravação. Use os filtros de público para incluir toda a base.",
   VALIDATION_FAILED: "Confira os campos obrigatórios e os limites de texto.",
   IDEMPOTENCY_CONFLICT:
     "Essa solicitação já foi usada com outros dados. Atualize e tente novamente.",

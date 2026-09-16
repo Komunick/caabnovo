@@ -327,3 +327,7 @@ Não usar cache público, localStorage ou salvamento automático no banco.
 ## Mensagens no shell — 16/09/2026
 
 Registrar a nova área por messages:access, seus atalhos de busca e título do cabeçalho; preservar layout, temas e estado compartilhado. Validação junto à jornada E2E de 009-messaging.
+
+## Ordem de módulos — 16/09/2026
+
+Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens penúltimo imediatamente antes de Auditoria; manter utilidades da conta. Compartilhar ordem entre navegação e catálogo de áreas. Agendamentos de Mensagens na busca de funções.

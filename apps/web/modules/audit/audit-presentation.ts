@@ -7,6 +7,7 @@ export const auditActions: Record<string, string> = {
   "message.saved": "Salvou um registro de mensagens",
   "message.duplicated": "Duplicou uma campanha",
   "message.send": "Solicitou envio de uma campanha",
+  "message.reschedule": "Reagendou uma campanha",
   "message.schedule": "Programou uma campanha",
   "message.cancel": "Cancelou uma programação de campanha",
   "message.archive": "Arquivou um registro de mensagens",

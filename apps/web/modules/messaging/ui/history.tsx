@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { MessageExecution, MessageList } from "@caab/contracts";
 import { useMessageData } from "./client";
 import { MessageDataState, MessagePagination, messageDate, executionReasons } from "./shared";
+import { AudienceSummary } from "./audience-summary";
 import styles from "./messages.module.css";
 export function MessageHistory({ id }: { id: string }) {
   const [page, setPage] = useState(1);
@@ -51,16 +52,7 @@ export function MessageHistory({ id }: { id: string }) {
                     <strong>{item.snapshot.subject}</strong>
                     <p>{item.snapshot.body}</p>
                   </div>
-                  <p>
-                    Estado: {item.snapshot.audience.state || "Todos"} · Contato:{" "}
-                    {
-                      { any: "Qualquer", email: "Com e-mail", phone: "Com telefone" }[
-                        item.snapshot.audience.contact
-                      ]
-                    }{" "}
-                    · Seleção individual: {item.snapshot.audience.memberIds.length} · Exclusões
-                    explícitas: {item.snapshot.audience.excludedIds.length}
-                  </p>
+                  <AudienceSummary audience={item.snapshot.audience} />
                 </details>
               </article>
             ))}

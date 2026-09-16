@@ -29,7 +29,7 @@ interface Dependencies {
     download(actor: RequestActor, id: string, fileId: string): Promise<{ url: string }>;
   };
 }
-export async function readJson(request: Request) {
+export async function readJson(request: Request, maxBytes = 65536) {
   if (
     request.headers.get("content-type")?.split(";")[0]?.trim() !== "application/json" ||
     !request.body
@@ -44,7 +44,7 @@ export async function readJson(request: Request) {
       const { done, value } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > 65536) {
+      if (size > maxBytes) {
         await reader.cancel();
         throw { code: "BODY_TOO_LARGE", status: 413 };
       }

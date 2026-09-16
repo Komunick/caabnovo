@@ -31,3 +31,5 @@ comportamentos antigos não substituem essas decisões.
 ## Mensagens — 16/09/2026
 
 Campanhas/modelos/públicos em messaging_resource, preferências de bloqueio em messaging_suppression, snapshots e contagens em messaging_execution, idempotência em messaging_request. Acesso único messages:access; seleção retorna apenas id/nome/preferência, sem CPF/documentos/contatos completos. Auditoria geral registra ação/versão/contagens, sem corpo da mensagem. Não há envio a terceiros nesta etapa. Retenção continua pendente de aprovação institucional; não inventar prazo de descarte.
+
+Segmentação de Mensagens usa categoria, gênero informado, cidade/UF de residência, faixa etária, vínculo vigente e situação administrativa de Associados. As rotas de sugestões retornam apenas categorias/cidades distintas; prévias expõem contagem e amostra de nomes. Não há inferência de gênero, residência ou identidade. Campos opcionais continuam sujeitos à política institucional pendente.

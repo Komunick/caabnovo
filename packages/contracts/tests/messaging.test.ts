@@ -56,3 +56,41 @@ describe("messaging contracts", () => {
     ).toBe(true);
   });
 });
+
+it("accepts 100 manual recipients and compatible legacy audiences without a 500-person cap", () => {
+  const ids = Array.from({ length: 100 }, () => crypto.randomUUID());
+  expect(messageAudienceSchema.parse({ memberIds: ids }).memberIds).toHaveLength(100);
+  expect(messageAudienceSchema.parse({ excludedIds: ids }).excludedIds).toHaveLength(100);
+  expect(
+    messageAudienceSchema.parse({ state: "BA", contact: "email", memberIds: [], excludedIds: [] }),
+  ).toMatchObject({
+    residenceState: "",
+    administrativeStatus: "any",
+    minAge: null,
+    relationship: "any",
+  });
+});
+it("validates inclusive ages, administrative status and demographic values", () => {
+  expect(messageAudienceSchema.safeParse({ minAge: 40, maxAge: 20 }).success).toBe(false);
+  expect(messageAudienceSchema.safeParse({ minAge: -1 }).success).toBe(false);
+  expect(messageAudienceSchema.safeParse({ gender: "inferred" }).success).toBe(false);
+  expect(messageAudienceSchema.safeParse({ residenceState: "ZZ" }).success).toBe(false);
+  expect(
+    messageAudienceSchema.parse({
+      minAge: 0,
+      maxAge: 0,
+      administrativeStatus: "inactive",
+      gender: "female",
+    }).minAge,
+  ).toBe(0);
+  expect(
+    messageCommandSchema.safeParse({
+      action: "reschedule",
+      expectedVersion: 1,
+      scheduledAt: "2030-01-01T10:00:00Z",
+    }).success,
+  ).toBe(true);
+  expect(messageCommandSchema.safeParse({ action: "reschedule", expectedVersion: 1 }).success).toBe(
+    false,
+  );
+});

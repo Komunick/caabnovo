@@ -52,3 +52,16 @@ describe("consolidated workspace navigation", () => {
     expect(area.keywords).toContain("operações");
   });
 });
+
+it("puts news first among modules and messages immediately before the final audit module", () => {
+  const modules = getWorkspaceAreas([
+    "news:read",
+    "messages:access",
+    "audit:read",
+    "members:read",
+    "partners:read",
+    "users:read",
+  ]).filter((area) => !["home", "settings", "sessions"].includes(area.id));
+  expect(modules[0]?.id).toBe("news");
+  expect(modules.slice(-2).map((area) => area.id)).toEqual(["messages", "audit"]);
+});

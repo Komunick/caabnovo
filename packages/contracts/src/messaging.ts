@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { memberGenderSchema } from "./members";
 import { idSchema } from "./common";
 import { brazilianStateSchema } from "./brazilian-contact";
 
@@ -7,9 +8,17 @@ export type MessageKind = z.infer<typeof messageKindSchema>;
 export const messageAudienceSchema = z
   .object({
     state: brazilianStateSchema.or(z.literal("")).default(""),
+    residenceState: brazilianStateSchema.or(z.literal("")).default(""),
+    category: z.string().trim().max(80).default(""),
+    gender: memberGenderSchema.or(z.literal("")).default(""),
+    relationship: z.enum(["any", "holder", "dependent"]).default("any"),
+    city: z.string().trim().max(120).default(""),
+    minAge: z.number().int().min(0).max(150).nullable().default(null),
+    maxAge: z.number().int().min(0).max(150).nullable().default(null),
+    administrativeStatus: z.enum(["any", "active", "inactive", "blocked"]).default("any"),
     contact: z.enum(["any", "email", "phone"]).default("any"),
-    memberIds: z.array(idSchema).max(500).default([]),
-    excludedIds: z.array(idSchema).max(500).default([]),
+    memberIds: z.array(idSchema).default([]),
+    excludedIds: z.array(idSchema).default([]),
   })
   .strict()
   .refine(
@@ -17,6 +26,10 @@ export const messageAudienceSchema = z
       new Set(v.memberIds).size === v.memberIds.length &&
       new Set(v.excludedIds).size === v.excludedIds.length,
     "Pessoas repetidas.",
+  )
+  .refine(
+    (v) => v.minAge === null || v.maxAge === null || v.minAge <= v.maxAge,
+    "A idade mínima não pode superar a máxima.",
   );
 export type MessageAudience = z.infer<typeof messageAudienceSchema>;
 export const messageContentSchema = z
@@ -29,12 +42,7 @@ export const messageDataSchema = z
   .object({
     name: z.string().trim().min(2).max(160),
     ...messageContentSchema.shape,
-    audience: messageAudienceSchema.default(() => ({
-      state: "" as const,
-      contact: "any" as const,
-      memberIds: [],
-      excludedIds: [],
-    })),
+    audience: messageAudienceSchema.default(() => messageAudienceSchema.parse({})),
   })
   .strict();
 export type MessageData = z.infer<typeof messageDataSchema>;
@@ -43,13 +51,13 @@ export const messageSaveSchema = z
   .strict();
 export const messageCommandSchema = z
   .object({
-    action: z.enum(["archive", "restore", "duplicate", "send", "schedule", "cancel"]),
+    action: z.enum(["archive", "restore", "duplicate", "send", "schedule", "reschedule", "cancel"]),
     expectedVersion: z.number().int().positive(),
     scheduledAt: z.iso.datetime({ offset: true }).optional(),
   })
   .strict()
   .refine(
-    (v) => (v.action === "schedule") === (v.scheduledAt !== undefined),
+    (v) => ["schedule", "reschedule"].includes(v.action) === (v.scheduledAt !== undefined),
     "Data exclusiva da programação.",
   );
 export const messagePreviewSchema = z.object({ data: messageDataSchema }).strict();
@@ -68,6 +76,17 @@ export const messageQuerySchema = z
     pageSize: z.coerce.number().int().min(1).max(50).default(20),
   })
   .strict();
+export const messageScheduleQuerySchema = messageQuerySchema
+  .extend({
+    status: z.enum(["scheduled", "blocked", "canceled", "all"]).default("scheduled"),
+    from: z.iso.date().optional(),
+    to: z.iso.date().optional(),
+  })
+  .refine((v) => !v.from || !v.to || v.from <= v.to, "Período inválido.");
+export type MessageSchedule = Omit<MessageExecution, "snapshot"> & {
+  name: string;
+  currentVersion: number;
+};
 export type MessageQuery = z.infer<typeof messageQuerySchema>;
 export type MessageRecord = {
   lastExecutionStatus?: "scheduled" | "blocked" | "canceled" | null;
