@@ -177,11 +177,13 @@ test("publishes, explicitly withdraws and saves a draft, schedules and withdraws
   });
   await expect(withdraw).toBeVisible();
   await expect(page.getByRole("button", { name: "Salvar rascunho", exact: true })).toHaveCount(0);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
     path: testInfo.outputPath("news-withdraw-draft-desktop.png"),
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() => window.scrollTo(0, 0));
   await expect(withdraw).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({
