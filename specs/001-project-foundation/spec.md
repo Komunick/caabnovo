@@ -478,3 +478,7 @@ Pedido atual: proteções remotas, promoção/privacidade, implantação de arqu
 ## Integração de Mensagens — 16/09/2026
 
 Mensagens participa da navegação autorizada, busca global e título de seção no cabeçalho, usando o mesmo shell. Requisitos próprios em [009-messaging](../009-messaging/spec.md).
+
+## Ordem de módulos — 16/09/2026
+
+Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens penúltimo imediatamente antes de Auditoria; manter utilidades da conta. Compartilhar ordem entre navegação e catálogo de áreas. Agendamentos de Mensagens na busca de funções.

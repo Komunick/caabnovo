@@ -1,3 +1,48 @@
+## Correção final aprovada — 16/09/2026
+
+Código 2f157cb: [CI completo aprovado](https://github.com/Komunick/caabnovo/actions/runs/35144150881),
+344 unitários, 115 contratos, 201 integrações, 78 E2E e 6 verificações separadas de
+acessibilidade. Qualidade, build e segurança aprovados. M011–M014 concluídos.
+Testes com 100 cadastros sintéticos conforme instrução do usuário; sem benchmark
+ou seed de 40 mil. Público contado integralmente no banco e sem teto de seleção.
+
+Capturas revisadas após o ajuste de legibilidade dos agendamentos no celular:
+
+- [Filtros em 390px, tema claro](messages-segmentation-mobile-light.png).
+- [Agendamentos em 390px, tema escuro](messages-schedules-mobile-dark.png).
+- [Agendamentos e ordem dos módulos em desktop](messages-schedules-desktop.png).
+
+A lista móvel preserva cabeçalhos/semântica, mostra campos em blocos legíveis e
+mantém Reagendar/Cancelar acessíveis sem overflow horizontal. A jornada valida
+largura útil, acessibilidade, data preservada no primeiro salvamento e histórico
+após reagendamento/cancelamento. Commit documental posterior acrescenta estas
+capturas e encerra as tarefas; checks correspondentes acompanham o PR.
+
+---
+
+## Correção de públicos e agendamentos — 16/09/2026
+
+Na branch feature/messaging-audiences-20260916, commit 8c17bfd, a validação remota
+[35143077196](https://github.com/Komunick/caabnovo/actions/runs/35143077196) aprovou qualidade,
+344 unitários, 115 contratos, 201 integrações, 78 E2E e segurança. A massa principal
+usa 100 cadastros sintéticos por instrução do usuário; não foi realizado benchmark
+com 40 mil pessoas. As consultas não truncam a audiência nem impõem teto de IDs.
+
+Integrações comprovam filtros combinados, idade nas fronteiras, estado de residência
+separado da OAB, vínculo vigente sem duplicação, situação Ativa/Inativa, exclusões,
+reavaliação na data programada, reagendamento atômico e recusa de versão antiga.
+Criação/edição/arquivo de Associados preservam os novos campos. A primeira execução
+identificou o teste novo após revogação de sessão na suíte; corrigida a ordem sem
+alterar a proteção do produto. Tipos, lint e formatação passaram localmente; a suíte
+geral local sofreu ENOMEM no subprocesso Windows de prontidão e passou no CI Linux.
+
+Revisão visual encontrou estreitamento de colunas no celular. Refinamento posterior
+organiza cada linha de agendamento verticalmente no mobile, preservando semântica
+acessível e tabela em desktop. Jornada inclui assertion de largura útil e ausência
+de overflow horizontal. As capturas finais e CI correspondente acompanham o PR.
+
+---
+
 # Validação — 16/09/2026
 
 ## Preparação

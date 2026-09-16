@@ -258,3 +258,123 @@ test("completed creations reset independently and campaign saves preserve the un
   await page.getByRole("dialog").getByRole("button", { name: "Confirmar", exact: true }).click();
   await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue("");
 });
+
+test("demographic audience and visible scheduling support creation, rescheduling and cancellation", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(120000);
+  await login(page);
+  const suffix = randomUUID().slice(0, 8),
+    name = `Agenda segmentada ${suffix}`,
+    category = `Categoria ${suffix}`;
+  await page.goto("/members/new");
+  await page.getByLabel("Nome completo", { exact: true }).fill(`Pessoa segmento ${suffix}`);
+  await page.getByLabel("Categoria (opcional)", { exact: true }).fill(category);
+  await page.getByLabel("Gênero (opcional)", { exact: true }).selectOption("female");
+  await page.getByLabel("Cidade de residência (opcional)", { exact: true }).fill("Salvador");
+  await page.getByLabel("Estado de residência (opcional)", { exact: true }).selectOption("BA");
+  await page.getByLabel("Nascimento (opcional)", { exact: true }).fill("1990-01-01");
+  await page.getByRole("button", { name: "Criar cadastro", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: `Pessoa segmento ${suffix}`, exact: true }),
+  ).toBeVisible();
+  await page.goto("/messages/schedules");
+  await expect(page.getByRole("heading", { name: "Agendamentos", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Novo agendamento", exact: true }).click();
+  await page.getByLabel("Nome interno", { exact: true }).fill(name);
+  await page.getByLabel("Assunto", { exact: true }).fill("Aviso segmentado");
+  await page.getByLabel("Mensagem", { exact: true }).fill("Conteúdo sintético para {{nome}}");
+  const future = new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 16);
+  await page.getByLabel("Programar para", { exact: true }).fill(future); // available before first save
+  await page.getByRole("button", { name: "Público", exact: true }).click();
+  await page.getByLabel("Categoria", { exact: true }).fill(category);
+  await page.getByLabel("Gênero", { exact: true }).selectOption("female");
+  await page.getByLabel("Titular ou dependente", { exact: true }).selectOption("holder");
+  await page.getByLabel("Situação administrativa", { exact: true }).selectOption("inactive");
+  await page.getByLabel("Cidade de residência", { exact: true }).fill("Salvador");
+  await page.getByLabel("Estado de residência", { exact: true }).fill("BA");
+  await page.getByLabel("Idade mínima", { exact: true }).fill("18");
+  await page.getByLabel("Idade máxima", { exact: true }).fill("99");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectWcag22AA(page);
+  await capture(page, {
+    path: testInfo.outputPath("messages-segmentation-mobile-light.png"),
+    fullPage: true,
+  });
+  await save(page);
+  await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue(future);
+  await expect(page.getByLabel("Categoria", { exact: true })).toHaveValue(category);
+  await page.getByRole("button", { name: "Agendamento", exact: true }).click();
+  await expect(
+    page
+      .getByRole("group", { name: "Etapas da mensagem" })
+      .getByRole("button", { name: "Agendamento", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue(future);
+  await page.getByRole("button", { name: "Prévia", exact: true }).click();
+  await page.getByRole("button", { name: "Atualizar prévia", exact: true }).click();
+  await expect(
+    page
+      .locator("dl div")
+      .filter({ has: page.getByText("Encontrados", { exact: true }) })
+      .locator("dd"),
+  ).toHaveText("1");
+  await page.getByRole("button", { name: "Revisar programação", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Confirmar programação", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Cancelar programação", exact: true }),
+  ).toBeVisible();
+  const nav = page.getByRole("navigation", { name: "Áreas de mensagens" });
+  await nav.getByRole("link", { name: "Agendamentos", exact: true }).click();
+  await page.getByLabel("Buscar campanha", { exact: true }).fill(name);
+  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  const row = page.getByRole("row").filter({ has: page.getByRole("link", { name, exact: true }) });
+  await expect(row).toBeVisible();
+  expect(
+    await row
+      .locator("td")
+      .first()
+      .evaluate((element) => element.getBoundingClientRect().width),
+  ).toBeGreaterThan(200);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = "dark";
+  });
+  await expectWcag22AA(page);
+  await capture(page, {
+    path: testInfo.outputPath("messages-schedules-mobile-dark.png"),
+    fullPage: true,
+  });
+  await row.getByRole("button", { name: "Reagendar", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog
+    .getByLabel("Novo horário", { exact: true })
+    .fill(new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 16));
+  await expectWcag22AA(page);
+  await dialog.getByRole("button", { name: "Confirmar reagendamento", exact: true }).click();
+  await expect(
+    page.getByText("Agendamento alterado. O horário anterior foi preservado no histórico.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await row.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await dialog.getByRole("button", { name: "Confirmar cancelamento", exact: true }).click();
+  await expect(page.getByText("Agendamento cancelado.", { exact: true })).toBeVisible();
+  await page.getByLabel("Situação", { exact: true }).selectOption("canceled");
+  await expect(
+    page.getByRole("row").filter({ has: page.getByRole("link", { name, exact: true }) }),
+  ).toHaveCount(2);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = "light";
+  });
+  await capture(page, {
+    path: testInfo.outputPath("messages-schedules-desktop.png"),
+    fullPage: true,
+  });
+});

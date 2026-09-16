@@ -218,3 +218,10 @@ Proteções remotas e homologação mantêm seus limites explícitos no relatór
 - [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.
 
 Consulta individual autorizada em 16/09 no DEV retornou OAB_NOT_CONFIGURED; T028 permanece aberta. Sem resultado pessoal armazenado em evidência. Ver evidence/readiness-2026-09-16.md.
+
+## Dados para segmentação de Mensagens — 16/09/2026
+
+Adicionar categoria, gênero, cidade e UF de residência opcionais, com validação,
+persistência e edição nas permissões/versões/auditoria existentes. Registros atuais
+permanecem sem esses dados até preenchimento explícito. Não confundir residência e OAB.
+Validar criação/edição/consulta e preservar dados nas demais operações de cadastro.

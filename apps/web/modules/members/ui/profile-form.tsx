@@ -4,6 +4,7 @@ import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-contro
 import { Plus } from "lucide-react";
 import {
   memberProfileSchema,
+  memberGenderLabels,
   oabNumberSchema,
   contactFieldMessages,
   type MemberProfile,
@@ -35,6 +36,10 @@ export function ProfileForm({
         const saved = await onSave({
           name: str("name"),
           socialName: str("socialName"),
+          category: str("category"),
+          gender: str("gender"),
+          city: str("city"),
+          residenceState: str("residenceState"),
           cpf: str("cpf"),
           birthDate: str("birthDate") || null,
           email: str("email"),
@@ -60,6 +65,33 @@ export function ProfileForm({
           </FormField>
           <FormField id="member-social" label="Nome social (opcional)">
             <DraftInput name="socialName" maxLength={160} defaultValue={initial.socialName} />
+          </FormField>
+          <FormField id="member-category" label="Categoria (opcional)">
+            <DraftInput name="category" maxLength={80} defaultValue={initial.category} />
+          </FormField>
+          <FormField id="member-gender" label="Gênero (opcional)">
+            <DraftSelect name="gender" defaultValue={initial.gender}>
+              <option value="">Não informado</option>
+              {Object.entries(memberGenderLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </DraftSelect>
+          </FormField>
+          <FormField id="member-city" label="Cidade de residência (opcional)">
+            <DraftInput name="city" maxLength={120} defaultValue={initial.city} />
+          </FormField>
+          <FormField id="member-residence-state" label="Estado de residência (opcional)">
+            <DraftSelect name="residenceState" defaultValue={initial.residenceState}>
+              <option value="">Não informado</option>
+              {memberProfileSchema.shape.oab
+                .unwrap()
+                .unwrap()
+                .shape.state.options.map((uf) => (
+                  <option key={uf}>{uf}</option>
+                ))}
+            </DraftSelect>
           </FormField>
           <ValidatedTextField
             id="member-cpf"

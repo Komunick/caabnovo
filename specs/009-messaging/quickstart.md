@@ -42,3 +42,7 @@ Há testes de contrato, autorização, concorrência, preferências, programaç�
 navegador; a jornada registra capturas em 390px e desktop, nos dois temas, com Axe e contraste.
 Não usar dados pessoais reais em automação. Localhost e banco local permanecem pausados por
 preferência vigente. A disponibilização no DEV ocorre após merge humano do PR.
+
+## Públicos e agendamentos
+
+Preencha os dados de segmentação em Associados quando disponíveis. Em Mensagens, Público permite combinar categoria, gênero, titular/dependente, cidade, estado de residência, estado OAB, idade e situação Ativa/Inativa. Todos os cadastros remove filtros e seleções. Confira a contagem integral na Prévia. A aba Agendamentos permite criar, buscar por campanha/status/período, reagendar e cancelar. Novo agendamento abre campanha com data disponível antes de salvar; salvar mantém o horário digitado para confirmação. Meios de envio continuam pendentes.

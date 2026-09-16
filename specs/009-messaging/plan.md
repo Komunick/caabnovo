@@ -12,3 +12,11 @@ Rollback: retirar navegação e handler/worker novos; manter tabelas aditivas e 
 ## Conclusão de formulários
 
 Limpar o cache de inclusão depois da atualização de React, pois useDraftState grava no cache de forma síncrona. Salvar conteúdo de registro existente preserva a programação não confirmada. Duplicar não substitui o cache do registro original. Descarte explícito limpa também o horário não confirmado.
+
+## Evolução de públicos e agendamentos
+
+1. Migration aditiva 0023, cadastro mínimo de segmentação e índices parciais.
+2. Contratos compatíveis com públicos antigos, consulta agregada e listas sem teto de 500.
+3. Seletores combinados, resumo de audiência e paginação de seleções longas.
+4. API/lista de agendamentos e reagendamento com histórico anterior cancelado atomicamente.
+5. Testes reais em PostgreSQL descartável no CI, incluindo 100 registros sintéticos; navegador/a11y.

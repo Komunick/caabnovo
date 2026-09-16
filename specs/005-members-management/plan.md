@@ -165,3 +165,10 @@ Não usar cache público, localStorage ou salvamento automático no banco.
 2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
 3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
 4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.
+
+## Dados para segmentação de Mensagens — 16/09/2026
+
+Adicionar categoria, gênero, cidade e UF de residência opcionais, com validação,
+persistência e edição nas permissões/versões/auditoria existentes. Registros atuais
+permanecem sem esses dados até preenchimento explícito. Não confundir residência e OAB.
+Validar criação/edição/consulta e preservar dados nas demais operações de cadastro.

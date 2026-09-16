@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { creationJustificationSchema } from "./common";
 import { oabNumberSchema } from "./oab-lookup";
-import { brazilianPhoneSchema, contactEmailSchema } from "./brazilian-contact";
+import {
+  brazilianPhoneSchema,
+  contactEmailSchema,
+  brazilianStateSchema,
+} from "./brazilian-contact";
 
 export function isValidCpf(value: string): boolean {
   if (!/^\d{11}$/.test(value) || /^(\d)\1{10}$/.test(value)) return false;
@@ -18,9 +22,21 @@ const date = z.iso.date();
 const reason = z.string().trim().max(1000).default("");
 const uuid = z.uuid();
 export const MAX_MEMBER_PHOTO_BYTES = 5 * 1024 * 1024;
+export const memberGenderSchema = z.enum(["female", "male", "nonbinary", "other", "undisclosed"]);
+export const memberGenderLabels: Record<z.infer<typeof memberGenderSchema>, string> = {
+  female: "Feminino",
+  male: "Masculino",
+  nonbinary: "Não binário",
+  other: "Outro",
+  undisclosed: "Prefere não informar",
+};
 export const memberProfileSchema = z.strictObject({
   name: z.string().trim().min(2).max(160),
   socialName: optionalText(160),
+  category: optionalText(80),
+  gender: memberGenderSchema.or(z.literal("")).default(""),
+  city: optionalText(120),
+  residenceState: brazilianStateSchema.or(z.literal("")).default(""),
   cpf: z
     .string()
     .trim()

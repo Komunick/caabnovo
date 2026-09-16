@@ -232,3 +232,5 @@ modelos, públicos, preferências, prévia, programação cancelável e históri
 única `messages:access`, administrável na gestão de acessos existente. Meios de envio
 adiados pelo usuário; não há transmissão, métricas de entrega ou automações de eventos.
 A linha de comunicação acima descreve a visão final, além desta etapa de preparação.
+
+Mensagens: aba Agendamentos com busca, período, reagendamento e cancelamento; segmentação por dados explícitos do cadastro e situação administrativa. Sem teto de destinatários, prévia agregada e seleção visual paginada. Navegação: Notícias primeiro módulo após Início, Mensagens imediatamente antes de Auditoria.

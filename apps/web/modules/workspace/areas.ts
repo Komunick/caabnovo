@@ -45,17 +45,6 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       paths: ["/scheduling"],
     },
   ];
-  if (allowed.has(PERMISSIONS.messagesAccess)) {
-    areas.push({
-      id: "messages",
-      href: "/messages",
-      label: "Mensagens",
-      description: "Campanhas, públicos e comunicações.",
-      keywords: "mensagem campanha comunicação público modelo envio",
-      icon: MessageSquare,
-      paths: ["/messages"],
-    });
-  }
   if (allowed.has(PERMISSIONS.newsRead)) {
     areas.push({
       id: "news",
@@ -101,6 +90,17 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       paths: ["/users"],
     });
   }
+  if (allowed.has(PERMISSIONS.messagesAccess)) {
+    areas.push({
+      id: "messages",
+      href: "/messages",
+      label: "Mensagens",
+      description: "Campanhas, públicos e comunicações.",
+      keywords: "mensagem campanha comunicação público modelo envio",
+      icon: MessageSquare,
+      paths: ["/messages"],
+    });
+  }
   const events = allowed.has(PERMISSIONS.auditRead);
   const jobs = allowed.has(PERMISSIONS.jobsRead);
   if (events || jobs) {
@@ -137,6 +137,8 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
     icon: Settings,
     paths: ["/settings"],
   });
+  const news = areas.findIndex((area) => area.id === "news");
+  if (news >= 0) areas.splice(1, 0, ...areas.splice(news, 1));
   return areas;
 }
 

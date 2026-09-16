@@ -474,3 +474,7 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 ## Integração de Mensagens — 16/09/2026
 
 - [x] MG01 Registrar a área autorizada, atalhos e cabeçalho conforme spec 009; conferir as capturas de navegador no mesmo ciclo.
+
+## Ordem de módulos — 16/09/2026
+
+Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens penúltimo imediatamente antes de Auditoria; manter utilidades da conta. Compartilhar ordem entre navegação e catálogo de áreas. Agendamentos de Mensagens na busca de funções.

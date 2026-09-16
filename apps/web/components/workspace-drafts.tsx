@@ -45,6 +45,9 @@ export function useDraftCache() {
       write: (key: string, value: unknown) => {
         context?.values.set(`${context.scope}${key}`, value);
       },
+      writeForRoute: (pathname: string, key: string, value: unknown) => {
+        context?.values.set(`${pathname}?kind=:${key}`, value);
+      },
       remove: (key: string) => {
         context?.values.delete(`${context.scope}${key}`);
       },

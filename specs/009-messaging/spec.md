@@ -1,6 +1,6 @@
 # Mensagens — preparação e acompanhamento
 
-**Data:** 16/09/2026. **Estado:** preparação implementada e validada; meios de envio adiados. Responsável funcional: US7 do plano integrado.
+**Data:** 16/09/2026. **Estado:** preparação, segmentação e agendamentos implementados e validados; meios de envio adiados. Responsável funcional: US7 do plano integrado.
 
 ## Escopo e decisão do usuário
 
@@ -18,3 +18,23 @@ Qualquer pessoa autenticada no painel com `messages:access` pode consultar, prep
 ## Limites
 
 Sem anexos, importação de contatos externos, eventos (módulo inexistente), links públicos de descadastro, cobrança, métricas de provedor, credenciais ou disparos reais. Integrações futuras deverão definir consentimento/finalidade por canal, supressão, limites, assinatura de callbacks, idempotência destinatário/canal e evidência de entrega. Não exibir essas integrações como existentes.
+
+## Correção de escopo exigida pelo usuário — 16/09/2026
+
+A entrega anterior não concluiu a segmentação nem tornou o agendamento suficientemente visível.
+Sem teto funcional de destinatários, inclusive seleção/exclusão manual; toda a base de
+30–40 mil ou mais deve ser contada no banco, sem truncar a audiência. Limites de bytes
+protegem requests; paginação e amostras não limitam destinatários.
+Filtros combináveis: categoria cadastrada, gênero cadastrado, titular/dependente pelo
+vínculo vigente, cidade, faixa etária inclusiva, UF de residência, UF OAB separada,
+contato disponível e situação administrativa. Atalho explícito para todos os cadastros; filtro de situação Ativa/Inativa (sem obrigatoriedade de conta ativa, conforme correção do usuário).
+Dependente = possui titular vigente; titular = não possui titular vigente. Valores ausentes
+não atendem filtros específicos. Não inferir dados nem vincular contas por email/CPF.
+Aba Agendamentos própria com busca, status, data, paginação, abertura da campanha,
+cancelamento e reagendamento auditado/atômico com proteção de versão. Editor mostra
+etapa Agendamento desde a criação e mantém data digitada ao salvar o novo rascunho.
+Meios e entregas reais continuam adiados pelo usuário; nunca simular envio.
+Aceite: teste com 100 cadastros sintéticos, filtros cruzados e fronteiras de idade,
+bloqueios/arquivados, migração compatível de públicos existentes e jornada de agendamento.
+
+Notícias é o primeiro módulo após Início; Mensagens é o penúltimo, imediatamente antes de Auditoria. Sessões e configurações permanecem utilidades da conta.

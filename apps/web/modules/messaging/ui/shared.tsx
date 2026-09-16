@@ -20,7 +20,7 @@ export function MessageShell({
   children,
   add = false,
 }: {
-  active: MessageKind | "preferences" | "channels";
+  active: MessageKind | "preferences" | "channels" | "schedules";
   title: string;
   description: string;
   children: ReactNode;
@@ -32,7 +32,7 @@ export function MessageShell({
         <p className="eyebrow">Mensagens</p>
         <h1>{title}</h1>
         <p>{description}</p>
-        {add && active !== "preferences" && active !== "channels" && (
+        {add && active !== "preferences" && active !== "channels" && active !== "schedules" && (
           <Link
             href={`/messages/${active}/new`}
             className={buttonVariants({ intent: "primary", size: "add" })}
@@ -50,6 +50,7 @@ export function MessageShell({
             label: labels[kind].title,
             active: active === kind,
           })),
+          { href: "/messages/schedules", label: "Agendamentos", active: active === "schedules" },
           {
             href: "/messages/preferences",
             label: "Preferências",
@@ -106,5 +107,6 @@ export const executionReasons: Record<string, string> = {
   NO_CHANNEL: "Meio de envio não configurado",
   NO_RECIPIENTS: "Nenhum destinatário elegível",
   ACCESS_REVOKED: "Acesso do solicitante removido",
+  RESCHEDULED: "Substituída por novo agendamento",
   USER_CANCELED: "Cancelada pelo painel",
 };

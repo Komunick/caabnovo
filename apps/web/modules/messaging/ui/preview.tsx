@@ -45,6 +45,10 @@ export function MessagePreviewView({
           </p>
         </>
       )}
+      <p>
+        As contagens incluem o público inteiro. A amostra mostra no máximo dez pessoas e não limita
+        os destinatários.
+      </p>
       <details>
         <summary>Amostra do público ({preview.sample.length})</summary>
         <ul>
