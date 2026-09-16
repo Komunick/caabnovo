@@ -16,7 +16,7 @@ async function choose(page: Page, label: string, name: string) {
   const input = page.getByRole("combobox", { name: label, exact: true });
   await input.fill(name);
   const options = page.getByRole("listbox", {
-    name: `Op��es de ${label.toLocaleLowerCase("pt-BR")}`,
+    name: `Opções de ${label.toLocaleLowerCase("pt-BR")}`,
     exact: true,
   });
   await expect(options.getByRole("option").filter({ hasText: name }).first()).toBeVisible();
