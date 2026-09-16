@@ -119,7 +119,8 @@ do consumidor.
   antes de paginar; URL, limpeza e indicação de carregamento preservam o conjunto selecionado.
 - **FR-017**: `/news` exibe a versão efetivamente publicada, inclusive nos filtros e na
   ordenação, usando a mesma origem da inicial. `/news/drafts` contém a última revisão das
-  notícias sem publicação vigente, inclusive retiradas e arquivadas (conforme filtro).
+  notícias ativas sem publicação vigente, inclusive retiradas. Arquivadas mantêm a localização
+  histórica anterior, acessível pelo filtro Exibir, preservando a gestão já aceita.
   Uma edição privada não altera a lista Publicadas nem duplica seu cadastro em Rascunhos.
   Agendados ainda não publicados continuam nos rascunhos até a execução da publicação.
 - **FR-018**: Compactar espaçamento superior e cabeçalho. Busca e arquivamento permanecem

@@ -734,7 +734,7 @@ describe.sequential("news persistence with Payload", () => {
     });
     expect(
       (
-        await listNewsDrafts(payload, context.actor, { collection: "drafts", state: "archived" })
+        await listNewsDrafts(payload, context.actor, { collection: "published", state: "archived" })
       ).items.map((item) => item.id),
     ).toContain(created.id);
     await expect(

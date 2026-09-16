@@ -17,7 +17,10 @@ export async function queryNewsList(
   }[query.sort];
   const result = await db.query<{ total: number; items: Record<string, unknown>[] }>(
     `WITH selected AS (
-      SELECT v.parent_id, n._status = 'published' AND NOT n.archived AS is_published,
+      SELECT v.parent_id, (n._status = 'published' AND NOT n.archived) OR
+        (v.version_archived AND EXISTS (
+          SELECT 1 FROM _news_v history WHERE history.parent_id = v.parent_id AND history.version__status = 'published'
+        )) AS is_published,
         CASE WHEN n._status = 'published' AND NOT n.archived THEN n.body ELSE v.version_body END AS version_body,
         CASE WHEN n._status = 'published' AND NOT n.archived THEN n.revision ELSE v.version_revision END AS version_revision,
         CASE WHEN n._status = 'published' AND NOT n.archived THEN n.archived ELSE v.version_archived END AS version_archived,
