@@ -100,12 +100,15 @@ test("configure and manage a real reservation through the panel at 390px, withou
   async function save() {
     await keyboardActivate(
       page,
-      page.getByRole("button", { name: "Salvar registro", exact: true }),
+      page.getByRole("button", {
+        name: /^Criar (unidade|serviço|procedimento|profissional|habilitação)$/,
+      }),
     );
     await expect(page.getByText("Registro salvo.", { exact: true })).toBeVisible();
   }
   await open("units");
   await keyboardType(page, page.getByLabel("Nome", { exact: true }), unit);
+  await screenshot(page, testInfo.outputPath("scheduling-new-unit-mobile-light.png"));
   await page.route("**/api/v1/scheduling/units", (route) =>
     route.request().method() === "POST"
       ? route.fulfill({
@@ -115,7 +118,11 @@ test("configure and manage a real reservation through the panel at 390px, withou
         })
       : route.continue(),
   );
-  await page.getByRole("button", { name: "Salvar registro", exact: true }).click();
+  await page
+    .getByRole("button", {
+      name: /^Criar (unidade|serviço|procedimento|profissional|habilitação)$/,
+    })
+    .click();
   await expect(page.locator(".scheduling-workspace").getByRole("alert")).toContainText(
     "Não foi possível concluir",
   );

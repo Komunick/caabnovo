@@ -264,7 +264,7 @@ export function Choice({
             <option key={item.id} value={item.id}>
               {item.name}
               {resource === "beneficiaries"
-                ? ` · ${item.birthYear ?? "ano não informado"}${item.oabNumber ? ` · OAB ${item.oabState ?? ""} ${item.oabNumber}` : ""} · ${item.id.slice(0, 8)}`
+                ? ` · ${item.birthYear ?? "ano não informado"}${item.oabNumber ? ` · OAB ${item.oabState ?? ""} ${item.oabNumber}` : ""}`
                 : ""}
             </option>
           ))}

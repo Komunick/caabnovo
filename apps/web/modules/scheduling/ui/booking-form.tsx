@@ -57,7 +57,7 @@ export function BookingForm({
     <form className="scheduling-form" onSubmit={submit}>
       <fieldset disabled={mutation.pending} className="scheduling-fields">
         <div>
-          <h2>Beneficiário</h2>
+          <h2>Dados da reserva</h2>
           {booking ? (
             <p>
               <strong>Beneficiário:</strong> {booking.memberName}

@@ -195,11 +195,21 @@ function CatalogForm({
         </fieldset>
         {mutation.error && <p role="alert">{mutation.error}</p>}
         <div className="scheduling-actions">
-          <Button type="submit" intent="primary" disabled={mutation.pending}>
-            {mutation.pending ? "Salvando…" : "Salvar registro"}
+          <Button
+            type="submit"
+            intent="primary"
+            size={item ? "default" : "add"}
+            disabled={mutation.pending}
+          >
+            {!item && <Plus aria-hidden="true" />}
+            {mutation.pending
+              ? "Salvando…"
+              : item
+                ? "Salvar alterações"
+                : catalogLabels[kind].add.replace(/^Nov[ao]/, "Criar")}
           </Button>
           <Button disabled={mutation.pending} onClick={onClose}>
-            Fechar formulário
+            Cancelar
           </Button>
         </div>
       </form>
