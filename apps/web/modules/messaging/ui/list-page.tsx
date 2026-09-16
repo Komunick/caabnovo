@@ -91,7 +91,11 @@ export function MessageListPage({ kind }: { kind: MessageKind }) {
                             : item.scheduledAt
                               ? `Programada para ${messageDate(item.scheduledAt)}`
                               : kind === "campaigns"
-                                ? "Rascunho"
+                                ? item.lastExecutionStatus === "blocked"
+                                  ? "Rascunho · última solicitação bloqueada"
+                                  : item.lastExecutionStatus === "canceled"
+                                    ? "Rascunho · última programação cancelada"
+                                    : "Rascunho"
                                 : "Disponível"}
                         </td>
                         <td>{messageDate(item.updatedAt)}</td>

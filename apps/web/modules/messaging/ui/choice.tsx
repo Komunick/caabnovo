@@ -39,6 +39,11 @@ export function MessageChoice({
     open && search === text ? `${resource}?q=${encodeURIComponent(search)}&page=${page}` : null,
   );
   const items = result.data?.items ?? [];
+  const activeId = open ? items[active]?.id : undefined;
+  useEffect(() => {
+    if (activeId)
+      document.getElementById(`${id}-${activeId}`)?.scrollIntoView({ block: "nearest" });
+  }, [activeId, id]);
   function choose(item: MessageChoiceItem) {
     onChoose(item);
     setText("");

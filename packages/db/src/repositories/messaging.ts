@@ -35,7 +35,7 @@ export class MessagingError extends Error {
     super(code);
   }
 }
-const columns = `r.id,r.kind,r.data,r.version,r.archived_at AS "archivedAt",r.updated_at AS "updatedAt",
+const columns = `(SELECT e.status FROM messaging_execution e WHERE e.campaign_id=r.id ORDER BY e.created_at DESC,e.id LIMIT 1) AS "lastExecutionStatus",r.id,r.kind,r.data,r.version,r.archived_at AS "archivedAt",r.updated_at AS "updatedAt",
  (SELECT e.scheduled_at FROM messaging_execution e WHERE e.campaign_id=r.id AND e.status='scheduled') AS "scheduledAt"`;
 const executionColumns = `id,campaign_id AS "campaignId",campaign_version AS "campaignVersion",snapshot,status,reason,
  scheduled_at AS "scheduledAt",created_at AS "createdAt",completed_at AS "completedAt",counts`;

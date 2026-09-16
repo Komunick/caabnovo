@@ -70,6 +70,7 @@ export const messageQuerySchema = z
   .strict();
 export type MessageQuery = z.infer<typeof messageQuerySchema>;
 export type MessageRecord = {
+  lastExecutionStatus?: "scheduled" | "blocked" | "canceled" | null;
   people?: { id: string; name: string }[];
   id: string;
   kind: MessageKind;

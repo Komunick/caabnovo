@@ -24,7 +24,7 @@ async function choose(page: Page, label: string, name: string) {
   await input.press("Enter");
 }
 async function save(page: Page) {
-  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await page.getByRole("button", { name: /^Salvar (rascunho|modelo|público)$/ }).click();
   await expect(page).not.toHaveURL(/\/new$/);
   await expect(page.getByText("Alterações ainda não salvas", { exact: true })).toHaveCount(0);
 }

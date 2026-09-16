@@ -301,7 +301,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                 Atualizar prévia
               </Button>
               {visiblePreview ? (
-                <MessagePreviewView preview={visiblePreview} />
+                <MessagePreviewView preview={visiblePreview} audienceOnly={kind === "audiences"} />
               ) : (
                 <p>Atualize a prévia para conferir o conteúdo e o público atual.</p>
               )}
@@ -310,7 +310,13 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           <div className={styles.actions}>
             {!locked && (
               <Button type="submit" intent="primary" disabled={mutation.pending}>
-                {mutation.pending ? "Salvando…" : "Salvar rascunho"}
+                {mutation.pending
+                  ? "Salvando…"
+                  : kind === "campaigns"
+                    ? "Salvar rascunho"
+                    : kind === "templates"
+                      ? "Salvar modelo"
+                      : "Salvar público"}
               </Button>
             )}
             <Button onClick={() => setConfirm("discard")} disabled={mutation.pending}>
@@ -423,7 +429,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                 <strong>{saved.data.name}</strong> · Versão {edit.version}
               </p>
               {confirm === "schedule" && <p>Horário de Brasília: {schedule.replace("T", " ")}</p>}
-              <MessagePreviewView preview={visiblePreview} />
+              <MessagePreviewView preview={visiblePreview} audienceOnly={kind === "audiences"} />
             </>
           )}
           {confirm === "archive" && (
