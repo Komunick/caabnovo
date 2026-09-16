@@ -1,0 +1,53 @@
+# Contratos — painel de Agendamentos
+
+Base: /api/v1/scheduling. Autorização de todas as rotas: sessão ativa e acesso
+válido ao painel pelo mecanismo existente. Sem scheduling:read/write ou escopo por
+unidade. Sem API anônima, sem token Cal.com e sem autenticação do app nesta fase.
+
+| Interface | Operações | Campos/resultado |
+| --- | --- | --- |
+| /units, /services, /procedures, /professionals, /assignments | GET, POST; PATCH /:id | Catálogo mínimo paginado; versões para edição. |
+| /units/:id/hours, /professionals/:id/hours | GET, PUT | Semana, unidade, almoço e version; validação de reservas afetadas. |
+| /beneficiaries | GET q/page | Projeção mínima de associados/dependentes para seleção; sem CPF integral, documentos ou finanças. |
+| /availability | GET assignmentId/date | Inícios/fins possíveis, timezone; leitura não retém vaga. |
+| /bookings | GET date/unitId/professionalId/status/q/page; POST | Lista diária e criação. |
+| /bookings/:id | GET | Detalhes e histórico paginado. |
+| /bookings/:id/reschedule | POST | Nova habilitação, início e expectedVersion. |
+| /bookings/:id/cancel | POST | expectedVersion; confirmação é apresentada na UI, sem motivo obrigatório. |
+
+Criação: memberId, assignmentId, startsAt ISO com offset; fim/duração derivados no
+servidor. POSTs de criação/remarcação/cancelamento usam Idempotency-Key. Não aceitar
+id de ator, situação de bloqueio ou papéis enviados pelo cliente. Conferir Origin/CSRF
+com o padrão do projeto em todas as mutações.
+
+Respostas: 201 criação; 200 leitura/alteração/replay; 422 formato inválido; 401 sessão
+ausente/inválida; 403 acesso administrativo negado; 404 registro inexistente;
+409 conflito de horário, versão ou chave reutilizada; 422 combinação/horário/
+beneficiário impedido; 413 corpo maior que 64 KiB. Envelope {code,message,fields?,requestId};
+fields contém path/code. Sem stack SQL.
+Listas: {items,page,pageSize,total}; 25 padrão e até 100. Intervalos fora da faixa
+e data inválida são recusados; nenhuma consulta sem limite.
+
+POST/PATCH de catálogo também exigem Idempotency-Key. PUT de horários exige
+expectedVersion; retorna {version,rows}. Cada linha: weekday (0 domingo a 6 sábado),
+start/end HH:mm e lunchStart/lunchEnd nulos ou HH:mm (somente profissionais).
+Catálogos: id/name/active/version e referências correspondentes; procedimentos
+incluem description/durationMinutes; unidades incluem address/phone opcionais.
+Serviços, procedimentos e habilitações incluem os nomes das referências de catálogo,
+para distinguir ofertas homônimas de unidades diferentes na listagem e na edição.
+Detalhes: {booking,history:{items,page,pageSize,total}}. Histórico usa created,
+rescheduled e cancelled, actorName, occurredAt e snapshots before/after.
+Disponibilidade aceita excludeBookingId para remarcação; confirmar revalida a vaga.
+
+Remarcação preserva id e usa rollback integral no conflito; cancelamento repetido
+retorna estado já cancelado sem duplicar efeito. Chave igual com payload diferente
+é 409. Erros de edição mantêm valores do formulário. Alterações de catálogo
+invalidam leituras relevantes após sucesso, não criam confirmação otimista falsa.
+
+Contrato visual: /scheduling abre lista por dia, data de hoje, filtros persistidos
+na URL, Novo agendamento e links Oferta/Horários. Formulário: beneficiário → unidade
+→ serviço → procedimento → profissional → vaga; campos dependentes são limpos quando
+a seleção anterior muda. Sem vagas, explicar e permitir trocar dia/profissional.
+Detalhes oferecem Remarcar/Cancelar apenas para reservas futuras agendadas. Histórico
+mostra datas/autores e ações humanas. Não exibir atalhos inoperantes para avaliações/app.
+

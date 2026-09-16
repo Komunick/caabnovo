@@ -3,6 +3,12 @@
 Data da consulta: 15/09/2026. Estado: pesquisa e brainstorming, sem implementação.
 Complementa a [pesquisa de 14/09](pesquisa-mercado-agendamentos-2026-09-14.md).
 
+**Correção posterior do usuário:** funções ausentes do site antigo devem permanecer
+como sugestões, incluindo controle de salas. Propostas neste relatório não são
+requisitos aprovados. O gerenciamento de horários existente foi detalhado no
+[inventário do legado](horarios-legado-2026-09-15.md), distinguindo telas, API e limites
+da inspeção. Funções ainda não comprovadas no legado não devem ser apresentadas como existentes.
+
 ## 1. Decisões fornecidas pelo usuário
 
 - A CAAB gerencia no painel administrativo o serviço de reservas oferecido no app/site.
@@ -131,7 +137,7 @@ Trinks e Fresha oferecem referências mais diretamente relacionadas à operaçã
 serviços presenciais e avaliações. Isso é uma inferência de adequação do recorte,
 não um ranking de produtos ou uma decisão de contratação.
 
-## 6. Salas, equipamentos e capacidade
+## 6. Sugestão: salas, equipamentos e capacidade
 
 Observação: Fresha documenta recursos físicos associados a serviços, disponibilidade
 própria e capacidade; também descreve reservas somente de recursos, sem profissional.
@@ -191,7 +197,10 @@ Proposta para discussão, não tela aprovada:
 2. **Unidades**: identificação, serviços oferecidos e horários de funcionamento.
 3. **Serviços e procedimentos**: catálogo, descrição e condições da reserva.
 4. **Profissionais**: vínculos, procedimentos habilitados e jornada.
-5. **Avaliações**: acompanhamento e gestão das opiniões recebidas.
+5. **Horários**: funcionamento, expediente, almoço, indisponibilidades e agenda extra,
+   com antecedência e janela de reservas. A posição no menu é proposta; as funções
+   identificadas no legado estão no inventário específico.
+6. **Avaliações**: acompanhamento e gestão das opiniões recebidas.
 
 Horários, feriados e indisponibilidades podem ficar no contexto de cada unidade e
 profissional; validar se também é necessária uma visão geral. Antes de disponibilizar

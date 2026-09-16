@@ -4,6 +4,20 @@ import { describeAuditDetails } from "./audit-details";
 
 // Shared by the filters and summaries. Values in the audit trail never change.
 export const auditActions: Record<string, string> = {
+  "scheduling.units.created": "Cadastrou uma unidade de atendimento",
+  "scheduling.units.updated": "Alterou uma unidade de atendimento",
+  "scheduling.services.created": "Cadastrou um serviço de atendimento",
+  "scheduling.services.updated": "Alterou um serviço de atendimento",
+  "scheduling.procedures.created": "Cadastrou um procedimento",
+  "scheduling.procedures.updated": "Alterou um procedimento",
+  "scheduling.professionals.created": "Cadastrou um profissional",
+  "scheduling.professionals.updated": "Alterou um profissional",
+  "scheduling.assignments.created": "Habilitou um profissional",
+  "scheduling.assignments.updated": "Alterou uma habilitação",
+  "scheduling.hours.updated": "Alterou horários de atendimento",
+  "scheduling.booking.created": "Criou uma reserva",
+  "scheduling.booking.rescheduled": "Remarcou uma reserva",
+  "scheduling.booking.cancelled": "Cancelou uma reserva",
   "user.created": "Criou um colaborador",
   "user.updated": "Alterou um colaborador",
   "user.disabled": "Desativou um colaborador",
@@ -71,6 +85,12 @@ export const auditActions: Record<string, string> = {
 };
 
 export const auditEntities: Record<string, string> = {
+  scheduling_units: "Unidade de atendimento",
+  scheduling_services: "Serviço de atendimento",
+  scheduling_procedures: "Procedimento",
+  scheduling_professionals: "Profissional",
+  scheduling_assignments: "Habilitação",
+  scheduling_booking: "Reserva",
   user: "Colaborador",
   role: "Perfil de acesso",
   member: "Associado",

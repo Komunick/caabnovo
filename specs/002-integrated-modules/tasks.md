@@ -103,6 +103,19 @@ fonte e motivo, sem inventar a matriz. Credencial nesta entrega é situação/va
 
 ## Phase 6 — US4 Agendamentos (P2)
 
+- [x] AG-N01 Validar cabeçalho/atalho de Agendamentos e contraste do menu da conta
+      durante a troca de tema; registrar junto às evidências da spec 008.
+
+- [x] AG-I01 Concluir a etapa 1 administrativa da spec 008 (US1 + US2, T001–T020),
+      com gates/evidências e PR. Código implementado e validado; entrega preparada para PR, com resultados em spec 008/evidence/release-review.md.
+      As tarefas antigas T022–T026 abaixo abrangem mais que este recorte e permanecem
+      substituídas pelo planejamento incremental da spec 008.
+
+Planejamento incremental agora pertence à [spec 008](../008-scheduling-management/spec.md),
+com [tarefas próprias](../008-scheduling-management/tasks.md). Primeiro painel funcional;
+depois nível do legado/app/site; por último sugestões selecionadas. O usuário confirmou
+o recorte inicial. T022–T026 permanecem históricas e não são tarefas executáveis.
+
 **Revisão em 14/09/2026:** o módulo se chama **Agendamentos**. T022–T026 são propostas
 anteriores e estão suspensas até o novo brainstorming solicitado pelo usuário.
 Não iniciar implementação com regras presumidas. Consultar
@@ -127,9 +140,16 @@ Não iniciar implementação com regras presumidas. Consultar
       fontes oficiais; registrar resultados em `pesquisa-gestao-agendamentos-2026-09-15.md`.
 - [ ] AG-B04 Validar organização serviço/procedimento, vínculos entre unidades e
       profissionais, ações de avaliações e efeito de mudanças de horário nas reservas.
+- [x] AG-D02 Registrar que funções ausentes do legado são sugestões, incluindo
+      controle de salas; detalhar o gerenciamento de horários em inventário com fontes.
+- [ ] AG-B05 Revisar horários do legado com o usuário: expediente, almoço,
+      indisponibilidades, agenda extra, antecedência, janela futura e reservas afetadas.
+      Classificar cada função adicional como sugestão até decisão explícita.
 - [ ] AG-B02 Explorar jornadas, atores, oferta, disponibilidade, exceções e integrações;
       distinguir decisões confirmadas de opções ainda em discussão.
-- [ ] AG-B03 Consolidar o escopo resultante em spec própria, plano e tarefas antes do código.
+- [x] AG-B03 Consolidar o recorte inicial em spec própria 008, plano, tarefas, pesquisa,
+      modelo, contratos e roteiro de validação. Etapas posteriores têm roadmap e
+      serão detalhadas antes de sua implementação; hipóteses iniciais para revisão.
 
 Objetivo: oferta e operação sem conflitos. Teste independente: concorrência pela capacidade,
 exceções, remarcação/desfecho e avaliação preservada.
@@ -252,6 +272,17 @@ escopos.
       `specs/002-integrated-modules/evidence/delivery.md`.
 
 ## Dependencies & Execution Order
+
+**Prioridade confirmada em 15/09/2026:** após concluir e validar a etapa 1 de
+Agendamentos (spec 008), iniciar a primeira versão da interface do usuário no
+app/site, antes das demais expansões e módulos pendentes. As fases numeradas acima
+organizam o backlog; a sequência vigente está em [plan.md](plan.md).
+
+- [ ] UI01 Após Agendamentos inicial validado, preparar spec, plano, tarefas e
+      critérios de aceite próprios para a primeira interface do usuário no app/site;
+      definir jornadas, identidade e contratos, coordenando reservas com a spec 008.
+- [ ] UI02 Implementar e validar essa primeira versão conforme o recorte especificado,
+      usando os mesmos dados e serviços do painel; registrar evidências dos dois canais.
 
 T001–T004 → US1. US2/US3/US5/US6 usam fundação e suas decisões próprias. US4 depende de US3 e
 cadastros/oferta da própria história; US7 depende de contatos e eventos (US2/US3/US5); US8 depende

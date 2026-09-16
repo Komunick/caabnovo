@@ -2,7 +2,29 @@
 
 Atualizado em 15/09/2026. Estado: brainstorming e pesquisa em andamento; sem implementação.
 
+## Planejamento incremental iniciado — 15/09/2026
+
+O usuário definiu três etapas: básico funcional, nível do legado e novas funções.
+Confirmou que a primeira entrega opera no painel (oferta/horários, criar, consultar,
+remarcar e cancelar); conexão real com app/site na etapa seguinte. Planejamento
+responsável em [spec 008](../008-scheduling-management/spec.md),
+[plano](../008-scheduling-management/plan.md) e [roadmap](../008-scheduling-management/roadmap.md).
+Novidades continuam sugestões. A spec própria foi criada; registros abaixo que
+diziam não existir spec ou planejamento são histórico. Nenhum código iniciado.
+
 ## Decisões vigentes do usuário — 15/09/2026
+
+- **Correção posterior:** funções que não existem no site antigo devem ficar como
+  sugestões, sem entrar automaticamente no escopo. Controle de salas é exemplo
+  explícito de sugestão. Funções sem comprovação no legado ficam como sugestões
+  ou pendentes de verificação, nunca como funcionalidades existentes.
+- O gerenciamento de horários precisa ser detalhado como parte central do módulo:
+  funcionamento da unidade, expediente profissional, almoço, indisponibilidades,
+  agenda extra, antecedência, janela futura e horários calculados por procedimento.
+  Ver [inventário do legado e limites da verificação](horarios-legado-2026-09-15.md).
+- A organização serviço como Massagens e procedimento como Massagem relaxante foi
+  aceita na continuidade da conversa; valores de duração e vínculos entre várias
+  unidades continuam a detalhar.
 
 - **Qualquer pessoa com acesso válido ao painel administrativo pode consultar e fazer
   alterações em Agendamentos.** Não exigir papel de gestor, vínculo com profissional,

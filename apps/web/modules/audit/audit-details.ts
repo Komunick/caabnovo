@@ -10,6 +10,7 @@ const translated =
   (value) =>
     typeof value === "string" && Object.hasOwn(labels, value) ? labels[value] : undefined;
 const state = translated({
+  scheduled: "Agendado",
   active: "Ativo",
   inactive: "Inativo",
   disabled: "Desativado",
@@ -105,6 +106,22 @@ export function describeAuditDetails(event: Event, canReadUserNames = false): Au
   };
   const field = (key: string, label: string, format: Format) =>
     add(label, event.before?.[key], event.after?.[key], format);
+  if (event.action.startsWith("scheduling.")) {
+    field("startsAt", "Início do atendimento", date);
+    field("endsAt", "Fim do atendimento", date);
+    field("durationMinutes", "Duração em minutos", number);
+    for (const [key, label] of [
+      ["name", "Nome"],
+      ["unitName", "Unidade"],
+      ["procedureName", "Procedimento"],
+      ["professionalName", "Profissional"],
+      ["hoursSummary", "Horários"],
+    ] as const) {
+      field(key, label, (value) =>
+        typeof value === "string" && value !== "[REDACTED]" ? value : undefined,
+      );
+    }
+  }
   if (event.entityType === "user" && canReadUserNames) {
     field("name", "Nome", (value) =>
       typeof value === "string" && value.trim() && value !== "[REDACTED]" ? value : undefined,

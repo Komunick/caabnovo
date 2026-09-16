@@ -2,6 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { withTransaction } from "@caab/db";
+import { lockMemberEligibility } from "@caab/db/repositories/members";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import {
   createMemberSchema,
@@ -263,8 +264,12 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
       context.actor,
       async (client) => {
         // Serializing graph writes before row locks prevents concurrent A→B/B→A cycles.
-        if (input.action === "link" || input.action === "unlink")
-          await client.query("SELECT pg_advisory_xact_lock(5010,1)");
+        if (
+          ["link", "unlink", "block", "unblock", "activate", "archive", "restore"].includes(
+            input.action,
+          )
+        )
+          await lockMemberEligibility(client);
         const claim = await idempotency(client, context, `${id}:${input.action}`, input);
         if (claim.prior) return record(client, claim.prior);
         const locked = await client.query<{

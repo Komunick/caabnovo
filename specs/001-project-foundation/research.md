@@ -333,3 +333,11 @@ Decisão: limites loading por área, feedback discreto nos links centrais quando
 Validação causal em CI com dados sintéticos: bloquear temporariamente leitura de member em transação do teste; verificar que o destino exibe carregamento e que a inicial mostra atalhos/publicações antes do desbloqueio. Liberar sempre em finally. Simular espera da resposta RSC para conferir feedback e interrupção. Nunca aplicar bloqueio ou seed no banco do preview. Revisão visual local é leve; build/E2E somente no CI.
 
 Limite do diagnóstico local: preview apresentou timeout de conexão na autenticação durante a primeira observação; não usar essa amostra como baseline de desempenho da aplicação. Worker/scanner continuam pausados por restrição de memória.
+
+## Contraste transitório — pesquisa de 16/09/2026
+
+Fontes oficiais: [WCAG 2.2, contraste mínimo](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) define 4,5:1 para texto normal, sem arredondar resultados abaixo do limite; [CSS Transitions](https://www.w3.org/TR/css-transitions-1/) descreve valores interpolados durante a transição. Consultado também o guia CSS distribuído com Next em apps/web/node_modules/next/dist/docs/01-app/01-getting-started/11-css.md.
+
+Diagnóstico local do código e log CI35019277298: o item ativo interpola texto e fundo através de combinações de baixo contraste; na busca, o texto filho muda imediatamente enquanto o fundo interpola. Estados finais aprovados não garantem os quadros intermediários. Decisão: retirar interpolação de texto/fundo desses controles, mantendo borda/movimento e medindo contraste por quadros em ambos os sentidos. Não alterar paleta nem enfraquecer axe. Limite: regressão automatizada de cores não substitui toda a avaliação manual de acessibilidade.
+
+Complemento da validação: CI35089210281 aprovou todos os gates de5740428, mas CI35089213112 revelou interpolação de color herdada de body nos detalhes/histórico de reserva, com contraste2,09–2,26:1 sobre superfícies já claras. Remover também a transição global de texto/fundo e reutilizar o medidor por quadros na jornada real de Agendamentos.
