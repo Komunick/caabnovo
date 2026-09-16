@@ -181,6 +181,14 @@ test("publishes, explicitly withdraws and saves a draft, schedules and withdraws
     path: testInfo.outputPath("news-withdraw-draft-desktop.png"),
     fullPage: true,
   });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(withdraw).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({
+    path: testInfo.outputPath("news-withdraw-draft-mobile.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.route(`**/api/v1/news/${id}`, async (route) => {
     if (route.request().method() === "PUT") await route.fulfill({ status: 500, body: "{}" });
     else await route.continue();

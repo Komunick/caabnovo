@@ -4724,10 +4724,21 @@ thead th {
   font-weight: 720;
 }
 .scheduling-choice .form-field,
+.scheduling-day .form-field,
+.scheduling-form > .form-field,
+.scheduling-fields .address-fields .form-field,
 .scheduling-fields > .form-field,
 .scheduling-grid > .form-field,
 .scheduling-filters .filter-toolbar > .form-field {
   margin: 0;
+}
+.scheduling-fields .address-fields {
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+}
+.scheduling-fields > p:empty {
+  display: none;
 }
 .scheduling-choice .form-field > label {
   position: absolute;
