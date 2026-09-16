@@ -46,6 +46,7 @@ describe("database foundation migrations", () => {
       "0019_optional_action_reasons.sql",
       "0020_scheduling.sql",
       "0021_messaging.sql",
+      "0022_messaging_history.sql",
     ]);
   });
 

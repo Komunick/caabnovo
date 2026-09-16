@@ -347,6 +347,9 @@ describe("messages lifecycle with the restricted database role", () => {
     ).rejects.toMatchObject({ code: "42501" });
     await expect(
       pool.query("UPDATE messaging_execution SET status='sent' WHERE id=$1", [execution.id]),
-    ).rejects.toMatchObject({ code: "23514" });
+    ).rejects.toMatchObject({ code: "55000" });
+    await expect(
+      pool.query("UPDATE messaging_execution SET counts='{}' WHERE id=$1", [execution.id]),
+    ).rejects.toMatchObject({ code: "55000" });
   });
 });
