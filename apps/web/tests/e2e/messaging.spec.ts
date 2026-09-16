@@ -23,6 +23,14 @@ async function choose(page: Page, label: string, name: string) {
   await input.press("ArrowDown");
   await input.press("Enter");
 }
+async function capture(page: Page, options: { path: string; fullPage: boolean }) {
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement)?.blur();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  });
+  await expect(page.locator(".admin-topbar")).toContainText("Mensagens");
+  await page.screenshot(options);
+}
 async function save(page: Page) {
   await page.getByRole("button", { name: /^Salvar (rascunho|modelo|público)$/ }).click();
   await expect(page).not.toHaveURL(/\/new$/);
@@ -93,7 +101,7 @@ test("prepare models, audiences and campaigns; preserve edits; block, schedule a
   await expect(page.getByText("Para preparação", { exact: true })).toBeVisible();
   await expectWcag22AA(page);
   await expectThemeContrast(page, ".page-stack .button");
-  await page.screenshot({
+  await capture(page, {
     path: testInfo.outputPath("messages-preview-mobile-light.png"),
     fullPage: true,
   });
@@ -101,7 +109,7 @@ test("prepare models, audiences and campaigns; preserve edits; block, schedule a
     document.documentElement.dataset.theme = "dark";
   });
   await expectWcag22AA(page);
-  await page.screenshot({
+  await capture(page, {
     path: testInfo.outputPath("messages-preview-mobile-dark.png"),
     fullPage: true,
   });
@@ -149,7 +157,7 @@ test("prepare models, audiences and campaigns; preserve edits; block, schedule a
       .locator("dd"),
   ).toHaveText("0");
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.screenshot({
+  await capture(page, {
     path: testInfo.outputPath("messages-history-desktop.png"),
     fullPage: true,
   });
@@ -169,7 +177,9 @@ test("prepare models, audiences and campaigns; preserve edits; block, schedule a
 test("messages requires module access", async ({ page }) => {
   await login(page, false);
   await page.goto("/messages");
-  await expect(page.getByRole("alert")).toHaveText("Você não tem acesso ao módulo de mensagens.");
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    "Você não tem acesso ao módulo de mensagens.",
+  );
   const response = await page.request.get("/api/v1/messages/campaigns");
   expect(response.status()).toBe(403);
 });
@@ -189,7 +199,7 @@ test("a failed list offers retry without losing filters", async ({ page }) => {
     return route.continue();
   });
   await page.goto("/messages");
-  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.locator("main").getByRole("alert")).toBeVisible();
   await page.getByRole("button", { name: "Tentar novamente", exact: true }).click();
   await expect(page.getByRole("navigation", { name: "Paginação", exact: true })).toBeVisible();
 });

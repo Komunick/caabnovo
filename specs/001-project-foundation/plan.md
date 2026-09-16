@@ -323,3 +323,7 @@ Não usar cache público, localStorage ou salvamento automático no banco.
 2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
 3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
 4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.
+
+## Mensagens no shell — 16/09/2026
+
+Registrar a nova área por messages:access, seus atalhos de busca e título do cabeçalho; preservar layout, temas e estado compartilhado. Validação junto à jornada E2E de 009-messaging.

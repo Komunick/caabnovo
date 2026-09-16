@@ -474,3 +474,7 @@ essas funções; funções de conta e demais módulos existentes são encontráv
 ## Homologação e prontidão — 16/09/2026
 
 Pedido atual: proteções remotas, promoção/privacidade, implantação de arquivos e conciliação documental. Validar evidências reais, preservar dados existentes e não declarar concluída uma aprovação institucional ausente. Homologação da OAB depende da inscrição autorizada e do resultado esperado; descarte não executa sem política aprovada.
+
+## Integração de Mensagens — 16/09/2026
+
+Mensagens participa da navegação autorizada, busca global e título de seção no cabeçalho, usando o mesmo shell. Requisitos próprios em [009-messaging](../009-messaging/spec.md).

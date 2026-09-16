@@ -470,3 +470,7 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
 - [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
 - [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.
+
+## Integração de Mensagens — 16/09/2026
+
+- [x] MG01 Registrar a área autorizada, atalhos e cabeçalho conforme spec 009; conferir as capturas de navegador no mesmo ciclo.

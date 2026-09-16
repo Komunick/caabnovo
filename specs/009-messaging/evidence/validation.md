@@ -11,3 +11,13 @@ Tipos web/db/worker, lint e formatação locais aprovados. 47 testes direcionado
 ## Limites
 
 Nenhuma validação de entrega real é alegada. Meios adiados expressamente; não há provedores, credenciais ou disparo a associados. Atualização de DEV depende de merge humano; preview local permanece pausado por preferência vigente.
+
+## Revisão visual inicial
+
+A jornada completa de criação/modelo/público/campanha, edição preservada, prévia, bloqueio,
+programação/cancelamento, preferência, duplicação e arquivo passou no navegador em 11,6s.
+Axe WCAG 2.2 AA e contraste nos dois temas passaram durante essa jornada. 75 E2E passaram;
+a verificação de acesso negado encontrou dois elementos `alert` (mensagem e anunciador
+interno do Next), corrigida restringindo a asserção ao conteúdo principal. Não foi reduzida
+a verificação HTTP 403. Capturas revelaram o título de seção genérico no shell: registrado
+Mensagens explicitamente. Capturas finais reposicionam a página no topo após os testes de teclado.
