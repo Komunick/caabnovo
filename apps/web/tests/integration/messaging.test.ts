@@ -405,7 +405,7 @@ it("combines demographic filters, exact ages, current relationships and explicit
 it("lists, reschedules atomically, preserves snapshots and rejects stale or invalid changes", async () => {
   const campaign = await create();
   const first = await command(campaign, "schedule", {
-    scheduledAt: new Date(Date.now() + 2 * 861000).toISOString(),
+    scheduledAt: new Date(Date.now() + 2 * 86400000).toISOString(),
   });
   const original = (await history(campaign.id)).items[0]!;
   await expect(
@@ -413,7 +413,7 @@ it("lists, reschedules atomically, preserves snapshots and rejects stale or inva
   ).rejects.toMatchObject({ code: "INVALID_SCHEDULE" });
   expect((await history(campaign.id)).items[0]!.status).toBe("scheduled");
   const second = await command(first, "reschedule", {
-    scheduledAt: new Date(Date.now() + 3 * 861000).toISOString(),
+    scheduledAt: new Date(Date.now() + 3 * 86400000).toISOString(),
   });
   const timeline = (await history(campaign.id)).items;
   expect(timeline).toHaveLength(2);
@@ -464,7 +464,7 @@ it("counts and saves a 100-person audience without truncation, including executi
     data: { ...broad, audience: { category: "Teste escala 100", excludedIds: [ids[2]] } },
   });
   const scheduled = await command(campaign, "schedule", {
-    scheduledAt: new Date(Date.now() + 861000).toISOString(),
+    scheduledAt: new Date(Date.now() + 86400000).toISOString(),
   });
   await admin.query("UPDATE member SET archived_at=now() WHERE id=$1", [ids[0]]);
   await saveMessagePreference(pool, next(), ids[1]!, {

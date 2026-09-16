@@ -829,6 +829,34 @@ describe.sequential("member persistence", () => {
       ).items.map((x) => x.id),
     ).toEqual([person.id]);
   });
+
+  it("persists explicit audience demographics through creation, editing and other commands", async () => {
+    const person = await create("Pessoa segmentação sintética", {
+      category: "Advocacia",
+      gender: "female",
+      city: "Salvador",
+      residenceState: "BA",
+    });
+    expect(person.profile).toMatchObject({
+      category: "Advocacia",
+      gender: "female",
+      city: "Salvador",
+      residenceState: "BA",
+    });
+    const changed = await command(person.id, person.version, {
+      action: "update",
+      profile: { ...person.profile, city: "Feira de Santana", category: "Estágio" },
+    });
+    expect((await getMember(pool, context.actor, person.id)).profile).toMatchObject({
+      category: "Estágio",
+      city: "Feira de Santana",
+      gender: "female",
+      residenceState: "BA",
+    });
+    const archived = await command(person.id, changed.version, { action: "archive" });
+    expect(archived.profile.city).toBe("Feira de Santana");
+  });
+
   it("refuses revoked sessions for reads and writes", async () => {
     const person = await create();
     await admin.query("UPDATE session SET revoked_at=now() WHERE id=$1", [context.actor.sessionId]);
@@ -839,31 +867,4 @@ describe.sequential("member persistence", () => {
       code: "AUTHENTICATION_REQUIRED",
     });
   });
-});
-
-it("persists explicit audience demographics through creation, editing and other commands", async () => {
-  const person = await create("Pessoa segmentação sintética", {
-    category: "Advocacia",
-    gender: "female",
-    city: "Salvador",
-    residenceState: "BA",
-  });
-  expect(person.profile).toMatchObject({
-    category: "Advocacia",
-    gender: "female",
-    city: "Salvador",
-    residenceState: "BA",
-  });
-  const changed = await command(person.id, person.version, {
-    action: "update",
-    profile: { ...person.profile, city: "Feira de Santana", category: "Estágio" },
-  });
-  expect((await getMember(pool, context.actor, person.id)).profile).toMatchObject({
-    category: "Estágio",
-    city: "Feira de Santana",
-    gender: "female",
-    residenceState: "BA",
-  });
-  const archived = await command(person.id, changed.version, { action: "archive" });
-  expect(archived.profile.city).toBe("Feira de Santana");
 });

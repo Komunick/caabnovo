@@ -161,6 +161,82 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
     }
   }
   const visiblePreview = preview?.source === JSON.stringify(edit.data) ? preview.value : null;
+  const organization = (saved.id !== "new" || kind === "campaigns") && (
+    <section className={tab === "schedule" ? styles.stack : "panel"} id="message-scheduling">
+      <h2>{kind === "campaigns" ? "Agendamento e envio" : "Organização"}</h2>
+      {kind === "campaigns" && (
+        <>
+          <p className={styles.notice}>
+            Nenhum meio de envio configurado. Você pode preparar e programar campanhas; as
+            solicitações ficarão bloqueadas até que os meios sejam definidos. Não serão reenviadas
+            automaticamente.
+          </p>
+          {!saved.archivedAt && (
+            <>
+              <FormField
+                id="message-schedule"
+                label="Programar para"
+                hint="Horário de Brasília (UTC−3). Entre um minuto e um ano a partir de agora."
+              >
+                <input
+                  type="datetime-local"
+                  value={schedule}
+                  onChange={(e) => setSchedule(e.target.value)}
+                />
+              </FormField>
+              <div className={styles.actions}>
+                <Button
+                  intent="primary"
+                  disabled={saved.id === "new" || locked || dirty || mutation.pending}
+                  onClick={() => void review("send")}
+                >
+                  Solicitar envio agora
+                </Button>
+                <Button
+                  disabled={
+                    saved.id === "new" ||
+                    dirty ||
+                    mutation.pending ||
+                    !schedule ||
+                    !Number.isFinite(new Date(`${schedule}:00-03:00`).getTime())
+                  }
+                  onClick={() => void review(saved.scheduledAt ? "reschedule" : "schedule")}
+                >
+                  {saved.scheduledAt ? "Revisar reagendamento" : "Revisar programação"}
+                </Button>
+              </div>
+              {(dirty || saved.id === "new") && (
+                <p>
+                  Salve o rascunho para revisar e confirmar o agendamento. O horário digitado será
+                  preservado.
+                </p>
+              )}
+            </>
+          )}
+          {saved.scheduledAt && (
+            <Button disabled={mutation.pending} onClick={() => setConfirm("cancel")}>
+              Cancelar programação
+            </Button>
+          )}
+        </>
+      )}
+      <div className={styles.actions}>
+        {kind === "campaigns" && saved.id !== "new" && (
+          <Button disabled={mutation.pending || dirty} onClick={() => void command("duplicate")}>
+            Duplicar campanha
+          </Button>
+        )}
+        {saved.id !== "new" && !saved.scheduledAt && (
+          <Button
+            disabled={mutation.pending || dirty}
+            onClick={() => setConfirm(saved.archivedAt ? "restore" : "archive")}
+          >
+            {saved.archivedAt ? "Restaurar" : "Arquivar"}
+          </Button>
+        )}
+      </div>
+    </section>
+  );
   return (
     <MessageShell
       active={kind}
@@ -330,6 +406,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
               )}
             </div>
           )}
+          {tab === "schedule" && organization}
           <div className={styles.actions}>
             {!locked && (
               <Button type="submit" intent="primary" disabled={mutation.pending}>
@@ -348,85 +425,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           </div>
         </form>
       </section>
-      {(saved.id !== "new" || kind === "campaigns") && (
-        <section className="panel" id="message-scheduling">
-          <h2>{kind === "campaigns" ? "Agendamento e envio" : "Organização"}</h2>
-          {kind === "campaigns" && (
-            <>
-              <p className={styles.notice}>
-                Nenhum meio de envio configurado. Você pode preparar e programar campanhas; as
-                solicitações ficarão bloqueadas até que os meios sejam definidos. Não serão
-                reenviadas automaticamente.
-              </p>
-              {!saved.archivedAt && (
-                <>
-                  <FormField
-                    id="message-schedule"
-                    label="Programar para"
-                    hint="Horário de Brasília (UTC−3). Entre um minuto e um ano a partir de agora."
-                  >
-                    <input
-                      type="datetime-local"
-                      value={schedule}
-                      onChange={(e) => setSchedule(e.target.value)}
-                    />
-                  </FormField>
-                  <div className={styles.actions}>
-                    <Button
-                      intent="primary"
-                      disabled={saved.id === "new" || locked || dirty || mutation.pending}
-                      onClick={() => void review("send")}
-                    >
-                      Solicitar envio agora
-                    </Button>
-                    <Button
-                      disabled={
-                        saved.id === "new" ||
-                        dirty ||
-                        mutation.pending ||
-                        !schedule ||
-                        !Number.isFinite(new Date(`${schedule}:00-03:00`).getTime())
-                      }
-                      onClick={() => void review(saved.scheduledAt ? "reschedule" : "schedule")}
-                    >
-                      {saved.scheduledAt ? "Revisar reagendamento" : "Revisar programação"}
-                    </Button>
-                  </div>
-                  {(dirty || saved.id === "new") && (
-                    <p>
-                      Salve o rascunho para revisar e confirmar o agendamento. O horário digitado
-                      será preservado.
-                    </p>
-                  )}
-                </>
-              )}
-              {saved.scheduledAt && (
-                <Button disabled={mutation.pending} onClick={() => setConfirm("cancel")}>
-                  Cancelar programação
-                </Button>
-              )}
-            </>
-          )}
-          <div className={styles.actions}>
-            {kind === "campaigns" && saved.id !== "new" && (
-              <Button
-                disabled={mutation.pending || dirty}
-                onClick={() => void command("duplicate")}
-              >
-                Duplicar campanha
-              </Button>
-            )}
-            {saved.id !== "new" && !saved.scheduledAt && (
-              <Button
-                disabled={mutation.pending || dirty}
-                onClick={() => setConfirm(saved.archivedAt ? "restore" : "archive")}
-              >
-                {saved.archivedAt ? "Restaurar" : "Arquivar"}
-              </Button>
-            )}
-          </div>
-        </section>
-      )}
+      {tab !== "schedule" && organization}
       {kind === "campaigns" && saved.id !== "new" && (
         <MessageHistory key={historyRevision} id={saved.id} />
       )}

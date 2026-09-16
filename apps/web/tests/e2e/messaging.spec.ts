@@ -304,6 +304,13 @@ test("demographic audience and visible scheduling support creation, rescheduling
   await save(page);
   await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue(future);
   await expect(page.getByLabel("Categoria", { exact: true })).toHaveValue(category);
+  await page.getByRole("button", { name: "Agendamento", exact: true }).click();
+  await expect(
+    page
+      .getByRole("group", { name: "Etapas da mensagem" })
+      .getByRole("button", { name: "Agendamento", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("Programar para", { exact: true })).toHaveValue(future);
   await page.getByRole("button", { name: "Prévia", exact: true }).click();
   await page.getByRole("button", { name: "Atualizar prévia", exact: true }).click();
   await expect(
