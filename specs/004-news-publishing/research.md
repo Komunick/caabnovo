@@ -184,3 +184,17 @@ omitido, sem alegar que toda capa é decorativa ou gerar texto sem conhecer a im
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
+
+
+## Retirada explícita ao salvar — 16/09/2026
+
+Causa confirmada: lista administrativa lia `_news_v.latest` e classificava por qualquer
+publicação histórica; inicial e API pública liam `news._status=published`. Usar a versão
+vigente para a aba Publicadas elimina título, capa e filtros de revisão privada.
+A [documentação oficial de drafts do Payload](https://payloadcms.com/docs/versions/drafts)
+confirma que `draft:true` mantém alterações somente nas versões; para retirar e salvar,
+`draft:false` com `_status:draft` atualiza também o documento principal. O projeto já usa
+esse comportamento no arquivamento. Reutilizar transação e bloqueio existentes evita duas
+requisições parcialmente concluídas. A revisão pública esperada impede retirar uma publicação
+concorrente. Manter os agendamentos pendentes permitiria republicar após a retirada;
+cancelá-los atomicamente e informar no editor evita essa surpresa.

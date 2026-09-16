@@ -7,6 +7,7 @@ import {
   newsBodySchema,
   newsBodyImages,
   newsDraftMetadataSchema,
+  updateNewsDraftRequestSchema,
   newsVersionCommandSchema,
   newsChangeCommandSchema,
   restoreNewsRevisionRequestSchema,
@@ -182,14 +183,36 @@ export async function updateNewsDraft(
   input: unknown,
 ) {
   idSchema.parse(id);
-  return newsWriteTransaction(
+  const command = updateNewsDraftRequestSchema.parse(input);
+  const withdraw = command.withdrawPublishedVersion !== undefined;
+  return (withdraw ? newsPublishTransaction : newsWriteTransaction)(
     payload,
     context.actor,
-    async ({ req, lockNews, audit, mediaFiles }) => {
+    async ({ req, lockNews, audit, mediaFiles, db }) => {
       await lockNews(id);
       const before = await readDraft(payload, req, id);
       if (before.archived) throw new NewsPolicyError("NEWS_ARCHIVED", 409, "Notícia arquivada.");
       const prepared = prepareNewsDraftUpdate(context.actor, input, Number(before.revision));
+      const current = withdraw
+        ? await payload.findByID({
+            collection: "news",
+            id,
+            req,
+            overrideAccess: false,
+            draft: false,
+            depth: 0,
+          })
+        : undefined;
+      if (
+        current &&
+        (current._status !== "published" ||
+          Number(current.revision) !== command.withdrawPublishedVersion)
+      )
+        throw new NewsPolicyError(
+          "NEWS_VERSION_CONFLICT",
+          409,
+          "A publicação mudou. Reabra a versão atual.",
+        );
       const previousCover = newsDraftMetadataSchema.parse(before.metadata).cover;
       const previousIds = new Set([
         ...newsBodyImages(newsBodySchema.parse(before.body)).map((image) => image.fileId!),
@@ -217,13 +240,19 @@ export async function updateNewsDraft(
           "As imagens devem pertencer a esta notícia.",
         );
       const revision = prepared.expectedVersion + 1;
+      const cancelled = withdraw
+        ? await db.query(
+            "UPDATE news_action SET status='cancelled',completed_at=now(),cancelled_by=$2::uuid WHERE news_id=$1::uuid AND status='pending' RETURNING id",
+            [id, prepared.editorUserId],
+          )
+        : { rows: [] };
       const doc = await payload.update({
         collection: "news",
         id,
         req,
         overrideAccess: false,
         overrideLock: false,
-        draft: true,
+        draft: !withdraw,
         depth: 0,
         data: {
           metadata: prepared.metadata,
@@ -233,6 +262,26 @@ export async function updateNewsDraft(
           _status: "draft",
         },
       });
+      if (current)
+        await audit({
+          actorUserId: prepared.editorUserId,
+          effectiveIdentity: `user:${prepared.editorUserId}`,
+          action: "news.unpublished",
+          entityType: "news",
+          entityId: id,
+          before: {
+            revision: Number(current.revision),
+            channels: newsDraftMetadataSchema.parse(current.metadata).channels,
+          },
+          after: {
+            revision,
+            channels: [],
+            cancelledActionIds: cancelled.rows.map((row) => row.id),
+          },
+          origin: "web",
+          requestId: context.requestId,
+          correlationId: context.correlationId,
+        });
       await audit({
         actorUserId: prepared.editorUserId,
         effectiveIdentity: `user:${prepared.editorUserId}`,

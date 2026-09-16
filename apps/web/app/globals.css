@@ -4719,6 +4719,15 @@ thead th {
 .scheduling-choice legend {
   padding: 0;
   margin-bottom: 0.5rem;
+  color: var(--color-muted-strong);
+  font-size: 0.87rem;
+  font-weight: 720;
+}
+.scheduling-choice .form-field,
+.scheduling-fields > .form-field,
+.scheduling-grid > .form-field,
+.scheduling-filters .filter-toolbar > .form-field {
+  margin: 0;
 }
 .scheduling-choice .form-field > label {
   position: absolute;
@@ -4764,6 +4773,10 @@ thead th {
   margin-right: auto;
   color: var(--color-muted);
 }
+.scheduling-count {
+  margin: 1rem 0 0;
+  color: var(--color-muted);
+}
 .scheduling-empty {
   padding: 1.5rem 0;
 }
@@ -4775,7 +4788,6 @@ thead th {
   border-radius: var(--radius-sm);
   background: var(--color-surface);
 }
-.scheduling-choice legend,
 .scheduling-day legend {
   font-weight: 650;
   padding: 0 0.25rem;

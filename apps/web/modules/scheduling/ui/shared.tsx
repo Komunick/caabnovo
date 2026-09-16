@@ -182,6 +182,13 @@ export function Pagination({
   total: number;
   onPage(page: number): void;
 }) {
+  if (!total) return null;
+  if (total <= pageSize && page === 1)
+    return (
+      <p className="scheduling-count" role="status">
+        {total} {total === 1 ? "registro" : "registros"}
+      </p>
+    );
   return (
     <nav className="pagination scheduling-pagination" aria-label="Paginação de registros">
       <span role="status">

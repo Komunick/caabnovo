@@ -38,7 +38,7 @@ revisão publicada. Cobrir conteúdo ativo malicioso, arquivos indisponíveis e 
 3. Prévia identifica rascunho e canal, exige o mesmo acesso ao painel e não é indexável/publicamente
    cacheada.
 4. Imagens exigem descrição acessível e arquivo liberado pela verificação existente.
-5. Salvar após publicar mantém o conteúdo público anterior até nova publicação explícita.
+5. Em notícias publicadas, substituir “Salvar rascunho” por “Retirar publicação e salvar rascunho”: retirar todos os destinos e salvar a revisão numa única transação. A preparação interna de uma publicação/agendamento preserva a versão pública até a ação explícita.
 6. A publicação registra responsável, revisão e destinos na auditoria, sem copiar o corpo completo.
 
 ### US3 — Programar e acompanhar distribuição (P2)
@@ -78,7 +78,7 @@ do consumidor.
   publicar.
 - **FR-004**: Reutilizar o acesso ao painel, inclusive verificação no servidor; não exigir nova
   permissão nem revisor. Decisão expressa do usuário em 09/09/2026.
-- **FR-005**: Preservar a versão publicada enquanto outra revisão está em elaboração.
+- **FR-005**: Preservar a versão publicada enquanto outra revisão está em elaboração. Para salvar manualmente como rascunho, a ação deve explicitar a retirada da publicação e executá-la junto com o salvamento; notícias sem publicação mantêm “Salvar rascunho”.
 - **FR-006**: Prévia e publicação aceitam somente conteúdo sem código ativo e mídias verificadas;
   embeds dependem de provedores explicitamente permitidos.
   Imagens no corpo têm descrição, legenda opcional e ordem editável; remoção preserva arquivos e
@@ -117,9 +117,10 @@ do consumidor.
   (app/site), destaque, presença de capa, atualização nos últimos 7/30/90 dias e ordenação
   por atualização/criação crescente ou decrescente e título A–Z/Z–A. Combinar filtros no banco
   antes de paginar; URL, limpeza e indicação de carregamento preservam o conjunto selecionado.
-- **FR-017**: Rascunhos ainda não publicados ficam em `/news/drafts`, acessível por botão em
-  `/news`. Notícias com publicação no histórico permanecem na lista principal, inclusive após
-  retirada ou arquivamento; editar uma publicação não duplica seu cadastro na lista de rascunhos.
+- **FR-017**: `/news` exibe a versão efetivamente publicada, inclusive nos filtros e na
+  ordenação, usando a mesma origem da inicial. `/news/drafts` contém a última revisão das
+  notícias sem publicação vigente, inclusive retiradas e arquivadas (conforme filtro).
+  Uma edição privada não altera a lista Publicadas nem duplica seu cadastro em Rascunhos.
   Agendados ainda não publicados continuam nos rascunhos até a execução da publicação.
 - **FR-018**: Compactar espaçamento superior e cabeçalho. Busca e arquivamento permanecem
   visíveis; filtros adicionais e ordenação ficam em uma área expansível, sem botão de aplicação.
@@ -235,3 +236,13 @@ inseridas no corpo, verificação dos arquivos, autorização ou propriedade da 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+
+
+Refinamento solicitado pelo usuário em 16/09/2026:
+
+- **NP-01**: A retirada junto do salvamento compara a revisão editorial e a publicada sob
+  bloqueio da notícia; falha de validação, concorrência ou auditoria desfaz toda a operação.
+- **NP-02**: Retirar e salvar cancela agendamentos pendentes da notícia na mesma transação,
+  para que uma publicação programada não a publique novamente. Explicar esse efeito no editor.
+- **NP-03**: Após sucesso, o texto salvo fica em Rascunhos e a notícia sai da inicial, Publicadas
+  e dos consumidores públicos. Histórico e auditoria são preservados; erro mantém o texto no editor.

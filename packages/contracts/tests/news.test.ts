@@ -121,6 +121,24 @@ describe("news contracts", () => {
   });
 
   it("requires a positive safe integer version for mutation", () => {
+    for (const withdrawPublishedVersion of [0, -1, 1.5, "1", true, Number.MAX_SAFE_INTEGER + 1]) {
+      expect(
+        updateNewsDraftRequestSchema.safeParse({
+          expectedVersion: 1,
+          withdrawPublishedVersion,
+          metadata: {},
+          body: emptyNewsBody,
+        }).success,
+      ).toBe(false);
+    }
+    expect(
+      updateNewsDraftRequestSchema.parse({
+        expectedVersion: 3,
+        withdrawPublishedVersion: 2,
+        metadata: {},
+        body: emptyNewsBody,
+      }).withdrawPublishedVersion,
+    ).toBe(2);
     for (const expectedVersion of [undefined, 0, -1, 1.5, "1", Number.MAX_SAFE_INTEGER + 1]) {
       expect(
         updateNewsDraftRequestSchema.safeParse({
