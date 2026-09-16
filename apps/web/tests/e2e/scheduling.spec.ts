@@ -136,6 +136,14 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await open("services");
   await page.getByLabel("Nome", { exact: true }).fill(service);
   await choose(page, "Unidade", unit);
+  await page.getByRole("combobox", { name: "Unidade", exact: true }).click();
+  await expect(page.getByRole("option").filter({ hasText: unit }).first()).toBeVisible();
+  await expectWcag22AA(page);
+  await page.screenshot({
+    path: testInfo.outputPath("scheduling-combobox-mobile-light.png"),
+    fullPage: true,
+  });
+  await page.keyboard.press("Escape");
   await save();
   await open("procedures");
   await page.getByLabel("Nome", { exact: true }).fill(procedure);
@@ -165,9 +173,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
     .getByRole("button", { name: `Editar ${professional} — ${procedure}`, exact: true })
     .click();
   await expect(page.getByRole("combobox", { name: "Unidade", exact: true })).toHaveValue(unit);
-  await expect(
-    page.getByLabel("Selecionar serviço", { exact: true }).locator("option:checked"),
-  ).toHaveValue(service);
+  await expect(page.getByRole("combobox", { name: "Serviço", exact: true })).toHaveValue(service);
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   const date = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
   const weekday = new Date(`${date}T12:00:00-03:00`).getUTCDay();

@@ -294,6 +294,7 @@ export function Choice({
           required={required}
           maxLength={240}
           value={text}
+          onClick={() => setOpen(true)}
           onFocus={() => {
             setOpen(true);
             setPage(1);

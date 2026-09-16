@@ -74,6 +74,8 @@ it("uses one editable field and selects a homonymous option by its ID with the k
   expect(input.value).toBe("Unidade");
   expect(input.getAttribute("aria-expanded")).toBe("false");
   expect(input.validity.valid).toBe(true);
+  await act(() => input.click());
+  expect(input.getAttribute("aria-expanded")).toBe("true");
 });
 it("clears the selected ID when typing and blocks arbitrary labels from being submitted", async () => {
   const input = await render();
