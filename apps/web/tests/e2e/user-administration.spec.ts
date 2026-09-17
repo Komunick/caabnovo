@@ -94,6 +94,10 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await expect(page.getByRole("button", { name: "Revogar Consulta de usuários" })).toHaveCount(0);
 
   const accesses = page.getByRole("region", { name: "Acessos do colaborador" });
+  await expect(
+    accesses.getByRole("checkbox", { name: "Consultar notícias e rascunhos" }),
+  ).not.toBeChecked();
+  await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).check();
   await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).uncheck();
   await expect(
     accesses.getByRole("checkbox", { name: "Publicar, programar e arquivar notícias" }),

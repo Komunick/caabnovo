@@ -335,3 +335,7 @@ Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens pen
 ## Senha inicial — 17/09/2026
 
 Gerador server-only com crypto.randomInt e lista local; hashPassword do Better Auth. Inserir account/credential na transação de criação. Resposta exclusiva de criação com initialPassword string/null; reenvio idempotente retorna null. Recibo transitório em memória com controles compartilhados. Ação no detalhe para cadastro sem senha: lock da conta, sessão/permissões revalidadas e comparação da autoridade. Não sobrescrever credenciais existentes. Sem migration ou backfill. Specs 001/006 compartilham o código. Testes leves locais e integração/E2E/build no CI; banco/preview pausados, nenhum merge automático.
+
+## Correção de segurança — 17/09/2026
+
+Branch única fix/app-security-hardening-20260917, base dev 8f12db4. Desabilitar signup no Better Auth e lista de rotas; fixtures usam SQL em bancos de teste, sem bypass de runtime. Migration aditiva 0024 converte baseline editorial em função legada somente para usuários anteriores sem seleção explícita, preservando RBAC dinâmico. CSP via proxy Next, nonce por resposta e layout dinâmico com Script de tema autorizado. Cabeçalhos globais e no-store nas APIs privadas. Guardas de seed antes da conexão; placeholders bloqueados fora do loopback. Integração/E2E/build no CI; localhost pausado.

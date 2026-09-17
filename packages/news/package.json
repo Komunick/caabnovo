@@ -13,9 +13,9 @@
   "dependencies": {
     "@caab/contracts": "workspace:*",
     "@caab/db": "workspace:*",
-    "@payloadcms/db-postgres": "3.88.0",
-    "@payloadcms/richtext-lexical": "3.88.0",
-    "payload": "3.88.0",
+    "@payloadcms/db-postgres": "3.89.0",
+    "@payloadcms/richtext-lexical": "3.89.0",
+    "payload": "3.89.0",
     "pg": "8.23.0"
   },
   "devDependencies": {

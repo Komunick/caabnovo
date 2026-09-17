@@ -4,6 +4,7 @@ import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { resetIdentifier } from "../../modules/auth/password-recovery-service";
 import { createAuth } from "../../modules/auth/auth-factory";
+import { provisionTestUser } from "../support/provision-user";
 import { loadActiveSession } from "../../modules/auth/session-dal";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
 
@@ -62,9 +63,31 @@ afterAll(async () => {
 });
 
 describe.sequential("Better Auth PostgreSQL sessions", () => {
-  it("persists an opaque session and emits a hardened cookie without a session cache", async () => {
+  it("rejects valid public signup without creating a user, credential or session", async () => {
     const response = await handler(
-      authRequest("/sign-up/email", {
+      authRequest(
+        "/sign-up/email",
+        { email: "uninvited@example.test", name: "Uninvited", password },
+        "",
+      ),
+    );
+    expect(response.status).toBe(404);
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(
+      (await admin.query('SELECT id FROM "user" WHERE email=$1', ["uninvited@example.test"]))
+        .rowCount,
+    ).toBe(0);
+    expect((await admin.query("SELECT id FROM account")).rowCount).toBe(0);
+    expect((await admin.query("SELECT id FROM session")).rowCount).toBe(0);
+  });
+  it("persists an opaque session and emits a hardened cookie without a session cache", async () => {
+    await provisionTestUser(admin, {
+      email: "ordinary@example.test",
+      name: "Ordinary User",
+      password,
+    });
+    const response = await handler(
+      authRequest("/sign-in/email", {
         email: "ordinary@example.test",
         name: "Ordinary User",
         password,

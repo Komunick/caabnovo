@@ -182,3 +182,7 @@ Para a única conta antiga sem senha informada pelo usuário, oferecer geração
 Aceite: criação pela interface seguida de login com a senha gerada; recuperação disponível; negações, idempotência, concorrência, rollback e ausência de segredo em consultas/auditoria testados. UI desktop/mobile e acessibilidade no padrão existente.
 
 Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+
+## Correção de segurança — 17/09/2026
+
+Bloquear inscrição pública em qualquer ambiente, preservando login, recuperação e criação administrativa. Contas novas não recebem acesso editorial implícito; preservar permissões atuais por concessão legada explícita sem congelar RBAC. Impedir seeds sintéticos contra destinos públicos e rejeitar segredos de exemplo no app público. Restringir portas do Compose local ao loopback. Aplicar CSP com nonce e cabeçalhos de proteção, sem quebrar CEP, upload, tema ou navegação. Atualizar dependências corrigíveis. Configurações e workflows GitHub excluídos. Nenhum merge ou alteração de conta real nesta entrega.

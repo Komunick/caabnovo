@@ -486,3 +486,12 @@ Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens pen
 - [x] IP003 Exibir recibo de senha e permitir geração inicial para cadastro sem senha.
 - [x] IP004 Testar login, recuperação, autorização, concorrência, rollback e não exposição.
 - [x] IP005 Validar interface desktop/mobile, acessibilidade, gates e preparar PR para dev.
+
+## Correção de segurança — 17/09/2026
+
+- [ ] SH01 Bloquear signup público e adaptar fixtures sem bypass de produção.
+- [ ] SH02 Migrar baseline editorial preservando usuários atuais e testar negação por padrão.
+- [ ] SH03 Aplicar CSP/cabeçalhos/cache e validar navegação, CEP e fluxos críticos.
+- [ ] SH04 Proteger seeds/defaults e portas locais, com testes de destinos recusados.
+- [ ] SH05 Atualizar dependências corrigíveis e registrar avisos restantes.
+- [ ] SH06 Executar gates, registrar evidências e preparar PR para dev sem merge.

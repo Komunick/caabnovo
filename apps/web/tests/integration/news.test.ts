@@ -52,6 +52,10 @@ beforeAll(async () => {
   const sessionId = crypto.randomUUID();
   const userId = user.rows[0]!.id;
   await admin.query(
+    "INSERT INTO user_access(user_id,permissions,updated_by) VALUES ($1,ARRAY['news:read','news:write','news:publish'],$1)",
+    [userId],
+  );
+  await admin.query(
     `INSERT INTO session(id,token,user_id,expires_at) VALUES ($1,$1,$2,now() + interval '1 hour')`,
     [sessionId, userId],
   );
@@ -124,10 +128,9 @@ describe.sequential("news persistence with Payload", () => {
     });
     const id = context.actor!.userId;
     try {
-      await admin.query(
-        "INSERT INTO user_access(user_id,permissions,updated_by) VALUES ($1,ARRAY['news:read'],$1)",
-        [id],
-      );
+      await admin.query("UPDATE user_access SET permissions=ARRAY['news:read'] WHERE user_id=$1", [
+        id,
+      ]);
       expect((await getNewsDraft(payload, context.actor, article.id)).id).toBe(article.id);
       await expect(
         createNewsDraft(payload, context, {
@@ -166,7 +169,10 @@ describe.sequential("news persistence with Payload", () => {
         status: 403,
       });
     } finally {
-      await admin.query("DELETE FROM user_access WHERE user_id=$1", [id]);
+      await admin.query(
+        "UPDATE user_access SET permissions=ARRAY['news:read','news:write','news:publish'] WHERE user_id=$1",
+        [id],
+      );
     }
   });
   it("shows only the four latest live publications on home across channels", async () => {

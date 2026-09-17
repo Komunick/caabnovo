@@ -2,6 +2,7 @@ import { keyboardActivate, keyboardType } from "./keyboard";
 import { randomUUID } from "node:crypto";
 import { expect, test } from "./fixtures";
 import { expectWcag22AA } from "./accessibility";
+import { provisionAccount } from "./provision-account";
 
 test("recovers a password through local email and rejects reuse of the link", async ({
   page,
@@ -12,9 +13,10 @@ test("recovers a password through local email and rejects reuse of the link", as
   const email = `recovery-${randomUUID()}@example.test`;
   const password = "SyntheticRecoveryPassword2026";
   const newPassword = "NewRecoveryPassword2026";
+  await provisionAccount({ email, password, name: "Recuperação Sintética" });
   expect(
     (
-      await page.request.post("/api/auth/sign-up/email", {
+      await page.request.post("/api/auth/sign-in/email", {
         headers: { origin: baseURL! },
         data: { email, password, name: "Recuperação Sintética" },
       })

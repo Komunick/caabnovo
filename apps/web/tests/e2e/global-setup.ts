@@ -1,45 +1,18 @@
 import { Client } from "pg";
-import { createDatabaseClient, runMigrations } from "@caab/db";
-import { createAuth } from "../../modules/auth/auth-factory";
+import { runMigrations } from "@caab/db";
+import { provisionTestUser } from "../support/provision-user";
+import { assertLocalSeedTarget } from "../support/local-seed-target";
 import { syntheticUsers } from "./fixtures";
 
 const origin = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 const adminUrl =
   process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab";
 
-function cookieFrom(response: Response): string {
-  const value = response.headers.get("set-cookie") ?? "";
-  const match = /(?:^|, )((?:__Secure-)?caab\.session=[^;]+)/.exec(value);
-  if (!match?.[1]) throw new Error("The synthetic user session cookie was not issued");
-  return match[1];
-}
-
 export default async function globalSetup() {
+  assertLocalSeedTarget({ ...process.env, BETTER_AUTH_URL: origin, DATABASE_ADMIN_URL: adminUrl });
   await runMigrations(adminUrl);
-  const database = createDatabaseClient(adminUrl);
-  const auth = createAuth({
-    database: database.db,
-    pool: database.pool,
-    baseURL: origin,
-    secret: process.env.BETTER_AUTH_SECRET ?? "e2e-only-secret-with-at-least-32-characters",
-    disableRateLimit: true,
-  });
   const admin = new Client({ connectionString: adminUrl });
   await admin.connect();
-
-  async function post(path: string, body: unknown, cookie = "") {
-    return auth.handler(
-      new Request(`${origin}/api/auth${path}`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          origin,
-          ...(cookie ? { cookie } : {}),
-        },
-        body: JSON.stringify(body),
-      }),
-    );
-  }
 
   async function ensureUser(user: { email: string; password: string }, name: string) {
     const existing = await admin.query<{ two_factor_enabled: boolean }>(
@@ -47,9 +20,7 @@ export default async function globalSetup() {
       [user.email],
     );
     if (existing.rows[0]) return existing.rows[0].two_factor_enabled;
-    const response = await post("/sign-up/email", { ...user, name });
-    if (!response.ok) throw new Error(`Unable to create synthetic user: ${response.status}`);
-    return cookieFrom(response);
+    await provisionTestUser(admin, { ...user, name });
   }
 
   try {
@@ -58,6 +29,20 @@ export default async function globalSetup() {
     await ensureUser(syntheticUsers.auditor, "Auditor Sintético");
     await ensureUser(syntheticUsers.operator, "Operador Sintético");
     await ensureUser(syntheticUsers.administrator, "Administrador Sintético");
+
+    // Existing editorial tests use an explicit fixture role, not implicit production access.
+    await admin.query(
+      `INSERT INTO role(code,name,description) VALUES ('synthetic-editor','Editor sintético','Fixture editorial') ON CONFLICT (code) DO NOTHING`,
+    );
+    await admin.query(`INSERT INTO role_permission(role_id,permission_id)
+      SELECT r.id,p.id FROM role r CROSS JOIN permission p
+      WHERE r.code='synthetic-editor' AND p.resource='news' AND p.action IN ('read','write','publish') ON CONFLICT DO NOTHING`);
+    await admin.query(
+      `INSERT INTO user_role(user_id,role_id,granted_by,justification)
+      SELECT u.id,r.id,u.id,'Fixture editorial explícita' FROM "user" u CROSS JOIN role r
+      WHERE u.email=ANY($1::citext[]) AND r.code='synthetic-editor' ON CONFLICT DO NOTHING`,
+      [Object.values(syntheticUsers).map((user) => user.email)],
+    );
 
     const users = await admin.query<{ id: string; email: string }>(
       `SELECT id, email::text FROM "user" WHERE email = ANY($1::citext[])`,
@@ -203,6 +188,5 @@ export default async function globalSetup() {
     }
   } finally {
     await admin.end();
-    await database.close();
   }
 }
