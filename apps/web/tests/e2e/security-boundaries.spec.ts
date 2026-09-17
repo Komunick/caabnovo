@@ -13,6 +13,16 @@ test("blocks signup, protects HTML with nonces and keeps authenticated navigatio
     },
   });
   expect(signup.status()).toBe(404);
+  // Inject into the response so the HTML parser, rather than DevTools evaluation,
+  // attempts execution under the page's actual CSP.
+  await page.route("**/login", async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      "</head>",
+      "<script>window.__blockedInline = true</script></head>",
+    );
+    await route.fulfill({ response, body });
+  });
   const response = await page.goto("/login");
   const headers = response!.headers();
   expect(headers["x-content-type-options"]).toBe("nosniff");
@@ -25,13 +35,9 @@ test("blocks signup, protects HTML with nonces and keeps authenticated navigatio
   expect(
     await page.locator("script#caab-theme").evaluate((el) => (el as HTMLScriptElement).nonce),
   ).toBe(nonce);
-  // A real attempted inline script must be blocked by the browser, not only by a string assertion.
-  await page.evaluate(() => {
-    const script = document.createElement("script");
-    script.textContent = "window.__blockedInline = true";
-    document.body.append(script);
-  });
+  expect(await page.locator("script").allTextContents()).toContain("window.__blockedInline = true");
   expect(await page.evaluate(() => "__blockedInline" in window)).toBe(false);
+  await page.unroute("**/login");
   const next = await page.request.get("/login");
   expect(next.headers()["content-security-policy"]).not.toBe(csp);
   await page.getByLabel("E-mail").fill(syntheticUsers.administrator.email);
