@@ -1,6 +1,7 @@
 import "server-only";
 import type { Pool, PoolClient } from "pg";
 import { hashPassword } from "better-auth/crypto";
+import { createLocalAccountIssuer } from "better-auth/db";
 import { withTransaction } from "@caab/db";
 import { readUserPermissions } from "@caab/db/repositories/user-access";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
@@ -20,15 +21,16 @@ export async function insertInitialCredential(client: PoolClient, userId: string
     throw new UserAccessError("PASSWORD_ALREADY_DEFINED", 409, "Password already defined");
   const initialPassword = generateInitialPassword();
   const hash = await hashPassword(initialPassword);
+  const issuer = createLocalAccountIssuer("credential");
   if (existing.rows[0]) {
-    await client.query("UPDATE account SET password=$2,updated_at=now() WHERE id=$1", [
-      existing.rows[0].id,
-      hash,
-    ]);
+    await client.query(
+      "UPDATE account SET password=$2,issuer=$3,account_id=$4,updated_at=now() WHERE id=$1",
+      [existing.rows[0].id, hash, issuer, userId],
+    );
   } else {
     await client.query(
-      "INSERT INTO account(id,account_id,provider_id,user_id,password) VALUES ($1,$2,'credential',$3,$4)",
-      [crypto.randomUUID(), userId, userId, hash],
+      "INSERT INTO account(id,account_id,provider_id,user_id,password,issuer) VALUES ($1,$2,'credential',$3,$4,$5)",
+      [crypto.randomUUID(), userId, userId, hash, issuer],
     );
   }
   return initialPassword;

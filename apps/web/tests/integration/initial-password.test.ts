@@ -96,13 +96,15 @@ describe("initial credential provisioning", () => {
     expect(created.initialPassword).toMatch(/^[A-Z][a-z]{5,}\d{6}$/);
     const password = created.initialPassword!;
     const stored = (
-      await admin.query("SELECT password,account_id,provider_id FROM account WHERE user_id=$1", [
-        created.id,
-      ])
+      await admin.query(
+        "SELECT password,account_id,provider_id,issuer FROM account WHERE user_id=$1",
+        [created.id],
+      )
     ).rows;
     expect(stored).toHaveLength(1);
     expect(stored[0].password === password).toBe(false);
     expect(stored[0].account_id).toBe(created.id);
+    expect(stored[0].issuer).toBe("local:credential");
     expect((await signIn(created.email, password)).status).toBe(200);
     let resetSent = false;
     await requestPasswordRecovery(database.pool, created.email, async () => {
@@ -168,6 +170,19 @@ describe("initial credential provisioning", () => {
       initializeUserPassword(database.pool, { ...context(), userId: created.id }),
     ).rejects.toMatchObject({ code: "PASSWORD_ALREADY_DEFINED" });
     expect((await signIn(created.email, created.initialPassword!)).status).toBe(200);
+  });
+  it("initializes a legacy credential row without a password using the current issuer", async () => {
+    const userId = await legacy();
+    const accountId = crypto.randomUUID();
+    await admin.query(
+      "INSERT INTO account(id,account_id,provider_id,user_id) VALUES ($1,$2,'credential',$2)",
+      [accountId, userId],
+    );
+    const result = await initializeUserPassword(database.pool, { ...context(), userId });
+    expect((await signIn("legacy@example.test", result.initialPassword)).status).toBe(200);
+    expect((await admin.query("SELECT id FROM account WHERE user_id=$1", [userId])).rows).toEqual([
+      { id: accountId },
+    ]);
   });
   it("rejects disabled users and targets outside the manager's current authority", async () => {
     const userId = await legacy();
