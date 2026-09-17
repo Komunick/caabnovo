@@ -1,6 +1,8 @@
 # Mensagens — preparação e acompanhamento
 
-**Data:** 16/09/2026. **Estado:** preparação, segmentação e agendamentos implementados e validados; meios de envio adiados. Responsável funcional: US7 do plano integrado.
+**Data:** 16/09/2026. **Estado atualizado em 17/09/2026:** protótipo, pendente de revisão da finalidade de construção. Responsável funcional: US7 do plano integrado.
+
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
 
 ## Escopo e decisão do usuário
 

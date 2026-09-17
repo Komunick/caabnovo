@@ -1,4 +1,13 @@
 # CAAB — Referência de Stack e Arquitetura
+
+## Estado consolidado — 17/09/2026
+
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+
+Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
+
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
 A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
@@ -177,7 +186,7 @@ A fundação do projeto novo já utiliza Better Auth, sessões e autorização n
 implementação, sem criar provedores ou tabelas de autenticação por módulo. Requisitos:
 
 - Cookies de sessão `HttpOnly`, `Secure` e `SameSite` apropriado.
-- E-mail e senha para administradores, com permissões e auditoria. Autenticador removido por decisão do produto em 10/09/2026; ver `specs/006-account-settings/authenticator-removal.md`.
+- E-mail e senha para administradores, com permissões e auditoria. Autenticador removido em 10/09/2026 por reclamações, conforme motivo confirmado pelo usuário em 17/09/2026; ver `specs/006-account-settings/authenticator-removal.md`.
 - Expiração e revogação de sessões.
 - Desativação imediata de usuário.
 - RBAC com permissões concretas por ação.
@@ -401,11 +410,9 @@ responsabilidade definida.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.
 
-## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+## Estado vigente — Agendamentos e CAASSH, consolidado em 17/09/2026
 
-O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
-solicitou novo brainstorming para uma grande evolução antes da implementação.
-Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
+A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da [spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta, remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja apenas em pesquisa.
 
 **CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
 são referências históricas, sem ativação ou implementação autorizada no ciclo atual.

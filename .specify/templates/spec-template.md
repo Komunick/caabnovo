@@ -1,6 +1,12 @@
 # Feature Specification: [FEATURE NAME]
 
-**Feature Branch**: `[###-feature-name]`
+> Branch: reutilizar a branch/worktree ativa da entrega. Quando uma nova entrega
+> for necessária, usar `feature/*`, `fix/*`, `chore/*` ou `docs/*`, conforme
+> `docs/DELIVERY-WORKFLOW.md`. O diretório numerado `specs/###-nome/` identifica
+> a especificação; não determina o nome nem exige uma branch por funcionalidade.
+> PR aberto pode ser atualizado ou cancelado; PR mergeado não pode ser alterado.
+
+**Feature Branch**: `[BRANCH_DA_ENTREGA]`
 
 **Created**: [DATE]
 

@@ -1,5 +1,9 @@
 # Feature Specification: Módulos integrados CAAB
 
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+
 **Feature Branch**: `feature/product-direction` **Created**: 2026-09-09 **Status**: Escopo
 consolidado; módulos administrativos existentes entregues; expansões e regras institucionais seguem por história.
 **Input**: Incluir todos os módulos, evitar duplicatas, fundir Operações com Auditoria, atualizar
@@ -167,7 +171,8 @@ implicam cópia de cadastros.
 
 Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
 atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
-Não haverá módulo separado de equipe interna/RH.
+Não há módulo separado de equipe interna/RH no escopo atual. Recursos Humanos
+é uma possibilidade futura, pendente de definição e autorização (17/09/2026).
 
 A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
 foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,

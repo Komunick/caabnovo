@@ -44,7 +44,11 @@ não participa da decisão. Não houve retorno pessoal nem homologação positiv
 
 ## Programa integrado
 
-As jornadas implementadas seguem cobertas pelo CI e pelos specs 003–008. Mensagens,
-Portal, Relatórios, interface app/site e Créditos suspensos não foram implementados nesta
-entrega. T055–T057 do programa 002 continuam vinculadas à entrega completa do programa;
-nenhuma suíte dos módulos atuais equivale à conclusão dos módulos futuros.
+As jornadas administrativas existentes são acompanhadas pelos specs 003–008.
+Agendamentos já tem primeira versão administrativa; interface app/site e expansões
+continuam pendentes. Mensagens possui código de protótipo na spec 009, pendente de
+revisão da finalidade de sua construção (decisão de 17/09/2026), sem envio real ou
+homologação final do módulo. Portal e Relatórios continuam pendentes; Créditos está
+suspenso. Recursos Humanos é apenas possibilidade futura, sem construção autorizada.
+T055–T057 continuam vinculadas à entrega completa do programa; testes do protótipo
+ou dos módulos atuais não concluem funções futuras.

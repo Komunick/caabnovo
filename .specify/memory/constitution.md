@@ -1,5 +1,6 @@
 <!--
 Sync Impact Report
+- 2026-09-17, 1.1.0 -> 1.1.1 (PATCH): esclarece que a retirada de MFA em 10/09 ocorreu por reclamações, conforme confirmação do usuário. Sem mudança de princípio ou controle.
 - 2026-09-10, 1.0.0 -> 1.1.0: requisito de MFA retirado por solicitação explícita; permissões, sessões e auditoria preservadas.
 - Version change: scaffold sem versão -> 1.0.0
 - Modified principles:
@@ -63,7 +64,7 @@ distintos.
 ### IV. Segurança, privacidade e menor privilégio
 
 Toda ação executada no servidor DEVE autenticar a identidade quando não for pública e DEVE aplicar
-autorização server-side com negação por padrão e menor privilégio. Administradores DEVEM autenticar-se por e-mail e senha e possuir as permissões concretas para cada ação. A exigência de MFA foi removida por decisão explícita do responsável pelo produto em 10/09/2026 (specs/006-account-settings/authenticator-removal.md).
+autorização server-side com negação por padrão e menor privilégio. Administradores DEVEM autenticar-se por e-mail e senha e possuir as permissões concretas para cada ação. A exigência de MFA foi removida em 10/09/2026 por reclamações, por decisão explícita do responsável pelo produto; motivação confirmada em 17/09/2026 (specs/006-account-settings/authenticator-removal.md).
 Papéis ou escopos informados pelo cliente NÃO PODEM ser tratados como fonte confiável.
 
 O projeto DEVE adotar OWASP ASVS nível 2 como baseline verificável e cumprir a LGPD por meio de
@@ -168,4 +169,4 @@ A conformidade DEVE ser revisada em cada Pull Request e novamente antes de qualq
 `main`. Divergências entre documentos DEVEM ser resolvidas pela ordem de precedência acima e, quando
 afetarem governança, por emenda versionada.
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-04 | **Last Amended**: 2026-09-10
+**Version**: 1.1.1 | **Ratified**: 2026-09-04 | **Last Amended**: 2026-09-17

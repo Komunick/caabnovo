@@ -7,6 +7,11 @@ description: "Task list template for feature implementation"
 
 **Input**: Design documents from `/specs/[###-feature-name]/`
 
+> O diretório numerado identifica a especificação, não uma branch nova. As tarefas
+> de cada função ficam na branch/worktree da entrega ativa, conforme
+> `docs/DELIVERY-WORKFLOW.md`. PR aberto pode ser atualizado ou cancelado;
+> PR mergeado não pode ser alterado nem ter sua branch reutilizada.
+
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.

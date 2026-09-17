@@ -1,4 +1,13 @@
 # Módulos e responsabilidades — entrega integrada
+
+## Estado consolidado — 17/09/2026
+
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+
+Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
+
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
 A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
@@ -39,10 +48,13 @@ canal, revalidando parceiro, unidade e contrato em cada leitura. Portal, contas 
 parceiro, QR/resgates, créditos e coleta de avaliações não integram esta implementação.
 Consulte as evidências da spec para o estado da validação e do PR.
 
-### Inventário histórico da base inicial
+### Inventário histórico da base inicial — não representa o estado atual
 
 Inventário do projeto novo em `dev` após o PR #10 (`284f867`), obtido de rotas, módulos e migrations
 deste repositório. Não foram consultados código, telas ou contratos do sistema antigo.
+Este retrato de 09/09/2026 é preservado como histórico: MFA foi retirado,
+Colaboradores passou a nomear contas e Mensagens evoluiu para protótipo.
+Não usar as lacunas desta tabela como backlog atual.
 
 | Capacidade atual                        | Evidência no projeto novo                                                                    | Destino / decisão                                              | O que ainda precisa ser construído                                                                                                               |
 | --------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -157,38 +169,20 @@ Ver [spec](../specs/005-members-management/spec.md) e [evidências](../specs/005
 O usuário esclareceu em 10/09/2026 que o módulo ainda não está pronto. As verificações acima
 cobrem o incremento existente; a conclusão funcional deve preceder qualquer PR.
 
-## Revisão de sobreposição: Usuários e Colaboradores — 10/09/2026
+## Colaboradores — responsabilidade atual
 
-Solicitada pelo usuário durante a retomada de Associados. No código atual existem `modules/users`,
-`user`, `role`, `user_role` e `session`; não existem módulo, rotas ou migration de Colaboradores.
-Portanto, não foi encontrada duplicação implementada. US6 ainda é planejamento.
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
-| Responsabilidade | Fonte de verdade | Limite da outra área |
-| --- | --- | --- |
-| Conta, e-mail de login, MFA, sessões, recuperação e status do acesso | Usuários / autenticação existentes | Colaboradores referencia a conta, sem outro login ou senha. |
-| Funções de acesso, concessões e permissões efetivas | Usuários e RBAC existentes | Cargo funcional não concede função de acesso automaticamente. |
-| Unidade, setor, cargo e situação do vínculo funcional | Futuro domínio Colaboradores | Esses campos não devem virar campos da conta de login. |
-| Associação entre colaborador e conta | Vínculo explícito entre os registros | Colaborador pode existir sem login; conta pode existir sem colaborador. Não vincular por coincidência de nome/e-mail. |
-
-O risco de sobreposição está em implementar duas telas independentes para criar contas ou conceder
-permissões. A área de navegação prevista, **Equipe e acesso**, deve reunir as jornadas de Colaboradores
-e Contas e acesso; a gestão de acesso continua usando os serviços e identificadores atuais.
-Não criar um segundo catálogo de papéis, uma segunda política de MFA ou um novo cadastro de login.
-
-Nome e contato precisam ter finalidade e proprietário explícitos no desenho de US6: dados da conta
-são consultados pelo vínculo; e-mail profissional não altera automaticamente o identificador de
-login. O desligamento deve remover concessões derivadas do vínculo encerrado, preservando a decisão
-sobre outros vínculos; desativar a conta inteira exige autorização e regra próprias.
-
-Pendências para a spec funcional de Colaboradores: campos administrativos necessários, cardinalidade
-do vínculo, matriz por unidade/setor e efeitos do desligamento. Esta revisão delimita responsabilidades;
-não implementa Colaboradores nem altera o funcionamento de Usuários.
+A proposta de 10/09/2026 de um cadastro funcional separado foi substituída em
+11/09/2026. Não é requisito vigente nem trabalho implementado.
 
 # Colaboradores, Usuários e Parceiros: decisão de escopo
 
 Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
 atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
-Não haverá módulo separado de equipe interna/RH.
+Não há módulo separado de equipe interna/RH no escopo atual.
+
+Decisão de 17/09/2026: Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
 A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
 foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,
@@ -202,11 +196,11 @@ API ou migration para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+## Estado vigente — Agendamentos e CAASSH, consolidado em 17/09/2026
 
 **Planejamento incremental em 15/09:** [spec 008](../specs/008-scheduling-management/spec.md)
-passa a responder por Agendamentos: primeiro painel básico funcional, depois legado
-com app/site, por último novas funções escolhidas. Sem implementação nesta etapa.
+responde por Agendamentos: o painel básico já está implementado; depois vêm
+a interface app/site e novas funções escolhidas. A antiga etapa de pesquisa foi superada.
 
 **Atualização de Agendamentos em 15/09/2026:** administração pela CAAB da oferta e
 das reservas do app/site. Qualquer pessoa com acesso válido ao painel administrativo
@@ -217,20 +211,19 @@ módulos. Não pressupor área administrativa independente de negócios/profissi
 Cal.com é referência; integrar somente se nenhuma outra possibilidade for encontrada.
 Detalhes e opções abertas no [brainstorming](../specs/002-integrated-modules/brainstorming-agendamentos.md).
 
-O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
-solicitou novo brainstorming para uma grande evolução antes da implementação.
-Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
+A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da [spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta, remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja apenas em pesquisa.
 
 **CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
 são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
 A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.
 
-## Mensagens — preparação em 16/09/2026
+## Mensagens — protótipo pendente de revisão de finalidade (17/09/2026)
 
 Spec [009-messaging](../specs/009-messaging/spec.md), entrada `/messages`: campanhas,
 modelos, públicos, preferências, prévia, programação cancelável e histórico. Permissão
 única `messages:access`, administrável na gestão de acessos existente. Meios de envio
 adiados pelo usuário; não há transmissão, métricas de entrega ou automações de eventos.
-A linha de comunicação acima descreve a visão final, além desta etapa de preparação.
+A visão de comunicação acima é uma proposta sujeita à revisão de finalidade,
+não uma definição final aprovada. **Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
 
 Mensagens: aba Agendamentos com busca, período, reagendamento e cancelamento; segmentação por dados explícitos do cadastro e situação administrativa. Sem teto de destinatários, prévia agregada e seleção visual paginada. Navegação: Notícias primeiro módulo após Início, Mensagens imediatamente antes de Auditoria.

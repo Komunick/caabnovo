@@ -1,4 +1,13 @@
 # CAAB — Sistema Interno de Gestão
+
+## Estado consolidado — 17/09/2026
+
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+
+Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
+
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
 A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
@@ -16,11 +25,11 @@ primeira interface do usuário no app/site; CAASSH continua desativado.
 
 **Tipo:** Product Requirements Document (PRD)
 
-**Versão:** 0.2
+**Versão:** 0.3
 
-**Status:** Escopo integrado confirmado; regras institucionais em definição
+**Status:** Escopo consolidado; Mensagens em protótipo sob revisão de finalidade; Recursos Humanos como possibilidade futura
 
-**Data:** 09/09/2026
+**Data:** 17/09/2026 (revisão das decisões; versão inicial de 09/09/2026)
 
 **Escopo desta versão:** todos os módulos do painel e portal do parceiro
 
@@ -132,10 +141,9 @@ Cria e atualiza associados, registra verificações da OAB e solicita bloqueios 
 
 Mantém serviços parceiros, vigências, documentos, unidades atendidas e situação contratual.
 
-### 6.7 Recursos humanos
+### 6.7 Gestão de Colaboradores e possibilidade de Recursos Humanos
 
-Mantém os dados administrativos dos colaboradores. Acesso a dados sensíveis deve ser mínimo e
-explicitamente autorizado.
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
 ### 6.8 Auditor
 
@@ -158,7 +166,7 @@ apenas pelo nome do cargo.
 - Gestão de associados e registro de verificação da OAB.
 - Bloqueio e desbloqueio de associados com justificativa.
 - Gestão de parceiros e serviços parceiros.
-- Gestão administrativa de colaboradores.
+- Gestão de contas e permissões, apresentada como Colaboradores.
 - Logs de alterações e histórico dos registros críticos.
 - Pesquisa, filtros, paginação e exportação autorizada.
 
@@ -182,7 +190,7 @@ entrega integrada, inclusive os anteriormente ausentes ou adiados:
 - Comunicação: notícias/destaques, públicos, campanhas e modelos automáticos com acompanhamento.
 - Créditos: Caassh, configuração do programa, concessões individuais/em lote, extrato e correções.
 - Portal do parceiro: acesso por organização, solicitações avulsas ou identificadas por QR.
-- Equipe e acesso: colaboradores associados às contas e permissões existentes, sem duplicá-las.
+- Equipe e acesso: Colaboradores é a gestão das contas e permissões existentes, sem cadastro de RH separado.
 - Auditoria: Eventos e Processamentos reunidos, preservando autorizações independentes.
 - Relatórios: consultas e exportações dos mesmos registros dos domínios.
 
@@ -311,13 +319,10 @@ terminal; correções administrativas exigem permissão especial e justificativa
 
 ### 9.6 Colaboradores
 
-| ID      | Requisito                                                  | Prioridade |
-| ------- | ---------------------------------------------------------- | ---------- |
-| COL-001 | Cadastrar colaborador e situação funcional administrativa. | MVP        |
-| COL-002 | Relacionar colaborador a unidade, setor e função.          | MVP        |
-| COL-003 | Separar colaborador de conta de acesso ao sistema.         | MVP        |
-| COL-004 | Restringir campos sensíveis por permissão.                 | MVP        |
-| COL-005 | Integrar com sistema oficial de RH.                        | Pós-MVP    |
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+
+COL-001–COL-005 foram retirados do escopo de RH em 11/09/2026; seus IDs
+ficam reservados como histórico e não representam tarefas aprovadas ou concluídas.
 
 ### 9.7 Usuários e permissões
 
@@ -326,7 +331,7 @@ terminal; correções administrativas exigem permissão especial e justificativa
 | SEG-001 | Autenticar usuários e permitir desativação imediata.       | MVP        |
 | SEG-002 | Aplicar autorização no servidor em todas as ações.         | MVP        |
 | SEG-003 | Permitir múltiplas funções por usuário.                    | MVP        |
-| SEG-004 | Exigir MFA de administradores.                             | MVP        |
+| SEG-004 | MFA retirado em 10/09/2026 por reclamações; motivo registrado em 17/09/2026. | Retirado |
 | SEG-005 | Testar automaticamente a matriz de permissões.             | MVP        |
 | SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis. | MVP        |
 
@@ -398,8 +403,8 @@ terminal; correções administrativas exigem permissão especial e justificativa
 - **Bloqueio do associado:** tipo, motivo, início, fim, responsável e situação.
 - **Parceiro:** dados institucionais, categoria, contatos, vigência e status.
 - **Serviço parceiro:** parceiro, descrição, condições, abrangência e status.
-- **Colaborador:** dados administrativos, unidade, setor, função e status.
-- **Usuário:** identidade de autenticação, colaborador opcional, funções e status.
+- **Colaborador/Usuário:** a mesma conta de acesso, com identidade de autenticação, funções, permissões e status; a interface usa Colaboradores.
+- **Recursos Humanos:** possibilidade futura, sem entidade ou campos aprovados nesta revisão.
 - **Evento de auditoria:** registro imutável da ação e seu contexto.
 
 ### 10.4 Convenções
@@ -408,7 +413,7 @@ terminal; correções administrativas exigem permissão especial e justificativa
 - Datas persistidas em UTC e exibidas em `America/Bahia`.
 - Exclusão lógica para entidades auditáveis.
 - Valores sensíveis criptografados quando necessário.
-- Arquivos no object storage; apenas metadados no PostgreSQL.
+- Arquivos e metadados no PostgreSQL, conforme a decisão vigente de armazenamento; sem fallback S3/MinIO.
 - Estados controlados por enums ou máquinas de estado explícitas.
 
 ## 11. Telas necessárias
@@ -484,7 +489,7 @@ terminal; correções administrativas exigem permissão especial e justificativa
 
 - OWASP ASVS nível 2 como baseline verificável.
 - Autorização server-side e menor privilégio.
-- MFA para administradores e funções sensíveis definidas pela CAAB.
+- MFA retirado em 10/09/2026 por reclamações, conforme motivo confirmado pelo usuário em 17/09/2026; manter senha, sessões, autorização e auditoria.
 - Proteção contra CSRF, XSS, injeção, IDOR e força bruta.
 - Sanitização do conteúdo rico no armazenamento e/ou renderização.
 - Lista permitida de provedores e formatos para embeds.
@@ -629,7 +634,9 @@ as regras institucionais antigas de ativo/inativo e finanças não foram adotada
 
 Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
 atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
-Não haverá módulo separado de equipe interna/RH.
+Não há módulo separado de equipe interna/RH no escopo atual.
+
+Decisão de 17/09/2026: Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
 A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
 foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,
@@ -643,7 +650,7 @@ API ou migration para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Decisão vigente — Agendamentos e CAASSH, 14/09/2026
+## Estado vigente — Agendamentos e CAASSH, consolidado em 17/09/2026
 
 **Atualização de Agendamentos em 15/09/2026:** a CAAB gerencia no painel o serviço
 de reservas do app/site. Qualquer pessoa com acesso válido ao painel pode consultar
@@ -653,9 +660,7 @@ consulta/gestão de avaliações. Autenticação e auditoria permanecem; outros 
 mantêm suas permissões. Ações específicas de avaliações e regras operacionais ainda
 em brainstorming. Cal.com somente como referência, salvo se nenhuma alternativa for encontrada.
 
-O módulo se chama **Agendamentos**. Seu desenho anterior está suspenso: o usuário
-solicitou novo brainstorming para uma grande evolução antes da implementação.
-Ver `specs/002-integrated-modules/brainstorming-agendamentos.md`.
+A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da [spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta, remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja apenas em pesquisa.
 
 **CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
 são referências históricas, sem ativação ou implementação autorizada no ciclo atual.

@@ -1,12 +1,17 @@
 # Matriz OWASP ASVS 5.0.0 L2 — Fundação CAAB
 
+MFA foi retirado em 10/09/2026 por reclamações, conforme motivo confirmado
+pelo usuário em 17/09/2026. Ver a [decisão de retirada](../../specs/006-account-settings/authenticator-removal.md).
+A matriz descreve os controles implementados e não certifica conformidade integral
+com ASVS L2; registrar a retirada na revisão de segurança, sem afirmar atendimento por MFA.
+
 Esta matriz é evidência viva. Cada controle aplicável deve apontar para implementação e teste; itens
 que dependem de infraestrutura de produção permanecem bloqueadores até revisão humana.
 
 | Área ASVS | Requisito verificável da Fundação | Evidência automatizada | Estado |
 | --- | --- | --- | --- |
 | V1 Arquitetura | Fronteiras do monólito e componentes confiáveis documentados | lint de imports; `docs/architecture/foundation.md` | Atendido |
-| V2 Autenticação | Sessão server-side, revogação imediata e MFA administrativo | testes unitários, integração e E2E da US1 | Atendido |
+| V2 Autenticação | E-mail/senha, sessão server-side e revogação imediata; MFA retirado | testes unitários, integração e E2E da US1 | Atendido |
 | V3 Sessão | Cookies seguros e sessão ativa consultada a cada ação | integração Better Auth e revogação E2E | Atendido |
 | V4 Autorização | Negação por padrão e menor privilégio em toda ação protegida | testes de autorização US1–US5 | Atendido |
 | V5 Validação | Entradas validadas por schemas Zod e respostas sem detalhes internos | 16 testes de contrato | Atendido |

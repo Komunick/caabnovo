@@ -1,5 +1,10 @@
 # Plano — Mensagens
 
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+
+O plano abaixo registra a construção existente do protótipo. A continuidade depende
+da revisão de finalidade, escopo e aceite, acompanhada em M015/M016.
+
 1. Contratos Zod, migrations aditivas 0021/0022 e permissão única com concessão ao papel administrador existente.
 2. Repositório transacional compartilhado web/worker: catálogos, campanha versionada, seleção mínima de associados, bloqueios, execuções e auditoria sem corpo da mensagem nem lista de pessoas nos logs gerais.
 3. Rotas autenticadas, validação de origem/CSRF, limites de corpo, idempotência por usuário e operação, revalidação de sessão e permissão no banco.

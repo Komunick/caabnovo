@@ -1,5 +1,9 @@
 # Implementation Plan: Módulos integrados CAAB
 
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+
 **Branch**: `feature/product-direction` | **Date**: 2026-09-09 | **Spec**: [spec.md](spec.md)
 **Input**: Todos os módulos no escopo, reutilização da fundação e início imediato por US1.
 
@@ -37,7 +41,8 @@ preliminar. **Scale/Scope**: Dez histórias; volumes reais ainda não fornecidos
 - Auditoria/privacidade: mesma trilha append-only; descarte depende de T089.
 - Integrações: contratos explícitos; estado desconhecido não vira decisão institucional.
 - Acessibilidade: testes das mudanças efetivas; sem repetição da validação manual do PR #10.
-- Entrega: branch de trabalho, PR por função concluída com documentação/testes, main fora do escopo.
+- Entrega: uma branch/worktree por entrega; funções mantêm documentação/testes próprios
+  no mesmo PR enquanto aberto. PR mergeado não pode ser alterado; main fora do escopo.
 
 Resultado antes/depois do desenho: compatível. US1 pronta para início. Histórias de negócio têm
 tarefas de definição institucional antes das operações dependentes; não se presume aprovação.
@@ -170,7 +175,8 @@ rastreabilidade.
 
 Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
 atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
-Não haverá módulo separado de equipe interna/RH.
+Não há módulo separado de equipe interna/RH no escopo atual. Recursos Humanos
+é uma possibilidade futura, pendente de definição e autorização (17/09/2026).
 
 A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
 foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,
@@ -198,4 +204,4 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 
 ## Execução de US7 — 16/09/2026
 
-Preparação de Mensagens concluída no [plano 009](../009-messaging/plan.md), no mesmo ciclo/PR ativo. Adapters e entrega real foram adiados expressamente; não bloqueiam campanhas, modelos, públicos e programação preparatória. Reutiliza associados, RBAC, auditoria, worker e shell.
+Protótipo de preparação de Mensagens registrado no [plano 009](../009-messaging/plan.md), no mesmo ciclo/PR ativo. Adapters e entrega real foram adiados expressamente; não bloqueiam campanhas, modelos, públicos e programação preparatória. Reutiliza associados, RBAC, auditoria, worker e shell.
