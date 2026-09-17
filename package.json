@@ -13,6 +13,8 @@
     "dev:worker": "corepack pnpm --filter @caab/worker dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:docs": "prettier --ignore-path .gitignore --write",
+    "format:docs:check": "prettier --ignore-path .gitignore --check",
     "lint": "eslint .",
     "typecheck": "corepack pnpm -r --if-present typecheck",
     "test": "vitest run",
