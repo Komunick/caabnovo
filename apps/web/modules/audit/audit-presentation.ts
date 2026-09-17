@@ -41,6 +41,7 @@ export const auditActions: Record<string, string> = {
   "user.email.change_requested": "Solicitou a alteração do e-mail",
   "user.password.changed": "Alterou a senha",
   "user.password.reset": "Redefiniu a senha",
+  "user.password.initialized": "Definiu a senha inicial do colaborador",
   "user.authenticator.removed": "Removeu o autenticador da conta",
   "session.revoke": "Encerrou uma sessão de acesso",
   "audit.export.requested": "Solicitou a exportação da auditoria",

@@ -10,10 +10,13 @@ Este documento define como alterações passam do desenvolvimento à produção.
 
 Nunca realizar commits ou pushes diretos em `dev` ou `main`.
 
-Regra vigente do usuário em 15/09/2026: manter uma única branch/worktree por entrega.
-PRs ainda não integrados podem receber correções, commits e pushes na mesma branch.
-A abertura do PR não congela a branch. Após a integração, preservar a worktree e
-começar trabalho novo em outra branch. Isolamento adicional somente quando solicitado.
+Regra vigente do usuário, consolidada em 17/09/2026: manter uma única branch/worktree
+por entrega. PRs abertos podem receber atualizações (correções, commits e pushes) ou
+ser cancelados/fechados sem merge conforme o escopo autorizado. Abrir PR não congela
+a branch. PRs já mergeados não podem ser alterados, inclusive título, descrição e
+demais metadados; suas branches não podem ser reutilizadas para novas alterações.
+Correções posteriores entram por nova branch e novo PR. Preservar a worktree integrada.
+Isolamento adicional somente quando solicitado.
 Não aprovar ou integrar PR por iniciativa do agente; checks não são aprovação humana.
 
 ## 2. Política de merge
@@ -41,6 +44,14 @@ Não aprovar ou integrar PR por iniciativa do agente; checks não são aprovaç�
 - Merge em `main`: deploy no ambiente PROD.
 
 DEV e PROD devem ter bancos, storages, segredos e integrações separados.
+
+### Preview local — decisão de 17/09/2026
+
+Localhost permanece desativado até ordem explícita do usuário para ligá-lo. Quando autorizado, atualizar o preview para a versão mais recente do repositório local antes de disponibilizá-lo, conferindo e registrando branch, commit e eventuais alterações locais que compõem essa versão. Não reutilizar silenciosamente build antigo; preservar banco, contas e arquivos. Essa regra não autoriza ligar serviços agora.
+
+Quando ligado, o preview principal usa `http://localhost:3107` e os limites locais
+de recursos registrados em `AGENTS.md`. Builds e E2E pesados ficam no CI quando
+houver pouca memória local; testes usam bancos descartáveis.
 
 ## 4. Fluxo padrão
 
@@ -101,9 +112,11 @@ A IA pode:
 4. Preparar migrations e documentação.
 5. Abrir PR para `dev` com resumo, riscos e plano de teste.
 6. Preparar PR de promoção quando solicitado.
+7. Cancelar/fechar PR aberto sem merge quando autorizado pelo pedido ou escopo da entrega.
 
 A IA não pode:
 
+- Alterar PR já mergeado ou reutilizar sua branch para novas mudanças.
 - Fazer merge em `main`.
 - Aprovar ou forçar deploy de produção.
 - Ignorar CI ou proteção de branch.

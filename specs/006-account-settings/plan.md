@@ -58,3 +58,7 @@ Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenam
 em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
 React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
 Não usar cache público, localStorage ou salvamento automático no banco.
+
+## Senha inicial — 17/09/2026
+
+Gerador server-only com crypto.randomInt e lista local; hashPassword do Better Auth. Inserir account/credential na transação de criação. Resposta exclusiva de criação com initialPassword string/null; reenvio idempotente retorna null. Recibo transitório em memória com controles compartilhados. Ação no detalhe para cadastro sem senha: lock da conta, sessão/permissões revalidadas e comparação da autoridade. Não sobrescrever credenciais existentes. Sem migration ou backfill. Specs 001/006 compartilham o código. Testes leves locais e integração/E2E/build no CI; banco/preview pausados, nenhum merge automático.

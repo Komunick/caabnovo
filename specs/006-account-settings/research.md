@@ -63,3 +63,13 @@ compartilhados conservam estado; Activity do framework retém somente três rota
 identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
 usa input/list: [MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
 Sugestões não validam sozinhas a seleção; conferir identificador válido antes de enviar.
+
+## Senha inicial — pesquisa de 17/09/2026
+
+Fontes oficiais: [Node.js randomInt](https://nodejs.org/docs/latest-v24.x/api/crypto.html#cryptorandomintmin-max-callback), [Better Auth database](https://better-auth.com/docs/concepts/database), [OWASP Password Storage](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). Consultado guia local Next 16.3.4 de Route Handlers.
+
+Node oferece sorteio criptográfico sem viés de módulo. Reutilizar hashPassword e account/providerId credential assegura compatibilidade com login; armazenar somente hash adaptativo. Decisão do usuário: uma palavra + seis dígitos. Palavra de seis ou mais letras com inicial maiúscula atende à política atual. A entropia é limitada pela lista e um milhão de sufixos; não afirmar que comprimento implica alta entropia. Preservar rate limiting e troca de senha existentes. Sem dependência nova nem envio de e-mail automático.
+
+Diagnóstico: criação anterior só inseria user e recuperação exige account.password existente. Corrigir atomicamente. Reenvio idempotente não pode recuperar senha do hash ou substituí-la. A única conta legada sem senha poderá receber credencial por ação explícita, com autoridade e concorrência verificadas. Respostas com no-store; segredo só em memória transitória, fora de logs/rascunhos/storage. Nenhum dado real na implementação.
+
+Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.

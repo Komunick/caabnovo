@@ -28,7 +28,7 @@ Nunca copie tokens, cookies, senhas, payloads pessoais ou stacks completas para 
 2. Para sessões, revogue os registros ativos do usuário e confirme 401 no próximo request.
 3. Para capacidades de arquivos, tratar a chave de assinatura do painel; URLs emitidas expiram em cinco minutos.
 4. Para banco, crie credencial nova de menor privilégio, atualize o ambiente e revogue a anterior.
-5. Para MFA, invalide recuperação/TOTP comprometido e refaça o enrollment por canal verificado.
+5. MFA foi retirado por reclamações; não há enrollment/TOTP ativo a refazer. Para conta comprometida, revogue sessões e redefina a senha pelo fluxo autorizado.
 6. Procure o identificador, nunca o segredo, em logs/auditoria e acione resposta a incidente/DPO quando
    houver possível exposição de dados pessoais.
 

@@ -1,12 +1,12 @@
 # Tasks: Módulos integrados CAAB
 
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
-Obrigatórios por risco conforme especificação. Todos os módulos no escopo, com PR por função pronta.
+Obrigatórios por risco conforme especificação. Cada função tem artefatos próprios; alterações autorizadas compartilham a única branch/worktree da entrega e seu PR enquanto aberto.
 **Status em 16/09/2026**: Auditoria/Processamentos, Notícias, Associados, Parceiros,
 contas/acessos e Agendamentos administrativos iniciais estão entregues em dev, incluindo
 as correções dos PRs #29 e #30. Pessoas/elegibilidade institucional (T017) permanece
-parcial, distinta do cadastro implementado. Mensagens, Portal, Relatórios e interface
-app/site permanecem futuros; CAASSH/Créditos suspenso. A validação final de todo o
+parcial, distinta do cadastro implementado. Mensagens é protótipo pendente de revisão
+de finalidade (17/09/2026); Portal, Relatórios e interface app/site permanecem futuros; CAASSH/Créditos suspenso. A validação final de todo o
 programa (T055–T057) depende dessas histórias futuras.
 
 
@@ -202,6 +202,9 @@ Parceiros são externos; não haverá módulo separado de equipe interna/RH.
   sem aguardar ou criar cadastro funcional, vínculo colaborador-conta ou módulo employees.
 
 ## Phase 9 — US7 Mensagens (P2)
+
+**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+A revisão é acompanhada por M015/M016 da spec 009, antes de retomar T036–T039.
 
 Atualização 16/09/2026: implementação autorizada antes dos canais, no spec próprio
 [009-messaging](../009-messaging/spec.md). T036–T039 cobrem também entrega real e

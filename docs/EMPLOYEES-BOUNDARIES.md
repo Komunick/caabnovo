@@ -2,7 +2,9 @@
 
 Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
 atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
-Não haverá módulo separado de equipe interna/RH.
+Não há módulo separado de equipe interna/RH no escopo atual.
+
+Decisão de 17/09/2026: Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
 A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
 foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,

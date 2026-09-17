@@ -2,9 +2,7 @@ openapi: 3.1.1
 info:
   title: CAAB Foundation API
   version: 1.0.0
-  description: Versioned administrative contracts for identity context, access management, audit,
-    files and asynchronous operation status. Authentication endpoints are delegated to Better Auth
-    and constrained by authentication.md.
+  description: Versioned administrative contracts for identity context, access management, audit, files and asynchronous operation status. Authentication endpoints are delegated to Better Auth and constrained by authentication.md.
 servers:
   - url: /api/v1
 security:
@@ -15,9 +13,10 @@ paths:
       - in: query
         name: grant
         required: true
-        schema: { type: string, maxLength: 2048 }
-        description: Five-minute HMAC capability issued after authorization; bound to object and HTTP
-          method. Never log this value.
+        schema:
+          type: string
+          maxLength: 2048
+        description: Five-minute HMAC capability issued after authorization; bound to object and HTTP method. Never log this value.
     put:
       operationId: putDatabaseFileContent
       security: []
@@ -25,23 +24,46 @@ paths:
       requestBody:
         required: true
         content:
-          image/jpeg: { schema: { type: string, format: binary } }
-          image/png: { schema: { type: string, format: binary } }
-          application/pdf: { schema: { type: string, format: binary } }
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+          image/png:
+            schema:
+              type: string
+              format: binary
+          application/pdf:
+            schema:
+              type: string
+              format: binary
       responses:
-        "204": { description: Exact size and SHA-256 accepted; finalization and scanning still required }
-        "403": { description: Missing, invalid or expired capability }
-        "409": { description: State, size or checksum conflict }
-        "413": { description: Body exceeds intent size or 25 MiB }
-        "422": { description: Content type differs from intent }
+        "204":
+          description: Exact size and SHA-256 accepted; finalization and scanning still required
+        "403":
+          description: Missing
+          invalid or expired capability: null
+        "409":
+          description: State
+          size or checksum conflict: null
+        "413":
+          description: Body exceeds intent size or 25 MiB
+        "422":
+          description: Content type differs from intent
     get:
       operationId: getDatabaseFileContent
       security: []
       summary: Read available file bytes using the short-lived download capability
       responses:
-        "200": { description: Binary content, no-store, nosniff; only JPEG/PNG inline }
-        "403": { description: Missing, invalid or expired capability }
-        "404": { description: File unavailable, deleted or still quarantined }
+        "200":
+          description: Binary content
+          no-store: null
+          nosniff; only JPEG/PNG inline: null
+        "403":
+          description: Missing
+          invalid or expired capability: null
+        "404":
+          description: File unavailable
+          deleted or still quarantined: null
   /me:
     get:
       operationId: getCurrentUser
@@ -95,7 +117,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/CreatedUser"
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: private, no-store
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -390,6 +417,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Job"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/Unprocessable"
+  /users/{userId}/initial-password:
+    post:
+      operationId: initializeUserPassword
+      summary: Create the first password only for an active account with no password
+      description: Requires users:create, users:update, roles:grant, a live session and authority over every target permission. Cannot replace existing credentials or initialize self.
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+        - $ref: "#/components/parameters/CsrfToken"
+      responses:
+        "200":
+          description: Initial password, returned once
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const: private, no-store
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - initialPassword
+                properties:
+                  initialPassword:
+                    type: string
+                    pattern: ^[A-Z][a-z]{5,}[0-9]{6}$
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -952,3 +1016,52 @@ components:
                     type: string
                   code:
                     type: string
+    CreatedUser:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - email
+        - name
+        - status
+        - twoFactorEnabled
+        - roles
+        - version
+        - createdAt
+        - initialPassword
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+        status:
+          $ref: "#/components/schemas/UserStatus"
+        twoFactorEnabled:
+          type: boolean
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleReference"
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type:
+            - string
+            - "null"
+          format: date-time
+        initialPassword:
+          type:
+            - string
+            - "null"
+          pattern: ^[A-Z][a-z]{5,}[0-9]{6}$
+          description: Returned only on first creation; null on idempotent replay. Never stored in plaintext.

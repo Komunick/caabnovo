@@ -62,3 +62,11 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
 - [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.
+
+## Senha inicial — 17/09/2026
+
+- [x] IP001 Registrar pesquisa e contratos do formato palavra + seis dígitos.
+- [x] IP002 Criar hash/credencial atomicamente e proteger idempotência.
+- [x] IP003 Exibir recibo de senha e permitir geração inicial para cadastro sem senha.
+- [x] IP004 Testar login, recuperação, autorização, concorrência, rollback e não exposição.
+- [x] IP005 Validar interface desktop/mobile, acessibilidade, gates e preparar PR para dev.

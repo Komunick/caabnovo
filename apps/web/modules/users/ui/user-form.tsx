@@ -5,12 +5,13 @@ import { FormField } from "@/components/ui/form-field";
 
 import { Plus } from "lucide-react";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { Role, User } from "@caab/contracts";
+import type { CreatedUser, Role, User } from "@caab/contracts";
 import { requiredEmailSchema, contactFieldMessages } from "@caab/contracts";
 import { ValidatedTextField } from "@/components/ui/validated-text-field";
 import { SensitiveActionDialog } from "./sensitive-action-dialog";
+import { InitialPasswordReceipt } from "./initial-password";
 
 type UserFormProps =
   | { mode: "create"; roles: Role[]; user?: never; canDisable?: never }
@@ -37,6 +38,9 @@ export function UserForm(props: Readonly<UserFormProps>) {
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  // Credential receipts are intentionally excluded from persistent form drafts.
+  const [created, setCreated] = useState<CreatedUser | null>(null);
+  const attempt = useRef<{ body: string; key: string } | null>(null);
 
   useEffect(() => setHydrated(true), []);
 
@@ -48,42 +52,54 @@ export function UserForm(props: Readonly<UserFormProps>) {
     const form = event.currentTarget;
     const data = new FormData(form);
     const editing = props.mode === "edit";
-    const response = await fetch(editing ? `/api/v1/users/${props.user.id}` : "/api/v1/users", {
-      method: editing ? "PATCH" : "POST",
-      headers: mutationHeaders(editing ? undefined : crypto.randomUUID()),
-      body: JSON.stringify(
-        editing
-          ? {
-              name: data.get("name"),
-              version,
-            }
-          : {
-              name: data.get("name"),
-              email: data.get("email"),
-              roleIds: data.getAll("roleIds"),
-            },
-      ),
-    });
-    if (!response.ok) {
-      setError(await errorMessage(response));
-    } else {
-      drafts.clear("users-user-form-1:");
-      if (!editing) {
-        const created = (await response.json()) as { id?: string };
-        if (!created.id) {
-          setError("O colaborador foi criado, mas não foi possível abrir o cadastro.");
-          setPending(false);
+    const body = JSON.stringify(
+      editing
+        ? {
+            name: data.get("name"),
+            version,
+          }
+        : {
+            name: data.get("name"),
+            email: data.get("email"),
+            roleIds: data.getAll("roleIds"),
+          },
+    );
+    if (!editing && attempt.current?.body !== body)
+      attempt.current = { body, key: crypto.randomUUID() };
+    try {
+      const response = await fetch(editing ? `/api/v1/users/${props.user.id}` : "/api/v1/users", {
+        method: editing ? "PATCH" : "POST",
+        headers: mutationHeaders(editing ? undefined : attempt.current!.key),
+        body,
+        cache: "no-store",
+      });
+      if (!response.ok) {
+        setError(await errorMessage(response));
+      } else {
+        drafts.clear("users-user-form-1:");
+        if (!editing) {
+          const created = (await response.json()) as CreatedUser;
+          if (!created.id) {
+            setError("O colaborador foi criado, mas não foi possível abrir o cadastro.");
+            setPending(false);
+            return;
+          }
+          setCreated(created);
+          attempt.current = null;
           return;
         }
-        router.push(`/users/${created.id}`);
-        return;
+        const saved = await response.json();
+        setVersion(saved.version);
+        setMessage("Alterações salvas.");
+        router.refresh();
       }
-      const saved = await response.json();
-      setVersion(saved.version);
-      setMessage("Alterações salvas.");
-      router.refresh();
+    } catch {
+      setError(
+        "Não foi possível confirmar o cadastro. Tente novamente; um envio repetido não criará outra conta.",
+      );
+    } finally {
+      setPending(false);
     }
-    setPending(false);
   }
 
   async function disable() {
@@ -99,6 +115,16 @@ export function UserForm(props: Readonly<UserFormProps>) {
     if (!response.ok) throw new Error(await errorMessage(response));
     router.refresh();
   }
+
+  if (created)
+    return (
+      <InitialPasswordReceipt
+        password={created.initialPassword}
+        email={created.email}
+        userId={created.id}
+        onDone={() => setCreated(null)}
+      />
+    );
 
   return (
     <section className="panel" aria-labelledby={`${props.mode}-user-title`}>

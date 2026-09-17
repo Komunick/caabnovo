@@ -1,5 +1,9 @@
 # Decisão: remoção total do autenticador
 
+**Motivo confirmado em 17/09/2026:** MFA foi retirado por reclamações.
+A retirada ocorreu em 10/09/2026; este registro esclarece sua motivação, preservando
+senha, sessões, permissões e auditoria. Reintrodução exige nova decisão explícita.
+
 Em 10/09/2026, o responsável pelo produto solicitou explicitamente: “remova totalmente o autenticador” e confirmou a retirada da aba de Configurações. Essa decisão substitui tanto a exigência anterior de MFA para administradores quanto o pedido intermediário de um botão administrativo para remover MFA.
 
 - Login passa a usar e-mail e senha, sem desafio TOTP, códigos de recuperação ou confiança de dispositivos.

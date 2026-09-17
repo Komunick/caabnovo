@@ -21,7 +21,7 @@ Web + Worker -> OpenTelemetry Collector -> métricas/traces/alertas
 ## Fronteiras
 
 - `apps/web/app`: composição Next.js, páginas e adaptadores HTTP; não contém regra de negócio.
-- `apps/web/modules/auth`: sessão, MFA, ator da requisição e autorização deny-by-default.
+- `apps/web/modules/auth`: autenticação por e-mail/senha, sessão, ator da requisição e autorização deny-by-default.
 - `apps/web/modules/users`, `audit`, `files`, `jobs`: serviços transacionais e UI por capacidade.
 - `apps/worker/src/jobs`: handlers idempotentes que recarregam dados protegidos por identificador.
 - `packages/contracts`: schemas Zod e validação/geração determinística do OpenAPI 3.1.1.
@@ -35,7 +35,7 @@ de módulos web. Domínios comunicam por contratos pequenos, IDs e transações,
 ## Invariantes de segurança
 
 - Sessões são confirmadas no servidor e permissões são recalculadas do banco em cada ação protegida.
-- Administradores passam por MFA; autorização de UI nunca substitui autorização no handler/serviço.
+- MFA foi retirado por reclamações (retirada em 10/09/2026, motivo confirmado em 17/09/2026). Administradores usam e-mail/senha; autorização de UI nunca substitui autorização no handler/serviço.
 - Eventos críticos são append-only e compartilham transação com a mutação causal.
 - Logs e erros usam campos allowlisted; mensagens externas nunca incluem stacks ou payloads brutos.
 - Upload começa em quarentena privada. Apenas `available` recebe URL privada de download.
