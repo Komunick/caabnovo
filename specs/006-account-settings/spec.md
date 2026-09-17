@@ -172,3 +172,13 @@ Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção cor
 - Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
   Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
 - Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.
+
+## Senha inicial de colaboradores — decisão de 17/09/2026
+
+Novos colaboradores recebem palavra aleatória em português sem acentos, com inicial maiúscula e pelo menos seis letras, seguida de exatamente seis dígitos (inclusive zeros iniciais). Cadastro, hash da credencial e auditoria são atômicos. A senha é mostrada somente na resposta inicial ao administrador, com mostrar/ocultar, copiar e abrir cadastro. Não enviar e-mail automaticamente nem guardar senha em logs, auditoria, rascunhos, URL ou storage. Repetição idempotente não troca nem reapresenta senha; orientar recuperação se a resposta original foi perdida.
+
+Para a única conta antiga sem senha informada pelo usuário, oferecer geração inicial no detalhe somente se não houver credencial de senha. Exigir sessão ativa, users:create/users:update/roles:grant, destinatário ativo e acessos contidos na autoridade atual do gestor. Proibir autogeração e substituição de senha existente. Não executar backfill em lote nem incluir e-mail real no código.
+
+Aceite: criação pela interface seguida de login com a senha gerada; recuperação disponível; negações, idempotência, concorrência, rollback e ausência de segredo em consultas/auditoria testados. UI desktop/mobile e acessibilidade no padrão existente.
+
+Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.

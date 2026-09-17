@@ -331,3 +331,7 @@ Registrar a nova área por messages:access, seus atalhos de busca e título do c
 ## Ordem de módulos — 16/09/2026
 
 Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens penúltimo imediatamente antes de Auditoria; manter utilidades da conta. Compartilhar ordem entre navegação e catálogo de áreas. Agendamentos de Mensagens na busca de funções.
+
+## Senha inicial — 17/09/2026
+
+Gerador server-only com crypto.randomInt e lista local; hashPassword do Better Auth. Inserir account/credential na transação de criação. Resposta exclusiva de criação com initialPassword string/null; reenvio idempotente retorna null. Recibo transitório em memória com controles compartilhados. Ação no detalhe para cadastro sem senha: lock da conta, sessão/permissões revalidadas e comparação da autoridade. Não sobrescrever credenciais existentes. Sem migration ou backfill. Specs 001/006 compartilham o código. Testes leves locais e integração/E2E/build no CI; banco/preview pausados, nenhum merge automático.

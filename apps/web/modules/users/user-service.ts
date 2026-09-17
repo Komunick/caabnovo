@@ -22,6 +22,7 @@ import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
 import { validateRoleGrant } from "./access-policy";
 import { UserAccessError } from "./errors";
+import { insertInitialCredential } from "./initial-password-service";
 
 interface CommandContext {
   actor: RequestActor;
@@ -109,7 +110,7 @@ export async function createUser(
           }
           if (record.status === "completed" && record.response_reference) {
             const prior = await findUserById(client, record.response_reference);
-            if (prior) return serializeUser(prior);
+            if (prior) return { ...serializeUser(prior), initialPassword: null };
           }
           throw new UserAccessError(
             "IDEMPOTENCY_IN_PROGRESS",
@@ -119,6 +120,7 @@ export async function createUser(
         }
       }
       const created = await insertUser(client, { email: command.email, name: command.name });
+      const initialPassword = await insertInitialCredential(client, created.id);
       for (const roleId of command.roleIds) {
         const role = await findRoleById(client, roleId);
         if (!role || role.status !== "active") {
@@ -171,7 +173,7 @@ export async function createUser(
           [command.idempotencyKey, created.id],
         );
       }
-      return serializeUser(result);
+      return { ...serializeUser(result), initialPassword };
     });
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && error.code === "23505") {

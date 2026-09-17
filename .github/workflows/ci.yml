@@ -99,6 +99,14 @@ jobs:
           pnpm db:seed:dev
           pnpm dev:worker > /tmp/caab-e2e-worker.log 2>&1 &
       - run: pnpm test:e2e --project=chromium
+      - name: Preserve synthetic initial password UI evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: initial-password-synthetic-evidence
+          path: apps/web/test-results/**/initial-password-*.png
+          retention-days: 7
+          if-no-files-found: warn
       - name: Preserve workspace draft review evidence
         if: always()
         uses: actions/upload-artifact@v7

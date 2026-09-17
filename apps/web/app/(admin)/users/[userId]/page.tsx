@@ -12,6 +12,11 @@ import { RoleAssignmentForm } from "@/modules/users/ui/role-assignment-form";
 import { UserForm } from "@/modules/users/ui/user-form";
 import { UserAccessForm } from "@/modules/users/ui/user-access-form";
 import { readUserAccess } from "@caab/db/repositories/user-access";
+import {
+  hasUserPassword,
+  INITIAL_PASSWORD_PERMISSIONS,
+} from "@/modules/users/initial-password-service";
+import { InitializePasswordForm } from "@/modules/users/ui/initial-password";
 
 export default async function UserDetailPage({
   params,
@@ -25,10 +30,11 @@ export default async function UserDetailPage({
     return <p role="alert">Você não tem permissão para acessar colaboradores.</p>;
   }
   const database = getDatabase();
-  const [record, roleRecords, access] = await Promise.all([
+  const [record, roleRecords, access, hasPassword] = await Promise.all([
     findUserById(database.pool, userId),
     listActiveRoles(database.pool),
     readUserAccess(database.pool, userId),
+    hasUserPassword(database.pool, userId),
   ]);
   if (!record) return <p role="alert">Colaborador não encontrado.</p>;
   const user = userSchema.parse(serializeUser(record));
@@ -55,6 +61,13 @@ export default async function UserDetailPage({
           {user.status === "active" ? "Ativo" : "Desativado"}
         </span>
       </header>
+      {!hasPassword &&
+      user.status === "active" &&
+      actor.userId !== user.id &&
+      INITIAL_PASSWORD_PERMISSIONS.every((permission) => actor.permissions.has(permission)) &&
+      access.permissions.every((permission) => actor.permissions.has(permission)) ? (
+        <InitializePasswordForm userId={user.id} email={user.email} />
+      ) : null}
       {actor.permissions.has(PERMISSIONS.usersUpdate) ? (
         <UserForm
           mode="edit"

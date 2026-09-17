@@ -2,9 +2,9 @@ import {
   createUserRequestSchema,
   userListQuerySchema,
   userPageSchema,
-  userSchema,
+  createdUserSchema,
   type CreateUserRequest,
-  type User,
+  type CreatedUser,
   type UserListQuery,
   type UserPage,
 } from "@caab/contracts";
@@ -24,7 +24,7 @@ interface UsersRouteDependencies {
       correlationId: string;
       idempotencyKey: string;
     },
-  ): Promise<User>;
+  ): Promise<CreatedUser>;
 }
 
 export function createUsersRoute(deps: UsersRouteDependencies) {
@@ -57,7 +57,10 @@ export function createUsersRoute(deps: UsersRouteDependencies) {
           correlationId: correlationId(request),
           idempotencyKey: idempotencyKey!,
         });
-        return Response.json(userSchema.parse(created), { status: 201 });
+        return Response.json(createdUserSchema.parse(created), {
+          status: 201,
+          headers: { "cache-control": "private, no-store" },
+        });
       } catch (error) {
         return routeErrorResponse(error, id);
       }

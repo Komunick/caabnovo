@@ -11,6 +11,14 @@ import { currentUserSchema, userStatusSchema } from "./auth";
 
 export const userSchema = currentUserSchema.omit({ permissions: true });
 
+export const initialPasswordResponseSchema = z.object({
+  initialPassword: z.string().regex(/^[A-Z][a-z]{5,}\d{6}$/),
+});
+export const createdUserSchema = userSchema.extend({
+  initialPassword: initialPasswordResponseSchema.shape.initialPassword.nullable(),
+});
+export type CreatedUser = z.infer<typeof createdUserSchema>;
+
 export const userPageSchema = pageSchema(userSchema);
 
 export const userListQuerySchema = paginationQuerySchema.extend({

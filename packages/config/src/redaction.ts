@@ -1,5 +1,6 @@
 export const SENSITIVE_KEYS = new Set([
   "password",
+  "initialPassword",
   "token",
   "cookie",
   "authorization",
