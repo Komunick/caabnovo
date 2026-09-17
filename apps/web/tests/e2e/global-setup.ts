@@ -1,15 +1,12 @@
 import { Client } from "pg";
 import { runMigrations } from "@caab/db";
 import { provisionTestUser } from "../support/provision-user";
-import { assertLocalSeedTarget } from "../support/local-seed-target";
 import { syntheticUsers } from "./fixtures";
 
-const origin = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 const adminUrl =
   process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab";
 
 export default async function globalSetup() {
-  assertLocalSeedTarget({ ...process.env, BETTER_AUTH_URL: origin, DATABASE_ADMIN_URL: adminUrl });
   await runMigrations(adminUrl);
   const admin = new Client({ connectionString: adminUrl });
   await admin.connect();
@@ -29,20 +26,6 @@ export default async function globalSetup() {
     await ensureUser(syntheticUsers.auditor, "Auditor Sintético");
     await ensureUser(syntheticUsers.operator, "Operador Sintético");
     await ensureUser(syntheticUsers.administrator, "Administrador Sintético");
-
-    // Existing editorial tests use an explicit fixture role, not implicit production access.
-    await admin.query(
-      `INSERT INTO role(code,name,description) VALUES ('synthetic-editor','Editor sintético','Fixture editorial') ON CONFLICT (code) DO NOTHING`,
-    );
-    await admin.query(`INSERT INTO role_permission(role_id,permission_id)
-      SELECT r.id,p.id FROM role r CROSS JOIN permission p
-      WHERE r.code='synthetic-editor' AND p.resource='news' AND p.action IN ('read','write','publish') ON CONFLICT DO NOTHING`);
-    await admin.query(
-      `INSERT INTO user_role(user_id,role_id,granted_by,justification)
-      SELECT u.id,r.id,u.id,'Fixture editorial explícita' FROM "user" u CROSS JOIN role r
-      WHERE u.email=ANY($1::citext[]) AND r.code='synthetic-editor' ON CONFLICT DO NOTHING`,
-      [Object.values(syntheticUsers).map((user) => user.email)],
-    );
 
     const users = await admin.query<{ id: string; email: string }>(
       `SELECT id, email::text FROM "user" WHERE email = ANY($1::citext[])`,

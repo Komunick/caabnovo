@@ -187,10 +187,6 @@ describe("initial credential provisioning", () => {
   it("rejects disabled users and targets outside the manager's current authority", async () => {
     const userId = await legacy();
     await admin.query(
-      "INSERT INTO user_access(user_id,permissions,updated_by) VALUES ($1,ARRAY['news:read'],$1)",
-      [userId],
-    );
-    await admin.query(
       "UPDATE user_access SET permissions=ARRAY['users:create','users:update','roles:grant'] WHERE user_id=$1",
       [actor.userId],
     );

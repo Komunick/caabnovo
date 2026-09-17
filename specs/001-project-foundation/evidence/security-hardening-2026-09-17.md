@@ -1,44 +1,38 @@
-# Correção de segurança — 17/09/2026
+# Correção de segurança — escopo reduzido em 17/09/2026
 
-Escopo autorizado: aplicação, banco, Compose local e dependências. Configurações e
-workflows GitHub excluídos. Nenhuma conta real ou serviço local alterado.
+Por pedido do usuário, retiradas mudanças com possível incompatibilidade com a VM.
+Nenhuma implantação ou alteração de conta, banco, segredo ou serviço real realizada.
 
-- Signup desabilitado no Better Auth e na lista de rotas. Fixtures SQL exclusivas
-  de teste substituem inscrições; não existe flag para reabrir signup.
-- Migration 0024 preserva o baseline editorial anterior como função explícita,
-  somente para contas preexistentes sem user_access. Overrides, negações e RBAC
-  dinâmico permanecem. Contas futuras começam sem permissões implícitas. Migração
-  auditada como sistema; granted_by da concessão histórica usa o destinatário por
-  compatibilidade com o schema, sem representar ação humana.
-- CSP com nonce criptográfico por HTML e renderização dinâmica, incluindo tema.
-  Scripts de produção sem unsafe-inline/eval; estilos inline mantidos por exigência
-  de React/editor. ViaCEP permitido em connect-src. Anti-framing, nosniff, política
-  de referência/capacidades, HSTS no HTTPS e no-store nas APIs privadas.
-- Seeds recusam app/banco remoto, produção e overrides de conexão antes de abrir
-  conexão. App público recusa placeholders de autenticação/banco. Portas Compose
-  passam a 127.0.0.1; aplicação depende de recriar os containers quando autorizado.
-- Payload e seus pacotes alinhados em 3.89.0; DOMPurify 3.4.15, YAML 2.9.1 e cópias
-  transitivas vulneráveis de esbuild fixadas em 0.28.2. Audit final: zero avisos em
-  todas as severidades (registro local .cache/dependencies-after.json).
+## Mantido
 
-Pesquisa: [release Payload](https://github.com/payloadcms/payload/releases/tag/v3.89.0)
-altera também defaults de jobs; o projeto usa pg-boss e mantém jobs Payload sem
-tasks/autoRun. [DOMPurify](https://github.com/cure53/DOMPurify/releases) e
+- Cadastro público bloqueado na lista de rotas e por disableSignUp do Better Auth.
+  Login, recuperação e criação administrativa preservados. Fixtures SQL substituem
+  signup nos testes, sem flag de runtime para reabrir cadastro público.
+- Payload e seus pacotes de 3.88.0 para 3.89.0; transitivas DOMPurify 3.4.15,
+  YAML 2.9.1 e esbuild 0.28.2. Audit registrado sem alertas conhecidos.
+
+## Retirado antes da implantação
+
+- Migration 0024, função legada e alteração das permissões editoriais implícitas.
+- CSP/nonce, cabeçalhos adicionais, políticas de cache e renderização dinâmica.
+- Rejeição adicional de credenciais de exemplo em ambiente público.
+- Restrições de execução dos seeds e portas do Compose ao loopback.
+- Testes exclusivos dessas mudanças; regressões originais da dev restauradas.
+
+Arquivos correspondentes restaurados da dev 8f12db4. Nenhuma migration anterior
+editada. Permanece o acesso editorial implícito de contas sem seleção individual.
+Os achados retirados seguem pendentes. GitHub settings/workflows fora do escopo.
+
+## Validação e limites
+
+O conjunto anterior em a58b88e passou em todos os jobs do
+[CI 35266679311](https://github.com/Komunick/caabnovo/actions/runs/35266679311).
+Resultado histórico: o conjunto reduzido será validado novamente no CI.
+Não equivale a teste na VM nem garante ausência absoluta de incompatibilidades.
+A entrega reduzida não exige migration, troca de variável ou recriação de container.
+
+Pesquisa mantida: [Payload 3.89.0](https://github.com/payloadcms/payload/releases/tag/v3.89.0),
+[DOMPurify](https://github.com/cure53/DOMPurify/releases) e
 [esbuild](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99).
-Não inferir ausência de falhas desconhecidas a partir do audit zerado.
-
-Validação local: formatação e lint aprovados; 467 testes de unidade/contrato
-passaram. Um teste de subprocesso antigo falhou no Windows com uv_os_get_passwd
-ENOMEM; permanece obrigatório no CI Linux, sem skip. Integração/E2E/build no CI.
-
-## Implantação e reversão
-
-Antes da implantação, conferir segredos próprios do ambiente fora dos arquivos de
-exemplo; a nova validação falha de forma explícita se placeholders permanecerem.
-Aplicar migrations com o runner normal. A migration bloqueia inserções de contas
-durante o snapshot. Não apaga contas ou sessões; revisar a legitimidade das contas
-existentes operacionalmente continua necessário. Não reescrever migration aplicada.
-Rollback de código deve manter a migration restritiva; não reabrir signup nem
-restaurar permissões automáticas. Uma falha de CSP deve ser corrigida por origem/
-diretiva específica, sem liberar scripts inline globalmente. HTML agora dinâmico
-tem custo adicional de renderização. GitHub/scanner continuam pendências fora do escopo.
+Payload mudou defaults de jobs; o projeto usa pg-boss e não configura tasks/autoRun
+Payload. Audit sem alertas não garante ausência de falhas desconhecidas.

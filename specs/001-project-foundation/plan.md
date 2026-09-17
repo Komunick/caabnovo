@@ -338,4 +338,4 @@ Gerador server-only com crypto.randomInt e lista local; hashPassword do Better A
 
 ## Correção de segurança — 17/09/2026
 
-Branch única fix/app-security-hardening-20260917, base dev 8f12db4. Desabilitar signup no Better Auth e lista de rotas; fixtures usam SQL em bancos de teste, sem bypass de runtime. Migration aditiva 0024 converte baseline editorial em função legada somente para usuários anteriores sem seleção explícita, preservando RBAC dinâmico. CSP via proxy Next, nonce por resposta e layout dinâmico com Script de tema autorizado. Cabeçalhos globais e no-store nas APIs privadas. Guardas de seed antes da conexão; placeholders bloqueados fora do loopback. Integração/E2E/build no CI; localhost pausado.
+Na mesma branch fix/app-security-hardening-20260917, restaurar da base dev os arquivos de infraestrutura, ambiente, permissões e navegador alterados nesta entrega. Remover a migration 0024 ainda não implantada e testes exclusivos das mudanças retiradas. Manter disableSignUp/lista de rotas, fixtures SQL necessárias ao bloqueio e dependências atualizadas. Validar o conjunto reduzido em CI; sem serviços locais, merge ou deploy.

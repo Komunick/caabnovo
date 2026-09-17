@@ -73,9 +73,7 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 
 ## Correção de segurança — 17/09/2026
 
-- [ ] SH01 Bloquear signup público e adaptar fixtures sem bypass de produção.
-- [ ] SH02 Migrar baseline editorial preservando usuários atuais e testar negação por padrão.
-- [ ] SH03 Aplicar CSP/cabeçalhos/cache e validar navegação, CEP e fluxos críticos.
-- [ ] SH04 Proteger seeds/defaults e portas locais, com testes de destinos recusados.
-- [ ] SH05 Atualizar dependências corrigíveis e registrar avisos restantes.
-- [ ] SH06 Executar gates, registrar evidências e preparar PR para dev sem merge.
+- [ ] SH01 Manter bloqueio de signup público e fixtures sem bypass de produção.
+- [ ] SH02 Retirar migration/permissões, CSP/cabeçalhos/cache, validação de ambiente, restrição de seeds e portas.
+- [ ] SH03 Preservar atualizações de dependências e registrar o audit.
+- [ ] SH04 Validar conjunto reduzido, registrar evidências e preparar PR sem merge.

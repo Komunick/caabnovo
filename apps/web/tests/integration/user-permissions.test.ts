@@ -69,8 +69,12 @@ beforeEach(async () => {
   target = await user("target");
 });
 describe("individual permissions in PostgreSQL", () => {
-  it("starts without implicit access, then makes an explicit selection effective in every service", async () => {
-    expect((await readUserAccess(db.pool, target.id)).permissions).toEqual([]);
+  it("preserves legacy editorial access, then makes selection effective in session, identity and member service", async () => {
+    expect((await readUserAccess(db.pool, target.id)).permissions).toEqual([
+      "news:publish",
+      "news:read",
+      "news:write",
+    ]);
     await changeUserAccess(db.pool, await command(["members:read"]));
     const actor = (await loadActiveSession(db.pool, target.token))!;
     expect([...actor.permissions]).toEqual(["members:read"]);

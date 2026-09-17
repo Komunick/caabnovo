@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: change-me
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
     volumes:
       - caab-postgres:/var/lib/postgresql
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
@@ -21,7 +21,7 @@ services:
   clamav:
     image: clamav/clamav:1.4
     ports:
-      - "127.0.0.1:3310:3310"
+      - "3310:3310"
     volumes:
       - ./infra/clamav/clamd.conf:/etc/clamav/clamd.conf:ro
       - caab-clamav:/var/lib/clamav
@@ -35,9 +35,9 @@ services:
     image: otel/opentelemetry-collector-contrib:0.139.0
     command: ["--config=/etc/otelcol/config.yaml"]
     ports:
-      - "127.0.0.1:4317:4317"
-      - "127.0.0.1:4318:4318"
-      - "127.0.0.1:8889:8889"
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
     volumes:
       - ./infra/observability/otel-collector.yaml:/etc/otelcol/config.yaml:ro
 
