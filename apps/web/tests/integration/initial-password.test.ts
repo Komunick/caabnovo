@@ -175,8 +175,8 @@ describe("initial credential provisioning", () => {
     const userId = await legacy();
     const accountId = crypto.randomUUID();
     await admin.query(
-      "INSERT INTO account(id,account_id,provider_id,user_id) VALUES ($1,$2,'credential',$2)",
-      [accountId, userId],
+      "INSERT INTO account(id,account_id,provider_id,user_id) VALUES ($1,$2,'credential',$3)",
+      [accountId, userId, userId],
     );
     const result = await initializeUserPassword(database.pool, { ...context(), userId });
     expect((await signIn("legacy@example.test", result.initialPassword)).status).toBe(200);
