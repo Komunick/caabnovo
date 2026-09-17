@@ -68,5 +68,5 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] IP001 Registrar pesquisa e contratos do formato palavra + seis dígitos.
 - [x] IP002 Criar hash/credencial atomicamente e proteger idempotência.
 - [x] IP003 Exibir recibo de senha e permitir geração inicial para cadastro sem senha.
-- [ ] IP004 Testar login, recuperação, autorização, concorrência, rollback e não exposição.
-- [ ] IP005 Validar interface desktop/mobile, acessibilidade, gates e preparar PR para dev.
+- [x] IP004 Testar login, recuperação, autorização, concorrência, rollback e não exposição.
+- [x] IP005 Validar interface desktop/mobile, acessibilidade, gates e preparar PR para dev.
