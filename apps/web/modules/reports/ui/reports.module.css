@@ -21,9 +21,15 @@
 }
 .root input:focus-visible,
 .root select:focus-visible,
-.root textarea:focus-visible {
+.root textarea:focus-visible,
+.root summary:focus-visible {
   outline: 2px solid var(--color-action);
   outline-offset: 2px;
+}
+.root summary {
+  min-height: 2.75rem;
+  padding-block: 0.5rem;
+  cursor: pointer;
 }
 .actions {
   display: flex;
