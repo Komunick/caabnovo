@@ -13,7 +13,7 @@ export async function reportRequest<T>(path: string, options: RequestInit = {}):
         "O relatório excede 50 mil linhas. Refine o período ou agrupe os resultados.",
     };
     throw new Error(
-      messages[data.error?.code] ??
+      messages[data.code] ??
         "Não foi possível concluir. Tente novamente; suas edições foram preservadas.",
     );
   }

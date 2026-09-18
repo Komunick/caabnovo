@@ -97,11 +97,9 @@ export function createCollectionRoute(
         typeof error === "object" && error && "status" in error && error.status === 413
           ? Response.json(
               {
-                error: {
-                  code: "BODY_TOO_LARGE",
-                  message: "Request body exceeds the limit",
-                  requestId: requestId(request),
-                },
+                code: "BODY_TOO_LARGE",
+                message: "Request body exceeds the limit",
+                requestId: requestId(request),
               },
               { status: 413 },
             )

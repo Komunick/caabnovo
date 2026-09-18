@@ -127,11 +127,9 @@ export function createReportsRoute(deps: {
         typeof error === "object" && error && "status" in error && error.status === 413
           ? Response.json(
               {
-                error: {
-                  code: "BODY_TOO_LARGE",
-                  message: "Request body exceeds the limit",
-                  requestId: rid,
-                },
+                code: "BODY_TOO_LARGE",
+                message: "Request body exceeds the limit",
+                requestId: rid,
               },
               { status: 413 },
             )
