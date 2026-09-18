@@ -112,6 +112,7 @@ export async function reportPdf(doc: ReportDocument): Promise<Buffer> {
       if (!header) line(Object.values(doc.columns), true);
     }
     const y = pdf.y;
+    pdf.font(header ? "Helvetica-Bold" : "Helvetica").fontSize(8);
     if (header) pdf.rect(36, y, pdf.page.width - 72, height).fill("#e5edf2");
     values.forEach((value, index) =>
       pdf.fillColor("#222222").text(safe(value), 41 + index * width, y + 5, { width: width - 10 }),

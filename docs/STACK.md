@@ -397,6 +397,12 @@ responsabilidade definida.
 
 ## 21. Decisão resumida
 
+Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos privados
+no banco. PDFKit gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file
+gera XLSX com células tipadas, e CSV usa UTF-8 BOM e neutralização de fórmulas.
+São dependências do worker, com versões fixadas no lockfile. Coleta própria usa
+eventos permitidos e HMAC; não adiciona provedor ou serviço de analytics externo.
+
 - Next.js + React + TypeScript.
 - PostgreSQL.
 - Payload CMS + Lexical para notícias.

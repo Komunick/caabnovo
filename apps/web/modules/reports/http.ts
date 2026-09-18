@@ -123,7 +123,19 @@ export function createReportsRoute(deps: {
         else throw reportError("NOT_FOUND", 404);
       }
     } catch (error) {
-      response = routeErrorResponse(error, rid);
+      response =
+        typeof error === "object" && error && "status" in error && error.status === 413
+          ? Response.json(
+              {
+                error: {
+                  code: "BODY_TOO_LARGE",
+                  message: "Request body exceeds the limit",
+                  requestId: rid,
+                },
+              },
+              { status: 413 },
+            )
+          : routeErrorResponse(error, rid);
     }
     response.headers.set("Cache-Control", "no-store");
     response.headers.set("X-Request-Id", rid);

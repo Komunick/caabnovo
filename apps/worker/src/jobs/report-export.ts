@@ -79,8 +79,14 @@ export async function runReportExport(pool: Pool, raw: ReportJob) {
       `Período: ${query.from} a ${query.to} (America/Bahia)`,
       `Atualizado em: ${generatedAt}`,
       `Canal: ${query.channel}; ambiente: ${query.environment}; fonte: ${query.source || "Todas"}`,
-      `Filtros: busca=${query.search || "Todos"}; situação=${query.status || "Todas"}; categoria=${query.category || "Todas"}; cidade=${query.city || "Todas"}`,
-      `Ordenação: ${query.sort} ${query.direction}; agrupamento: ${query.groupBy || "Nenhum"}`,
+      ...(query.view === "details"
+        ? [
+            `Filtros: busca=${query.search || "Todos"}; situação=${query.status || "Todas"}; categoria=${query.category || "Todas"}; cidade=${query.city || "Todas"}`,
+            `Ordenação: ${query.sort} ${query.direction}; agrupamento: ${query.groupBy || "Nenhum"}`,
+          ]
+        : [
+            "Indicadores de negócio usam o período; canal, ambiente e fonte aplicam-se aos acessos. Filtros de registros aplicam-se somente à Análise detalhada.",
+          ]),
     ];
     if (query.view === "details") {
       const table = await queryReport(db, actor, query, true);

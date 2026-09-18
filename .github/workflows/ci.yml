@@ -48,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
+      REPORTS_ENVIRONMENT: test
       FILE_STORAGE_BACKEND: database
       DATABASE_URL: postgresql://caab_runtime:change-me-runtime@127.0.0.1:5432/caab
       BETTER_AUTH_SECRET: e2e-only-secret-with-at-least-32-characters

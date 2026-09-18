@@ -79,6 +79,11 @@ export function reportSql(query: ReportQuery) {
     ["city", query.city],
   ]) {
     if (!value) continue;
+    if (field === "status") {
+      values.push(value);
+      filters.push(`lower(cells->>'status') = lower($${values.length})`);
+      continue;
+    }
     values.push(`%${value.replace(/[\\%_]/g, "\\$&")}%`);
     filters.push(`cells->>'${field}' ILIKE $${values.length}`);
   }

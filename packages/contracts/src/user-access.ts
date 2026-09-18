@@ -31,6 +31,7 @@ export const accessPermissionSchema = z.enum([
 ]);
 export type AccessPermission = z.infer<typeof accessPermissionSchema>;
 export const accessPrerequisites: Partial<Record<AccessPermission, AccessPermission[]>> = {
+  "reports:export": ["reports:read"],
   "partners:write": ["partners:read"],
   "partners:publish": ["partners:read"],
   "news:write": ["news:read"],

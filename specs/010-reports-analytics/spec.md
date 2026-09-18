@@ -2,7 +2,7 @@
 
 **Feature Branch**: `feature/reports-analytics-20260918`
 **Created**: 2026-09-18
-**Status**: Especificado para implementação
+**Status**: Implementado; validação de entrega em andamento
 **Input**: Brainstorm aprovado: relatórios dos domínios, métricas dos sites/app/painel,
 três abas e exportação. Todos os módulos devem futuramente oferecer baixar/exportar.
 

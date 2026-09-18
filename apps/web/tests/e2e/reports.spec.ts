@@ -14,6 +14,11 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page
+      .getByRole("navigation", { name: "Navegação administrativa" })
+      .getByRole("link", { name: "Relatórios", exact: true }),
+  ).toBeVisible();
   await page
     .locator(".sidebar-navigation")
     .getByRole("link", { name: "Relatórios", exact: true })

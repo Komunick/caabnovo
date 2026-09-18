@@ -93,7 +93,19 @@ export function createCollectionRoute(
       });
       response = new Response(null, { status: 204 });
     } catch (error) {
-      response = routeErrorResponse(error, requestId(request));
+      response =
+        typeof error === "object" && error && "status" in error && error.status === 413
+          ? Response.json(
+              {
+                error: {
+                  code: "BODY_TOO_LARGE",
+                  message: "Request body exceeds the limit",
+                  requestId: requestId(request),
+                },
+              },
+              { status: 413 },
+            )
+          : routeErrorResponse(error, requestId(request));
     }
     response.headers.set("Cache-Control", "no-store");
     return response;

@@ -543,6 +543,12 @@ export function ReportsPage({
               )}
             </div>
             <p>Fuso: America/Bahia. Permissões e filtros são preservados nos arquivos.</p>
+            {query.view !== "details" && (
+              <p>
+                Os indicadores de negócio usam o período. Canal, ambiente e fonte filtram os
+                acessos. Os filtros de registros são usados somente na Análise detalhada.
+              </p>
+            )}
           </section>
           {query.view !== "details" && (
             <>

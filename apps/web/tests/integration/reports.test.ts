@@ -85,7 +85,17 @@ describe("reports with restricted database role", () => {
       await queryReport(pool, actor, { ...query, dataset });
     const summary = await reportSummary(pool, actor, query);
     expect(summary.metrics.find((m) => m.id === "members")?.value).toBe(65);
-    expect(summary.inventory.find((m) => m.label === "Associados ativos agora")?.value).toBe(65);
+    expect(summary.inventory.find((m) => m.label === "Associados ativos agora")?.value).toBe(0);
+    await admin.query(
+      "UPDATE member SET administrative_status='active',administrative_changed_at=now(),administrative_changed_by=$1 WHERE name='Pessoa relatório 65'",
+      [actor.userId],
+    );
+    expect(
+      (await reportSummary(pool, actor, query)).inventory.find(
+        (m) => m.label === "Associados ativos agora",
+      )?.value,
+    ).toBe(1);
+    expect((await queryReport(pool, actor, { ...query, status: "Ativo" })).total).toBe(1);
     const historical = await admin.query<{ id: string }>(
       "INSERT INTO member(name,city,created_at) VALUES('Cadastro antigo','Feira de Santana','2025-01-01') RETURNING id",
     );
