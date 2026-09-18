@@ -167,6 +167,12 @@ export const reportQuerySchema = z
       ctx.addIssue({ code: "custom", path: ["groupBy"], message: "Agrupamento inválido" });
   });
 export type ReportQuery = z.infer<typeof reportQuerySchema>;
+/** JSONB changes object key order; pagination does not change the exported filters. */
+export function sameReportFilters(candidate: ReportQuery, applied: ReportQuery): boolean {
+  const left = reportQuerySchema.safeParse({ ...candidate, page: 1 });
+  const right = reportQuerySchema.safeParse({ ...applied, page: 1 });
+  return left.success && right.success && JSON.stringify(left.data) === JSON.stringify(right.data);
+}
 export const reportFormatSchema = z.enum(["csv", "xlsx", "pdf"]);
 export const reportExportSchema = z
   .object({

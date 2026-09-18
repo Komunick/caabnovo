@@ -7,6 +7,7 @@ import {
   reportChange,
   reportPreset,
   reportQuerySchema,
+  sameReportFilters,
   type ReportDataset,
   type ReportQuery,
   type ReportSummary,
@@ -238,8 +239,7 @@ export function ReportsPage({
     setQuery((old) => ({ ...old, view, page: 1 }));
   }
   const fields = reportCatalog[filters.dataset].columns as Record<string, string>;
-  const dirtyFilters =
-    JSON.stringify({ ...filters, page: 1 }) !== JSON.stringify({ ...query, page: 1 });
+  const dirtyFilters = !sameReportFilters(filters, query);
   return (
     <div
       ref={root}

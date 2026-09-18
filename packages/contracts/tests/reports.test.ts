@@ -5,8 +5,16 @@ import {
   reportPreset,
   reportQuerySchema,
   analyticsEventSchema,
+  sameReportFilters,
 } from "../src/reports";
 describe("report contracts", () => {
+  it("compares saved JSONB filters independently of object order and page", () => {
+    const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
+    const restored = Object.fromEntries(Object.entries(query).reverse()) as typeof query;
+    expect(sameReportFilters({ ...restored, page: 2 }, query)).toBe(true);
+    expect(sameReportFilters({ ...restored, city: "Salvador" }, query)).toBe(false);
+    expect(sameReportFilters({ ...restored, from: "" }, query)).toBe(false);
+  });
   it("rejects impossible dates, reversed/oversized periods and injected fields", () => {
     for (const input of [
       { from: "2026-02-30", to: "2026-03-01" },

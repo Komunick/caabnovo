@@ -99,6 +99,8 @@ jobs:
         run: |
           pnpm db:seed:dev
           pnpm dev:worker > /tmp/caab-e2e-worker.log 2>&1 &
+      - name: Validate reports workflow before the complete browser suite
+        run: pnpm test:e2e reports.spec.ts --project=chromium
       - run: pnpm test:e2e --project=chromium
       - name: Preserve synthetic initial password UI evidence
         if: always()
