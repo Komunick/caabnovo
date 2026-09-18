@@ -5,12 +5,21 @@ Validação com dados sintéticos. Localhost, banco e preview principais permane
 
 ## Gates e regressão
 
-Revisão P2 recebida após afe7b8d: polling de exportações em retry, atualização com
-filtros iguais e analytics fora da resposta de reserva corrigidos na mesma branch.
-Seis novos testes de componente/rota aprovados localmente, assim como lint,
-formatação e tipos. Teste adicional de integração cobre as cinco tentativas,
-recuperação e download real. Os CIs push e PR serão mantidos até conclusão;
-resultado desta revisão deve constar no PR antes da entrega.
+Revisão P2 recebida após afe7b8d corrigida em **0eed68e**. Ambos os CIs concluídos
+com sucesso, sem cancelamentos: [push](https://github.com/Komunick/caabnovo/actions/runs/35383512012)
+e [PR](https://github.com/Komunick/caabnovo/actions/runs/35383516873).
+360 testes unitários, 122 contratos, 217 integrações, 81 E2E, dois testes focados de
+Relatórios e seis de acessibilidade; formatação, lint, tipos, build e segurança aprovados.
+
+- Interface: três testes novos verificam renovação do indicador com filtros iguais,
+  polling até disponibilizar download após retry e parada apenas na falha definitiva.
+- Rota de reserva: três testes verificam resposta 201 antes da coleta pendente,
+  rejeição posterior da coleta, falha do agendador e ausência de coleta para reserva rejeitada.
+- Banco: cenário adicional usa o papel restrito, percorre as cinco tentativas e
+  confirma sucesso posterior com arquivo real disponível. Falhas temporárias são
+  apresentadas como `retrying`, mantendo a política existente do worker.
+
+Commit posterior apenas registra estas evidências e conclui as tarefas da revisão.
 
 - Formatação, lint e typecheck locais aprovados. A execução local completa de unidade/contratos
   encontrou um erro de ambiente do Node/Windows (`uv_os_get_passwd ENOMEM`) em subprocesso

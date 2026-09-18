@@ -48,10 +48,10 @@ Teste independente: navegação SPA, retry sem duplicação, fonte sem dados e r
 
 ## Dependências e execução
 
-- [ ] T021 Corrigir acompanhamento de retries e testar transições até sucesso/falha definitiva.
-- [ ] T022 Corrigir atualização explícita com filtros iguais e testar números renovados na tela.
-- [ ] T023 Mover analytics de reserva para após a resposta e testar coleta pendente/indisponível.
-- [ ] T024 Validar correções nos dois CIs, atualizar evidências e PR34 sem merge.
+- [x] T021 Corrigir acompanhamento de retries e testar transições até sucesso/falha definitiva.
+- [x] T022 Corrigir atualização explícita com filtros iguais e testar números renovados na tela.
+- [x] T023 Mover analytics de reserva para após a resposta e testar coleta pendente/indisponível.
+- [x] T024 Validar correções nos dois CIs, atualizar evidências e PR34 sem merge.
 
 T001 → T002/T003 → T004/T005 → T006/T007. T008 → T009/T010/T011.
 US3 reutiliza resumo/exportador. T013 → T014/T015. T016/T017 → T019/T020.
