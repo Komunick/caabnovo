@@ -1,4 +1,5 @@
 "use client";
+import { reportSession } from "@/modules/reports/collector";
 import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -11,6 +12,8 @@ import { FormField } from "@/components/ui/form-field";
 import { catalogLabels } from "./catalog-labels";
 
 const messages: Record<string, string> = {
+  SCHEDULING_CALENDAR_LIMIT:
+    "Há mais de 1.000 reservas neste período. Selecione Dia ou Semana, ou filtre por unidade e profissional para carregar a agenda completa.",
   SCHEDULING_CONFLICT: "Essa vaga não está mais disponível. Escolha outro horário.",
   SCHEDULING_VERSION_CONFLICT:
     "O registro foi alterado. Recarregue a página e confira os dados antes de salvar.",
@@ -84,11 +87,22 @@ export function useSchedulingMutation() {
     const body = JSON.stringify(input);
     const payload = `${method}:${path}:${body}`;
     if (retry.current.payload !== payload) retry.current = { payload, key: crypto.randomUUID() };
+    let analyticsHeaders: Record<string, string> = {};
+    try {
+      const session = reportSession();
+      analyticsHeaders = {
+        "x-analytics-visitor": session.visitorId,
+        "x-analytics-session": session.sessionId,
+      };
+    } catch {
+      /* Optional telemetry cannot block a reservation. */
+    }
     try {
       const result = await schedulingRequest<T>(path, {
         method,
         body,
         headers: {
+          ...analyticsHeaders,
           "content-type": "application/json",
           "x-csrf-token": crypto.randomUUID(),
           "idempotency-key": retry.current.key,
@@ -143,7 +157,7 @@ export function SchedulingShell({
         items={[
           {
             href: "/scheduling",
-            label: "Agenda diária",
+            label: "Agenda",
             active: !pathname.includes("/catalog") && !pathname.includes("/hours"),
           },
           ...schedulingKinds.map((item) => ({

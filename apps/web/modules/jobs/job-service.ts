@@ -7,6 +7,7 @@ import type {
   NewsActionJobPayload,
   Job,
   JobList,
+  ReportJob,
 } from "@caab/contracts";
 import { jobListQuerySchema } from "@caab/contracts";
 import { withTransaction } from "@caab/db";
@@ -153,8 +154,13 @@ async function rebuildPayload(
     request_id: string | null;
     aggregate_id: string | null;
   },
-): Promise<FileScanJobPayload | AuditExportJobPayload | NewsActionJobPayload> {
+): Promise<FileScanJobPayload | AuditExportJobPayload | NewsActionJobPayload | ReportJob> {
   if (!job.request_id) throw operationError("REDRIVE_PAYLOAD_UNAVAILABLE", 409);
+  if (job.job_type === "report-export") {
+    const record = await client.query("SELECT id FROM report_export WHERE id=$1", [job.id]);
+    if (!record.rowCount) throw operationError("REDRIVE_PAYLOAD_UNAVAILABLE", 409);
+    return { jobId: job.id, requestId: job.request_id, correlationId: job.correlation_id };
+  }
   if (job.job_type === "news-publication" && job.aggregate_id) {
     const action = (
       await client.query<{ id: string }>(

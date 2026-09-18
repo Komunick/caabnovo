@@ -10,6 +10,20 @@ dados, autorização e acessibilidade. Etapas do produto estão em roadmap.md.
 
 ## Phase 1 — Setup
 
+## Calendário administrativo — autorizado em 18/09/2026
+
+Decisão atual supera a prioridade anterior de T022. Continuidade na branch ativa
+`feature/reports-analytics-20260918`; detalhes para retomada em checkpoint.md.
+
+- [x] CAL01 Registrar escopo, pesquisa oficial, contratos, plano e estratégia de validação.
+- [x] CAL02 Escrever testes de intervalo/limites/filtros/autorização e consulta de calendário.
+- [x] CAL03 Implementar GET calendar limitado e autenticado, preservando listagem diária.
+- [x] CAL04 Integrar FullCalendar mês/semana/dia, URL/filtros, tokens, fuso e estados acessíveis.
+- [x] CAL05 Cobrir jornada real de reservas, recarga/navegação, mobile/temas e fuso no E2E.
+- [ ] CAL06 Validar conjunto, revisar evidências visuais, atualizar docs/PR34 e conferir dev.
+
+Não marcar CAL06 antes de verificações reais; atualizar checkpoint a cada fase.
+
 - [x] T001 Conferir base/branch sem PR e validar o recorte/hipóteses com a revisão do planejamento em specs/008-scheduling-management/spec.md antes do código.
 - [x] T002 Conciliar contratos com os padrões existentes em specs/008-scheduling-management/contracts/admin.md e definir próximo número de migration livre em packages/db/migrations/.
 

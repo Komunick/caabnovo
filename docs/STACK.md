@@ -114,6 +114,14 @@ embeds arbitrários.
 
 ## 6. Interface e design system
 
+Atualização de 18/09/2026, entrega em validação: FullCalendar Standard 7.1.0 adotado
+no painel de Agendamentos (mês/semana/dia), com temporal-polyfill 1.0.1, locale pt-BR,
+America/Bahia e tokens existentes. Lista diária preservada. Decisão e limites na
+[spec 008](../specs/008-scheduling-management/spec.md); evidências em
+[calendário](../specs/008-scheduling-management/evidence/calendar-2026-09-18.md).
+TanStack Table/Query e React Hook Form abaixo continuam escolhas históricas não
+adotadas nesta entrega; componentes e formulários próprios permanecem implementados.
+
 - Tailwind CSS.
 - shadcn/ui.
 - Radix UI para primitivas acessíveis.
@@ -140,8 +148,9 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 ### 7.1 Decisão
 
 Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md):
-primeira entrega usa lista diária com componentes existentes. FullCalendar citado
-abaixo é opção para evolução visual; não adicionar biblioteca de calendário no básico.
+primeira entrega usou lista diária com componentes existentes. O incremento autorizado
+em 18/09/2026 adiciona FullCalendar Standard como camada visual, sem mudar a autoridade
+do servidor sobre vagas e reservas. App/site continua pendente.
 
 Direção: avaliar núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário
 em 15/09/2026: Cal.com é referência de pesquisa e **não deve ser integrado, salvo
@@ -396,6 +405,12 @@ responsabilidade definida.
 - CI para lint, typecheck, testes, build, auditoria de dependências e migrations.
 
 ## 21. Decisão resumida
+
+Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos privados
+no banco. PDFKit gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file
+gera XLSX com células tipadas, e CSV usa UTF-8 BOM e neutralização de fórmulas.
+São dependências do worker, com versões fixadas no lockfile. Coleta própria usa
+eventos permitidos e HMAC; não adiciona provedor ou serviço de analytics externo.
 
 - Next.js + React + TypeScript.
 - PostgreSQL.

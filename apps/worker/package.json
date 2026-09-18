@@ -15,17 +15,20 @@
     "@caab/contracts": "workspace:*",
     "@caab/db": "workspace:*",
     "@caab/news": "workspace:*",
-    "payload": "3.88.0",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/sdk-node": "0.222.0",
     "file-type": "22.0.2",
+    "payload": "3.88.0",
+    "pdfkit": "0.20.2",
     "pg": "8.23.0",
     "pg-boss": "12.30.0",
     "pino": "10.3.1",
     "tsx": "4.21.0",
+    "write-excel-file": "4.1.1",
     "zod": "4.5.4"
   },
   "devDependencies": {
+    "@types/pdfkit": "0.17.6",
     "@types/pg": "8.20.0",
     "typescript": "6.0.3"
   }

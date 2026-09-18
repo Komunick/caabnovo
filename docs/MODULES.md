@@ -227,3 +227,17 @@ A visão de comunicação acima é uma proposta sujeita à revisão de finalidad
 não uma definição final aprovada. **Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
 
 Mensagens: aba Agendamentos com busca, período, reagendamento e cancelamento; segmentação por dados explícitos do cadastro e situação administrativa. Sem teto de destinatários, prévia agregada e seleção visual paginada. Navegação: Notícias primeiro módulo após Início, Mensagens imediatamente antes de Auditoria.
+
+## Relatórios e Análises — entrega de 18/09/2026
+
+Implementação na [spec 010](../specs/010-reports-analytics/spec.md), rota `/reports`:
+Resumo gerencial, Análise detalhada, Resultados e evolução. PDF/CSV no resumo,
+XLSX/PDF/CSV nos detalhes, PDF/CSV e apresentação executiva, consultas pessoais,
+histórico privado de exportações e métricas de uso do painel. Sites/app externos
+têm contrato autenticado de ingestão; sua instrumentação ocorre nos respectivos
+projetos. Sem histórico retroativo de acessos ou reconstrução de estados cadastrais
+passados. Permissões `reports:read` e `reports:export`, combinadas com leitura dos
+domínios. Homologação humana em DEV permanece posterior ao PR.
+
+Exportação em todos os demais módulos foi registrada como requisito transversal
+no programa 002 (EXP01–EXP03); esses botões não estão incluídos nesta entrega.

@@ -1,5 +1,25 @@
 # Pesquisa e decisões — entrega incremental
 
+## Calendário administrativo — pesquisa em 18/09/2026
+
+Fontes oficiais consultadas: [React](https://fullcalendar.io/docs/react),
+[migração/API v7](https://fullcalendar.io/docs/upgrading-from-v6-js),
+[fuso](https://fullcalendar.io/docs/timeZone), [acessibilidade](https://fullcalendar.io/docs/accessibility)
+e [licença](https://fullcalendar.io/license). Registry confirmou @fullcalendar/react 7.1.0,
+React 17–19 e peer temporal-polyfill ^1.0.1. Fixar 7.1.0 e 1.0.1 no manifest/lockfile.
+
+Decisão: usuário autorizou FullCalendar no painel; usar Standard (MIT), mês/semana/dia,
+pt-BR, America/Bahia com suporte de fuso da v7. A API v7 reúne plugins no pacote React
+e exige CSS explícito. Tema classic será adaptado aos tokens, sem tema paralelo.
+Lista diária preservada, consultas limitadas ao período e controles do painel.
+Calendário mostra ocupação; criação/remarcação usam disponibilidade/transação atuais.
+Arrastar, redimensionar, grade de recursos Premium e novas regras ficam fora do recorte.
+Limite técnico de 42 dias cobre seis semanas mensais; 1.000 reservas é teto de resposta,
+com erro explícito e filtros como recuperação, nunca limite comercial de agendamentos.
+
+Alternativas: manter só lista não atende ao pedido atual; implementação manual da grade
+repetiria uma função da biblioteca escolhida; grade Premium não é necessária ao escopo.
+
 ## Revisão técnica antes do código — 15/09/2026
 
 Reconsultadas fontes oficiais: [PostgreSQL intervalos](https://www.postgresql.org/docs/current/rangetypes.html),

@@ -1,4 +1,6 @@
 import { prepareScheduledMessages } from "./jobs/prepare-messages.js";
+import { runReportExport } from "./jobs/report-export.js";
+import { reportJobSchema } from "@caab/contracts";
 import { loadServerEnv, loadWorkspaceEnv } from "@caab/config";
 import { logger } from "./logger.js";
 import { createQueue, startQueue } from "./queue.js";
@@ -23,6 +25,24 @@ const database = createDatabaseClient(env.DATABASE_URL);
 const workerId = `worker-${process.pid}-${crypto.randomUUID()}`;
 const fileStorage = new DatabaseWorkerObjectStorage(database.pool);
 const antivirus = new ClamAvScanner(env.CLAMAV_HOST, env.CLAMAV_PORT);
+
+await boss.work(QUEUES.reportExport, async (jobs) => {
+  const payload = reportJobSchema.parse(jobs[0]?.data);
+  await executeTrackedJob(
+    database.pool,
+    {
+      id: payload.jobId,
+      requestId: payload.requestId,
+      correlationId: payload.correlationId,
+      jobType: QUEUES.reportExport,
+    },
+    async ({ progress }) => {
+      await progress(10);
+      await runReportExport(database.pool, payload);
+      await progress(95);
+    },
+  );
+});
 
 await boss.work(QUEUES.messagePreparation, async () => {
   await prepareScheduledMessages(database.pool);
