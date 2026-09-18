@@ -75,10 +75,16 @@ test("reports: three views, private saved queries, preserved edits, usage and re
     ["Excel", "xlsx", "PK"],
     ["PDF", "pdf", "%PDF-"],
   ]) {
+    const requested = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/v1/reports/exports") &&
+        response.request().method() === "POST",
+    );
     await page.getByRole("button", { name: `Exportar ${label}`, exact: true }).click();
-    const downloadLink = page
-      .getByRole("link", { name: `Baixar ${extension!.toUpperCase()}`, exact: true })
-      .first();
+    const requestedResponse = await requested;
+    expect(requestedResponse.status()).toBe(202);
+    const { id } = await requestedResponse.json();
+    const downloadLink = page.locator(`a[href="/api/v1/reports/exports/${id}/download"]`);
     await expect(downloadLink).toBeVisible({ timeout: 60000 });
     const downloading = page.waitForEvent("download", { timeout: 15000 });
     await downloadLink.click();

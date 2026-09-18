@@ -25,13 +25,11 @@ it("reads the shared API error contract and explains a saved-query conflict", as
 it("does not expose raw server messages on unexpected failures", async () => {
   vi.stubGlobal(
     "fetch",
-    vi
-      .fn()
-      .mockResolvedValue(
-        Response.json(apiError("INTERNAL_ERROR", "private SQL details", crypto.randomUUID()), {
-          status: 500,
-        }),
-      ),
+    vi.fn().mockResolvedValue(
+      Response.json(apiError("INTERNAL_ERROR", "private SQL details", crypto.randomUUID()), {
+        status: 500,
+      }),
+    ),
   );
   await expect(reportRequest("/queries")).rejects.toThrow("Não foi possível concluir.");
 });
