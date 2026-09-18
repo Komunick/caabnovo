@@ -27,12 +27,38 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await expect(page.getByRole("heading", { name: "Resumo gerencial", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Indicadores do período" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Exportar CSV", exact: true })).toBeEnabled();
-  const name = `Consulta relatório ${randomUUID().slice(0, 8)}`;
+  let name = `Consulta relatório ${randomUUID().slice(0, 8)}`;
   await page.getByLabel("Nome da consulta").fill(name);
   await page.getByRole("button", { name: "Salvar consulta", exact: true }).click();
   await expect(
     page.getByText("Consulta salva. Ao abrir novamente, os dados serão atualizados."),
   ).toBeVisible();
+  const saved = (await (await page.request.get("/api/v1/reports/queries")).json()).find(
+    (item: { name: string }) => item.name === name,
+  );
+  const remoteName = `${name} atual`;
+  expect(
+    (
+      await page.request.put(`/api/v1/reports/queries/${saved.id}`, {
+        headers: { origin: new URL(page.url()).origin, "x-csrf-token": randomUUID() },
+        data: {
+          name: remoteName,
+          query: saved.configuration.query,
+          notes: "",
+          version: saved.version,
+        },
+      })
+    ).ok(),
+  ).toBe(true);
+  await page.getByLabel("Nome da consulta").fill("Edição local preservada");
+  await page.getByRole("button", { name: "Atualizar consulta", exact: true }).click();
+  await expect(page.getByText(/Esta consulta mudou/)).toBeVisible();
+  await expect(page.getByLabel("Nome da consulta")).toHaveValue("Edição local preservada");
+  await expect(page.getByRole("button", { name: remoteName, exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cancelar edição", exact: true }).click();
+  await page.getByRole("button", { name: remoteName, exact: true }).click();
+  await expect(page.getByLabel("Nome da consulta")).toHaveValue(remoteName);
+  name = remoteName;
   await page.getByRole("button", { name: "Análise detalhada", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Análise detalhada", exact: true })).toBeVisible();
   await page.getByRole("combobox", { name: "Relatório", exact: true }).selectOption("members");

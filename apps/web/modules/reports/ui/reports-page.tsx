@@ -208,6 +208,8 @@ export function ReportsPage({
       return result;
     } catch (error) {
       setError(error instanceof Error ? error.message : "Falha de conexão. Tente novamente.");
+      // Refresh saved revisions/history without replacing the user's edit or baseline version.
+      setRevision((r) => r + 1);
     } finally {
       running.current = false;
       setPending(false);
