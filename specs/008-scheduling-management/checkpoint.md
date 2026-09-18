@@ -47,6 +47,11 @@ FullCalendar Standard 7.1.0, API React atual, sem plugins Premium.
   identifica mês/intervalo semanal no título e captura evento após rolar no celular.
 - Próximo passo: enviar ajuste visual consolidado, confirmar CI final e revisar novas
   capturas. CAL06 ainda pendente até essa revisão. Localhost permanece desligado.
+- Ajuste enviado em `8819bce`, CIs finais push 35388521920 e PR 35388527805 em execução.
+- Resultado: PR aprovado por completo e capturas revisadas; push falhou no scroll
+  de captura por substituição do nó durante dimensionamento. Correção só no teste:
+  re-resolver nó e verificar viewport com espera condicionada de até 10s. Próximo
+  passo: enviar correção com evidências e acompanhar os checks da revisão corrigida.
 - Integração/build/E2E da primeira revisão passaram; evidências em evidence/calendar-2026-09-18.md.
 - Primeira validação: formatação e lint dos arquivos alterados aprovados; 19 testes
   unitários de Agendamentos aprovados. Typecheck global com heap 384 MB esgotou memória

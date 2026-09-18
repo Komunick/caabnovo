@@ -243,9 +243,13 @@ test("configure and manage a real reservation through the panel at 390px, withou
     await expect(
       calendar.getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) }),
     ).toBeVisible();
-    await calendar
-      .getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) })
-      .scrollIntoViewIfNeeded();
+    // FullCalendar can replace event nodes while sizing the first rendered view.
+    // Re-resolve and verify the actual viewport position before taking evidence.
+    await expect(async () => {
+      const event = calendar.getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) });
+      await event.scrollIntoViewIfNeeded();
+      await expect(event).toBeInViewport();
+    }).toPass({ timeout: 10000 });
     await expectWcag22AA(page);
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
