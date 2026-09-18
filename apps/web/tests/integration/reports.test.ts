@@ -81,6 +81,26 @@ describe("reports with restricted database role", () => {
     expect(next.rows).toHaveLength(5);
     const group = await queryReport(pool, actor, { ...query, groupBy: "city" });
     expect(group.rows.find((r) => r.group === "Salvador")?.count).toBe(55);
+    expect(
+      (
+        await queryReport(pool, actor, {
+          ...query,
+          groupBy: "city",
+          sort: "city",
+          direction: "asc",
+        })
+      ).rows[0]?.group,
+    ).toBe("Ilhéus");
+    expect(
+      (
+        await queryReport(pool, actor, {
+          ...query,
+          groupBy: "city",
+          sort: "count",
+          direction: "asc",
+        })
+      ).rows[0]?.count,
+    ).toBe(10);
     for (const dataset of Object.keys(reportCatalog))
       await queryReport(pool, actor, { ...query, dataset });
     const summary = await reportSummary(pool, actor, query);

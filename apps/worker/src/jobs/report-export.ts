@@ -77,7 +77,7 @@ export async function runReportExport(pool: Pool, raw: ReportJob) {
     let doc: ReportDocument;
     const context = [
       `Período: ${query.from} a ${query.to} (America/Bahia)`,
-      `Atualizado em: ${generatedAt}`,
+      `Atualizado em: ${new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Bahia", dateStyle: "short", timeStyle: "medium" }).format(new Date(generatedAt))} (America/Bahia)`,
       `Canal: ${query.channel}; ambiente: ${query.environment}; fonte: ${query.source || "Todas"}`,
       ...(query.view === "details"
         ? [

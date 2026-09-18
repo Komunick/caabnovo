@@ -121,7 +121,7 @@ export async function queryReport(
         ),
       );
   const order = query.groupBy
-    ? "(cells->>'count')::bigint DESC,id"
+    ? `${query.sort === query.groupBy ? "cells->>'group'" : "(cells->>'count')::bigint"} ${query.direction},id`
     : query.sort === "date"
       ? `at ${query.direction},id`
       : `cells->'${query.sort}' ${query.direction},id`;

@@ -161,7 +161,7 @@ export const reportQuerySchema = z
       new Set(query.columns).size !== query.columns.length
     )
       ctx.addIssue({ code: "custom", path: ["columns"], message: "Colunas inválidas" });
-    if (!fields.includes(query.sort))
+    if (!fields.includes(query.sort) && !(query.groupBy && query.sort === "count"))
       ctx.addIssue({ code: "custom", path: ["sort"], message: "Ordenação inválida" });
     if (query.groupBy && (!fields.includes(query.groupBy) || query.dataset === "access"))
       ctx.addIssue({ code: "custom", path: ["groupBy"], message: "Agrupamento inválido" });

@@ -90,6 +90,7 @@ export function ReportsPage({
     [pending, setPending] = useState(false),
     [message, setMessage] = useState("");
   const [presentation, setPresentation] = useState(false);
+  const [listError, setListError] = useState("");
   const root = useRef<HTMLDivElement>(null);
   const running = useRef(false),
     retry = useRef({ payload: "", key: "" });
@@ -108,7 +109,9 @@ export function ReportsPage({
     const abort = new AbortController();
     void reportRequest<Saved[]>("/queries", { signal: abort.signal })
       .then(setSaved)
-      .catch(() => undefined);
+      .catch(() => {
+        if (!abort.signal.aborted) setListError("Não foi possível atualizar as consultas salvas.");
+      });
     return () => abort.abort();
   }, [revision]);
   useEffect(() => {
@@ -122,7 +125,9 @@ export function ReportsPage({
           if (items.some((item) => ["queued", "running"].includes(item.status)))
             timer = setTimeout(poll, 3000);
         })
-        .catch(() => undefined);
+        .catch(() => {
+          if (!abort.signal.aborted) setListError("Não foi possível atualizar as exportações.");
+        });
     poll();
     return () => {
       abort.abort();
@@ -147,9 +152,16 @@ export function ReportsPage({
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setPresentation(false);
       if (event.key === "Tab") {
-        // Presentation has a single action; keep keyboard focus on its exit button.
-        event.preventDefault();
-        root.current?.querySelector<HTMLButtonElement>("button")?.focus();
+        const focusable = root.current?.querySelectorAll<HTMLElement>("button, summary, a[href]");
+        const first = focusable?.[0],
+          last = focusable?.[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
       }
     };
     document.addEventListener("keydown", onKey);
@@ -412,7 +424,12 @@ export function ReportsPage({
                         Agrupar por
                         <select
                           value={filters.groupBy}
-                          onChange={(e) => change({ groupBy: e.target.value })}
+                          onChange={(e) =>
+                            change({
+                              groupBy: e.target.value,
+                              sort: e.target.value ? "count" : "date",
+                            })
+                          }
                         >
                           <option value="">Sem agrupamento</option>
                           {Object.entries(fields).map(([key, label]) => (
@@ -426,10 +443,18 @@ export function ReportsPage({
                     <label>
                       Ordenar por
                       <select
-                        value={filters.sort}
+                        value={
+                          filters.groupBy && filters.sort !== filters.groupBy
+                            ? "count"
+                            : filters.sort
+                        }
                         onChange={(e) => change({ sort: e.target.value })}
                       >
-                        {Object.entries(fields).map(([key, label]) => (
+                        {Object.entries(
+                          filters.groupBy
+                            ? { [filters.groupBy]: fields[filters.groupBy], count: "Quantidade" }
+                            : fields,
+                        ).map(([key, label]) => (
                           <option key={key} value={key}>
                             {label}
                           </option>
@@ -495,6 +520,19 @@ export function ReportsPage({
         <p role="status" className={styles.notice}>
           {message}
         </p>
+      )}
+      {listError && !presentation && (
+        <section className={styles.notice}>
+          <p role="alert">{listError}</p>
+          <Button
+            onClick={() => {
+              setListError("");
+              setRevision((r) => r + 1);
+            }}
+          >
+            Atualizar listas
+          </Button>
+        </section>
       )}
       {!data ? (
         <section className="panel">
