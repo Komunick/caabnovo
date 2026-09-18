@@ -1,5 +1,9 @@
 # Roadmap de Agendamentos
 
+**Prioridade vigente — 18/09/2026:** usuário escolheu evoluir o painel com FullCalendar
+antes de app/site. Executar apenas CAL01–CAL06 do tasks.md; a prioridade de 15/09 abaixo
+é histórica. Os demais incrementos seguem pendentes de detalhamento específico.
+
 Data: 15/09/2026. Ordem confirmada: básico funcional → nível do legado → novidades.
 Primeira entrega confirmada pelo usuário: painel; conexão real app/site depois.
 
@@ -69,4 +73,3 @@ dependentes existentes; Agendado/Cancelado; lista diária; restrição conservad
 alterações com reservas afetadas. A prioridade de app/site após a etapa 1 está
 confirmada; a ordem dos demais incrementos e seus valores/políticas continuam a definir.
 Nenhuma duração, antecedência ou penalidade padrão foi inventada.
-

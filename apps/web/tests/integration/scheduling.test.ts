@@ -15,6 +15,7 @@ import {
   createSchedulingBooking,
   getSchedulingBooking,
   listSchedulingBookings,
+  listSchedulingCalendar,
   rescheduleSchedulingBooking,
   cancelSchedulingBooking,
 } from "../../modules/scheduling/booking-service";
@@ -121,6 +122,90 @@ afterAll(async () => {
 });
 
 describe.sequential("scheduling transactions and migration", () => {
+  it("reads the complete calendar interval in Bahia with filters and exclusive boundaries", async () => {
+    const data = await offer();
+    const booking = (await reserve(data)).value;
+    const end = new Date(Date.parse(date) + 86400000).toISOString().slice(0, 10);
+    const query = { start: date, end, unitId: data.unit.id, professionalId: data.professional.id };
+    expect(
+      (await listSchedulingCalendar(pool, context.actor, query)).items.map((b) => b.id),
+    ).toEqual([booking.id]);
+    expect(
+      (await listSchedulingCalendar(pool, context.actor, { ...query, q: "missing-person" })).items,
+    ).toEqual([]);
+    await cancelSchedulingBooking(pool, next(), booking.id, { expectedVersion: booking.version });
+    expect(
+      (await listSchedulingCalendar(pool, context.actor, { ...query, status: "scheduled" })).items,
+    ).toEqual([]);
+    // UTC date differs from the Bahia date; equality at the end must be excluded.
+    const inserted = await admin.query(
+      `INSERT INTO scheduling_booking(assignment_id,professional_id,member_id,starts_at,ends_at,duration_snapshot,status,created_by)
+      SELECT $1,$2,$3,point,point+interval '30 minutes',30,'cancelled',$4
+      FROM unnest(ARRAY[($5::date::timestamp AT TIME ZONE 'America/Bahia')-interval '30 minutes',
+                       ($6::date::timestamp AT TIME ZONE 'America/Bahia')-interval '30 minutes',
+                       ($6::date::timestamp AT TIME ZONE 'America/Bahia')]) point RETURNING id`,
+      [data.assignment.id, data.professional.id, data.memberId, context.actor.userId, date, end],
+    );
+    const items = (
+      await listSchedulingCalendar(pool, context.actor, { ...query, status: "cancelled" })
+    ).items;
+    expect(items.map((b) => b.id)).toEqual([booking.id, inserted.rows[1].id]);
+    const route = createSchedulingRoute({
+      pool,
+      resolveActor: async () => context.actor,
+      afterResponse: () => {},
+    });
+    const response = await route(
+      new Request(`https://example.test/api/v1/scheduling/calendar?${new URLSearchParams(query)}`),
+      ["calendar"],
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    const invalid = await route(
+      new Request(
+        "https://example.test/api/v1/scheduling/calendar?start=2026-01-01&end=2027-01-01",
+      ),
+      ["calendar"],
+    );
+    expect(invalid.status).toBe(422);
+    const unauthenticated = createSchedulingRoute({
+      pool,
+      resolveActor: async () => null,
+      afterResponse: () => {},
+    });
+    expect(
+      (
+        await unauthenticated(
+          new Request(
+            `https://example.test/api/v1/scheduling/calendar?${new URLSearchParams(query)}`,
+          ),
+          ["calendar"],
+        )
+      ).status,
+    ).toBe(401);
+    await expect(
+      listSchedulingCalendar(pool, { ...context.actor, sessionId: crypto.randomUUID() }, query),
+    ).rejects.toMatchObject({ status: 401 });
+  });
+  it("returns more than a list page and refuses an oversized calendar without truncation", async () => {
+    const data = await offer();
+    const end = new Date(Date.parse(date) + 86400000).toISOString().slice(0, 10);
+    const query = { start: date, end, unitId: data.unit.id };
+    await admin.query(
+      `INSERT INTO scheduling_booking(assignment_id,professional_id,member_id,starts_at,ends_at,duration_snapshot,status,created_by)
+      SELECT $1,$2,$3,$4::timestamptz,$4::timestamptz+interval '30 minutes',30,'cancelled',$5 FROM generate_series(1,1000)`,
+      [data.assignment.id, data.professional.id, data.memberId, at("09:00"), context.actor.userId],
+    );
+    expect((await listSchedulingCalendar(pool, context.actor, query)).items).toHaveLength(1000);
+    await reserve(data);
+    await expect(listSchedulingCalendar(pool, context.actor, query)).rejects.toMatchObject({
+      code: "SCHEDULING_CALENDAR_LIMIT",
+      status: 422,
+    });
+    expect(
+      (await listSchedulingCalendar(pool, context.actor, { ...query, status: "scheduled" })).items,
+    ).toHaveLength(1);
+  });
   it("distinguishes identically named offers by unit and preserves readable parent references", async () => {
     const north = await offer();
     const south = await offer();

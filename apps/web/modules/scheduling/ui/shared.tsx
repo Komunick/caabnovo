@@ -12,6 +12,8 @@ import { FormField } from "@/components/ui/form-field";
 import { catalogLabels } from "./catalog-labels";
 
 const messages: Record<string, string> = {
+  SCHEDULING_CALENDAR_LIMIT:
+    "Há mais de 1.000 reservas neste período. Selecione Dia ou Semana, ou filtre por unidade e profissional para carregar a agenda completa.",
   SCHEDULING_CONFLICT: "Essa vaga não está mais disponível. Escolha outro horário.",
   SCHEDULING_VERSION_CONFLICT:
     "O registro foi alterado. Recarregue a página e confira os dados antes de salvar.",

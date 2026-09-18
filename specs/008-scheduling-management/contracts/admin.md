@@ -4,6 +4,14 @@ Base: /api/v1/scheduling. Autorização de todas as rotas: sessão ativa e acess
 válido ao painel pelo mecanismo existente. Sem scheduling:read/write ou escopo por
 unidade. Sem API anônima, sem token Cal.com e sem autenticação do app nesta fase.
 
+Incremento de 18/09: GET `/calendar?start=YYYY-MM-DD&end=YYYY-MM-DD` retorna
+`{items: SchedulingBooking[]}`. Start inclusivo/end exclusivo, dias em America/Bahia,
+até 42 dias. Filtros opcionais: q, unitId, professionalId, status. Inclui reservas que
+intersectam o intervalo (`ends_at > start`, `starts_at < end`), ordenadas por início/id.
+Até 1.000 itens; acima disso 422/SCHEDULING_CALENDAR_LIMIT sem resposta parcial.
+Intervalo inválido retorna 422; sessão inválida 401/403 como nas rotas existentes.
+Resposta privada sem cache. Não altera `/bookings?date=...` nem seus consumidores.
+
 | Interface | Operações | Campos/resultado |
 | --- | --- | --- |
 | /units, /services, /procedures, /professionals, /assignments | GET, POST; PATCH /:id | Catálogo mínimo paginado; versões para edição. |
@@ -50,4 +58,3 @@ na URL, Novo agendamento e links Oferta/Horários. Formulário: beneficiário �
 a seleção anterior muda. Sem vagas, explicar e permitir trocar dia/profissional.
 Detalhes oferecem Remarcar/Cancelar apenas para reservas futuras agendadas. Histórico
 mostra datas/autores e ações humanas. Não exibir atalhos inoperantes para avaliações/app.
-

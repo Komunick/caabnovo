@@ -4,6 +4,8 @@ import { expect, syntheticUsers, test } from "./fixtures";
 import { keyboardActivate, keyboardType, tabTo } from "./keyboard";
 import { expectThemeContrast, expectWcag22AA } from "./accessibility";
 
+test.use({ timezoneId: "Pacific/Auckland" });
+
 async function signIn(page: Page, admin = false) {
   const user = admin ? syntheticUsers.administrator : syntheticUsers.ordinary;
   await page.goto("/login");
@@ -42,7 +44,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
   page,
   context,
 }, testInfo) => {
-  test.setTimeout(180000);
+  test.setTimeout(300000);
   await page.setViewportSize({ width: 390, height: 844 });
   const suffix = randomUUID().slice(0, 8);
   const member = `Pessoa agenda ${suffix}`,
@@ -234,6 +236,50 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await expect(page.getByRole("row").filter({ hasText: member })).toContainText(professional);
   await page.reload();
   await expect(page.getByLabel("Nome do beneficiário")).toHaveValue(member);
+  const views = page.getByRole("navigation", { name: "Visualização da agenda" });
+  for (const label of ["Mês", "Semana", "Dia"]) {
+    await views.getByRole("link", { name: label, exact: true }).click();
+    const calendar = page.getByRole("region", { name: "Calendário de reservas" });
+    await expect(
+      calendar.getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) }),
+    ).toBeVisible();
+    await expectWcag22AA(page);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    await screenshot(page, testInfo.outputPath(`scheduling-calendar-${label}-mobile-light.png`));
+  }
+  await page.reload();
+  await expect(views.getByRole("link", { name: "Dia", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expect(page.getByLabel("Nome do beneficiário")).toHaveValue(member);
+  await views.getByRole("link", { name: "Próximo período" }).click();
+  await expect(page.getByText("Nenhuma reserva encontrada neste período e filtros.")).toBeVisible();
+  await page.goBack();
+  const calendarEvent = page
+    .getByRole("region", { name: "Calendário de reservas" })
+    .getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) });
+  await expect(calendarEvent).toBeVisible();
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await views.getByRole("link", { name: "Semana", exact: true }).click();
+  await expect(calendarEvent).toBeVisible();
+  await page.locator("html").evaluate((element) => {
+    element.dataset.theme = "dark";
+    element.style.colorScheme = "dark";
+  });
+  await expectWcag22AA(page);
+  await screenshot(page, testInfo.outputPath("scheduling-calendar-week-desktop-dark.png"));
+  await keyboardActivate(page, calendarEvent);
+  await expect(page).toHaveURL(detailUrl);
+  await page.goBack();
+  await views.getByRole("link", { name: "Lista", exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("html").evaluate((element) => {
+    element.dataset.theme = "light";
+    element.style.colorScheme = "light";
+  });
   await keyboardActivate(
     page,
     page.getByRole("link", { name: new RegExp(`Ver reserva de ${member}`) }),
@@ -248,6 +294,13 @@ test("configure and manage a real reservation through the panel at 390px, withou
   );
   await expect(page.getByText("Reserva remarcada.", { exact: true })).toBeVisible();
   await expect(page.getByText("Reserva remarcada", { exact: true })).toBeVisible();
+  await page.goto(`/scheduling?date=${date}&q=${encodeURIComponent(member)}&view=day`);
+  await expect(
+    page
+      .getByRole("region", { name: "Calendário de reservas" })
+      .getByRole("link", { name: new RegExp(`${member}, 09:00 às 10:00`) }),
+  ).toBeVisible();
+  await page.goto(detailUrl);
   await expectThemeContrast(
     page,
     ".scheduling-workspace dt, .scheduling-workspace dd, .scheduling-workspace li p, .scheduling-workspace li strong, .scheduling-workspace [role=status]",
@@ -285,6 +338,14 @@ test("configure and manage a real reservation through the panel at 390px, withou
   await expect(page.getByText("Cancelado", { exact: true })).toBeVisible();
   await expect(page.getByText("Reserva cancelada", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Remarcar", exact: true })).toHaveCount(0);
+  await page.goto(
+    `/scheduling?date=${date}&q=${encodeURIComponent(member)}&view=day&status=cancelled`,
+  );
+  await expect(
+    page
+      .getByRole("region", { name: "Calendário de reservas" })
+      .getByRole("link", { name: new RegExp(`${member}.*Cancelado`) }),
+  ).toBeVisible();
   await page.goto("/scheduling/new");
   await choose(page, "Beneficiário", member);
   await choose(page, "Unidade", unit);
@@ -320,5 +381,45 @@ test("agenda handles an empty result and retry without exposing server messages"
   await page.getByLabel("Nome do beneficiário").fill(`Sem resultado ${randomUUID()}`);
   await page.getByRole("button", { name: "Aplicar filtros" }).click();
   await expect(page.getByText("Nenhuma reserva encontrada para esses filtros.")).toBeVisible();
+  await expectWcag22AA(page);
+});
+
+test("calendar reports load failures and capacity limits without claiming an empty agenda", async ({
+  page,
+}) => {
+  await signIn(page);
+  await page.route("**/api/v1/scheduling/calendar?**", (route) =>
+    route.fulfill({
+      status: 422,
+      contentType: "application/json",
+      body: JSON.stringify({ error: { code: "SCHEDULING_CALENDAR_LIMIT" } }),
+    }),
+  );
+  await page.goto("/scheduling?date=2026-09-18&view=month");
+  await expect(page.locator(".scheduling-workspace").getByRole("alert")).toContainText(
+    "Há mais de 1.000 reservas",
+  );
+  await expect(page.getByRole("region", { name: "Calendário de reservas" })).toHaveCount(0);
+  await expect(page.getByText("Nenhuma reserva encontrada neste período e filtros.")).toHaveCount(
+    0,
+  );
+  await page.unroute("**/api/v1/scheduling/calendar?**");
+  await page.route("**/api/v1/scheduling/calendar?**", (route) =>
+    route.fulfill({
+      status: 500,
+      contentType: "application/json",
+      body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "database detail" } }),
+    }),
+  );
+  await page.getByRole("button", { name: "Tentar novamente" }).click();
+  await expect(page.locator(".scheduling-workspace").getByRole("alert")).toContainText(
+    "Não foi possível concluir",
+  );
+  await expect(page.getByText("database detail")).toHaveCount(0);
+  await page.unroute("**/api/v1/scheduling/calendar?**");
+  await page.getByLabel("Nome do beneficiário").fill(`Sem reserva ${randomUUID()}`);
+  await page.getByRole("button", { name: "Aplicar filtros" }).click();
+  await expect(page).toHaveURL(/view=month/);
+  await expect(page.getByText("Nenhuma reserva encontrada neste período e filtros.")).toBeVisible();
   await expectWcag22AA(page);
 });

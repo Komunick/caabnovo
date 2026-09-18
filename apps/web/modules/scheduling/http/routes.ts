@@ -16,6 +16,7 @@ import { getSchedulingAvailability } from "../availability-service";
 import { listSchedulingBeneficiaries } from "../beneficiary-service";
 import {
   listSchedulingBookings,
+  listSchedulingCalendar,
   getSchedulingBooking,
   createSchedulingBooking,
   rescheduleSchedulingBooking,
@@ -50,6 +51,8 @@ export function createSchedulingRoute(deps: {
           result = id
             ? await getSchedulingBooking(deps.pool, actor, id, query)
             : await listSchedulingBookings(deps.pool, actor, query);
+        else if (resource === "calendar" && path.length === 1)
+          result = await listSchedulingCalendar(deps.pool, actor, query);
         else if (resource === "beneficiaries" && path.length === 1)
           result = await listSchedulingBeneficiaries(deps.pool, actor, query);
         else if (resource === "availability" && path.length === 1)

@@ -4,8 +4,27 @@ import {
   schedulingHoursSchema,
   schedulingCreateSchema,
   schedulingBookingsQuerySchema,
+  schedulingCalendarQuerySchema,
 } from "./scheduling";
 describe("scheduling contracts", () => {
+  it("bounds the calendar interval to six weeks with an exclusive end", () => {
+    expect(
+      schedulingCalendarQuerySchema.safeParse({ start: "2026-09-01", end: "2026-10-13" }).success,
+    ).toBe(true);
+    for (const end of ["2026-09-01", "2026-08-31", "2026-10-14", "2026-09-31"]) {
+      expect(schedulingCalendarQuerySchema.safeParse({ start: "2026-09-01", end }).success).toBe(
+        false,
+      );
+    }
+    expect(schedulingCalendarQuerySchema.safeParse({ start: "2026-09-01" }).success).toBe(false);
+    expect(
+      schedulingCalendarQuerySchema.safeParse({
+        start: "2026-09-01",
+        end: "2026-09-02",
+        professionalId: "invalid",
+      }).success,
+    ).toBe(false);
+  });
   it("rejects invalid duration and client-controlled booking fields", () => {
     expect(
       schedulingCatalogSchemas.procedures.safeParse({

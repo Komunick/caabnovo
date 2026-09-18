@@ -1,5 +1,9 @@
 # Feature Specification: Módulos integrados CAAB
 
+**Prioridade de 18/09/2026:** evolução administrativa de Agendamentos com FullCalendar,
+conforme spec 008, antecede app/site. Esta decisão substitui a prioridade histórica
+de 15/09 abaixo, sem ampliar os demais módulos ou integrações.
+
 **Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
 
 Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.

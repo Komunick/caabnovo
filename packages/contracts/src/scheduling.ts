@@ -138,6 +138,16 @@ export const schedulingBookingsQuerySchema = schedulingPageQuerySchema.extend({
   status: z.enum(["scheduled", "cancelled"]).optional(),
   memberId: idSchema.optional(),
 });
+export const schedulingCalendarQuerySchema = schedulingBookingsQuerySchema
+  .pick({ q: true, unitId: true, professionalId: true, status: true })
+  .extend({ start: schedulingDateSchema, end: schedulingDateSchema })
+  .refine(
+    ({ start, end }) => {
+      const days = (Date.parse(end) - Date.parse(start)) / 86400000;
+      return days > 0 && days <= 42;
+    },
+    { path: ["end"], message: "Escolha um intervalo de até 42 dias, com fim posterior ao início." },
+  );
 export const schedulingBookingSchema = z.object({
   id: idSchema,
   memberId: idSchema,

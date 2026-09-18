@@ -1,5 +1,9 @@
 # Tasks: Módulos integrados CAAB
 
+**Prioridade de 18/09/2026:** usuário escolheu continuar Agendamentos no painel com
+FullCalendar; executar CAL01–CAL06 da spec 008 antes da interface app/site (UI01/UI02).
+Não reabrir escopos suspensos. Preservar documentação de retomada durante a execução.
+
 **Input**: spec.md, plan.md, research.md, data-model.md, contracts/interfaces.md. **Tests**:
 Obrigatórios por risco conforme especificação. Cada função tem artefatos próprios; alterações autorizadas compartilham a única branch/worktree da entrega e seu PR enquanto aberto.
 **Status em 16/09/2026**: Auditoria/Processamentos, Notícias, Associados, Parceiros,

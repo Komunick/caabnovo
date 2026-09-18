@@ -1,7 +1,10 @@
 "use client";
-import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
+import { DraftScope, useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import { schedulingDateSchema } from "@caab/contracts";
+import { calendarView, calendarViews, moveCalendarDate, type CalendarView } from "../calendar";
 import { type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SchedulingBooking, SchedulingPage } from "@caab/contracts";
@@ -10,6 +13,7 @@ import { SearchField, FilterToggle } from "@/components/ui/search-controls";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { schedulingDate } from "../availability";
+import "./calendar.css";
 import {
   Choice,
   DataState,
@@ -19,12 +23,32 @@ import {
   useSchedulingData,
 } from "./shared";
 
+const SchedulingCalendar = dynamic(() => import("./calendar"), {
+  ssr: false,
+  loading: () => <p role="status">Carregando calendário…</p>,
+});
+
 export function SchedulingAgenda() {
   const query = useSearchParams();
   const router = useRouter();
-  const date = query.get("date") || schedulingDate();
+  const date = schedulingDateSchema.safeParse(query.get("date")).data || schedulingDate();
+  const view = calendarView(query.get("view"));
   const path = `bookings?${new URLSearchParams({ ...Object.fromEntries(query), date }).toString()}`;
-  const result = useSchedulingData<SchedulingPage<SchedulingBooking>>(path);
+  const result = useSchedulingData<SchedulingPage<SchedulingBooking>>(
+    view === "list" ? path : null,
+  );
+  const calendarFilters = new URLSearchParams();
+  for (const name of ["q", "unitId", "professionalId", "status"]) {
+    const value = query.get(name);
+    if (value) calendarFilters.set(name, value);
+  }
+  function agendaLink(nextView: CalendarView, nextDate = date) {
+    const next = new URLSearchParams(query);
+    next.set("date", nextDate);
+    next.set("view", nextView);
+    next.delete("page");
+    return `/scheduling?${next}`;
+  }
   function changePage(page: number) {
     const next = new URLSearchParams(query);
     next.set("date", date);
@@ -33,13 +57,59 @@ export function SchedulingAgenda() {
   }
   return (
     <SchedulingShell
-      title="Agenda diária"
-      description="Consulte os atendimentos, crie reservas e acompanhe a agenda do dia."
+      title="Agenda"
+      description="Consulte os atendimentos, crie reservas e acompanhe a agenda."
     >
       <section className="panel">
         <h2>Encontrar reserva</h2>
-        <AgendaFilters key={query.toString()} initial={new URLSearchParams(query)} date={date} />
-        {result.data ? (
+        <DraftScope name={`agenda-filters:${date}:${calendarFilters}`}>
+          <AgendaFilters key={query.toString()} initial={new URLSearchParams(query)} date={date} />
+        </DraftScope>
+        <nav className="scheduling-calendar-toolbar" aria-label="Visualização da agenda">
+          <div>
+            {Object.entries(calendarViews).map(([key, label]) => (
+              <Link
+                key={key}
+                className={buttonVariants({
+                  intent: view === key ? "primary" : "secondary",
+                  size: "compact",
+                })}
+                href={agendaLink(key as CalendarView)}
+                aria-current={view === key ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div>
+            <Link
+              className={buttonVariants({ size: "compact" })}
+              href={agendaLink(view, moveCalendarDate(date, view, -1))}
+            >
+              Período anterior
+            </Link>
+            <Link
+              className={buttonVariants({ size: "compact" })}
+              href={agendaLink(view, schedulingDate())}
+            >
+              Hoje
+            </Link>
+            <Link
+              className={buttonVariants({ size: "compact" })}
+              href={agendaLink(view, moveCalendarDate(date, view, 1))}
+            >
+              Próximo período
+            </Link>
+          </div>
+        </nav>
+        <h3>
+          {new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "UTC" }).format(
+            new Date(`${date}T12:00:00Z`),
+          )}
+        </h3>
+        {view !== "list" ? (
+          <SchedulingCalendar date={date} view={view} filters={calendarFilters.toString()} />
+        ) : result.data ? (
           <>
             {result.data.items.length ? (
               <TableContainer aria-label="Reservas do dia">
@@ -126,12 +196,15 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const next = new URLSearchParams();
+    if (initial.get("view")) next.set("view", initial.get("view")!);
     for (const key of ["date", "q", "status"]) {
       const value = String(form.get(key) ?? "");
       if (value) next.set(key, value);
     }
     if (unitId) next.set("unitId", unitId);
     if (professionalId) next.set("professionalId", professionalId);
+    drafts.clear("scheduling-agenda-1:");
+    drafts.clear("agenda:");
     router.push(`/scheduling?${next}`);
   }
   return (
@@ -162,7 +235,7 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
         <Button type="submit">Aplicar filtros</Button>
         <Link
           className={buttonVariants({ size: "compact" })}
-          href="/scheduling"
+          href={`/scheduling?date=${date}&view=${calendarView(initial.get("view"))}`}
           onClick={() => {
             drafts.clear("scheduling-agenda-1:");
             setUnitId("");

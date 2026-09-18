@@ -8,6 +8,31 @@
 
 ## User Scenarios & Testing
 
+### Incremento autorizado — calendário administrativo, 18/09/2026
+
+O usuário priorizou evoluir o painel com FullCalendar antes de app/site. Esta decisão
+substitui a ordem anterior do roadmap, sem autorizar os demais incrementos juntos.
+
+- CAL-F01: alternar Lista, Dia, Semana e Mês na mesma Agenda, mantendo cabeçalho,
+  inclusões explícitas, filtros e tokens do painel. Lista permanece entrada padrão.
+- CAL-F02: navegar anterior/próximo/hoje e escolher data; data, visualização e filtros
+  persistem na URL, recarga e histórico do navegador. Edição não salva é preservada.
+- CAL-F03: mostrar reservas de todo o intervalo visível, em America/Bahia, mesmo com
+  navegador em outro fuso. Beneficiário, horário, profissional, procedimento e situação
+  devem ser identificáveis; cancelado tem indicação textual, além da cor.
+- CAL-F04: abrir os detalhes existentes a partir da reserva; criar, remarcar e cancelar
+  continuam com confirmação/revalidação no servidor. Grade vazia não comprova vaga.
+- CAL-F05: consulta autenticada por intervalo exclusivo no fim, máximo 42 dias e 1.000
+  reservas. Acima disso recusar integralmente e orientar reduzir período/filtros;
+  nunca truncar ou apresentar erro de rede como agenda vazia.
+- CAL-F06: teclado, foco, mobile 390 px, temas claro/escuro, vazio/erro/carregamento
+  e retorno à lista devem funcionar. Semana/mês podem rolar dentro da grade, sem
+  transbordar a página. Não introduzir arrastar/redimensionar nem plugins Premium.
+
+Aceite: uma reserva criada pela UI aparece no mês/semana/dia no horário correto;
+filtros e recarga mantêm contexto; abrir/remarcar/cancelar atualiza a visualização;
+limites/intervalos inválidos/sessão revogada não expõem dados ou agenda incompleta.
+
 ### US1 — Configurar oferta e realizar uma reserva (Priority: P1)
 
 Qualquer pessoa com acesso válido ao painel consegue cadastrar uma unidade, seus
