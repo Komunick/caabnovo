@@ -212,6 +212,8 @@ export async function finalizeUpload(
   );
   const file = fileResult.rows[0];
   if (!file) throw operationError("NOT_FOUND", 404);
+  // Report files must reauthorize the owner and source permissions on every download.
+  if (file.owner_type === "report_export") throw operationError("PERMISSION_DENIED", 403);
   if (file.owner_type === "partner")
     await withTransaction(pool, (client) =>
       authorizePartnerUpload(client, command.actor, file.owner_id),
@@ -340,6 +342,7 @@ export async function createDownloadGrant(
   );
   const file = result.rows[0];
   if (!file) throw operationError("NOT_FOUND", 404);
+  if (file.owner_type === "report_export") throw operationError("PERMISSION_DENIED", 403);
   if (file.owner_type === "member") {
     const { memberDownload } = await import("../members/member-service");
     const grant = await memberDownload(pool, actor, file.owner_id, fileId, storage);

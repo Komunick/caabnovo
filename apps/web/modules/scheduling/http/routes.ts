@@ -1,4 +1,5 @@
 import type { Pool } from "pg";
+import { trackConfirmedBooking } from "../../reports/business-events";
 import { apiError, idSchema, schedulingKindSchema } from "@caab/contracts";
 import type { RequestActor } from "../../shared/request-context";
 import { readJson } from "../../members/http/routes";
@@ -87,6 +88,7 @@ export function createSchedulingRoute(deps: {
                 ? await cancelSchedulingBooking(deps.pool, context, id, body)
                 : null;
           if (!result) throw new SchedulingError("NOT_FOUND", 404);
+          if (!id) await trackConfirmedBooking(deps.pool, request, result.value.id, actor.userId);
           response = Response.json(result.value, { status: !id && !result.replayed ? 201 : 200 });
         } else if (
           kind.success &&

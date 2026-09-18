@@ -205,3 +205,13 @@ Atualizar contratos e serviços desta função para aceitar omissão/vazio; mant
 ## Execução de US7 — 16/09/2026
 
 Protótipo de preparação de Mensagens registrado no [plano 009](../009-messaging/plan.md), no mesmo ciclo/PR ativo. Adapters e entrega real foram adiados expressamente; não bloqueiam campanhas, modelos, públicos e programação preparatória. Reutiliza associados, RBAC, auditoria, worker e shell.
+
+## Decisão transversal — exportação em todos os módulos — 18/09/2026
+
+Todos os módulos existentes e futuros deverão permitir baixar/exportar os dados
+consultados, com ação visível, filtros/período/ordenação/colunas preservados,
+permissões revalidadas e exportação além da página da tabela. Formatos adequados
+serão definidos em cada função. Relatórios e Análises: spec 010, três abas;
+Resumo gerencial PDF/CSV, Análise detalhada Excel/PDF/CSV, executivo PDF.
+Demais módulos ganham tarefas próprias quando implementados; esta regra não
+reativa CAASSH nem autoriza funções futuras suspensas.

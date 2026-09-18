@@ -48,6 +48,7 @@ describe("database foundation migrations", () => {
       "0021_messaging.sql",
       "0022_messaging_history.sql",
       "0023_messaging_audiences.sql",
+      "0024_reports.sql",
     ]);
   });
 

@@ -18,6 +18,9 @@ export function safeJobFailure(error: unknown): { code: string; message: string 
   const code =
     typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
   const messages: Record<string, string> = {
+    REPORT_TOO_LARGE:
+      "O relatório excede 50 mil linhas. Refine os filtros ou agrupe os resultados.",
+    PERMISSION_DENIED: "O responsável não possui mais as permissões necessárias.",
     NEWS_NOT_READY: "Confira o conteúdo e a liberação das imagens da revisão agendada.",
     NEWS_SLUG_CONFLICT: "O endereço da notícia já está publicado em outro cadastro.",
     NEWS_ACTION_CONFLICT: "Confira o horário e se o responsável pelo agendamento continua ativo.",

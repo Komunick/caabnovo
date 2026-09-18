@@ -331,3 +331,17 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
 - [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
 - [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.
+
+## Exportação transversal — 18/09/2026
+
+- [ ] EXP01 Inventariar e implementar baixar/exportar em todos os módulos existentes,
+      atualizando specs próprios: Notícias, Associados, Parceiros/Benefícios,
+      Colaboradores, Agendamentos, Mensagens, Auditoria/Processamentos.
+- [ ] EXP02 Exigir baixar/exportar nos planos de todo módulo futuro, conforme
+      disponibilidade/autorização da função, sem reativar módulos suspensos.
+- [ ] EXP03 Conferir preservação de filtros, período, colunas e permissões, arquivos
+      completos além da paginação e jornada por interface em cada spec responsável.
+
+Relatórios e Análises possui spec/plano/tarefas próprios em ../010-reports-analytics/.
+T051–T054 são acompanhadas por esse spec; exportações nos demais módulos não estão
+concluídas pela simples criação da central de relatórios.

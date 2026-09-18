@@ -1,4 +1,6 @@
 export const PERMISSIONS = {
+  reportsRead: "reports:read",
+  reportsExport: "reports:export",
   messagesAccess: "messages:access",
   partnersRead: "partners:read",
   partnersWrite: "partners:write",

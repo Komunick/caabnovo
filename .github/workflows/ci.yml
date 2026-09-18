@@ -200,6 +200,15 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+      - name: Preserve reports review evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports-synthetic-evidence
+          path: apps/web/test-results/**/reports-*
+          retention-days: 7
+          if-no-files-found: warn
+
       - run: pnpm test:a11y --project=chromium
 
   security:

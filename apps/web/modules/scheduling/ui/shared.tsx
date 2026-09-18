@@ -1,4 +1,5 @@
 "use client";
+import { reportSession } from "@/modules/reports/collector";
 import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -84,11 +85,22 @@ export function useSchedulingMutation() {
     const body = JSON.stringify(input);
     const payload = `${method}:${path}:${body}`;
     if (retry.current.payload !== payload) retry.current = { payload, key: crypto.randomUUID() };
+    let analyticsHeaders: Record<string, string> = {};
+    try {
+      const session = reportSession();
+      analyticsHeaders = {
+        "x-analytics-visitor": session.visitorId,
+        "x-analytics-session": session.sessionId,
+      };
+    } catch {
+      /* Optional telemetry cannot block a reservation. */
+    }
     try {
       const result = await schedulingRequest<T>(path, {
         method,
         body,
         headers: {
+          ...analyticsHeaders,
           "content-type": "application/json",
           "x-csrf-token": crypto.randomUUID(),
           "idempotency-key": retry.current.key,

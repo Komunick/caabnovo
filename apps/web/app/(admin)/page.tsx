@@ -5,15 +5,7 @@ import { NavigationPending } from "@/components/ui/navigation-pending";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import {
-  ArrowRight,
-  CalendarDays,
-  WalletCards,
-  ChartNoAxesCombined,
-  Plus,
-  FilePenLine,
-  UsersRound,
-} from "lucide-react";
+import { ArrowRight, CalendarDays, WalletCards, Plus, FilePenLine, UsersRound } from "lucide-react";
 import { resolveCurrentUser } from "@/modules/auth/current-user";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { getWorkspaceAreas } from "@/modules/workspace/areas";
@@ -31,12 +23,6 @@ const upcoming = [
     description: "Módulo desativado até a revisão de sua proposta.",
     status: "Desativado — pendente de revisão",
     icon: WalletCards,
-  },
-  {
-    name: "Relatórios",
-    status: "Em planejamento",
-    description: "Indicadores e resultados de cada área.",
-    icon: ChartNoAxesCombined,
   },
 ];
 const date = (value: string) =>
