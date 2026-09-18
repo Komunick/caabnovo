@@ -4,7 +4,13 @@ import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-contro
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { schedulingDateSchema } from "@caab/contracts";
-import { calendarView, calendarViews, moveCalendarDate, type CalendarView } from "../calendar";
+import {
+  calendarRange,
+  calendarView,
+  calendarViews,
+  moveCalendarDate,
+  type CalendarView,
+} from "../calendar";
 import { type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SchedulingBooking, SchedulingPage } from "@caab/contracts";
@@ -33,6 +39,21 @@ export function SchedulingAgenda() {
   const router = useRouter();
   const date = schedulingDateSchema.safeParse(query.get("date")).data || schedulingDate();
   const view = calendarView(query.get("view"));
+  const period = calendarRange(date, view);
+  const dayFormat = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "UTC" });
+  const periodTitle =
+    view === "month"
+      ? new Intl.DateTimeFormat("pt-BR", {
+          month: "long",
+          year: "numeric",
+          timeZone: "UTC",
+        }).format(new Date(`${date}T12:00:00Z`))
+      : view === "week"
+        ? dayFormat.formatRange(
+            new Date(`${period.start}T12:00:00Z`),
+            new Date(Date.parse(`${period.end}T12:00:00Z`) - 86400000),
+          )
+        : dayFormat.format(new Date(`${date}T12:00:00Z`));
   const path = `bookings?${new URLSearchParams({ ...Object.fromEntries(query), date }).toString()}`;
   const result = useSchedulingData<SchedulingPage<SchedulingBooking>>(
     view === "list" ? path : null,
@@ -102,11 +123,7 @@ export function SchedulingAgenda() {
             </Link>
           </div>
         </nav>
-        <h3>
-          {new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeZone: "UTC" }).format(
-            new Date(`${date}T12:00:00Z`),
-          )}
-        </h3>
+        <h3>{periodTitle}</h3>
         {view !== "list" ? (
           <SchedulingCalendar date={date} view={view} filters={calendarFilters.toString()} />
         ) : result.data ? (

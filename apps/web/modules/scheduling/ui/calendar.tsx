@@ -36,7 +36,7 @@ export default function SchedulingCalendar({
       id: booking.id,
       start: booking.startsAt,
       end: booking.endsAt,
-      title: `${booking.memberName} · ${booking.procedureName} · ${booking.professionalName} · ${status}`,
+      title: `${status} · ${booking.memberName} · ${booking.procedureName} · ${booking.professionalName}`,
       url: `/scheduling/${booking.id}`,
       extendedProps: { label, status: booking.status },
     };

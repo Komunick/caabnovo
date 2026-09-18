@@ -38,8 +38,16 @@ FullCalendar Standard 7.1.0, API React atual, sem plugins Premium.
 - GET calendar, FullCalendar, navegação/filtros e testes implementados. Sem migration.
 - Validação local: 485 testes de unidade/contrato aprovados em 74 arquivos; typecheck
   da web aprovado após ajuste para API v7. Formatação geral aprovada.
-- Próximo passo: concluir lint, consolidar commit/push para CI e revisar capturas reais.
-- Integração/build/E2E ainda não executados; evidências em evidence/calendar-2026-09-18.md.
+- Lint final aprovado. Commit de implementação `2af7348` enviado ao PR34; título e
+  descrição atualizados para Relatórios e calendário. PR continua rascunho.
+- CI push 35387126094 e PR 35387129716 totalmente aprovados: 363 unitários,
+  122 contratos, 219 integrações, 82 E2E, 2 focados Relatórios, 6 acessibilidade.
+- Capturas revisadas: temas/tamanho/grade coerentes; em colunas estreitas a situação
+  podia ficar cortada no fim do cartão. Ajuste final coloca situação no início,
+  identifica mês/intervalo semanal no título e captura evento após rolar no celular.
+- Próximo passo: enviar ajuste visual consolidado, confirmar CI final e revisar novas
+  capturas. CAL06 ainda pendente até essa revisão. Localhost permanece desligado.
+- Integração/build/E2E da primeira revisão passaram; evidências em evidence/calendar-2026-09-18.md.
 - Primeira validação: formatação e lint dos arquivos alterados aprovados; 19 testes
   unitários de Agendamentos aprovados. Typecheck global com heap 384 MB esgotou memória
   em packages/news; web isolado com 1.024 MB identificou slotLabelFormat renomeado para

@@ -243,12 +243,25 @@ test("configure and manage a real reservation through the panel at 390px, withou
     await expect(
       calendar.getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) }),
     ).toBeVisible();
+    await calendar
+      .getByRole("link", { name: new RegExp(`${member}, 08:00 às 09:00`) })
+      .scrollIntoViewIfNeeded();
     await expectWcag22AA(page);
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
     await screenshot(page, testInfo.outputPath(`scheduling-calendar-${label}-mobile-light.png`));
   }
+  await page.locator("html").evaluate((element) => {
+    element.dataset.theme = "dark";
+    element.style.colorScheme = "dark";
+  });
+  await expectWcag22AA(page);
+  await screenshot(page, testInfo.outputPath("scheduling-calendar-day-mobile-dark.png"));
+  await page.locator("html").evaluate((element) => {
+    element.dataset.theme = "light";
+    element.style.colorScheme = "light";
+  });
   await page.reload();
   await expect(views.getByRole("link", { name: "Dia", exact: true })).toHaveAttribute(
     "aria-current",
@@ -346,6 +359,7 @@ test("configure and manage a real reservation through the panel at 390px, withou
       .getByRole("region", { name: "Calendário de reservas" })
       .getByRole("link", { name: new RegExp(`${member}.*Cancelado`) }),
   ).toBeVisible();
+  await screenshot(page, testInfo.outputPath("scheduling-calendar-cancelled-mobile-light.png"));
   await page.goto("/scheduling/new");
   await choose(page, "Beneficiário", member);
   await choose(page, "Unidade", unit);

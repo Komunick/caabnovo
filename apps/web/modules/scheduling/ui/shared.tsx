@@ -157,7 +157,7 @@ export function SchedulingShell({
         items={[
           {
             href: "/scheduling",
-            label: "Agenda diária",
+            label: "Agenda",
             active: !pathname.includes("/catalog") && !pathname.includes("/hours"),
           },
           ...schedulingKinds.map((item) => ({
