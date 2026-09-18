@@ -440,7 +440,11 @@ describe.sequential("scheduling transactions and migration", () => {
     ).rejects.toMatchObject({ status: 401 });
   });
   it("validates HTTP authentication, origin, CSRF, payload limits and all mutation methods", async () => {
-    const route = createSchedulingRoute({ pool, resolveActor: async () => context.actor });
+    const route = createSchedulingRoute({
+      pool,
+      resolveActor: async () => context.actor,
+      afterResponse: () => {},
+    });
     const headers = {
       origin: "http://localhost:3000",
       "content-type": "application/json",
@@ -475,7 +479,11 @@ describe.sequential("scheduling transactions and migration", () => {
         ])
       ).status,
     ).toBe(422);
-    const unauthenticated = createSchedulingRoute({ pool, resolveActor: async () => null });
+    const unauthenticated = createSchedulingRoute({
+      pool,
+      resolveActor: async () => null,
+      afterResponse: () => {},
+    });
     const response = await unauthenticated(
       new Request("http://localhost:3000/api/v1/scheduling/units"),
       ["units"],

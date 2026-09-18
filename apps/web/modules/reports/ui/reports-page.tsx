@@ -123,7 +123,7 @@ export function ReportsPage({
       void reportRequest<Export[]>(`/exports?page=${exportPage}`, { signal: abort.signal })
         .then((items) => {
           setExports(items);
-          if (items.some((item) => ["queued", "running"].includes(item.status)))
+          if (items.some((item) => ["queued", "running", "retrying"].includes(item.status)))
             timer = setTimeout(poll, 3000);
         })
         .catch(() => {
@@ -183,6 +183,7 @@ export function ReportsPage({
     }
     setError("");
     setQuery({ ...result.data, page: 1 });
+    setRevision((r) => r + 1);
   }
   async function mutate<T>(path: string, method: string, input: unknown): Promise<T | undefined> {
     if (running.current) return;
@@ -853,6 +854,7 @@ export function ReportsPage({
                             {
                               queued: "Aguardando processamento",
                               running: "Gerando arquivo",
+                              retrying: "Aguardando nova tentativa automática",
                               succeeded: "Disponível",
                               failed: "Falha na geração",
                             } as Record<string, string>

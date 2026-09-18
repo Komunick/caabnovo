@@ -33,3 +33,14 @@ para report_export; endpoint próprio revalida conta, proprietário e permissõe
 Sem truncamento silencioso; limite de geração explícito. Métricas sem CPF, email,
 IP bruto, replay, URLs pessoais ou histórico inventado. Estado atual não reconstrói
 passado; reservas não são atendimentos e uso administrativo não mede produtividade.
+
+## Revisão de confiabilidade — 18/09/2026
+
+Documentação instalada do Next 16.3.4 (`next/dist/docs/01-app/03-api-reference/04-functions/after.md`)
+reconsultada: `after(callback)` executa logging/analytics após finalizar a resposta,
+com suporte a Route Handlers. Adotado na confirmação de reservas; coletor continua
+melhor esforço, sem garantir entrega se o processo morrer após a confirmação.
+Inspeção de `job-runtime.ts`, `job-execution.ts` e configurações locais pg-boss:
+uma execução inicial + quatro retries corresponde a attempt_limit=5. O estado
+persistido failed descreve a tentativa; histórico deve considerar o contador antes
+de apresentar falha definitiva. Sem alteração de política de retries nesta correção.

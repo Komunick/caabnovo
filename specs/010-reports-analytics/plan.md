@@ -49,3 +49,14 @@ Não reativar módulos suspensos. Botões nos demais módulos permanecem no back
 Contratos/unitários, autorização e banco descartável; E2E das três abas,
 exportações reais, consultas e coleta SPA; screenshots mobile/desktop/temas e
 acessibilidade. Formato/lint/tipos/build/segurança antes de PR para dev, sem merge.
+
+## Ajustes da revisão do PR34 — 18/09/2026
+
+Histórico projeta `retrying` quando job_execution registra falha e ainda possui
+tentativas dentro do limite de cinco (execução inicial + quatro retries). A interface
+continua polling nesse estado e reserva a ação de nova solicitação à falha definitiva.
+Gerar incrementa a revisão da consulta mesmo com filtros iguais. Coleta de confirmação
+usa o agendador `after` do Next na fronteira HTTP, injetado na rota para testes;
+falhas de agendamento da coleta também não alteram a resposta de negócio.
+Testes de componente com relógio controlado, transições reais no PostgreSQL e rota
+com coleta pendente/rejeitada cobrem os três casos. CI push e PR devem concluir.

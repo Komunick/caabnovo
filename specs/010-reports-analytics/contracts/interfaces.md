@@ -19,6 +19,12 @@ Repetir chave com outro conteúdo retorna 409. Erros 401/403/404/409/413/422.
 Corpo de configuração limitado a 16 KB. Período até 366 dias, página de 50 registros,
 arquivo até 50 mil linhas; excedente falha explicitamente, sem truncamento.
 
+Histórico inclui `attempt_count` e `attempt_limit`. O `status` de apresentação é
+`retrying` quando uma tentativa falhou e ainda restam tentativas automáticas;
+`failed` indica esgotamento. Consultar novamente a cada três segundos enquanto
+`queued`, `running` ou `retrying`; `succeeded` libera o download. Gerar relatório
+executa nova consulta mesmo se `ReportQuery` não mudou.
+
 ```json
 {"view":"details","dataset":"members","from":"2026-09-01","to":"2026-09-30","dateScope":"period","columns":["name","city"],"sort":"name","direction":"asc"}
 ```
@@ -35,7 +41,9 @@ aplicam-se somente aos detalhes e ficam preservados entre abas.
 POST `/api/v1/reports/collect`: sessão autenticada e CSRF; conta derivada do servidor.
 Corpo até 2 KB, retorno 204. Não exige permissão de consultar relatórios. Não aceita
 `accountId`, instante informado pelo cliente ou conclusão de reserva. Confirmação
-é registrada após sucesso da operação no servidor. Navegação SPA gera visualização
+é agendada após sucesso da operação no servidor e executa após a resposta HTTP
+usando `after` do Next. Falhas da coleta ou do seu agendamento não mudam a resposta
+da reserva persistida. Navegação SPA gera visualização
 de módulos, sem URL completa, parâmetros ou IDs de cadastro. Sessão de uso expira
 após 30 minutos sem atividade instrumentada; falhas não bloqueiam o painel.
 

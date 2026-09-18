@@ -78,6 +78,11 @@ identidade autenticada vem do servidor; nenhum total é chamado de pessoas entre
   existentes e futuros. Implementação dos botões dos outros módulos é tarefa transversal posterior.
 - **FR-012**: Validar autorização, filtros, contagens, arquivos reais, banco, jornada por
   navegador, estados vazios, mobile, temas e acessibilidade com dados sintéticos.
+- **FR-013**: Gerar relatório sempre consulta os dados atuais, inclusive com os mesmos filtros.
+- **FR-014**: Falha de exportação com tentativas automáticas restantes continua em acompanhamento;
+  sucesso posterior libera o download automaticamente. Falha definitiva permite nova solicitação.
+- **FR-015**: Analytics de reserva confirmada executa após a resposta HTTP; coleta lenta ou
+  indisponível não altera nem atrasa a confirmação de uma reserva persistida.
 
 ### Key Entities
 

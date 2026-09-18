@@ -129,7 +129,9 @@ export async function reportExports(db: ReportDb, actor: ReportActor, page = 1) 
   authorizeReport(actor, undefined, true);
   return (
     await db.query(
-      `SELECT e.id,e.configuration->'input' AS configuration,e.created_at,j.status,j.progress,j.safe_error_code
+      `SELECT e.id,e.configuration->'input' AS configuration,e.created_at,
+      CASE WHEN j.status='failed' AND j.attempt_count<j.attempt_limit THEN 'retrying' ELSE j.status::text END AS status,
+      j.attempt_count,j.attempt_limit,j.progress,j.safe_error_code
     FROM report_export e JOIN job_execution j ON j.id=e.id WHERE e.owner_id=$1 ORDER BY e.created_at DESC,e.id LIMIT 21 OFFSET $2`,
       [actor.userId, (page - 1) * 20],
     )

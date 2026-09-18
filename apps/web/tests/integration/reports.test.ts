@@ -13,7 +13,13 @@ import {
   deleteReport,
   requestReportExport,
   reportExportDownload,
+  reportExports,
 } from "@caab/db/repositories/report-storage";
+import {
+  markJobRunning,
+  markJobFailed,
+  markJobSucceeded,
+} from "@caab/db/repositories/job-execution";
 import { runReportExport } from "../../../worker/src/jobs/report-export";
 import { createDownloadGrant } from "../../modules/files/file-service";
 let container: StartedPostgreSqlContainer,
@@ -67,6 +73,50 @@ afterAll(async () => {
   await container?.stop();
 });
 describe("reports with restricted database role", () => {
+  it("distinguishes automatic retries from final failure and exposes later success", async () => {
+    const create = () =>
+      requestReportExport(
+        pool,
+        actor,
+        { query, format: "csv" },
+        {
+          key: crypto.randomUUID(),
+          requestId: crypto.randomUUID(),
+          correlationId: crypto.randomUUID(),
+        },
+        async () => {},
+      );
+    const current = async (id: string) =>
+      (await reportExports(pool, actor)).find((item) => item.id === id);
+    const temporary = await create();
+    await markJobRunning(pool, temporary.id);
+    await markJobFailed(pool, temporary.id, "JOB_FAILED", "Synthetic failure");
+    expect(await current(temporary.id)).toMatchObject({
+      status: "retrying",
+      attempt_count: 1,
+      attempt_limit: 5,
+    });
+    await markJobRunning(pool, temporary.id);
+    await runReportExport(pool, {
+      jobId: temporary.id,
+      requestId: crypto.randomUUID(),
+      correlationId: crypto.randomUUID(),
+    });
+    await markJobSucceeded(pool, temporary.id);
+    expect(await current(temporary.id)).toMatchObject({ status: "succeeded", attempt_count: 2 });
+    expect((await reportExportDownload(pool, actor, temporary.id)).body.toString()).toContain(
+      "Pessoa relatório",
+    );
+    const exhausted = await create();
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      await markJobRunning(pool, exhausted.id);
+      await markJobFailed(pool, exhausted.id, "JOB_FAILED", "Synthetic failure");
+      expect(await current(exhausted.id)).toMatchObject({
+        status: attempt < 5 ? "retrying" : "failed",
+        attempt_count: attempt,
+      });
+    }
+  });
   it("filters, groups and paginates without exposing unselected personal fields", async () => {
     const first = await queryReport(pool, actor, {
       ...query,

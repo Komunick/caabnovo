@@ -3,6 +3,22 @@ import type { Pool } from "pg";
 import { collectReportEvent } from "@caab/db/repositories/report-analytics";
 import { analyticsEnvironment } from "./ingest";
 import { logger } from "../shared/logger";
+export function scheduleConfirmedBooking(
+  afterResponse: (task: () => Promise<void>) => void,
+  pool: Pool,
+  request: Request,
+  bookingId: string,
+  userId: string,
+) {
+  try {
+    afterResponse(() => trackConfirmedBooking(pool, request, bookingId, userId));
+  } catch {
+    logger.warn(
+      { event: "analytics.scheduling_failed", errorCode: "ANALYTICS_UNAVAILABLE" },
+      "Usage collection unavailable",
+    );
+  }
+}
 export async function trackConfirmedBooking(
   pool: Pool,
   request: Request,

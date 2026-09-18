@@ -5,6 +5,13 @@ Validação com dados sintéticos. Localhost, banco e preview principais permane
 
 ## Gates e regressão
 
+Revisão P2 recebida após afe7b8d: polling de exportações em retry, atualização com
+filtros iguais e analytics fora da resposta de reserva corrigidos na mesma branch.
+Seis novos testes de componente/rota aprovados localmente, assim como lint,
+formatação e tipos. Teste adicional de integração cobre as cinco tentativas,
+recuperação e download real. Os CIs push e PR serão mantidos até conclusão;
+resultado desta revisão deve constar no PR antes da entrega.
+
 - Formatação, lint e typecheck locais aprovados. A execução local completa de unidade/contratos
   encontrou um erro de ambiente do Node/Windows (`uv_os_get_passwd ENOMEM`) em subprocesso
   de um teste preexistente; a mesma suíte passou integralmente no CI Linux.
@@ -15,8 +22,8 @@ Validação com dados sintéticos. Localhost, banco e preview principais permane
   build de produção.
 - Navegador aprovado no mesmo CI: dois testes focados de Relatórios, 81 E2E da suíte
   completa e seis testes de acessibilidade. Todos os jobs concluíram com sucesso.
-  O commit posterior apenas encerra esta documentação, o status do spec e as tarefas;
-  não altera código nem testes em relação à revisão validada.
+  Esse resultado documenta a implementação anterior à revisão P2; não substitui
+  a validação das correções posteriores.
 
 ## Casos cobertos
 

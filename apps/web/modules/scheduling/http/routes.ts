@@ -1,5 +1,5 @@
 import type { Pool } from "pg";
-import { trackConfirmedBooking } from "../../reports/business-events";
+import { scheduleConfirmedBooking } from "../../reports/business-events";
 import { apiError, idSchema, schedulingKindSchema } from "@caab/contracts";
 import type { RequestActor } from "../../shared/request-context";
 import { readJson } from "../../members/http/routes";
@@ -25,6 +25,7 @@ import {
 export function createSchedulingRoute(deps: {
   pool: Pool;
   resolveActor(request: Request): Promise<RequestActor | null>;
+  afterResponse(task: () => Promise<void>): void;
 }) {
   return async (request: Request, path: string[] = []): Promise<Response> => {
     const rid = requestId(request);
@@ -88,7 +89,14 @@ export function createSchedulingRoute(deps: {
                 ? await cancelSchedulingBooking(deps.pool, context, id, body)
                 : null;
           if (!result) throw new SchedulingError("NOT_FOUND", 404);
-          if (!id) await trackConfirmedBooking(deps.pool, request, result.value.id, actor.userId);
+          if (!id)
+            scheduleConfirmedBooking(
+              deps.afterResponse,
+              deps.pool,
+              request,
+              result.value.id,
+              actor.userId,
+            );
           response = Response.json(result.value, { status: !id && !result.replayed ? 201 : 200 });
         } else if (
           kind.success &&
