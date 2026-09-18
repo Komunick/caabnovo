@@ -129,6 +129,7 @@ export const reportQuerySchema = z
     dataset: reportDatasetSchema.default("members"),
     from: reportDaySchema,
     to: reportDaySchema,
+    dateScope: z.enum(["period", "all"]).default("period"),
     search: z.string().trim().max(120).default(""),
     status: z.string().trim().max(80).default(""),
     category: z.string().trim().max(120).default(""),
@@ -205,12 +206,15 @@ export interface ReportMetric {
   definition: string;
 }
 export interface ReportSummary {
+  inventory: { label: string; value: number; definition: string }[];
   metrics: ReportMetric[];
   series: { date: string; dataset: string; value: number }[];
   notices: string[];
   updatedAt: string;
 }
 export interface ReportUsage {
+  previous: { views: number; sessions: number; visitors: number; accounts: number };
+  series: { date: string; views: number }[];
   views: number;
   sessions: number;
   visitors: number;

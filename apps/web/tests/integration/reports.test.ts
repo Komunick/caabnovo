@@ -85,6 +85,13 @@ describe("reports with restricted database role", () => {
       await queryReport(pool, actor, { ...query, dataset });
     const summary = await reportSummary(pool, actor, query);
     expect(summary.metrics.find((m) => m.id === "members")?.value).toBe(65);
+    expect(summary.inventory.find((m) => m.label === "Associados ativos agora")?.value).toBe(65);
+    const historical = await admin.query<{ id: string }>(
+      "INSERT INTO member(name,city,created_at) VALUES('Cadastro antigo','Feira de Santana','2025-01-01') RETURNING id",
+    );
+    expect((await queryReport(pool, actor, query)).total).toBe(65);
+    expect((await queryReport(pool, actor, { ...query, dateScope: "all" })).total).toBe(66);
+    await admin.query("DELETE FROM member WHERE id=$1", [historical.rows[0]!.id]);
     await expect(
       queryReport(pool, { ...actor, permissions: new Set(["reports:read"]) }, query),
     ).rejects.toMatchObject({ status: 403 });
@@ -130,6 +137,8 @@ describe("reports with restricted database role", () => {
     expect(usage.visitors).toBe(1);
     expect(usage.sessions).toBe(1);
     expect(usage.accounts).toBe(1);
+    expect(usage.previous.views).toBe(0);
+    expect(usage.series.reduce((total, point) => total + point.views, 0)).toBe(2);
     expect(
       (await reportUsage(pool, { ...usageQuery, environment: "production" })).firstEvent,
     ).toBeNull();
@@ -175,6 +184,18 @@ describe("reports with restricted database role", () => {
         requestId: context.requestId,
         correlationId: context.correlationId,
       };
+      const lock = await pool.connect();
+      try {
+        await lock.query("SELECT pg_advisory_lock(hashtextextended($1,0))", [
+          `report-export:${job.jobId}`,
+        ]);
+        await expect(runReportExport(pool, job)).rejects.toMatchObject({ status: 503 });
+      } finally {
+        await lock.query("SELECT pg_advisory_unlock(hashtextextended($1,0))", [
+          `report-export:${job.jobId}`,
+        ]);
+        lock.release();
+      }
       await runReportExport(pool, job);
       await runReportExport(pool, job);
       const file = await reportExportDownload(pool, actor, created.id);
@@ -217,6 +238,31 @@ describe("reports with restricted database role", () => {
         permissions,
       ]);
     }
+  });
+  it("exports executive indicators and management interpretation from the same query", async () => {
+    const context = {
+      key: crypto.randomUUID(),
+      requestId: crypto.randomUUID(),
+      correlationId: crypto.randomUUID(),
+    };
+    const created = await requestReportExport(
+      pool,
+      actor,
+      {
+        query: { ...query, view: "executive" },
+        format: "pdf",
+        notes: "Análise sintética da gestão.",
+      },
+      context,
+      async () => {},
+    );
+    await runReportExport(pool, {
+      jobId: created.id,
+      requestId: context.requestId,
+      correlationId: context.correlationId,
+    });
+    const file = await reportExportDownload(pool, actor, created.id);
+    expect(file.body.subarray(0, 5).toString()).toBe("%PDF-");
   });
   it("rolls back requests when queueing fails and rejects permission revocation before generation", async () => {
     const context = {

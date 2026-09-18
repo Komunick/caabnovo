@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Download, Plus, Presentation, X } from "lucide-react";
 import {
   reportCatalog,
+  reportChange,
   reportPreset,
   reportQuerySchema,
   type ReportDataset,
@@ -66,18 +67,21 @@ export function ReportsPage({
   const cache = useDraftCache();
   const [selected, setSelected] = useDraftState<Saved | null>("reports:selection", null);
   const prefix = `reports:${selected?.id ?? "new"}:`;
-  const initial =
-    selected?.configuration.query ??
-    reportQuerySchema.parse({
-      ...reportPreset("month"),
-      environment,
-      dataset: datasets[0] ?? "bookings",
-    });
+  const defaultQuery = reportQuerySchema.parse({
+    ...reportPreset("month"),
+    environment,
+    dataset: datasets[0] ?? "bookings",
+  });
+  const initial = selected?.configuration.query ?? defaultQuery;
   const [filters, setFilters] = useDraftState<ReportQuery>(`${prefix}filters`, initial);
   const [query, setQuery] = useDraftState<ReportQuery>(`${prefix}applied`, initial);
   const [name, setName] = useDraftState(`${prefix}name`, selected?.name ?? "");
   const [notes, setNotes] = useDraftState(`${prefix}notes`, selected?.configuration.notes ?? "");
   const [error, setError] = useDraftState(`${prefix}error`, "");
+  const [baselineVersion, setBaselineVersion] = useDraftState(
+    `${prefix}version`,
+    selected?.version,
+  );
   const [state, setState] = useState<{ key: string; data?: Data; error?: string }>({ key: "" });
   const [saved, setSaved] = useState<Saved[]>([]),
     [exports, setExports] = useState<Export[]>([]);
@@ -86,6 +90,7 @@ export function ReportsPage({
     [pending, setPending] = useState(false),
     [message, setMessage] = useState("");
   const [presentation, setPresentation] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
   const running = useRef(false),
     retry = useRef({ payload: "", key: "" });
   const key = JSON.stringify(query);
@@ -125,12 +130,34 @@ export function ReportsPage({
     };
   }, [data?.canExport, revision, exportPage]);
   useEffect(() => {
-    if (!presentation) return;
+    if (!presentation || !root.current) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const hidden: { element: HTMLElement; inert: boolean }[] = [];
+    let current: HTMLElement = root.current;
+    while (current.parentElement) {
+      for (const sibling of current.parentElement.children) {
+        if (sibling !== current && sibling instanceof HTMLElement) {
+          hidden.push({ element: sibling, inert: sibling.inert });
+          sibling.inert = true;
+        }
+      }
+      current = current.parentElement;
+    }
+    root.current.querySelector<HTMLButtonElement>("button")?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setPresentation(false);
+      if (event.key === "Tab") {
+        // Presentation has a single action; keep keyboard focus on its exit button.
+        event.preventDefault();
+        root.current?.querySelector<HTMLButtonElement>("button")?.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      for (const { element, inert } of hidden) element.inert = inert;
+      previous?.focus();
+    };
   }, [presentation]);
   function change(values: Partial<ReportQuery>) {
     setFilters((old) => ({ ...old, ...values, page: 1 }));
@@ -177,9 +204,10 @@ export function ReportsPage({
     const next = await mutate<Saved>(
       selected ? `/queries/${selected.id}` : "/queries",
       selected ? "PUT" : "POST",
-      { name, query: filters, notes, ...(selected ? { version: selected.version } : {}) },
+      { name, query: filters, notes, ...(selected ? { version: baselineVersion } : {}) },
     );
     if (next) {
+      setBaselineVersion(next.version);
       cache.clear(prefix);
       cache.clear(`reports:${next.id}:`);
       setSelected(next);
@@ -201,10 +229,16 @@ export function ReportsPage({
   const dirtyFilters =
     JSON.stringify({ ...filters, page: 1 }) !== JSON.stringify({ ...query, page: 1 });
   return (
-    <div className={`page-stack ${styles.root} ${presentation ? styles.presentation : ""}`}>
+    <div
+      ref={root}
+      role={presentation ? "dialog" : undefined}
+      aria-modal={presentation || undefined}
+      aria-labelledby={presentation ? "reports-heading" : undefined}
+      className={`page-stack ${styles.root} ${presentation ? styles.presentation : ""}`}
+    >
       <header className="page-header">
         <p className="eyebrow">Relatórios e Análises</p>
-        <h1>{views[query.view]}</h1>
+        <h1 id="reports-heading">{views[query.view]}</h1>
         <p>
           {query.view === "summary"
             ? "Acompanhe a semana ou o mês e identifique o que merece atenção."
@@ -347,6 +381,20 @@ export function ReportsPage({
                         onChange={(e) => change({ search: e.target.value })}
                       />
                     </label>
+                    {filters.dataset !== "access" && (
+                      <label>
+                        Datas dos registros
+                        <select
+                          value={filters.dateScope}
+                          onChange={(e) =>
+                            change({ dateScope: e.target.value as "period" | "all" })
+                          }
+                        >
+                          <option value="period">Dentro do período</option>
+                          <option value="all">Todos os registros</option>
+                        </select>
+                      </label>
+                    )}
                     {(["status", "category", "city"] as const)
                       .filter((field) => field in fields)
                       .map((field) => (
@@ -525,6 +573,7 @@ export function ReportsPage({
                               ...query,
                               view: "details",
                               dataset: metric.id,
+                              dateScope: "period",
                               columns: [],
                               groupBy: "",
                               sort: "date",
@@ -545,6 +594,21 @@ export function ReportsPage({
                 </div>
               </section>
               <Evolution summary={data.summary} />
+              <section className="panel">
+                <h2>
+                  {query.view === "executive" ? "Cobertura e base atual" : "Situação atual da base"}
+                </h2>
+                <p>Indicadores atuais de toda a base, independentes do período selecionado.</p>
+                <dl className={styles.metrics}>
+                  {data.summary.inventory.map((metric) => (
+                    <div key={metric.label}>
+                      <dt>{metric.label}</dt>
+                      <dd className={styles.value}>{number(metric.value)}</dd>
+                      <p>{metric.definition}</p>
+                    </div>
+                  ))}
+                </dl>
+              </section>
               <section className="panel">
                 <h2>Pontos de atenção</h2>
                 <ul>
@@ -668,11 +732,14 @@ export function ReportsPage({
               </Button>
               <Button
                 onClick={() => {
-                  cache.clear(prefix);
-                  setSelected(null);
                   setName("");
                   setNotes("");
                   setError("");
+                  setFilters(defaultQuery);
+                  setQuery(defaultQuery);
+                  setBaselineVersion(undefined);
+                  cache.clear(prefix);
+                  setSelected(null);
                 }}
               >
                 Cancelar edição
@@ -855,6 +922,51 @@ function Usage({ usage, executive }: { usage: ReportUsage; executive: boolean })
         Visitantes são identificadores reconhecidos, sujeitos a bloqueadores e troca de dispositivo;
         não equivalem a pessoas entre canais. Retorno exige atividade observada antes do período.
       </p>
+      {usage.firstEvent && (
+        <>
+          <h3>Comparação com o período anterior</h3>
+          <ul>
+            {(["views", "sessions", "visitors", "accounts"] as const).map((key) => {
+              const change = reportChange(usage[key], usage.previous[key]);
+              return (
+                <li key={key}>
+                  {
+                    {
+                      views: "Visualizações",
+                      sessions: "Sessões",
+                      visitors: "Visitantes reconhecidos",
+                      accounts: "Contas ativas",
+                    }[key]
+                  }
+                  : {usage.previous[key]} antes → {usage[key]} agora (
+                  {change === null ? "Sem base percentual" : `${change > 0 ? "+" : ""}${change}%`}).
+                </li>
+              );
+            })}
+          </ul>
+          <p>
+            Uma comparação pode ter cobertura parcial quando a coleta começou durante os períodos.
+          </p>
+          <h3>Evolução dos acessos</h3>
+          <ul className={styles.bars}>
+            {usage.series.map((point) => (
+              <li key={point.date}>
+                <span>{point.date}</span>
+                <div>
+                  <span
+                    className={styles.bar}
+                    style={{
+                      width: `${Math.max(1, (point.views / Math.max(1, ...usage.series.map((p) => p.views))) * 100)}%`,
+                    }}
+                    aria-hidden="true"
+                  />
+                </div>
+                <strong>{point.views}</strong>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
       <h3>Cobertura dos canais</h3>
       <ul>
         {(["admin", "site", "app"] as const).map((channel) => (

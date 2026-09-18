@@ -68,7 +68,10 @@ export function reportSql(query: ReportQuery) {
       AND ($4='all' OR channel=$4) AND ($5='' OR source=$5)
       GROUP BY date_trunc('day',occurred_at AT TIME ZONE 'America/Bahia'),screen,channel,source,device,origin,app_version`;
   } else base = reportSources[query.dataset];
-  const filters = ["at >= $1", "at < $2"];
+  const filters =
+    query.dateScope === "all" && query.dataset !== "access"
+      ? ["$1::timestamptz IS NOT NULL", "$2::timestamptz IS NOT NULL"]
+      : ["at >= $1", "at < $2"];
   for (const [field, value] of [
     ["name", query.search],
     ["status", query.status],
@@ -135,6 +138,6 @@ export async function queryReport(
     definition:
       query.dataset === "access"
         ? "Contagens por dia, tela, fonte e dispositivo. Visitantes e sessões podem se repetir entre linhas; não somar como pessoas."
-        : `${reportCatalog[query.dataset].dateLabel} dentro do período; demais campos representam a situação atual. Agendamentos são reservas, não atendimentos realizados.`,
+        : `${query.dateScope === "all" ? "Todos os registros, sem restrição por data" : `${reportCatalog[query.dataset].dateLabel} dentro do período`}; demais campos representam a situação atual. Agendamentos são reservas, não atendimentos realizados.`,
   };
 }

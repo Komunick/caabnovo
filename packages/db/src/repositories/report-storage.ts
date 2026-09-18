@@ -1,6 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
-import { reportExportSchema, savedReportSchema, type ReportExportInput } from "@caab/contracts";
+import {
+  reportCatalog,
+  reportExportSchema,
+  savedReportSchema,
+  type ReportExportInput,
+} from "@caab/contracts";
 import { withTransaction } from "../client";
 import { writeAuditEvent } from "./audit-writer";
 import { createJobExecution } from "./job-execution";
@@ -65,9 +70,10 @@ export async function requestReportExport(
   const required = [
     "reports:read",
     "reports:export",
-    ...["members:read", "partners:read", "news:read", "users:read"].filter((permission) =>
-      actor.permissions.has(permission),
-    ),
+    ...(parsed.query.view === "details"
+      ? [reportCatalog[parsed.query.dataset].permission]
+      : ["members:read", "partners:read", "news:read", "users:read"]
+    ).filter((permission) => actor.permissions.has(permission)),
   ];
   return withTransaction(pool, async (db) => {
     await db.query("SELECT pg_advisory_xact_lock(hashtext($1))", [

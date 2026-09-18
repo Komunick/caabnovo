@@ -68,7 +68,7 @@ export async function collectReportEvent(
   });
 }
 export async function reportUsage(db: ReportDb, query: ReportQuery): Promise<ReportUsage> {
-  const { from, until } = reportBounds(query);
+  const { from, until, previousFrom } = reportBounds(query);
   const values = [query.environment, query.channel, query.source, from, until];
   const where = "environment=$1 AND ($2='all' OR channel=$2) AND ($3='' OR source=$3)";
   const result = await db.query<Record<string, string | null>>(
@@ -76,6 +76,16 @@ export async function reportUsage(db: ReportDb, query: ReportQuery): Promise<Rep
     count(*) FILTER(WHERE event='page_view')::text AS views,count(DISTINCT session_hash)::text AS sessions,
     count(DISTINCT visitor_hash)::text AS visitors,count(DISTINCT account_hash)::text AS accounts
     FROM analytics_event WHERE ${where} AND occurred_at >= $4 AND occurred_at < $5`,
+    values,
+  );
+  const previous = (
+    await db.query<Record<string, string>>(
+      `SELECT count(*) FILTER(WHERE event='page_view')::text AS views,count(DISTINCT session_hash)::text AS sessions,count(DISTINCT visitor_hash)::text AS visitors,count(DISTINCT account_hash)::text AS accounts FROM analytics_event WHERE ${where} AND occurred_at >= $4 AND occurred_at < $5`,
+      [...values.slice(0, 3), previousFrom, from],
+    )
+  ).rows[0]!;
+  const series = await db.query<{ date: string; views: string }>(
+    `SELECT to_char(occurred_at AT TIME ZONE 'America/Bahia','YYYY-MM') AS date,count(*)::text AS views FROM analytics_event WHERE ${where} AND occurred_at >= $4 AND occurred_at < $5 AND event='page_view' GROUP BY 1 ORDER BY 1`,
     values,
   );
   const coverage = await db.query<{
@@ -120,6 +130,13 @@ export async function reportUsage(db: ReportDb, query: ReportQuery): Promise<Rep
       .sort()
       .at(-1) ?? null;
   return {
+    previous: {
+      views: Number(previous.views),
+      sessions: Number(previous.sessions),
+      visitors: Number(previous.visitors),
+      accounts: Number(previous.accounts),
+    },
+    series: series.rows.map((point) => ({ date: point.date, views: Number(point.views) })),
     views: Number(row.views),
     sessions: Number(row.sessions),
     visitors: Number(row.visitors),

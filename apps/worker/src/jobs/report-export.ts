@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
-import type { Pool } from "pg";
+import type { Pool, PoolClient } from "pg";
 import {
   reportCatalog,
+  reportChange,
   reportExportSchema,
   reportJobSchema,
   type ReportJob,
 } from "@caab/contracts";
-import { withTransaction } from "@caab/db";
 import { currentReportActor, queryReport, reportError } from "@caab/db/repositories/reports";
 import { reportSummary } from "@caab/db/repositories/report-summary";
 import { reportUsage } from "@caab/db/repositories/report-analytics";
@@ -17,14 +17,48 @@ import {
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { reportCsv, reportPdf, reportXlsx, type ReportDocument } from "./report-format";
 
+// Acquire the session lock before BEGIN so concurrent retries cannot read a stale
+// repeatable-read snapshot. report_export remains immutable to the runtime role.
+async function withExportSnapshot(pool: Pool, id: string, work: (db: PoolClient) => Promise<void>) {
+  const db = await pool.connect();
+  const key = `report-export:${id}`;
+  let locked = false;
+  let broken = false;
+  try {
+    locked = (
+      await db.query<{ locked: boolean }>(
+        "SELECT pg_try_advisory_lock(hashtextextended($1,0)) AS locked",
+        [key],
+      )
+    ).rows[0]!.locked;
+    if (!locked) throw reportError("REPORT_BUSY", 503);
+    await db.query("BEGIN ISOLATION LEVEL REPEATABLE READ");
+    try {
+      await work(db);
+      await db.query("COMMIT");
+    } catch (error) {
+      await db.query("ROLLBACK");
+      throw error;
+    }
+  } finally {
+    if (locked) {
+      try {
+        await db.query("SELECT pg_advisory_unlock(hashtextextended($1,0))", [key]);
+      } catch {
+        broken = true;
+      }
+    }
+    db.release(broken);
+  }
+}
+
 export async function runReportExport(pool: Pool, raw: ReportJob) {
   const job = reportJobSchema.parse(raw);
-  await withTransaction(pool, async (db) => {
-    await db.query("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+  await withExportSnapshot(pool, job.jobId, async (db) => {
     await db.query("SET LOCAL statement_timeout='120s'");
     const record = (
       await db.query<{ owner_id: string; configuration: StoredReportExport }>(
-        "SELECT owner_id,configuration FROM report_export WHERE id=$1 FOR UPDATE",
+        "SELECT owner_id,configuration FROM report_export WHERE id=$1",
         [job.jobId],
       )
     ).rows[0];
@@ -75,6 +109,7 @@ export async function runReportExport(pool: Pool, raw: ReportJob) {
           definition: "Definição",
         },
         rows: [
+          ...summary.inventory.map((metric) => ({ ...metric, previous: null, change: null })),
           ...summary.metrics.map((metric) => ({
             label: metric.label,
             value: metric.value,
@@ -83,24 +118,33 @@ export async function runReportExport(pool: Pool, raw: ReportJob) {
             definition: metric.definition,
           })),
           ...[
-            { label: "Visualizações", value: usage.views },
-            { label: "Sessões", value: usage.sessions },
-            { label: "Visitantes reconhecidos", value: usage.visitors },
-            { label: "Contas ativas", value: usage.accounts },
+            { label: "Visualizações", value: usage.views, previous: usage.previous.views },
+            { label: "Sessões", value: usage.sessions, previous: usage.previous.sessions },
+            {
+              label: "Visitantes reconhecidos",
+              value: usage.visitors,
+              previous: usage.previous.visitors,
+            },
+            { label: "Contas ativas", value: usage.accounts, previous: usage.previous.accounts },
           ].map((metric) => ({
             ...metric,
-            previous: null,
-            change: null,
+            change: reportChange(metric.value, metric.previous),
             definition: usage.firstEvent
               ? "Coleta observada no período; não equivale a pessoas entre canais."
               : "Sem dados de coleta.",
           })),
         ],
         notes,
-        chart: summary.series.map((point) => ({
-          label: `${point.date} ${reportCatalog[point.dataset as keyof typeof reportCatalog].label}`,
-          value: point.value,
-        })),
+        chart: [
+          ...usage.series.map((point) => ({
+            label: `${point.date} Visualizações`,
+            value: point.views,
+          })),
+          ...summary.series.map((point) => ({
+            label: `${point.date} ${reportCatalog[point.dataset as keyof typeof reportCatalog].label}`,
+            value: point.value,
+          })),
+        ],
       };
     }
     const body =

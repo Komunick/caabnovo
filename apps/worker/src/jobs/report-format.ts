@@ -10,6 +10,7 @@ export interface ReportDocument {
   chart?: { label: string; value: number }[];
 }
 export function csvCell(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) return `"${value}"`;
   let text = String(value ?? "");
   // eslint-disable-next-line no-control-regex -- Neutralize leading control characters used to hide spreadsheet formulas.
   if (/^[\s\u0000-\u001f]*[=+@-]/.test(text) || /^[\t\r\n]/.test(text)) text = `'${text}`;
