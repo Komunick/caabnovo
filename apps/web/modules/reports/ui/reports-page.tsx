@@ -655,7 +655,7 @@ export function ReportsPage({
                     <div key={metric.label}>
                       <dt>{metric.label}</dt>
                       <dd className={styles.value}>{number(metric.value)}</dd>
-                      <p>{metric.definition}</p>
+                      <dd className={styles.definition}>{metric.definition}</dd>
                     </div>
                   ))}
                 </dl>
