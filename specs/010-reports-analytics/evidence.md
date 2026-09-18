@@ -8,13 +8,15 @@ Validação com dados sintéticos. Localhost, banco e preview principais permane
 - Formatação, lint e typecheck locais aprovados. A execução local completa de unidade/contratos
   encontrou um erro de ambiente do Node/Windows (`uv_os_get_passwd ENOMEM`) em subprocesso
   de um teste preexistente; a mesma suíte passou integralmente no CI Linux.
-- [CI de qualidade em fb5736c](https://github.com/Komunick/caabnovo/actions/runs/35350576001):
-  352 testes unitários, 121 de contrato e 216 de integração aprovados. Inclui seis testes
-  de relatórios com PostgreSQL descartável e papel `caab_runtime`, migrations aplicadas
-  duas vezes, testes do tooling de branches, build de produção e segurança.
-- Revisão final de navegador em andamento no head da branch; resultado deve ser registrado
-  antes de encerrar a entrega. O ciclo anterior teve 80 E2E aprovados e falha no seletor
-  do teste novo (campo Relatório), corrigida com nome explícito e locator por combobox. Uma rodada seguinte identificou comparação de filtros dependente da ordem de chaves JSONB: corrigida com normalização pelo contrato e teste de regressão. O CI agora executa primeiro Relatórios e depois mantém a suíte completa.
+- [CI da implementação 578fd63](https://github.com/Komunick/caabnovo/actions/runs/35356554299):
+  qualidade e segurança aprovadas. 354 testes unitários, 122 de contrato e 216 de
+  integração aprovados. Inclui seis testes de relatórios com PostgreSQL descartável
+  e papel `caab_runtime`, migrations aplicadas duas vezes, tooling de branches e
+  build de produção.
+- Navegador aprovado no mesmo CI: dois testes focados de Relatórios, 81 E2E da suíte
+  completa e seis testes de acessibilidade. Todos os jobs concluíram com sucesso.
+  O commit posterior apenas encerra esta documentação, o status do spec e as tarefas;
+  não altera código nem testes em relação à revisão validada.
 
 ## Casos cobertos
 
@@ -37,7 +39,10 @@ do cliente do painel.
 
 Navegador: três abas, estado vazio, consultas salvas, navegação e rascunhos, downloads
 CSV/XLSX/PDF, coleta de uso, apresentação/Escape, desktop/mobile, claro/escuro e Axe
-WCAG 2.2 AA. Ver resultado final do CI e artefato `reports-synthetic-evidence`.
+WCAG 2.2 AA. Edição concorrente retorna mensagem específica e preserva o rascunho;
+cancelar permite abrir a versão atualizada. Cada download é associado ao identificador
+da solicitação nova, sem reutilizar arquivos anteriores. Ver resultado final do CI
+e artefato `reports-synthetic-evidence`.
 
 ## Revisão visual
 
@@ -47,8 +52,19 @@ com oito colunas em quatro páginas paisagem e executivo com comentários/gráfi
 duas páginas retrato. Acentos, cabeçalhos, numeração e tabelas legíveis; corrigida a
 fonte da primeira linha após quebra de página. Arquivos temporários ficam na cache.
 
-Captura de Análise detalhada do CI revisada: cabeçalho, abas, campos, navegação e tokens
-seguem o padrão do painel. Revisão das capturas finais gerencial/executiva/mobile pendente.
+Capturas de Análise detalhada e Resultados e evolução do CI revisadas: cabeçalho, abas,
+campos, navegação e tokens seguem o padrão do painel. Desktop claro de 1440 px e mobile
+escuro de 390 px revisados, sem transbordamento horizontal. PDF vazio baixado pelo
+navegador também revisado; mensagem alinhada abaixo da tabela e novamente renderizada
+após correção. XLSX inspecionado como pacote íntegro com abas Dados/Contexto; CSV
+confere cabeçalho, filtros, ambiente e fuso. As imagens ficam no artefato do CI e na
+cache da worktree; não contêm dados pessoais reais.
+
+Artefato final `reports-synthetic-evidence` do CI acima baixado e conferido: CSV com
+34 registros, XLSX com 35 linhas incluindo cabeçalho e PDF com duas páginas, ambas
+renderizadas e revisadas. As capturas finais são `reports-desktop-light.png` e
+`reports-mobile-dark.png`. A execução focada também cobriu arquivos sem registros;
+a integração cobre 55 linhas exportadas além da página visual de 50.
 
 ## Limites de entrega
 

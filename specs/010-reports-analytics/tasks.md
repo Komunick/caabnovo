@@ -40,11 +40,11 @@ Teste independente: navegação SPA, retry sem duplicação, fonte sem dados e r
 
 ## Validação e entrega
 
-- [ ] T016 Validar banco/arquivos/autorização em apps/web/tests/integration/reports.test.ts (inclui o worker real).
-- [ ] T017 Validar navegador, estados vazios, mobile, temas e acessibilidade em apps/web/tests/e2e/reports.spec.ts.
+- [x] T016 Validar banco/arquivos/autorização em apps/web/tests/integration/reports.test.ts (inclui o worker real).
+- [x] T017 Validar navegador, estados vazios, mobile, temas e acessibilidade em apps/web/tests/e2e/reports.spec.ts.
 - [x] T018 Registrar exportação transversal em specs/002-integrated-modules/plan.md e tasks.md.
-- [ ] T019 Executar gates/CI e revisar artefatos em specs/010-reports-analytics/evidence.md.
-- [ ] T020 Abrir PR para dev com evidências e rollback, sem merge, e sincronizar principal.
+- [x] T019 Executar gates/CI e revisar artefatos em specs/010-reports-analytics/evidence.md.
+- [x] T020 Abrir PR para dev com evidências e rollback, sem merge, e sincronizar principal.
 
 ## Dependências e execução
 
