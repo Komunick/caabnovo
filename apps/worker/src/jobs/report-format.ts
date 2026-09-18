@@ -130,7 +130,12 @@ export async function reportPdf(doc: ReportDocument): Promise<Buffer> {
       keys.map((key) => String(row[key] ?? "")),
       false,
     );
-  if (!doc.rows.length) pdf.moveDown().text("Nenhum registro encontrado para o período e filtros.");
+  if (!doc.rows.length)
+    pdf
+      .font("Helvetica")
+      .text("Nenhum registro encontrado para o período e filtros.", 41, pdf.y + 10, {
+        width: pdf.page.width - 82,
+      });
   const pages = pdf.bufferedPageRange();
   for (let page = 0; page < pages.count; page++) {
     pdf.switchToPage(page);
