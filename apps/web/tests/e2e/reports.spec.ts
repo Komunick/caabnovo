@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { test, expect, syntheticUsers } from "./fixtures";
 import { expectWcag22AA, expectThemeContrast } from "./accessibility";
 test.use({
+  actionTimeout: 15000,
   userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36",
 });
 test("reports: three views, private saved queries, preserved edits, usage and real exports", async ({
@@ -34,7 +35,7 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   ).toBeVisible();
   await page.getByRole("button", { name: "Análise detalhada", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Análise detalhada", exact: true })).toBeVisible();
-  await page.getByLabel("Relatório", { exact: true }).selectOption("members");
+  await page.getByRole("combobox", { name: "Relatório", exact: true }).selectOption("members");
   await page.getByLabel("Buscar por nome ou tela").fill("Pessoa inexistente relatório sintético");
   await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
   await expect(
@@ -53,7 +54,7 @@ test("reports: three views, private saved queries, preserved edits, usage and re
       .getByRole("link", { name: `Baixar ${extension!.toUpperCase()}`, exact: true })
       .first();
     await expect(downloadLink).toBeVisible({ timeout: 60000 });
-    const downloading = page.waitForEvent("download");
+    const downloading = page.waitForEvent("download", { timeout: 15000 });
     await downloadLink.click();
     const download = await downloading;
     const path = testInfo.outputPath(`reports-detail.${extension}`);

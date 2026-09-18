@@ -322,6 +322,7 @@ export function ReportsPage({
                 <label>
                   Canal de acesso
                   <select
+                    aria-label="Canal de acesso"
                     value={filters.channel}
                     onChange={(e) => change({ channel: e.target.value as ReportQuery["channel"] })}
                   >
@@ -335,6 +336,7 @@ export function ReportsPage({
                 <label>
                   Ambiente das métricas
                   <select
+                    aria-label="Ambiente das métricas"
                     value={filters.environment}
                     onChange={(e) =>
                       change({ environment: e.target.value as ReportQuery["environment"] })
@@ -364,6 +366,7 @@ export function ReportsPage({
                     <label>
                       Relatório
                       <select
+                        aria-label="Relatório"
                         value={filters.dataset}
                         onChange={(e) =>
                           change({
@@ -397,6 +400,7 @@ export function ReportsPage({
                       <label>
                         Datas dos registros
                         <select
+                          aria-label="Datas dos registros"
                           value={filters.dateScope}
                           onChange={(e) =>
                             change({ dateScope: e.target.value as "period" | "all" })
@@ -423,6 +427,7 @@ export function ReportsPage({
                       <label>
                         Agrupar por
                         <select
+                          aria-label="Agrupar por"
                           value={filters.groupBy}
                           onChange={(e) =>
                             change({
@@ -443,6 +448,7 @@ export function ReportsPage({
                     <label>
                       Ordenar por
                       <select
+                        aria-label="Ordenar por"
                         value={
                           filters.groupBy && filters.sort !== filters.groupBy
                             ? "count"
@@ -464,6 +470,7 @@ export function ReportsPage({
                     <label>
                       Ordem
                       <select
+                        aria-label="Ordem"
                         value={filters.direction}
                         onChange={(e) => change({ direction: e.target.value as "asc" | "desc" })}
                       >
