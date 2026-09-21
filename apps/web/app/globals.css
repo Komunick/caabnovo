@@ -4828,3 +4828,28 @@ thead th {
   padding: 0.75rem 0;
   overflow-wrap: anywhere;
 }
+
+/* Export ordering shares the panel controls, spacing and surface tokens. */
+.export-column-order {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.export-column-order > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+.export-column-order > li > span {
+  overflow-wrap: anywhere;
+}
+.export-column-order .button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.5rem;
+}

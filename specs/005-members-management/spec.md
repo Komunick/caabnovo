@@ -1,5 +1,15 @@
 # Feature Specification: Associados e dependentes
 
+## Checkpoint da entrega ativa — 21/09/2026
+
+Implementação do incremento de ciclo de vida realizada na entrega compartilhada, com testes de
+integração e navegador aprovados no CI35640590161. Gates complementares no CI35641862727:
+quality/security aprovados; navegador em andamento. Evidências, limites e próximo passo no
+[relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Clarify e
+analyze serão restritos às alterações desta entrega; requisitos históricos sem relação com o diff e
+exportações próprias ainda planejadas ficam fora. Os checkpoints anteriores são históricos.
+Localhost desligado, sem alteração do banco local.
+
 ## Checkpoint de revisão de código — 21/09/2026
 
 Cadastro, foto, dependentes, análise manual, situação e adaptador OAB implementados. Bloqueio

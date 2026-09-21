@@ -35,14 +35,29 @@ interrupção, unicidade de requestId e dono. Não é prova de grande volume/est
 
 ## Validação complementar
 
-CI35641862727, commit385f0d6: quality e security aprovados. Inclui snapshot entre lotes sob
-alteração concorrente, PDF longo em faixas horizontais e erro de writer. Navegador testa
-adicionalmente Gestor concedendo escrita que não possui, gerando senha sem escrita geral e reserva
-mantida/cancelada após exclusão. Navegador ainda em andamento neste checkpoint.
+CI35641862727, commit385f0d6: quality e security aprovados:387 testes unitários,145 de contrato,234
+de integração, lint, tipos, migrations e build. Inclui snapshot entre lotes sob alteração
+concorrente, PDF longo em faixas horizontais e erro de writer. Navegador testa adicionalmente Gestor
+concedendo escrita que não possui, gerando senha sem escrita geral e reserva mantida/cancelada após
+exclusão. Navegador ainda em andamento neste checkpoint.
 
 A rodada seguinte inicia as30 aberturas do painel em paralelo aos downloads (a primeira rodada as
 abria entre formatos) e confere erro real de configuração seguido de nova tentativa com o formulário
 preservado. A evidência de desempenho anterior não comprova simultaneidade.
+
+## Perfil com geração separada da verificação
+
+CI385f0d6, Node24.20.0, PostgreSQL18 e100 registros por formato, consumidor lento:
+
+| Formato | Primeiro byte | Geração/transferência | RSS antes/pico/depois | CPU usuário/sistema | Conexões dados/controle |
+| ------- | ------------- | --------------------- | --------------------- | ------------------- | ----------------------- |
+| CSV     | 32,5ms        | 213,8ms               | 259,6/259,7/259,7MB   | 36,0/4,2ms          | 1/1                     |
+| XLSX    | 22,1ms        | 493,0ms               | 260,8/264,2/264,2MB   | 110,8/18,6ms        | 1/1                     |
+| PDF     | 19,4ms        | 338,1ms               | 265,1/266,7/265,7MB   | 149,7/12,4ms        | 1/1                     |
+
+RSS pós-leitura independente:260,8/265,1/303,8MB respectivamente. Pico amostrado nos writes; CPU
+inclui o processo do teste, sem isolamento de hardware. Pools/cursor liberados ao final. Não
+representa limite de memória sob grande volume nem SLA de exportação.
 
 ## Pendências de fechamento
 

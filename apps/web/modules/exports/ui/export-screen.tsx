@@ -2,6 +2,8 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import type { ExportCatalog, ExportFormat, ExportOperation, ExportRequest } from "@caab/contracts";
 import { useDraftState } from "@/components/workspace-drafts";
+import { ArrowUp, ArrowDown } from "lucide-react";
+import { FormField } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
 import { PermissionGate } from "@/components/workspace-permissions";
 const terminal = new Set(["completed", "failed", "cancelled", "interrupted"]);
@@ -157,12 +159,15 @@ export function ExportScreen({
             <input type="hidden" name="requestId" ref={requestId} />
             <input type="hidden" name="config" ref={configuration} />
             <input type="hidden" name="csrfToken" value={catalog.csrfToken} />
-            <fieldset disabled={active}>
+            <fieldset className="access-group" disabled={active}>
               <legend>Filtros</legend>
-              <div className="form-grid">
+              <div className="filter-grid">
                 {catalog.filters.map((filter) => (
-                  <label key={filter.key}>
-                    {filter.label}
+                  <FormField
+                    key={filter.key}
+                    id={`export-filter-${filter.key}`}
+                    label={filter.label}
+                  >
                     {filter.type === "choice" ? (
                       <select
                         value={filters[filter.key] ?? ""}
@@ -184,10 +189,9 @@ export function ExportScreen({
                         onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
                       />
                     )}
-                  </label>
+                  </FormField>
                 ))}
-                <label>
-                  Ordenar por
+                <FormField id="export-sort" label="Ordenar por">
                   <select value={sort} onChange={(e) => setSort(e.target.value)}>
                     <option value="">Identificador</option>
                     {catalog.columns
@@ -198,9 +202,8 @@ export function ExportScreen({
                         </option>
                       ))}
                   </select>
-                </label>
-                <label>
-                  Ordem
+                </FormField>
+                <FormField id="export-direction" label="Ordem">
                   <select
                     value={direction}
                     onChange={(e) => setDirection(e.target.value as "asc" | "desc")}
@@ -208,14 +211,14 @@ export function ExportScreen({
                     <option value="asc">Crescente</option>
                     <option value="desc">Decrescente</option>
                   </select>
-                </label>
+                </FormField>
               </div>
             </fieldset>
-            <fieldset disabled={active}>
+            <fieldset className="access-group" disabled={active}>
               <legend>Colunas</legend>
-              <div className="button-row">
+              <div className="access-grid">
                 {catalog.columns.map((column) => (
-                  <label key={column.key}>
+                  <label className="access-option" key={column.key}>
                     <input
                       type="checkbox"
                       checked={columns.includes(column.key)}
@@ -231,29 +234,34 @@ export function ExportScreen({
                   </label>
                 ))}
               </div>
-              <ol aria-label="Ordem das colunas">
+              <p>Use as setas para definir a ordem das colunas no arquivo.</p>
+              <ol className="export-column-order" aria-label="Ordem das colunas">
                 {columns.map((key, index) => {
                   const label =
                     catalog.columns.find((c) => c.key === key)?.label ?? "Coluna indisponível";
                   return (
                     <li key={key}>
-                      <span>{label} </span>
-                      <Button
-                        size="compact"
-                        disabled={index === 0}
-                        aria-label={`Mover ${label} para cima`}
-                        onClick={() => move(index, -1)}
-                      >
-                        Subir
-                      </Button>
-                      <Button
-                        size="compact"
-                        disabled={index === columns.length - 1}
-                        aria-label={`Mover ${label} para baixo`}
-                        onClick={() => move(index, 1)}
-                      >
-                        Descer
-                      </Button>
+                      <span>
+                        {index + 1}. {label}
+                      </span>
+                      <div className="button-row">
+                        <Button
+                          size="compact"
+                          disabled={index === 0}
+                          aria-label={`Mover ${label} para cima`}
+                          onClick={() => move(index, -1)}
+                        >
+                          <ArrowUp size={18} aria-hidden="true" />
+                        </Button>
+                        <Button
+                          size="compact"
+                          disabled={index === columns.length - 1}
+                          aria-label={`Mover ${label} para baixo`}
+                          onClick={() => move(index, 1)}
+                        >
+                          <ArrowDown size={18} aria-hidden="true" />
+                        </Button>
+                      </div>
                     </li>
                   );
                 })}

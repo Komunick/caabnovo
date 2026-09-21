@@ -11,6 +11,12 @@ análise. Decisão explícita do usuário; não executar análise integral do pr
 
 ## Checkpoint atual — 21/09/2026
 
+Revisão visual dos artefatos385f0d6 encontrou filtros com estilo nativo; corrigidos com FormField,
+filter-grid, grupos de acesso e tokens compartilhados. Nova imagem desktop e revisão móvel em
+validação no CI. Reserva mantida conferida visualmente, com aviso preservado. CI385f0d6 passou por
+completo:89 E2E e6 acessibilidade, além dos gates quality/security. O ajuste visual será validado
+antes da sequência clarify → analyze → PR.
+
 Implementação do recorte concluída: T097, cargos/acessos, base de exportação e adaptador de
 Colaboradores, ciclo de colaboradores/associados, nova senha e decisão sobre reservas. CI35640590161
 (commit67c4292) aprovado em quality, browser e security, incluindo os três formatos com100 registros

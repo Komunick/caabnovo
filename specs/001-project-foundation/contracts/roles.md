@@ -46,14 +46,14 @@ auditoria de contas.
 
 ## Transição
 
-A migration planejada0025 continua convertendo as chaves antigas de exportação. A0026 inclui os dois
-novos cargos e a resolução acima, corrige a view e remove a concessão editorial indiscriminada. Não
-atribuir novos cargos a contas por inferência, não criar contas e não reutilizar `is_administrative`
-de forma que Gestor ganhe autoridade de Administrador. Conferir numeração antes de implementar. A
-decisão I1 substitui a regra anterior de não conceder novas permissões ao Administrador: acesso
-total decorre do cargo, separado da conversão Q4. Gestor também recebe exportação pela base de seu
-cargo, conforme complemento explícito do usuário. Para Colaborador, Q4 não cria exportação sem
-concessão anterior.
+A migration0025 implementada continua convertendo as chaves antigas de exportação. A0026 inclui os
+dois novos cargos e a resolução acima, corrige a view e remove a concessão editorial indiscriminada.
+Não atribuir novos cargos a contas por inferência, não criar contas e não reutilizar
+`is_administrative` de forma que Gestor ganhe autoridade de Administrador. Numeração0025/0026
+validada no CI. A decisão I1 substitui a regra anterior de não conceder novas permissões ao
+Administrador: acesso total decorre do cargo, separado da conversão Q4. Gestor também recebe
+exportação pela base de seu cargo, conforme complemento explícito do usuário. Para Colaborador, Q4
+não cria exportação sem concessão anterior.
 
 ## Aceite
 
@@ -76,8 +76,9 @@ Tarefas:001 T101/T103/T114/T116,002 T105 e regressão006 T027/T028. U1 e C1 fora
 consolidados documentalmente: a autorização atual dos downloads históricos está em
 [legacy-downloads.md](../../010-reports-analytics/contracts/legacy-downloads.md), e os critérios da
 validação inicial com 100 registros estão em
-[export-validation-100.md](../../002-integrated-modules/export-validation-100.md). Implementação e
-testes de aplicação permanecem pendentes.
+[export-validation-100.md](../../002-integrated-modules/export-validation-100.md). Implementação do
+recorte e testes de aplicação em validação final conforme
+[evidências da entrega](../evidence/plan-2026-09-21-validation.md).
 
 ### Ajuste de autoridade para nova senha — 21/09/2026
 

@@ -136,6 +136,15 @@ test("direct exports keep filters and keyboard column order and download 100 rec
         fullPage: true,
       });
     }
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = "light";
+    });
+    await expectWcag22AA(page);
+    await page.screenshot({
+      path: testInfo.outputPath("export-light-desktop.png"),
+      fullPage: true,
+    });
     await page
       .getByRole("textbox", { name: "Nome", exact: true })
       .fill("Sem resultado " + crypto.randomUUID());
