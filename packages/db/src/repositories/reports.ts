@@ -16,7 +16,7 @@ export function reportError(code: string, status = 403) {
 export function authorizeReport(actor: ReportActor, query?: ReportQuery, exporting = false) {
   if (
     !actor.permissions.has("reports:read") ||
-    (exporting && !actor.permissions.has("reports:export"))
+    (exporting && !actor.permissions.has("exports:generate"))
   )
     throw reportError("PERMISSION_DENIED");
   if (query?.view === "details") {
@@ -43,7 +43,7 @@ export async function currentReportActor(db: ReportDb, userId: string): Promise<
 // Only static, reviewed projections enter SQL. No identifiers/expressions come from callers.
 export const reportSources: Record<Exclude<ReportDataset, "access">, string> = {
   members: `SELECT id::text,created_at AS at,jsonb_build_object('name',name,'city',city,'state',residence_state,'category',category,
-    'status',CASE WHEN archived_at IS NOT NULL THEN 'Arquivado' WHEN administrative_status='active' THEN 'Ativo' WHEN administrative_status='blocked' THEN 'Bloqueado' ELSE 'Inativo' END,
+    'status',CASE WHEN deletion_effective_at<=clock_timestamp() THEN 'Excluído' WHEN archived_at IS NOT NULL THEN 'Arquivado' WHEN administrative_status='active' THEN 'Ativo' WHEN administrative_status='blocked' THEN 'Bloqueado' ELSE 'Inativo' END,
     'gender',CASE gender WHEN 'female' THEN 'Feminino' WHEN 'male' THEN 'Masculino' WHEN 'nonbinary' THEN 'Não binário' WHEN 'other' THEN 'Outro' ELSE 'Não informado' END,
     'age',extract(year from age(current_date,birth_date))::integer) AS cells FROM member`,
   dependents: `SELECT r.id::text,r.created_at AS at,jsonb_build_object('name',d.name,'holder',h.name,'category',r.relationship,'status',CASE WHEN r.ended_at IS NULL THEN 'Ativo' ELSE 'Encerrado' END) AS cells FROM member_relationship r JOIN member d ON d.id=r.dependent_id JOIN member h ON h.id=r.holder_id`,

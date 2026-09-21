@@ -3,7 +3,11 @@ import { nonEmptyReasonSchema } from "./common";
 
 export const accessPermissionSchema = z.enum([
   "reports:read",
-  "reports:export",
+  "exports:generate",
+  "access:manage",
+  "scheduling:read",
+  "scheduling:write",
+  "messages:write",
   "messages:access",
   "partners:read",
   "partners:write",
@@ -18,11 +22,12 @@ export const accessPermissionSchema = z.enum([
   "users:create",
   "users:update",
   "users:disable",
+  "users:delete",
+  "users:reset-password",
   "roles:read",
   "roles:grant",
   "roles:revoke",
   "audit:read",
-  "audit:export",
   "jobs:read",
   "jobs:redrive",
   "files:read",
@@ -31,7 +36,9 @@ export const accessPermissionSchema = z.enum([
 ]);
 export type AccessPermission = z.infer<typeof accessPermissionSchema>;
 export const accessPrerequisites: Partial<Record<AccessPermission, AccessPermission[]>> = {
-  "reports:export": ["reports:read"],
+  "scheduling:write": ["scheduling:read"],
+  "messages:write": ["messages:access"],
+  "access:manage": ["users:read", "roles:read"],
   "partners:write": ["partners:read"],
   "partners:publish": ["partners:read"],
   "news:write": ["news:read"],
@@ -41,10 +48,10 @@ export const accessPrerequisites: Partial<Record<AccessPermission, AccessPermiss
   "users:create": ["users:read"],
   "users:update": ["users:read"],
   "users:disable": ["users:read"],
+  "users:delete": ["users:read"],
   "roles:read": ["users:read"],
   "roles:grant": ["users:read", "roles:read"],
   "roles:revoke": ["users:read", "roles:read"],
-  "audit:export": ["audit:read"],
   "jobs:redrive": ["jobs:read"],
 };
 const permissions = z

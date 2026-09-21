@@ -11,12 +11,13 @@ export async function findSchedulingBeneficiary(client: PoolClient, id: string) 
     name: string;
     blocked: boolean;
     archived: boolean;
+    deleted: boolean;
   }>(
     `WITH RECURSIVE holders(id) AS (
       SELECT $1::uuid UNION
       SELECT r.holder_id FROM member_relationship r JOIN holders h ON r.dependent_id=h.id
         WHERE r.ended_at IS NULL AND r.starts_on <= (clock_timestamp() AT TIME ZONE 'America/Bahia')::date
-    ) SELECT m.id,m.name,m.archived_at IS NOT NULL AS archived,
+    ) SELECT m.id,m.name,m.archived_at IS NOT NULL AS archived,coalesce(m.deletion_effective_at<=clock_timestamp(),false) AS deleted,
       EXISTS(SELECT 1 FROM member a JOIN holders h ON h.id=a.id WHERE a.administrative_status='blocked') AS blocked
       FROM member m WHERE m.id=$1`,
     [id],
@@ -31,7 +32,10 @@ export async function findMemberSummary(client: Pool | PoolClient, id: string) {
     name: string;
     archived_at: Date | null;
     administrative_status: "inactive" | "active" | "blocked";
-  }>("SELECT id,name,archived_at,administrative_status FROM member WHERE id=$1", [id]);
+  }>(
+    "SELECT id,name,archived_at,administrative_status FROM member WHERE id=$1 AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp())",
+    [id],
+  );
   const row = result.rows[0];
   return row
     ? {

@@ -14,6 +14,7 @@ import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { createJobExecution } from "@caab/db/repositories/job-execution";
 import { requirePermission } from "../auth/authorize";
+import { authorizeLegacyFile } from "@caab/db/repositories/legacy-exports";
 import { PERMISSIONS } from "../auth/permissions";
 import type { RequestActor } from "../shared/request-context";
 import { authorizeMemberAccess } from "../members/access";
@@ -100,7 +101,7 @@ export async function createUploadIntent(
         PERMISSIONS.filesCreate,
       );
       const owner = await client.query(
-        "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+        "SELECT id FROM member WHERE id=$1 AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL FOR SHARE",
         [command.ownerId],
       );
       if (!owner.rowCount) throw operationError("MEMBER_NOT_FOUND", 404);
@@ -227,7 +228,7 @@ export async function finalizeUpload(
         PERMISSIONS.filesCreate,
       );
       const owner = await client.query(
-        "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+        "SELECT id FROM member WHERE id=$1 AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL FOR SHARE",
         [file.owner_id],
       );
       if (!owner.rowCount) throw operationError("MEMBER_NOT_FOUND", 404);
@@ -258,7 +259,7 @@ export async function finalizeUpload(
         PERMISSIONS.filesCreate,
       );
       const owner = await client.query(
-        "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+        "SELECT id FROM member WHERE id=$1 AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL FOR SHARE",
         [file.owner_id],
       );
       if (!owner.rowCount) throw operationError("MEMBER_NOT_FOUND", 404);
@@ -336,8 +337,9 @@ export async function createDownloadGrant(
     visibility: string;
     owner_type: string;
     owner_id: string;
+    uploaded_by: string;
   }>(
-    "SELECT object_key, status::text, visibility::text,owner_type,owner_id FROM stored_file WHERE id = $1 AND deleted_at IS NULL",
+    "SELECT object_key, status::text, visibility::text,owner_type,owner_id,uploaded_by FROM stored_file WHERE id = $1 AND deleted_at IS NULL",
     [fileId],
   );
   const file = result.rows[0];
@@ -356,6 +358,7 @@ export async function createDownloadGrant(
   if (file.status !== "available") throw operationError("FILE_NOT_AVAILABLE", 409);
   if (file.visibility !== "private") throw operationError("VISIBILITY_UNSUPPORTED", 409);
   return withTransaction(pool, async (client) => {
+    await authorizeLegacyFile(client, actor, file);
     if (file.owner_type === "news") await authorizeNewsFileAccess(client, actor, false);
     const grant = await storage.createPrivateDownload(file.object_key);
     return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };

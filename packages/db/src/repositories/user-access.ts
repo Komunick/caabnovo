@@ -1,6 +1,9 @@
 import type { Pool, PoolClient } from "pg";
 
-export async function readUserPermissions(connection: Pool | PoolClient, userId: string) {
+export async function readUserPermissions(
+  connection: Pick<Pool | PoolClient, "query">,
+  userId: string,
+) {
   const result = await connection.query<{ permission: string }>(
     "SELECT permission FROM effective_user_permission WHERE user_id=$1 ORDER BY permission",
     [userId],

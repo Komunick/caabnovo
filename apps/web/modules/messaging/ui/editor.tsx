@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -74,6 +75,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
   >(null);
   const [notice, setNotice] = useState("");
   const [historyRevision, setHistoryRevision] = useState(0);
+  const canWrite = useModulePermission("messages:write");
   const mutation = useMessageMutation(`edit:${initial.id}`);
   const dirty =
     JSON.stringify(edit.data) !== JSON.stringify(saved.data) || edit.version !== saved.version;
@@ -188,7 +190,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
               <div className={styles.actions}>
                 <Button
                   intent="primary"
-                  disabled={saved.id === "new" || locked || dirty || mutation.pending}
+                  disabled={!canWrite || saved.id === "new" || locked || dirty || mutation.pending}
                   onClick={() => void review("send")}
                 >
                   Solicitar envio agora
@@ -215,7 +217,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
             </>
           )}
           {saved.scheduledAt && (
-            <Button disabled={mutation.pending} onClick={() => setConfirm("cancel")}>
+            <Button disabled={!canWrite || mutation.pending} onClick={() => setConfirm("cancel")}>
               Cancelar programação
             </Button>
           )}
@@ -223,13 +225,16 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
       )}
       <div className={styles.actions}>
         {kind === "campaigns" && saved.id !== "new" && (
-          <Button disabled={mutation.pending || dirty} onClick={() => void command("duplicate")}>
+          <Button
+            disabled={!canWrite || mutation.pending || dirty}
+            onClick={() => void command("duplicate")}
+          >
             Duplicar campanha
           </Button>
         )}
         {saved.id !== "new" && !saved.scheduledAt && (
           <Button
-            disabled={mutation.pending || dirty}
+            disabled={!canWrite || mutation.pending || dirty}
             onClick={() => setConfirm(saved.archivedAt ? "restore" : "archive")}
           >
             {saved.archivedAt ? "Restaurar" : "Arquivar"}
@@ -307,7 +312,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
             void save();
           }}
         >
-          <fieldset disabled={locked || mutation.pending} className={styles.stack}>
+          <fieldset disabled={!canWrite || locked || mutation.pending} className={styles.stack}>
             {tab === "content" && (
               <>
                 <FormField id="message-name" label="Nome interno">
@@ -391,7 +396,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           {tab === "preview" && (
             <div className={styles.stack}>
               <h2>Conferir prévia</h2>
-              <Button disabled={mutation.pending} onClick={() => void review()}>
+              <Button disabled={!canWrite || mutation.pending} onClick={() => void review()}>
                 Atualizar prévia
               </Button>
               {visiblePreview ? (
@@ -410,7 +415,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           {tab === "schedule" && organization}
           <div className={styles.actions}>
             {!locked && (
-              <Button type="submit" intent="primary" disabled={mutation.pending}>
+              <Button type="submit" intent="primary" disabled={!canWrite || mutation.pending}>
                 {mutation.pending
                   ? "Salvando…"
                   : kind === "campaigns"
@@ -420,7 +425,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
                       : "Salvar público"}
               </Button>
             )}
-            <Button onClick={() => setConfirm("discard")} disabled={mutation.pending}>
+            <Button onClick={() => setConfirm("discard")} disabled={!canWrite || mutation.pending}>
               Descartar edições
             </Button>
           </div>
@@ -479,12 +484,12 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
           )}
           {mutation.error && <p role="alert">{mutation.error}</p>}
           <div className={styles.actions}>
-            <Button disabled={mutation.pending} onClick={() => setConfirm(null)}>
+            <Button disabled={!canWrite || mutation.pending} onClick={() => setConfirm(null)}>
               Voltar
             </Button>
             <Button
               intent={confirm === "discard" ? "danger" : "primary"}
-              disabled={mutation.pending}
+              disabled={!canWrite || mutation.pending}
               onClick={() => {
                 if (confirm === "discard") void discard();
                 else if (confirm) void command(confirm);

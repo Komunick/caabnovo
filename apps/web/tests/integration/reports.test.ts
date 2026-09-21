@@ -29,7 +29,7 @@ let container: StartedPostgreSqlContainer,
   other: ReportActor;
 const permissions = [
   "reports:read",
-  "reports:export",
+  "exports:generate",
   "members:read",
   "partners:read",
   "users:read",
@@ -307,7 +307,7 @@ describe("reports with restricted database role", () => {
         ),
       ).rejects.toMatchObject({ status: 403 });
       await admin.query(
-        "UPDATE user_access SET permissions=ARRAY['reports:read','reports:export'] WHERE user_id=$1",
+        "UPDATE user_access SET permissions=ARRAY['reports:read','exports:generate'] WHERE user_id=$1",
         [actor.userId],
       );
       await expect(reportExportDownload(pool, actor, created.id)).rejects.toMatchObject({

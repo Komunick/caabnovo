@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import Link from "next/link";
 import { useState } from "react";
 import { Plus } from "lucide-react";
@@ -34,6 +35,7 @@ export function MessageSchedulesPage() {
   const result = useMessageData<MessageList<MessageSchedule>>(
     `schedules?q=${encodeURIComponent(q)}&status=${status}&page=${page}${from ? `&from=${from}` : ""}${to ? `&to=${to}` : ""}`,
   );
+  const canWrite = useModulePermission("messages:write");
   const mutation = useMessageMutation("schedules");
   async function command() {
     if (!selected) return;
@@ -176,7 +178,7 @@ export function MessageSchedulesPage() {
                             : (executionReasons[item.reason ?? ""] ?? item.status)}
                         </td>
                         <td role="cell" data-label="Ações">
-                          {item.status === "scheduled" ? (
+                          {canWrite && item.status === "scheduled" ? (
                             <div className={styles.actions}>
                               <Button
                                 onClick={() => {
@@ -240,7 +242,7 @@ export function MessageSchedulesPage() {
               )}
               {mutation.error && <p role="alert">{mutation.error}</p>}
               <div className={styles.actions}>
-                <Button disabled={mutation.pending} onClick={() => setSelected(null)}>
+                <Button disabled={!canWrite || mutation.pending} onClick={() => setSelected(null)}>
                   Voltar
                 </Button>
                 <Button

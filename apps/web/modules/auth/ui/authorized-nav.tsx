@@ -5,10 +5,11 @@ import { NavigationPending } from "@/components/ui/navigation-pending";
 import { usePathname } from "next/navigation";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import { getWorkspaceAreas, isAreaActive } from "@/modules/workspace/areas";
+import { useWorkspacePermissions } from "@/components/workspace-permissions";
 
 export function AuthorizedNav({ permissions }: Readonly<{ permissions: readonly string[] }>) {
   const pathname = usePathname();
-  const items = getWorkspaceAreas(permissions).filter(
+  const items = getWorkspaceAreas(useWorkspacePermissions(permissions)).filter(
     (area) => area.id !== "sessions" && area.id !== "settings",
   );
 

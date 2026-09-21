@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { trackPanelEvent } from "@/modules/reports/collector";
 import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
@@ -48,6 +49,7 @@ export function BookingForm({
     booking ? schedulingDate(booking.startsAt) : schedulingDate(),
   );
   const [startsAt, setStartsAt] = useDraftState("booking-form:startsAt", "");
+  const canWrite = useModulePermission("scheduling:write");
   const mutation = useSchedulingMutation("booking-form");
   const slots = useSchedulingData<{ items: SchedulingSlot[]; durationMinutes: number }>(
     assignmentId && date
@@ -74,7 +76,7 @@ export function BookingForm({
   }
   return (
     <DraftForm draftKey="scheduling-booking-form-1" className="scheduling-form" onSubmit={submit}>
-      <fieldset disabled={mutation.pending} className="scheduling-fields">
+      <fieldset disabled={!canWrite || mutation.pending} className="scheduling-fields">
         <div>
           <h2>Dados da reserva</h2>
           {booking ? (

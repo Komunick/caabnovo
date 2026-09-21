@@ -9,10 +9,16 @@ import {
 } from "./common";
 import { currentUserSchema, userStatusSchema } from "./auth";
 
-export const userSchema = currentUserSchema.omit({ permissions: true });
+export const userSchema = currentUserSchema
+  .omit({ permissions: true })
+  .extend({ deletionEffectiveAt: z.iso.datetime({ offset: true }).nullable().optional() });
 
 export const initialPasswordResponseSchema = z.object({
   initialPassword: z.string().regex(/^[A-Z][a-z]{5,}\d{6}$/),
+});
+export const resetUserPasswordSchema = z.object({ version: z.number().int().positive() }).strict();
+export const resetUserPasswordResponseSchema = initialPasswordResponseSchema.extend({
+  version: z.number().int().positive(),
 });
 export const createdUserSchema = userSchema.extend({
   initialPassword: initialPasswordResponseSchema.shape.initialPassword.nullable(),
@@ -24,6 +30,7 @@ export const userPageSchema = pageSchema(userSchema);
 export const userListQuerySchema = paginationQuerySchema.extend({
   cursor: idSchema.optional(),
   status: userStatusSchema.optional(),
+  deleted: z.enum(["excluded", "only", "all"]).default("excluded"),
 });
 
 export const createUserRequestSchema = z
@@ -56,3 +63,7 @@ export type UserPage = z.infer<typeof userPageSchema>;
 export type UserListQuery = z.infer<typeof userListQuerySchema>;
 export type CreateUserRequest = z.infer<typeof createUserRequestSchema>;
 export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
+
+export const userLifecycleSchema = z
+  .object({ action: z.enum(["delete", "restore"]), version: z.number().int().positive() })
+  .strict();

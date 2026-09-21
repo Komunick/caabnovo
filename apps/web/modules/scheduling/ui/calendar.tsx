@@ -30,7 +30,7 @@ export default function SchedulingCalendar({
   const result = useSchedulingData<{ items: SchedulingBooking[] }>(`calendar?${query}`);
   if (!result.data) return <DataState error={result.error} reload={result.reload} />;
   const events = result.data.items.map((booking) => {
-    const status = booking.status === "scheduled" ? "Agendado" : "Cancelado";
+    const status = `${booking.status === "scheduled" ? "Agendado" : "Cancelado"}${booking.memberDeleted ? " · Associado excluído" : ""}`;
     const label = `${booking.memberName}, ${timeLabel(booking.startsAt)} às ${timeLabel(booking.endsAt)}, ${booking.procedureName}, ${booking.professionalName}, ${booking.unitName}, ${status}`;
     return {
       id: booking.id,

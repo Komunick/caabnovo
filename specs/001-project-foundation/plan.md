@@ -589,3 +589,15 @@ unitários, 122 de contrato, 220 de integração, build e segurança. Suíte com
 navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost
 permanece desligado. Evidências:
 [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+
+## Ampliação do ciclo de vida — 21/09/2026
+
+Executar na entrega ativa após levantamento dos fluxos existentes. Reutilizar PATCH versionado para
+reativar colaborador; acrescentar evento explícito user.reactivated. Implementar POST
+/api/v1/users/:id/reset-password com versão obrigatória, validação CSRF/origem, nova verificação
+transacional de sessão/cargo/permissões após locks, substituição atômica do hash e incremento de
+versão. Reutilizar geração e recibo de senha inicial, sem persistir segredo em rascunhos. Testar
+login novo/antigo, revogação, concorrência, rollback, acesso negado e interface. Persistir data de
+vigência da exclusão (24 horas após solicitação), bloquear a conta e encerrar sessões imediatamente;
+permitir desfazer durante o intervalo e restaurar explicitamente depois, preservando histórico; não
+confundir desativar com apagar silenciosamente.

@@ -19,7 +19,7 @@ export async function listSchedulingBeneficiaries(
     const total = Number(
       (
         await client.query(
-          "SELECT count(*) AS total FROM member WHERE archived_at IS NULL AND name ILIKE $1",
+          "SELECT count(*) AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND name ILIKE $1",
           [search],
         )
       ).rows[0].total,
@@ -27,7 +27,7 @@ export async function listSchedulingBeneficiaries(
     const items = (
       await client.query<SchedulingBeneficiary>(
         `SELECT id,name,extract(year FROM birth_date)::integer AS "birthYear",oab_number AS "oabNumber",oab_state AS "oabState"
-      FROM member WHERE archived_at IS NULL AND name ILIKE $1 ORDER BY name,id LIMIT $2 OFFSET $3`,
+      FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND name ILIKE $1 ORDER BY name,id LIMIT $2 OFFSET $3`,
         [search, query.pageSize, (query.page - 1) * query.pageSize],
       )
     ).rows;

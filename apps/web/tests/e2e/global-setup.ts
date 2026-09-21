@@ -41,8 +41,11 @@ export default async function globalSetup() {
     const userIds = new Map(users.rows.map(({ email, id }) => [email, id]));
     const memberPermissions = [
       "reports:read",
-      "reports:export",
+      "exports:generate",
       "messages:access",
+      "messages:write",
+      "scheduling:read",
+      "scheduling:write",
       "members:read",
       "members:write",
       "members:review",
@@ -59,7 +62,7 @@ export default async function globalSetup() {
       "roles:grant",
       "roles:revoke",
       "audit:read",
-      "audit:export",
+      "exports:generate",
       "files:create",
       "files:read",
       "files:delete",
@@ -87,9 +90,9 @@ export default async function globalSetup() {
         userId: userIds.get(syntheticUsers.operator.email),
       },
       {
-        code: "access-manager",
-        name: "Gestor de acesso",
-        administrative: false,
+        code: "administrator",
+        name: "Administrador",
+        administrative: true,
         permissions,
         userId: userIds.get(syntheticUsers.accessManager.email),
       },
@@ -97,7 +100,7 @@ export default async function globalSetup() {
         code: "auditor",
         name: "Auditor",
         administrative: false,
-        permissions: ["audit:read", "audit:export"],
+        permissions: ["audit:read", "exports:generate"],
         userId: userIds.get(syntheticUsers.auditor.email),
       },
       {
@@ -147,6 +150,13 @@ export default async function globalSetup() {
         );
       }
     }
+    // This synthetic account exercises editorial and scheduling work explicitly.
+    await admin.query(
+      `INSERT INTO user_access(user_id,permissions,updated_by)
+      SELECT id,ARRAY['news:read','news:write','news:publish','scheduling:read','scheduling:write'],id FROM "user" WHERE email=$1
+      ON CONFLICT(user_id) DO UPDATE SET permissions=EXCLUDED.permissions`,
+      [syntheticUsers.ordinary.email],
+    );
     const managerId = userIds.get(syntheticUsers.accessManager.email);
     if (managerId) {
       await admin.query(

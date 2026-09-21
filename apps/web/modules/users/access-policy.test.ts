@@ -43,7 +43,7 @@ describe("access policy", () => {
     ).toThrowError(expect.objectContaining({ code: "INVALID_VALIDITY" }));
   });
 
-  it("prevents self-elevation and grants beyond the actor authority", () => {
+  it("allows an administrator to assign roles to self but rejects grants beyond current authority", () => {
     expect(() =>
       validateRoleGrant({
         actor,
@@ -53,7 +53,7 @@ describe("access policy", () => {
         justification: "Autoatribuição",
         now,
       }),
-    ).toThrowError(expect.objectContaining({ code: "SELF_ESCALATION_DENIED" }));
+    ).not.toThrow();
 
     expect(() =>
       validateRoleGrant({

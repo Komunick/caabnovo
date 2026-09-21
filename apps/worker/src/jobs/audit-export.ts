@@ -4,12 +4,22 @@ import { auditExportJobPayloadSchema, type AuditExportJobPayload } from "@caab/c
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { listAuditEvents } from "@caab/db/repositories/audit-query";
+import { currentExportOwner } from "@caab/db/repositories/legacy-exports";
 
 export async function runAuditExport(
   pool: Pool,
   untrustedPayload: AuditExportJobPayload,
 ): Promise<void> {
   const payload = auditExportJobPayloadSchema.parse(untrustedPayload);
+  async function authorize(db: Parameters<typeof currentExportOwner>[0]) {
+    const actor = await currentExportOwner(db, payload.requestedBy);
+    if (!actor.permissions.has("audit:read") || !actor.permissions.has("exports:generate"))
+      throw Object.assign(new Error("PERMISSION_DENIED"), {
+        code: "PERMISSION_DENIED",
+        status: 403,
+      });
+  }
+  await authorize(pool);
   const completed = await pool.query(
     `SELECT 1 FROM stored_file
      WHERE owner_type = 'audit_export' AND owner_id = $1 AND status = 'available'
@@ -21,6 +31,7 @@ export async function runAuditExport(
   const lines: string[] = [];
   let cursor: string | undefined;
   do {
+    await authorize(pool);
     const page = await listAuditEvents(pool, {
       cursor,
       limit: 100,
@@ -54,6 +65,7 @@ export async function runAuditExport(
   const body = `${lines.join("\n")}${lines.length ? "\n" : ""}`;
   const objectKey = `database/audit-exports/${payload.jobId}.jsonl`;
   await withTransaction(pool, async (client) => {
+    await authorize(client);
     const inserted = await client.query(
       `INSERT INTO stored_file
         (owner_type, owner_id, original_name, object_key, quarantine_key, detected_mime,

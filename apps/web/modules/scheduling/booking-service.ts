@@ -6,6 +6,7 @@ import {
   schedulingBookingsQuerySchema,
   schedulingCalendarQuerySchema,
   schedulingCancelSchema,
+  schedulingKeepDeletedMemberSchema,
   schedulingCreateSchema,
   schedulingPageQuerySchema,
   schedulingRescheduleSchema,
@@ -31,6 +32,10 @@ const bookingFrom = `FROM scheduling_booking b JOIN member m ON m.id=b.member_id
 const bookingSelect = `SELECT jsonb_build_object('id',b.id,'memberId',b.member_id,'memberName',m.name,'assignmentId',b.assignment_id,
   'unitId',u.id,'unitName',u.name,'serviceId',s.id,'serviceName',s.name,'procedureId',p.id,'procedureName',p.name,
   'professionalId',f.id,'professionalName',f.name,'startsAt',b.starts_at,'endsAt',b.ends_at,
+  'memberDeletionEffectiveAt',m.deletion_effective_at,'memberDeleted',coalesce(m.deletion_effective_at<=clock_timestamp(),false),
+  'keptAfterMemberDeletion',coalesce(m.deletion_effective_at<=clock_timestamp() AND b.member_deletion_reviewed_at=m.deletion_effective_at,false),
+  'memberDeletionKeptAt',CASE WHEN b.member_deletion_reviewed_at=m.deletion_effective_at THEN b.member_deletion_kept_at END,
+  'memberDeletionKeptBy',CASE WHEN b.member_deletion_reviewed_at=m.deletion_effective_at THEN (SELECT name FROM "user" WHERE id=b.member_deletion_kept_by) END,
   'durationMinutes',b.duration_snapshot,'status',b.status,'version',b.version) AS data ${bookingFrom}`;
 async function readBooking(client: PoolClient, id: string): Promise<SchedulingBooking> {
   const row = (
@@ -137,6 +142,7 @@ export async function getSchedulingBooking(
 async function requireBeneficiary(client: PoolClient, memberId: string) {
   const member = await findSchedulingBeneficiary(client, memberId);
   if (!member) throw new SchedulingError("SCHEDULING_BENEFICIARY_NOT_FOUND", 404);
+  if (member.deleted) throw new SchedulingError("SCHEDULING_BENEFICIARY_DELETED", 422);
   if (member.archived || member.blocked)
     throw new SchedulingError("SCHEDULING_BENEFICIARY_BLOCKED", 422);
 }
@@ -168,6 +174,8 @@ function snapshot(booking: SchedulingBooking) {
     endsAt: booking.endsAt,
     status: booking.status,
     version: booking.version,
+    memberDeletionEffectiveAt: booking.memberDeletionEffectiveAt,
+    keptAfterMemberDeletion: booking.keptAfterMemberDeletion,
     unitName: booking.unitName,
     procedureName: booking.procedureName,
     professionalName: booking.professionalName,
@@ -285,6 +293,37 @@ export async function cancelSchedulingBooking(
       if (!updated.rowCount) throw new SchedulingError("SCHEDULING_PAST", 422);
       const booking = await readBooking(client, id);
       await bookingEvent(client, context, "cancelled", booking, before);
+      return booking;
+    }),
+  );
+}
+
+export async function keepSchedulingBooking(
+  pool: Pool,
+  context: SchedulingContext,
+  id: string,
+  raw: unknown,
+) {
+  idSchema.parse(id);
+  const input = schedulingKeepDeletedMemberSchema.parse(raw);
+  return schedulingAccess(pool, context.actor, true, (client) =>
+    schedulingReplay(client, context, `booking:${id}:keep`, input, async () => {
+      const before = await readBooking(client, id);
+      if (before.version !== input.expectedVersion)
+        throw new SchedulingError("SCHEDULING_VERSION_CONFLICT");
+      if (!before.memberDeleted || before.memberDeletionEffectiveAt !== input.deletionEffectiveAt)
+        throw new SchedulingError("SCHEDULING_MEMBER_DELETION_CHANGED");
+      if (before.status !== "scheduled" || Date.parse(before.startsAt) <= Date.now())
+        throw new SchedulingError("SCHEDULING_PAST", 422);
+      if (before.keptAfterMemberDeletion) return before;
+      const changed = await client.query(
+        `UPDATE scheduling_booking SET member_deletion_reviewed_at=$2,member_deletion_kept_at=clock_timestamp(),member_deletion_kept_by=$3,version=version+1
+      WHERE id=$1 AND starts_at>clock_timestamp()`,
+        [id, input.deletionEffectiveAt, context.actor.userId],
+      );
+      if (!changed.rowCount) throw new SchedulingError("SCHEDULING_PAST", 422);
+      const booking = await readBooking(client, id);
+      await bookingEvent(client, context, "kept_after_member_deletion", booking, before);
       return booking;
     }),
   );

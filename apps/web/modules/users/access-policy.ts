@@ -28,9 +28,6 @@ export function validateRoleGrant(input: {
   if (!input.actor.permissions.has(PERMISSIONS.rolesGrant)) {
     throw new AccessPolicyError("ROLE_GRANT_DENIED", 403, "Role grant permission required");
   }
-  if (input.actor.userId === input.targetUserId) {
-    throw new AccessPolicyError("SELF_ESCALATION_DENIED", 403, "Self-assignment is not allowed");
-  }
   const outsideAuthority = input.rolePermissions.some(
     (permission) => !input.actor.permissions.has(permission),
   );

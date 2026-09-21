@@ -9,6 +9,7 @@ import { WorkspaceControls } from "@/components/workspace-controls";
 import { AccountMenu } from "@/modules/auth/ui/account-menu";
 import { WorkspaceDrafts } from "@/components/workspace-drafts";
 import { PanelAnalytics } from "@/modules/reports/collector";
+import { WorkspacePermissions } from "@/components/workspace-permissions";
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
   const requestHeaders = await headers();
@@ -18,27 +19,29 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   if (!identity) redirect("/login");
 
   return (
-    <AppShell
-      controls={<WorkspaceControls permissions={identity.permissions} />}
-      sidebar={
-        <div className="sidebar-inner">
-          <Brand inverse />
-          <AuthorizedNav permissions={identity.permissions} />
-          <p className="sidebar-footer">
-            <span aria-hidden="true" /> Ambiente seguro
-          </p>
-          <AccountMenu
-            name={identity.name}
-            email={identity.email}
-            role={identity.roles[0]?.name ?? "Usuário interno"}
-          />
-        </div>
-      }
-    >
-      <WorkspaceDrafts key={identity.id}>
-        <PanelAnalytics />
-        {children}
-      </WorkspaceDrafts>
-    </AppShell>
+    <WorkspacePermissions initial={identity.permissions}>
+      <AppShell
+        controls={<WorkspaceControls permissions={identity.permissions} />}
+        sidebar={
+          <div className="sidebar-inner">
+            <Brand inverse />
+            <AuthorizedNav permissions={identity.permissions} />
+            <p className="sidebar-footer">
+              <span aria-hidden="true" /> Ambiente seguro
+            </p>
+            <AccountMenu
+              name={identity.name}
+              email={identity.email}
+              role={identity.roles[0]?.name ?? "Usuário interno"}
+            />
+          </div>
+        }
+      >
+        <WorkspaceDrafts key={identity.id}>
+          <PanelAnalytics />
+          {children}
+        </WorkspaceDrafts>
+      </AppShell>
+    </WorkspacePermissions>
   );
 }

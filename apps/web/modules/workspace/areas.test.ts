@@ -36,9 +36,8 @@ describe("consolidated workspace navigation", () => {
   });
 
   it("does not treat export or redrive permission as permission to read the area", () => {
-    expect(getWorkspaceAreas(["audit:export", "jobs:redrive"]).map(({ id }) => id)).toEqual([
+    expect(getWorkspaceAreas(["exports:generate", "jobs:redrive"]).map(({ id }) => id)).toEqual([
       "home",
-      "scheduling",
       "sessions",
       "settings",
     ]);
@@ -64,4 +63,12 @@ it("puts news first among modules and messages immediately before the final audi
   ]).filter((area) => !["home", "settings", "sessions"].includes(area.id));
   expect(modules[0]?.id).toBe("news");
   expect(modules.slice(-2).map((area) => area.id)).toEqual(["messages", "audit"]);
+});
+
+it("requires explicit scheduling consultation and does not infer it from writes", () => {
+  for (const permissions of [[], ["scheduling:write"], ["exports:generate"]])
+    expect(getWorkspaceAreas(permissions).some((area) => area.id === "scheduling")).toBe(false);
+  expect(getWorkspaceAreas(["scheduling:read"]).some((area) => area.id === "scheduling")).toBe(
+    true,
+  );
 });

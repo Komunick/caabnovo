@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { useState, type FormEvent } from "react";
@@ -58,6 +59,7 @@ function HoursEditor({
 }) {
   const [rows, setRows] = useDraftState(`hours:${path}:${unitId}:rows`, data.rows);
   const [version, setVersion] = useDraftState(`hours:${path}:${unitId}:version`, data.version);
+  const canWrite = useModulePermission("scheduling:write");
   const mutation = useSchedulingMutation(`hours:${path}:${unitId}`);
   const [notice, setNotice] = useState("");
   const change = (weekday: number, field: string, value: string) =>
@@ -87,7 +89,7 @@ function HoursEditor({
         Horário de Salvador (America/Bahia). Desmarque os dias sem atendimento. Uma faixa por dia,
         sem virar a noite.
       </p>
-      <fieldset disabled={mutation.pending} className="scheduling-fields">
+      <fieldset disabled={!canWrite || mutation.pending} className="scheduling-fields">
         {days.map((day, weekday) => {
           const row = rows.find((item) => item.weekday === weekday);
           return (
@@ -145,7 +147,7 @@ function HoursEditor({
       </fieldset>
       {mutation.error && <p role="alert">{mutation.error}</p>}
       {notice && <p role="status">{notice}</p>}
-      <Button type="submit" intent="primary" disabled={mutation.pending}>
+      <Button type="submit" intent="primary" disabled={!canWrite || mutation.pending}>
         {mutation.pending ? "Salvando…" : "Salvar horários"}
       </Button>
     </DraftForm>

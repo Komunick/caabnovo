@@ -3,21 +3,27 @@ import type { Pool, PoolClient } from "pg";
 import { hashPassword } from "better-auth/crypto";
 import { createLocalAccountIssuer } from "better-auth/db";
 import { withTransaction } from "@caab/db";
+import { readRoleBase } from "@caab/db/repositories/user-roles";
 import { readUserPermissions } from "@caab/db/repositories/user-access";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { writeSecurityEvent } from "@caab/db/repositories/security-events";
 import type { RequestActor } from "../shared/request-context";
 import { AuthenticationRequiredError, PermissionDeniedError } from "../auth/authorize";
 import { UserAccessError } from "./errors";
+import { currentAuthority } from "./current-authority";
+import { PERMISSIONS } from "../auth/permissions";
 import { generateInitialPassword } from "./initial-password";
 
 /** Caller locks the user, or has just inserted it in this same transaction. */
 export async function insertInitialCredential(client: PoolClient, userId: string) {
+  return writeCredential(client, userId, false);
+}
+async function writeCredential(client: PoolClient, userId: string, replace: boolean) {
   const existing = await client.query<{ id: string; password: string | null }>(
     "SELECT id,password FROM account WHERE user_id=$1 AND provider_id='credential' FOR UPDATE",
     [userId],
   );
-  if (existing.rows.length > 1 || existing.rows.some((row) => row.password !== null))
+  if (existing.rows.length > 1 || (!replace && existing.rows.some((row) => row.password !== null)))
     throw new UserAccessError("PASSWORD_ALREADY_DEFINED", 409, "Password already defined");
   const initialPassword = generateInitialPassword();
   const hash = await hashPassword(initialPassword);
@@ -99,5 +105,67 @@ export async function initializeUserPassword(
       context: { actorUserId: command.actor.userId },
     });
     return { initialPassword };
+  });
+}
+
+/** Replacement is separate from first initialization; stale versions can never rotate twice. */
+export async function resetUserPassword(
+  pool: Pool,
+  command: {
+    actor: RequestActor;
+    userId: string;
+    version: number;
+    requestId: string;
+    correlationId: string;
+  },
+  audit = writeAuditEvent,
+) {
+  if (command.actor.userId === command.userId)
+    throw new PermissionDeniedError("Use personal password settings");
+  return withTransaction(pool, async (client) => {
+    const actor = await currentAuthority(
+      client,
+      command.actor,
+      PERMISSIONS.usersResetPassword,
+      command.userId,
+    );
+    const role = await readRoleBase(client, actor.userId);
+    const targetRole = await readRoleBase(client, command.userId);
+    if ((!role.administrator && !role.manager) || (!role.administrator && targetRole.administrator))
+      throw new PermissionDeniedError("Password replacement exceeds role authority");
+    const target = await client.query<{ version: number }>(
+      `SELECT version FROM "user" WHERE id=$1 AND status='active'`,
+      [command.userId],
+    );
+    if (!target.rows[0]) throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
+    if (target.rows[0].version !== command.version)
+      throw new UserAccessError("USER_VERSION_CONFLICT", 409, "User version changed");
+    const initialPassword = await writeCredential(client, command.userId, true);
+    const updated = await client.query<{ version: number }>(
+      'UPDATE "user" SET version=version+1,updated_at=now() WHERE id=$1 RETURNING version',
+      [command.userId],
+    );
+    await client.query("DELETE FROM session WHERE user_id=$1", [command.userId]);
+    await client.query("DELETE FROM verification WHERE value=$1", [command.userId]);
+    await audit(client, {
+      actorUserId: actor.userId,
+      effectiveIdentity: `user:${actor.userId}`,
+      action: "user.password.reset",
+      entityType: "user",
+      entityId: command.userId,
+      origin: "web",
+      requestId: command.requestId,
+      correlationId: command.correlationId,
+    });
+    await writeSecurityEvent(client, {
+      userId: command.userId,
+      eventType: "account_change",
+      outcome: "success",
+      reasonCode: "PASSWORD_RESET_BY_ADMINISTRATOR",
+      requestId: command.requestId,
+      correlationId: command.correlationId,
+      context: { actorUserId: actor.userId },
+    });
+    return { initialPassword, version: updated.rows[0]!.version };
   });
 }

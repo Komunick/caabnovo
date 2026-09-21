@@ -66,7 +66,11 @@ export async function inspectDatabaseContent(pool: Pool, key: string) {
     : null;
 }
 
-export async function readDatabaseContent(pool: Pool, key: string, availableOnly = true) {
+export async function readDatabaseContent(
+  pool: Pick<Pool, "query">,
+  key: string,
+  availableOnly = true,
+) {
   const result = await pool.query<{ body: Buffer; mime: string; original_name: string }>(
     `SELECT c.body,COALESCE(f.detected_mime,f.declared_mime) AS mime,f.original_name
      FROM stored_file_content c JOIN stored_file f ON f.id=c.file_id

@@ -26,6 +26,7 @@ const functions: readonly FunctionDefinition[] = [
   },
   {
     id: "messages-new",
+    permissions: ["messages:write"],
     area: "messages",
     href: "/messages/campaigns/new",
     label: "Preparar mensagem",
@@ -50,6 +51,7 @@ const functions: readonly FunctionDefinition[] = [
   },
   {
     id: "scheduling-new",
+    permissions: ["scheduling:write"],
     area: "scheduling",
     href: "/scheduling/new",
     label: "Criar reserva",
@@ -283,7 +285,7 @@ const functions: readonly FunctionDefinition[] = [
     label: "Exportar auditoria",
     description: "Escolher o período e solicitar uma exportação.",
     keywords: "exportacao baixar relatorio historico atividades",
-    permissions: ["audit:read", "audit:export"],
+    permissions: ["audit:read", "exports:generate"],
   },
   {
     id: "jobs",

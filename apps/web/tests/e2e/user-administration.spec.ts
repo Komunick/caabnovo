@@ -11,7 +11,7 @@ async function signIn(page: import("@playwright/test").Page, email: string, pass
   await expect(page).toHaveURL(/\/$/);
 }
 
-test("authorized manager creates, updates, grants, revokes and disables a user", async ({
+test("administrator creates, updates, grants, revokes and disables a user", async ({
   page,
 }, testInfo) => {
   const suffix = randomUUID().slice(0, 8);
@@ -94,6 +94,9 @@ test("authorized manager creates, updates, grants, revokes and disables a user",
   await expect(page.getByRole("button", { name: "Revogar Consulta de usuários" })).toHaveCount(0);
 
   const accesses = page.getByRole("region", { name: "Acessos do colaborador" });
+  await accesses.getByRole("checkbox", { name: "Consultar notícias e rascunhos" }).check();
+  await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).check();
+  await accesses.getByRole("checkbox", { name: "Publicar, programar e arquivar notícias" }).check();
   await accesses.getByRole("checkbox", { name: "Criar e editar notícias", exact: true }).uncheck();
   await expect(
     accesses.getByRole("checkbox", { name: "Publicar, programar e arquivar notícias" }),
@@ -123,7 +126,7 @@ test("ordinary user cannot open user administration", async ({ page }) => {
   await expect(page.getByText("Você não tem permissão para acessar colaboradores.")).toBeVisible();
 });
 
-test("manager initializes a legacy account without replacing existing credentials", async ({
+test("administrator initializes a legacy account without replacing existing credentials", async ({
   page,
 }) => {
   const database = new Client({

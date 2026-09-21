@@ -12,7 +12,9 @@ import { Pagination } from "@/components/ui/pagination";
 
 export default async function UsersPage({
   searchParams,
-}: Readonly<{ searchParams: Promise<{ cursor?: string | string[] }> }>) {
+}: Readonly<{
+  searchParams: Promise<{ cursor?: string | string[]; deleted?: string | string[] }>;
+}>) {
   const requestHeaders = await headers();
   const actor = await resolveRequestActor(
     new Request("http://caab.internal/users", { headers: requestHeaders }),
@@ -22,6 +24,7 @@ export default async function UsersPage({
   }
   const parsed = userListQuerySchema.safeParse({
     cursor: (await searchParams).cursor,
+    deleted: (await searchParams).deleted,
     limit: 100,
   });
   const query = parsed.success ? parsed.data : userListQuerySchema.parse({ limit: 100 });
@@ -52,6 +55,17 @@ export default async function UsersPage({
       ) : null}
       <section className="panel" aria-labelledby="user-list-title">
         <h2 id="user-list-title">Contas cadastradas</h2>
+        <form method="get" className="button-row">
+          <label htmlFor="user-deleted">Exibir colaboradores</label>
+          <select id="user-deleted" name="deleted" defaultValue={query.deleted}>
+            <option value="excluded">Cadastros atuais</option>
+            <option value="only">Excluídos</option>
+            <option value="all">Todos</option>
+          </select>
+          <button type="submit" className="secondary-button">
+            Aplicar filtro
+          </button>
+        </form>
         {!parsed.success ? (
           <p role="alert">A página solicitada é inválida. Exibindo a primeira página.</p>
         ) : null}
@@ -75,7 +89,15 @@ export default async function UsersPage({
                     </Link>
                   </th>
                   <td>{user.email}</td>
-                  <td>{user.status === "active" ? "Ativo" : "Desativado"}</td>
+                  <td>
+                    {user.deletionEffectiveAt
+                      ? user.deletionEffectiveAt.getTime() <= Date.now()
+                        ? "Excluído"
+                        : "Exclusão pendente — bloqueado"
+                      : user.status === "active"
+                        ? "Ativo"
+                        : "Desativado"}
+                  </td>
                   <td>{user.roles.map(({ name }) => name).join(", ") || "Sem função"}</td>
                 </tr>
               ))}
@@ -83,9 +105,17 @@ export default async function UsersPage({
           </Table>
         </TableContainer>
         <Pagination
-          firstHref={query.cursor ? "/users" : undefined}
+          firstHref={
+            query.cursor
+              ? query.deleted === "excluded"
+                ? "/users"
+                : `/users?deleted=${query.deleted}`
+              : undefined
+          }
           nextHref={
-            page.nextCursor ? `/users?cursor=${encodeURIComponent(page.nextCursor)}` : undefined
+            page.nextCursor
+              ? `/users?cursor=${encodeURIComponent(page.nextCursor)}${query.deleted === "excluded" ? "" : `&deleted=${query.deleted}`}`
+              : undefined
           }
         />
       </section>

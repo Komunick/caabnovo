@@ -7,11 +7,13 @@ import {
   reportJobSchema,
   type ReportJob,
 } from "@caab/contracts";
-import { currentReportActor, queryReport, reportError } from "@caab/db/repositories/reports";
+import { queryReport, reportError } from "@caab/db/repositories/reports";
+import { currentExportOwner } from "@caab/db/repositories/legacy-exports";
 import { reportSummary } from "@caab/db/repositories/report-summary";
 import { reportUsage } from "@caab/db/repositories/report-analytics";
 import {
   authorizeStoredExport,
+  storedReportRequirements,
   type StoredReportExport,
 } from "@caab/db/repositories/report-storage";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
@@ -63,10 +65,10 @@ export async function runReportExport(pool: Pool, raw: ReportJob) {
       )
     ).rows[0];
     if (!record) throw reportError("NOT_FOUND", 404);
-    const actor = await currentReportActor(db, record.owner_id);
+    const actor = await currentExportOwner(pool, record.owner_id);
     authorizeStoredExport(actor, record.configuration);
     // Limit to permissions captured when requested; later grants do not broaden a queued file.
-    actor.permissions = new Set(record.configuration.permissions);
+    actor.permissions = new Set(storedReportRequirements(record.configuration));
     const existing = await db.query(
       "SELECT id FROM stored_file WHERE owner_type='report_export' AND owner_id=$1 AND status='available'",
       [job.jobId],
@@ -167,6 +169,7 @@ export async function runReportExport(pool: Pool, raw: ReportJob) {
           : "application/pdf";
     const name = `caab-${query.view}-${query.from}-${query.to}.${format}`,
       key = `database/report-exports/${job.jobId}.${format}`;
+    authorizeStoredExport(await currentExportOwner(pool, record.owner_id), record.configuration);
     const inserted = await db.query<{ id: string }>(
       `INSERT INTO stored_file(owner_type,owner_id,original_name,object_key,quarantine_key,detected_mime,declared_mime,size_bytes,checksum_sha256,status,scan_result,uploaded_by,available_at)
       VALUES('report_export',$1,$2,$3,$4,$5,$5,$6,$7,'available','clean',$8,now()) RETURNING id`,

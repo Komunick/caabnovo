@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { DraftScope, useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -50,6 +51,7 @@ function CatalogForm({
     "catalog:professionalId",
     item?.professionalId ?? "",
   );
+  const canWrite = useModulePermission("scheduling:write");
   const mutation = useSchedulingMutation("catalog");
   const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
@@ -97,7 +99,7 @@ function CatalogForm({
         onSubmit={submit}
         className="scheduling-form"
       >
-        <fieldset disabled={mutation.pending} className="scheduling-fields">
+        <fieldset disabled={!canWrite || mutation.pending} className="scheduling-fields">
           {kind !== "assignments" && (
             <FormField id="catalog-name" label="Nome">
               <DraftInput
@@ -223,7 +225,7 @@ function CatalogForm({
             type="submit"
             intent="primary"
             size={item ? "default" : "add"}
-            disabled={mutation.pending}
+            disabled={!canWrite || mutation.pending}
           >
             {!item && <Plus aria-hidden="true" />}
             {mutation.pending
@@ -232,7 +234,7 @@ function CatalogForm({
                 ? "Salvar alterações"
                 : catalogLabels[kind].add.replace(/^Nov[ao]/, "Criar")}
           </Button>
-          <Button disabled={mutation.pending} onClick={onClose}>
+          <Button disabled={!canWrite || mutation.pending} onClick={onClose}>
             Cancelar
           </Button>
         </div>
@@ -248,6 +250,7 @@ export function SchedulingCatalog() {
 }
 function CatalogPage({ kind }: { kind: SchedulingKind }) {
   const drafts = useDraftCache();
+  const canWrite = useModulePermission("scheduling:write");
   const router = useRouter();
   const query = useSearchParams();
   const page = Math.max(1, Number(query.get("page")) || 1);
@@ -386,6 +389,7 @@ function CatalogPage({ kind }: { kind: SchedulingKind }) {
                           <td>
                             <Button
                               size="compact"
+                              disabled={!canWrite}
                               aria-label={`Editar ${item.name}`}
                               onClick={() => {
                                 setEditing(item);

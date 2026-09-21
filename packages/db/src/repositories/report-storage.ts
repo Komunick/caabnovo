@@ -1,3 +1,4 @@
+import { currentExportOwner } from "./export-authority";
 import { createHash, randomUUID } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import {
@@ -9,13 +10,7 @@ import {
 import { withTransaction } from "../client";
 import { writeAuditEvent } from "./audit-writer";
 import { createJobExecution } from "./job-execution";
-import {
-  authorizeReport,
-  currentReportActor,
-  reportError,
-  type ReportActor,
-  type ReportDb,
-} from "./reports";
+import { authorizeReport, reportError, type ReportActor, type ReportDb } from "./reports";
 
 export async function savedReports(db: ReportDb, actor: ReportActor) {
   authorizeReport(actor);
@@ -50,10 +45,53 @@ export async function deleteReport(pool: Pool, actor: ReportActor, id: string, v
   );
   if (!result.rowCount) throw reportError("REPORT_QUERY_CONFLICT", 409);
 }
-export type StoredReportExport = { input: ReportExportInput; permissions: string[] };
+export type StoredReportExport = {
+  input: ReportExportInput;
+  permissions: string[];
+  generatorVersion?: number;
+};
+export const canonicalExportPermission = (permission: string) =>
+  permission === "audit:export" || permission === "reports:export"
+    ? "exports:generate"
+    : permission;
+export function storedReportRequirements(configuration: StoredReportExport): string[] {
+  // PR34 was the sole unversioned persisted generator; its complete parsed shape is known.
+  // Unknown versions or incomplete metadata cannot establish the contents of old bytes.
+  if (
+    !configuration ||
+    !Array.isArray(configuration.permissions) ||
+    configuration.permissions.some((key) => typeof key !== "string") ||
+    (configuration.generatorVersion !== undefined && configuration.generatorVersion !== 2) ||
+    !configuration.input?.query?.view ||
+    !configuration.input.query.dataset ||
+    !configuration.input.query.from ||
+    !configuration.input.query.to
+  )
+    throw reportError("REPORT_SOURCE_UNKNOWN", 409);
+  const parsed = reportExportSchema.safeParse(configuration.input);
+  if (!parsed.success) throw reportError("REPORT_SOURCE_UNKNOWN", 409);
+  const query = parsed.data.query;
+  return [
+    ...new Set([
+      "reports:read",
+      "exports:generate",
+      ...configuration.permissions.map(canonicalExportPermission),
+      ...(query.view === "details"
+        ? [
+            query.dataset === "bookings"
+              ? "scheduling:read"
+              : reportCatalog[query.dataset].permission,
+          ].filter(Boolean)
+        : configuration.generatorVersion === 2
+          ? []
+          : ["scheduling:read"]),
+    ]),
+  ];
+}
 export function authorizeStoredExport(actor: ReportActor, configuration: StoredReportExport) {
+  const required = storedReportRequirements(configuration);
   authorizeReport(actor, configuration.input.query, true);
-  if (configuration.permissions.some((permission) => !actor.permissions.has(permission)))
+  if (required.some((permission) => !actor.permissions.has(permission)))
     throw reportError("PERMISSION_DENIED");
 }
 export async function requestReportExport(
@@ -69,10 +107,10 @@ export async function requestReportExport(
   const fingerprint = createHash("sha256").update(JSON.stringify(parsed)).digest("hex");
   const required = [
     "reports:read",
-    "reports:export",
+    "exports:generate",
     ...(parsed.query.view === "details"
       ? [reportCatalog[parsed.query.dataset].permission]
-      : ["members:read", "partners:read", "news:read", "users:read"]
+      : ["members:read", "partners:read", "news:read", "users:read", "scheduling:read"]
     ).filter((permission) => actor.permissions.has(permission)),
   ];
   return withTransaction(pool, async (db) => {
@@ -103,7 +141,13 @@ export async function requestReportExport(
     });
     await db.query(
       "INSERT INTO report_export(id,owner_id,configuration,fingerprint,idempotency_key) VALUES($1,$2,$3,$4,$5)",
-      [id, actor.userId, { input: parsed, permissions: required }, fingerprint, context.key],
+      [
+        id,
+        actor.userId,
+        { input: parsed, permissions: required, generatorVersion: 2 },
+        fingerprint,
+        context.key,
+      ],
     );
     await enqueue(db, id);
     await writeAuditEvent(db, {
@@ -137,7 +181,11 @@ export async function reportExports(db: ReportDb, actor: ReportActor, page = 1) 
     )
   ).rows;
 }
-export async function reportExportDownload(db: ReportDb, actor: ReportActor, id: string) {
+export async function reportExportDownload(
+  db: ReportDb,
+  actor: ReportActor & { sessionId?: string },
+  id: string,
+) {
   const result = await db.query<{
     owner_id: string;
     configuration: StoredReportExport;
@@ -152,6 +200,9 @@ export async function reportExportDownload(db: ReportDb, actor: ReportActor, id:
   );
   const row = result.rows[0];
   if (!row) throw reportError("NOT_FOUND", 404);
-  authorizeStoredExport(await currentReportActor(db, actor.userId), row.configuration);
+  authorizeStoredExport(
+    await currentExportOwner(db, actor.userId, actor.sessionId),
+    row.configuration,
+  );
   return row;
 }

@@ -40,7 +40,7 @@ async function screenshot(page: Page, path: string) {
   });
   await page.screenshot({ path, fullPage: true });
 }
-test("configure and manage a real reservation through the panel at 390px, without scheduling grants", async ({
+test("configure and manage a real reservation through the panel at 390px, with explicit scheduling grants", async ({
   page,
   context,
 }, testInfo) => {

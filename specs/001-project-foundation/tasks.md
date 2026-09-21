@@ -927,3 +927,20 @@ unitários, 122 de contrato, 220 de integração, build e segurança. Suíte com
 navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost
 permanece desligado. Evidências:
 [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+
+## Ampliação autorizada: ciclo de vida — 21/09/2026
+
+- [ ] T121 Especificar e implementar exclusão de colaboradores lógica após 24 horas, com bloqueio e
+      revogação imediatos, conforme decisão confirmada; proteger último administrador, vínculos,
+      sessões, concorrência, permissões e auditoria; validar API e interface.
+- [ ] T122 Expor Reativar colaborador no detalhe desativado usando PATCH versionado; registrar
+      evento e validar reativação sem restaurar sessões antigas.
+- [ ] T123 Implementar nova senha administrativa pelo fluxo de primeira senha, com endpoint
+      separado, confirmação, versão, cargo Administrador/Gestor atual, sem concessão individual nem
+      Gestor sobre Administrador, segredo em memória transitória, revogação atômica e testes de
+      contrato/integração/interface. Ver spec006.
+
+Retenção confirmada: colaborador com bloqueio imediato e exclusão lógica após 24 horas. Associados
+têm prazo de sete dias (spec005 LC01) e reservas exigem decisão explícita do responsável (spec008
+LC01). T097 e T098–T120 permanecem no escopo previamente autorizado e não são concluídas por esta
+ampliação.

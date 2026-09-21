@@ -18,6 +18,7 @@ import {
   listSchedulingCalendar,
   rescheduleSchedulingBooking,
   cancelSchedulingBooking,
+  keepSchedulingBooking,
 } from "../../modules/scheduling/booking-service";
 import { createSchedulingRoute } from "../../modules/scheduling/http/routes";
 import type { SchedulingContext } from "../../modules/scheduling/access";
@@ -104,8 +105,12 @@ beforeAll(async () => {
     "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$2,now()+interval '1 hour')",
     [sessionId, userId],
   );
+  await admin.query(
+    "INSERT INTO user_access(user_id,permissions,updated_by) VALUES ($1,ARRAY['scheduling:read','scheduling:write'],$1)",
+    [userId],
+  );
   context = {
-    actor: { userId, sessionId, permissions: new Set() },
+    actor: { userId, sessionId, permissions: new Set(["scheduling:read", "scheduling:write"]) },
     idempotencyKey: crypto.randomUUID(),
     requestId: crypto.randomUUID(),
     correlationId: crypto.randomUUID(),
@@ -232,7 +237,7 @@ describe.sequential("scheduling transactions and migration", () => {
       professionalName: "Profissional sintético",
     });
   });
-  it("allows an active account without grants, but exposes only the beneficiary projection", async () => {
+  it("allows a scheduling operator with explicit grants, exposing only the beneficiary projection", async () => {
     const data = await offer();
     await admin.query(
       "UPDATE member SET name='Pessoa privacidade agenda',cpf='12345678909',email='private@example.test',phone='71999999999',birth_date='1990-01-02' WHERE id=$1",
@@ -810,4 +815,70 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
       [context.actor.userId, roleId],
     );
   });
+});
+
+it("keeps deletion warnings and reservations until an authorized versioned decision", async () => {
+  await admin.query(`UPDATE "user" SET status='active',deactivated_at=NULL WHERE id=$1`, [
+    context.actor.userId,
+  ]);
+  await admin.query(
+    "UPDATE session SET revoked_at=NULL,expires_at=clock_timestamp()+interval '1 hour' WHERE id=$1",
+    [context.actor.sessionId],
+  );
+  await admin.query(
+    "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write'] WHERE user_id=$1",
+    [context.actor.userId],
+  );
+  const data = await offer();
+  const booking = (await reserve(data)).value;
+  await admin.query(
+    "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
+    [data.memberId],
+  );
+  const before = (await getSchedulingBooking(pool, context.actor, booking.id, {})).booking;
+  expect(before.memberDeleted).toBe(true);
+  expect(before.status).toBe("scheduled");
+  await expect(reserve(data, "10:00")).rejects.toMatchObject({
+    code: "SCHEDULING_BENEFICIARY_DELETED",
+  });
+  const input = {
+    expectedVersion: before.version,
+    deletionEffectiveAt: before.memberDeletionEffectiveAt,
+  };
+  await admin.query(
+    "UPDATE user_access SET permissions=ARRAY['scheduling:read'] WHERE user_id=$1",
+    [context.actor.userId],
+  );
+  await expect(keepSchedulingBooking(pool, next(), booking.id, input)).rejects.toMatchObject({
+    status: 403,
+  });
+  await admin.query(
+    "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write'] WHERE user_id=$1",
+    [context.actor.userId],
+  );
+  const kept = (await keepSchedulingBooking(pool, next(), booking.id, input)).value;
+  expect(kept.keptAfterMemberDeletion).toBe(true);
+  expect(kept.memberDeleted).toBe(true);
+  expect(kept.status).toBe("scheduled");
+  await expect(
+    cancelSchedulingBooking(pool, next(), booking.id, { expectedVersion: before.version }),
+  ).rejects.toMatchObject({ code: "SCHEDULING_VERSION_CONFLICT" });
+  await admin.query("UPDATE member SET deletion_effective_at=NULL WHERE id=$1", [data.memberId]);
+  expect(
+    (await getSchedulingBooking(pool, context.actor, booking.id, {})).booking
+      .keptAfterMemberDeletion,
+  ).toBe(false);
+  await admin.query(
+    "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
+    [data.memberId],
+  );
+  expect(
+    (await getSchedulingBooking(pool, context.actor, booking.id, {})).booking
+      .keptAfterMemberDeletion,
+  ).toBe(false);
+  const cancelled = (
+    await cancelSchedulingBooking(pool, next(), booking.id, { expectedVersion: kept.version })
+  ).value;
+  expect(cancelled.status).toBe("cancelled");
+  expect(cancelled.memberDeleted).toBe(true);
 });

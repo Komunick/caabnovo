@@ -495,3 +495,21 @@ editorial inclui finalidade e categoria inclui cadastro. Reset remove a validaç
 encerramento do layout autenticado descarta os dados. Regressões de componente cobrem versão
 original, isolamento e encerramento; E2E preparado para Notícias, Associados e acessos, aguardando
 CI.
+
+## Ciclo de vida e credenciais — pesquisa de 21/09/2026
+
+Fontes primárias consultadas:
+[PostgreSQL: relógios e intervalos](https://www.postgresql.org/docs/current/functions-datetime.html),
+[Better Auth: autenticação e senha](https://better-auth.com/docs/authentication/email-password).
+PostgreSQL distingue relógio da transação de clock_timestamp; usar o segundo para a vigência
+corrente mesmo após espera por locks. Intervalos escolhidos: 24 horas e 168 horas (sete dias).
+Inferência de implementação: avaliar a data persistida nas consultas evita depender de worker ativo
+para efetivar a exclusão lógica. Preservar identidades e chaves estrangeiras; nenhuma remoção física
+ou cancelamento automático.
+
+Reutilizar hashPassword/verifyPassword da versão instalada e o registro credential existente; o
+reset administrativo é transacional, independente do fluxo público por link de recuperação.
+Sessões/recuperações antigas são revogadas e a versão impede rotação dupla. Segredo só no recibo
+transitório. Cargo é validado novamente sob lock: Administrador/Gestor, sem autogeração nem
+redefinição de Administrador por Gestor. Testes de integração usam contas sintéticas, banco
+descartável e relógio do banco.

@@ -34,7 +34,7 @@ export default async function MembersPage({
   const query = parsed.success ? parsed.data : memberListSchema.parse({});
   const result = await listMembers(getDatabase().pool, actor, query);
   const pageLink = (page: number) =>
-    `/members?${new URLSearchParams({ q: query.q, archived: query.archived, registrationStatus: query.registrationStatus ?? "", oabState: query.oabState ?? "", administrativeStatus: query.administrativeStatus ?? "", page: String(page) })}`;
+    `/members?${new URLSearchParams({ q: query.q, archived: query.archived, deleted: query.deleted, registrationStatus: query.registrationStatus ?? "", oabState: query.oabState ?? "", administrativeStatus: query.administrativeStatus ?? "", page: String(page) })}`;
   return (
     <div className={`page-stack ${styles.root}`}>
       <header className="page-header">
@@ -78,7 +78,15 @@ export default async function MembersPage({
                     </td>
                     <td>{resultLabels[m.registrationStatus]}</td>
                     <td>{administrativeStatusLabels[m.administrativeStatus]}</td>
-                    <td>{m.archivedAt ? "Arquivado" : "Não arquivado"}</td>
+                    <td>
+                      {m.deleted
+                        ? "Excluído"
+                        : m.deletionEffectiveAt
+                          ? "Exclusão pendente"
+                          : m.archivedAt
+                            ? "Arquivado"
+                            : "Não arquivado"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

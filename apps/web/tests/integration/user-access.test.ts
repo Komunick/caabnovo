@@ -25,13 +25,25 @@ async function seedUser(email: string, twoFactorEnabled = false) {
      VALUES ($1, $2, true, $3) RETURNING id`,
     [email, email, twoFactorEnabled],
   );
-  return result.rows[0]!.id;
+  const id = result.rows[0]!.id;
+  await admin.query(
+    "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$1,now()+interval '1 hour')",
+    [id],
+  );
+  if (email === "manager@example.test") {
+    const roleId = await seedRole("administrator", true);
+    await admin.query(
+      "INSERT INTO user_role(user_id,role_id,granted_by,justification) VALUES($1,$2,$1,'Synthetic administrator')",
+      [id, roleId],
+    );
+  }
+  return id;
 }
 
 async function seedRole(code: string, administrative = false) {
   const result = await admin.query<{ id: string }>(
     `INSERT INTO role (code, name, description, is_administrative)
-     VALUES ($1, $1, $1, $2) RETURNING id`,
+     VALUES ($1, $1, $1, $2) ON CONFLICT(code) DO UPDATE SET is_administrative=EXCLUDED.is_administrative RETURNING id`,
     [code, administrative],
   );
   const permissions = [...managerPermissions];
@@ -57,7 +69,7 @@ function context(actorId: string) {
   return {
     actor: {
       userId: actorId,
-      sessionId: crypto.randomUUID(),
+      sessionId: actorId,
       permissions: managerPermissions,
       mfaVerified: true,
     },
@@ -168,8 +180,8 @@ describe.sequential("user access transactions", () => {
   });
 
   it("serializes concurrent revocations and preserves the last administrator", async () => {
-    const actorId = await seedUser("manager@example.test", true);
     const firstAdmin = await seedUser("admin-one@example.test", true);
+    const actorId = firstAdmin;
     const secondAdmin = await seedUser("admin-two@example.test", true);
     const roleId = await seedRole("administrator", true);
     for (const targetUserId of [firstAdmin, secondAdmin]) {
@@ -183,7 +195,7 @@ describe.sequential("user access transactions", () => {
     const results = await Promise.allSettled(
       [firstAdmin, secondAdmin].map((targetUserId) =>
         revokeRole(database.pool, {
-          ...context(actorId),
+          ...context(targetUserId),
           targetUserId,
           roleId,
           reason: "Mudança organizacional",

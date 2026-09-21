@@ -34,6 +34,7 @@ export function MemberFilters({ query }: { query: Query }) {
       oabState: next.oabState ?? "",
       registrationStatus: next.registrationStatus ?? "",
       archived: next.archived,
+      deleted: next.deleted,
       administrativeStatus: next.administrativeStatus ?? "",
     });
     startTransition(() => router.push(`/members?${params}`, { scroll: false }));
@@ -44,6 +45,7 @@ export function MemberFilters({ query }: { query: Query }) {
     filters.registrationStatus,
     filters.administrativeStatus,
     filters.archived !== "active",
+    filters.deleted !== "excluded",
   ].filter(Boolean).length;
   return (
     <DraftForm
@@ -136,6 +138,25 @@ export function MemberFilters({ query }: { query: Query }) {
             >
               <option value="active">Não arquivados</option>
               <option value="archived">Arquivados</option>
+              <option value="all">Todos</option>
+            </DraftSelect>
+          </FormField>
+          <FormField id="member-deleted-filter" label="Exclusão">
+            <DraftSelect
+              id="member-deleted-filter"
+              name="deleted"
+              value={filters.deleted}
+              onChange={(event) =>
+                apply({
+                  ...filters,
+                  archived: "all",
+                  deleted: memberListSchema.shape.deleted.parse(event.target.value),
+                })
+              }
+            >
+              <option value="excluded">Cadastros atuais</option>
+              <option value="pending">Exclusão pendente</option>
+              <option value="only">Excluídos</option>
               <option value="all">Todos</option>
             </DraftSelect>
           </FormField>

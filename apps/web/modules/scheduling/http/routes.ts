@@ -21,6 +21,7 @@ import {
   createSchedulingBooking,
   rescheduleSchedulingBooking,
   cancelSchedulingBooking,
+  keepSchedulingBooking,
 } from "../booking-service";
 
 export function createSchedulingRoute(deps: {
@@ -90,7 +91,9 @@ export function createSchedulingRoute(deps: {
               ? await rescheduleSchedulingBooking(deps.pool, context, id, body)
               : action === "cancel"
                 ? await cancelSchedulingBooking(deps.pool, context, id, body)
-                : null;
+                : action === "keep"
+                  ? await keepSchedulingBooking(deps.pool, context, id, body)
+                  : null;
           if (!result) throw new SchedulingError("NOT_FOUND", 404);
           if (!id)
             scheduleConfirmedBooking(

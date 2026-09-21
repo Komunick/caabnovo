@@ -1,4 +1,28 @@
-import type { PoolClient } from "pg";
+import type { Pool, PoolClient } from "pg";
+
+export async function readRoleBase(connection: Pool | PoolClient, userId: string) {
+  const result = await connection.query<{ administrator: boolean; manager: boolean }>(
+    `SELECT coalesce(bool_or(r.code='administrator'),false) AS administrator,
+      coalesce(bool_or(r.code='manager'),false) AS manager
+     FROM user_role ur JOIN role r ON r.id=ur.role_id
+     JOIN "user" u ON u.id=ur.user_id AND u.status='active'
+     WHERE ur.user_id=$1 AND r.status='active' AND r.deleted_at IS NULL
+       AND ur.revoked_at IS NULL AND ur.valid_from<=clock_timestamp()
+       AND (ur.valid_until IS NULL OR ur.valid_until>clock_timestamp())`,
+    [userId],
+  );
+  const roles = result.rows[0]!;
+  const base = await connection.query<{ permission: string }>(
+    `SELECT resource||':'||action AS permission FROM permission
+     WHERE $1 OR ($2 AND (action='read' OR resource='reports'
+       OR (resource='messages' AND action='access')
+       OR (resource='exports' AND action='generate')
+       OR (resource='access' AND action='manage')
+       OR (resource='users' AND action='reset-password'))) ORDER BY permission`,
+    [roles.administrator, roles.manager],
+  );
+  return { ...roles, permissions: base.rows.map((row) => row.permission) };
+}
 
 export interface UserRoleRecord {
   id: string;
@@ -97,12 +121,8 @@ export async function lockAndCountActiveAdministrators(client: PoolClient): Prom
      FROM user_role ur
      JOIN role r ON r.id = ur.role_id
      JOIN "user" u ON u.id = ur.user_id
-     WHERE r.is_administrative AND r.status = 'active' AND r.deleted_at IS NULL
+     WHERE r.code='administrator' AND r.status = 'active' AND r.deleted_at IS NULL
        AND u.status = 'active'
-       AND NOT EXISTS (
-         SELECT 1 FROM user_access a WHERE a.user_id=u.id
-         AND NOT a.permissions @> ARRAY['users:read','users:create','users:update','users:disable','roles:read','roles:grant','roles:revoke']::text[]
-       )
        AND ur.revoked_at IS NULL AND ur.valid_from <= now()
        AND (ur.valid_until IS NULL OR ur.valid_until > now())`,
   );
@@ -117,7 +137,7 @@ export async function hasActiveAdministrativeRole(
     `SELECT EXISTS (
        SELECT 1 FROM user_role ur
        JOIN role r ON r.id = ur.role_id
-       WHERE ur.user_id = $1 AND r.is_administrative
+       WHERE ur.user_id = $1 AND r.code='administrator'
          AND r.status = 'active' AND r.deleted_at IS NULL
          AND ur.revoked_at IS NULL AND ur.valid_from <= now()
          AND (ur.valid_until IS NULL OR ur.valid_until > now())

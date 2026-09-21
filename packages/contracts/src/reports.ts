@@ -30,7 +30,7 @@ export const reportCatalog = {
   },
   bookings: {
     label: "Agendamentos",
-    permission: "",
+    permission: "scheduling:read",
     dateLabel: "Data da reserva",
     columns: {
       name: "Procedimento",

@@ -29,12 +29,14 @@ export function UserAccessForm({
   authority,
   self,
   active,
+  basePermissions = [],
 }: Readonly<{
   userId: string;
   initial: { version: number; permissions: string[] };
   authority: string[];
   self: boolean;
   active: boolean;
+  basePermissions?: string[];
 }>) {
   const router = useRouter();
   const [snapshot, setSnapshot] = useDraftState(`user-access-form:${userId}:snapshot`, initial);
@@ -46,21 +48,16 @@ export function UserAccessForm({
   const [error, setError] = useDraftState(`user-access-form:${userId}:error`, "");
   const [saved, setSaved] = useState(false);
   const editable =
-    !self && active && (authority.includes("roles:grant") || authority.includes("roles:revoke"));
+    (!self || authority.includes("roles:grant")) && active && authority.includes("access:manage");
   const changed = [...selected].sort().join() !== [...snapshot.permissions].sort().join();
-  function canToggle(key: AccessPermission, checked: boolean) {
-    return (
-      editable &&
-      !pending &&
-      authority.includes(key) &&
-      authority.includes(checked ? "roles:revoke" : "roles:grant")
-    );
+  function canToggle(key: AccessPermission) {
+    return editable && !pending && !basePermissions.includes(key);
   }
   function toggle(key: AccessPermission, checked: boolean) {
     const next = new Set(selected);
     if (checked) {
       const required = accessPrerequisites[key] ?? [];
-      if (required.some((permission) => !selected.has(permission) && !canToggle(permission, false)))
+      if (required.some((permission) => !selected.has(permission) && !canToggle(permission)))
         return;
       required.forEach((permission) => next.add(permission));
       next.add(key);
@@ -68,7 +65,7 @@ export function UserAccessForm({
       const dependents = Object.entries(accessPrerequisites)
         .filter(([, required]) => required.includes(key))
         .map(([permission]) => permission as AccessPermission);
-      if (dependents.some((permission) => selected.has(permission) && !canToggle(permission, true)))
+      if (dependents.some((permission) => selected.has(permission) && !canToggle(permission)))
         return;
       dependents.forEach((permission) => next.delete(permission));
       next.delete(key);
@@ -121,8 +118,10 @@ export function UserAccessForm({
         Selecione os módulos e as ações que este colaborador pode usar. As alterações valem após
         salvar.
       </p>
-      {self ? (
-        <p className="muted-text">Outro administrador deve alterar os acessos da sua conta.</p>
+      {self && !editable ? (
+        <p className="muted-text">
+          Outro administrador ou gestor deve alterar os acessos da sua conta.
+        </p>
       ) : null}
       {!active ? <p className="muted-text">Reative a conta antes de alterar os acessos.</p> : null}
       <DraftForm draftKey="users-user-access-form-1" onSubmit={save}>
@@ -135,7 +134,7 @@ export function UserAccessForm({
                   <DraftInput
                     type="checkbox"
                     checked={selected.has(key)}
-                    disabled={!canToggle(key, selected.has(key))}
+                    disabled={!canToggle(key)}
                     onChange={(event) => toggle(key, event.target.checked)}
                   />
                   <span>{label}</span>
@@ -147,8 +146,8 @@ export function UserAccessForm({
         {editable ? (
           <div className="access-save">
             <p className="muted-text">
-              Ao salvar, esta seleção passa a definir todos os acessos da conta. Início,
-              configurações pessoais e notícias públicas continuam disponíveis.
+              Ao salvar, esta seleção atualiza os acessos individuais. As permissões obrigatórias do
+              cargo permanecem ativas. Início e configurações pessoais continuam disponíveis.
             </p>
 
             <Button intent="primary" type="submit" disabled={pending || !changed}>

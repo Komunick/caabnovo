@@ -89,8 +89,10 @@ export function useDraftState<T>(
     (next) => {
       const updated =
         typeof next === "function" ? (next as (previous: T) => T)(current.current) : next;
-      current.current = updated;
       cache.write(key, updated);
+      // Match React state's no-op behavior, including native select input/change ordering.
+      if (Object.is(current.current, updated)) return;
+      current.current = updated;
       setState({ identity, value: updated });
     },
     [cache, identity, key],

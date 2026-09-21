@@ -38,7 +38,16 @@ export function FormField({
   const container = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const form = container.current?.closest("form");
-    const reset = () => setLocalError("");
+    const reset = () => {
+      const control = container.current?.querySelector<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >("input,select,textarea");
+      if (control && ownedValidity.current.get(control) === control.validationMessage) {
+        control.setCustomValidity("");
+        ownedValidity.current.delete(control);
+      }
+      setLocalError("");
+    };
     form?.addEventListener("reset", reset);
     return () => form?.removeEventListener("reset", reset);
   }, [setLocalError]);
@@ -56,6 +65,9 @@ export function FormField({
       control.id !== id
     )
       return;
+    // A native select emits input before change. Wait for change so validating the
+    // wrapper cannot restore its old controlled value before its owner receives it.
+    if (event.type === "input" && control instanceof HTMLSelectElement) return;
     const previous = ownedValidity.current.get(control);
     if (previous && control.validationMessage === previous) control.setCustomValidity("");
     ownedValidity.current.delete(control);

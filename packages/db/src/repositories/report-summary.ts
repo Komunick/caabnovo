@@ -53,12 +53,12 @@ export async function reportSummary(
     {
       permission: "members:read",
       label: "Associados ativos agora",
-      sql: "SELECT count(*)::text AS total FROM member WHERE archived_at IS NULL AND administrative_status='active'",
+      sql: "SELECT count(*)::text AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND administrative_status='active'",
     },
     {
       permission: "members:read",
       label: "Municípios com associados",
-      sql: "SELECT count(DISTINCT (lower(city),residence_state))::text AS total FROM member WHERE archived_at IS NULL AND city<>''",
+      sql: "SELECT count(DISTINCT (lower(city),residence_state))::text AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND city<>''",
     },
     {
       permission: "partners:read",
@@ -80,11 +80,13 @@ export async function reportSummary(
         "Situação atual de toda a base, independente do período. Sem reconstrução retroativa.",
     });
   }
-  const canceled = await db.query<{ total: string }>(
-    "SELECT count(*)::text AS total FROM scheduling_booking WHERE status='cancelled' AND starts_at >= $1 AND starts_at < $2",
-    [from, until],
-  );
-  notices.push(`${canceled.rows[0]!.total} reserva(s) do período estão canceladas atualmente.`);
+  if (actor.permissions.has("scheduling:read")) {
+    const canceled = await db.query<{ total: string }>(
+      "SELECT count(*)::text AS total FROM scheduling_booking WHERE status='cancelled' AND starts_at >= $1 AND starts_at < $2",
+      [from, until],
+    );
+    notices.push(`${canceled.rows[0]!.total} reserva(s) do período estão canceladas atualmente.`);
+  }
   if (actor.permissions.has("partners:read")) {
     const expiring = await db.query<{ total: string }>(
       "SELECT count(*)::text AS total FROM partner_contract WHERE status='approved' AND ends_on BETWEEN (now() AT TIME ZONE 'America/Bahia')::date AND (now() AT TIME ZONE 'America/Bahia')::date+30",

@@ -4,6 +4,7 @@ import { getObjectStorage } from "../files/object-storage";
 import type { Pool, PoolClient } from "pg";
 import type { Db, PgBoss } from "pg-boss";
 import type { AuditExportJobPayload, AuditExportRequest } from "@caab/contracts";
+import { currentExportOwner } from "@caab/db/repositories/export-authority";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { createJobExecution } from "@caab/db/repositories/job-execution";
@@ -60,9 +61,19 @@ export async function requestAuditExport(
   enqueuer: AuditExportEnqueuer,
 ) {
   requirePermission(command.actor, PERMISSIONS.auditExport);
+  requirePermission(command.actor, PERMISSIONS.auditRead);
   const reason = command.justification.trim();
   const requestFingerprint = fingerprint(command);
   return withTransaction(pool, async (client) => {
+    const current = await currentExportOwner(client, command.actor.userId, command.actor.sessionId);
+    requirePermission(
+      { ...command.actor, permissions: current.permissions },
+      PERMISSIONS.auditRead,
+    );
+    requirePermission(
+      { ...command.actor, permissions: current.permissions },
+      PERMISSIONS.exportsGenerate,
+    );
     const claimed = await client.query(
       `INSERT INTO idempotency_record
         (scope, key, request_fingerprint, expires_at)
@@ -152,6 +163,7 @@ export async function requestAuditExport(
 
 export async function findAuditExport(pool: Pool, actor: RequestActor, jobId: string) {
   requirePermission(actor, PERMISSIONS.auditExport);
+  requirePermission(actor, PERMISSIONS.auditRead);
   const result = await pool.query<{
     id: string;
     status: "queued" | "running" | "succeeded" | "failed";
@@ -163,8 +175,8 @@ export async function findAuditExport(pool: Pool, actor: RequestActor, jobId: st
      FROM job_execution j
      LEFT JOIN stored_file sf ON sf.owner_type = 'audit_export' AND sf.owner_id = j.id::text
        AND sf.status = 'available'
-     WHERE j.id = $1 AND j.job_type = 'audit-export'`,
-    [jobId],
+     WHERE j.id = $1 AND j.job_type = 'audit-export' AND EXISTS(SELECT 1 FROM audit_event a WHERE a.entity_id=j.id::text AND a.action='audit.export.requested' AND a.actor_user_id=$2)`,
+    [jobId, actor.userId],
   );
   return result.rows[0] ?? null;
 }

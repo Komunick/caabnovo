@@ -691,3 +691,45 @@ reset; estados transitórios de rede e confirmações sem campos permanecem loca
 preservava erro e versão. Testes focados: 14 passaram em três arquivos; lint de componentes/módulos
 e typecheck web passaram. E2E de conflitos preparado, ainda não executado; T097 permanece aberta.
 Nenhum serviço local ativado. Próxima fase: spike T098 e núcleo compartilhado.
+
+## Ampliação autorizada: ciclo de vida de colaboradores — 21/09/2026
+
+Na mesma entrega ativa, acrescentar exclusão de colaboradores, reativação e geração administrativa
+de nova senha pelo padrão de senha inicial. A senha substituta é exibida uma única vez ao
+administrador; invalidar sessões e recuperações anteriores, preservar auditoria sem segredo e
+impedir repetição concorrente por versão do cadastro. Manter a autorização da geração inicial
+(sessão atual, users:create, users:update e cargo Administrador com roles:grant), sem conceder
+redefinição ao Gestor apenas por poder administrar acessos. Configurações pessoais continuam sendo o
+caminho para a própria senha. Contas desativadas devem ser reativadas antes da geração.
+
+Colaboradores desativados recebem ação visível Reativar colaborador, com confirmação, controle de
+versão e users:update. Reativar não recupera sessões revogadas. Proteger o último administrador
+ativo nas operações que removam seu acesso.
+
+Exclusão: decisão confirmada pelo usuário: colaboradores têm bloqueio imediato e exclusão lógica
+efetiva após 24 horas, com remoção das listagens normais e revogação de acesso, preservando vínculos
+e histórico. Não executar remoção de dados reais nem presumir descarte de auditoria/histórico.
+Associados evolui na spec005; credenciais compartilham o contrato da spec006.
+
+Checkpoint: T097 em d571a9c passou quality/security, mas browser falhou e precisa de diagnóstico.
+Base T098–T120 em implementação, sem migrations aplicadas. Nova ampliação em levantamento e
+documentação; nenhum teste de ciclo de vida concluído. Localhost desligado.
+
+### Ajuste de autoridade para nova senha — 21/09/2026
+
+Decisão mais recente do usuário: somente Administrador e Gestor podem solicitar uma nova senha para
+outro colaborador. A autorização deriva do cargo (users:reset-password), nunca de concessão
+individual; substitui a restrição inicial desta ampliação a apenas Administrador. Não exige
+users:create/users:update/roles:grant para esta ação. Gestor não redefine senha de Administrador;
+autogeração usa as Configurações pessoais. A conta destinatária precisa estar ativa. A geração
+inicial continua em endpoint próprio.
+
+Checkpoint de continuidade — 21/09/2026: usuário pediu executar speckit-clarify e, em seguida,
+speckit-analyze após terminar a implementação e as validações do escopo. Sequência registrada; não
+executada antecipadamente. Ciclo de vida em implementação com prazo de 24 horas para colaborador
+bloqueado e sete dias para associado, reserva preservada com decisão do responsável e nova senha
+restrita a Administrador/Gestor. Migrations 0025/0026/0028 ainda não aplicadas. Validação local
+parcial: 505 testes unitários/contrato passaram, cinco falhas de compatibilidade identificadas e um
+teste impedido por ENOMEM do Windows; correções em validação. Navegador anterior apresentou duas
+falhas em seleção por teclado; identificado rerender entre input/change de select controlado,
+corrigido aguardando nova execução. Tarefas permanecem abertas.

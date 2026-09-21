@@ -152,6 +152,7 @@ export function SchedulingAgenda() {
                             href={`/scheduling/${booking.id}`}
                           >
                             {booking.memberName}
+                            {booking.memberDeleted ? " · Associado excluído" : ""}
                           </Link>
                         </td>
                         <td>

@@ -42,7 +42,7 @@ async function access(user = "first", version = 2) {
           key={user}
           userId={user}
           initial={{ version, permissions: [] }}
-          authority={["roles:grant", "roles:revoke", "members:read"]}
+          authority={["access:manage", "roles:grant", "roles:revoke", "members:read"]}
           self={false}
           active
         />

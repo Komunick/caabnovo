@@ -18,7 +18,7 @@ describe("member contracts", () => {
     ])
       expect(memberCommandSchema.safeParse({ ...base, ...extra }).success).toBe(false);
   });
-  it.each(["activate", "block", "unblock"])(
+  it.each(["activate", "block", "unblock", "delete", "restore-deleted"])(
     "requires version without a justification for %s",
     (action) => {
       const input = { action, expectedVersion: 1, justification: "Decisão administrativa" };
@@ -48,6 +48,7 @@ describe("member contracts", () => {
       oabState: "BA",
       page: 2,
       archived: "all",
+      deleted: "excluded",
       registrationStatus: "pending",
     });
     expect(memberListSchema.parse({}).oabState).toBeUndefined();

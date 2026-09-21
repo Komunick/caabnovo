@@ -141,6 +141,9 @@ export function describeAuditDetails(event: Event, canReadUserNames = false): Au
   );
   field("permissions", "Acessos", permissionList);
   field("validUntil", "Validade", date);
+  field("deletionEffectiveAt", "Exclusão efetiva em", date);
+  field("memberDeletionEffectiveAt", "Exclusão do associado", date);
+  field("keptAfterMemberDeletion", "Reserva mantida após exclusão", yesNo);
   field("result", "Resultado da análise", state);
   field(
     "dimension",
