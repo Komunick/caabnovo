@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftTextarea } from "@/components/ui/draft-controls";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -60,7 +61,7 @@ export function NewsCover({
   const [media, setMedia] = useState<MediaPage>({ items: [], page: 1, hasNextPage: false });
   const [page, setPage] = useState(1);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`${prefix}:error`, "");
   const [message, setMessage] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
   const [localPreview, setLocalPreview] = useState<{ fileId: string; url: string }>();

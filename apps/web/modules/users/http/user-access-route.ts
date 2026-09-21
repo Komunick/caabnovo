@@ -12,10 +12,7 @@ export function createUserAccessRoute(deps: {
     try {
       const actor = await deps.resolveActor(request);
       if (!actor) throw Object.assign(new Error("Authentication required"), { status: 401 });
-      if (
-        !actor.permissions.has("users:read") ||
-        (!actor.permissions.has("roles:grant") && !actor.permissions.has("roles:revoke"))
-      )
+      if (!actor.permissions.has("users:read") || !actor.permissions.has("access:manage"))
         throw Object.assign(new Error("Permission denied"), { status: 403 });
       validateMutationRequest(request);
       const input = userAccessChangeSchema.parse(await request.json().catch(() => null));

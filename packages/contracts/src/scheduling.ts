@@ -133,6 +133,9 @@ export const schedulingRescheduleSchema = z
 export const schedulingCancelSchema = z
   .object({ expectedVersion: z.number().int().positive() })
   .strict();
+export const schedulingKeepDeletedMemberSchema = z
+  .object({ expectedVersion: z.number().int().positive(), deletionEffectiveAt: isoDateTimeSchema })
+  .strict();
 export const schedulingBookingsQuerySchema = schedulingPageQuerySchema.extend({
   date: schedulingDateSchema,
   status: z.enum(["scheduled", "cancelled"]).optional(),
@@ -152,6 +155,11 @@ export const schedulingBookingSchema = z.object({
   id: idSchema,
   memberId: idSchema,
   memberName: z.string(),
+  memberDeletionEffectiveAt: isoDateTimeSchema.nullable().optional(),
+  memberDeleted: z.boolean().optional(),
+  keptAfterMemberDeletion: z.boolean().optional(),
+  memberDeletionKeptAt: isoDateTimeSchema.nullable().optional(),
+  memberDeletionKeptBy: z.string().nullable().optional(),
   assignmentId: idSchema,
   unitId: idSchema,
   unitName: z.string(),
@@ -177,7 +185,7 @@ export type SchedulingBeneficiary = {
 };
 export type SchedulingEvent = {
   id: string;
-  action: "created" | "rescheduled" | "cancelled";
+  action: "created" | "rescheduled" | "cancelled" | "kept_after_member_deletion";
   actorName: string;
   occurredAt: string;
   before: Partial<SchedulingBooking> | null;

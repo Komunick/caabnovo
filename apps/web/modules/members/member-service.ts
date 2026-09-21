@@ -60,6 +60,7 @@ async function authorized<T>(
 
 const memberSelect = `SELECT jsonb_build_object(
  'id',m.id,'version',m.version,'archivedAt',m.archived_at,'createdAt',m.created_at,'updatedAt',m.updated_at,
+ 'deletionEffectiveAt',m.deletion_effective_at,'deleted',coalesce(m.deletion_effective_at<=clock_timestamp(),false),
  'administrativeStatus',m.administrative_status,'photoFileId',m.photo_file_id,
  'administrativeDecision',CASE WHEN m.administrative_changed_at IS NULL THEN NULL ELSE jsonb_build_object(
  'reason',m.administrative_reason,'changedAt',m.administrative_changed_at,
@@ -98,7 +99,7 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
   const input = memberListSchema.parse(query);
   return authorized(pool, actor, async (client) => {
     const result = await client.query<MemberListItem>(
-      `SELECT m.id,m.name,m.administrative_status AS "administrativeStatus",m.archived_at AS "archivedAt",COALESCE(a.result,'unknown') AS "registrationStatus"
+      `SELECT m.id,m.name,m.administrative_status AS "administrativeStatus",m.archived_at AS "archivedAt",m.deletion_effective_at AS "deletionEffectiveAt",coalesce(m.deletion_effective_at<=clock_timestamp(),false) AS deleted,COALESCE(a.result,'unknown') AS "registrationStatus"
        FROM member m LEFT JOIN LATERAL (SELECT result FROM member_assessment WHERE member_id=m.id AND dimension='registration'
        ORDER BY created_at DESC,id LIMIT 1) a ON true
        WHERE ($1='' OR m.name ILIKE $2 ESCAPE '\\' OR m.social_name ILIKE $2 ESCAPE '\\' OR m.cpf=$3 OR m.oab_number=$4)
@@ -106,6 +107,8 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
        AND ($6::text IS NULL OR COALESCE(a.result,'unknown')=$6)
        AND ($8::text IS NULL OR m.oab_state=$8)
        AND ($9::text IS NULL OR m.administrative_status=$9)
+       AND ($10='all' OR ($10='excluded' AND (m.deletion_effective_at IS NULL OR m.deletion_effective_at>clock_timestamp()))
+         OR ($10='pending' AND m.deletion_effective_at>clock_timestamp()) OR ($10='only' AND m.deletion_effective_at<=clock_timestamp()))
        ORDER BY lower(m.name),m.id LIMIT 26 OFFSET $7`,
       [
         input.q,
@@ -117,6 +120,7 @@ export async function listMembers(pool: Pool, actor: RequestActor, query: unknow
         (input.page - 1) * 25,
         input.oabState ?? null,
         input.administrativeStatus ?? null,
+        input.deleted,
       ],
     );
     return {
@@ -270,9 +274,17 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
       async (client) => {
         // Serializing graph writes before row locks prevents concurrent A→B/B→A cycles.
         if (
-          ["link", "unlink", "block", "unblock", "activate", "archive", "restore"].includes(
-            input.action,
-          )
+          [
+            "link",
+            "unlink",
+            "block",
+            "unblock",
+            "activate",
+            "archive",
+            "restore",
+            "delete",
+            "restore-deleted",
+          ].includes(input.action)
         )
           await lockMemberEligibility(client);
         const claim = await idempotency(client, context, `${id}:${input.action}`, input);
@@ -281,16 +293,21 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
           version: number;
           profile_version: number;
           archived_at: Date | null;
+          deletion_effective_at: Date | null;
+          deleted: boolean;
           administrative_status: string;
           photo_file_id: string | null;
         }>(
-          "SELECT version,profile_version,archived_at,administrative_status,photo_file_id FROM member WHERE id=$1 FOR UPDATE",
+          "SELECT version,profile_version,archived_at,administrative_status,photo_file_id,deletion_effective_at,coalesce(deletion_effective_at<=clock_timestamp(),false) AS deleted FROM member WHERE id=$1 FOR UPDATE",
           [id],
         );
         const row = locked.rows[0];
         if (!row) throw new MemberError("MEMBER_NOT_FOUND", 404);
         if (row.version !== input.expectedVersion) throw new MemberError("MEMBER_VERSION_CONFLICT");
-        if (row.archived_at && input.action !== "restore") throw new MemberError("MEMBER_ARCHIVED");
+        if (row.deleted && input.action !== "restore-deleted")
+          throw new MemberError("MEMBER_DELETED");
+        if (row.archived_at && !["restore", "delete", "restore-deleted"].includes(input.action))
+          throw new MemberError("MEMBER_ARCHIVED");
         const after: Record<string, unknown> = { version: row.version + 1 };
         const justification = input.justification;
         switch (input.action) {
@@ -343,6 +360,20 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
             after.identificationChanged = changed;
             break;
           }
+          case "delete": {
+            if (row.deletion_effective_at) throw new MemberError("MEMBER_DELETION_PENDING");
+            const scheduled = await client.query<{ deletion_effective_at: Date }>(
+              "UPDATE member SET deletion_effective_at=clock_timestamp()+interval '168 hours' WHERE id=$1 RETURNING deletion_effective_at",
+              [id],
+            );
+            after.deletionEffectiveAt = scheduled.rows[0]!.deletion_effective_at.toISOString();
+            break;
+          }
+          case "restore-deleted":
+            if (!row.deletion_effective_at) throw new MemberError("MEMBER_NOT_DELETED");
+            await client.query("UPDATE member SET deletion_effective_at=NULL WHERE id=$1", [id]);
+            after.previousDeletionEffectiveAt = row.deletion_effective_at.toISOString();
+            break;
           case "archive":
             await client.query("UPDATE member SET archived_at=now() WHERE id=$1", [id]);
             break;
@@ -353,7 +384,7 @@ export async function commandMember(pool: Pool, context: MemberContext, id: stri
           case "link": {
             if (input.dependentId === id) throw new MemberError("MEMBER_RELATIONSHIP_CYCLE");
             const target = await client.query(
-              "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL FOR SHARE",
+              "SELECT id FROM member WHERE id=$1 AND archived_at IS NULL AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) FOR SHARE",
               [input.dependentId],
             );
             if (!target.rowCount) throw new MemberError("MEMBER_NOT_FOUND", 404);

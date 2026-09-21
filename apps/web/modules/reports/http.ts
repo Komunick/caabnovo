@@ -65,7 +65,7 @@ export function createReportsRoute(deps: {
             usage,
             table,
             catalog: allowedReports(actor).map((key) => ({ key, ...reportCatalog[key] })),
-            canExport: actor.permissions.has("reports:export"),
+            canExport: actor.permissions.has("exports:generate"),
           };
         });
         response = Response.json(result);

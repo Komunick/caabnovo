@@ -1,0 +1,73 @@
+{
+  "commit": "57d6b568f7c0ab7b36f714fa3ebf5e8ad4947ea3",
+  "ci": "https://github.com/Komunick/caabnovo/actions/runs/35644236348",
+  "environment": "GitHub ubuntu-latest; PostgreSQL18; Node24.20.0; isolated synthetic database",
+  "scope": "100 records per format; sampled RSS; CPU of test process; not a stress test",
+  "formats": [
+    {
+      "format": "csv",
+      "records": 100,
+      "node": "v24.20.0",
+      "firstByteMs": 38.45929199999955,
+      "totalMs": 276.2503889999998,
+      "rssAfter": 261201920,
+      "cpu": {
+        "user": 36294,
+        "system": 5253
+      },
+      "rssBefore": 261201920,
+      "rssPeak": 261201920,
+      "rssAfterVerification": 262250496,
+      "dataConnections": 1,
+      "controlConnections": 1
+    },
+    {
+      "format": "xlsx",
+      "records": 100,
+      "node": "v24.20.0",
+      "firstByteMs": 25.146252999999888,
+      "totalMs": 533.8873800000001,
+      "rssAfter": 265691136,
+      "cpu": {
+        "user": 109950,
+        "system": 20230
+      },
+      "rssBefore": 262250496,
+      "rssPeak": 265560064,
+      "rssAfterVerification": 266870784,
+      "dataConnections": 1,
+      "controlConnections": 1
+    },
+    {
+      "format": "pdf",
+      "records": 100,
+      "node": "v24.20.0",
+      "firstByteMs": 21.96195500000067,
+      "totalMs": 320.628471,
+      "rssAfter": 266788864,
+      "cpu": {
+        "user": 134918,
+        "system": 9537
+      },
+      "rssBefore": 267788288,
+      "rssPeak": 269099008,
+      "rssAfterVerification": 303149056,
+      "dataConnections": 1,
+      "controlConnections": 1
+    }
+  ],
+  "panel": {
+    "samples": [
+      479.7166150000048, 399.62068, 370.98609900000156, 353.4874060000002, 334.59955099999934,
+      375.2536029999974, 343.72428899999795, 426.36629600000015, 420.627247000004,
+      343.3284990000029, 375.79613699999754, 345.30848400000104, 331.58496799999557,
+      320.17852400000265, 334.0380839999998, 422.7457839999988, 343.3833739999973,
+      326.8516579999996, 338.5061449999994, 348.04237000000285, 860.7182059999977,
+      341.4708610000016, 367.1357649999991, 376.5766519999961, 352.07974600000307,
+      339.1251310000007, 317.434500000003, 388.72666000000027, 354.11761999999726, 321.0482630000042
+    ],
+    "p95": 479.7166150000048,
+    "records": 100,
+    "node": "v24.20.0"
+  }
+}

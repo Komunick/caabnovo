@@ -4,7 +4,7 @@ const id = crypto.randomUUID();
 const actor = {
   userId: crypto.randomUUID(),
   sessionId: crypto.randomUUID(),
-  permissions: new Set(["users:read", "roles:grant", "roles:revoke"]),
+  permissions: new Set(["users:read", "access:manage"]),
 };
 const input = {
   permissions: ["members:read"],

@@ -65,16 +65,16 @@ afterAll(async () => {
 });
 beforeEach(async () => {
   await admin.query('TRUNCATE "user" CASCADE');
-  manager = await user("manager", all);
+  manager = await user("manager");
+  await admin.query(
+    "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'Synthetic manager' FROM role WHERE code='manager'",
+    [manager.id],
+  );
   target = await user("target");
 });
 describe("individual permissions in PostgreSQL", () => {
-  it("preserves legacy editorial access, then makes selection effective in session, identity and member service", async () => {
-    expect((await readUserAccess(db.pool, target.id)).permissions).toEqual([
-      "news:publish",
-      "news:read",
-      "news:write",
-    ]);
+  it("starts without implicit access, then makes selection effective in session, identity and member service", async () => {
+    expect((await readUserAccess(db.pool, target.id)).permissions).toEqual([]);
     await changeUserAccess(db.pool, await command(["members:read"]));
     const actor = (await loadActiveSession(db.pool, target.token))!;
     expect([...actor.permissions]).toEqual(["members:read"]);
@@ -102,12 +102,11 @@ describe("individual permissions in PostgreSQL", () => {
       code: "SELF_ESCALATION_DENIED",
     });
     const update = await command(["members:read"]);
-    await admin.query(
-      "UPDATE user_access SET permissions=ARRAY['users:read','roles:read','roles:grant','roles:revoke','news:read','news:write','news:publish'] WHERE user_id=$1",
-      [manager.id],
-    );
+    await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+      manager.id,
+    ]);
     await expect(changeUserAccess(db.pool, update)).rejects.toMatchObject({
-      code: "GRANT_BEYOND_AUTHORITY",
+      code: "PERMISSION_DENIED",
     });
   });
   it("rejects revoked sessions even with a previously resolved actor", async () => {
@@ -134,10 +133,10 @@ describe("individual permissions in PostgreSQL", () => {
     ).rejects.toThrow("synthetic audit failure");
     expect((await readUserAccess(db.pool, target.id)).version).toBe(0);
   });
-  it("protects the last active administrator even when another manager has granular rights", async () => {
+  it("prevents a manager from removing the administrator role base through individual permissions", async () => {
     const role = (
       await admin.query(
-        "INSERT INTO role(code,name,description,is_administrative) VALUES ('last-admin','Last admin','Synthetic',true) ON CONFLICT(code) DO UPDATE SET name=EXCLUDED.name RETURNING id",
+        "INSERT INTO role(code,name,description,is_administrative) VALUES ('administrator','Last admin','Synthetic',true) ON CONFLICT(code) DO UPDATE SET name=EXCLUDED.name RETURNING id",
       )
     ).rows[0].id;
     await admin.query(
@@ -149,7 +148,48 @@ describe("individual permissions in PostgreSQL", () => {
       all,
     ]);
     await expect(changeUserAccess(db.pool, await command([]))).rejects.toMatchObject({
-      code: "LAST_ADMINISTRATOR",
+      code: "ROLE_GRANT_DENIED",
     });
   });
+});
+
+it("lets a manager grant writes they cannot use but never grants delegation to a collaborator", async () => {
+  const actor = (await loadActiveSession(db.pool, manager.token))!;
+  expect(actor.permissions.has("members:write")).toBe(false);
+  await changeUserAccess(db.pool, await command(["members:read", "members:write"]));
+  expect((await readUserAccess(db.pool, target.id)).permissions).toEqual([
+    "members:read",
+    "members:write",
+  ]);
+  await expect(
+    changeUserAccess(db.pool, await command(["users:read", "roles:read", "roles:grant"])),
+  ).rejects.toMatchObject({ code: "ROLE_GRANT_DENIED" });
+  await admin.query("INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,$2,$1)", [
+    manager.id,
+    all,
+  ]);
+  await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+    manager.id,
+  ]);
+  await expect(changeUserAccess(db.pool, await command([]))).rejects.toMatchObject({ status: 403 });
+});
+
+it("administrator keeps every current capability even when individual overrides are empty", async () => {
+  await admin.query(
+    "INSERT INTO role(code,name,description,is_administrative) VALUES ('administrator','Administrador','Synthetic administrator',true) ON CONFLICT(code) DO NOTHING",
+  );
+  await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+    manager.id,
+  ]);
+  await admin.query(
+    "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'Synthetic administrator' FROM role WHERE code='administrator'",
+    [manager.id],
+  );
+  await changeUserAccess(db.pool, await command([], manager.id));
+  const effective = (await readUserAccess(db.pool, manager.id)).permissions;
+  for (const permission of all) expect(effective).toContain(permission);
+  expect(
+    (await admin.query("SELECT permissions FROM user_access WHERE user_id=$1", [manager.id]))
+      .rows[0].permissions,
+  ).toEqual([]);
 });

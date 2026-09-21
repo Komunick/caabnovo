@@ -16,9 +16,10 @@ async function memberIdentity(client: PoolClient, id: string) {
     oab_state: string | null;
     oab_type: string | null;
     profile_version: number;
-  }>("SELECT oab_number,oab_state,oab_type,profile_version FROM member WHERE id=$1 FOR SHARE", [
-    id,
-  ]);
+  }>(
+    "SELECT oab_number,oab_state,oab_type,profile_version FROM member WHERE id=$1 AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) FOR SHARE",
+    [id],
+  );
   const member = record.rows[0];
   if (!member) throw new MemberError("MEMBER_NOT_FOUND", 404);
   if (

@@ -6,7 +6,7 @@ import { createAuditExportsRoute } from "../../modules/audit/http/audit-exports-
 const reader = {
   userId: crypto.randomUUID(),
   sessionId: crypto.randomUUID(),
-  permissions: new Set(["audit:read", "audit:export"]),
+  permissions: new Set(["audit:read", "exports:generate"]),
   mfaVerified: true,
 };
 

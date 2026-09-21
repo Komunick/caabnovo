@@ -31,6 +31,8 @@ export const actionLabels: Record<string, string> = {
   created: "Cadastro criado",
   update: "Cadastro corrigido",
   photo: "Foto de perfil atualizada",
+  delete: "Exclusão solicitada (sete dias)",
+  "restore-deleted": "Exclusão desfeita / cadastro restaurado",
   archive: "Cadastro arquivado",
   restore: "Cadastro restaurado",
   link: "Dependente vinculado",
@@ -73,6 +75,9 @@ export const memberErrors: Record<string, string> = {
   MEMBER_VERSION_CONFLICT:
     "Este cadastro mudou em outra operação. Recarregue os dados antes de tentar novamente.",
   MEMBER_RELATIONSHIP_CYCLE: "Este vínculo criaria uma dependência circular.",
+  MEMBER_DELETED: "Associado excluído. Restaure o cadastro antes de alterá-lo.",
+  MEMBER_DELETION_PENDING: "Este associado já tem exclusão solicitada.",
+  MEMBER_NOT_DELETED: "Este associado não tem exclusão solicitada.",
   MEMBER_ARCHIVED: "Restaure o cadastro antes de alterá-lo.",
   MEMBER_FILE_UNAVAILABLE: "O arquivo ainda não foi liberado para uso.",
   MEMBER_PHOTO_INVALID: "Escolha uma foto JPG, JPEG ou PNG de até 5 MB.",

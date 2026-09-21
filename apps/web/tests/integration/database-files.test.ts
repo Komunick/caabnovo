@@ -183,6 +183,10 @@ describe("files in the application PostgreSQL", () => {
     ).toBe(0);
   });
   it("writes an audit export and its content in the same database transaction", async () => {
+    await admin.query(
+      "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['audit:read','exports:generate'],$1) ON CONFLICT(user_id) DO UPDATE SET permissions=EXCLUDED.permissions",
+      [actor.userId],
+    );
     const jobId = crypto.randomUUID();
     await runAuditExport(pool, {
       schemaVersion: 1,

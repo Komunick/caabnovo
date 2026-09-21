@@ -4,6 +4,8 @@ import { describeAuditDetails } from "./audit-details";
 
 // Shared by the filters and summaries. Values in the audit trail never change.
 export const auditActions: Record<string, string> = {
+  "export.started": "Iniciou uma exportação direta",
+  "export.finished": "Registrou o resultado de uma exportação direta",
   "message.saved": "Salvou um registro de mensagens",
   "message.duplicated": "Duplicou uma campanha",
   "message.send": "Solicitou envio de uma campanha",
@@ -30,6 +32,12 @@ export const auditActions: Record<string, string> = {
   "scheduling.booking.cancelled": "Cancelou uma reserva",
   "user.created": "Criou um colaborador",
   "user.updated": "Alterou um colaborador",
+  "user.reactivated": "Reativou um colaborador",
+  "user.deletion.requested": "Solicitou exclusão de colaborador após 24 horas e bloqueou a conta",
+  "user.deletion.restored": "Desfez a exclusão e reativou um colaborador",
+  "member.delete": "Solicitou exclusão de associado após sete dias",
+  "member.restore-deleted": "Desfez a exclusão de um associado",
+  "scheduling.booking.kept_after_member_deletion": "Manteve uma reserva após exclusão do associado",
   "user.disabled": "Desativou um colaborador",
   "user.role.granted": "Concedeu um perfil de acesso",
   "user.role.revoked": "Removeu um perfil de acesso",
@@ -160,6 +168,14 @@ export function presentAuditEvent(event: Event, names: Names = {}) {
     const verbs: Record<string, string> = {
       "user.created": "criou o cadastro de",
       "user.updated": "alterou o cadastro de",
+      "user.reactivated": "Reativou um colaborador",
+      "user.deletion.requested":
+        "Solicitou exclusão de colaborador após 24 horas e bloqueou a conta",
+      "user.deletion.restored": "Desfez a exclusão e reativou um colaborador",
+      "member.delete": "Solicitou exclusão de associado após sete dias",
+      "member.restore-deleted": "Desfez a exclusão de um associado",
+      "scheduling.booking.kept_after_member_deletion":
+        "Manteve uma reserva após exclusão do associado",
       "user.disabled": "desativou o cadastro de",
       "user.access.updated": "alterou os acessos de",
     };

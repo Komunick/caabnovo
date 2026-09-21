@@ -1,9 +1,10 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { useRef, useState } from "react";
 import { mutationHeaders, partnerRequest } from "./client";
-export function usePartnerMutation() {
+export function usePartnerMutation(draftKey: string) {
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`${draftKey}:error`, "");
   const [notice, setNotice] = useState("");
   const inFlight = useRef(false);
   const retry = useRef({ body: "", key: "", url: "" });

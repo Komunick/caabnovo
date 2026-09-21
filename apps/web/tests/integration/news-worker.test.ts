@@ -51,6 +51,10 @@ beforeAll(async () => {
     "INSERT INTO session(id,token,user_id,expires_at) VALUES ($1,$1,$2,now()+interval '1 hour')",
     [sessionId, user.id],
   );
+  await admin.query(
+    "INSERT INTO user_access(user_id,permissions,updated_by) VALUES ($1,ARRAY['news:read','news:write','news:publish'],$1)",
+    [user.id],
+  );
   context = {
     actor: { userId: user.id, sessionId, permissions: new Set(["files:read"]), mfaVerified: false },
     requestId: crypto.randomUUID(),

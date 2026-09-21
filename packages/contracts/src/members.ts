@@ -112,6 +112,8 @@ export const memberCommandSchema = z
       action: z.literal("photo"),
       fileId: uuid.nullable(),
     }),
+    z.strictObject({ ...base, action: z.literal("delete") }),
+    z.strictObject({ ...base, action: z.literal("restore-deleted") }),
     z.strictObject({ ...base, action: z.literal("archive") }),
     z.strictObject({ ...base, action: z.literal("restore") }),
     z.strictObject({ ...base, action: z.literal("activate") }),
@@ -171,6 +173,7 @@ export const memberListSchema = z.strictObject({
   q: z.string().trim().max(160).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   archived: z.enum(["active", "archived", "all"]).default("active"),
+  deleted: z.enum(["excluded", "pending", "only", "all"]).default("excluded"),
   registrationStatus: z.enum(memberDimensions.registration).optional(),
   oabState: memberProfileSchema.shape.oab.unwrap().unwrap().shape.state.optional(),
   administrativeStatus: memberAdministrativeStatusSchema.optional(),
@@ -220,6 +223,8 @@ export interface MemberRecord {
   profile: MemberProfile;
   version: number;
   archivedAt: string | null;
+  deletionEffectiveAt?: string | null;
+  deleted?: boolean;
   createdAt: string;
   updatedAt: string;
   assessments: MemberAssessment[];
@@ -232,6 +237,8 @@ export interface MemberListItem {
   name: string;
   registrationStatus: string;
   archivedAt: string | null;
+  deletionEffectiveAt?: string | null;
+  deleted?: boolean;
 }
 export interface MemberFile {
   id: string;

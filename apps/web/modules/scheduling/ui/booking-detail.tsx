@@ -1,4 +1,6 @@
 "use client";
+import { useEffectiveDeletion } from "@/components/use-effective-deletion";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { useDraftState } from "@/components/workspace-drafts";
 import { useState } from "react";
 import type { SchedulingBooking, SchedulingEvent, SchedulingPage } from "@caab/contracts";
@@ -20,8 +22,13 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const result = useSchedulingData<Details>(`bookings/${id}?page=${page}`);
-  const mutation = useSchedulingMutation();
+  const canWrite = useModulePermission("scheduling:write");
+  const mutation = useSchedulingMutation("booking-detail");
   const booking = result.data?.booking;
+  const memberDeleted = useEffectiveDeletion(
+    booking?.memberDeletionEffectiveAt,
+    booking?.memberDeleted,
+  );
   async function cancel() {
     if (
       booking &&
@@ -47,6 +54,42 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
         <>
           <section className="panel scheduling-form">
             <h2>{booking.memberName}</h2>
+            {memberDeleted && (
+              <section className="scheduling-notice" aria-label="Associado excluído">
+                <p>
+                  <strong>Associado excluído</strong>. A reserva foi preservada. O responsável pelo
+                  agendamento pode mantê-la ou cancelá-la.
+                </p>
+                {booking.keptAfterMemberDeletion ? (
+                  <p>
+                    Reserva mantida por {booking.memberDeletionKeptBy} em{" "}
+                    {dateTimeLabel(booking.memberDeletionKeptAt!)}.
+                  </p>
+                ) : (
+                  canWrite &&
+                  booking.status === "scheduled" &&
+                  Date.parse(booking.startsAt) > Date.now() && (
+                    <Button
+                      disabled={mutation.pending}
+                      onClick={async () => {
+                        if (
+                          await mutation.mutate(`bookings/${id}/keep`, "POST", {
+                            expectedVersion: booking.version,
+                            deletionEffectiveAt: booking.memberDeletionEffectiveAt,
+                          })
+                        ) {
+                          setNotice("Decisão registrada. A reserva e o horário foram mantidos.");
+                          result.reload();
+                        }
+                      }}
+                    >
+                      Manter reserva
+                    </Button>
+                  )
+                )}
+                {mutation.error && <p role="alert">{mutation.error}</p>}
+              </section>
+            )}
             <dl className="scheduling-details">
               <div>
                 <dt>Atendimento</dt>
@@ -77,9 +120,11 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                 <dd>{booking.status === "scheduled" ? "Agendado" : "Cancelado"}</dd>
               </div>
             </dl>
-            {booking.status === "scheduled" && new Date(booking.startsAt).getTime() > Date.now() ? (
+            {canWrite &&
+            booking.status === "scheduled" &&
+            new Date(booking.startsAt).getTime() > Date.now() ? (
               <div className="scheduling-actions">
-                <Button onClick={() => setRescheduling((value) => !value)}>
+                <Button disabled={memberDeleted} onClick={() => setRescheduling((value) => !value)}>
                   {rescheduling ? "Fechar remarcação" : "Remarcar"}
                 </Button>
                 <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
@@ -93,9 +138,13 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                     {mutation.error && <p role="alert">{mutation.error}</p>}
                     <div className="scheduling-actions">
                       <DialogClose asChild>
-                        <Button disabled={mutation.pending}>Manter reserva</Button>
+                        <Button disabled={!canWrite || mutation.pending}>Manter reserva</Button>
                       </DialogClose>
-                      <Button intent="danger" disabled={mutation.pending} onClick={cancel}>
+                      <Button
+                        intent="danger"
+                        disabled={!canWrite || mutation.pending}
+                        onClick={cancel}
+                      >
                         {mutation.pending ? "Cancelando…" : "Confirmar cancelamento"}
                       </Button>
                     </div>
@@ -106,7 +155,7 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
               <p>Esta reserva não permite novas alterações.</p>
             )}
           </section>
-          {rescheduling && (
+          {rescheduling && canWrite && !memberDeleted && (
             <section className="panel">
               <h2>Remarcar atendimento</h2>
               <BookingForm
@@ -132,6 +181,7 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                         created: "Reserva criada",
                         rescheduled: "Reserva remarcada",
                         cancelled: "Reserva cancelada",
+                        kept_after_member_deletion: "Reserva mantida após exclusão do associado",
                       }[event.action]
                     }
                   </strong>

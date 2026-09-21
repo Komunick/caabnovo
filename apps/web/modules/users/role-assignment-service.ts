@@ -14,6 +14,7 @@ import { findUserById } from "@caab/db/repositories/users";
 import type { RequestActor } from "../shared/request-context";
 import { validateRoleGrant, validateRoleRevocation } from "./access-policy";
 import { UserAccessError } from "./errors";
+import { currentAuthority } from "./current-authority";
 
 interface CommandContext {
   actor: RequestActor;
@@ -47,6 +48,12 @@ export async function grantRole(
   const deps = dependencies(overrides);
   try {
     await withTransaction(pool, async (client) => {
+      const actor = await currentAuthority(
+        client,
+        command.actor,
+        "roles:grant",
+        command.targetUserId,
+      );
       const [target, role] = await Promise.all([
         findUserById(client, command.targetUserId),
         findRoleById(client, command.roleId),
@@ -59,7 +66,7 @@ export async function grantRole(
       }
 
       const policy = validateRoleGrant({
-        actor: command.actor,
+        actor,
         targetUserId: target.id,
         rolePermissions: role.permissions,
         roleAdministrative: role.administrative,
@@ -117,6 +124,12 @@ export async function revokeRole(
 ): Promise<void> {
   const deps = dependencies(overrides);
   await withTransaction(pool, async (client: PoolClient) => {
+    const actor = await currentAuthority(
+      client,
+      command.actor,
+      "roles:revoke",
+      command.targetUserId,
+    );
     const [target, role] = await Promise.all([
       findUserById(client, command.targetUserId),
       findRoleById(client, command.roleId),
@@ -124,7 +137,7 @@ export async function revokeRole(
     if (!target) throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
     if (!role) throw new UserAccessError("ROLE_NOT_FOUND", 404, "Role not found");
     const policy = validateRoleRevocation({
-      actor: command.actor,
+      actor,
       targetUserId: target.id,
       reason: command.reason,
     });
@@ -132,7 +145,7 @@ export async function revokeRole(
     if (!assignment) {
       throw new UserAccessError("ROLE_NOT_ASSIGNED", 409, "Role is not actively assigned");
     }
-    if (role.administrative && (await lockAndCountActiveAdministrators(client)) <= 1) {
+    if (role.code === "administrator" && (await lockAndCountActiveAdministrators(client)) <= 1) {
       throw new UserAccessError(
         "LAST_ADMINISTRATOR",
         409,

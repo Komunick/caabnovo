@@ -29,7 +29,7 @@ export function NewMemberPhoto({
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string>();
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("new-member-photo:error", "");
   useEffect(() => {
     if (!file) {
       setPreview(undefined);
@@ -132,7 +132,7 @@ export function MemberPhoto({
 }) {
   const [file, setFile] = useDraftState<File | undefined>("member-photo:file", undefined);
   const [preview, setPreview] = useState<string>();
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("member-photo:error", "");
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
   const [committing, setCommitting] = useState(false);

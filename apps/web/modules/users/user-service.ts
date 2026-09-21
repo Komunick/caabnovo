@@ -23,6 +23,7 @@ import type { RequestActor } from "../shared/request-context";
 import { validateRoleGrant } from "./access-policy";
 import { UserAccessError } from "./errors";
 import { insertInitialCredential } from "./initial-password-service";
+import { currentAuthority } from "./current-authority";
 
 interface CommandContext {
   actor: RequestActor;
@@ -54,6 +55,7 @@ export function serializeUser(user: UserRecord) {
     version: user.version,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt?.toISOString() ?? null,
+    deletionEffectiveAt: user.deletionEffectiveAt?.toISOString() ?? null,
   };
 }
 
@@ -73,6 +75,8 @@ export async function createUser(
   const deps = dependencies(overrides);
   try {
     return await withTransaction(pool, async (client) => {
+      const actor = await currentAuthority(client, command.actor, PERMISSIONS.usersCreate);
+      if (command.roleIds.length) await currentAuthority(client, actor, PERMISSIONS.rolesGrant);
       const fingerprint = createHash("sha256")
         .update(
           JSON.stringify({
@@ -127,7 +131,7 @@ export async function createUser(
           throw new UserAccessError("ROLE_NOT_FOUND", 404, "Role not found");
         }
         const policy = validateRoleGrant({
-          actor: command.actor,
+          actor,
           targetUserId: created.id,
           rolePermissions: role.permissions,
           roleAdministrative: role.administrative,
@@ -201,8 +205,20 @@ export async function changeUser(
   const reason = command.justification.trim();
   const deps = dependencies(overrides);
   return withTransaction(pool, async (client: PoolClient) => {
+    await currentAuthority(
+      client,
+      command.actor,
+      command.status === "disabled" ? PERMISSIONS.usersDisable : PERMISSIONS.usersUpdate,
+      command.userId,
+    );
     const before = await findUserById(client, command.userId);
     if (!before) throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
+    if (before.deletionEffectiveAt)
+      throw new UserAccessError(
+        "USER_DELETION_PENDING",
+        409,
+        "Restore the account explicitly first",
+      );
     if (
       command.status === "disabled" &&
       (await hasActiveAdministrativeRole(client, before.id)) &&
@@ -223,7 +239,12 @@ export async function changeUser(
     await deps.writeAudit(client, {
       actorUserId: command.actor.userId,
       effectiveIdentity: command.effectiveIdentity,
-      action: command.status === "disabled" ? "user.disabled" : "user.updated",
+      action:
+        command.status === "disabled"
+          ? "user.disabled"
+          : command.status === "active" && before.status === "disabled"
+            ? "user.reactivated"
+            : "user.updated",
       entityType: "user",
       entityId: updated.id,
       before: { name: before.name, status: before.status, version: before.version },
@@ -237,10 +258,91 @@ export async function changeUser(
       userId: updated.id,
       eventType: "account_change",
       outcome: "success",
-      reasonCode: command.status === "disabled" ? "ACCOUNT_DISABLED" : "ACCOUNT_UPDATED",
+      reasonCode:
+        command.status === "disabled"
+          ? "ACCOUNT_DISABLED"
+          : command.status === "active" && before.status === "disabled"
+            ? "ACCOUNT_REACTIVATED"
+            : "ACCOUNT_UPDATED",
       requestId: command.requestId,
       correlationId: command.correlationId,
       context: { actorUserId: command.actor.userId, revokedSessions },
+    });
+    return serializeUser(updated);
+  });
+}
+
+export async function changeUserLifecycle(
+  pool: Pool,
+  command: CommandContext & { userId: string; version: number; action: "delete" | "restore" },
+  overrides: ServiceDependencies = {},
+) {
+  const deps = dependencies(overrides);
+  return withTransaction(pool, async (client) => {
+    await currentAuthority(
+      client,
+      command.actor,
+      command.action === "delete" ? PERMISSIONS.usersDelete : PERMISSIONS.usersUpdate,
+      command.userId,
+    );
+    const before = await findUserById(client, command.userId);
+    if (!before) throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
+    if (before.version !== command.version)
+      throw new UserAccessError("USER_VERSION_CONFLICT", 409, "User version changed");
+    if (command.action === "delete") {
+      if (before.deletionEffectiveAt)
+        throw new UserAccessError("USER_DELETION_PENDING", 409, "Deletion already requested");
+      if (
+        (await hasActiveAdministrativeRole(client, before.id)) &&
+        (await lockAndCountActiveAdministrators(client)) <= 1
+      )
+        throw new UserAccessError(
+          "LAST_ADMINISTRATOR",
+          409,
+          "Last administrator must remain active",
+        );
+      await client.query(
+        `UPDATE "user" SET status='disabled',deactivated_at=coalesce(deactivated_at,now()),deletion_effective_at=clock_timestamp()+interval '24 hours',version=version+1,updated_at=now() WHERE id=$1`,
+        [before.id],
+      );
+      await revokeUserSessions(client, before.id);
+      await client.query("DELETE FROM verification WHERE value=$1", [before.id]);
+    } else {
+      if (!before.deletionEffectiveAt)
+        throw new UserAccessError("USER_NOT_DELETED", 409, "Deletion not requested");
+      // Restoration is explicit; old sessions remain revoked and existing grants remain auditable.
+      await client.query(
+        `UPDATE "user" SET status='active',deactivated_at=NULL,deletion_effective_at=NULL,version=version+1,updated_at=now() WHERE id=$1`,
+        [before.id],
+      );
+    }
+    const updated = (await findUserById(client, before.id))!;
+    await deps.writeAudit(client, {
+      actorUserId: command.actor.userId,
+      effectiveIdentity: command.effectiveIdentity,
+      action: command.action === "delete" ? "user.deletion.requested" : "user.deletion.restored",
+      entityType: "user",
+      entityId: before.id,
+      before: {
+        status: before.status,
+        deletionEffectiveAt: before.deletionEffectiveAt?.toISOString() ?? null,
+      },
+      after: {
+        status: updated.status,
+        deletionEffectiveAt: updated.deletionEffectiveAt?.toISOString() ?? null,
+      },
+      origin: "web",
+      requestId: command.requestId,
+      correlationId: command.correlationId,
+    });
+    await deps.writeSecurity(client, {
+      userId: before.id,
+      eventType: "account_change",
+      outcome: "success",
+      reasonCode: command.action === "delete" ? "ACCOUNT_DELETION_REQUESTED" : "ACCOUNT_RESTORED",
+      requestId: command.requestId,
+      correlationId: command.correlationId,
+      context: { actorUserId: command.actor.userId },
     });
     return serializeUser(updated);
   });

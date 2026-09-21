@@ -36,7 +36,9 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       icon: House,
       paths: ["/"],
     },
-    {
+  ];
+  if (allowed.has(PERMISSIONS.schedulingRead))
+    areas.push({
       id: "scheduling",
       href: "/scheduling",
       label: "Agendamentos",
@@ -44,8 +46,7 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       keywords: "agenda agendamentos reservas horários procedimentos profissionais atendimento",
       icon: CalendarDays,
       paths: ["/scheduling"],
-    },
-  ];
+    });
   if (allowed.has(PERMISSIONS.newsRead)) {
     areas.push({
       id: "news",

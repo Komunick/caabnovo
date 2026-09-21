@@ -5,16 +5,18 @@ import Link from "next/link";
 import { Moon, Search, Sun } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { getWorkspaceDestinations, searchWorkspaceDestinations } from "@/modules/workspace/search";
+import { useWorkspacePermissions } from "./workspace-permissions";
 
 type Theme = "light" | "dark";
 
 export function WorkspaceControls({ permissions }: Readonly<{ permissions: readonly string[] }>) {
+  const currentPermissions = useWorkspacePermissions(permissions);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState<Theme>("light");
   const searchRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
-  const items = useMemo(() => getWorkspaceDestinations(permissions), [permissions]);
+  const items = useMemo(() => getWorkspaceDestinations(currentPermissions), [currentPermissions]);
   const results = searchWorkspaceDestinations(items, query);
 
   useEffect(() => {

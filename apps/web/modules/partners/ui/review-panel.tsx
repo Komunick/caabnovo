@@ -33,7 +33,7 @@ export function ReviewPanel({
     review: PartnerReview;
     status: "published" | "hidden";
   } | null>(null);
-  const mutation = usePartnerMutation();
+  const mutation = usePartnerMutation("review-panel");
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);

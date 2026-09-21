@@ -26,6 +26,7 @@ const functions: readonly FunctionDefinition[] = [
   },
   {
     id: "messages-new",
+    permissions: ["messages:write"],
     area: "messages",
     href: "/messages/campaigns/new",
     label: "Preparar mensagem",
@@ -50,6 +51,7 @@ const functions: readonly FunctionDefinition[] = [
   },
   {
     id: "scheduling-new",
+    permissions: ["scheduling:write"],
     area: "scheduling",
     href: "/scheduling/new",
     label: "Criar reserva",
@@ -277,13 +279,22 @@ const functions: readonly FunctionDefinition[] = [
     permissions: ["users:update"],
   },
   {
+    id: "users-export",
+    area: "users",
+    href: "/users/exportar",
+    label: "Exportar colaboradores",
+    description: "Filtrar dados e baixar em Excel, CSV ou PDF.",
+    keywords: "exportacao excel csv pdf contas acessos",
+    permissions: ["users:read", "exports:generate"],
+  },
+  {
     id: "audit-export",
     area: "audit",
     href: "/audit",
     label: "Exportar auditoria",
     description: "Escolher o período e solicitar uma exportação.",
     keywords: "exportacao baixar relatorio historico atividades",
-    permissions: ["audit:read", "audit:export"],
+    permissions: ["audit:read", "exports:generate"],
   },
   {
     id: "jobs",

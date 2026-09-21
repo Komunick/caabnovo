@@ -2,6 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { withTransaction } from "@caab/db";
+import { readUserPermissions } from "@caab/db/repositories/user-access";
 import { lockMemberEligibility } from "@caab/db/repositories/members";
 import type { RequestActor } from "../shared/request-context";
 
@@ -40,6 +41,12 @@ export async function schedulingAccess<T>(
         [actor.sessionId],
       );
       if (!valid.rowCount) throw new SchedulingError("AUTHENTICATION_REQUIRED", 401);
+      const permissions = await readUserPermissions(client, actor.userId);
+      if (
+        !permissions.includes("scheduling:read") ||
+        (write && !permissions.includes("scheduling:write"))
+      )
+        throw new SchedulingError("PERMISSION_DENIED", 403);
       return operation(client);
     });
   } catch (error) {

@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { useState } from "react";
 import type { MessageList, MessagePerson } from "@caab/contracts";
 import { useDraftState } from "@/components/workspace-drafts";
@@ -19,7 +20,8 @@ export function MessagePreferences() {
   const result = useMessageData<MessageList<MessagePerson>>(
     `preferences?q=${encodeURIComponent(q)}&page=${page}`,
   );
-  const mutation = useMessageMutation();
+  const canWrite = useModulePermission("messages:write");
+  const mutation = useMessageMutation("preference");
   async function save() {
     if (!selected) return;
     const saved = await mutation.mutate<{ version: number }>(`preferences/${selected.id}`, "PUT", {
@@ -60,7 +62,7 @@ export function MessagePreferences() {
           <MessageChoice
             label="Selecionar associado"
             resource="recipients"
-            disabled={mutation.pending}
+            disabled={!canWrite || mutation.pending}
             onChoose={(item) => {
               setSelected({
                 id: item.id,
@@ -91,11 +93,11 @@ export function MessagePreferences() {
                 />
               </FormField>
               <div className={styles.actions}>
-                <Button intent="primary" type="submit" disabled={mutation.pending}>
+                <Button intent="primary" type="submit" disabled={!canWrite || mutation.pending}>
                   {selected.blocked ? "Remover bloqueio geral" : "Bloquear comunicações"}
                 </Button>
                 <Button
-                  disabled={mutation.pending}
+                  disabled={!canWrite || mutation.pending}
                   onClick={() => {
                     setSelected(null);
                     setReason("");
@@ -138,6 +140,7 @@ export function MessagePreferences() {
                     {person.reason}
                   </span>
                   <Button
+                    disabled={!canWrite}
                     onClick={() => {
                       setSelected(person);
                       setReason("");

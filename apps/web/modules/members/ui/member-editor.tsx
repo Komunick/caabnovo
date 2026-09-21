@@ -1,4 +1,6 @@
 "use client";
+import { useEffectiveDeletion } from "@/components/use-effective-deletion";
+import { SensitiveActionDialog } from "@/modules/users/ui/sensitive-action-dialog";
 import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { Plus } from "lucide-react";
@@ -55,11 +57,12 @@ export function MemberEditor({
   canReview: boolean;
 }) {
   const [member, setMember] = useDraftState("member-editor:member", initial);
+  const deleted = useEffectiveDeletion(member.deletionEffectiveAt, member.deleted);
   const [tab, setTab] = useDraftState("member-editor:tab", "Situações");
   const [commandBusy, setBusy] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const busy = commandBusy || photoBusy;
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("member-editor:error", "");
   const [message, setMessage] = useState("");
   const [dimension, setDimension] = useDraftState<MemberDimension>(
     "member-editor:dimension",
@@ -123,6 +126,43 @@ export function MemberEditor({
           Voltar à lista
         </Link>
       </header>
+      {member.deletionEffectiveAt && (
+        <p role="status">
+          {deleted
+            ? "Associado excluído. Vínculos e histórico foram preservados; o responsável por cada reserva decide mantê-la ou cancelá-la."
+            : `Exclusão prevista para ${formatMemberDate(member.deletionEffectiveAt)}. É possível desfazer a solicitação antes dessa data.`}
+        </p>
+      )}
+      {canWrite && (
+        <section className="panel" aria-label="Exclusão do associado">
+          <SensitiveActionDialog
+            triggerLabel={
+              member.deletionEffectiveAt
+                ? deleted
+                  ? "Restaurar associado excluído"
+                  : "Desfazer exclusão do associado"
+                : "Excluir associado"
+            }
+            title={member.deletionEffectiveAt ? "Restaurar associado" : "Excluir associado"}
+            confirmLabel={
+              member.deletionEffectiveAt ? "Confirmar restauração" : "Confirmar exclusão"
+            }
+            description={
+              member.deletionEffectiveAt
+                ? "O cadastro voltará às consultas normais. Reservas canceladas não serão recriadas e a situação administrativa será preservada."
+                : "A exclusão lógica ocorrerá em sete dias. Dados, vínculos e reservas serão preservados. O responsável por cada reserva decidirá se deseja mantê-la ou cancelá-la."
+            }
+            onConfirm={async () => {
+              if (
+                !(await command({
+                  action: member.deletionEffectiveAt ? "restore-deleted" : "delete",
+                }))
+              )
+                throw new Error("Member lifecycle refused");
+            }}
+          />
+        </section>
+      )}
       {error && (
         <div className={styles.notice} role="alert">
           <p>{error}</p>
@@ -168,14 +208,14 @@ export function MemberEditor({
             member={member}
             canRead={canReadFiles}
             canUpload={canUpload && canWrite}
-            disabled={commandBusy || !!member.archivedAt || !canWrite}
+            disabled={commandBusy || !!member.archivedAt || deleted || !canWrite}
             command={command}
             onBusyChange={setPhotoBusy}
           />
           <ProfileForm
             key={member.version}
             profile={member.profile}
-            disabled={busy || !!member.archivedAt || !canWrite}
+            disabled={busy || !!member.archivedAt || deleted || !canWrite}
             onSave={async (profile) => {
               return command({ action: "update", profile });
             }}
@@ -194,7 +234,7 @@ export function MemberEditor({
           >
             <Button
               type="submit"
-              disabled={busy || !canWrite}
+              disabled={busy || deleted || !canWrite}
               intent={member.archivedAt ? "secondary" : "danger"}
             >
               {member.archivedAt ? "Restaurar cadastro" : "Arquivar cadastro"}
@@ -208,7 +248,7 @@ export function MemberEditor({
             key={member.version}
             member={member}
             busy={busy}
-            canReview={canReview}
+            canReview={canReview && !deleted}
             command={command}
           />
           <section className="panel">
@@ -294,7 +334,7 @@ export function MemberEditor({
                 if (saved) form.reset();
               }}
             >
-              <fieldset disabled={busy || !!member.archivedAt || !canReview}>
+              <fieldset disabled={busy || !!member.archivedAt || deleted || !canReview}>
                 <div className={styles.grid}>
                   <FormField id="assessment-dimension" label="Dimensão">
                     <DraftSelect
@@ -395,7 +435,10 @@ export function MemberEditor({
                       if (saved) form.reset();
                     }}
                   >
-                    <Button type="submit" disabled={busy || !!member.archivedAt || !canWrite}>
+                    <Button
+                      type="submit"
+                      disabled={busy || !!member.archivedAt || deleted || !canWrite}
+                    >
                       Encerrar vínculo
                     </Button>
                   </DraftForm>
@@ -446,7 +489,7 @@ export function MemberEditor({
                 if (saved) form.reset();
               }}
             >
-              <fieldset disabled={busy || !!member.archivedAt || !canWrite}>
+              <fieldset disabled={busy || !!member.archivedAt || deleted || !canWrite}>
                 <FormField id="dependent-id" label="Pessoa encontrada">
                   <DraftSelect name="dependentId">
                     {matches.map((m) => (
@@ -486,9 +529,9 @@ export function MemberEditor({
       {tab === "Documentos" && (
         <MemberDocuments
           member={member}
-          disabled={busy || !!member.archivedAt}
+          disabled={busy || !!member.archivedAt || deleted}
           canWrite={canWrite}
-          canReview={canReview}
+          canReview={canReview && !deleted}
           canRead={canReadFiles}
           canUpload={canUpload}
           command={command}

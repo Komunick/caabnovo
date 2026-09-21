@@ -42,7 +42,7 @@ const columns = `(SELECT e.status FROM messaging_execution e WHERE e.campaign_id
 const executionColumns = `id,campaign_id AS "campaignId",campaign_version AS "campaignVersion",snapshot,status,reason,
  scheduled_at AS "scheduledAt",created_at AS "createdAt",completed_at AS "completedAt",counts`;
 
-async function authorize(client: PoolClient, actor: MessagingActor) {
+async function authorize(client: PoolClient, actor: MessagingActor, write = false) {
   const session = await client.query(
     `SELECT u.id FROM "user" u JOIN session s ON s.user_id=u.id
  WHERE u.id=$1 AND s.id=$2 AND u.status='active' AND s.revoked_at IS NULL
@@ -51,10 +51,10 @@ async function authorize(client: PoolClient, actor: MessagingActor) {
   );
   if (!session.rowCount) throw new MessagingError("AUTHENTICATION_REQUIRED", 401);
   const grants = await client.query(
-    `SELECT permission FROM effective_user_permission WHERE user_id=$1 AND permission='messages:access'`,
-    [actor.userId],
+    `SELECT permission FROM effective_user_permission WHERE user_id=$1 AND permission=ANY($2::text[])`,
+    [actor.userId, write ? ["messages:access", "messages:write"] : ["messages:access"]],
   );
-  if (!grants.rowCount) throw new MessagingError("PERMISSION_DENIED", 403);
+  if (grants.rowCount !== (write ? 2 : 1)) throw new MessagingError("PERMISSION_DENIED", 403);
 }
 async function read<T>(
   pool: Pool,
@@ -77,7 +77,7 @@ async function mutate<T>(
   return withTransaction(pool, async (client) => {
     // One lock order for commands, preferences and scheduler; retries are atomic with audit.
     await client.query("SELECT pg_advisory_xact_lock(hashtext('caab:messaging'))");
-    await authorize(client, context.actor);
+    await authorize(client, context.actor, true);
     const hash = createHash("sha256").update(JSON.stringify(payload)).digest("hex");
     const previous = await client.query<{ payload_hash: string; result: T }>(
       "SELECT payload_hash,result FROM messaging_request WHERE actor_id=$1 AND key=$2",
@@ -204,7 +204,7 @@ async function audiencePreview(client: PoolClient, data: MessageData): Promise<M
  SELECT m.id,COALESCE(NULLIF(m.social_name,''),m.name) AS name,
  m.id=ANY($4::uuid[]) AS excluded,COALESCE(s.blocked,false) AS suppressed
  FROM member m LEFT JOIN messaging_suppression s ON s.member_id=m.id
- WHERE m.archived_at IS NULL AND ($1='' OR m.oab_state=$1)
+ WHERE (m.deletion_effective_at IS NULL OR m.deletion_effective_at>clock_timestamp()) AND m.archived_at IS NULL AND ($1='' OR m.oab_state=$1)
  AND ($2='any' OR ($2='email' AND btrim(m.email)<>'') OR ($2='phone' AND btrim(m.phone)<>''))
  AND (cardinality($3::uuid[])=0 OR m.id=ANY($3::uuid[]))
  AND ($5='' OR m.residence_state=$5)
@@ -250,7 +250,10 @@ export const previewMessage = (pool: Pool, actor: MessagingActor, data: unknown)
 async function validateAudience(client: PoolClient, a: MessageAudience) {
   const ids = [...new Set([...a.memberIds, ...a.excludedIds])];
   if (!ids.length) return;
-  const result = await client.query("SELECT id FROM member WHERE id=ANY($1::uuid[])", [ids]);
+  const result = await client.query(
+    "SELECT id FROM member WHERE id=ANY($1::uuid[]) AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp())",
+    [ids],
+  );
   if (result.rowCount !== ids.length) throw new MessagingError("INVALID_RECIPIENT", 422);
 }
 export async function commandMessage(
@@ -363,7 +366,7 @@ export const messagePeople = (
 ) =>
   read(pool, actor, async (client) => {
     const q = messageQuerySchema.parse(raw);
-    const where = `m.archived_at IS NULL AND (m.name ILIKE $1 OR m.social_name ILIKE $1) AND (NOT $2 OR s.blocked=true)`;
+    const where = `(m.deletion_effective_at IS NULL OR m.deletion_effective_at>clock_timestamp()) AND m.archived_at IS NULL AND (m.name ILIKE $1 OR m.social_name ILIKE $1) AND (NOT $2 OR s.blocked=true)`;
     const params = [pattern(q.q), preferences];
     const total = Number(
       (
@@ -389,9 +392,10 @@ export async function saveMessagePreference(
 ) {
   const input = messagePreferenceSchema.parse(raw);
   return mutate(pool, context, { preference: id, input }, async (client) => {
-    const member = await client.query("SELECT id FROM member WHERE id=$1 AND archived_at IS NULL", [
-      id,
-    ]);
+    const member = await client.query(
+      "SELECT id FROM member WHERE id=$1 AND (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL",
+      [id],
+    );
     if (!member.rowCount) throw new MessagingError("INVALID_RECIPIENT", 404);
     const before = await client.query<{ version: number }>(
       "SELECT version FROM messaging_suppression WHERE member_id=$1",
@@ -430,10 +434,10 @@ export async function processScheduledMessages(pool: Pool, limit = 25) {
         [job.requested_by],
       );
       const grants = await client.query(
-        "SELECT permission FROM effective_user_permission WHERE user_id=$1 AND permission='messages:access'",
+        "SELECT permission FROM effective_user_permission WHERE user_id=$1 AND permission IN ('messages:access','messages:write')",
         [job.requested_by],
       );
-      const allowed = Boolean(user.rowCount && grants.rowCount);
+      const allowed = Boolean(user.rowCount && grants.rowCount === 2);
       const preview = allowed
         ? await audiencePreview(client, messageDataSchema.parse(job.snapshot))
         : null;
@@ -479,7 +483,7 @@ export const messageAudienceOptions = (
     const column = field === "category" ? "category" : "city";
     const result = await client.query<{ name: string }>(
       `SELECT min(btrim(${column})) AS name FROM member
-      WHERE archived_at IS NULL AND btrim(${column})<>'' AND ${column} ILIKE $1
+      WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND btrim(${column})<>'' AND ${column} ILIKE $1
       GROUP BY lower(btrim(${column})) ORDER BY lower(btrim(${column})) LIMIT $2 OFFSET $3`,
       [pattern(q.q), q.pageSize + 1, (q.page - 1) * q.pageSize],
     );

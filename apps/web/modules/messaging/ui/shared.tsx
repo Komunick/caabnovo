@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import type { ReactNode } from "react";
@@ -26,21 +27,26 @@ export function MessageShell({
   children: ReactNode;
   add?: boolean;
 }) {
+  const canWrite = useModulePermission("messages:write");
   return (
     <div className={`page-stack ${styles.root}`}>
       <header className="page-header">
         <p className="eyebrow">Mensagens</p>
         <h1>{title}</h1>
         <p>{description}</p>
-        {add && active !== "preferences" && active !== "channels" && active !== "schedules" && (
-          <Link
-            href={`/messages/${active}/new`}
-            className={buttonVariants({ intent: "primary", size: "add" })}
-          >
-            <Plus aria-hidden="true" />
-            {labels[active].add}
-          </Link>
-        )}
+        {canWrite &&
+          add &&
+          active !== "preferences" &&
+          active !== "channels" &&
+          active !== "schedules" && (
+            <Link
+              href={`/messages/${active}/new`}
+              className={buttonVariants({ intent: "primary", size: "add" })}
+            >
+              <Plus aria-hidden="true" />
+              {labels[active].add}
+            </Link>
+          )}
       </header>
       <ModuleNavigation
         label="Áreas de mensagens"

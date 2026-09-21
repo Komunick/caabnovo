@@ -1,4 +1,5 @@
 "use client";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { reportSession } from "@/modules/reports/collector";
 import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
@@ -19,6 +20,10 @@ const messages: Record<string, string> = {
     "O registro foi alterado. Recarregue a página e confira os dados antes de salvar.",
   SCHEDULING_FUTURE_BOOKINGS:
     "A alteração afetaria reservas futuras. Remarque ou cancele essas reservas antes de alterar a configuração.",
+  SCHEDULING_BENEFICIARY_DELETED:
+    "Associado excluído. Não é possível criar ou remarcar uma reserva.",
+  SCHEDULING_MEMBER_DELETION_CHANGED:
+    "A situação do associado mudou. Atualize a reserva antes de decidir.",
   SCHEDULING_BENEFICIARY_BLOCKED:
     "O cadastro está arquivado ou o beneficiário ou seu titular está bloqueado. Confira o cadastro antes de reservar.",
   SCHEDULING_BENEFICIARY_ARCHIVED: "O cadastro está arquivado. Confira o beneficiário.",
@@ -74,9 +79,9 @@ export function useSchedulingData<T>(path: string | null) {
     reload: () => setRevision((value) => value + 1),
   };
 }
-export function useSchedulingMutation() {
+export function useSchedulingMutation(draftKey: string) {
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`${draftKey}:error`, "");
   const retry = useRef({ payload: "", key: "" });
   const running = useRef(false);
   async function mutate<T>(path: string, method: string, input: unknown): Promise<T | undefined> {
@@ -134,6 +139,7 @@ export function SchedulingShell({
 }) {
   const pathname = usePathname();
   const query = useSearchParams();
+  const canWrite = useModulePermission("scheduling:write");
   const selectedKind = query.get("kind") as SchedulingKind;
   const kind = schedulingKinds.includes(selectedKind) ? selectedKind : "units";
   return (
@@ -142,15 +148,16 @@ export function SchedulingShell({
         <p className="eyebrow">Agendamentos</p>
         <h1>{title}</h1>
         <p>{description}</p>
-        {action ??
-          (pathname !== "/scheduling/new" && (
-            <Link
-              href="/scheduling/new"
-              className={buttonVariants({ intent: "primary", size: "add" })}
-            >
-              <Plus aria-hidden="true" /> Nova reserva
-            </Link>
-          ))}
+        {canWrite &&
+          (action ??
+            (pathname !== "/scheduling/new" && (
+              <Link
+                href="/scheduling/new"
+                className={buttonVariants({ intent: "primary", size: "add" })}
+              >
+                <Plus aria-hidden="true" /> Nova reserva
+              </Link>
+            )))}
       </header>
       <ModuleNavigation
         label="Agendamentos"

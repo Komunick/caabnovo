@@ -1,164 +1,276 @@
 # Feature Specification: Configurações da conta
 
+## Checkpoint da entrega ativa — 21/09/2026
+
+Incremento de ciclo de vida implementado e validado no CI35644236348 (57d6b56), com dados
+sintéticos. Evidências e limites no
+[relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Clarify e
+analyze concluídos somente nas alterações do recorte; sem achados relevantes. Requisitos históricos
+sem relação com o diff e exportações próprias ainda planejadas ficam fora. Checkpoints anteriores
+são históricos. Localhost desligado; banco local preservado.
+
 ## Checkpoint de revisão de código — 21/09/2026
 
-Perfil/senha/troca de e-mail, recuperação, menu e senha inicial implementados. Não há MFA nem provedores sociais configurados. T025 registra homologação de entrega SMTP não comprovada, sem afirmar falha do ambiente. Tema Vitória e OAuth seguem futuros; preservação de erros transversal em 001 T097.
+Perfil/senha/troca de e-mail, recuperação, menu e senha inicial implementados. Não há MFA nem
+provedores sociais configurados. T025 registra homologação de entrega SMTP não comprovada, sem
+afirmar falha do ambiente. Tema Vitória e OAuth seguem futuros; preservação de erros transversal em
+001 T097.
 
-Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
-Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa. Evidências
+e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
 
 **Feature Branch**: `feature/account-settings`
 
 **Created**: 2026-09-10
 
-**Status**: Implementação e correções da revisão concluídas e verificadas automaticamente; resoluções em [review.md](review.md). Autenticador removido por decisão explícita posterior. Em 10/09/2026, o usuário autorizou PR para dev após aprovação dos testes (T009). CI e revisão humana continuam exigidos antes de merge.
+**Status**: Implementação e correções da revisão concluídas e verificadas automaticamente;
+resoluções em [review.md](review.md). Autenticador removido por decisão explícita posterior. Em
+10/09/2026, o usuário autorizou PR para dev após aprovação dos testes (T009). CI e revisão humana
+continuam exigidos antes de merge.
 
-**Input**: Usuário solicitou explicar a recusa ao conceder funções e permitir ativar MFA. Ampliou o escopo para uma área de configurações com alteração de nome, e-mail e senha, exigindo spec e branch próprias.
+**Input**: Usuário solicitou explicar a recusa ao conceder funções e permitir ativar MFA. Ampliou o
+escopo para uma área de configurações com alteração de nome, e-mail e senha, exigindo spec e branch
+próprias.
 
-**Decisões posteriores**: remover integralmente o autenticador, inclusive de Configurações, e manter o botão Conta no rodapé com a navegação recolhida. A remoção substitui a ativação inicial de MFA e o pedido intermediário de remoção por administrador (FR-019).
+**Decisões posteriores**: remover integralmente o autenticador, inclusive de Configurações, e manter
+o botão Conta no rodapé com a navegação recolhida. A remoção substitui a ativação inicial de MFA e o
+pedido intermediário de remoção por administrador (FR-019).
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Editar meu perfil (Priority: P1)
 
-Como usuário autenticado, quero encontrar minhas configurações e alterar meu nome, sem depender de um administrador.
+Como usuário autenticado, quero encontrar minhas configurações e alterar meu nome, sem depender de
+um administrador.
 
-**Why this priority**: O acesso às configurações pessoais precisa existir inclusive para quem não administra usuários.
+**Why this priority**: O acesso às configurações pessoais precisa existir inclusive para quem não
+administra usuários.
 
-**Independent Test**: Uma conta sem funções administrativas acessa Configurações, altera o nome e vê o novo nome após recarregar a página.
+**Independent Test**: Uma conta sem funções administrativas acessa Configurações, altera o nome e vê
+o novo nome após recarregar a página.
 
 **Acceptance Scenarios**:
 
-1. **Given** uma conta ativa autenticada, **When** abre Configurações, **Then** encontra Perfil e Segurança, com nome, e-mail e manutenção da senha.
-2. **Given** um nome válido, **When** salva o perfil, **Then** a alteração persiste e aparece na identificação da sessão.
-3. **Given** nome vazio ou maior que 160 caracteres, **When** tenta salvar, **Then** recebe orientação de correção sem perder os outros dados.
-4. **Given** uma tentativa de editar outra identidade, **When** envia a alteração, **Then** o sistema recusa; as configurações pessoais não concedem gestão de usuários.
+1. **Given** uma conta ativa autenticada, **When** abre Configurações, **Then** encontra Perfil e
+   Segurança, com nome, e-mail e manutenção da senha.
+2. **Given** um nome válido, **When** salva o perfil, **Then** a alteração persiste e aparece na
+   identificação da sessão.
+3. **Given** nome vazio ou maior que 160 caracteres, **When** tenta salvar, **Then** recebe
+   orientação de correção sem perder os outros dados.
+4. **Given** uma tentativa de editar outra identidade, **When** envia a alteração, **Then** o
+   sistema recusa; as configurações pessoais não concedem gestão de usuários.
 
 ### User Story 2 - Alterar minha senha e meu e-mail (Priority: P1)
 
-Como titular da conta, quero manter minhas credenciais atualizadas e receber confirmação clara de cada alteração.
+Como titular da conta, quero manter minhas credenciais atualizadas e receber confirmação clara de
+cada alteração.
 
-**Why this priority**: Nome, e-mail e senha são capacidades básicas de manutenção da conta explicitamente solicitadas.
+**Why this priority**: Nome, e-mail e senha são capacidades básicas de manutenção da conta
+explicitamente solicitadas.
 
-**Independent Test**: Alterar a senha, verificar que a antiga deixa de funcionar e que outras sessões são encerradas; alterar o e-mail e autenticar com o novo endereço após concluir o processo definido.
+**Independent Test**: Alterar a senha, verificar que a antiga deixa de funcionar e que outras
+sessões são encerradas; alterar o e-mail e autenticar com o novo endereço após concluir o processo
+definido.
 
 **Acceptance Scenarios**:
 
-1. **Given** a senha atual correta e uma nova senha de 12 a 72 caracteres confirmada, **When** salva, **Then** a nova senha passa a valer e as outras sessões são encerradas.
-2. **Given** senha atual incorreta, nova senha inválida ou confirmação divergente, **When** envia, **Then** nenhuma credencial muda e a mensagem explica o problema.
-3. **Given** novo e-mail válido e disponível, **When** solicita a mudança com confirmação de identidade, **Then** o sistema segue o fluxo de confirmação descrito em FR-006 antes de efetivar o novo login.
-4. **Given** e-mail inválido, indisponível ou confirmação expirada, **When** tenta concluir a mudança, **Then** o acesso anterior permanece válido e a tela explica como corrigir.
-5. **Given** uma alteração concluída, **When** retorna à conta, **Then** identidade, vínculos e funções permanecem associados ao mesmo usuário.
+1. **Given** a senha atual correta e uma nova senha de 12 a 72 caracteres confirmada, **When**
+   salva, **Then** a nova senha passa a valer e as outras sessões são encerradas.
+2. **Given** senha atual incorreta, nova senha inválida ou confirmação divergente, **When** envia,
+   **Then** nenhuma credencial muda e a mensagem explica o problema.
+3. **Given** novo e-mail válido e disponível, **When** solicita a mudança com confirmação de
+   identidade, **Then** o sistema segue o fluxo de confirmação descrito em FR-006 antes de efetivar
+   o novo login.
+4. **Given** e-mail inválido, indisponível ou confirmação expirada, **When** tenta concluir a
+   mudança, **Then** o acesso anterior permanece válido e a tela explica como corrigir.
+5. **Given** uma alteração concluída, **When** retorna à conta, **Then** identidade, vínculos e
+   funções permanecem associados ao mesmo usuário.
 
 ### User Story 3 - Entender recusas de permissão (Priority: P1)
 
-Como administrador autorizado, quero conceder funções e entender as recusas sem depender de autenticador.
+Como administrador autorizado, quero conceder funções e entender as recusas sem depender de
+autenticador.
 
-**Independent Test**: Uma conta com autoridade suficiente concede a função administrativa a outra conta ativa; conta sem permissão não consegue realizar a ação. Nenhuma etapa solicita MFA.
+**Independent Test**: Uma conta com autoridade suficiente concede a função administrativa a outra
+conta ativa; conta sem permissão não consegue realizar a ação. Nenhuma etapa solicita MFA.
 
 **Acceptance Scenarios**:
 
 1. Conta autorizada concede função sem exigir justificativa, preservando autorização e auditoria.
-2. Recusas distinguem falta de permissão, concessão acima da autoridade, autoatribuição, duplicidade, conta inativa e sessão expirada.
-3. O sistema continua impedindo a remoção/desativação do último administrador ativo, independentemente do estado legado de MFA.
+2. Recusas distinguem falta de permissão, concessão acima da autoridade, autoatribuição,
+   duplicidade, conta inativa e sessão expirada.
+3. O sistema continua impedindo a remoção/desativação do último administrador ativo,
+   independentemente do estado legado de MFA.
 
 ### Edge Cases
 
-- Duas abas alterando o perfil: impedir que uma versão antiga sobrescreva uma alteração recente sem aviso.
+- Duas abas alterando o perfil: impedir que uma versão antiga sobrescreva uma alteração recente sem
+  aviso.
 - Conta desativada ou sessão revogada durante a edição: recusar a alteração.
 - Falha de conexão: restaurar os controles e permitir nova tentativa, sem mostrar sucesso indevido.
-- Senha e e-mail não devem aparecer em logs; códigos e chaves não devem permanecer no armazenamento do navegador.
-- A aplicação usa credenciais locais; uma futura integração com provedor externo deverá definir sua própria recuperação antes de ser habilitada.
-- Confirmação de e-mail vencida ou reutilizada: não alterar a identidade; permitir iniciar novo pedido.
+- Senha e e-mail não devem aparecer em logs; códigos e chaves não devem permanecer no armazenamento
+  do navegador.
+- A aplicação usa credenciais locais; uma futura integração com provedor externo deverá definir sua
+  própria recuperação antes de ser habilitada.
+- Confirmação de e-mail vencida ou reutilizada: não alterar a identidade; permitir iniciar novo
+  pedido.
 
 ### User Story 4 - Recuperar senha esquecida (Priority: P1)
 
-Como titular, quero solicitar um link no meu e-mail para recuperar o acesso sem conhecer a senha atual.
+Como titular, quero solicitar um link no meu e-mail para recuperar o acesso sem conhecer a senha
+atual.
 
-**Independent Test**: Solicitar pelo login, abrir o e-mail local, definir uma senha válida e entrar novamente; verificar rejeição do link vencido ou reutilizado.
+**Independent Test**: Solicitar pelo login, abrir o e-mail local, definir uma senha válida e entrar
+novamente; verificar rejeição do link vencido ou reutilizado.
 
 **Acceptance Scenarios**:
 
 1. Endereços cadastrados e desconhecidos recebem a mesma mensagem de solicitação na tela.
-2. O link permite escolher e confirmar a nova senha por 30 minutos e uma única vez; senhas inválidas não consomem o link.
-3. Ao concluir, todas as sessões são encerradas e a senha antiga deixa de funcionar. Identidade e funções são preservadas.
-4. Link inválido, vencido ou utilizado orienta a solicitar outro; solicitações repetidas recebem limitação no servidor.
+2. O link permite escolher e confirmar a nova senha por 30 minutos e uma única vez; senhas inválidas
+   não consomem o link.
+3. Ao concluir, todas as sessões são encerradas e a senha antiga deixa de funcionar. Identidade e
+   funções são preservadas.
+4. Link inválido, vencido ou utilizado orienta a solicitar outro; solicitações repetidas recebem
+   limitação no servidor.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
-- **FR-001**: Disponibilizar Configurações da conta pelo menu aberto ao clicar no próprio nome no canto inferior esquerdo, para toda conta ativa autenticada. Reunir nesse menu Configurações da conta, Sessões e Sair; retirar configurações pessoais e saída da lista principal de módulos. Manter acesso no menu recolhido e no celular, navegação por teclado e fechamento por Escape. Ao recolher a navegação, o botão Conta permanece no rodapé, sem subir junto aos links dos módulos.
-- **FR-002**: Organizar a área em Perfil e Segurança, com nome, e-mail de acesso, alteração de senha; apresentar retornos de sucesso, erro e processamento próximos à ação.
-- **FR-003**: Permitir alterar somente o próprio nome, entre 1 e 160 caracteres após remover espaços externos, com controle de versão.
-- **FR-004**: Exigir senha atual para alterar senha ou solicitar troca de e-mail. Nova senha deve ter 12 a 72 caracteres, ser diferente da atual e ter confirmação idêntica.
-- **FR-005**: Após trocar senha ou efetivar troca de e-mail, encerrar outras sessões e preservar a sessão atual, a identidade e as funções.
-- **FR-006**: Trocar e-mail somente após senha atual correta e confirmação por link no novo endereço, conforme escolha do usuário em 10/09/2026. Validar formato e disponibilidade; manter o login anterior até a confirmação. O link expira em 30 minutos, aceita um único uso e exige uma sessão autenticada do titular para confirmar. Novo pedido invalida o anterior.
-- **FR-007**: Retirado por decisão explícita do usuário em 10/09/2026; não oferecer ativação de autenticador (FR-019).
-- **FR-008**: Retirado; não oferecer códigos de recuperação de MFA. A recuperação de senha por e-mail permanece (FR-016/019).
-- **FR-009**: Exibir as causas conhecidas de recusa ao conceder funções em português, com próximo passo aplicável; mostrar erro genérico seguro para falhas desconhecidas.
-- **FR-010**: Revalidar autenticação, estado da conta e titularidade no servidor; rejeitar mudanças de funções, permissões, situação da conta ou identificador por meio das configurações pessoais.
-- **FR-011**: Registrar alterações de perfil e credenciais na auditoria, com ator, ação, data e correlação; excluir senhas, segredos, tokens e códigos de recuperação.
-- **FR-012**: As jornadas devem funcionar por teclado e em largura de 390 pixels, com rótulos, foco e mensagens acessíveis segundo o padrão de acessibilidade do projeto.
-- **FR-013**: A caixa de e-mails local é exclusiva de testes, claramente identificada e restrita ao computador local. Antes de qualquer implantação fora do localhost, substituir a configuração por envio real, remetente autorizado e endereço público HTTPS; testar entrega, expiração e uso único dos links. Impedir a utilização do modo de e-mail local com endereço público. Não considerar a validação local como evidência de entrega real.
-- **FR-014**: Substituir a marca provisória pelo arquivo oficial `caab-logo.png` enviado pelo usuário, preservando cores e proporções e garantindo leitura no menu lateral, no menu recolhido e nas telas de autenticação. Inclusão nesta branch autorizada explicitamente em 10/09/2026.
+- **FR-001**: Disponibilizar Configurações da conta pelo menu aberto ao clicar no próprio nome no
+  canto inferior esquerdo, para toda conta ativa autenticada. Reunir nesse menu Configurações da
+  conta, Sessões e Sair; retirar configurações pessoais e saída da lista principal de módulos.
+  Manter acesso no menu recolhido e no celular, navegação por teclado e fechamento por Escape. Ao
+  recolher a navegação, o botão Conta permanece no rodapé, sem subir junto aos links dos módulos.
+- **FR-002**: Organizar a área em Perfil e Segurança, com nome, e-mail de acesso, alteração de
+  senha; apresentar retornos de sucesso, erro e processamento próximos à ação.
+- **FR-003**: Permitir alterar somente o próprio nome, entre 1 e 160 caracteres após remover espaços
+  externos, com controle de versão.
+- **FR-004**: Exigir senha atual para alterar senha ou solicitar troca de e-mail. Nova senha deve
+  ter 12 a 72 caracteres, ser diferente da atual e ter confirmação idêntica.
+- **FR-005**: Após trocar senha ou efetivar troca de e-mail, encerrar outras sessões e preservar a
+  sessão atual, a identidade e as funções.
+- **FR-006**: Trocar e-mail somente após senha atual correta e confirmação por link no novo
+  endereço, conforme escolha do usuário em 10/09/2026. Validar formato e disponibilidade; manter o
+  login anterior até a confirmação. O link expira em 30 minutos, aceita um único uso e exige uma
+  sessão autenticada do titular para confirmar. Novo pedido invalida o anterior.
+- **FR-007**: Retirado por decisão explícita do usuário em 10/09/2026; não oferecer ativação de
+  autenticador (FR-019).
+- **FR-008**: Retirado; não oferecer códigos de recuperação de MFA. A recuperação de senha por
+  e-mail permanece (FR-016/019).
+- **FR-009**: Exibir as causas conhecidas de recusa ao conceder funções em português, com próximo
+  passo aplicável; mostrar erro genérico seguro para falhas desconhecidas.
+- **FR-010**: Revalidar autenticação, estado da conta e titularidade no servidor; rejeitar mudanças
+  de funções, permissões, situação da conta ou identificador por meio das configurações pessoais.
+- **FR-011**: Registrar alterações de perfil e credenciais na auditoria, com ator, ação, data e
+  correlação; excluir senhas, segredos, tokens e códigos de recuperação.
+- **FR-012**: As jornadas devem funcionar por teclado e em largura de 390 pixels, com rótulos, foco
+  e mensagens acessíveis segundo o padrão de acessibilidade do projeto.
+- **FR-013**: A caixa de e-mails local é exclusiva de testes, claramente identificada e restrita ao
+  computador local. Antes de qualquer implantação fora do localhost, substituir a configuração por
+  envio real, remetente autorizado e endereço público HTTPS; testar entrega, expiração e uso único
+  dos links. Impedir a utilização do modo de e-mail local com endereço público. Não considerar a
+  validação local como evidência de entrega real.
+- **FR-014**: Substituir a marca provisória pelo arquivo oficial `caab-logo.png` enviado pelo
+  usuário, preservando cores e proporções e garantindo leitura no menu lateral, no menu recolhido e
+  nas telas de autenticação. Inclusão nesta branch autorizada explicitamente em 10/09/2026.
 
-- **FR-015**: Novas senhas devem ter de 12 a 72 caracteres, com pelo menos uma letra maiúscula, uma minúscula e um número; símbolos são opcionais. Aplicar a política no servidor e nos formulários de alteração e redefinição. Não exibir texto fixo com a faixa numérica ou contador. Senhas existentes continuam aceitas no login e na confirmação de identidade.
-- **FR-016**: Disponibilizar “Esqueci minha senha” no login e “Redefinir senha por e-mail” em Segurança, conforme US4. Enviar somente ao e-mail da conta, manter o token apenas na memória da página e exigir novo login após redefinir. Registrar a redefinição na auditoria sem segredos e invalidar trocas de e-mail pendentes. O procedimento de envio real de FR-013 também se aplica à recuperação.
-- **FR-017**: Não mostrar foto, avatar ou inicial decorativa no painel administrativo. O menu continua acessível pelo nome e, quando recolhido, pelo texto “Conta”. Manter o logo institucional oficial.
+- **FR-015**: Novas senhas devem ter de 12 a 72 caracteres, com pelo menos uma letra maiúscula, uma
+  minúscula e um número; símbolos são opcionais. Aplicar a política no servidor e nos formulários de
+  alteração e redefinição. Não exibir texto fixo com a faixa numérica ou contador. Senhas existentes
+  continuam aceitas no login e na confirmação de identidade.
+- **FR-016**: Disponibilizar “Esqueci minha senha” no login e “Redefinir senha por e-mail” em
+  Segurança, conforme US4. Enviar somente ao e-mail da conta, manter o token apenas na memória da
+  página e exigir novo login após redefinir. Registrar a redefinição na auditoria sem segredos e
+  invalidar trocas de e-mail pendentes. O procedimento de envio real de FR-013 também se aplica à
+  recuperação.
+- **FR-017**: Não mostrar foto, avatar ou inicial decorativa no painel administrativo. O menu
+  continua acessível pelo nome e, quando recolhido, pelo texto “Conta”. Manter o logo institucional
+  oficial.
 
-- **FR-018**: Disponibilizar botão com ícone de olho em todos os campos de senha do login e das configurações, incluindo troca de e-mail, confirmação de nova senha, recuperação. Iniciar com senha oculta; alternar para texto visível sem modificar o valor nem enviar o formulário. Usar olho riscado para ocultar novamente, nome acessível “Mostrar senha”/“Ocultar senha”, foco visível e operação por teclado.
+- **FR-018**: Disponibilizar botão com ícone de olho em todos os campos de senha do login e das
+  configurações, incluindo troca de e-mail, confirmação de nova senha, recuperação. Iniciar com
+  senha oculta; alternar para texto visível sem modificar o valor nem enviar o formulário. Usar olho
+  riscado para ocultar novamente, nome acessível “Mostrar senha”/“Ocultar senha”, foco visível e
+  operação por teclado.
 
-- **FR-019**: Remover integralmente o autenticador do painel, inclusive Configurações, login, rotas, avisos e exigências para administradores. Eliminar segredos/códigos/desafios legados com registro de auditoria, preservando credenciais e funções. Decisão documentada em [authenticator-removal.md](authenticator-removal.md).
+- **FR-019**: Remover integralmente o autenticador do painel, inclusive Configurações, login, rotas,
+  avisos e exigências para administradores. Eliminar segredos/códigos/desafios legados com registro
+  de auditoria, preservando credenciais e funções. Decisão documentada em
+  [authenticator-removal.md](authenticator-removal.md).
 
 ### Key Entities
 
-- **Conta**: identidade existente, nome, e-mail de acesso, situação e versão; não cria cadastro paralelo de colaborador ou associado.
+- **Conta**: identidade existente, nome, e-mail de acesso, situação e versão; não cria cadastro
+  paralelo de colaborador ou associado.
 - **Credencial**: senha da conta, sem acesso público aos segredos.
 - **Sessão**: acesso autenticado atual ou de outro dispositivo, com validade e revogação.
-- **Pedido de troca de e-mail**: titular, endereço pretendido, confirmação, validade e estado de consumo.
+- **Pedido de troca de e-mail**: titular, endereço pretendido, confirmação, validade e estado de
+  consumo.
 - **Evento de auditoria**: registro imutável da alteração, sem conteúdo secreto.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
-- **SC-001**: Uma conta comum alcança Configurações em duas ações no desktop (nome → Configurações da conta) ou três no menu móvel (abrir navegação → nome → Configurações da conta).
-- **SC-002**: Nome, senha e e-mail alterados persistem após recarregar a página e novo login; as credenciais substituídas deixam de funcionar.
+- **SC-001**: Uma conta comum alcança Configurações em duas ações no desktop (nome → Configurações
+  da conta) ou três no menu móvel (abrir navegação → nome → Configurações da conta).
+- **SC-002**: Nome, senha e e-mail alterados persistem após recarregar a página e novo login; as
+  credenciais substituídas deixam de funcionar.
 - **SC-003**: Todas as recusas de concessão enumeradas em US3 apresentam uma explicação específica.
-- **SC-004**: Nenhuma tentativa testada de editar outra conta, reutilizar confirmação ou usar sessão revogada altera dados.
-- **SC-005**: As jornadas críticas são concluídas com teclado em 390 pixels, sem rolagem horizontal e sem violações detectadas na verificação automatizada de acessibilidade.
+- **SC-004**: Nenhuma tentativa testada de editar outra conta, reutilizar confirmação ou usar sessão
+  revogada altera dados.
+- **SC-005**: As jornadas críticas são concluídas com teclado em 390 pixels, sem rolagem horizontal
+  e sem violações detectadas na verificação automatizada de acessibilidade.
 
 ## Assumptions
 
-- Referências de mercado e opções candidatas estão em [research.md](research.md). Preferências, notificações, dispositivos, integrações e privacidade são oportunidades registradas, não funcionalidades já entregues nem escopo automaticamente aprovado.
+- Referências de mercado e opções candidatas estão em [research.md](research.md). Preferências,
+  notificações, dispositivos, integrações e privacidade são oportunidades registradas, não
+  funcionalidades já entregues nem escopo automaticamente aprovado.
 
-- Escopo é a conta pessoal. Configurações institucionais, gestão de colaboradores, notificações e exclusão de conta não foram solicitados e não integram este incremento. Foto/avatar foram explicitamente dispensados pelo usuário.
-- Aplicar a nova regra de senha aos cadastros e alterações; preservar a autenticação de senhas antigas. As funções existentes permanecem.
-- O usuário aprovou senha atual + link no novo endereço e caixa local para testes. A configuração deve ser substituída e validada ao sair do ambiente local; credenciais de envio reais serão fornecidas no processo de implantação, sem incluí-las no repositório.
-- Implementação e documentação ficam na branch própria, baseada em dev. O preview local pode reunir módulos, mas não determina o conteúdo de PRs. Associados continua em validação e não está autorizado para PR.
+- Escopo é a conta pessoal. Configurações institucionais, gestão de colaboradores, notificações e
+  exclusão de conta não foram solicitados e não integram este incremento. Foto/avatar foram
+  explicitamente dispensados pelo usuário.
+- Aplicar a nova regra de senha aos cadastros e alterações; preservar a autenticação de senhas
+  antigas. As funções existentes permanecem.
+- O usuário aprovou senha atual + link no novo endereço e caixa local para testes. A configuração
+  deve ser substituída e validada ao sair do ambiente local; credenciais de envio reais serão
+  fornecidas no processo de implantação, sem incluí-las no repositório.
+- Implementação e documentação ficam na branch própria, baseada em dev. O preview local pode reunir
+  módulos, mas não determina o conteúdo de PRs. Associados continua em validação e não está
+  autorizado para PR.
 
-Revisão transversal em 11/09/2026: e-mails em login, recuperação e alteração do e-mail
-usam o componente comum de aviso junto ao campo, com limite de 254 caracteres.
-Não mudar autenticação, confirmação de titularidade ou política de envio.
+Revisão transversal em 11/09/2026: e-mails em login, recuperação e alteração do e-mail usam o
+componente comum de aviso junto ao campo, com limite de 254 caracteres. Não mudar autenticação,
+confirmação de titularidade ou política de envio.
+
 ## Justificativas de criação e alteração — 14/09/2026
 
-A regra intermediária que dispensava motivo somente na criação foi substituída
-pela decisão final de 14/09/2026: nenhuma ação exige campo de motivo ou
-justificativa. Preservar autor, data, alterações e motivos históricos existentes,
-além de autorização, confirmação, idempotência e controle de versão.
-Aceite vigente: criar e alterar sem preencher/enviar motivo, sem esse controle
-na interface. Não apagar dados históricos nem inventar explicação humana.
-
+A regra intermediária que dispensava motivo somente na criação foi substituída pela decisão final de
+14/09/2026: nenhuma ação exige campo de motivo ou justificativa. Preservar autor, data, alterações e
+motivos históricos existentes, além de autorização, confirmação, idempotência e controle de versão.
+Aceite vigente: criar e alterar sem preencher/enviar motivo, sem esse controle na interface. Não
+apagar dados históricos nem inventar explicação humana.
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos possui primeira versão administrativa (spec 008), com app/site e expansões pendentes; OAB-BA permanece pendente da hospedagem.
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua
+obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação,
+arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios.
+Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira
+criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação
+humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado,
+condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem.
+Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece
+na interface. Agendamentos possui primeira versão administrativa (spec 008), com app/site e
+expansões pendentes; OAB-BA permanece pendente da hospedagem.
 
 ## Navegação para seções — 15/09/2026
 
-Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção correspondente deve ficar visível mesmo quando a página chegar por carregamento progressivo. Preservar navegação nativa entre âncoras já presentes e o foco atual.
-
+Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção correspondente deve ficar
+visível mesmo quando a página chegar por carregamento progressivo. Preservar navegação nativa entre
+âncoras já presentes e o foco atual.
 
 ## Edições durante navegação — decisão de 16/09/2026
 
@@ -170,31 +282,86 @@ Ao abrir Configurações por um atalho de perfil, e-mail ou senha, a seção cor
 
 ## Senha inicial de colaboradores — decisão de 17/09/2026
 
-Novos colaboradores recebem palavra aleatória em português sem acentos, com inicial maiúscula e pelo menos seis letras, seguida de exatamente seis dígitos (inclusive zeros iniciais). Cadastro, hash da credencial e auditoria são atômicos. A senha é mostrada somente na resposta inicial ao administrador, com mostrar/ocultar, copiar e abrir cadastro. Não enviar e-mail automaticamente nem guardar senha em logs, auditoria, rascunhos, URL ou storage. Repetição idempotente não troca nem reapresenta senha; orientar recuperação se a resposta original foi perdida.
+Novos colaboradores recebem palavra aleatória em português sem acentos, com inicial maiúscula e pelo
+menos seis letras, seguida de exatamente seis dígitos (inclusive zeros iniciais). Cadastro, hash da
+credencial e auditoria são atômicos. A senha é mostrada somente na resposta inicial ao
+administrador, com mostrar/ocultar, copiar e abrir cadastro. Não enviar e-mail automaticamente nem
+guardar senha em logs, auditoria, rascunhos, URL ou storage. Repetição idempotente não troca nem
+reapresenta senha; orientar recuperação se a resposta original foi perdida.
 
-Para a única conta antiga sem senha informada pelo usuário, oferecer geração inicial no detalhe somente se não houver credencial de senha. Exigir sessão ativa, users:create/users:update/roles:grant, destinatário ativo e acessos contidos na autoridade atual do gestor. Proibir autogeração e substituição de senha existente. Não executar backfill em lote nem incluir e-mail real no código.
+Para a única conta antiga sem senha informada pelo usuário, oferecer geração inicial no detalhe
+somente se não houver credencial de senha. Exigir sessão ativa,
+users:create/users:update/roles:grant, destinatário ativo e acessos contidos na autoridade atual do
+gestor. Proibir autogeração e substituição de senha existente. Não executar backfill em lote nem
+incluir e-mail real no código.
 
-Aceite: criação pela interface seguida de login com a senha gerada; recuperação disponível; negações, idempotência, concorrência, rollback e ausência de segredo em consultas/auditoria testados. UI desktop/mobile e acessibilidade no padrão existente.
+Aceite: criação pela interface seguida de login com a senha gerada; recuperação disponível;
+negações, idempotência, concorrência, rollback e ausência de segredo em consultas/auditoria
+testados. UI desktop/mobile e acessibilidade no padrão existente.
 
-Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos
+nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco
+familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede
+garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos
+removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
 
+Checkpoint de 21/09/2026 — plan concluído: desenho, pesquisa, modelo, contratos e roteiro
+atualizados. Nenhum código, serviço, migration ou teste de aplicação executado. Tarefas serão
+detalhadas em seguida; políticas e funções adiadas permanecem pendentes.
 
-Checkpoint de 21/09/2026 — plan concluído: desenho, pesquisa, modelo, contratos e
-roteiro atualizados. Nenhum código, serviço, migration ou teste de aplicação executado.
-Tarefas serão detalhadas em seguida; políticas e funções adiadas permanecem pendentes.
+Checkpoint de 21/09/2026 — tasks concluídas: 4 tarefas novas (T026–T029), com histórias,
+dependências, caminhos e aceite; nenhuma implementação/teste de aplicação executado. Ver tasks.md.
 
-Checkpoint de 21/09/2026 — tasks concluídas: 4 tarefas novas (T026–T029), com histórias, dependências, caminhos e aceite; nenhuma implementação/teste de aplicação executado. Ver tasks.md.
-
-Checkpoint final de21/09/2026 — plan seguido de tasks encerrados. Conferência
-documental de IDs, fases, links e preservação do histórico concluída; código,
-testes de aplicação e homologações não executados. Próximo passo recomendado:
-análise cruzada antes da implementação. Detalhes no relatório do programa002.
+Checkpoint final de21/09/2026 — plan seguido de tasks encerrados. Conferência documental de IDs,
+fases, links e preservação do histórico concluída; código, testes de aplicação e homologações não
+executados. Próximo passo recomendado: análise cruzada antes da implementação. Detalhes no relatório
+do programa002.
 
 ## Cargos e recusas — decisão I1 de21/09/2026
 
-Concessões usam [001 cargos](../001-project-foundation/contracts/roles.md). Gestor pode conceder alteração de módulo que ele próprio somente consulta a terceiros; esse caso não é concessão acima da autoridade. Autogestão do Gestor e concessão por Colaborador permanecem recusadas; somente Administrador atribui cargos. Configurações pessoais não concedem gestão de terceiros.
-
+Concessões usam [001 cargos](../001-project-foundation/contracts/roles.md). Gestor pode conceder
+alteração de módulo que ele próprio somente consulta a terceiros; esse caso não é concessão acima da
+autoridade. Autogestão do Gestor e concessão por Colaborador permanecem recusadas; somente
+Administrador atribui cargos. Configurações pessoais não concedem gestão de terceiros.
 
 ## Consolidação de segurança — 21/09/2026
 
-Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado,
+provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências
+preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos
+existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura
+retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam
+planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes
+unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de
+navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost
+permanece desligado. Evidências:
+[segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+
+## Nova senha administrativa — decisão de 21/09/2026
+
+O usuário autorizou pedir mudança de senha de um colaborador usando o padrão de geração da primeira
+senha. Acrescentar ação explícita Gerar nova senha no cadastro ativo de terceiro, com confirmação de
+que a senha anterior deixará de funcionar e as sessões serão encerradas. A restrição histórica de
+não substituir senha continua valendo no endpoint initial-password; a substituição passa a existir
+somente na nova ação reset-password, com versão do cadastro e autoridade administrativa atual.
+
+Reutilizar palavra revisada e seis dígitos, hash Better Auth e recibo único com copiar/
+mostrar/ocultar. Sem e-mail automático, senha em auditoria/storage/rascunhos ou mudança forçada no
+próximo login presumida. A senha pode ser alterada nas Configurações após entrar. Sucesso incrementa
+versão e remove sessões/recuperações antigas atomicamente; repetir a versão anterior retorna
+conflito sem substituir novamente. Auditoria falha implica rollback. Conta desativada, sessão
+revogada, autogeração e acesso insuficiente são recusados. Implementação e evidências coordenadas
+por 001 T123.
+
+### Ajuste de autoridade para nova senha — 21/09/2026
+
+Decisão mais recente do usuário: somente Administrador e Gestor podem solicitar uma nova senha para
+outro colaborador. A autorização deriva do cargo (users:reset-password), nunca de concessão
+individual; substitui a restrição inicial desta ampliação a apenas Administrador. Não exige
+users:create/users:update/roles:grant para esta ação. Gestor não redefine senha de Administrador;
+autogeração usa as Configurações pessoais. A conta destinatária precisa estar ativa. A geração
+inicial continua em endpoint próprio.
+
+Confirmação no clarify do recorte,21/09/2026: usuário escolheu A. Gestor pode redefinir outros
+Gestores/Colaboradores, mas somente Administrador redefine outro Administrador. A resposta confirma
+a implementação existente e não amplia a autoridade do Gestor.

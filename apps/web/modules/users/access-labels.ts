@@ -1,14 +1,25 @@
 import type { AccessPermission } from "@caab/contracts";
 
 export const accessGroups: { name: string; actions: [AccessPermission, string][] }[] = [
+  { name: "Exportação", actions: [["exports:generate", "Exportar dados dos módulos autorizados"]] },
   {
-    name: "Relatórios e Análises",
+    name: "Agendamentos",
     actions: [
-      ["reports:read", "Consultar análises dos domínios autorizados"],
-      ["reports:export", "Exportar relatórios autorizados"],
+      ["scheduling:read", "Consultar agendamentos"],
+      ["scheduling:write", "Alterar agendamentos e oferta"],
     ],
   },
-  { name: "Mensagens", actions: [["messages:access", "Acessar, preparar e solicitar envios"]] },
+  {
+    name: "Relatórios e Análises",
+    actions: [["reports:read", "Consultar análises dos domínios autorizados"]],
+  },
+  {
+    name: "Mensagens",
+    actions: [
+      ["messages:access", "Consultar mensagens"],
+      ["messages:write", "Preparar e alterar mensagens"],
+    ],
+  },
   {
     name: "Parceiros",
     actions: [
@@ -40,22 +51,16 @@ export const accessGroups: { name: string; actions: [AccessPermission, string][]
       ["users:create", "Criar colaboradores"],
       ["users:update", "Editar colaboradores"],
       ["users:disable", "Desativar colaboradores"],
+      ["users:delete", "Excluir colaboradores"],
     ],
   },
   {
     name: "Gestão de acessos",
-    actions: [
-      ["roles:read", "Consultar perfis de acesso"],
-      ["roles:grant", "Conceder acessos"],
-      ["roles:revoke", "Remover acessos"],
-    ],
+    actions: [["roles:read", "Consultar perfis de acesso"]],
   },
   {
     name: "Auditoria",
-    actions: [
-      ["audit:read", "Consultar eventos"],
-      ["audit:export", "Exportar eventos"],
-    ],
+    actions: [["audit:read", "Consultar eventos"]],
   },
   {
     name: "Processamentos",
@@ -74,4 +79,13 @@ export const accessGroups: { name: string; actions: [AccessPermission, string][]
   },
 ];
 
-export const accessLabels = new Map<string, string>(accessGroups.flatMap((group) => group.actions));
+// Historical audit labels do not add grantable options to the access editor.
+export const accessLabels = new Map<string, string>([
+  ...accessGroups.flatMap((group) => group.actions),
+  ["roles:grant", "Conceder acessos"],
+  ["roles:revoke", "Remover acessos"],
+  ["access:manage", "Administrar acessos"],
+  ["users:reset-password", "Gerar nova senha de colaborador"],
+  ["audit:export", "Exportar auditoria"],
+  ["reports:export", "Exportar relatórios"],
+]);

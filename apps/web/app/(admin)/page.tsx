@@ -5,7 +5,7 @@ import { NavigationPending } from "@/components/ui/navigation-pending";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { ArrowRight, CalendarDays, WalletCards, Plus, FilePenLine, UsersRound } from "lucide-react";
+import { ArrowRight, CalendarDays, Plus, FilePenLine, UsersRound } from "lucide-react";
 import { resolveCurrentUser } from "@/modules/auth/current-user";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { getWorkspaceAreas } from "@/modules/workspace/areas";
@@ -17,14 +17,6 @@ import { getDatabase } from "@/modules/shared/database";
 import { buttonVariants } from "@/components/ui/button";
 import { NewsThumbnail } from "@/modules/workspace/ui/news-thumbnail";
 
-const upcoming = [
-  {
-    name: "CAASSH",
-    description: "Módulo desativado até a revisão de sua proposta.",
-    status: "Desativado — pendente de revisão",
-    icon: WalletCards,
-  },
-];
 const date = (value: string) =>
   new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
@@ -73,22 +65,24 @@ export default async function AdminHomePage() {
         ))}
       </nav>
 
-      <section className="home-section" aria-labelledby="latest-news-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">COMUNICAÇÃO</p>
-            <h2 id="latest-news-title">Últimas notícias publicadas</h2>
+      {canReadNews && (
+        <section className="home-section" aria-labelledby="latest-news-title">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">COMUNICAÇÃO</p>
+              <h2 id="latest-news-title">Últimas notícias publicadas</h2>
+            </div>
+            {canReadNews && (
+              <Link className={buttonVariants({ size: "compact" })} href="/news">
+                Ver notícias <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+            )}
           </div>
-          {canReadNews && (
-            <Link className={buttonVariants({ size: "compact" })} href="/news">
-              Ver notícias <ArrowRight size={16} aria-hidden="true" />
-            </Link>
-          )}
-        </div>
-        <Suspense fallback={<PageLoading label="Carregando publicações…" />}>
-          <PublishedNews canWriteNews={canWriteNews} />
-        </Suspense>
-      </section>
+          <Suspense fallback={<PageLoading label="Carregando publicações…" />}>
+            <PublishedNews canWriteNews={canWriteNews} />
+          </Suspense>
+        </section>
+      )}
 
       {(canReadNews || canReadMembers) && (
         <section className="home-section" aria-labelledby="continue-title">
@@ -112,25 +106,6 @@ export default async function AdminHomePage() {
           </div>
         </section>
       )}
-
-      <section className="home-section" aria-labelledby="upcoming-title">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">PRÓXIMOS MÓDULOS</p>
-            <h2 id="upcoming-title">Novas áreas de acompanhamento</h2>
-          </div>
-        </div>
-        <div className="home-upcoming-grid">
-          {upcoming.map(({ name, description, status, icon: Icon }) => (
-            <article className="home-upcoming-card" key={name}>
-              <Icon size={23} strokeWidth={1.6} aria-hidden="true" />
-              <h3>{name}</h3>
-              <span className="planning-label">{status}</span>
-              <p>{description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

@@ -10,10 +10,12 @@ export function SensitiveActionDialog({
   title,
   confirmLabel,
   onConfirm,
+  description = "Confirme para concluir esta ação.",
 }: Readonly<{
   triggerLabel: string;
   title: string;
   confirmLabel: string;
+  description?: string;
   onConfirm(): Promise<void>;
 }>) {
   const [hydrated, setHydrated] = useState(false);
@@ -44,7 +46,7 @@ export function SensitiveActionDialog({
           {triggerLabel}
         </Button>
       </DialogTrigger>
-      <DialogContent title={title} description="Confirme para concluir esta ação.">
+      <DialogContent title={title} description={description}>
         <DraftForm draftKey="users-sensitive-action-dialog-1" onSubmit={submit}>
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">

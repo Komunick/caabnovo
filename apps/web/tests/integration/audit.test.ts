@@ -26,7 +26,21 @@ async function seedUser(email: string) {
      VALUES ($1::citext, $1::text, true) RETURNING id`,
     [email],
   );
-  return result.rows[0]!.id;
+  const id = result.rows[0]!.id;
+  if (email.includes("exporter")) {
+    await admin.query(
+      "INSERT INTO permission(resource,action,description) VALUES ('audit','read','Synthetic'),('exports','generate','Synthetic') ON CONFLICT DO NOTHING",
+    );
+    await admin.query(
+      "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['audit:read','exports:generate'],$1)",
+      [id],
+    );
+    await admin.query(
+      "INSERT INTO session(id,token,user_id,expires_at) VALUES($1::text,$1::text,$1::uuid,now()+interval '1 hour')",
+      [id],
+    );
+  }
+  return id;
 }
 
 function event(actorUserId: string, action: string, entityId: string) {
@@ -374,8 +388,8 @@ describe.sequential("append-only audit investigation", () => {
     const command = {
       actor: {
         userId: actorId,
-        sessionId: crypto.randomUUID(),
-        permissions: new Set([PERMISSIONS.auditExport]),
+        sessionId: actorId,
+        permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.auditExport]),
         mfaVerified: true,
       },
       effectiveIdentity: `user:${actorId}`,
@@ -414,8 +428,8 @@ describe.sequential("append-only audit investigation", () => {
         {
           actor: {
             userId: actorId,
-            sessionId: crypto.randomUUID(),
-            permissions: new Set([PERMISSIONS.auditExport]),
+            sessionId: actorId,
+            permissions: new Set([PERMISSIONS.auditRead, PERMISSIONS.auditExport]),
             mfaVerified: true,
           },
           effectiveIdentity: `user:${actorId}`,

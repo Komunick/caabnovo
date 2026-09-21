@@ -24,7 +24,7 @@ export function ContractFiles({
   const [files, setFiles] = useState<FilePage>({ items: [], page: 1, hasNextPage: false });
   const [page, setPage] = useDraftState("contract-files:page", 1);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("contract-files:error", "");
   const [notice, setNotice] = useState("");
   const retry = useRef({ fingerprint: "", key: "" });
   const refresh = useCallback(async () => {

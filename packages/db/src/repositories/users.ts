@@ -19,6 +19,7 @@ export interface UserRecord {
   createdAt: Date;
   updatedAt: Date | null;
   deactivatedAt: Date | null;
+  deletionEffectiveAt?: Date | null;
 }
 
 interface UserRow {
@@ -32,6 +33,7 @@ interface UserRow {
   created_at: Date;
   updated_at: Date | null;
   deactivated_at: Date | null;
+  deletion_effective_at: Date | null;
 }
 
 function mapUser(row: UserRow): UserRecord {
@@ -46,11 +48,12 @@ function mapUser(row: UserRow): UserRecord {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     deactivatedAt: row.deactivated_at,
+    deletionEffectiveAt: row.deletion_effective_at,
   };
 }
 
 const userSelection = `u.id, u.email::text, u.name, u.status, u.two_factor_enabled, u.version,
-  u.created_at, u.updated_at, u.deactivated_at,
+  u.created_at, u.updated_at, u.deactivated_at, u.deletion_effective_at,
   COALESCE(
     jsonb_agg(DISTINCT jsonb_build_object('id', r.id, 'code', r.code, 'name', r.name))
       FILTER (WHERE r.id IS NOT NULL), '[]'::jsonb
@@ -76,7 +79,12 @@ export async function findUserById(
 
 export async function listUsers(
   connection: DatabaseConnection,
-  input: { status?: "active" | "disabled"; cursor?: string; limit: number },
+  input: {
+    status?: "active" | "disabled";
+    cursor?: string;
+    limit: number;
+    deleted?: "excluded" | "only" | "all";
+  },
 ): Promise<{ items: UserRecord[]; nextCursor: string | null }> {
   const result = await connection.query<UserRow>(
     `SELECT ${userSelection}
@@ -87,10 +95,12 @@ export async function listUsers(
      LEFT JOIN role r ON r.id = ur.role_id AND r.status = 'active' AND r.deleted_at IS NULL
      WHERE ($1::user_status IS NULL OR u.status = $1)
        AND ($2::uuid IS NULL OR u.id > $2)
+       AND ($4='all' OR ($4='only' AND u.deletion_effective_at<=clock_timestamp())
+         OR ($4='excluded' AND (u.deletion_effective_at IS NULL OR u.deletion_effective_at>clock_timestamp())))
      GROUP BY u.id
      ORDER BY u.id
      LIMIT $3`,
-    [input.status ?? null, input.cursor ?? null, input.limit + 1],
+    [input.status ?? null, input.cursor ?? null, input.limit + 1, input.deleted ?? "excluded"],
   );
   const hasNext = result.rows.length > input.limit;
   const rows = result.rows.slice(0, input.limit);

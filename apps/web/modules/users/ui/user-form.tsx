@@ -37,7 +37,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
   const [hydrated, setHydrated] = useState(false);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("users-user-form-1:error", "");
   // Credential receipts are intentionally excluded from persistent form drafts.
   const [created, setCreated] = useState<CreatedUser | null>(null);
   const attempt = useRef<{ body: string; key: string } | null>(null);
@@ -102,17 +102,20 @@ export function UserForm(props: Readonly<UserFormProps>) {
     }
   }
 
-  async function disable() {
+  async function changeStatus(status: "active" | "disabled") {
     if (props.mode !== "edit") return;
     const response = await fetch(`/api/v1/users/${props.user.id}`, {
       method: "PATCH",
       headers: mutationHeaders(),
       body: JSON.stringify({
-        status: "disabled",
+        status,
         version,
       }),
     });
     if (!response.ok) throw new Error(await errorMessage(response));
+    const saved = await response.json();
+    setVersion(saved.version);
+    setError("");
     router.refresh();
   }
 
@@ -191,9 +194,18 @@ export function UserForm(props: Readonly<UserFormProps>) {
             triggerLabel="Desativar colaborador"
             title="Desativar colaborador"
             confirmLabel="Confirmar desativação"
-            onConfirm={disable}
+            onConfirm={() => changeStatus("disabled")}
           />
         </div>
+      ) : null}
+      {props.mode === "edit" && props.user.status === "disabled" ? (
+        <SensitiveActionDialog
+          triggerLabel="Reativar colaborador"
+          title="Reativar colaborador"
+          confirmLabel="Confirmar reativação"
+          description="O colaborador poderá entrar novamente com sua senha. As sessões encerradas não serão restauradas."
+          onConfirm={() => changeStatus("active")}
+        />
       ) : null}
     </section>
   );

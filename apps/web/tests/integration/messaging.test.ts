@@ -61,7 +61,7 @@ beforeAll(async () => {
     [sessionId, userId],
   );
   await admin.query(
-    "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['messages:access'],$1)",
+    "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['messages:access','messages:write'],$1)",
     [userId],
   );
   base = {
@@ -86,7 +86,7 @@ afterAll(async () => {
   await container?.stop();
 });
 describe("messages lifecycle with the restricted database role", () => {
-  it("module-only access creates campaign, model and audience without publishing grants", async () => {
+  it("explicit messaging write access creates campaign, model and audience without news grants", async () => {
     for (const kind of ["campaigns", "templates", "audiences"] as const) {
       const saved = await saveMessage(pool, next(), kind, null, {
         expectedVersion: 0,
@@ -297,7 +297,7 @@ describe("messages lifecycle with the restricted database role", () => {
       expect(await processScheduledMessages(pool)).toBe(1);
     } finally {
       await admin.query(
-        "UPDATE user_access SET permissions=ARRAY['messages:access'] WHERE user_id=$1",
+        "UPDATE user_access SET permissions=ARRAY['messages:access','messages:write'] WHERE user_id=$1",
         [base.actor.userId],
       );
     }

@@ -16,7 +16,7 @@ export function AppSettingsForm({ initial, canPublish }: { initial: Data; canPub
       ? initial.categories.filter((c) => c.active).map((c) => c.id)
       : initial.settings.categoryIds,
   );
-  const mutation = usePartnerMutation();
+  const mutation = usePartnerMutation("app-settings-form");
   const active = data.categories.filter((category) => category.active);
   const visibleCount =
     mode === "all" ? active.length : active.filter((c) => selected.includes(c.id)).length;

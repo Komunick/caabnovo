@@ -29,9 +29,12 @@ export function CategoryManager({
   const drafts = useDraftCache();
   const close = () => {
     drafts.clear(`partners-category-manager:${editing === "new" ? "new" : editing?.id}:`);
+    drafts.clear(`category-manager:${editing === "new" ? "new" : editing?.id}:`);
     setEditing(null);
   };
-  const mutation = usePartnerMutation();
+  const mutation = usePartnerMutation(
+    `category-manager:${editing === "new" ? "new" : (editing?.id ?? "list")}`,
+  );
   const filtered = items.filter((item) =>
     item.name.toLocaleLowerCase("pt-BR").includes(q.toLocaleLowerCase("pt-BR")),
   );

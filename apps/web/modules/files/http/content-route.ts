@@ -8,6 +8,9 @@ import {
 } from "@caab/db/repositories/file-content";
 import { verifyContentGrant } from "../content-grant";
 import { requestId, routeError } from "./responses";
+import { withTransaction } from "@caab/db";
+import { authorizeLegacyFile } from "@caab/db/repositories/legacy-exports";
+import type { RequestActor } from "../../shared/request-context";
 
 export async function readLimitedBody(request: Request, limit: number): Promise<Buffer> {
   const declared = request.headers.get("content-length");
@@ -34,7 +37,11 @@ export async function readLimitedBody(request: Request, limit: number): Promise<
   return Buffer.concat(chunks, size);
 }
 
-export function createContentRoute(deps: { pool: () => Pool; secret: () => string }) {
+export function createContentRoute(deps: {
+  pool: () => Pool;
+  secret: () => string;
+  resolveActor?(request: Request): Promise<RequestActor | null>;
+}) {
   return async (request: Request) => {
     let response: Response;
     try {
@@ -55,7 +62,20 @@ export function createContentRoute(deps: { pool: () => Pool; secret: () => strin
         await putQuarantineContent(pool, key, body);
         response = new Response(null, { status: 204 });
       } else {
-        const file = await readDatabaseContent(pool, key);
+        const file = await withTransaction(pool, async (db) => {
+          const meta = (
+            await db.query<{ owner_type: string; owner_id: string; uploaded_by: string }>(
+              "SELECT owner_type,owner_id,uploaded_by FROM stored_file WHERE object_key=$1 AND deleted_at IS NULL",
+              [key],
+            )
+          ).rows[0];
+          if (meta && ["audit_export", "report_export"].includes(meta.owner_type)) {
+            const actor = await deps.resolveActor?.(request);
+            if (!actor) throw fileContentError("AUTHENTICATION_REQUIRED", 401);
+            await authorizeLegacyFile(db, actor, meta);
+          }
+          return readDatabaseContent(db, key);
+        });
         const inline = ["image/png", "image/jpeg"].includes(file.mime);
         response = new Response(new Uint8Array(file.body), {
           headers: {
