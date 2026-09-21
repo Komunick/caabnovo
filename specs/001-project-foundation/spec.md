@@ -775,3 +775,31 @@ parcial: 505 testes unitários/contrato passaram, cinco falhas de compatibilidad
 teste impedido por ENOMEM do Windows; correções em validação. Navegador anterior apresentou duas
 falhas em seleção por teclado; identificado rerender entre input/change de select controlado,
 corrigido aguardando nova execução. Tarefas permanecem abertas.
+
+## Cadastro completo de Colaboradores — 21/09/2026
+
+Decisão do usuário: criar um colaborador exige nome, CPF, e-mail, endereço e telefone. CPF com
+dígitos verificadores válidos; telefone brasileiro com DDD; normalizar máscaras antes de persistir.
+Endereço estruturado segue os controles existentes: CEP, rua, número (aceita s/n), bairro, cidade e
+UF obrigatórios; complemento opcional. Consulta de CEP é auxiliar: preenchimento manual continua
+possível se indisponível.
+
+Novos cadastros incompletos são recusados também pela API. Dados existentes permanecem nulos até
+preenchimento explícito, sem bloquear login, gestão de acessos ou ciclo de vida. O detalhe
+autorizado permite consultar e corrigir CPF, telefone e endereço, preservando versão, rascunho e
+permissões existentes. E-mail mantém o fluxo seguro de troca já existente. CPF identifica unicamente
+o colaborador, inclusive contas desativadas/excluídas; não reutilizar identidade de conta antiga.
+Duplicidade retorna conflito sem expor a conta correspondente. Exportação de Colaboradores oferece
+estes campos como colunas opcionais em Excel/CSV/PDF, sob users:read e exports:generate. Não incluir
+os novos dados pessoais em logs/auditoria ou na sessão global; auditoria registra quais campos
+mudaram.
+
+Aceite: criação completa e leitura após recarregar; dados ausentes/inválidos recusados; CPF
+duplicado e atualização concorrente recusados; legado continua utilizável; campos persistem na
+navegação; consulta sem edição funciona; três formatos mantêm seleção/ordem.
+
+Checkpoint: implementação local preparada. 151 contratos, tipos, lint e formatação aprovados.
+Unitários: 386 passaram; falha do subprocesso do worker na sandbox Windows (uv_os_get_passwd ENOMEM)
+desapareceu na reexecução isolada autorizada (14/14). Integração/migration, build, navegador e
+acessibilidade aguardam CI; tarefas ainda não concluídas. Registros locais de dependentes permanecem
+fora desta entrega.

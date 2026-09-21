@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
@@ -27,6 +28,7 @@ const context = () => ({
 });
 const creation = () => ({
   ...context(),
+  ...syntheticUserContact(),
   name: "Synthetic colleague",
   email: "new@example.test",
   roleIds: [],

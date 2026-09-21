@@ -28,6 +28,16 @@ describe("creation and edit justification policy", () => {
       createUserRequestSchema.safeParse({
         name: "Pessoa sintética",
         email: "test@example.test",
+        cpf: "52998224725",
+        phone: "71999990000",
+        address: {
+          postalCode: "40000000",
+          street: "Rua Teste",
+          number: "s/n",
+          neighborhood: "Centro",
+          city: "Salvador",
+          state: "BA",
+        },
         roleIds: [],
       }).success,
     ).toBe(true);

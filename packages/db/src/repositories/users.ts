@@ -1,3 +1,4 @@
+import type { UserAddress } from "@caab/contracts";
 import type { Pool, PoolClient } from "pg";
 
 type DatabaseConnection = Pool | PoolClient;
@@ -12,6 +13,9 @@ export interface UserRecord {
   id: string;
   email: string;
   name: string;
+  cpf: string | null;
+  phone: string | null;
+  address: UserAddress | null;
   status: "active" | "disabled";
   twoFactorEnabled: boolean;
   roles: RoleReferenceRecord[];
@@ -26,6 +30,9 @@ interface UserRow {
   id: string;
   email: string;
   name: string;
+  cpf: string | null;
+  phone: string | null;
+  address: UserAddress | null;
   status: "active" | "disabled";
   two_factor_enabled: boolean;
   roles: RoleReferenceRecord[] | null;
@@ -41,6 +48,9 @@ function mapUser(row: UserRow): UserRecord {
     id: row.id,
     email: row.email,
     name: row.name,
+    cpf: row.cpf,
+    phone: row.phone,
+    address: row.address,
     status: row.status,
     twoFactorEnabled: false,
     roles: row.roles ?? [],
@@ -53,7 +63,7 @@ function mapUser(row: UserRow): UserRecord {
 }
 
 const userSelection = `u.id, u.email::text, u.name, u.status, u.two_factor_enabled, u.version,
-  u.created_at, u.updated_at, u.deactivated_at, u.deletion_effective_at,
+  u.created_at, u.updated_at, u.deactivated_at, u.deletion_effective_at, u.cpf, u.phone, u.address,
   COALESCE(
     jsonb_agg(DISTINCT jsonb_build_object('id', r.id, 'code', r.code, 'name', r.name))
       FILTER (WHERE r.id IS NOT NULL), '[]'::jsonb
@@ -112,12 +122,18 @@ export async function listUsers(
 
 export async function insertUser(
   connection: DatabaseConnection,
-  input: { email: string; name: string },
+  input: { email: string; name: string; cpf: string; phone: string; address: UserAddress },
 ): Promise<UserRecord> {
   const inserted = await connection.query<{ id: string }>(
-    `INSERT INTO "user" (email, name, email_verified, status)
-     VALUES ($1, $2, false, 'active') RETURNING id`,
-    [input.email.trim().toLowerCase(), input.name.trim()],
+    `INSERT INTO "user" (email, name, email_verified, status, cpf, phone, address)
+     VALUES ($1, $2, false, 'active', $3, $4, $5::jsonb) RETURNING id`,
+    [
+      input.email.trim().toLowerCase(),
+      input.name.trim(),
+      input.cpf,
+      input.phone,
+      JSON.stringify(input.address),
+    ],
   );
   return (await findUserById(connection, inserted.rows[0]!.id))!;
 }
@@ -128,6 +144,9 @@ export async function updateUser(
     userId: string;
     version: number;
     name?: string;
+    cpf?: string;
+    phone?: string;
+    address?: UserAddress;
     status?: "active" | "disabled";
   },
 ): Promise<UserRecord | null> {
@@ -135,6 +154,9 @@ export async function updateUser(
     `UPDATE "user"
      SET name = COALESCE($3, name),
          status = COALESCE($4::user_status, status),
+         cpf = COALESCE($5, cpf),
+         phone = COALESCE($6, phone),
+         address = COALESCE($7::jsonb, address),
          deactivated_at = CASE
            WHEN $4::user_status = 'disabled' THEN COALESCE(deactivated_at, now())
            WHEN $4::user_status = 'active' THEN NULL
@@ -144,7 +166,15 @@ export async function updateUser(
          updated_at = now()
      WHERE id = $1 AND version = $2
      RETURNING id`,
-    [input.userId, input.version, input.name?.trim() || null, input.status ?? null],
+    [
+      input.userId,
+      input.version,
+      input.name?.trim() || null,
+      input.status ?? null,
+      input.cpf ?? null,
+      input.phone ?? null,
+      input.address ? JSON.stringify(input.address) : null,
+    ],
   );
   return updated.rows[0] ? findUserById(connection, updated.rows[0].id) : null;
 }

@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { describe, expect, it, vi } from "vitest";
 import { createdUserSchema, userSchema } from "@caab/contracts";
 import { createInitialPasswordRoute } from "../../modules/users/http/initial-password-route";
@@ -48,7 +49,12 @@ describe("initial password HTTP contract", () => {
         "x-csrf-token": crypto.randomUUID(),
         "idempotency-key": crypto.randomUUID(),
       },
-      body: JSON.stringify({ name: created.name, email: created.email, roleIds: [] }),
+      body: JSON.stringify({
+        ...syntheticUserContact(),
+        name: created.name,
+        email: created.email,
+        roleIds: [],
+      }),
     });
     const response = await route.POST(req);
     expect(response.status).toBe(201);

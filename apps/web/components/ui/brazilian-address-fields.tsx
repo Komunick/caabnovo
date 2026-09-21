@@ -22,10 +22,12 @@ export function BrazilianAddressFields({
   prefix,
   initial,
   className,
+  required = false,
 }: {
   prefix: string;
   initial?: Partial<BrazilianAddress>;
   className?: string;
+  required?: boolean;
 }) {
   const [address, setAddress] = useDraftState<Address>(`address:${prefix}`, {
     street: initial?.street ?? "",
@@ -136,7 +138,8 @@ export function BrazilianAddressFields({
         <ValidatedTextField
           id={`${prefix}-postalCode`}
           name="postalCode"
-          label="CEP (opcional)"
+          label={required ? "CEP" : "CEP (opcional)"}
+          required={required}
           hint="Digite oito números para preencher endereço, cidade e UF."
           schema={postalCodeSchema}
           message={contactFieldMessages.postalCode}
@@ -179,11 +182,12 @@ export function BrazilianAddressFields({
           <FormField
             key={name}
             id={`${prefix}-${name}`}
-            label={label}
+            label={required && name !== "complement" ? label.replace(" (opcional)", "") : label}
             hint={name === "number" ? "Ex.: 123, 12A ou s/n." : undefined}
           >
             <DraftInput
               name={name}
+              required={required && name !== "complement"}
               maxLength={max}
               autoComplete={autoComplete}
               disabled={!converting}
@@ -192,19 +196,25 @@ export function BrazilianAddressFields({
             />
           </FormField>
         ))}
-        <FormField id={`${prefix}-city`} label="Cidade (opcional)">
+        <FormField id={`${prefix}-city`} label={required ? "Cidade" : "Cidade (opcional)"}>
           <DraftInput
             name="city"
+            required={required}
             autoComplete="address-level2"
             maxLength={100}
             value={address.city}
             onChange={(event) => change("city", event.target.value)}
           />
         </FormField>
-        <FormField id={`${prefix}-state`} label="Estado (UF) (opcional)" error={stateError}>
+        <FormField
+          id={`${prefix}-state`}
+          label={required ? "Estado (UF)" : "Estado (UF) (opcional)"}
+          error={stateError}
+        >
           <DraftInput
             ref={stateInput}
             name="state"
+            required={required}
             list={`${prefix}-state-options`}
             autoComplete="address-level1"
             maxLength={2}

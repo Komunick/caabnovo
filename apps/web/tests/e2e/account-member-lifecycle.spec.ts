@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import type { Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -46,6 +47,7 @@ test("administrator reactivates, replaces password, schedules deletion and resto
   await login(page);
   const email = `lifecycle-${crypto.randomUUID()}@example.test`;
   const user = await create(page, "/api/v1/users", {
+    ...syntheticUserContact(),
     name: "Colaborador ciclo de vida",
     email,
     roleIds: [],

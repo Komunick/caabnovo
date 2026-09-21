@@ -2,7 +2,10 @@ openapi: 3.1.1
 info:
   title: CAAB Foundation API
   version: 1.0.0
-  description: Versioned administrative contracts for identity context, access management, audit, files and asynchronous operation status. Authentication endpoints are delegated to Better Auth and constrained by authentication.md.
+  description:
+    Versioned administrative contracts for identity context, access management, audit, files and
+    asynchronous operation status. Authentication endpoints are delegated to Better Auth and
+    constrained by authentication.md.
 servers:
   - url: /api/v1
 security:
@@ -16,7 +19,9 @@ paths:
         schema:
           type: string
           maxLength: 2048
-        description: Five-minute HMAC capability issued after authorization; bound to object and HTTP method. Never log this value.
+        description:
+          Five-minute HMAC capability issued after authorization; bound to object and HTTP method.
+          Never log this value.
     put:
       operationId: putDatabaseFileContent
       security: []
@@ -431,7 +436,9 @@ paths:
     post:
       operationId: initializeUserPassword
       summary: Create the first password only for an active account with no password
-      description: Requires users:create, users:update, roles:grant, a live session and authority over every target permission. Cannot replace existing credentials or initialize self.
+      description:
+        Requires users:create, users:update, roles:grant, a live session and authority over every
+        target permission. Cannot replace existing credentials or initialize self.
       parameters:
         - $ref: "#/components/parameters/UserId"
         - $ref: "#/components/parameters/CsrfToken"
@@ -590,6 +597,15 @@ components:
         - version
         - createdAt
       properties:
+        cpf:
+          type: [string, "null"]
+          description: Nulo no legado sem preenchimento; restrito à consulta de Colaboradores.
+        phone:
+          type: [string, "null"]
+        address:
+          oneOf:
+            - $ref: "#/components/schemas/UserAddress"
+            - type: "null"
         id:
           type: string
           format: uuid
@@ -631,14 +647,61 @@ components:
               items:
                 type: string
                 pattern: ^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$
+    UserAddress:
+      type: object
+      additionalProperties: false
+      required: [postalCode, street, number, neighborhood, city, state]
+      properties:
+        postalCode:
+          type: string
+          description: CEP brasileiro com oito dígitos; aceita máscara de entrada.
+        street:
+          type: string
+          minLength: 1
+          maxLength: 300
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+          description: Aceita s/n.
+        neighborhood:
+          type: string
+          minLength: 1
+          maxLength: 100
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        state:
+          type: string
+          description: Sigla de uma UF brasileira.
+        complement:
+          type: string
+          maxLength: 150
+          default: ""
+        address:
+          type: string
+          maxLength: 600
+          default: ""
     CreateUserRequest:
       type: object
       additionalProperties: false
       required:
         - email
         - name
+        - cpf
+        - phone
+        - address
         - roleIds
       properties:
+        cpf:
+          type: string
+          description: CPF com dígitos verificadores válidos; normalizado sem máscara e único.
+        phone:
+          type: string
+          description: Telefone brasileiro com DDD; normalizado sem máscara.
+        address:
+          $ref: "#/components/schemas/UserAddress"
         email:
           type: string
           format: email
@@ -657,13 +720,22 @@ components:
           maxLength: 1000
           default: ""
           description: Optional legacy field; creation never requires an operator reason.
-      description: No written reason is required. Legacy reason text remains optional for compatibility.
+      description:
+        No written reason is required. Legacy reason text remains optional for compatibility.
     UpdateUserRequest:
       type: object
       additionalProperties: false
       required:
         - version
       properties:
+        cpf:
+          type: string
+          description: CPF com dígitos verificadores válidos; normalizado sem máscara e único.
+        phone:
+          type: string
+          description: Telefone brasileiro com DDD; normalizado sem máscara.
+        address:
+          $ref: "#/components/schemas/UserAddress"
         name:
           type: string
           minLength: 1
@@ -677,7 +749,8 @@ components:
           type: string
           maxLength: 1000
           default: ""
-      description: No written reason is required. Legacy reason text remains optional for compatibility.
+      description:
+        No written reason is required. Legacy reason text remains optional for compatibility.
     RoleChangeRequest:
       type: object
       additionalProperties: false
@@ -691,7 +764,8 @@ components:
           type: string
           maxLength: 1000
           default: ""
-      description: No written reason is required. Legacy reason text remains optional for compatibility.
+      description:
+        No written reason is required. Legacy reason text remains optional for compatibility.
     RoleReference:
       type: object
       additionalProperties: false
@@ -829,7 +903,8 @@ components:
           type: string
           maxLength: 1000
           default: ""
-      description: No written reason is required. Legacy reason text remains optional for compatibility.
+      description:
+        No written reason is required. Legacy reason text remains optional for compatibility.
     CreateUploadIntentRequest:
       type: object
       additionalProperties: false
@@ -981,7 +1056,8 @@ components:
           type: string
           maxLength: 500
           default: ""
-      description: No written reason is required. Legacy reason text remains optional for compatibility.
+      description:
+        No written reason is required. Legacy reason text remains optional for compatibility.
     Error:
       type: object
       additionalProperties: false
@@ -1064,4 +1140,5 @@ components:
             - string
             - "null"
           pattern: ^[A-Z][a-z]{5,}[0-9]{6}$
-          description: Returned only on first creation; null on idempotent replay. Never stored in plaintext.
+          description:
+            Returned only on first creation; null on idempotent replay. Never stored in plaintext.

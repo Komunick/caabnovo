@@ -4853,3 +4853,9 @@ thead th {
   min-height: 44px;
   padding: 0.5rem;
 }
+
+.user-create-form > .user-contact-address,
+.user-create-form > .user-contact-instructions {
+  grid-column: 1 / -1;
+  min-width: 0;
+}

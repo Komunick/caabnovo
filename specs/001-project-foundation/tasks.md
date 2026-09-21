@@ -945,3 +945,12 @@ Retenção confirmada: colaborador com bloqueio imediato e exclusão lógica ap�
 têm prazo de sete dias (spec005 LC01) e reservas exigem decisão explícita do responsável (spec008
 LC01). T097 e T098–T120 permanecem no escopo previamente autorizado e não são concluídas por esta
 ampliação.
+
+## Dados obrigatórios de Colaboradores — 21/09/2026
+
+- [ ] T124 Implementar contratos, migration0029, persistência/serialização e atualização dos dados
+      obrigatórios, unicidade de CPF, idempotência e auditoria sem novos dados pessoais.
+- [ ] T125 Atualizar formulário/detalhe com máscaras, endereço compartilhado, legado, rascunhos e
+      colunas opcionais de exportação; preservar acessos, senha e ciclo de vida.
+- [ ] T126 Validar contratos, integração, E2E/a11y, formatos, migração e gates; registrar evidências
+      reais e atualizar o PR aberto, preservando documentos locais de dependentes fora do commit.

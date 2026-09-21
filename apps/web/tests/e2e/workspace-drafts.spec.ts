@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -224,6 +225,7 @@ test("access conflicts preserve selection and baseline without leaking to anothe
         "idempotency-key": randomUUID(),
       },
       data: {
+        ...syntheticUserContact(),
         name: `Rascunho acesso ${index}`,
         email: `draft-${randomUUID()}@example.test`,
         roleIds: [],

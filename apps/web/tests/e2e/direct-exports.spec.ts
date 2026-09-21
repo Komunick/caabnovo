@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import { readFile, writeFile } from "node:fs/promises";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -169,7 +170,7 @@ test("general export alone exposes no administrative module and revocation hides
       "x-csrf-token": crypto.randomUUID(),
       "idempotency-key": crypto.randomUUID(),
     },
-    data: { name: "Colaborador parcial sintético", email, roleIds: [] },
+    data: { ...syntheticUserContact(), name: "Colaborador parcial sintético", email, roleIds: [] },
   });
   expect(created.status()).toBe(201);
   const body = await created.json();
@@ -246,7 +247,12 @@ test("manager grants a write they do not possess, resets a colleague password, a
         "x-csrf-token": crypto.randomUUID(),
         "idempotency-key": crypto.randomUUID(),
       },
-      data: { name: label, email: `role-${crypto.randomUUID()}@example.test`, roleIds: [] },
+      data: {
+        ...syntheticUserContact(),
+        name: label,
+        email: `role-${crypto.randomUUID()}@example.test`,
+        roleIds: [],
+      },
     });
     expect(response.status()).toBe(201);
     return response.json();
@@ -277,7 +283,7 @@ test("manager grants a write they do not possess, resets a colleague password, a
         "x-csrf-token": crypto.randomUUID(),
         "idempotency-key": crypto.randomUUID(),
       },
-      data: { name: "Write must be denied" },
+      data: { ...syntheticUserContact(), name: "Write must be denied" },
     });
     expect(denied.status()).toBe(403);
     await view.goto(`/users/${colleague.id}`);
@@ -320,5 +326,46 @@ test("manager grants a write they do not possess, resets a colleague password, a
     await managerContext.close();
     await colleagueContext.close();
     await sql.end();
+  }
+});
+
+test("exports selected collaborator contact fields in Excel, CSV and PDF", async ({ page }) => {
+  await login(page);
+  const contact = syntheticUserContact();
+  const name = `Contato exportação ${crypto.randomUUID()}`;
+  const response = await page.request.post("/api/v1/users", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": crypto.randomUUID(),
+      "idempotency-key": crypto.randomUUID(),
+    },
+    data: { ...contact, name, email: `contact-${crypto.randomUUID()}@example.test`, roleIds: [] },
+  });
+  expect(response.status()).toBe(201);
+  await page.goto("/users/exportar");
+  await page.getByRole("textbox", { name: "Nome", exact: true }).fill(name);
+  for (const label of ["CPF", "Telefone", "Endereço"])
+    await page.getByRole("checkbox", { name: label, exact: true }).check();
+  for (const [format, label] of [
+    ["xlsx", "Excel"],
+    ["csv", "CSV"],
+    ["pdf", "PDF"],
+  ] as const) {
+    const promise = page.waitForEvent("download");
+    await page.getByRole("button", { name: `Exportar em ${label}`, exact: true }).click();
+    const download = await promise;
+    expect(await download.failure()).toBeNull();
+    const bytes = await readFile((await download.path())!);
+    const content =
+      format === "pdf"
+        ? (await readPdf(bytes)).join(" ")
+        : JSON.stringify(format === "csv" ? readCsv(bytes) : readXlsx(bytes));
+    expect(content).toContain(contact.cpf);
+    expect(content).toContain(contact.phone);
+    expect(content).toContain(contact.address.street);
+    expect(content).toContain(contact.address.postalCode);
+    await expect(
+      page.getByRole("status").filter({ hasText: "Geração e transferência concluídas" }),
+    ).toContainText("1 registros");
   }
 });

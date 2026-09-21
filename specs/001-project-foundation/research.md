@@ -537,3 +537,16 @@ cancelamento. Cursor usa lotes de100 e snapshot; o limite de lote não é teto d
 Heartbeat de10s revalida autorização mesmo sob backpressure; ausência por60s registra interrupção,
 sem prazo de arquivo. A massa de 100 registros continua diagnóstica, sem alegação de escalabilidade
 comprovada.
+
+## Cadastro completo de Colaboradores — pesquisa de 21/09/2026
+
+- [W3C WAI — Labeling Controls](https://www.w3.org/WAI/tutorials/forms/labels/) e
+  [Form Instructions](https://www.w3.org/WAI/tutorials/forms/instructions/): rótulos associados,
+  identificação da obrigatoriedade e instruções próximas aos campos. Decisão: reutilizar os
+  controles compartilhados, máscaras/erros locais e complemento explicitamente opcional.
+- [OWASP — Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html):
+  validação no servidor é necessária independentemente do cliente. Decisão: mesmo contrato de
+  CPF/telefone/endereço, normalização e constraints/índice no banco; ausência rejeitada na criação.
+- Limites: fontes técnicas não definem política institucional de dados. Obrigatoriedade vem do
+  usuário; não consultar Receita/OAB, não enriquecer dados pessoais nem presumir retenção.
+  Reutilizar CPF e endereço brasileiros já existentes no projeto, sem nova dependência.

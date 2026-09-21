@@ -295,3 +295,16 @@ cargos não criam/alteram contas automaticamente.
   Alteração de senha incrementa user.version e invalida sessões/recuperações na mesma transação.
 
 Migrations0025/0026/0027/0028 validadas em banco descartável do CI, sem aplicação ao banco local.
+
+## Dados cadastrais de Colaboradores — 21/09/2026
+
+Migration0029 acrescenta a `user`: `cpf text` normalizado (11 dígitos, índice único inclusive contas
+excluídas), `phone text` com DDD (10/11 dígitos), `address jsonb` estruturado. Todos permitem NULL
+para preservar o legado. Contratos/serviços exigem dados válidos na criação e não aceitam esvaziar
+campos já preenchidos. Endereço contém CEP, rua, número, complemento opcional, bairro, cidade e UF.
+Validação de dígitos verificadores e obrigatoriedade ocorre no servidor; constraints verificam
+formato de armazenamento. Versão/auditoria/idempotência existentes continuam atômicas.
+
+Campos são lidos apenas na administração de Colaboradores e em sua exportação autorizada; não
+adicionar à projeção de sessão/auth nem a logs. Auditoria de edição registra nomes dos campos
+alterados, sem CPF, telefone ou endereço. Não há backfill automático, prazo ou exclusão novos.

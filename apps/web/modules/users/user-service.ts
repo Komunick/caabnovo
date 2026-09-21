@@ -1,4 +1,9 @@
 import "server-only";
+import {
+  createUserRequestSchema,
+  updateUserRequestSchema,
+  type UserAddress,
+} from "@caab/contracts";
 import { createHash } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { withTransaction } from "@caab/db";
@@ -49,6 +54,9 @@ export function serializeUser(user: UserRecord) {
     id: user.id,
     email: user.email,
     name: user.name,
+    cpf: user.cpf,
+    phone: user.phone,
+    address: user.address,
     status: user.status,
     twoFactorEnabled: user.twoFactorEnabled,
     roles: user.roles,
@@ -64,6 +72,9 @@ export async function createUser(
   command: CommandContext & {
     email: string;
     name: string;
+    cpf: string;
+    phone: string;
+    address: UserAddress;
     roleIds: string[];
     justification?: string;
     idempotencyKey?: string;
@@ -71,6 +82,15 @@ export async function createUser(
   overrides: ServiceDependencies = {},
 ) {
   requirePermission(command.actor, PERMISSIONS.usersCreate);
+  const input = createUserRequestSchema.parse({
+    email: command.email,
+    name: command.name,
+    cpf: command.cpf,
+    phone: command.phone,
+    address: command.address,
+    roleIds: command.roleIds,
+    justification: command.justification,
+  });
   const reason = command.justification?.trim() || "";
   const deps = dependencies(overrides);
   try {
@@ -82,6 +102,9 @@ export async function createUser(
           JSON.stringify({
             email: command.email.trim().toLowerCase(),
             name: command.name.trim(),
+            cpf: input.cpf,
+            phone: input.phone,
+            address: input.address,
             roleIds: [...command.roleIds].sort(),
           }),
         )
@@ -123,7 +146,7 @@ export async function createUser(
           );
         }
       }
-      const created = await insertUser(client, { email: command.email, name: command.name });
+      const created = await insertUser(client, input);
       const initialPassword = await insertInitialCredential(client, created.id);
       for (const roleId of command.roleIds) {
         const role = await findRoleById(client, roleId);
@@ -181,6 +204,8 @@ export async function createUser(
     });
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && error.code === "23505") {
+      if ("constraint" in error && error.constraint === "user_cpf_unique")
+        throw new UserAccessError("USER_CPF_CONFLICT", 409, "CPF already exists");
       throw new UserAccessError("USER_EMAIL_CONFLICT", 409, "Email already exists");
     }
     throw error;
@@ -193,6 +218,9 @@ export async function changeUser(
     userId: string;
     version: number;
     name?: string;
+    cpf?: string;
+    phone?: string;
+    address?: UserAddress;
     status?: "active" | "disabled";
     justification: string;
   },
@@ -202,6 +230,19 @@ export async function changeUser(
     command.actor,
     command.status === "disabled" ? PERMISSIONS.usersDisable : PERMISSIONS.usersUpdate,
   );
+  const changesProfile = [command.name, command.cpf, command.phone, command.address].some(
+    (value) => value !== undefined,
+  );
+  if (changesProfile) requirePermission(command.actor, PERMISSIONS.usersUpdate);
+  const input = updateUserRequestSchema.parse({
+    name: command.name,
+    status: command.status,
+    cpf: command.cpf,
+    phone: command.phone,
+    address: command.address,
+    version: command.version,
+    justification: command.justification,
+  });
   const reason = command.justification.trim();
   const deps = dependencies(overrides);
   return withTransaction(pool, async (client: PoolClient) => {
@@ -211,6 +252,8 @@ export async function changeUser(
       command.status === "disabled" ? PERMISSIONS.usersDisable : PERMISSIONS.usersUpdate,
       command.userId,
     );
+    if (changesProfile)
+      await currentAuthority(client, command.actor, PERMISSIONS.usersUpdate, command.userId);
     const before = await findUserById(client, command.userId);
     if (!before) throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
     if (before.deletionEffectiveAt)
@@ -230,7 +273,7 @@ export async function changeUser(
         "The last active administrator cannot be disabled",
       );
     }
-    const updated = await updateUser(client, command);
+    const updated = await updateUser(client, { ...input, userId: command.userId });
     if (!updated) {
       throw new UserAccessError("USER_VERSION_CONFLICT", 409, "User version changed");
     }
@@ -248,7 +291,14 @@ export async function changeUser(
       entityType: "user",
       entityId: updated.id,
       before: { name: before.name, status: before.status, version: before.version },
-      after: { name: updated.name, status: updated.status, version: updated.version },
+      after: {
+        name: updated.name,
+        status: updated.status,
+        version: updated.version,
+        changedFields: ["cpf", "phone", "address"].filter(
+          (field) => input[field as keyof typeof input] !== undefined,
+        ),
+      },
       reason,
       origin: "web",
       requestId: command.requestId,
@@ -269,6 +319,17 @@ export async function changeUser(
       context: { actorUserId: command.actor.userId, revokedSessions },
     });
     return serializeUser(updated);
+  }).catch((error: unknown) => {
+    if (
+      typeof error === "object" &&
+      error &&
+      "code" in error &&
+      error.code === "23505" &&
+      "constraint" in error &&
+      error.constraint === "user_cpf_unique"
+    )
+      throw new UserAccessError("USER_CPF_CONFLICT", 409, "CPF already exists");
+    throw error;
   });
 }
 

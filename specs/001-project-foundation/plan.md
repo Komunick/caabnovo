@@ -610,3 +610,17 @@ adaptadores de exportação dos demais módulos permanecem para suas próprias t
 clarify → analyze somente nas alterações e documentos correspondentes; não revisar requisitos
 históricos sem relação com a entrega. Checklists documentais preservam as três marcações abertas por
 autorização do usuário.
+
+## Incremento: dados de Colaboradores — 21/09/2026
+
+1. Migration0029 aditiva: CPF/telefone/endereço em user, permitindo NULL no legado e índice único de
+   CPF normalizado. Não preencher identidades ou aplicar no banco local.
+2. Contrato obrigatório na criação, atualização parcial com versão, repositório/serviço e
+   fingerprint de idempotência incluindo os dados normalizados. Conflito de CPF explícito.
+3. Reutilizar ValidatedTextField/BrazilianAddressFields e rascunhos existentes; tornar endereço
+   obrigatório apenas neste cadastro, sem mudar Parceiros/Unidades. Detalhe de leitura e edição.
+4. Colunas opcionais no adaptador existente, protegidas pela mesma leitura.
+5. Contratos, integração com PostgreSQL descartável, E2E/a11y móvel/desktop e exportações; tipos,
+   lint, formatação e build. CI executa serviços/build/navegador; localhost permanece desligado.
+
+Rollback: aplicação anterior pode ignorar colunas aditivas; preservar dados e migration aplicada.
