@@ -48,7 +48,7 @@ export function BookingForm({
     booking ? schedulingDate(booking.startsAt) : schedulingDate(),
   );
   const [startsAt, setStartsAt] = useDraftState("booking-form:startsAt", "");
-  const mutation = useSchedulingMutation();
+  const mutation = useSchedulingMutation("booking-form");
   const slots = useSchedulingData<{ items: SchedulingSlot[]; durationMinutes: number }>(
     assignmentId && date
       ? `availability?assignmentId=${assignmentId}&date=${date}${booking ? `&excludeBookingId=${booking.id}` : ""}`

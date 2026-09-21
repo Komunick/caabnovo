@@ -85,8 +85,11 @@ export function NewsEditor({
   const [pending, setPending] = useState(false);
   const [mediaUploading, setMediaUploading] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<NewsFieldErrors>({});
+  const [error, setError] = useDraftState("news-editor:error", "");
+  const [fieldErrors, setFieldErrors] = useDraftState<NewsFieldErrors>(
+    "news-editor:fieldErrors",
+    {},
+  );
   const [confirm, setConfirm] = useState<{ action: "archive" | "restore"; versionId?: string }>();
   const retry = useRef<{ input: string; key: string } | undefined>(undefined);
   const busy = useRef(false);

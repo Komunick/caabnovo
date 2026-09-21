@@ -43,7 +43,7 @@ export function PartnerEditor({
     )[searchParams.get("tab") ?? ""] ?? "Cadastro",
   );
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("partner-editor:error", "");
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState<HistoryPage | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);

@@ -19,7 +19,7 @@ export function MessagePreferences() {
   const result = useMessageData<MessageList<MessagePerson>>(
     `preferences?q=${encodeURIComponent(q)}&page=${page}`,
   );
-  const mutation = useMessageMutation();
+  const mutation = useMessageMutation("preference");
   async function save() {
     if (!selected) return;
     const saved = await mutation.mutate<{ version: number }>(`preferences/${selected.id}`, "PUT", {

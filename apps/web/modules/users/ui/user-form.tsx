@@ -37,7 +37,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
   const [hydrated, setHydrated] = useState(false);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("users-user-form-1:error", "");
   // Credential receipts are intentionally excluded from persistent form drafts.
   const [created, setCreated] = useState<CreatedUser | null>(null);
   const attempt = useRef<{ body: string; key: string } | null>(null);

@@ -74,7 +74,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
   >(null);
   const [notice, setNotice] = useState("");
   const [historyRevision, setHistoryRevision] = useState(0);
-  const mutation = useMessageMutation();
+  const mutation = useMessageMutation(`edit:${initial.id}`);
   const dirty =
     JSON.stringify(edit.data) !== JSON.stringify(saved.data) || edit.version !== saved.version;
   const locked = Boolean(saved.archivedAt || saved.scheduledAt);
@@ -147,6 +147,7 @@ function MessageEditor({ kind, initial }: { kind: MessageKind; initial: MessageR
     try {
       const current = await messageRequest<MessageRecord>(`${kind}/${saved.id}`);
       cache.clear();
+      mutation.setError("");
       setSaved(current);
       setEdit(current);
       setNames(Object.fromEntries((current.people ?? []).map((p) => [p.id, p.name])));

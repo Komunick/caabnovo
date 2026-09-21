@@ -1,5 +1,5 @@
 "use client";
-import { useDraftCache } from "@/components/workspace-drafts";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PartnerRecord } from "@caab/contracts";
@@ -10,7 +10,7 @@ export function NewPartner() {
   const drafts = useDraftCache();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("new-partner:error", "");
   const retry = useRef({ body: "", key: "" });
   return (
     <section className={`panel ${styles.root}`}>

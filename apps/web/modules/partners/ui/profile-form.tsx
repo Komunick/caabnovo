@@ -1,5 +1,5 @@
 "use client";
-import { useDraftCache } from "@/components/workspace-drafts";
+import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
@@ -20,7 +20,10 @@ export function ProfileForm({
   disabled: boolean;
   onSave: (profile: PartnerProfile) => Promise<boolean | void>;
 }) {
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useDraftState<Record<string, string>>(
+    "partners-profile-form-1:errors",
+    {},
+  );
   const [categories, setCategories] = useState<PartnerCategory[]>([]);
   useEffect(() => {
     const controller = new AbortController();

@@ -45,7 +45,7 @@ export function MemberDocuments({
   const [replacesId, setReplacesId] = useDraftState("member-documents:replacesId", "");
   const [files, setFiles] = useState<FilesPage>({ items: [], page: 1, hasNextPage: false });
   const [page, setPage] = useDraftState("member-documents:page", 1);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("member-documents:error", "");
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState("");
   const retry = useRef({ fingerprint: "", key: "" });

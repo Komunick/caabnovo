@@ -58,7 +58,7 @@ function HoursEditor({
 }) {
   const [rows, setRows] = useDraftState(`hours:${path}:${unitId}:rows`, data.rows);
   const [version, setVersion] = useDraftState(`hours:${path}:${unitId}:version`, data.version);
-  const mutation = useSchedulingMutation();
+  const mutation = useSchedulingMutation(`hours:${path}:${unitId}`);
   const [notice, setNotice] = useState("");
   const change = (weekday: number, field: string, value: string) =>
     setRows((values) =>

@@ -69,8 +69,11 @@ export function NewsPublishing({
   );
   const [pending, setPending] = useState(false);
   const [confirm, setConfirm] = useState<"publish" | "unpublish" | "schedule">();
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<NewsFieldErrors>({});
+  const [error, setError] = useDraftState("news-publishing:error", "");
+  const [fieldErrors, setFieldErrors] = useDraftState<NewsFieldErrors>(
+    "news-publishing:fieldErrors",
+    {},
+  );
   const [message, setMessage] = useState("");
   const retry = useRef<{ fingerprint: string; key: string } | undefined>(undefined);
   const busy = useRef(false);

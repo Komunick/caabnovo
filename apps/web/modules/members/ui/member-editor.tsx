@@ -59,7 +59,7 @@ export function MemberEditor({
   const [commandBusy, setBusy] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const busy = commandBusy || photoBusy;
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("member-editor:error", "");
   const [message, setMessage] = useState("");
   const [dimension, setDimension] = useDraftState<MemberDimension>(
     "member-editor:dimension",

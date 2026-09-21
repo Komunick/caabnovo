@@ -43,7 +43,7 @@ export function UserAccessForm({
     new Set(initial.permissions),
   );
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`user-access-form:${userId}:error`, "");
   const [saved, setSaved] = useState(false);
   const editable =
     !self && active && (authority.includes("roles:grant") || authority.includes("roles:revoke"));

@@ -1,6 +1,7 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput } from "./draft-controls";
-import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { useEffect, useRef, type ComponentProps } from "react";
 import { FormField } from "./form-field";
 import { MaskedContactInput, type ContactMask } from "./masked-contact-input";
 
@@ -27,8 +28,17 @@ export function ValidatedTextField({
   mask?: ContactMask;
   onValueChange?: (input: HTMLInputElement) => void;
 }) {
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`validation-contract:${id}`, "");
   const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const input = inputRef.current;
+    const reset = () => {
+      setError("");
+      input?.setCustomValidity("");
+    };
+    input?.form?.addEventListener("reset", reset);
+    return () => input?.form?.removeEventListener("reset", reset);
+  }, [setError]);
   useEffect(() => {
     const input = inputRef.current;
     if (input) input.setCustomValidity(schema.safeParse(input.value).success ? "" : message);

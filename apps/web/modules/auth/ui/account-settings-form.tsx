@@ -64,11 +64,11 @@ export function AccountSettingsForm({
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const [pending, setPending] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<{
+  const [feedback, setFeedback] = useDraftState<{
     action: string;
     message: string;
     error: boolean;
-  } | null>(null);
+  } | null>("account:feedback", null);
   useEffect(() => setHydrated(true), []);
   useEffect(() => {
     // The route's loading fallback can arrive before these anchored sections exist.

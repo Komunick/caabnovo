@@ -34,7 +34,7 @@ export function MessageSchedulesPage() {
   const result = useMessageData<MessageList<MessageSchedule>>(
     `schedules?q=${encodeURIComponent(q)}&status=${status}&page=${page}${from ? `&from=${from}` : ""}${to ? `&to=${to}` : ""}`,
   );
-  const mutation = useMessageMutation();
+  const mutation = useMessageMutation("schedules");
   async function command() {
     if (!selected) return;
     const changed = await mutation.mutate<MessageRecord>(

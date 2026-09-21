@@ -50,7 +50,7 @@ function CatalogForm({
     "catalog:professionalId",
     item?.professionalId ?? "",
   );
-  const mutation = useSchedulingMutation();
+  const mutation = useSchedulingMutation("catalog");
   const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
     formRef.current?.querySelector<HTMLInputElement>("input:not([disabled])")?.focus();

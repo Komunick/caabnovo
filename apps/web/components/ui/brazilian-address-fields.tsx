@@ -46,8 +46,8 @@ export function BrazilianAddressFields({
   const [converting, setConverting] = useDraftState(`address-converting:${prefix}`, !legacy);
   const [lookup, setLookup] = useState("");
   const [notice, setNotice] = useState("");
-  const [error, setError] = useState("");
-  const [stateError, setStateError] = useState("");
+  const [error, setError] = useDraftState(`address:${prefix}:error`, "");
+  const [stateError, setStateError] = useDraftState(`address:${prefix}:stateError`, "");
   const [retry, setRetry] = useState(0);
   const revisions = useRef({
     street: 0,

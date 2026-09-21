@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
@@ -30,7 +31,7 @@ export function RoleAssignmentForm({
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("users-role-assignment-form-1:error", "");
   const assigned = new Set(assignedRoles.map(({ id }) => id));
   const available = roles.filter(({ id }) => !assigned.has(id));
 

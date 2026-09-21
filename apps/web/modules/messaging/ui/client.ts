@@ -1,4 +1,5 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { useEffect, useRef, useState } from "react";
 const errors: Record<string, string> = {
   VERSION_CONFLICT:
@@ -57,9 +58,9 @@ export function useMessageData<T>(path: string | null) {
     reload: () => setRevision((n) => n + 1),
   };
 }
-export function useMessageMutation() {
+export function useMessageMutation(draftKey: string) {
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`${draftKey}:error`, "");
   const running = useRef(false);
   const retry = useRef({ payload: "", key: "" });
   async function mutate<T>(path: string, method: string, input: unknown): Promise<T | undefined> {
@@ -89,5 +90,5 @@ export function useMessageMutation() {
       setPending(false);
     }
   }
-  return { pending, error, mutate };
+  return { pending, error, mutate, setError };
 }

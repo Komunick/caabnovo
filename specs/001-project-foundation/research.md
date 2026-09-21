@@ -1,29 +1,33 @@
 # Pesquisa vigente — 21/09/2026
 
-**Decisão:** Consolidar exports:generate, ocultação por acesso e infraestrutura comum; oferecer exportação de Colaboradores sem alterar a gestão existente.
+**Decisão:** Consolidar exports:generate, ocultação por acesso e infraestrutura comum; oferecer
+exportação de Colaboradores sem alterar a gestão existente.
 
-**Fundamento:** Perfis Associados+Colaboradores com geral exportam só essas fontes; conversão preserva herança expirada/revogada e override vazio; sem módulo não há elemento nas três superfícies; writer respeita colunas, grande volume, CSRF, revogação e interrupção.
+**Fundamento:** Perfis Associados+Colaboradores com geral exportam só essas fontes; conversão
+preserva herança expirada/revogada e override vazio; sem módulo não há elemento nas três
+superfícies; writer respeita colunas, grande volume, CSRF, revogação e interrupção.
 
-**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
-visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
-não implementa exportação nesta fase, preservar seus controles existentes.
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página visual,
+gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função não implementa
+exportação nesta fase, preservar seus controles existentes.
 
-**Evidência local:** `apps/web/modules/auth/permissions.ts`, `packages/contracts/src/user-access.ts`, `packages/db/src/repositories/user-access.ts`.
-Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
-na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
-Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+**Evidência local:** `apps/web/modules/auth/permissions.ts`,
+`packages/contracts/src/user-access.ts`, `packages/db/src/repositories/user-access.ts`. Desenho
+concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas na
+[pesquisa transversal](../002-integrated-modules/research-2026-09-21.md). Essa revisão não homologa
+dependências, desempenho ou produto; testes estão no quickstart.
 
 ## Pesquisa anterior — contexto histórico
 
-Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
-onde conflitarem; referências antigas não autorizam funções adiadas.
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09 onde
+conflitarem; referências antigas não autorizam funções adiadas.
 
 # Research: Fundação do Sistema CAAB
 
 **Date**: 2026-09-04
 
-Todas as decisões abaixo resolvem o contexto técnico do plano. Não restam marcadores `NEEDS
-CLARIFICATION`.
+Todas as decisões abaixo resolvem o contexto técnico do plano. Não restam marcadores
+`NEEDS CLARIFICATION`.
 
 ## Autenticação, sessões e MFA
 
@@ -32,8 +36,8 @@ CLARIFICATION`.
 devem concluir TOTP em toda autenticação, sem dispositivo confiável, e não podem manter papel
 administrativo quando o fator deixa de estar habilitado.
 
-**Rationale**: mantém identidade e revogação no PostgreSQL, integra diretamente com Next.js e oferece
-fluxo oficial de TOTP. A ausência de cache de sessão preserva a revogação imediata exigida.
+**Rationale**: mantém identidade e revogação no PostgreSQL, integra diretamente com Next.js e
+oferece fluxo oficial de TOTP. A ausência de cache de sessão preserva a revogação imediata exigida.
 
 **Alternatives considered**:
 
@@ -50,12 +54,12 @@ fluxo oficial de TOTP. A ausência de cache de sessão preserva a revogação im
 ## Autorização
 
 **Decision**: manter RBAC próprio com permissões concretas em tabelas relacionais e um guard
-server-side `requirePermission(resource, action)`. Better Auth autentica e gerencia sessões; o domínio
-CAAB é a única autoridade sobre permissões. Cada Server Action, Route Handler e caso de uso chama o
-guard; papéis fornecidos pelo cliente nunca são aceitos.
+server-side `requirePermission(resource, action)`. Better Auth autentica e gerencia sessões; o
+domínio CAAB é a única autoridade sobre permissões. Cada Server Action, Route Handler e caso de uso
+chama o guard; papéis fornecidos pelo cliente nunca são aceitos.
 
-**Rationale**: separa autenticação de regras de domínio, preserva menor privilégio e torna alterações
-efetivas na próxima ação. O guard lê conta ativa e atribuições no banco antes da decisão.
+**Rationale**: separa autenticação de regras de domínio, preserva menor privilégio e torna
+alterações efetivas na próxima ação. O guard lê conta ativa e atribuições no banco antes da decisão.
 
 **Alternatives considered**:
 
@@ -134,9 +138,11 @@ OWASP para uploads não confiáveis.
 
 - Upload passando pelo processo web: rejeitado por consumo de memória, CPU e banda.
 - Bucket público: rejeitado porque contorna autorização e quarentena.
-- GuardDuty Malware Protection: alternativa válida se o ambiente final for AWS, mas cria acoplamento.
+- GuardDuty Malware Protection: alternativa válida se o ambiente final for AWS, mas cria
+  acoplamento.
 
-**Sources**: [OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html),
+**Sources**:
+[OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html),
 [S3 presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html),
 [S3 Block Public Access](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html),
 [ClamAV scanning](https://docs.clamav.net/manual/Usage/Scanning.html).
@@ -230,24 +236,24 @@ incluindo consultar Associados e editar Notícias; atualizar o PR #16 existente.
 
 Critérios: matriz agrupada por módulo com rótulos simples, justificativa e confirmação de
 salvamento; seleção efetiva após recarregar; negativa também em rotas/serviços e navegação;
-preservar acessos das contas existentes até edição explícita; nenhuma autoelevação, concessão
-além da autoridade do operador ou remoção do último administrador capaz de gerir acessos.
+preservar acessos das contas existentes até edição explícita; nenhuma autoelevação, concessão além
+da autoridade do operador ou remoção do último administrador capaz de gerir acessos.
 
-Plano: migration aditiva `user_access` com conjunto explícito e versão. Sem configuração
-individual, manter RBAC existente e acesso editorial anterior. Uma view de permissões efetivas
-unifica leitura da sessão, identidade e serviços; com seleção individual, apenas as ações
-selecionadas são concedidas. Perfis legados permanecem para histórico e compatibilidade.
-Notícias passa a distinguir leitura, edição e publicação, com revalidação transacional.
-Serviço de atualização bloqueia conta/concorrência, revalida o operador, valida dependências,
-grava conjunto e auditoria na mesma transação e protege o último administrador.
+Plano: migration aditiva `user_access` com conjunto explícito e versão. Sem configuração individual,
+manter RBAC existente e acesso editorial anterior. Uma view de permissões efetivas unifica leitura
+da sessão, identidade e serviços; com seleção individual, apenas as ações selecionadas são
+concedidas. Perfis legados permanecem para histórico e compatibilidade. Notícias passa a distinguir
+leitura, edição e publicação, com revalidação transacional. Serviço de atualização bloqueia
+conta/concorrência, revalida o operador, valida dependências, grava conjunto e auditoria na mesma
+transação e protege o último administrador.
 
 Pesquisa: OWASP Authorization Cheat Sheet, consultada em 11/09/2026:
-https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
-Aplicar menor privilégio, negação por padrão para a seleção explícita e checagem no servidor
-em cada requisição. UI isolada não autoriza. Alternativas rejeitadas: esconder somente menu;
-criar um perfil compartilhado por combinação; alterar permissões de um perfil que afeta outras
-contas. Compatibilidade editorial é limitada às contas sem seleção explícita, nunca um fallback
-após uma permissão individual removida.
+https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html Aplicar menor
+privilégio, negação por padrão para a seleção explícita e checagem no servidor em cada requisição.
+UI isolada não autoriza. Alternativas rejeitadas: esconder somente menu; criar um perfil
+compartilhado por combinação; alterar permissões de um perfil que afeta outras contas.
+Compatibilidade editorial é limitada às contas sem seleção explícita, nunca um fallback após uma
+permissão individual removida.
 
 Validação: testes de contrato, rota/CSRF, banco descartável (revogação, autoridade, concorrência,
 auditoria atômica, administrador), notícias somente leitura e E2E de seleção/recarregamento;
@@ -257,143 +263,235 @@ inspeção visual claro/escuro e 390 px. Não usar contas ou dados pessoais reai
 
 Fontes oficiais: https://www.w3.org/WAI/tutorials/forms/notifications/ e
 https://www.w3.org/WAI/tutorials/forms/grouping/ (consultadas em 11/09/2026), e
-https://viacep.com.br/ (consultada em 11/09/2026). Usar avisos junto aos campos,
-associação acessível e alternativa de preenchimento manual para falha de CEP.
-Consulta ao ViaCEP envia somente oito dígitos, sem credenciais/referrer, sem lote.
-Máscaras auxiliam digitação e não comprovam identidade, contato ou titularidade.
-Reutilização exigida pelo usuário: padrões existentes de Associados são extraídos
-para componentes comuns, sem introduzir biblioteca nova ou alterar dados em lote.
+https://viacep.com.br/ (consultada em 11/09/2026). Usar avisos junto aos campos, associação
+acessível e alternativa de preenchimento manual para falha de CEP. Consulta ao ViaCEP envia somente
+oito dígitos, sem credenciais/referrer, sem lote. Máscaras auxiliam digitação e não comprovam
+identidade, contato ou titularidade. Reutilização exigida pelo usuário: padrões existentes de
+Associados são extraídos para componentes comuns, sem introduzir biblioteca nova ou alterar dados em
+lote.
+
 # Correção do registro de imagens do CI — 14/09/2026
 
-O job browser do PR #19 falhou antes dos testes: Docker Hub recusou o pull de
-minio/minio. A [documentação oficial do MinIO](https://github.com/minio/minio/blob/master/docs/docker/README.md)
-usa quay.io/minio/minio. Os manifests oficiais de MinIO RELEASE.2025-09-07T16-13-09Z
-e mc RELEASE.2025-08-13T08-35-41Z foram consultados em Quay nesta data.
-Decisão: mudar apenas o registro em compose.yaml, mantendo as versões fixadas,
-serviços, portas, volumes e testes. Sem migração de storage ou atualização de versão.
-O registro oficial evita depender de uma imagem de terceiros ou desativar o gate.
+O job browser do PR #19 falhou antes dos testes: Docker Hub recusou o pull de minio/minio. A
+[documentação oficial do MinIO](https://github.com/minio/minio/blob/master/docs/docker/README.md)
+usa quay.io/minio/minio. Os manifests oficiais de MinIO RELEASE.2025-09-07T16-13-09Z e mc
+RELEASE.2025-08-13T08-35-41Z foram consultados em Quay nesta data. Decisão: mudar apenas o registro
+em compose.yaml, mantendo as versões fixadas, serviços, portas, volumes e testes. Sem migração de
+storage ou atualização de versão. O registro oficial evita depender de uma imagem de terceiros ou
+desativar o gate.
 
 ## Pesquisa da ampliação dos campos — 14/09/2026
 
-- https://www.w3.org/WAI/tutorials/forms/validation/ : controles HTML tipados,
-  required e validação no cliente complementam a validação obrigatória no servidor.
-- https://www.w3.org/WAI/tutorials/forms/notifications/ : erro textual associado
-  ao campo, foco e possibilidade de corrigir preservando os valores.
-- https://viacep.com.br/ : resposta separa logradouro, bairro, localidade e UF;
-  CEP requer oito dígitos. Complemento retornado pode descrever trecho postal
-  (ex.: lado ímpar), portanto não representa sala/apartamento do usuário.
+- https://www.w3.org/WAI/tutorials/forms/validation/ : controles HTML tipados, required e validação
+  no cliente complementam a validação obrigatória no servidor.
+- https://www.w3.org/WAI/tutorials/forms/notifications/ : erro textual associado ao campo, foco e
+  possibilidade de corrigir preservando os valores.
+- https://viacep.com.br/ : resposta separa logradouro, bairro, localidade e UF; CEP requer oito
+  dígitos. Complemento retornado pode descrever trecho postal (ex.: lado ímpar), portanto não
+  representa sala/apartamento do usuário.
 
-Decisão: número/complemento sempre manuais; preservar resposta tardia por campo;
-conversão de texto legado explícita, sem parsing especulativo. Não aplicar máscaras
-a texto livre, senha ou busca mista. Sem novas dependências.
+Decisão: número/complemento sempre manuais; preservar resposta tardia por campo; conversão de texto
+legado explícita, sem parsing especulativo. Não aplicar máscaras a texto livre, senha ou busca
+mista. Sem novas dependências.
 
 ## JPG nos seletores — 14/09/2026
 
-A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept) recomenda combinar identificadores de extensão e MIME; o atributo orienta a seleção, sem validar conteúdo. A [propriedade Blob.type](https://developer.mozilla.org/en-US/docs/Web/API/Blob/type) depende da identificação do navegador. Decisão: listar `.jpg,.jpeg,.png` junto aos MIME existentes, explicitar JPG na interface e preservar a inspeção efetiva do servidor. JPEG já é reconhecido pelo pipeline como `image/jpeg`, com ambas as extensões; nenhum novo formato binário ou permissão é introduzido.
+A [MDN sobre accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept)
+recomenda combinar identificadores de extensão e MIME; o atributo orienta a seleção, sem validar
+conteúdo. A [propriedade Blob.type](https://developer.mozilla.org/en-US/docs/Web/API/Blob/type)
+depende da identificação do navegador. Decisão: listar `.jpg,.jpeg,.png` junto aos MIME existentes,
+explicitar JPG na interface e preservar a inspeção efetiva do servidor. JPEG já é reconhecido pelo
+pipeline como `image/jpeg`, com ambas as extensões; nenhum novo formato binário ou permissão é
+introduzido.
 
 ## Pesquisa: justificativas e auditoria — 14/09/2026
 
 - OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
-  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação
-  independe de texto de justificativa do operador.
-- OWASP Input Validation: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
-  Validar no servidor antes da mutação, incluindo texto vazio após trim.
-- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis
-  associados aos campos necessários à ação atual.
+  Preservar quando/onde/quem/o quê e minimizar dados sensíveis. Auditoria da criação independe de
+  texto de justificativa do operador.
+- OWASP Input Validation:
+  https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html Validar no
+  servidor antes da mutação, incluindo texto vazio após trim.
+- W3C Forms: https://www.w3.org/WAI/tutorials/forms/ — instruções e nomes acessíveis associados aos
+  campos necessários à ação atual.
 
-A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes.
-Não alterar permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
+A obrigação de motivo nas alterações é decisão do usuário, não imposição dessas fontes. Não alterar
+permissões, inventar motivo humano nem registrar senhas/tokens em auditoria.
 
 ## Conteúdo binário no PostgreSQL — 14/09/2026
 
 Fontes oficiais: [bytea](https://www.postgresql.org/docs/18/datatype-binary.html),
 [TOAST](https://www.postgresql.org/docs/18/storage-toast.html) e
 [OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
-Decisão: bytes parametrizados em bytea, tabela própria no mesmo banco, sem base64 persistido.
-TOAST administra valores grandes; listagens seguem consultando apenas metadados. Manter
-limite de upload, assinatura/MIME e antivírus, autorização e URLs temporárias. Armazenar no
-banco simplifica a infraestrutura por decisão do usuário, mas aumenta o volume de backup/WAL;
-não foi realizado dimensionamento da VM. Backups precisam incluir a nova tabela e a restauração
-deve verificar hashes. Guia local Next consultado: route handlers aceitam Request/Response e PUT.
-
+Decisão: bytes parametrizados em bytea, tabela própria no mesmo banco, sem base64 persistido. TOAST
+administra valores grandes; listagens seguem consultando apenas metadados. Manter limite de upload,
+assinatura/MIME e antivírus, autorização e URLs temporárias. Armazenar no banco simplifica a
+infraestrutura por decisão do usuário, mas aumenta o volume de backup/WAL; não foi realizado
+dimensionamento da VM. Backups precisam incluir a nova tabela e a restauração deve verificar hashes.
+Guia local Next consultado: route handlers aceitam Request/Response e PUT.
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto: rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade, preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
+Fonte de negócio: instrução expressa do usuário nesta data para remover motivos de todas as abas. A
+[OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html),
+consultada em 14/09/2026, orienta registrar contexto da ação e identidade. Decisão do projeto:
+rastreabilidade é automática e não depende de justificativa escrita. O inventário encontrou
+validações em UI, contratos, serviços e CHECKs SQL; retirar todas as camadas da obrigatoriedade,
+preservando histórico e permissões. Não presumir que o usuário forneceu um motivo automático.
 
 ## Backend único de arquivos — 15/09/2026
 
-Fontes oficiais consultadas: [PostgreSQL 18: bytea](https://www.postgresql.org/docs/18/datatype-binary.html)
-e [backup por dump](https://www.postgresql.org/docs/18/backup-dump.html). bytea armazena
-bytes binários e integra o backup transacional do banco. Decisão: manter a implementação
-PostgreSQL já validada, removendo o custo de dois backends após o usuário dispensar a
-migração de dois arquivos de teste. Não adicionar banco ou dependências. ClamAV, limites,
-HMAC e autorização continuam necessários. A pesquisa não demonstra capacidade da VM;
-espaço e backup permanecem responsabilidade operacional. Não se executará limpeza de
-registros históricos ou volumes para eliminar referências obsoletas.
+Fontes oficiais consultadas:
+[PostgreSQL 18: bytea](https://www.postgresql.org/docs/18/datatype-binary.html) e
+[backup por dump](https://www.postgresql.org/docs/18/backup-dump.html). bytea armazena bytes
+binários e integra o backup transacional do banco. Decisão: manter a implementação PostgreSQL já
+validada, removendo o custo de dois backends após o usuário dispensar a migração de dois arquivos de
+teste. Não adicionar banco ou dependências. ClamAV, limites, HMAC e autorização continuam
+necessários. A pesquisa não demonstra capacidade da VM; espaço e backup permanecem responsabilidade
+operacional. Não se executará limpeza de registros históricos ou volumes para eliminar referências
+obsoletas.
 
 ## Pesquisa: busca geral por funções — 15/09/2026
 
-Fontes oficiais: [GitHub Command Palette](https://docs.github.com/en/enterprise-cloud%40latest/get-started/accessibility/github-command-palette)
-organiza navegação e ações acessíveis ao usuário; [Windows Terminal Command Palette](https://learn.microsoft.com/en-us/windows/terminal/command-palette)
-oferece busca das ações disponíveis e operação por teclado. Adaptação ao CAAB: catálogo leve de funções
-existentes, com destino, contexto e permissões declarados. Busca normaliza acentos e termos; funções
-específicas têm prioridade sobre área genérica. Não executar mutações ao selecionar um resultado.
-Para funções dependentes de cadastro, abrir a lista e informar que é necessário selecionar um registro.
-Reutilizar dialog/links existentes; sem indexador de dados pessoais, biblioteca nova ou serviço adicional.
+Fontes oficiais:
+[GitHub Command Palette](https://docs.github.com/en/enterprise-cloud%40latest/get-started/accessibility/github-command-palette)
+organiza navegação e ações acessíveis ao usuário;
+[Windows Terminal Command Palette](https://learn.microsoft.com/en-us/windows/terminal/command-palette)
+oferece busca das ações disponíveis e operação por teclado. Adaptação ao CAAB: catálogo leve de
+funções existentes, com destino, contexto e permissões declarados. Busca normaliza acentos e termos;
+funções específicas têm prioridade sobre área genérica. Não executar mutações ao selecionar um
+resultado. Para funções dependentes de cadastro, abrir a lista e informar que é necessário
+selecionar um registro. Reutilizar dialog/links existentes; sem indexador de dados pessoais,
+biblioteca nova ou serviço adicional.
 
 ## Abertura de telas e navegação — 15/09/2026
 
-Fontes oficiais consultadas: [Next.js: Linking and Navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating), [loading](https://nextjs.org/docs/app/api-reference/file-conventions/loading), [useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status) e os guias distribuídos com Next 16.3.4 instalado em apps/web/node_modules/next/dist/docs.
+Fontes oficiais consultadas:
+[Next.js: Linking and Navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating),
+[loading](https://nextjs.org/docs/app/api-reference/file-conventions/loading),
+[useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status) e os guias
+distribuídos com Next 16.3.4 instalado em apps/web/node_modules/next/dist/docs.
 
-Diagnóstico do código45e22b3: nenhuma loading.tsx no painel; rotas dinâmicas aguardam consultas antes de mostrar o destino. A inicial aguarda Promise.allSettled de publicações, rascunhos e associados antes de renderizar até os atalhos. Links já usam next/link; não há motivo para introduzir roteador ou dependência nova. Layout autenticado deve continuar validando acesso antes de mostrar o painel.
+Diagnóstico do código45e22b3: nenhuma loading.tsx no painel; rotas dinâmicas aguardam consultas
+antes de mostrar o destino. A inicial aguarda Promise.allSettled de publicações, rascunhos e
+associados antes de renderizar até os atalhos. Links já usam next/link; não há motivo para
+introduzir roteador ou dependência nova. Layout autenticado deve continuar validando acesso antes de
+mostrar o painel.
 
-Decisão: limites loading por área, feedback discreto nos links centrais quando ainda não houver resposta e carregamento independente dos três blocos da inicial via Suspense. Manter prefetch automático parcial, sem forçar pré-carga completa de dados privados e sem cache persistente de sessão/permissões. Medir separadamente disponibilidade do conteúdo útil e conclusão das consultas, sem prometer redução percentual sem medição.
+Decisão: limites loading por área, feedback discreto nos links centrais quando ainda não houver
+resposta e carregamento independente dos três blocos da inicial via Suspense. Manter prefetch
+automático parcial, sem forçar pré-carga completa de dados privados e sem cache persistente de
+sessão/permissões. Medir separadamente disponibilidade do conteúdo útil e conclusão das consultas,
+sem prometer redução percentual sem medição.
 
-Validação causal em CI com dados sintéticos: bloquear temporariamente leitura de member em transação do teste; verificar que o destino exibe carregamento e que a inicial mostra atalhos/publicações antes do desbloqueio. Liberar sempre em finally. Simular espera da resposta RSC para conferir feedback e interrupção. Nunca aplicar bloqueio ou seed no banco do preview. Revisão visual local é leve; build/E2E somente no CI.
+Validação causal em CI com dados sintéticos: bloquear temporariamente leitura de member em transação
+do teste; verificar que o destino exibe carregamento e que a inicial mostra atalhos/publicações
+antes do desbloqueio. Liberar sempre em finally. Simular espera da resposta RSC para conferir
+feedback e interrupção. Nunca aplicar bloqueio ou seed no banco do preview. Revisão visual local é
+leve; build/E2E somente no CI.
 
-Limite do diagnóstico local: preview apresentou timeout de conexão na autenticação durante a primeira observação; não usar essa amostra como baseline de desempenho da aplicação. Worker/scanner continuam pausados por restrição de memória.
+Limite do diagnóstico local: preview apresentou timeout de conexão na autenticação durante a
+primeira observação; não usar essa amostra como baseline de desempenho da aplicação. Worker/scanner
+continuam pausados por restrição de memória.
 
 ## Contraste transitório — pesquisa de 16/09/2026
 
-Fontes oficiais: [WCAG 2.2, contraste mínimo](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) define 4,5:1 para texto normal, sem arredondar resultados abaixo do limite; [CSS Transitions](https://www.w3.org/TR/css-transitions-1/) descreve valores interpolados durante a transição. Consultado também o guia CSS distribuído com Next em apps/web/node_modules/next/dist/docs/01-app/01-getting-started/11-css.md.
+Fontes oficiais:
+[WCAG 2.2, contraste mínimo](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
+define 4,5:1 para texto normal, sem arredondar resultados abaixo do limite;
+[CSS Transitions](https://www.w3.org/TR/css-transitions-1/) descreve valores interpolados durante a
+transição. Consultado também o guia CSS distribuído com Next em
+apps/web/node_modules/next/dist/docs/01-app/01-getting-started/11-css.md.
 
-Diagnóstico local do código e log CI35019277298: o item ativo interpola texto e fundo através de combinações de baixo contraste; na busca, o texto filho muda imediatamente enquanto o fundo interpola. Estados finais aprovados não garantem os quadros intermediários. Decisão: retirar interpolação de texto/fundo desses controles, mantendo borda/movimento e medindo contraste por quadros em ambos os sentidos. Não alterar paleta nem enfraquecer axe. Limite: regressão automatizada de cores não substitui toda a avaliação manual de acessibilidade.
+Diagnóstico local do código e log CI35019277298: o item ativo interpola texto e fundo através de
+combinações de baixo contraste; na busca, o texto filho muda imediatamente enquanto o fundo
+interpola. Estados finais aprovados não garantem os quadros intermediários. Decisão: retirar
+interpolação de texto/fundo desses controles, mantendo borda/movimento e medindo contraste por
+quadros em ambos os sentidos. Não alterar paleta nem enfraquecer axe. Limite: regressão automatizada
+de cores não substitui toda a avaliação manual de acessibilidade.
 
-Complemento da validação: CI35089210281 aprovou todos os gates de5740428, mas CI35089213112 revelou interpolação de color herdada de body nos detalhes/histórico de reserva, com contraste2,09–2,26:1 sobre superfícies já claras. Remover também a transição global de texto/fundo e reutilizar o medidor por quadros na jornada real de Agendamentos.
-
+Complemento da validação: CI35089210281 aprovou todos os gates de5740428, mas CI35089213112 revelou
+interpolação de color herdada de body nos detalhes/histórico de reserva, com contraste2,09–2,26:1
+sobre superfícies já claras. Remover também a transição global de texto/fundo e reutilizar o medidor
+por quadros na jornada real de Agendamentos.
 
 ## Estado ao navegar — 16/09/2026
 
 Os guias locais do Next 16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
-compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
-à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
-identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
-usa input/list: [MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
+compartilhados conservam estado; Activity do framework retém somente três rotas e não atende à
+preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
+identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF usa
+input/list:
+[MDN datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/datalist).
 Sugestões não validam sozinhas a seleção; conferir identificador válido antes de enviar.
 
 ## Revisão de homologação — 16/09/2026
 
-GitHub documenta rulesets públicos, checks vinculados ao GitHub App e exigência de PR: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets . A API do repositório confirmou acesso administrativo e ruleset ativo de dev nesta data; conferir main e promoção sem push direto nem merge.
+GitHub documenta rulesets públicos, checks vinculados ao GitHub App e exigência de PR:
+https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
+. A API do repositório confirmou acesso administrativo e ruleset ativo de dev nesta data; conferir
+main e promoção sem push direto nem merge.
 
-O guia da ANPD identifica os papéis de agentes de tratamento e encarregado: https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-orientativo-para-definicoes-dos-agentes-de-tratamento-de-dados-pessoais-e-do-encarregado . Esta pesquisa não define prazos da CAAB nem substitui aprovação nominal exigida pelo projeto.
+O guia da ANPD identifica os papéis de agentes de tratamento e encarregado:
+https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-orientativo-para-definicoes-dos-agentes-de-tratamento-de-dados-pessoais-e-do-encarregado
+. Esta pesquisa não define prazos da CAAB nem substitui aprovação nominal exigida pelo projeto.
 
 ## Integração de Mensagens — 16/09/2026
 
-A pesquisa de [009-messaging](../009-messaging/research.md) orienta o fluxo novo. O shell reutiliza os padrões existentes de navegação/permissões; não introduz biblioteca nem novo padrão de layout.
+A pesquisa de [009-messaging](../009-messaging/research.md) orienta o fluxo novo. O shell reutiliza
+os padrões existentes de navegação/permissões; não introduz biblioteca nem novo padrão de layout.
 
 ## Senha inicial — pesquisa de 17/09/2026
 
-Fontes oficiais: [Node.js randomInt](https://nodejs.org/docs/latest-v24.x/api/crypto.html#cryptorandomintmin-max-callback), [Better Auth database](https://better-auth.com/docs/concepts/database), [OWASP Password Storage](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). Consultado guia local Next 16.3.4 de Route Handlers.
+Fontes oficiais:
+[Node.js randomInt](https://nodejs.org/docs/latest-v24.x/api/crypto.html#cryptorandomintmin-max-callback),
+[Better Auth database](https://better-auth.com/docs/concepts/database),
+[OWASP Password Storage](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
+Consultado guia local Next 16.3.4 de Route Handlers.
 
-Node oferece sorteio criptográfico sem viés de módulo. Reutilizar hashPassword e account/providerId credential assegura compatibilidade com login; armazenar somente hash adaptativo. Decisão do usuário: uma palavra + seis dígitos. Palavra de seis ou mais letras com inicial maiúscula atende à política atual. A entropia é limitada pela lista e um milhão de sufixos; não afirmar que comprimento implica alta entropia. Preservar rate limiting e troca de senha existentes. Sem dependência nova nem envio de e-mail automático.
+Node oferece sorteio criptográfico sem viés de módulo. Reutilizar hashPassword e account/providerId
+credential assegura compatibilidade com login; armazenar somente hash adaptativo. Decisão do
+usuário: uma palavra + seis dígitos. Palavra de seis ou mais letras com inicial maiúscula atende à
+política atual. A entropia é limitada pela lista e um milhão de sufixos; não afirmar que comprimento
+implica alta entropia. Preservar rate limiting e troca de senha existentes. Sem dependência nova nem
+envio de e-mail automático.
 
-Diagnóstico: criação anterior só inseria user e recuperação exige account.password existente. Corrigir atomicamente. Reenvio idempotente não pode recuperar senha do hash ou substituí-la. A única conta legada sem senha poderá receber credencial por ação explícita, com autoridade e concorrência verificadas. Respostas com no-store; segredo só em memória transitória, fora de logs/rascunhos/storage. Nenhum dado real na implementação.
+Diagnóstico: criação anterior só inseria user e recuperação exige account.password existente.
+Corrigir atomicamente. Reenvio idempotente não pode recuperar senha do hash ou substituí-la. A única
+conta legada sem senha poderá receber credencial por ação explícita, com autoridade e concorrência
+verificadas. Respostas com no-store; segredo só em memória transitória, fora de
+logs/rascunhos/storage. Nenhum dado real na implementação.
 
-Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos
+nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco
+familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede
+garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos
+removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
 
 ## Revisão I1 após analyze — 21/09/2026
 
-Fonte: decisão explícita do usuário, não nova pesquisa externa. Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores, inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição de cargos permanece com Administrador.
+Fonte: decisão explícita do usuário, não nova pesquisa externa. Administrador tem todas as
+permissões concretas dos módulos disponíveis, atuais e futuros, incluindo exportação e gestão de
+cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e acesso completo a
+Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores, inclusive alterações
+que não possui para uso próprio, mas não altera os próprios acessos nem atribui cargos. Colaborador
+somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição de cargos permanece
+com Administrador.
 
-A guarda atual changeUserAccess exige que o ator possua cada chave; será substituída pela distinção entre concessão e uso. A view0014 também precisa reconhecer Administrador apesar do override. Estratégia detalhada em [cargos](contracts/roles.md); nenhuma implementação ou emenda constitucional necessária para permissões concretas autorizadas pelo produto.
+A guarda atual changeUserAccess exige que o ator possua cada chave; será substituída pela distinção
+entre concessão e uso. A view0014 também precisa reconhecer Administrador apesar do override.
+Estratégia detalhada em [cargos](contracts/roles.md); nenhuma implementação ou emenda constitucional
+necessária para permissões concretas autorizadas pelo produto.
+
+## Preservação de conflitos — 21/09/2026
+
+Conferidos os guias embarcados da versão instalada de Next em
+`next/dist/docs/01-app/03-api-reference/01-directives/use-client.md` e `01-app/02-guides/forms.md`.
+O cache de rascunhos do layout autenticado já preserva valores e versões; a lacuna era o estado
+local de erros. Decisão: reutilizar `useDraftState`, com chave semântica por formulário e cadastro,
+sem armazenamento persistente no navegador. Não restaurar estados de carregamento ou recibos de
+senha. Para mutações compartilhadas, a chave é explícita; horários incluem recurso/unidade, imagem
+editorial inclui finalidade e categoria inclui cadastro. Reset remove a validação visível;
+encerramento do layout autenticado descarta os dados. Regressões de componente cobrem versão
+original, isolamento e encerramento; E2E preparado para Notícias, Associados e acessos, aguardando
+CI.

@@ -74,9 +74,9 @@ export function useSchedulingData<T>(path: string | null) {
     reload: () => setRevision((value) => value + 1),
   };
 }
-export function useSchedulingMutation() {
+export function useSchedulingMutation(draftKey: string) {
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`${draftKey}:error`, "");
   const retry = useRef({ payload: "", key: "" });
   const running = useRef(false);
   async function mutate<T>(path: string, method: string, input: unknown): Promise<T | undefined> {

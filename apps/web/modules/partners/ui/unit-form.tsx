@@ -1,6 +1,6 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
-import { useState } from "react";
 import { partnerUnitSchema, contactFieldMessages, type PartnerUnit } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
@@ -19,7 +19,7 @@ export function UnitForm({
   command: PartnerCommandHandler;
   onClose: () => void;
 }) {
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`partners-unit-form:${unit?.id ?? "new"}:error`, "");
   return (
     <DraftForm
       draftKey={`partners-unit-form:${unit?.id ?? "new"}`}

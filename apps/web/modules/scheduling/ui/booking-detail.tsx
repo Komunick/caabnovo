@@ -20,7 +20,7 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const result = useSchedulingData<Details>(`bookings/${id}?page=${page}`);
-  const mutation = useSchedulingMutation();
+  const mutation = useSchedulingMutation("booking-detail");
   const booking = result.data?.booking;
   async function cancel() {
     if (

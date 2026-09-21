@@ -2,7 +2,7 @@
 import { useDraftState } from "@/components/workspace-drafts";
 import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 
-import { useState, type FormEvent } from "react";
+import { type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
@@ -51,7 +51,7 @@ export function AuditFilters({
         ? "custom"
         : "all",
   );
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("audit-filters:error", "");
   const hasFilters = Boolean(
     values.actorId || values.action || values.entityType || values.from || values.to,
   );

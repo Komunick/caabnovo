@@ -13,7 +13,7 @@ export function NewMember({ canUpload }: { canUpload: boolean }) {
   const drafts = useDraftCache();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState("new-member:error", "");
   const [notice, setNotice] = useState("");
   const [file, setFile] = useDraftState<File | undefined>("new-member:file", undefined);
   const [created, setCreated] = useDraftState<MemberRecord | undefined>(

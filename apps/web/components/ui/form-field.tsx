@@ -1,8 +1,9 @@
 "use client";
+import { useDraftState } from "@/components/workspace-drafts";
 import {
   cloneElement,
+  useEffect,
   useRef,
-  useState,
   type ReactElement,
   type ReactNode,
   type SyntheticEvent,
@@ -33,7 +34,14 @@ export function FormField({
   action?: ReactNode;
   children: ReactElement<FieldControlProps>;
 }>) {
-  const [localError, setLocalError] = useState("");
+  const [localError, setLocalError] = useDraftState(`validation:${id}`, "");
+  const container = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const form = container.current?.closest("form");
+    const reset = () => setLocalError("");
+    form?.addEventListener("reset", reset);
+    return () => form?.removeEventListener("reset", reset);
+  }, [setLocalError]);
   const ownedValidity = useRef(new WeakMap<HTMLElement, string>());
   const visibleError = error || localError;
   function validate(event: SyntheticEvent, show: boolean) {
@@ -102,6 +110,7 @@ export function FormField({
   });
   return (
     <div
+      ref={container}
       className={["form-field", className].filter(Boolean).join(" ")}
       onBlur={(event) => validate(event, true)}
       onInput={(event) => validate(event, false)}

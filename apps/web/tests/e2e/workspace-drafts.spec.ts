@@ -163,9 +163,98 @@ test("preserves member edits across inner tabs, other records and failed saves w
   await expect(
     page.getByRole("alert").filter({ hasText: /cadastro mudou em outra operação/i }),
   ).toBeVisible();
+  await area(page, "/partners");
+  await page.goBack();
+  await expect(
+    page.getByRole("alert").filter({ hasText: /cadastro mudou em outra operação/i }),
+  ).toBeVisible();
   await expect(page.getByLabel("Nome social (opcional)")).toHaveValue("Nome social pendente");
   await page.getByRole("button", { name: "Documentos", exact: true }).click();
   await expect(page.getByLabel("Categoria do documento")).toHaveValue("Comprovante pendente");
+});
+
+test("news conflicts survive navigation with field errors and the original revision", async ({
+  page,
+}) => {
+  await signIn(page);
+  await create(page, "/news");
+  await page.getByLabel("Título", { exact: true }).fill(`Rascunho ${randomUUID()}`);
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(page).toHaveURL(/\/news\/[0-9a-f-]+$/);
+  const path = new URL(page.url()).pathname;
+  const record = await (await page.request.get(`/api/v1${path}`)).json();
+  const sentVersions: number[] = [];
+  await page.route(`**/api/v1${path}`, async (route) => {
+    if (route.request().method() !== "PUT") return route.continue();
+    sentVersions.push(route.request().postDataJSON().expectedVersion);
+    await route.fulfill({
+      status: 409,
+      json: { code: "NEWS_VERSION_CONFLICT", fields: [{ path: "title" }] },
+    });
+  });
+  await page.getByLabel("Título", { exact: true }).fill("Texto ainda não salvo");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  const conflict = page.getByRole("alert").filter({ hasText: "Outra alteração foi salva" });
+  await expect(conflict).toBeVisible();
+  await area(page, "/members");
+  await page.goBack();
+  await expect(conflict).toBeVisible();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Texto ainda não salvo");
+  await expect(page.getByLabel("Título", { exact: true })).toHaveAttribute("aria-invalid", "true");
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect.poll(() => sentVersions).toEqual([record.revision, record.revision]);
+  await page.unroute(`**/api/v1${path}`);
+  await page.getByRole("button", { name: "Salvar rascunho", exact: true }).click();
+  await expect(conflict).toHaveCount(0);
+  await area(page, "/members");
+  await page.goBack();
+  await expect(conflict).toHaveCount(0);
+});
+
+test("access conflicts preserve selection and baseline without leaking to another user", async ({
+  page,
+}) => {
+  await signIn(page);
+  const users = [];
+  for (let index = 0; index < 2; index++) {
+    const response = await page.request.post("/api/v1/users", {
+      headers: {
+        origin: new URL(page.url()).origin,
+        "x-csrf-token": randomUUID(),
+        "idempotency-key": randomUUID(),
+      },
+      data: {
+        name: `Rascunho acesso ${index}`,
+        email: `draft-${randomUUID()}@example.test`,
+        roleIds: [],
+      },
+    });
+    expect(response.ok()).toBe(true);
+    users.push(await response.json());
+  }
+  await page.goto(`/users/${users[0].id}`);
+  const submitted: unknown[] = [];
+  await page.route(`**/api/v1/users/${users[0].id}/access`, async (route) => {
+    if (route.request().method() !== "PUT") return route.continue();
+    submitted.push(route.request().postDataJSON());
+    await route.fulfill({ status: 409, json: { code: "ACCESS_VERSION_CONFLICT" } });
+  });
+  const checkbox = page.getByRole("checkbox", { name: "Consultar associados", exact: true });
+  await checkbox.check();
+  await page.getByRole("button", { name: "Salvar acessos", exact: true }).click();
+  const conflict = page.getByRole("alert").filter({ hasText: "Os acessos mudaram" });
+  await expect(conflict).toBeVisible();
+  await area(page, "/users");
+  await page.locator(`a[href="/users/${users[1].id}"]`).first().click();
+  await expect(conflict).toHaveCount(0);
+  await expect(checkbox).not.toBeChecked();
+  await page.goBack();
+  await page.goBack();
+  await expect(conflict).toBeVisible();
+  await expect(checkbox).toBeChecked();
+  await page.getByRole("button", { name: "Salvar acessos", exact: true }).click();
+  await expect.poll(() => submitted.length).toBe(2);
+  expect(submitted[1]).toEqual(submitted[0]);
 });
 
 test("partner sections keep independent edits when another form is saved or cancelled", async ({

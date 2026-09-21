@@ -70,7 +70,7 @@ function BenefitForm({
     `benefit-panel:draft:${benefit?.id ?? "new"}`,
     benefit?.draft ?? benefitDraftSchema.parse({}),
   );
-  const [error, setError] = useState("");
+  const [error, setError] = useDraftState(`benefit-panel:error:${benefit?.id ?? "new"}`, "");
   return (
     <DraftForm
       draftKey="partners-benefit-panel-1"
@@ -251,6 +251,8 @@ export function BenefitPanel({
           command={command}
           onClose={() => {
             drafts.remove(`benefit-panel:draft:${editing === "new" ? "new" : editing?.id}`);
+            drafts.remove(`benefit-panel:error:${editing === "new" ? "new" : editing?.id}`);
+            drafts.clear("partners-benefit-panel-1:");
             setEditing(null);
           }}
         />
