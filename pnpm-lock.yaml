@@ -212,8 +212,8 @@ importers:
         specifier: 22.0.2
         version: 22.0.2(supports-color@7.2.0)
       payload:
-        specifier: 3.88.0
-        version: 3.88.0(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)
+        specifier: 3.89.0
+        version: 3.89.0(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)
       pdfkit:
         specifier: 0.20.2
         version: 0.20.2
@@ -1412,9 +1412,6 @@ packages:
       payload: 3.89.0
       react: ^19.0.1 || ^19.1.2 || ^19.2.1
       react-dom: ^19.0.1 || ^19.1.2 || ^19.2.1
-
-  '@payloadcms/translations@3.88.0':
-    resolution: {integrity: sha512-AZVQjjW5pKxO+K9ODeh6yw6/EfXK1hxGPw55KzzDC5srO3hjNskgyWtkauKvbz+S0+xFspANbRc4OD/Rg/74WA==}
 
   '@payloadcms/translations@3.89.0':
     resolution: {integrity: sha512-XLPOdv9NoPcqr21zBTu0uyJk0qGRIF7JVl2H2UTecpweQSMlQCackhUKWz1LKBO7QcKgkNSVHFnMNcizRDcPDg==}
@@ -3568,13 +3565,6 @@ packages:
 
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
-
-  payload@3.88.0:
-    resolution: {integrity: sha512-O7zuS80bvEGLte+7xZjwN05+ox5BCsGcQT2M6+CTote07JQOOvHJoiuoyQFw6cUElcFTWGMC5dy03w7J7sTYGg==}
-    engines: {node: ^18.20.2 || >=20.9.0}
-    hasBin: true
-    peerDependencies:
-      graphql: ^16.8.1
 
   payload@3.89.0:
     resolution: {integrity: sha512-n0rDsMDTlKkNDqNllSLow1xEn2XaktD2oyi6Gl7i/LAD7xRBaS+tj27ca9EeNM5QmoGSd734UCHYj5Vr4JQYNA==}
@@ -5751,10 +5741,6 @@ snapshots:
       - utf-8-validate
       - yjs
 
-  '@payloadcms/translations@3.88.0':
-    dependencies:
-      date-fns: 4.1.0
-
   '@payloadcms/translations@3.89.0':
     dependencies:
       date-fns: 4.1.0
@@ -7841,46 +7827,6 @@ snapshots:
   path-type@4.0.0: {}
 
   pathe@2.0.3: {}
-
-  payload@3.88.0(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3):
-    dependencies:
-      '@next/env': 15.5.25
-      '@payloadcms/translations': 3.88.0
-      '@types/busboy': 1.5.4
-      ajv: 8.18.0
-      bson-objectid: 2.0.4
-      busboy: 1.6.0
-      ci-info: 4.4.0
-      console-table-printer: 2.12.1
-      croner: 10.0.1
-      dataloader: 2.2.3
-      deepmerge: 4.3.1
-      file-type: 21.3.4(supports-color@7.2.0)
-      get-tsconfig: 4.8.1
-      graphql: 16.14.2
-      http-status: 2.1.0
-      image-dimensions: 2.5.1
-      ipaddr.js: 2.2.0
-      jose: 5.10.0
-      json-schema-to-typescript: 15.0.3
-      minimist: 1.2.8
-      path-to-regexp: 6.3.0
-      pino: 9.14.0
-      pino-pretty: 13.1.2
-      pluralize: 8.0.0
-      qs-esm: 8.0.1
-      range-parser: 1.2.1
-      sanitize-filename: 1.6.3
-      ts-essentials: 10.0.3(typescript@6.0.3)
-      tsx: 4.22.4
-      undici: 7.29.0
-      uuid: 13.0.2
-      ws: 8.21.3
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - typescript
-      - utf-8-validate
 
   payload@3.89.0(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3):
     dependencies:

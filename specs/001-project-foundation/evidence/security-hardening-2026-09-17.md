@@ -36,3 +36,8 @@ Pesquisa mantida: [Payload 3.89.0](https://github.com/payloadcms/payload/release
 [esbuild](https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99).
 Payload mudou defaults de jobs; o projeto usa pg-boss e não configura tasks/autoRun
 Payload. Audit sem alertas não garante ausência de falhas desconhecidas.
+
+
+## Conciliação de 21/09/2026
+
+O primeiro CI da composição (0bb9a84) passou em formatação/lint e segurança, mas falhou no typecheck do worker: o merge preservou Payload 3.88.0 no worker enquanto web/news usavam 3.89.0. Corrigido o manifesto e regenerado o lockfile para uma única versão 3.89.0. Nova execução necessária; não marcar os gates do conjunto como concluídos antes dela.
