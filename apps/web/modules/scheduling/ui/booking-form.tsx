@@ -222,6 +222,7 @@ export function BookingForm({
         intent="primary"
         type="submit"
         disabled={
+          !canWrite ||
           mutation.pending ||
           !startsAt ||
           !slots.data?.items.some((slot) => slot.startsAt === startsAt)

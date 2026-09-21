@@ -45,6 +45,7 @@ export async function* exportBatches(
   adapter: ExportAdapter,
   input: ExportRequest,
   signal: AbortSignal,
+  batchSize = 100,
 ) {
   const client = await acquire(pool, signal);
   let released = false;
@@ -64,7 +65,7 @@ export async function* exportBatches(
     cursor = client.query(new Cursor<Record<string, unknown>>(query.text, query.values));
     for (;;) {
       signal.throwIfAborted();
-      const batch = await cursor.read(100);
+      const batch = await cursor.read(batchSize);
       if (!batch.length) break;
       yield batch.map((row) => adapter.map(row));
     }

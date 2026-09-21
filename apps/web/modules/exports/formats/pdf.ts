@@ -77,7 +77,7 @@ export const writePdf: Writer = async (rows, columns, output, signal) => {
     for await (const row of rows) {
       logical++;
       for (let band = 0; band < bands.length; band++) {
-        if (bands.length > 1) y = newPage(band);
+        if (bands.length > 1 && (logical > 1 || band > 0)) y = newPage(band);
         const cols = bands[band]!,
           width = 770 / cols.length;
         const lines = cols.map((c) => {

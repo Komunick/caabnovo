@@ -4,6 +4,8 @@ import { describeAuditDetails } from "./audit-details";
 
 // Shared by the filters and summaries. Values in the audit trail never change.
 export const auditActions: Record<string, string> = {
+  "export.started": "Iniciou uma exportação direta",
+  "export.finished": "Registrou o resultado de uma exportação direta",
   "message.saved": "Salvou um registro de mensagens",
   "message.duplicated": "Duplicou uma campanha",
   "message.send": "Solicitou envio de uma campanha",

@@ -224,4 +224,5 @@ permanece desligado. Evidências:
 
 Implementação coordenada pela tarefa 001 T123 (mesma entrega, sem duplicar conclusão). Validar
 contrato/API, UI sem persistência do segredo, login com nova senha, rejeição da antiga, expiração
-das sessões, repetição/concorrência e rollback. Estado: pendente.
+das sessões, repetição/concorrência e rollback. Estado: implementação e testes aprovados no CI
+35637568416; evidência consolidada em001. Validação adicional da interface do Gestor em andamento.

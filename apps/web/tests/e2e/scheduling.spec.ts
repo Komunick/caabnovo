@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Locator, Page } from "@playwright/test";
+import { Client } from "pg";
 import { expect, syntheticUsers, test } from "./fixtures";
 import { keyboardActivate, keyboardType, tabTo } from "./keyboard";
 import { expectThemeContrast, expectWcag22AA } from "./accessibility";
@@ -57,6 +58,7 @@ test("configure and manage a real reservation through the panel at 390px, with e
   await page.getByLabel("Nome completo").fill(member);
   await page.getByRole("button", { name: "Criar cadastro", exact: true }).click();
   await expect(page.getByRole("heading", { name: member, exact: true })).toBeVisible();
+  const memberId = new URL(page.url()).pathname.split("/").at(-1)!;
   await context.clearCookies();
   await signIn(page);
   await expect(
@@ -341,6 +343,30 @@ test("configure and manage a real reservation through the panel at 390px, with e
   await expectWcag22AA(page);
   await screenshot(page, testInfo.outputPath("scheduling-detail-desktop-light.png"));
   await page.setViewportSize({ width: 390, height: 844 });
+  const lifecycleDb = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
+  await lifecycleDb.connect();
+  try {
+    await lifecycleDb.query(
+      "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
+      [memberId],
+    );
+  } finally {
+    await lifecycleDb.end();
+  }
+  await page.reload();
+  const deletionNotice = page.getByRole("region", { name: "Associado excluído", exact: true });
+  await expect(deletionNotice).toBeVisible();
+  await expect(page.getByRole("button", { name: "Remarcar", exact: true })).toBeDisabled();
+  await keyboardActivate(
+    page,
+    deletionNotice.getByRole("button", { name: "Manter reserva", exact: true }),
+  );
+  await expect(deletionNotice).toContainText("Reserva mantida por");
+  await expectWcag22AA(page);
+  await screenshot(page, testInfo.outputPath("scheduling-deleted-member-kept-mobile.png"));
   const cancel = page.getByRole("button", { name: "Cancelar reserva", exact: true });
   await keyboardActivate(page, cancel);
   const dialog = page.getByRole("dialog", { name: "Cancelar esta reserva?" });
@@ -364,6 +390,16 @@ test("configure and manage a real reservation through the panel at 390px, with e
       .getByRole("link", { name: new RegExp(`${member}.*Cancelado`) }),
   ).toBeVisible();
   await screenshot(page, testInfo.outputPath("scheduling-calendar-cancelled-mobile-light.png"));
+  const restoreDb = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
+  await restoreDb.connect();
+  try {
+    await restoreDb.query("UPDATE member SET deletion_effective_at=NULL WHERE id=$1", [memberId]);
+  } finally {
+    await restoreDb.end();
+  }
   await page.goto("/scheduling/new");
   await choose(page, "Beneficiário", member);
   await choose(page, "Unidade", unit);

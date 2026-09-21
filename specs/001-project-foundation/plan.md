@@ -1,7 +1,8 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
 **Branch da entrega**: `feature/access-export-foundation-20260921` | **Data**: 2026-09-21 **Spec**:
-[spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+[spec.md](spec.md) | **Estado**: implementação autorizada em validação; evidências no checkpoint e
+relatório do incremento.
 
 ## Summary
 
@@ -16,16 +17,16 @@ Retenção Q10/T089 continua adiada.
 TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout; PostgreSQL
 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO novo. Testes Vitest
 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas, teclado e tokens
-compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos e PDFKit existente, sujeitos
-a spike/versão fixada no código; nenhum pacote instalado agora.
+compartilhados. Exportação incremental com pg-cursor2.22.0, ExcelJS4.4.0 e PDFKit0.20.2 fixados.
+Spike e testes de integridade executados; ponte de backpressure do ExcelJS documentada na pesquisa.
 
 **Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a transferência
 integral arbitrária. Exportações não têm teto funcional de registros/período. Aplicar o
 [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md): medir
 tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova de estresse/grande
 volume nesta rodada; manter produto sem teto funcional de registros. **Restrições**: banco único,
-autorização atual por ação; sem localhost, deploy, seed real, limpeza de dados ou implementação
-nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+autorização atual por ação; sem localhost, deploy, seed real ou limpeza de dados. Implementação
+limitada ao recorte autorizado desta entrega. Q10/Q11 e módulos futuros continuam adiados.
 
 ## Constitution Check
 
@@ -601,3 +602,11 @@ login novo/antigo, revogação, concorrência, rollback, acesso negado e interfa
 vigência da exclusão (24 horas após solicitação), bloquear a conta e encerrar sessões imediatamente;
 permitir desfazer durante o intervalo e restaurar explicitamente depois, preservando histórico; não
 confundir desativar com apagar silenciosamente.
+
+## Fechamento do recorte autorizado
+
+Inclui T097, T098–T120 e T121–T123, com ciclo de associados005 LC01/LC02 e reservas008 LC01. Novos
+adaptadores de exportação dos demais módulos permanecem para suas próprias tarefas. Após os gates,
+clarify → analyze somente nas alterações e documentos correspondentes; não revisar requisitos
+históricos sem relação com a entrega. Checklists documentais preservam as três marcações abertas por
+autorização do usuário.

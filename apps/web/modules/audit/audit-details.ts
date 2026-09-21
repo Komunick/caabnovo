@@ -198,6 +198,23 @@ export function describeAuditDetails(event: Event, canReadUserNames = false): Au
   field("sourceRevision", "Versão usada como origem", number);
   field("version", "Versão do cadastro", number);
   field("eventCount", "Registros incluídos na exportação", number);
+  if (event.entityType === "export_operation") {
+    field("rowCount", "Registros exportados", number);
+    field("byteCount", "Bytes transferidos", number);
+    field("format", "Formato", translated({ xlsx: "Excel", csv: "CSV", pdf: "PDF" }));
+    field(
+      "phase",
+      "Resultado da exportação",
+      translated({
+        preparing: "Preparando",
+        streaming: "Transferindo",
+        completed: "Concluída pelo servidor",
+        failed: "Falhou",
+        cancelled: "Cancelada",
+        interrupted: "Interrompida",
+      }),
+    );
+  }
   field("attemptCount", "Tentativas realizadas", number);
   field("nextAttempt", "Próxima tentativa", number);
   field("runAt", "Data agendada", date);

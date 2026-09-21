@@ -212,6 +212,15 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+      - name: Preserve direct export review evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: direct-export-synthetic-evidence
+          path: apps/web/test-results/direct-exports-*/**
+          retention-days: 7
+          if-no-files-found: warn
+
       - run: pnpm test:a11y --project=chromium
 
   security:

@@ -114,6 +114,11 @@ it("exports 100 complete synthetic records in each real format with bounded pool
       },
     });
     const result = await runExport(engine(op), sink, new AbortController().signal);
+    const generated = {
+      totalMs: performance.now() - start,
+      rssAfter: process.memoryUsage().rss,
+      cpu: process.cpuUsage(cpu),
+    };
     expect(result.rows).toBe(100);
     const bytes = Buffer.concat(chunks);
     if (format === "csv") {
@@ -152,17 +157,38 @@ it("exports 100 complete synthetic records in each real format with bounded pool
         records: 100,
         node: process.version,
         firstByteMs: first,
-        totalMs: performance.now() - start,
+        ...generated,
         rssBefore: rss,
         rssPeak: peak,
-        rssAfter: process.memoryUsage().rss,
-        cpu: process.cpuUsage(cpu),
+        rssAfterVerification: process.memoryUsage().rss,
         dataConnections: data.pool.totalCount,
         controlConnections: control.pool.totalCount,
       }),
     );
   }
 }, 60000);
+it("keeps one snapshot across cursor batches while concurrent source rows change", async () => {
+  const source = exportBatches(data.pool, usersExport, input, new AbortController().signal, 17);
+  const names: string[] = [];
+  let changed = false;
+  try {
+    for await (const batch of source) {
+      names.push(...batch.map((row) => String(row.values.name)));
+      if (!changed) {
+        changed = true;
+        await admin.query(
+          `UPDATE "user" SET name='Changed after snapshot' WHERE email='export-person-100@example.test'`,
+        );
+      }
+    }
+    expect(names).toHaveLength(100);
+    expect(names.at(-1)).toBe("ExportPerson 100");
+  } finally {
+    await admin.query(
+      `UPDATE "user" SET name='ExportPerson 100' WHERE email='export-person-100@example.test'`,
+    );
+  }
+});
 it("deduplicates request IDs, records only minimal state and reconciles an interrupted heartbeat once", async () => {
   const op = operation();
   await beginExportOperation(control.pool, op);

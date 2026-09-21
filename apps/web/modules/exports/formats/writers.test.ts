@@ -87,3 +87,30 @@ it("writers reject cancellation without reporting a complete file", async () => 
     await expect(writer(records(), columns, t.sink, controller.signal)).rejects.toBeDefined();
   }
 });
+it("PDF retains the end of a long value, Unicode escapes and columns in horizontal bands", async () => {
+  const many = Array.from({ length: 6 }, (_, n) => ({
+    ...columns[0]!,
+    key: `c${n}`,
+    label: `Coluna ${n}`,
+  }));
+  async function* source() {
+    yield {
+      id: "one",
+      values: Object.fromEntries(
+        many.map((c, n) => [
+          c.key,
+          n === 0 ? "Trecho longo ".repeat(1200) + "FIM_UNICODE 😀" : `VALOR_COLUNA_${n}`,
+        ]),
+      ),
+    };
+  }
+  const t = target();
+  await writePdf(source(), many, t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes()),
+    text = pages.join(" ");
+  expect(pages.length).toBeGreaterThan(2);
+  expect(text.replace(/\s/g, "")).toContain("FIM_UNICODE");
+  expect(text).toContain("\\u{1F600}");
+  for (let n = 1; n < 6; n++) expect(text).toContain(`VALOR_COLUNA_${n}`);
+  expect(text.indexOf("VALOR_COLUNA_3")).toBeLessThan(text.indexOf("VALOR_COLUNA_4"));
+}, 30000);

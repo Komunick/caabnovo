@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { expect, syntheticUsers, test } from "./fixtures";
 import { expectWcag22AA } from "./accessibility";
 import { readCsv, readXlsx, readPdf } from "../helpers/read-export";
@@ -93,6 +93,10 @@ test("direct exports keep filters and keyboard column order and download 100 rec
     }
     const sorted = [...samples].sort((a, b) => a - b),
       p95 = sorted[Math.ceil(sorted.length * 0.95) - 1]!;
+    await writeFile(
+      testInfo.outputPath("export-panel-profile.json"),
+      JSON.stringify({ samples, p95, records: 100, node: process.version }),
+    );
     await testInfo.attach("export-panel-profile", {
       body: JSON.stringify({
         samples,
@@ -199,6 +203,96 @@ test("general export alone exposes no administrative module and revocation hides
     ).toHaveCount(0);
   } finally {
     await context.close();
+    await sql.end();
+  }
+});
+
+test("manager grants a write they do not possess, resets a colleague password, and cannot manage their own access", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await login(page);
+  const origin = new URL(page.url()).origin;
+  const make = async (label: string) => {
+    const response = await page.request.post("/api/v1/users", {
+      headers: {
+        origin,
+        "x-csrf-token": crypto.randomUUID(),
+        "idempotency-key": crypto.randomUUID(),
+      },
+      data: { name: label, email: `role-${crypto.randomUUID()}@example.test`, roleIds: [] },
+    });
+    expect(response.status()).toBe(201);
+    return response.json();
+  };
+  const manager = await make("Gestor sintético exportação"),
+    colleague = await make("Colaborador sem gestão");
+  const sql = db();
+  await sql.connect();
+  await sql.query(
+    "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'Synthetic manager role' FROM role WHERE code='manager'",
+    [manager.id],
+  );
+  const managerContext = await page.context().browser()!.newContext({ baseURL: origin }),
+    colleagueContext = await page.context().browser()!.newContext({ baseURL: origin });
+  const view = await managerContext.newPage();
+  try {
+    await login(view, manager.email, manager.initialPassword);
+    await view.goto("/users");
+    await expect(
+      view.getByRole("link", { name: "Exportar colaboradores", exact: true }),
+    ).toBeVisible();
+    await expect(view.getByRole("button", { name: "Criar colaborador", exact: true })).toHaveCount(
+      0,
+    );
+    const denied = await view.request.post("/api/v1/members", {
+      headers: {
+        origin,
+        "x-csrf-token": crypto.randomUUID(),
+        "idempotency-key": crypto.randomUUID(),
+      },
+      data: { name: "Write must be denied" },
+    });
+    expect(denied.status()).toBe(403);
+    await view.goto(`/users/${colleague.id}`);
+    await expect(view.getByRole("button", { name: "Conceder função", exact: true })).toHaveCount(0);
+    await view
+      .getByRole("checkbox", { name: "Cadastrar e editar associados", exact: true })
+      .check();
+    await view.getByRole("checkbox", { name: "Consultar colaboradores", exact: true }).check();
+    await view.getByRole("button", { name: "Salvar acessos", exact: true }).click();
+    await expect(view.getByRole("status").filter({ hasText: "Acessos atualizados" })).toBeVisible();
+    await expect(view.getByRole("button", { name: "Salvar alterações", exact: true })).toHaveCount(
+      0,
+    );
+    await view.getByRole("button", { name: "Gerar nova senha", exact: true }).click();
+    await view.getByRole("button", { name: "Confirmar nova senha", exact: true }).click();
+    const receipt = view.getByRole("region", { name: "Nova senha do colaborador" });
+    await expect(receipt).toBeVisible();
+    const password = await receipt.getByLabel("Nova senha", { exact: true }).inputValue();
+    await view.goto(`/users/${manager.id}`);
+    await expect(view.getByRole("button", { name: "Salvar acessos", exact: true })).toHaveCount(0);
+    await expect(
+      view.getByRole("checkbox", { name: "Cadastrar e editar associados", exact: true }),
+    ).toBeDisabled();
+    await expect(
+      view.getByRole("checkbox", { name: "Cadastrar e editar associados", exact: true }),
+    ).not.toBeChecked();
+    const endUser = await colleagueContext.newPage();
+    await login(endUser, colleague.email, password);
+    await endUser.goto(`/users/${manager.id}`);
+    await expect(endUser.getByRole("button", { name: "Salvar acessos", exact: true })).toHaveCount(
+      0,
+    );
+    await expect(
+      endUser.getByRole("button", { name: "Gerar nova senha", exact: true }),
+    ).toHaveCount(0);
+    await expect(endUser.getByRole("button", { name: "Conceder função", exact: true })).toHaveCount(
+      0,
+    );
+  } finally {
+    await managerContext.close();
+    await colleagueContext.close();
     await sql.end();
   }
 });

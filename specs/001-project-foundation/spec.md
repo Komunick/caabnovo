@@ -1,5 +1,14 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Recorte de revisão solicitado — 21/09/2026
+
+Ao terminar a implementação e os gates, executar clarify e depois analyze somente nas alterações
+desta entrega: T097, cargos/permissões/visibilidade, base e vertical Colaboradores de exportação,
+compatibilidade legada, exclusão/reativação e nova senha, e avisos/decisões de reservas. Conferir as
+seções correspondentes dos documentos das funções afetadas. Excluir tarefas históricas,
+funcionalidades não alteradas e os adaptadores dos demais módulos ainda não implementados desta
+análise. Decisão explícita do usuário; não executar análise integral do projeto.
+
 ## Checkpoint de exportação direta — 21/09/2026
 
 CI `35637568416` do commit `7f6304f`: quality aprovado, incluindo integração e build; navegador do
@@ -720,11 +729,12 @@ Nenhum serviço local ativado. Próxima fase: spike T098 e núcleo compartilhado
 
 Na mesma entrega ativa, acrescentar exclusão de colaboradores, reativação e geração administrativa
 de nova senha pelo padrão de senha inicial. A senha substituta é exibida uma única vez ao
-administrador; invalidar sessões e recuperações anteriores, preservar auditoria sem segredo e
-impedir repetição concorrente por versão do cadastro. Manter a autorização da geração inicial
-(sessão atual, users:create, users:update e cargo Administrador com roles:grant), sem conceder
-redefinição ao Gestor apenas por poder administrar acessos. Configurações pessoais continuam sendo o
-caminho para a própria senha. Contas desativadas devem ser reativadas antes da geração.
+Administrador ou Gestor autorizado; invalidar sessões e recuperações anteriores, preservar auditoria
+sem segredo e impedir repetição concorrente por versão do cadastro. Redefinição exige o cargo atual
+Administrador ou Gestor e users:reset-password, sem concessão individual; não exige escrita geral de
+Colaboradores. A geração inicial mantém seu endpoint e permissões anteriores. Configurações pessoais
+continuam sendo o caminho para a própria senha. Contas desativadas devem ser reativadas antes da
+geração.
 
 Colaboradores desativados recebem ação visível Reativar colaborador, com confirmação, controle de
 versão e users:update. Reativar não recupera sessões revogadas. Proteger o último administrador

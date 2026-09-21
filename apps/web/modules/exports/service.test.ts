@@ -99,3 +99,23 @@ it("records failure when the data pool cannot open without a false completion", 
   expect(f.phases.at(-1)).toBe("failed");
   expect(f.phases).not.toContain("completed");
 });
+it("closes resources on formatter failure and emits zero bytes for an initially denied actor", async () => {
+  const denied = fixture();
+  denied.deps.authorize.mockRejectedValue(new Error("PERMISSION_DENIED"));
+  await expect(runExport(denied.deps, denied.sink, new AbortController().signal)).rejects.toThrow(
+    "PERMISSION_DENIED",
+  );
+  expect(denied.chunks).toHaveLength(0);
+  const broken = fixture();
+  broken.deps.write = async (rows) => {
+    for await (const row of rows) {
+      expect(row.id).toBe("0");
+      throw new Error("FORMATTER_FAILED");
+    }
+  };
+  await expect(runExport(broken.deps, broken.sink, new AbortController().signal)).rejects.toThrow(
+    "FORMATTER_FAILED",
+  );
+  expect(broken.closed).toBe(true);
+  expect(broken.phases.at(-1)).toBe("failed");
+});
