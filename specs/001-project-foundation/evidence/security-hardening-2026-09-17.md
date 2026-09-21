@@ -41,3 +41,6 @@ Payload. Audit sem alertas não garante ausência de falhas desconhecidas.
 ## Conciliação de 21/09/2026
 
 O primeiro CI da composição (0bb9a84) passou em formatação/lint e segurança, mas falhou no typecheck do worker: o merge preservou Payload 3.88.0 no worker enquanto web/news usavam 3.89.0. Corrigido o manifesto e regenerado o lockfile para uma única versão 3.89.0. Nova execução necessária; não marcar os gates do conjunto como concluídos antes dela.
+
+
+Validação da correção em `7d4d507`: [CI da composição](https://github.com/Komunick/caabnovo/actions/runs/35617770034) com formatação, lint, typecheck, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança aprovados. Integração inclui auth-session (5), account-auth-hardening (10) e initial-password (9). O cenário focado de Relatórios também passou. Suíte completa de navegador/acessibilidade ainda em andamento neste registro; estado final consultável no [PR #35](https://github.com/Komunick/caabnovo/pull/35). Nenhum resultado representa teste em produção ou execução das 108 tarefas novas.

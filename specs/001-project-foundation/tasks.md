@@ -1,6 +1,6 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
-**Pendências preservadas pela revisão de código — 21/09:** T096 (fechar cadastro público, A03) foi conciliada com a correção preparada e aguarda validação desta entrega; T097 (preservar conflitos dos formulários, A11) continua pendente e executável em retomada autorizada. A lista incremental T098–T120 não as substitui nem suspende.
+**Pendências preservadas pela revisão de código — 21/09:** T096 (fechar cadastro público, A03) foi implementada e validada no CI de 7d4d507, com integração em dev pendente no PR #35; T097 (preservar conflitos dos formulários, A11) continua pendente e executável em retomada autorizada. A lista incremental T098–T120 não as substitui nem suspende.
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/exports.md), [quickstart](quickstart.md).
@@ -72,10 +72,10 @@ autorizadas por constarem neste arquivo. Não repetir tarefas já concluídas.
 
 ## Pendências anteriores que continuam prioritárias
 
-T096 (cadastro público) e T097 (preservação de erro/versão dos rascunhos) continuam
-abertas com seus IDs no histórico, sem serem substituídas por esta lista. Antes de
-entregar o novo acesso, T096 deve conciliar a correção já preparada e validar HTTP em
-`apps/web/modules/auth/auth-factory.ts` e `apps/web/tests/integration/auth-session.test.ts`.
+T096 (cadastro público) foi conciliada nesta entrega e validada no CI de 7d4d507:
+HTTP negado sem criação de usuário/credencial/sessão, login/recuperação e
+provisionamento administrativo cobertos pelas suítes de integração. PR #35 ainda
+sem merge. T097 (preservação de erro/versão dos rascunhos) continua aberta.
 T097 atua em `apps/web/components/workspace-drafts.tsx` e estados dos editores de
 Notícias/acessos, com `apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas
 pendências resolvidas por plan/tasks nem recriar correções já existentes sem confronto.
@@ -620,7 +620,7 @@ concluídos pelo adiamento e não alterar o gate de produção.
 
 ## Phase 9: Convergence — revisão de 21/09/2026
 
-- [ ] T096 CRÍTICA: fechar cadastro público por e-mail na versão integrada, conciliando a correção de segurança já preparada em entrega separada; validar HTTP negado e provisionamento administrativo, sem reaplicar mudanças de infraestrutura retiradas. Origem: US1/FR-001–FR-004, Constituição IV; achado A03 (contradicts).
+- [x] T096 Fechar cadastro público por e-mail, conciliando a correção preparada; HTTP negado e provisionamento administrativo validados no [CI de 7d4d507](https://github.com/Komunick/caabnovo/actions/runs/35617770034), incluindo auth-session, account-auth-hardening e initial-password. Sem reaplicar infraestrutura retirada. Implementado na branch de entrega; merge em dev pendente no PR #35. Origem: US1/FR-001–FR-004, Constituição IV; achado A03.
 - [ ] T097 Preservar mensagens de conflito e versão original ao navegar entre abas/módulos em todos os formulários; começar por NewsEditor e UserAccessForm, ampliar inventário dos estados de erro e validar retorno/salvar/cancelar/sair. Origem: decisão transversal de edição de 16/09 e DP01/DP02; A11 (partial).
 
 Detalhamento de AX02/AX03: ocultar também a seção de notícias publicadas do Início
@@ -632,4 +632,4 @@ sem news:read, mantendo a leitura pública externa. Agendamentos no catálogo at
 
 ## Consolidação de segurança — 21/09/2026
 
-Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

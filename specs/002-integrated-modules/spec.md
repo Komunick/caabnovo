@@ -346,3 +346,6 @@ Checkpoint I2/I3 — 21/09/2026: correções documentais autorizadas após o seg
 
 
 Checkpoint de entrega — 21/09/2026: usuário autorizou preparar PR e retirar cópias históricas locais após backup. Documentação atual registrada e segurança preparada conciliada nesta branch; sem iniciar as 108 tarefas novas de exportação/cargos/módulos. Conflitos de documentação preservam decisões atuais; validações da composição e PR pendentes. Sem merge ou localhost.
+
+
+Checkpoint PR #35 — 21/09/2026: entrega única de documentação e segurança publicada, sem aprovação/merge. T096 conciliada e validada por integração no CI de 7d4d507; 108 tarefas novas e T097 permanecem pendentes. Quality funcional (formatação/lint/tipos/unitários/contratos/integração/build) e segurança passaram; suíte completa de navegador ainda em andamento. Cópias históricas locais estão sendo retiradas após backup verificado; mapa operacional fora do PR.

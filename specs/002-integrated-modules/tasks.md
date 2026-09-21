@@ -2,7 +2,7 @@
 
 Resumo da entrega: [plan/tasks e dependências](plan-tasks-result-2026-09-21.md).
 
-**Pendências preservadas pela revisão de código — 21/09:** DOC01 cobre a conciliação normativa identificada na revisão de código. A nova T099 continua como revisão final dos contratos/planos gerados em paralelo e não representa implementação. Preservar também as pendências de auditoria 001 T096/T097, 006 T025 e 010 T025/T026; a seção histórica não as cancela.
+**Pendências preservadas pela revisão de código — 21/09:** DOC01 cobre a conciliação normativa identificada na revisão de código. A nova T099 continua como revisão final dos contratos/planos gerados em paralelo e não representa implementação. 001 T096 foi conciliada e validada nesta entrega, ainda sem merge. Preservar as pendências de auditoria 001 T097, 006 T025 e 010 T025/T026; a seção histórica não as cancela.
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/exports.md), [quickstart](quickstart.md).

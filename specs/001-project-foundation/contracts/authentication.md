@@ -3,8 +3,10 @@
 **Estado conferido em 21/09/2026:** catálogo atual contém news:read/write/publish,
 mas ainda não consulta/alteração de Agendamentos nem permissão geral de exportação.
 AX01/AX04 definirão a transição sem novas concessões automáticas de módulo.
-O handler integrado ainda permite cadastro público por e-mail; isso é lacuna
-registrada em T096, não autorização para criar contas públicas.
+Nesta entrega, T096 bloqueia `/sign-up/email` na lista de rotas e configura
+`disableSignUp: true`; a requisição pública é negada sem usuário, credencial ou
+sessão. Login, recuperação e criação administrativa permanecem. Validado no CI
+de 7d4d507; integração em dev pendente no PR #35.
 Permissões efetivas usam a view effective_user_permission, inclusive concessões
 individuais de user_access; não derivar o acesso somente do nome do papel.
 

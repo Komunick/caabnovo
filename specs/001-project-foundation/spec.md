@@ -2,7 +2,7 @@
 
 ## Checkpoint de revisão de código — 21/09/2026
 
-Contas, permissões individuais, senha inicial e sessões estão implementadas; MFA foi retirado. Encontradas lacunas A01/A03/A05/A06/A11 de autorização/visibilidade e preservação de erros. AX01–AX04/DX01 e T089/T095 permanecem pendentes. Cadastro público ainda permitido na base integrada; correção existente fora de dev deve ser conciliada em T096. T097 cobre erros de concorrência.
+Contas, permissões individuais, senha inicial e sessões estão implementadas; MFA foi retirado. Encontradas lacunas A01/A03/A05/A06/A11 de autorização/visibilidade e preservação de erros. AX01–AX04/DX01 e T089/T095 permanecem pendentes. T096 fecha o cadastro público nesta branch e foi validada no CI de 7d4d507; integração em dev pendente no PR #35. T097 cobre erros de concorrência.
 
 Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
 Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
@@ -576,4 +576,4 @@ Checkpoint I3 — 21/09/2026: correção documental autorizada após o segundo a
 
 ## Consolidação de segurança — 21/09/2026
 
-Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

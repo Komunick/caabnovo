@@ -78,7 +78,7 @@ da jornada de produto.
 - `apps/web/modules/users/export-adapter.ts` e `export-adapter.test.ts` (novos planejados).
 - `apps/web/app/(admin)/users/exportar/page.tsx` (nova planejada).
 
-A revisão de código anterior em specs/002-integrated-modules/code-audit-2026-09-21.md permanece preservada. T096 (fechar cadastro público, conciliando correção existente) é pré-requisito de segurança; T097 preserva erros/versão de rascunhos. A compatibilidade de audit_export deve fechar bypass pelo download genérico/binário com files:read isolada, sem afetar anexos/documentos comuns.
+A revisão de código anterior em specs/002-integrated-modules/code-audit-2026-09-21.md permanece preservada. T096 (fechar cadastro público) foi conciliada e validada nesta branch no CI de 7d4d507; sua integração em dev permanece no PR #35; T097 preserva erros/versão de rascunhos. A compatibilidade de audit_export deve fechar bypass pelo download genérico/binário com files:read isolada, sem afetar anexos/documentos comuns.
 
 ## Rollout, migração e rollback
 
@@ -514,4 +514,4 @@ Consulta global, exports:generate e todas as permissões de Relatórios são bas
 
 ## Consolidação de segurança — 21/09/2026
 
-Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
