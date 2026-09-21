@@ -3,10 +3,15 @@
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/exports.md), [quickstart](quickstart.md). **Branch da entrega:**
 `feature/access-export-foundation-20260921`. Lista ativa: T097–T123 e coordenação005 LC01/LC02, 008
-LC01. Implementação concluída, gates finais em andamento conforme checkpoint da spec e
+LC01. Implementação e gates concluídos conforme checkpoint da spec e
 [evidências](evidence/plan-2026-09-21-validation.md). T096 já integrada pelo PR35; não repetir.
 
 ## Rastreabilidade e escopo
+
+Evidência final: CI35644236348 (57d6b56) aprovado por completo. T097–T123 e005 LC01/LC02, 008 LC01
+concluídos; relatório vinculado acima. Clarify:1 resposta, Gestor não redefine Administrador.
+Analyze do recorte:23 requisitos/30 tarefas, cobertura100%, sem achados relevantes. As três
+marcações documentais permanecem abertas. Adaptações de outros módulos continuam pendentes.
 
 AX01–AX04 e DX01: detalhados pelas fases de permissões, descoberta, núcleo e Colaboradores abaixo.
 T089 continua política institucional adiada.
@@ -18,7 +23,7 @@ já concluídas.
 
 ## Setup
 
-- [ ] T098 Validar pg-cursor/ExcelJS/PDFKit sob Node 24 com consumidor lento e célula longa;
+- [x] T098 Validar pg-cursor/ExcelJS/PDFKit sob Node 24 com consumidor lento e célula longa;
       preparar parser de teste independente em `apps/web/tests/helpers/read-export.ts` (novo;
       leitura distinta dos writers), fixar versões aprovadas em `apps/web/package.json`,
       `pnpm-lock.yaml` e registrar RSS/compatibilidade em
@@ -26,14 +31,14 @@ já concluídas.
 
 ## Foundational
 
-- [ ] T099 Criar testes do contrato comum para datasets/colunas ordenadas, formatos, datas e campos
+- [x] T099 Criar testes do contrato comum para datasets/colunas ordenadas, formatos, datas e campos
       proibidos em `packages/contracts/tests/exports.test.ts` (novo), incluindo ausência de teto de
       registros/período.
-- [ ] T100 Implementar schemas e catálogo tipado de exportação em
+- [x] T100 Implementar schemas e catálogo tipado de exportação em
       `packages/contracts/src/exports.ts` (novo), exportar em `packages/contracts/src/index.ts` e
       preparar registro finito de adaptadores em `apps/web/modules/exports/catalog.ts` (novo), sem
       SQL livre.
-- [ ] T101 Cobrir migração de chaves, herança expirada/revogada, override vazio, deduplicação/versão
+- [x] T101 Cobrir migração de chaves, herança expirada/revogada, override vazio, deduplicação/versão
       e baseline editorial em `apps/web/tests/integration/access-foundation-migrations.test.ts`,
       `apps/web/tests/integration/user-access.test.ts` e
       `apps/web/tests/integration/user-permissions.test.ts`, comparando efetivo antes/depois das
@@ -41,11 +46,11 @@ já concluídas.
       `specs/001-project-foundation/contracts/roles.md`, incluindo Administrador com override
       vazio/novas permissões e Gestor com consulta global/exportação/Relatórios completos,
       concedendo a terceiro uma escrita que não possui.
-- [ ] T102 Adicionar conversão idempotente audit:export/reports:export→exports:generate em
+- [x] T102 Adicionar conversão idempotente audit:export/reports:export→exports:generate em
       `packages/db/migrations/0025_general_export_permission.sql` (nova); preservar user_role,
       leitura e override, incrementar version só quando array mudar e atualizar
       `apps/web/modules/auth/permissions.ts`.
-- [ ] T103 Implementar cargos/resolução de I1 em
+- [x] T103 Implementar cargos/resolução de I1 em
       `packages/db/migrations/0026_explicit_module_access.sql`: Gestor/Colaborador,
       scheduling:read/write/access:manage, Administrador com todo o catálogo apesar de override,
       Gestor com consulta global/exportação/Relatórios completos apesar de override, e remoção do
@@ -53,7 +58,7 @@ já concluídas.
       `packages/db/src/repositories/user-roles.ts`; distinguir Gestor do último Administrador,
       preservar vigência/revogação/dependências e não atribuir cargos a contas por inferência.
       Seguir `specs/001-project-foundation/contracts/roles.md`.
-- [ ] T104 Preparar compatibilidade de autorização antes do rollout em
+- [x] T104 Preparar compatibilidade de autorização antes do rollout em
       `packages/db/src/repositories/report-storage.ts`, `apps/worker/src/jobs/report-export.ts`,
       `apps/worker/src/jobs/audit-export.ts` e `apps/web/modules/files/file-service.ts`; normalizar
       só chaves antigas, mantendo dono/domínios/revogação e arquivos intactos; audit_export exige
@@ -61,31 +66,31 @@ já concluídas.
       Relatórios aplicar `specs/010-reports-analytics/contracts/legacy-downloads.md`, complementando
       snapshots antigos com dependências de conteúdo/gerador; não tratar ausência de scheduling:read
       salvo como autorização.
-- [ ] T105 Criar testes de streaming/abort/reautorização por lote/pool indisponível simulado e
+- [x] T105 Criar testes de streaming/abort/reautorização por lote/pool indisponível simulado e
       estados, usando até100 registros conforme C1, em `apps/web/modules/exports/service.test.ts`
       (novo); comprovar interrupção total quando um registro perde acesso, sem omissão silenciosa.
-- [ ] T106 Criar estado operacional mínimo em `packages/db/migrations/0027_export_operations.sql` e
+- [x] T106 Criar estado operacional mínimo em `packages/db/migrations/0027_export_operations.sql` e
       `packages/db/src/repositories/export-operations.ts` (novos), com requestId único, dono,
       estados/heartbeat e contagens, sem dados exportados/filtros pessoais ou fila.
-- [ ] T107 Implementar cursor/snapshot e pipeline cancelável em
+- [x] T107 Implementar cursor/snapshot e pipeline cancelável em
       `apps/web/modules/exports/service.ts` e `apps/web/modules/exports/query.ts` (novos), separando
       pools de dados/controle, revalidando sessão/grants/IDs/campos antes de cada lote e fechando
       todos os recursos em falha.
-- [ ] T108 [P] Implementar CSV incremental em `apps/web/modules/exports/formats/csv.ts` e testes
+- [x] T108 [P] Implementar CSV incremental em `apps/web/modules/exports/formats/csv.ts` e testes
       adjacentes (novos), com escape, BOM, neutralização de fórmulas e identificadores textuais; sem
       Buffer completo.
-- [ ] T109 [P] Implementar XLSX incremental em `apps/web/modules/exports/formats/xlsx.ts` e testes
+- [x] T109 [P] Implementar XLSX incremental em `apps/web/modules/exports/formats/xlsx.ts` e testes
       adjacentes (novos), commit por linha, múltiplas planilhas, continuação Unicode/linhas/células
       e reconstrução exata de múltiplas colunas longas.
-- [ ] T110 [P] Implementar PDFKit incremental em `apps/web/modules/exports/formats/pdf.ts` e testes
+- [x] T110 [P] Implementar PDFKit incremental em `apps/web/modules/exports/formats/pdf.ts` e testes
       adjacentes (novos), paginação vertical/faixas horizontais, cabeçalhos e ordem de colunas, sem
       bufferPages ou corte de valores.
-- [ ] T111 Implementar catálogo, POST de formulário e status próprios em
+- [x] T111 Implementar catálogo, POST de formulário e status próprios em
       `apps/web/app/api/v1/exports/catalog/route.ts`,
       `apps/web/app/api/v1/exports/download/route.ts` e
       `apps/web/app/api/v1/exports/operations/[requestId]/route.ts` (novos); CSRF/Origin,
       attachment/no-store e envelope de erro do frame conforme contrato.
-- [ ] T112 Implementar tela compartilhada em `apps/web/modules/exports/ui/export-screen.tsx` (nova),
+- [x] T112 Implementar tela compartilhada em `apps/web/modules/exports/ui/export-screen.tsx` (nova),
       filtros e ordem de colunas por teclado, três formatos/formulário nativo, polling sem spinner
       infinito e postMessage validado por origem/source/requestId; preservar rascunhos após erro e
       não usar blob integral.
@@ -95,7 +100,7 @@ já concluídas.
 **Objetivo/aceite independente:** Sessões inválidas/revogadas e CSRF recusados; autenticação e
 concessão válidas funcionam sem MFA, sem autoelevação ou dados secretos exportados.
 
-- [ ] T113 [US1] Validar sessão atual, sem MFA, sem escalada e sem segredo exportado em
+- [x] T113 [US1] Validar sessão atual, sem MFA, sem escalada e sem segredo exportado em
       `apps/web/tests/integration/auth-session.test.ts` e `apps/web/tests/contract/exports.test.ts`
       (novo), incluindo CSRF/Origin inválidos, consulta de operação alheia e revogação durante
       stream.
@@ -107,7 +112,7 @@ módulos, exporta e tem Relatórios completos, concede acessos a terceiros sem m
 acessos/cargo; Colaborador não concede; Colaboradores oferece três formatos com campos autorizados,
 sem senha/hash/token.
 
-- [ ] T114 [US2] Atualizar rótulos e seleção de acessos em
+- [x] T114 [US2] Atualizar rótulos e seleção de acessos em
       `apps/web/modules/users/access-labels.ts`, `apps/web/modules/users/ui/user-access-form.tsx` e
       `apps/web/modules/users/user-access-service.ts`; geral independente de módulos, dependências
       válidas e conflito de version sem perda de edição. Aplicar
@@ -120,10 +125,10 @@ sem senha/hash/token.
       gerir acessos. Classificar leitura versus mutação em guardas com chave unificada, incluindo
       `apps/web/modules/messaging/http/routes.ts` e contrato009; cobrir tentativa direta de escrita
       pelo Gestor sem concessão, coordenando M016 sem ativar envio real.
-- [ ] T115 [US2] Implementar `apps/web/modules/users/export-adapter.ts` e teste adjacente (novos),
+- [x] T115 [US2] Implementar `apps/web/modules/users/export-adapter.ts` e teste adjacente (novos),
       consultando `packages/db/src/repositories/users.ts` e autorizações de acessos existentes;
       excluir senha inicial/hash/tokens e manter ordenação/escopo por campo.
-- [ ] T116 [US2] Integrar ação e tela em `apps/web/app/(admin)/users/page.tsx` e
+- [x] T116 [US2] Integrar ação e tela em `apps/web/app/(admin)/users/page.tsx` e
       `apps/web/app/(admin)/users/exportar/page.tsx` (nova); cobrir três cargos, perfil parcial e
       três formatos em `apps/web/tests/e2e/direct-exports.spec.ts` e regressões em
       `apps/web/tests/e2e/user-administration.spec.ts`; provar Gestor sem escrita em outro módulo
@@ -134,11 +139,11 @@ sem senha/hash/token.
 **Objetivo/aceite independente:** Módulo negado não produz sidebar, resultado de busca ou
 cartão/contador no Início; revogação vale na próxima ação e Conta/Sessões permanecem.
 
-- [ ] T117 [US4] Ajustar `apps/web/modules/workspace/areas.ts`,
+- [x] T117 [US4] Ajustar `apps/web/modules/workspace/areas.ts`,
       `apps/web/modules/workspace/search.ts` e `apps/web/app/(admin)/page.tsx` para zero
       entradas/cartões/contadores sem consulta; ações de mutação exigem escrita, Conta/Sessões
       preservadas.
-- [ ] T118 [US4] Cobrir sidebar/busca/Início e revogação em
+- [x] T118 [US4] Cobrir sidebar/busca/Início e revogação em
       `apps/web/modules/workspace/areas.test.ts`, `apps/web/modules/workspace/search.test.ts` e
       `apps/web/tests/e2e/workspace-experience.spec.ts` e
       `apps/web/tests/e2e/direct-exports.spec.ts`, incluindo geral isolada e scheduling sem acesso.
@@ -148,13 +153,13 @@ cartão/contador no Início; revogação vale na próxima ação e Conta/Sessõe
 **Objetivo/aceite independente:** Distinguir geração, transferência, falha e interrupção com estado
 auditável e sem spinner infinito ou afirmação de gravação local.
 
-- [ ] T119 [US5] Validar auditoria/estado de início/falha/cancelamento/interrupção e fim do stream
+- [x] T119 [US5] Validar auditoria/estado de início/falha/cancelamento/interrupção e fim do stream
       em `apps/web/tests/integration/export-operations.test.ts` (novo), heartbeat sob backpressure e
       falha de controle sem sucesso falso; nunca afirmar gravação no disco do cliente.
 
 ## Polish
 
-- [ ] T120 Executar gates aplicáveis e validação com100 registros/arquivos/teclado/390 px/temas no
+- [x] T120 Executar gates aplicáveis e validação com100 registros/arquivos/teclado/390 px/temas no
       CI conforme `specs/002-integrated-modules/export-validation-100.md`, sem prova de
       estresse/grande volume; registrar resultados reais e rollback compatível em
       `specs/001-project-foundation/evidence/plan-2026-09-21-validation.md` (novo), preservando T089
@@ -900,7 +905,7 @@ alterar o gate de produção.
       auth-session, account-auth-hardening e initial-password. Sem reaplicar infraestrutura
       retirada. Implementado na branch de entrega; merge em dev pendente no PR #35. Origem:
       US1/FR-001–FR-004, Constituição IV; achado A03.
-- [ ] T097 Preservar mensagens de conflito e versão original ao navegar entre abas/módulos em todos
+- [x] T097 Preservar mensagens de conflito e versão original ao navegar entre abas/módulos em todos
       os formulários; começar por NewsEditor e UserAccessForm, ampliar inventário dos estados de
       erro e validar retorno/salvar/cancelar/sair. Origem: decisão transversal de edição de 16/09 e
       DP01/DP02; A11 (partial).
@@ -926,12 +931,12 @@ permanece desligado. Evidências:
 
 ## Ampliação autorizada: ciclo de vida — 21/09/2026
 
-- [ ] T121 Especificar e implementar exclusão de colaboradores lógica após 24 horas, com bloqueio e
+- [x] T121 Especificar e implementar exclusão de colaboradores lógica após 24 horas, com bloqueio e
       revogação imediatos, conforme decisão confirmada; proteger último administrador, vínculos,
       sessões, concorrência, permissões e auditoria; validar API e interface.
-- [ ] T122 Expor Reativar colaborador no detalhe desativado usando PATCH versionado; registrar
+- [x] T122 Expor Reativar colaborador no detalhe desativado usando PATCH versionado; registrar
       evento e validar reativação sem restaurar sessões antigas.
-- [ ] T123 Implementar nova senha administrativa pelo fluxo de primeira senha, com endpoint
+- [x] T123 Implementar nova senha administrativa pelo fluxo de primeira senha, com endpoint
       separado, confirmação, versão, cargo Administrador/Gestor atual, sem concessão individual nem
       Gestor sobre Administrador, segredo em memória transitória, revogação atômica e testes de
       contrato/integração/interface. Ver spec006.

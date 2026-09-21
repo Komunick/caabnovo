@@ -419,8 +419,14 @@ O adiamento documentado não conclui P01/POL01 nem representa validação instit
 
 ## Ciclo de vida autorizado — 21/09/2026
 
-- [ ] LC01 Implementar ação de excluir associado lógica após sete dias, com desfazer e restauração,
+- [x] LC01 Implementar ação de excluir associado lógica após sete dias, com desfazer e restauração,
       incluindo data efetiva, filtros, autorização, confirmação, concorrência, vínculos e auditoria;
       validar API e UI.
-- [ ] LC02 Conferir e validar reativação/desbloqueio/restauração existente pela interface e pelos
+- [x] LC02 Conferir e validar reativação/desbloqueio/restauração existente pela interface e pelos
       filtros, sem alterar dependentes nem avaliação OAB implicitamente.
+
+Evidência do ciclo de vida: CI35641862727 (385f0d6) totalmente aprovado; integração e jornadas de
+interface em `account-member-lifecycle`, `members` e `scheduling`, conforme a função. Exclusão,
+recuperação e decisão da reserva mantêm histórico/ocupação. Detalhes no
+[relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Somente os
+itens LC acima foram concluídos; exportação própria e pendências anteriores permanecem.

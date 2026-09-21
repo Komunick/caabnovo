@@ -347,3 +347,9 @@ sete dias após a solicitação; consultas e elegibilidade avaliam a data pelo r
 depender de worker. Cancelamento da solicitação/restauração e reagendamento da exclusão são
 versionados; manter vínculos e histórico íntegros. Entrega na mesma branch do ciclo; sem novo
 projeto ou cópia de spec na pasta principal.
+
+Checkpoint de execução do ciclo de vida,21/09/2026: incremento implementado e validado no
+CI35641862727, com migração0028 aditiva, controle de versão e auditoria. Tarefas LC e evidências
+atualizadas; exportação própria continua planejada. Sem aplicação ao banco local. Clarify do recorte
+concluído; analyze restrito às alterações concluído sem achados relevantes; gates compartilhados
+aprovados em57d6b56.

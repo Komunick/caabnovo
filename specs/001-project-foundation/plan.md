@@ -1,7 +1,7 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
 **Branch da entrega**: `feature/access-export-foundation-20260921` | **Data**: 2026-09-21 **Spec**:
-[spec.md](spec.md) | **Estado**: implementação autorizada em validação; evidências no checkpoint e
+[spec.md](spec.md) | **Estado**: recorte implementado e validado; evidências no checkpoint e
 relatório do incremento.
 
 ## Summary

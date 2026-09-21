@@ -336,3 +336,9 @@ Projetar a vigência da exclusão no DTO da reserva; guardar data de exclusão a
 instante da decisão de manter. Acrescentar comando versionado/auditado de manutenção; reutilizar
 cancelamento. Validar fronteira de sete dias, autorização, concorrência, restauração e preservação
 da ocupação até cancelamento explícito.
+
+Checkpoint de execução do ciclo de vida,21/09/2026: incremento implementado e validado no
+CI35641862727, com migração0028 aditiva, controle de versão e auditoria. Tarefas LC e evidências
+atualizadas; exportação própria continua planejada. Sem aplicação ao banco local. Clarify do recorte
+concluído; analyze restrito às alterações concluído sem achados relevantes; gates compartilhados
+aprovados em57d6b56.

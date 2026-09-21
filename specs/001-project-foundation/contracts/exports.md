@@ -1,7 +1,7 @@
 # Contrato do incremento — Fundação, Colaboradores e infraestrutura de exportação
 
-Estado em21/09/2026: implementado no recorte Colaboradores/base comum; validação final de navegador
-em andamento.
+Estado em21/09/2026: implementado no recorte Colaboradores/base comum; validado no CI35644236348
+(57d6b56), com três formatos e100 registros.
 
 Colaboradores: module `users`, dataset `accounts` e contexto de acessos do cadastro; filtros nome,
 e-mail, datas de criação, estado e exclusão. Colunas de cargos/acessos exigem roles:read. Seleção

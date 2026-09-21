@@ -2,13 +2,12 @@
 
 ## Checkpoint da entrega ativa — 21/09/2026
 
-Implementação do incremento de ciclo de vida realizada na entrega compartilhada, com testes de
-integração e navegador aprovados no CI35640590161. Gates complementares no CI35641862727:
-quality/security aprovados; navegador em andamento. Evidências, limites e próximo passo no
+Incremento de ciclo de vida implementado e validado no CI35644236348 (57d6b56), com dados
+sintéticos. Evidências e limites no
 [relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Clarify e
-analyze serão restritos às alterações desta entrega; requisitos históricos sem relação com o diff e
-exportações próprias ainda planejadas ficam fora. Os checkpoints anteriores são históricos.
-Localhost desligado, sem alteração do banco local.
+analyze concluídos somente nas alterações do recorte; sem achados relevantes. Requisitos históricos
+sem relação com o diff e exportações próprias ainda planejadas ficam fora. Checkpoints anteriores
+são históricos. Localhost desligado; banco local preservado.
 
 ## Checkpoint de revisão de código — 21/09/2026
 
@@ -362,3 +361,7 @@ individual; substitui a restrição inicial desta ampliação a apenas Administr
 users:create/users:update/roles:grant para esta ação. Gestor não redefine senha de Administrador;
 autogeração usa as Configurações pessoais. A conta destinatária precisa estar ativa. A geração
 inicial continua em endpoint próprio.
+
+Confirmação no clarify do recorte,21/09/2026: usuário escolheu A. Gestor pode redefinir outros
+Gestores/Colaboradores, mas somente Administrador redefine outro Administrador. A resposta confirma
+a implementação existente e não amplia a autoridade do Gestor.

@@ -59,11 +59,53 @@ RSS pós-leitura independente:260,8/265,1/303,8MB respectivamente. Pico amostrad
 inclui o processo do teste, sem isolamento de hardware. Pools/cursor liberados ao final. Não
 representa limite de memória sob grande volume nem SLA de exportação.
 
-## Pendências de fechamento
+## Navegador e revisão visual
 
-Navegador da exportação,30 aberturas/p95, temas/390px e jornadas complementares do Gestor e reserva
-mantida/cancelada após exclusão. Snapshot entre lotes e formato PDF longo/faixas em validação
-adicional. Não marcar as tarefas dependentes desses resultados antes do CI.
+CI385f0d6:89 E2E e6 testes de acessibilidade aprovados, além do smoke inicial de Relatórios.
+Artefatos sintéticos de exportação e reservas foram baixados e inspecionados. O aviso de associado
+excluído permanece após Manter reserva e registra responsável/data. As imagens iniciais de
+exportação mostraram filtros nativos sem os componentes compartilhados; corrigidos em9464254, com
+FormField/filter-grid, grupos/seleção e controles de ordem usando os tokens existentes.
+
+CIc18ac5b: quality/security aprovados; navegador falhou porque o seletor genérico de alerta também
+capturava o anunciador interno do Next.js. A mensagem correta estava presente. Corrigido em57d6b56.
+O teste de conflito de acessos passou na repetição, mas sua dependência de uma conta estar na
+primeira página foi removida; agora percorre a paginação da massa de100 registros.
+
+## Fechamento validado
+
+[CI35644236348](https://github.com/Komunick/caabnovo/actions/runs/35644236348), commit57d6b56:
+quality, browser e security aprovados. Passaram387 testes unitários,145 de contrato,234 de
+integração, 89 E2E,6 acessibilidade e2 testes do smoke inicial de Relatórios; formatação, lint,
+tipos, migrations e build aprovados. Nenhuma falha ou repetição instável registrada na execução
+final.
+
+Exportação real de100 registros nos três formatos, com erro de configuração e nova tentativa,
+colunas reordenadas, resultado vazio, Gestor/Colaborador e revogação. As30 aberturas do painel
+iniciadas em paralelo aos downloads tiveram p95 de479,7ms, abaixo do alvo2s no runner. Os downloads
+podem terminar antes das30 aberturas; não alegar carga concorrente sustentada ou estresse. Perfil
+completo em [export-profile-57d6b56.json](export-profile-57d6b56.json).
+
+Revisão visual concluída: filtros usam os controles compartilhados, colunas e botões permanecem
+legíveis em390px/desktop e nos dois temas. Imagens e perfil no
+[artefato de exportação](https://github.com/Komunick/caabnovo/actions/runs/35644236348/artifacts/10660201880)
+e [reservas](https://github.com/Komunick/caabnovo/actions/runs/35644236348/artifacts/10660401502).
+As capturas full-page mantêm a barra fixa na posição de rolagem do momento da captura.
+
+Clarify restrito às alterações:1 pergunta respondida, confirmando que somente Administrador redefine
+outro Administrador. Escopo/comportamento, modelo/ciclo de vida, UX, qualidade, dependências,
+falhas, restrições, terminologia, aceite e placeholders claros; sem pendências novas. Seções
+atualizadas: Clarifications e autoridade de nova senha nas specs001/006. Checklist00113/16 →13/16,
+sem regressões; três itens documentais mantidos abertos por autorização do usuário. Sem hooks.
+
+Analyze posterior, somente leitura e limitado ao mesmo recorte:23 requisitos,30 tarefas,100% de
+cobertura; zero ambiguidades restantes, duplicações relevantes, questões críticas ou tarefas sem
+requisito. Nenhum conflito constitucional identificado. T097–T123,005 LC01/LC02 e008 LC01 concluídos
+com estas evidências. Isso não conclui os adaptadores futuros nem homologações institucionais.
+
+Registros concorrentes sobre documentos/dependentes P01 foram preservados localmente e ficam fora
+deste PR, por pedido explícito do usuário. Não pertencem ao recorte do clarify/analyze desta
+entrega.
 
 ## Rollback e limites
 

@@ -347,6 +347,12 @@ Nenhuma tarefa nova concluída apenas pela atualização documental.
 
 ## Ciclo de vida de associados — 21/09/2026
 
-- [ ] LC01 Avisar exclusão efetiva de associado em reservas, preservando histórico e ocupação;
+- [x] LC01 Avisar exclusão efetiva de associado em reservas, preservando histórico e ocupação;
       permitir manter (com auditoria) ou cancelar por responsável com escrita; validar fronteira
       temporal, concorrência, UI e negações. Depende de 005 LC01.
+
+Evidência do ciclo de vida: CI35641862727 (385f0d6) totalmente aprovado; integração e jornadas de
+interface em `account-member-lifecycle`, `members` e `scheduling`, conforme a função. Exclusão,
+recuperação e decisão da reserva mantêm histórico/ocupação. Detalhes no
+[relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Somente os
+itens LC acima foram concluídos; exportação própria e pendências anteriores permanecem.

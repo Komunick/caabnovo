@@ -11,31 +11,20 @@ análise. Decisão explícita do usuário; não executar análise integral do pr
 
 ## Checkpoint atual — 21/09/2026
 
-Clarify iniciado somente no diff; uma pergunta enviada sobre Gestor redefinir senha de
-Administrador, aguardando resposta. CIc18ac5b aprovou quality/security e encontrou um seletor de
-alerta ambíguo no novo teste; corrigido para o alerta de configuração. Teste de conflito também
-passa a percorrer a paginação, sem depender da posição aleatória do UUID na massa sintética. Essas
-correções de testes e a apresentação dos filtros estão em validação; não concluir T120 ainda.
+Recorte implementado e validado: T097–T123,005 LC01/LC02 e008 LC01. CI35644236348 (57d6b56) aprovado
+em quality/browser/security, incluindo387 unitários,145 contrato,234 integração,89 E2E, 6
+acessibilidade, migrations e build. Exportação Colaboradores com100 registros, três formatos,
+recuperação de erro e p95 de479,7ms nas30 aberturas do painel. Imagens finais conferidas.
+[Resultados e limites](evidence/plan-2026-09-21-validation.md).
 
-Revisão visual dos artefatos385f0d6 encontrou filtros com estilo nativo; corrigidos com FormField,
-filter-grid, grupos de acesso e tokens compartilhados. Nova imagem desktop e revisão móvel em
-validação no CI. Reserva mantida conferida visualmente, com aviso preservado. CI385f0d6 passou por
-completo:89 E2E e6 acessibilidade, além dos gates quality/security. O ajuste visual será validado
-antes da sequência clarify → analyze → PR.
+Clarify apenas das alterações concluído:1 pergunta respondida, Gestor não redefine Administrador.
+Demais categorias claras. Checklist13/16 preservado por autorização, sem hooks. Analyze posterior
+somente leitura:23 requisitos,30 tarefas, cobertura100%, sem achados relevantes. A documentação não
+declara novos adaptadores, descarte institucional ou homologação dos demais módulos concluídos.
 
-Implementação do recorte concluída: T097, cargos/acessos, base de exportação e adaptador de
-Colaboradores, ciclo de colaboradores/associados, nova senha e decisão sobre reservas. CI35640590161
-(commit67c4292) aprovado em quality, browser e security, incluindo os três formatos com100 registros
-e acessibilidade. CI35641862727 (385f0d6) aprovou quality/security; navegador complementar em
-andamento. Detalhes e limites no [relatório de validação](evidence/plan-2026-09-21-validation.md).
-
-Ajuste final em validação: medir aberturas do painel em paralelo aos downloads e testar erro de
-configuração seguido de nova tentativa com os filtros preservados; limitar espera de instruções SQL
-também na criação do estado operacional. Não é limite de registros/período da exportação. Próximo
-passo: concluir gates, executar clarify → analyze somente no diff autorizado e abrir PR para dev,
-conforme pedido explícito do usuário. Localhost desligado; nenhuma migration aplicada ao banco
-local. As três marcações documentais continuam abertas. Checkpoints abaixo são históricos e
-registram o estado de suas etapas, não substituem este checkpoint atual.
+Próximo passo: abrir PR para dev conforme pedido explícito, sem aprovar/integrar. Localhost
+desligado, banco local preservado. Checkpoints abaixo são históricos e não substituem este estado
+atual.
 
 ## Checkpoint de implementação — CI 35636649322
 
@@ -70,6 +59,10 @@ com branches dev e main obrigatórias."
 ## Clarifications
 
 ### Session 2026-09-21
+
+- Q: O Gestor poderá gerar nova senha para uma conta com cargo Administrador? → A: Não (A). Somente
+  Administrador redefine outro Administrador; Gestor pode redefinir outros gestores e colaboradores.
+  Resposta confirma a proteção implementada; senha própria permanece em Configurações.
 
 - Q: Quem poderá baixar/exportar dados em cada módulo? → A: Uma permissão geral de exportação,
   combinada com o acesso aos módulos. Quem só acessa Associados e Colaboradores só pode exportar
@@ -123,10 +116,10 @@ inclusive alterações que não possui para uso próprio, mas não altera os pr�
 cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição
 de cargos permanece com Administrador.
 
-Segundo o usuário, somente Administrador existe atualmente. Criar Gestor e Colaborador faz parte da
-implementação futura; nenhuma conta foi alterada agora. Contrato e aceite em
-[cargos](contracts/roles.md). A autoridade de concessão do Gestor é independente de seus acessos de
-uso.
+Na definição do requisito, o usuário informou que somente Administrador existia. Esta entrega criou
+as definições Gestor e Colaborador na migration0026, sem atribuí-las a contas por inferência;
+nenhuma conta do banco local foi alterada. Contrato e aceite em [cargos](contracts/roles.md). A
+autoridade de concessão do Gestor é independente de seus acessos de uso.
 
 ## User Scenarios & Testing _(mandatory)_
 
