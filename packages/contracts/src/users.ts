@@ -34,14 +34,12 @@ export const userAddressSchema = brazilianAddressSchema
   .strict();
 export type UserAddress = z.infer<typeof userAddressSchema>;
 
-export const userSchema = currentUserSchema
-  .omit({ permissions: true })
-  .extend({
-    cpf: userCpfSchema.nullable().optional(),
-    phone: userPhoneSchema.nullable().optional(),
-    address: userAddressSchema.nullable().optional(),
-    deletionEffectiveAt: z.iso.datetime({ offset: true }).nullable().optional(),
-  });
+export const userSchema = currentUserSchema.omit({ permissions: true }).extend({
+  cpf: userCpfSchema.nullable().optional(),
+  phone: userPhoneSchema.nullable().optional(),
+  address: userAddressSchema.nullable().optional(),
+  deletionEffectiveAt: z.iso.datetime({ offset: true }).nullable().optional(),
+});
 
 export const initialPasswordResponseSchema = z.object({
   initialPassword: z.string().regex(/^[A-Z][a-z]{5,}\d{6}$/),
