@@ -72,7 +72,7 @@ it("restores a failed access edit with its original version and isolates another
   expect(container.querySelector('[role="alert"]')?.textContent).toContain("Os acessos mudaram");
   expect(container.querySelector("input:checked")).not.toBeNull();
   await submit();
-  expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({
+  expect(JSON.parse(fetchMock.mock.calls[1]![1].body)).toEqual({
     permissions: ["members:read"],
     expectedPermissions: [],
     version: 2,
