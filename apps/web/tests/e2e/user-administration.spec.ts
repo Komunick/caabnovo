@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import { expectWcag22AA } from "./accessibility";
@@ -30,6 +31,40 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await expect(createButton).toBeEnabled();
   await page.getByLabel("Nome").fill(name);
   await page.getByLabel("E-mail").fill(email);
+  await createButton.click();
+  await expect(page.getByLabel("CPF", { exact: true })).toHaveAttribute("required", "");
+  await expect(page.getByRole("region", { name: "Senha inicial do colaborador" })).toHaveCount(0);
+  const contact = syntheticUserContact();
+  await page.route("https://viacep.com.br/**", (route) => route.abort());
+  await page.getByLabel("CPF", { exact: true }).fill(contact.cpf);
+  await page.getByLabel("Telefone", { exact: true }).fill(contact.phone);
+  await page.getByLabel("CEP", { exact: true }).fill(contact.address.postalCode);
+  await page.getByLabel("Rua", { exact: true }).fill(contact.address.street);
+  await page.getByLabel("Número", { exact: true }).fill(contact.address.number);
+  await page.getByLabel("Bairro", { exact: true }).fill(contact.address.neighborhood);
+  await page.getByLabel("Cidade", { exact: true }).fill(contact.address.city);
+  await page.getByLabel("Estado (UF)", { exact: true }).fill(contact.address.state);
+  await page
+    .getByRole("navigation", { name: "Navegação administrativa" })
+    .getByRole("link", { name: "Início", exact: true })
+    .click();
+  await page
+    .getByRole("navigation", { name: "Navegação administrativa" })
+    .getByRole("link", { name: "Colaboradores", exact: true })
+    .click();
+  await expect(page.getByLabel("Rua", { exact: true })).toHaveValue(contact.address.street);
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue(name);
+  await page.screenshot({
+    path: testInfo.outputPath("collaborator-fields-desktop.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectWcag22AA(page);
+  await page.screenshot({
+    path: testInfo.outputPath("collaborator-fields-mobile.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1280, height: 720 });
   await expect(page.getByLabel("Justificativa", { exact: true })).toHaveCount(0);
   await createButton.click();
   const receipt = page.getByRole("region", { name: "Senha inicial do colaborador" });
@@ -74,13 +109,20 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await expect(page.getByRole("button", { name: "Gerar senha inicial" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name })).toBeVisible();
 
+  await expect(page.getByLabel("CPF", { exact: true })).toHaveValue(
+    contact.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+  );
+  await expect(page.getByLabel("Rua", { exact: true })).toHaveValue(contact.address.street);
   const saveButton = page.getByRole("button", { name: "Salvar alterações" });
   await expect(saveButton).toBeEnabled();
   await expectWcag22AA(page);
   await page.getByLabel("Nome").fill(updatedName);
+  await page.getByLabel("Número", { exact: true }).fill("42");
   await expect(page.getByLabel("Justificativa", { exact: true })).toHaveCount(0);
   await saveButton.click();
   await expect(page.getByRole("heading", { name: updatedName })).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel("Número", { exact: true })).toHaveValue("42");
 
   const grantButton = page.getByRole("button", { name: "Conceder função" });
   await expect(grantButton).toBeEnabled();

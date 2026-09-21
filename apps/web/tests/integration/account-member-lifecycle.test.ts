@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
@@ -63,6 +64,7 @@ beforeEach(async () => {
 const colleague = () =>
   createUser(database.pool, {
     ...context(),
+    ...syntheticUserContact(),
     name: "Lifecycle colleague",
     email: "lifecycle@example.test",
     roleIds: [],

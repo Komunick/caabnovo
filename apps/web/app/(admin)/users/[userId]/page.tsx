@@ -3,7 +3,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { listActiveRoles } from "@caab/db/repositories/roles";
 import { findUserById } from "@caab/db/repositories/users";
-import { roleSchema, userSchema } from "@caab/contracts";
+import { roleSchema, userSchema, formatBrazilianAddress } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { PERMISSIONS } from "@/modules/auth/permissions";
 import { getDatabase } from "@/modules/shared/database";
@@ -91,6 +91,23 @@ export default async function UserDetailPage({
           canDisable={actor.permissions.has(PERMISSIONS.usersDisable)}
         />
       ) : null}
+      {(!actor.permissions.has(PERMISSIONS.usersUpdate) || user.deletionEffectiveAt) && (
+        <section className="panel" aria-label="Dados cadastrais">
+          <h2>Dados cadastrais</h2>
+          <dl>
+            <dt>CPF</dt>
+            <dd>{user.cpf ?? "Não informado"}</dd>
+            <dt>Telefone</dt>
+            <dd>{user.phone ?? "Não informado"}</dd>
+            <dt>Endereço</dt>
+            <dd>
+              {user.address
+                ? `${formatBrazilianAddress(user.address)} — ${user.address.city}/${user.address.state} — CEP ${user.address.postalCode}`
+                : "Não informado"}
+            </dd>
+          </dl>
+        </section>
+      )}
       <UserLifecycle
         user={user}
         canDelete={actor.permissions.has(PERMISSIONS.usersDelete)}

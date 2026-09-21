@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requiredEmailSchema } from "./brazilian-contact";
+import { brazilianPhoneSchema, requiredEmailSchema } from "./brazilian-contact";
 import {
   creationJustificationSchema,
   idSchema,
@@ -9,9 +9,39 @@ import {
 } from "./common";
 import { currentUserSchema, userStatusSchema } from "./auth";
 
+import { brazilianAddressSchema } from "./brazilian-address";
+import { isValidCpf } from "./members";
+
+export const userCpfSchema = z
+  .string()
+  .trim()
+  .regex(/^[\d.-]+$/)
+  .transform((value) => value.replace(/[.-]/g, ""))
+  .refine(isValidCpf, "Informe um CPF válido.");
+export const userPhoneSchema = brazilianPhoneSchema.refine(
+  (value) => value.length > 0,
+  "Informe o telefone com DDD.",
+);
+export const userAddressSchema = brazilianAddressSchema
+  .extend({
+    street: z.string().trim().min(1).max(300),
+    neighborhood: z.string().trim().min(1).max(100),
+    number: z.string().trim().min(1).max(20),
+    city: z.string().trim().min(1).max(100),
+    postalCode: brazilianAddressSchema.shape.postalCode.refine((value) => value.length === 8),
+    state: brazilianAddressSchema.shape.state.refine((value) => value.length === 2),
+  })
+  .strict();
+export type UserAddress = z.infer<typeof userAddressSchema>;
+
 export const userSchema = currentUserSchema
   .omit({ permissions: true })
-  .extend({ deletionEffectiveAt: z.iso.datetime({ offset: true }).nullable().optional() });
+  .extend({
+    cpf: userCpfSchema.nullable().optional(),
+    phone: userPhoneSchema.nullable().optional(),
+    address: userAddressSchema.nullable().optional(),
+    deletionEffectiveAt: z.iso.datetime({ offset: true }).nullable().optional(),
+  });
 
 export const initialPasswordResponseSchema = z.object({
   initialPassword: z.string().regex(/^[A-Z][a-z]{5,}\d{6}$/),
@@ -36,6 +66,9 @@ export const userListQuerySchema = paginationQuerySchema.extend({
 export const createUserRequestSchema = z
   .object({
     email: requiredEmailSchema,
+    cpf: userCpfSchema,
+    phone: userPhoneSchema,
+    address: userAddressSchema,
     name: z.string().trim().min(1).max(160),
     roleIds: z.array(idSchema),
     justification: creationJustificationSchema,
@@ -50,13 +83,20 @@ export const updateUserRequestSchema = z
   .object({
     name: z.string().trim().min(1).max(160).optional(),
     status: userStatusSchema.optional(),
+    cpf: userCpfSchema.optional(),
+    phone: userPhoneSchema.optional(),
+    address: userAddressSchema.optional(),
     version: z.number().int().positive(),
     justification: nonEmptyReasonSchema.max(1000).default(""),
   })
   .strict()
-  .refine(({ name, status }) => name !== undefined || status !== undefined, {
-    message: "At least one change is required",
-  });
+  .refine(
+    ({ name, status, cpf, phone, address }) =>
+      [name, status, cpf, phone, address].some((value) => value !== undefined),
+    {
+      message: "At least one change is required",
+    },
+  );
 
 export type User = z.infer<typeof userSchema>;
 export type UserPage = z.infer<typeof userPageSchema>;

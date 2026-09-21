@@ -188,6 +188,16 @@ export function foundationWorkflow() {
       JSON.stringify({
         name: `Usuário sintético k6 ${suffix}`,
         email: `k6-${suffix}@example.test`,
+        cpf: syntheticCpf(),
+        phone: "71999990000",
+        address: {
+          postalCode: "40000000",
+          street: "Rua Teste",
+          number: "s/n",
+          neighborhood: "Centro",
+          city: "Salvador",
+          state: "BA",
+        },
         roleIds: [],
         justification: "Medição sintética SC-006",
       }),
@@ -209,4 +219,15 @@ export function foundationWorkflow() {
     check(granted, { "permission write accepted": (value) => value.status === 204 });
   });
   sleep(1);
+}
+
+function syntheticCpf() {
+  const digits = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+  if (new Set(digits).size === 1) digits[0] = (digits[0]! + 1) % 10;
+  for (const length of [9, 10])
+    digits.push(
+      ((digits.reduce((sum, digit, index) => sum + digit * (length + 1 - index), 0) * 10) % 11) %
+        10,
+    );
+  return digits.join("");
 }
