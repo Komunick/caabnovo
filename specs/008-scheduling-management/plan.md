@@ -8,6 +8,20 @@ A branch real foi conferida com git e é a indicada acima.
 
 ## Summary
 
+### Continuidade vigente — 18/09/2026
+
+Entrega ativa: `feature/reports-analytics-20260918`, worktree registrada em checkpoint.md,
+PR34 ainda aberto. Incremento CAL-F01–CAL-F06: FullCalendar Standard 7.1.0/React e
+temporal-polyfill 1.0.1, importação dinâmica somente ao abrir a grade. Plugins
+daygrid/timegrid e tema classic adaptado aos tokens; locale pt-BR e America/Bahia.
+Toolbar com Button/Link existentes, visualização/data controladas pela URL.
+Novo GET /api/v1/scheduling/calendar, limites 42 dias/1.000 registros e mesmas guardas.
+Nenhuma migration ou alteração dos comandos transacionais. Carregamento abortável
+pela infraestrutura existente; limpar eventos anteriores ao trocar consulta/erro.
+Testar contratos, limites/isolamento no banco, navegação, fuso e ações no navegador.
+Consolidar implementação/testes/documentação antes dos checks locais e CI final.
+App/site permanece posterior; não executar automaticamente o restante do roadmap.
+
 ### Implementação autorizada em 15/09/2026
 
 Branch atual feature/scheduling-management-20260915, mesma worktree do planejamento.

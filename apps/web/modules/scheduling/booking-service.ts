@@ -4,6 +4,7 @@ import {
   idSchema,
   schedulingBookingSchema,
   schedulingBookingsQuerySchema,
+  schedulingCalendarQuerySchema,
   schedulingCancelSchema,
   schedulingCreateSchema,
   schedulingPageQuerySchema,
@@ -74,6 +75,35 @@ export async function listSchedulingBookings(
       )
     ).rows.map((row) => schedulingBookingSchema.parse(row.data));
     return { items, total, page: query.page, pageSize: query.pageSize };
+  });
+}
+export async function listSchedulingCalendar(pool: Pool, actor: RequestActor, raw: unknown) {
+  const query = schedulingCalendarQuerySchema.parse(raw);
+  return schedulingAccess(pool, actor, false, async (client) => {
+    const values: unknown[] = [query.start, query.end, `%${query.q.replace(/[\\%_]/g, "\\$&")}%`];
+    const filters = [
+      "b.ends_at > ($1::date::timestamp AT TIME ZONE 'America/Bahia')",
+      "b.starts_at < ($2::date::timestamp AT TIME ZONE 'America/Bahia')",
+      "m.name ILIKE $3",
+    ];
+    for (const [key, column] of [
+      ["unitId", "u.id"],
+      ["professionalId", "f.id"],
+      ["status", "b.status"],
+    ] as const) {
+      if (query[key]) {
+        values.push(query[key]);
+        filters.push(`${column}=$${values.length}`);
+      }
+    }
+    const rows = (
+      await client.query<{ data: SchedulingBooking }>(
+        `${bookingSelect} WHERE ${filters.join(" AND ")} ORDER BY b.starts_at,b.id LIMIT 1001`,
+        values,
+      )
+    ).rows;
+    if (rows.length > 1000) throw new SchedulingError("SCHEDULING_CALENDAR_LIMIT", 422);
+    return { items: rows.map((row) => schedulingBookingSchema.parse(row.data)) };
   });
 }
 export async function getSchedulingBooking(

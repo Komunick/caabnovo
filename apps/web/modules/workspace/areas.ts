@@ -1,5 +1,6 @@
 import {
   CalendarDays,
+  ChartNoAxesCombined,
   MessageSquare,
   ContactRound,
   FileClock,
@@ -101,6 +102,16 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
       paths: ["/messages"],
     });
   }
+  if (allowed.has(PERMISSIONS.reportsRead))
+    areas.push({
+      id: "reports",
+      href: "/reports",
+      label: "Relatórios",
+      description: "Resumo gerencial, análise detalhada e evolução.",
+      keywords: "relatórios análises métricas acessos exportar excel pdf csv resultados evolução",
+      icon: ChartNoAxesCombined,
+      paths: ["/reports"],
+    });
   const events = allowed.has(PERMISSIONS.auditRead);
   const jobs = allowed.has(PERMISSIONS.jobsRead);
   if (events || jobs) {
@@ -139,6 +150,10 @@ export function getWorkspaceAreas(permissions: readonly string[]): WorkspaceArea
   });
   const news = areas.findIndex((area) => area.id === "news");
   if (news >= 0) areas.splice(1, 0, ...areas.splice(news, 1));
+  const report = areas.findIndex((area) => area.id === "reports");
+  const messages = areas.findIndex((area) => area.id === "messages");
+  if (report >= 0 && messages >= 0 && report > messages)
+    areas.splice(messages, 0, ...areas.splice(report, 1));
   return areas;
 }
 

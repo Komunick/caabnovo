@@ -27,7 +27,12 @@ export function getJobQueue(): Promise<PgBoss> {
         );
       });
       await boss.start();
-      for (const name of [AUDIT_EXPORT_QUEUE, FILE_SCAN_QUEUE, "news-publication"]) {
+      for (const name of [
+        AUDIT_EXPORT_QUEUE,
+        FILE_SCAN_QUEUE,
+        "news-publication",
+        "report-export",
+      ]) {
         await boss.createQueue(name, {
           policy: "standard",
           retryLimit: 4,

@@ -48,6 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
+      REPORTS_ENVIRONMENT: test
       FILE_STORAGE_BACKEND: database
       DATABASE_URL: postgresql://caab_runtime:change-me-runtime@127.0.0.1:5432/caab
       BETTER_AUTH_SECRET: e2e-only-secret-with-at-least-32-characters
@@ -98,6 +99,8 @@ jobs:
         run: |
           pnpm db:seed:dev
           pnpm dev:worker > /tmp/caab-e2e-worker.log 2>&1 &
+      - name: Validate reports workflow before the complete browser suite
+        run: pnpm test:e2e reports.spec.ts --project=chromium
       - run: pnpm test:e2e --project=chromium
       - name: Preserve synthetic initial password UI evidence
         if: always()
@@ -197,6 +200,15 @@ jobs:
         with:
           name: messages-synthetic-screenshots
           path: apps/web/test-results/**/messages-*.png
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Preserve reports review evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports-synthetic-evidence
+          path: apps/web/test-results/**/reports-*
           retention-days: 7
           if-no-files-found: warn
 

@@ -1,4 +1,5 @@
 "use client";
+import { trackPanelEvent } from "@/modules/reports/collector";
 import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import Link from "next/link";
@@ -119,6 +120,7 @@ export function BookingForm({
               required
               onChange={(value) => {
                 setServiceId(value);
+                if (value) trackPanelEvent("service_selected", "scheduling");
                 setProcedureId("");
                 setAssignmentId("");
                 setStartsAt("");
@@ -180,7 +182,10 @@ export function BookingForm({
                   <DraftSelect
                     required
                     value={startsAt}
-                    onChange={(event) => setStartsAt(event.target.value)}
+                    onChange={(event) => {
+                      setStartsAt(event.target.value);
+                      trackPanelEvent("slot_selected", "scheduling");
+                    }}
                   >
                     <option value="">Selecione um horário</option>
                     {startsAt && !slots.data.items.some((slot) => slot.startsAt === startsAt) && (

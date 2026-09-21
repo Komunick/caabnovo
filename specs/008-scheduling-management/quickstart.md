@@ -1,5 +1,16 @@
 # Roteiro de validação
 
+## Incremento de calendário — 18/09/2026
+
+Após configurar/criar pela jornada abaixo, alternar Mês/Semana/Dia/Lista; conferir
+filtros, URL, recarga, anterior/próximo/hoje e abrir reserva por teclado. Usar browser
+em Pacific/Auckland: a reserva de 08h da Bahia deve continuar às 08h. Remarcar e
+cancelar pelos detalhes, retornar ao calendário e verificar situação/horário.
+Testar 390px e desktop nos temas, rolando somente a grade quando necessário.
+Erros/mais de 1.000 reservas não podem resultar em calendário vazio ou parcial.
+Rodada final: testes scheduling de unidade/integração, scheduling.spec.ts completo,
+gates gerais do projeto e revisão das capturas do CI. Nenhum serviço local autorizado.
+
 **Estado atual:** código implementado e gates aprovados; [resultados e capturas](evidence/release-review.md).
 Não executar contra dados reais nem reativar localhost/PostgreSQL por este documento.
 
@@ -49,4 +60,3 @@ aprovação. Integração/build/E2E no CI enquanto vigorar a suspensão dos serv
 
 Guardar relatório e capturas sintéticas em evidence/. Não declarar equivalência com
 legado nem integração dos canais com base nestas provas da primeira entrega.
-
