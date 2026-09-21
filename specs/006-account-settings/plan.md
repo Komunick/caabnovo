@@ -1,3 +1,97 @@
+# Implementation Plan: Conta: conciliação e regressão dos controles existentes
+
+**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21
+**Spec**: [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+
+## Summary
+
+Preservar conta pessoal e recusas de concessão durante a adequação transversal, sem reintroduzir MFA ou justificativa.
+
+US1/US2/US4 permanecem implementadas conforme evidências existentes; US3 recebe revisão documental/regressão. Não criar exportação de senhas, tokens ou novo módulo Conta.
+
+## Technical Context
+
+TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout;
+PostgreSQL 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO
+novo. Testes Vitest 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas,
+teclado e tokens compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos
+e PDFKit existente, sujeitos a spike/versão fixada no código; nenhum pacote instalado agora.
+
+**Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a
+transferência integral arbitrária. Exportações não têm teto funcional de registros/período.
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md):
+medir tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova
+de estresse/grande volume nesta rodada; manter produto sem teto funcional de registros.
+**Restrições**: banco único, autorização atual por ação; sem localhost, deploy, seed real,
+limpeza de dados ou implementação nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+
+## Constitution Check
+
+Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
+Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no
+PostgreSQL e UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já
+retiradas; autenticação continua sem MFA. Abstração de exportação cobre oito consumidores
+reais, sem CRUD genérico. Não há violação de desenho sem justificativa. Aprovações
+institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução de gates.
+
+## Phase 0 — Research
+
+Decisões, alternativas e fontes em [research.md](research.md), com pesquisa transversal
+[de 21/09](../002-integrated-modules/research-2026-09-21.md). Leitura estática conclui
+as escolhas necessárias para este recorte; limitações operacionais viram validações
+de implementação, não requisitos indefinidos. Sem consulta a contas/dados de produção.
+
+## Phase 1 — Design
+
+- Concessões continuam pelo gestor autorizado em Colaboradores, sem MFA e sem justificativa. Ajuste transversal do catálogo não concede gestão de usuários via configurações pessoais.
+- Preservar senha atual/confirmar e-mail, expiração/uso único de tokens, revogação de sessões, proteção contra autoelevação e último administrador. Prazos de tokens de segurança não são prazo de exportação.
+- Reconciliar contratos/modelo com remoções já executadas; não reexecutar migration0012 nem limpeza de segredos. Rodar regressão direcionada quando o catálogo e autorizadores forem implementados.
+- Sem nova entidade, biblioteca, serviço externo ou mudança de autenticação. Templates e pesquisa de novos recursos de conta ficam fora do recorte.
+
+Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
+e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
+rascunhos/filtros e dados em falhas, sem exigir justificativa. Catálogo de colunas é
+allowlist por função; servidor não confia no catálogo antigo do navegador.
+
+## Project Structure
+
+- `apps/web/modules/auth/account-settings-service.ts` (existente).
+- `apps/web/modules/users/role-assignment-service.ts` (existente).
+- `apps/web/modules/users/ui/role-grant-error.ts` (existente).
+- `apps/web/tests/integration/account-settings.test.ts` (existente).
+
+## Rollout, migração e rollback
+
+Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001.
+Preparar compatibilidade de leitura de chaves/snapshots antes de ativar migrações e
+novos botões. Conta sem acesso não ganha concessão para preservar conveniência.
+Diagnosticar conflitos antes da restrição008; parar sem corrigir registros automaticamente.
+Rollback da UI/API deve preservar grants convertidos, dados e arquivos; não publicar
+binário antigo que dependa exclusivamente de audit:export/reports:export após conversão.
+Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
+
+## Validation e próximo passo
+
+Usuário comum acessa sua conta, não altera outra nem ganha permissão; gestor concede sem MFA/justificativa, recusas permanecem específicas e último administrador protegido.
+
+Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior
+nunca conclui tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação:
+speckit-tasks, organizado por história, com dependências e critérios independentes.
+
+## Complexity Tracking
+
+Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm
+as regras dos domínios. Sem microserviço, linguagem nova ou nova fonte de verdade.
+Estado operacional serve somente à transferência atual; não é fila/histórico obrigatório.
+
+## Histórico anterior — referência, não sequência executável atual
+
+O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência,
+valem o desenho de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+
+<details>
+<summary>Plano anterior preservado</summary>
+
 # Plano: Configurações da conta
 
 Branch: `feature/account-settings`, base `origin/dev`. Status: implementação e correções verificadas; PR autorizado pelo usuário em 10/09/2026 após aprovação dos testes.
@@ -62,3 +156,23 @@ Não usar cache público, localStorage ou salvamento automático no banco.
 ## Senha inicial — 17/09/2026
 
 Gerador server-only com crypto.randomInt e lista local; hashPassword do Better Auth. Inserir account/credential na transação de criação. Resposta exclusiva de criação com initialPassword string/null; reenvio idempotente retorna null. Recibo transitório em memória com controles compartilhados. Ação no detalhe para cadastro sem senha: lock da conta, sessão/permissões revalidadas e comparação da autoridade. Não sobrescrever credenciais existentes. Sem migration ou backfill. Specs 001/006 compartilham o código. Testes leves locais e integração/E2E/build no CI; banco/preview pausados, nenhum merge automático.
+
+## Checkpoint de revisão de código — 21/09/2026
+
+Perfil/senha/troca de e-mail, recuperação, menu e senha inicial implementados. Não há MFA nem provedores sociais configurados. T025 registra homologação de entrega SMTP não comprovada, sem afirmar falha do ambiente. Tema Vitória e OAuth seguem futuros; preservação de erros transversal em 001 T097.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
+Executar adequações e seus testes em retomada de implementação. Preservar dados e decisões adiadas; a revisão atual altera somente documentação.
+
+</details>
+
+## Complemento vigente I1 — 21/09/2026
+
+Regressão T027/T028 deve usar a matriz dos três cargos de001. Gestor com consulta global, exportação geral e Relatórios completos pode conceder alteração de outro módulo que não possui a terceiro; não mostrar GRANT_BEYOND_AUTHORITY nesse caso. Gestor não altera a si nem atribui cargos; Colaborador não concede. Preservar Conta/Sessões e último Administrador.
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

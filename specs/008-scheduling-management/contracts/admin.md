@@ -1,8 +1,11 @@
 # Contratos — painel de Agendamentos
 
-Base: /api/v1/scheduling. Autorização de todas as rotas: sessão ativa e acesso
-válido ao painel pelo mecanismo existente. Sem scheduling:read/write ou escopo por
-unidade. Sem API anônima, sem token Cal.com e sem autenticação do app nesta fase.
+Base: /api/v1/scheduling. Autorização alvo de todas as rotas (Q8 de 21/09): sessão
+administrativa ativa e acesso concedido a Agendamentos, revalidado no servidor.
+Sessão sozinha não basta; ausência/revogação da concessão retorna 403. Q9 exige
+consulta nas leituras e consulta+alteração nas mutações; alteração sem consulta
+é recusada. Nomes técnicos/transição serão detalhados em AC01. Sem escopo por unidade, API anônima,
+token Cal.com ou autenticação do app nesta fase. Implementação AC01–AC03 pendente.
 
 Incremento de 18/09: GET `/calendar?start=YYYY-MM-DD&end=YYYY-MM-DD` retorna
 `{items: SchedulingBooking[]}`. Start inclusivo/end exclusivo, dias em America/Bahia,
@@ -47,6 +50,13 @@ Detalhes: {booking,history:{items,page,pageSize,total}}. Histórico usa created,
 rescheduled e cancelled, actorName, occurredAt e snapshots before/after.
 Disponibilidade aceita excludeBookingId para remarcação; confirmar revalida a vaga.
 
+Clarificação de 20/09/2026 (implementação pendente): criação/remarcação também
+recusa com 409 a sobreposição de reservas scheduled do mesmo memberId, inclusive
+entre profissionais/unidades. memberId é o beneficiário atendido, associado ou
+dependente individual, nunca seu titular ou o operador. A mensagem deve identificar
+conflito da pessoa, conservar os campos e permitir escolher outro horário.
+Preservar o contrato de conflito profissional e o rollback integral da remarcação.
+
 Remarcação preserva id e usa rollback integral no conflito; cancelamento repetido
 retorna estado já cancelado sem duplicar efeito. Chave igual com payload diferente
 é 409. Erros de edição mantêm valores do formulário. Alterações de catálogo
@@ -58,3 +68,6 @@ na URL, Novo agendamento e links Oferta/Horários. Formulário: beneficiário �
 a seleção anterior muda. Sem vagas, explicar e permitir trocar dia/profissional.
 Detalhes oferecem Remarcar/Cancelar apenas para reservas futuras agendadas. Histórico
 mostra datas/autores e ações humanas. Não exibir atalhos inoperantes para avaliações/app.
+
+
+Endpoints existentes em contracts/admin.md passam a exigir read nas consultas e read+write nas mutações. Disponibilidade recebe beneficiaryId opcional para refinar vagas; criar/remarcar sempre exige identidade real. Projeções de reservas/lista/calendário/detalhe acrescentam eligibilityWarning: blocked|null. Export datasets scheduling.bookings/catalog/hours; padrão reserva/data/beneficiário mínimo/profissional/unidade/situação/aviso; filtros data/beneficiário/profissional/unidade/estado, texto e sort permitidos. Sem alteração do contrato público de app/site.

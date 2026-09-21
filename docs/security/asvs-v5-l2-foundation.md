@@ -1,5 +1,12 @@
 # Matriz OWASP ASVS 5.0.0 L2 — Fundação CAAB
 
+**Reavaliação estática — 21/09/2026:** a coluna de evidências abaixo é histórica,
+não certificação integral de conformidade atual. Cadastro público em dev, acesso
+de Agendamentos, worker de Notícias e exportação de Auditoria possuem lacunas
+registradas em [A01–A05](../../specs/002-integrated-modules/code-audit-2026-09-21.md).
+MFA continua retirado por decisão explícita; não reintroduzir para encerrar achados.
+Não foram executados testes de segurança nem inspeção de produção nesta revisão.
+
 MFA foi retirado em 10/09/2026 por reclamações, conforme motivo confirmado
 pelo usuário em 17/09/2026. Ver a [decisão de retirada](../../specs/006-account-settings/authenticator-removal.md).
 A matriz descreve os controles implementados e não certifica conformidade integral

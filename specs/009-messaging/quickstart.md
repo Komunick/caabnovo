@@ -1,3 +1,53 @@
+# Validação do incremento — Mensagens: revisão de aderência e exportação condicionada
+
+## Estado e pré-requisitos
+
+Pré-requisitos de execução futura: Node 24/pnpm do package.json, dependências fixadas,
+PostgreSQL 18 descartável/Testcontainers e Chromium no CI. Nunca usar banco do preview
+ou contas reais como seed. Localhost continua desligado; os comandos abaixo são roteiro,
+não foram executados neste planejamento. Variáveis/segredos seguem `.github/workflows/ci.yml`.
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm test:unit
+corepack pnpm test:contract
+corepack pnpm test:integration apps/web/tests/integration/messaging.test.ts
+corepack pnpm test:e2e messaging.spec.ts --project=chromium
+corepack pnpm test:a11y --project=chromium
+```
+
+O job browser existente prepara ambiente/contas sintéticos; não copiar seus seeds
+para o preview principal. Testes de migração/conflito usam banco descartável. Antes
+de entrega de código, completar format/lint/typecheck/build/security e evidências
+visuais pelo workflow de CI, sem iniciar builds/serviços pesados no computador.
+
+## Jornada independente
+
+Após M016, conferir preparo/segmentação/programação sem envio real; exports respeitam a projeção mínima e formatos/colunas; nenhum botão/tela de chat ou ticket; alterações no protótipo dependem do gate registrado.
+
+Para cada dataset do contrato, abrir Exportar [módulo], variar filtros, selecionar/reordenar colunas por teclado e baixar Excel/CSV/PDF. Ler arquivos com parsers independentes, confrontar IDs/contagem/conteúdo/ordem com a massa conhecida. Vazio mantém cabeçalho; mais de uma página não corta resultados.
+
+Matriz negativa: anônimo, sessão revogada, sem acesso, leitura sem geral, geral sem
+leitura, leitura+geral sem escrita, campo proibido, operação de outro usuário e
+revogação entre lotes. Preservar filtros após falha; interrupção não retorna sucesso.
+Testar teclado,390 px, desktop e temas. Módulos negados têm zero entradas no menu,
+busca e Início; controles pessoais da conta continuam disponíveis.
+
+## Evidência esperada
+
+Registrar comandos, versões/commit, fixtures sintéticas, resultados, arquivos
+validados e capturas em `specs/009-messaging/evidence/plan-2026-09-21-validation.md`
+(arquivo futuro). Nunca marcar tarefas como concluídas por este roteiro.
+Requisitos e representações: [modelo](data-model.md), [contrato](contracts/exports.md).
+
+## Roteiro anterior — histórico
+
+Não executar serviços/seeds indicados abaixo no preview principal. O roteiro atual
+usa CI/banco descartável; passos substituídos não autorizam reativação local.
+
+<details>
+<summary>Roteiro anterior preservado</summary>
+
 # Mensagens — uso e validação
 
 ## Preparar uma campanha
@@ -46,3 +96,5 @@ preferência vigente. A disponibilização no DEV ocorre após merge humano do P
 ## Públicos e agendamentos
 
 Preencha os dados de segmentação em Associados quando disponíveis. Em Mensagens, Público permite combinar categoria, gênero, titular/dependente, cidade, estado de residência, estado OAB, idade e situação Ativa/Inativa. Todos os cadastros remove filtros e seleções. Confira a contagem integral na Prévia. A aba Agendamentos permite criar, buscar por campanha/status/período, reagendar e cancelar. Novo agendamento abre campanha com data disponível antes de salvar; salvar mantém o horário digitado para confirmação. Meios de envio continuam pendentes.
+
+</details>

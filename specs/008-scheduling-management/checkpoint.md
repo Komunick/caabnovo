@@ -1,4 +1,57 @@
+## Clarify transversal — 20/09/2026
+
+Q2 respondida (A): manter e sinalizar reservas futuras do associado bloqueado e
+dependentes afetados para decisão manual. FR-017/SC-007, BLQ01/BLQ02 e coordenação
+AE04 da spec 005 documentados; sem código ou testes. Reservas mantêm ocupação e
+situação; criação/remarcação continuam impedidas. Checklist 008 segue 13/14.
+Checklist 005 reavaliado: 16/16 → 13/16 por detalhes técnicos preexistentes
+(locks, permissões técnicas e configuração); marcadores alterados, texto preservado.
+Próximo assunto: autorização da exportação transversal; resposta ainda pendente.
+
+Q1 respondida: impedir sobreposição por pessoa atendida entre quaisquer unidades
+e profissionais, diferenciando associado e cada dependente pelo cadastro individual.
+Specs/plan/modelo/contrato/tarefas atualizados; FR-016/SC-006 e BEN01–BEN03 documentam
+regra e validação futura. Nenhum código, migration ou teste executado nesta sessão.
+CAL06 e as tarefas novas permanecem pendentes; implementação não retomada.
+Checklist reavaliado: 14/14 → 13/14; item sem frameworks desmarcado porque a spec
+já contém FullCalendar no incremento anterior. Nenhuma regressão de código alegada.
+Próximo passo: continuar perguntas do clarify e registrar decisões incrementalmente.
+
+### Resultado final da retomada de CI — 20/09/2026
+
+Runs 35392211021 (pull_request) e 35392206888 (push), tentativa 2, concluídos com
+success no HEAD fb218fb429bab6c220ed1e3f0096760829cb41bf. Todos os seis checks
+quality/browser/security concluídos com sucesso; os quatro anteriormente cancelados
+foram reexecutados. E2E e acessibilidade concluídos em ambas as execuções.
+Nenhuma mudança de implementação ou novo commit/push necessário. CAL06 e revisão
+visual de produto não foram concluídas por este pedido restrito ao CI.
+Principal dev 8f12db4 limpa e sincronizada por fetch/ff-only na conferência final.
+PR continua aberto, sem aprovação/merge pelo agente; localhost desligado.
+Próximo passo de produto permanece sujeito à retomada do escopo de Agendamentos.
+
+## Retomada limitada aos checks do PR #34 — 20/09/2026
+
+Usuário solicitou reiniciar os quatro checks cancelados e acompanhar todos até
+terminarem. Retomada autorizada apenas para esta validação; demais pendências de
+produto permanecem com o escopo anterior. HEAD remoto confirmado: fb218fb429bab6c220ed1e3f0096760829cb41bf.
+Runs PR 35392211021 e push 35392206888 reiniciados pelo navegador na tentativa 2;
+quality/browser em andamento. Nenhum resultado final presumido. CAL06 não marcada.
+CLI com token inválido para mutação (401); conector sem Actions write (403).
+Sessão autenticada do navegador permitiu o reinício. Principal dev limpa e
+sincronizada com origin/dev por fetch/ff-only. Localhost permanece desligado.
+Próximo passo: acompanhar as duas execuções e registrar conclusões finais.
+Sem alteração de código, commit, push, aprovação ou merge nesta retomada.
+
 # Retomada de Agendamentos — 18/09/2026
+
+## PAUSA solicitada pelo usuário
+
+Usuário ordenou parar. Trabalho interrompido após push de `fb218fb` (somente ajuste
+de sincronização do E2E, documentação e capturas). Aplicação em `8819bce` passou no
+CI do PR 35388527805 e foi revisada visualmente. Push 35388521920 falhou na captura;
+correção do teste ainda aguarda validação. CAL06 não concluída. Não iniciar novos
+checks nem continuar implementação sem retomada do usuário. CIs ativos de fb218fb
+serão cancelados por esta ordem. PR34 continua rascunho, sem aprovação/merge.
 
 ## Pedido e decisão vigentes
 
@@ -60,3 +113,42 @@ FullCalendar Standard 7.1.0, API React atual, sem plugins Premium.
 
 Atualizar este arquivo ao mudar de fase, registrar falhas e o comando exato de
 retomada; atualizar também tasks.md e evidências, sem marcar testes não executados.
+
+## Continuidade documental — 21/09/2026
+
+PR34 integrado em dev ed31baf. Decisões Q1/Q2 não integradas foram preservadas e
+transferidas após comparação de bases idênticas; nenhuma implementação retomada.
+Q3 definida: permissão geral de exportação combinada com acesso ao módulo/dados.
+Complemento: módulos sem acesso somem da barra lateral, busca e Início. Regras
+transversais em specs 001/002; não criar permissão nova de acesso a Agendamentos.
+BEN01–BEN03, BLQ01/BLQ02, CAL06 continuam com os estados anteriores. Próximo passo:
+continuar clarify. Q4 resolveu a transição: converter automaticamente quem já tem
+permissão antiga de exportação na geral, sem alterar acesso aos módulos; conversão
+ainda não executada. Próximo ponto transversal: finalidade de Mensagens.
+
+## Q8 — acesso por módulo — 21/09/2026
+
+Usuário escolheu A: Notícias e Agendamentos exigem acesso concedido por usuário.
+Exceção de acesso a qualquer conta administrativa substituída; ocultar sem concessão
+na barra lateral, busca e Início e negar URL/API. Specs 001/002/004/008, planos,
+contratos e tarefas atualizados; AC01–AC03 pendentes. Nenhuma implementação/teste.
+Próxima pergunta: granularidade de permissões internas desses dois módulos.
+
+## Q9 — preservar consulta e alteração separadas — 21/09/2026
+
+Usuário confirmou B e destacou que o padrão já existe. Notícias de fato possui
+news:read/write/publish no código e guardas; diagnóstico anterior baseado em docs
+estava desatualizado, corrigido nas specs 004/001/002. Não unificar permissões.
+Agendamentos ainda verifica sessão sem concessão e é incluído incondicionalmente
+no catálogo; registrar/adequar lacuna ao padrão consulta/alteração (AC01–AC03).
+Leitura estática apenas; nenhum teste, código ou concessão alterado nesta etapa.
+
+
+## Checkpoint vigente — revisão de código de 21/09/2026
+
+PR34 integrado na base ed31baf; referências anteriores a PR aberto/branch ativa
+são histórico. CAL01–CAL05 têm implementação; CAL06 permanece revisão final de
+produto/evidências. Não alterar PR34 nem trabalhar novamente em sua branch.
+BEN01–BEN03, BLQ01/BLQ02, AC01–AC03, DX01 e expansões continuam pendentes.
+Revisão estática executada; nenhum teste de aplicação ou serviço iniciado.
+Detalhes: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).

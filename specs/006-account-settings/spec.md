@@ -1,5 +1,12 @@
 # Feature Specification: Configurações da conta
 
+## Checkpoint de revisão de código — 21/09/2026
+
+Perfil/senha/troca de e-mail, recuperação, menu e senha inicial implementados. Não há MFA nem provedores sociais configurados. T025 registra homologação de entrega SMTP não comprovada, sem afirmar falha do ambiente. Tema Vitória e OAuth seguem futuros; preservação de erros transversal em 001 T097.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
 **Feature Branch**: `feature/account-settings`
 
 **Created**: 2026-09-10
@@ -51,7 +58,7 @@ Como administrador autorizado, quero conceder funções e entender as recusas se
 
 **Acceptance Scenarios**:
 
-1. Conta autorizada concede função com justificativa, preservando a auditoria.
+1. Conta autorizada concede função sem exigir justificativa, preservando autorização e auditoria.
 2. Recusas distinguem falta de permissão, concessão acima da autoridade, autoatribuição, duplicidade, conta inativa e sessão expirada.
 3. O sistema continua impedindo a remoção/desativação do último administrador ativo, independentemente do estado legado de MFA.
 
@@ -136,29 +143,17 @@ usam o componente comum de aviso junto ao campo, com limite de 254 caracteres.
 Não mudar autenticação, confirmação de titularidade ou política de envio.
 ## Justificativas de criação e alteração — 14/09/2026
 
-Decisão expressa do usuário: cadastros novos dispensam motivo; alterações de registros
-existentes exigem justificativa informada pelo operador, validada no servidor e gravada
-na auditoria na mesma transação. Criação continua auditada, identificada como criação
-pelo servidor; não atribuir ao operador uma justificativa que ele não escreveu.
-
-Abrange Colaboradores, Associados (incluindo novos vínculos/documentos e substituições),
-Notícias e Configurações. Parceiros já segue o padrão. Primeira inclusão de foto é
-criação; substituição/remoção exige motivo verificado com o estado bloqueado no banco.
-Notícia nova, duplicação e novo agendamento dispensam motivo. Edição, recuperação,
-arquivamento, publicação/retirada e cancelamento/reenvio exigem motivo. Execução
-programada registra sua origem automática. Perfil, senha e solicitação de troca de
-e-mail em Configurações exigem motivo; confirmação por token conclui a solicitação já
-auditada. Login, recuperação de senha, leitura, filtros, tema e uploads técnicos não
-são alterações cadastrais. Preservar autorização, idempotência e controle de versão.
-
-Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
-recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
-mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+A regra intermediária que dispensava motivo somente na criação foi substituída
+pela decisão final de 14/09/2026: nenhuma ação exige campo de motivo ou
+justificativa. Preservar autor, data, alterações e motivos históricos existentes,
+além de autorização, confirmação, idempotência e controle de versão.
+Aceite vigente: criar e alterar sem preencher/enviar motivo, sem esse controle
+na interface. Não apagar dados históricos nem inventar explicação humana.
 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos possui primeira versão administrativa (spec 008), com app/site e expansões pendentes; OAB-BA permanece pendente da hospedagem.
 
 ## Navegação para seções — 15/09/2026
 
@@ -182,3 +177,24 @@ Para a única conta antiga sem senha informada pelo usuário, oferecer geração
 Aceite: criação pela interface seguida de login com a senha gerada; recuperação disponível; negações, idempotência, concorrência, rollback e ausência de segredo em consultas/auditoria testados. UI desktop/mobile e acessibilidade no padrão existente.
 
 Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+
+
+Checkpoint de 21/09/2026 — plan concluído: desenho, pesquisa, modelo, contratos e
+roteiro atualizados. Nenhum código, serviço, migration ou teste de aplicação executado.
+Tarefas serão detalhadas em seguida; políticas e funções adiadas permanecem pendentes.
+
+Checkpoint de 21/09/2026 — tasks concluídas: 4 tarefas novas (T026–T029), com histórias, dependências, caminhos e aceite; nenhuma implementação/teste de aplicação executado. Ver tasks.md.
+
+Checkpoint final de21/09/2026 — plan seguido de tasks encerrados. Conferência
+documental de IDs, fases, links e preservação do histórico concluída; código,
+testes de aplicação e homologações não executados. Próximo passo recomendado:
+análise cruzada antes da implementação. Detalhes no relatório do programa002.
+
+## Cargos e recusas — decisão I1 de21/09/2026
+
+Concessões usam [001 cargos](../001-project-foundation/contracts/roles.md). Gestor pode conceder alteração de módulo que ele próprio somente consulta a terceiros; esse caso não é concessão acima da autoridade. Autogestão do Gestor e concessão por Colaborador permanecem recusadas; somente Administrador atribui cargos. Configurações pessoais não concedem gestão de terceiros.
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. Payload foi alinhado em 3.89.0 no worker, web e packages/news, preservando os usos existentes e evitando duas versões incompatíveis. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

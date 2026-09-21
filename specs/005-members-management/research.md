@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Exportar dados autorizados de Associados e conferir efeitos de bloqueio na agenda sem presumir políticas institucionais.
+
+**Fundamento:** Exportar associados/dependentes sem acesso a Relatórios; negar documento/campo restrito; bloqueio mantém reservas e vaga, sinaliza vínculos vigentes e não afeta situação própria; manter análise manual sem novas exigências.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `apps/web/modules/members/member-service.ts`, `packages/db/src/repositories/members.ts`, `apps/web/modules/members/access.ts`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Pesquisa — 09/09/2026
 
 ## Revisão de concorrência — 15/09/2026
@@ -112,7 +132,7 @@ valida credenciais ausentes; mantém-se a autenticação exigida pelo provedor.
 
 ## Estado ao navegar — 16/09/2026
 
-Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+Os guias locais do Next 16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
 compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
 à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
 identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF

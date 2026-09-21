@@ -60,3 +60,12 @@ public-service aplica política de leitura aberta definida pelo usuário, com fi
 _status published, archived false e canal. Não aceita estado de rascunho no contrato público.
 DTO v1 contém somente campos editoriais; consulta e página pública não expõem autor/histórico/
 sessão/storage. Disponibilidade é distinta de confirmação de consumo, que não é presumida.
+
+
+## Modelo vigente do incremento — 21/09/2026
+
+Entidades news/revisões/publicações existentes permanecem. Catálogo de exportação seleciona aba/revisão sem misturar rascunho privado à versão publicada. Chaves read/write/publish conservam dependências. Nenhum grant novo implícito ou alteração de schedule.
+
+Entidades técnicas/ciclo de vida em [contrato comum](../002-integrated-modules/contracts/direct-exports.md); sem cópia de domínio.
+Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.0.0
+e contratos de 21/09 prevalecem. Mudanças descritas são planejamento, sem migration executada.

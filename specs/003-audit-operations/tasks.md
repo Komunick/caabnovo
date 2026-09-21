@@ -1,3 +1,83 @@
+# Tasks: Auditoria e Processamentos: exportação direta — incremento de 21/09/2026
+
+**Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
+[contrato](contracts/exports.md), [quickstart](quickstart.md).
+**Branch da entrega:** `docs/project-clarify-20260921`. Nenhuma tarefa nova executada.
+**Lista ativa:** T015–T022; testes foram pedidos nas specs e nos gates do projeto.
+Caminhos novos são destinos planejados; conferir referências contra o inventário de
+artefatos deste incremento antes de editar. Nenhum arquivo de código foi criado agora.
+
+## Rastreabilidade e escopo
+
+EX01/EX02/DX01/DX02: substituídos pelo detalhamento de US5 e continuidade US2; migração pertence à001.
+
+O histórico abaixo conserva marcadores e evidências originais. IDs provisórios
+detalhados aqui não são uma segunda execução; usar a lista ativa. Pendências de
+política/pesquisa/homologação e funções suspensas continuam pendentes e não são
+autorizadas por constarem neste arquivo. Não repetir tarefas já concluídas.
+
+## Setup
+
+- [ ] T015 Conferir o catálogo real de telas/abas e filtros contra `specs/003-audit-operations/contracts/exports.md`; mapear campos permitidos/defaults e projeções atuais, sem criar fonte ou ampliar permissão.
+
+## Foundational
+
+- [ ] T016 Preparar fixtures sintéticas isoladas e contratos da função em `apps/web/modules/audit/export-fixtures.ts` (novo, exclusivo de testes), com datas empatadas, zero resultados, texto longo, campos restritos e filtros combinados; depende dos schemas de 001.
+
+## US2 — Continuidade das operações
+
+**Objetivo/aceite independente:** Rotas/arquivos legados mantêm dono e permissões atuais; revogação bloqueia worker e download genérico; jobs:redrive permanece independente.
+
+- [ ] T017 [US2] Preservar rotas/arquivos/jobs antigos e reenvio autorizado em `apps/web/modules/audit/http/audit-exports-route.ts`, `apps/worker/src/jobs/audit-export.ts` e `apps/web/tests/e2e/operations.spec.ts`; novos pedidos usam somente fluxo direto, sem confundir jobs:read com audit:read.
+
+## US5 — Exportação autorizada
+
+**Objetivo/aceite independente:** Eventos e jobs exportam Excel/CSV/PDF com filtros, redação e colunas em ordem; nenhum corte além da paginação.
+
+- [ ] T018 [US5] Escrever testes do adaptador em `apps/web/modules/audit/export-adapter.test.ts` (novo): filtro+sort, columns em ordem pedida, campo proibido, dados completos e matriz de autorização conforme `specs/003-audit-operations/contracts/exports.md`.
+- [ ] T019 [US5] Implementar `apps/web/modules/audit/export-adapter.ts` (novo) reutilizando as consultas/projeções do domínio, IDs/dependências para reautorização por lote e cursor do núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados.
+- [ ] T020 [US5] Integrar ação/tela em `apps/web/app/(admin)/audit/exportar/page.tsx` (nova) e nas listas/abas existentes de `apps/web/modules/audit/ui/`; passar contexto/filtros, preservar rascunho e oferecer os três formatos com defaults e reordenação acessível.
+- [ ] T021 [US5] Validar arquivos reais nos três formatos, ordem/contagem/IDs/filtros e negações em `apps/web/tests/integration/audit.test.ts` e `apps/web/tests/e2e/audit.spec.ts`; usar o parser independente do núcleo 001 e confirmar erro recuperável sem corte.
+
+## Polish
+
+- [ ] T022 Executar gates/testes da função no CI e registrar resultados/capturas/limites em `specs/003-audit-operations/evidence/plan-2026-09-21-validation.md` (novo); marcar conclusão somente com evidência, preservando tarefas institucionais e históricas.
+
+## Dependências e ordem de execução
+
+Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes
+antecedem código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura
+de 001 (concessões, schemas, writers, rotas e UI) precede adaptadores/exportações dos
+demais specs. Migração 0025 precede0026;0027 antes de transferências;0028 depende do
+diagnóstico de conflitos e não altera dados automaticamente. Regressões004/006 e
+regras008 podem avançar após catálogo/migrações mesmo antes do núcleo de exportação.
+Aceite transversal002 depende das evidências das funções. Spec009 exige gate M016.
+Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
+
+## Paralelismo por história
+
+Após pré-requisitos, os adaptadores de domínios diferentes podem avançar em paralelo
+porque têm arquivos próprios. Dentro desta função, manter testes→adaptador→UI→E2E
+sequencial; não dividir edições no mesmo arquivo. [P] identifica arquivos independentes
+prontos após a base da fase: writers separados em001 e relatórios de aceite em002.
+Para cada história sem par de arquivos independente, não há paralelismo interno seguro;
+ela pode avançar junto da história equivalente de outro domínio após as dependências.
+Migrações/catálogo/registro central têm um único responsável na spec001, sem edições simultâneas.
+
+## Estratégia incremental e MVP
+
+Primeiro invariantes de acesso/migração e descoberta; depois fluxo completo de
+Relatórios usando núcleo 001 como prova vertical (três formatos, todos os dados).
+Isso é marco de validação, não redução do escopo: completar depois cada função
+do contrato, incluindo003/004/005/007/008 e Colaboradores;009 permanece condicionada.
+Reservas Q1/Q2 seguem incremento independente008 após permissões. Políticas adiadas,
+chat/suporte, CAASSH, portal e app/site não são parte do MVP.
+
+## Histórico e backlog anterior — não executar automaticamente
+
+<details>
+<summary>Tarefas anteriores, evidências e pendências preservadas</summary>
+
 # Tasks: Auditoria e Processamentos
 
 ## Setup e fundação
@@ -105,3 +185,23 @@ Evidências AD02: [fundo do log e cabeçalho](evidence/modal-2026-09-16.md).
 
 - [x] DP01 Integrar a preservação compartilhada às abas e formulários desta função.
 - [x] DP02 Validar retorno, sucesso, cancelamento e isolamento; registrar [evidências](evidence/drafts-2026-09-16.md) no PR.
+
+## Permissão geral de exportação — 21/09/2026
+
+- [ ] EX01 Substituir autorização específica de exportação pela permissão geral combinada com leitura da subárea/dados; converter automaticamente concessões legadas de exportação com 001 AX01/002 EXP04, preservando leitura e revalidar solicitação, geração e download.
+- [ ] EX02 Validar perfis com somente exportação, somente leitura, ambos e revogação; preservar redação de eventos, restrições de dados e separação Eventos/Processamentos.
+
+## Exportação direta — Q6 de 21/09/2026
+
+- [ ] DX01 Adequar exportação de Auditoria/Processamentos à ação nomeada, tela de filtros com seleção e ordenação das colunas autorizadas e Excel/CSV/PDF com download direto integral, sem prazo ou teto funcional de período/registros; preservar eventos e arquivos legados.
+- [ ] DX02 Validar três formatos com seleção e ordem de colunas idênticas, recusa de campos restritos, filtros/ordenação de registros, volume além da paginação, erros/retentativa e leitura por subárea com permissão geral; registrar evidências sem declarar o fluxo novo coberto pelo CI antigo.
+
+## Evidências para EX01/EX02 — revisão de 21/09/2026
+
+A05: cobrir runAuditExport antes da geração, findAuditExport e a rota genérica de
+download de arquivos audit_export. Atualmente files:read pode obter grant sem
+audit:read/audit:export nesse último caminho; o worker não relê concessões.
+Testar revogação, acesso por ID direto e grants legados, preservando dados e a
+separação Eventos/Processamentos. Não estender a nova regra a anexos/documentos.
+
+</details>

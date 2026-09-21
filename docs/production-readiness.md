@@ -1,6 +1,6 @@
 # Pendências para produção
 
-Estado revisto em 16/09/2026. Desenvolvimento e revisão em dev continuam permitidos;
+Estado documental revisto em 21/09/2026; evidências operacionais abaixo mantêm suas datas. Desenvolvimento e revisão em dev continuam permitidos;
 esta revisão não promove código nem concede aprovação institucional.
 
 ## T089 — Privacidade e retenção
@@ -44,11 +44,13 @@ não participa da decisão. Não houve retorno pessoal nem homologação positiv
 
 ## Programa integrado
 
-As jornadas administrativas existentes são acompanhadas pelos specs 003–008.
+As jornadas administrativas existentes são acompanhadas pelos specs 003–010.
 Agendamentos já tem primeira versão administrativa; interface app/site e expansões
-continuam pendentes. Mensagens possui código de protótipo na spec 009, pendente de
-revisão da finalidade de sua construção (decisão de 17/09/2026), sem envio real ou
-homologação final do módulo. Portal e Relatórios continuam pendentes; Créditos está
+continuam pendentes. Mensagens possui código de protótipo na spec 009, com finalidade
+confirmada em 21/09: comunicados/campanhas, público e programação. Aderência M016,
+meios/envio real e homologação continuam pendentes. Relatórios inicial está implementado
+na spec 010; adequações de autorização/exportação e homologação continuam pendentes.
+Portal completo segue pendente; Créditos está
 suspenso. Recursos Humanos é apenas possibilidade futura, sem construção autorizada.
 T055–T057 continuam vinculadas à entrega completa do programa; testes do protótipo
 ou dos módulos atuais não concluem funções futuras.

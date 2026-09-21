@@ -21,7 +21,6 @@ export interface CreateAuthOptions {
 }
 
 const allowedPaths = new Set([
-  "/sign-up/email",
   "/sign-in/email",
   "/sign-out",
   "/get-session",
@@ -44,6 +43,7 @@ export function createAuth(options: CreateAuthOptions) {
     }),
     emailAndPassword: {
       enabled: true,
+      disableSignUp: true,
       minPasswordLength: PASSWORD_MIN_LENGTH,
       maxPasswordLength: PASSWORD_MAX_LENGTH,
       sendResetPassword: options.sendResetPassword,
@@ -66,17 +66,9 @@ export function createAuth(options: CreateAuthOptions) {
             code: "ACCOUNT_ROUTE_DISABLED",
             message: "Use the account settings workflow",
           });
-        if (
-          ctx.path === "/sign-up/email" &&
-          !z.string().trim().min(1).max(160).safeParse(ctx.body?.name).success
-        )
-          throw new APIError("BAD_REQUEST", { code: "INVALID_NAME", message: "Invalid name" });
-        const field =
-          ctx.path === "/sign-up/email"
-            ? "password"
-            : ["/reset-password", "/change-password", "/set-password"].includes(ctx.path)
-              ? "newPassword"
-              : null;
+        const field = ["/reset-password", "/change-password", "/set-password"].includes(ctx.path)
+          ? "newPassword"
+          : null;
         if (field && !newPasswordSchema.safeParse(ctx.body?.[field]).success) {
           throw new APIError("BAD_REQUEST", {
             code: "PASSWORD_POLICY_FAILED",

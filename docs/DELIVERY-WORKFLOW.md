@@ -10,14 +10,13 @@ Este documento define como alterações passam do desenvolvimento à produção.
 
 Nunca realizar commits ou pushes diretos em `dev` ou `main`.
 
-Regra vigente do usuário, consolidada em 17/09/2026: manter uma única branch/worktree
-por entrega. PRs abertos podem receber atualizações (correções, commits e pushes) ou
-ser cancelados/fechados sem merge conforme o escopo autorizado. Abrir PR não congela
-a branch. PRs já mergeados não podem ser alterados, inclusive título, descrição e
-demais metadados; suas branches não podem ser reutilizadas para novas alterações.
-Correções posteriores entram por nova branch e novo PR. Preservar a worktree integrada.
-Isolamento adicional somente quando solicitado.
-Não aprovar ou integrar PR por iniciativa do agente; checks não são aprovação humana.
+Regra vigente do usuário, consolidada em 17/09/2026: manter uma única branch/worktree por entrega.
+PRs abertos podem receber atualizações (correções, commits e pushes) ou ser cancelados/fechados sem
+merge conforme o escopo autorizado. Abrir PR não congela a branch. PRs já mergeados não podem ser
+alterados, inclusive título, descrição e demais metadados; suas branches não podem ser reutilizadas
+para novas alterações. Correções posteriores entram por nova branch e novo PR. Preservar a worktree
+integrada. Isolamento adicional somente quando solicitado. Não aprovar ou integrar PR por iniciativa
+do agente; checks não são aprovação humana.
 
 ## 2. Política de merge
 
@@ -29,9 +28,10 @@ Não aprovar ou integrar PR por iniciativa do agente; checks não são aprovaç�
   criam outro spec. Antes de abrir um spec, conferir se já existe um responsável pela função.
 - Antes de implementar uma função nova ou evoluí-la, analisar práticas atuais do mercado em fontes
   oficiais e registrar data, referências, decisões e limites da pesquisa no `research.md` existente.
-- Reunir as alterações autorizadas na única branch ativa até o PR. Cada função mantém
-  spec, plano, tarefas, testes e evidências próprios dentro dessa mesma entrega.
-- Abrir o PR quando o conjunto estiver pronto para revisão. Correções posteriores usam a mesma branch enquanto o PR não estiver integrado.
+- Reunir as alterações autorizadas na única branch ativa até o PR. Cada função mantém spec, plano,
+  tarefas, testes e evidências próprios dentro dessa mesma entrega.
+- Abrir o PR quando o conjunto estiver pronto para revisão. Correções posteriores usam a mesma
+  branch enquanto o PR não estiver integrado.
 - Produção recebe apenas PR de promoção `dev` → `main`.
 - Merge em `main` é exclusivamente humano.
 - Não contornar CI, reviews ou proteções de branch.
@@ -47,11 +47,15 @@ DEV e PROD devem ter bancos, storages, segredos e integrações separados.
 
 ### Preview local — decisão de 17/09/2026
 
-Localhost permanece desativado até ordem explícita do usuário para ligá-lo. Quando autorizado, atualizar o preview para a versão mais recente do repositório local antes de disponibilizá-lo, conferindo e registrando branch, commit e eventuais alterações locais que compõem essa versão. Não reutilizar silenciosamente build antigo; preservar banco, contas e arquivos. Essa regra não autoriza ligar serviços agora.
+Localhost permanece desativado até ordem explícita do usuário para ligá-lo. Quando autorizado,
+atualizar o preview para a versão mais recente do repositório local antes de disponibilizá-lo,
+conferindo e registrando branch, commit e eventuais alterações locais que compõem essa versão. Não
+reutilizar silenciosamente build antigo; preservar banco, contas e arquivos. Essa regra não autoriza
+ligar serviços agora.
 
-Quando ligado, o preview principal usa `http://localhost:3107` e os limites locais
-de recursos registrados em `AGENTS.md`. Builds e E2E pesados ficam no CI quando
-houver pouca memória local; testes usam bancos descartáveis.
+Quando ligado, o preview principal usa `http://localhost:3107` e os limites locais de recursos
+registrados em `AGENTS.md`. Builds e E2E pesados ficam no CI quando houver pouca memória local;
+testes usam bancos descartáveis.
 
 ## 4. Fluxo padrão
 
@@ -69,7 +73,8 @@ houver pouca memória local; testes usam bancos descartáveis.
 
 ## 5. Gates obrigatórios
 
-- Formatação.
+- Formatação de código e, para documentos alterados, `pnpm format:docs:check <arquivos>` conforme
+  [TOOLING.md](TOOLING.md). A exclusão no comando geral não dispensa esta verificação explícita.
 - Lint.
 - Typecheck.
 - Testes unitários e de integração aplicáveis.
@@ -79,6 +84,10 @@ houver pouca memória local; testes usam bancos descartáveis.
 - Verificação de dependências e segredos.
 - Testes de autorização quando uma rota, ação ou papel for alterado.
 - Teste de acessibilidade quando houver mudança de UI relevante.
+- Exportações seguem o [padrão obrigatório](EXPORT-STANDARD.md): Excel, CSV e PDF
+  em todos os módulos/abas aplicáveis, com filtros e download direto. Conferir os
+  três formatos, seleção/ordem das colunas, completude dos dados e permissões antes
+  de concluir sua entrega.
 
 ## 6. Regras para migrations
 

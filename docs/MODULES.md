@@ -1,8 +1,52 @@
 # Módulos e responsabilidades — entrega integrada
 
-## Estado consolidado — 17/09/2026
+## Desenho vigente após clarify — 21/09/2026
 
-**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+Permissão geral `exports:generate` intersecta consulta de módulo/dados; sem acesso,
+zero descoberta no menu/busca/Início. Notícias preserva read/write/publish, mas a
+concessão implícita da view será removida; Agendamentos terá read/write explícitos.
+Exportações novas usam filtros/colunas e Excel/CSV/PDF diretos, sem teto funcional
+ou prazo/histórico obrigatório; dados/arquivos legados preservados. Desenho e tarefas
+em [programa002](../specs/002-integrated-modules/plan.md).
+Mensagens tem finalidade confirmada (comunicados/campanhas), mas continua protótipo
+sob revisão de aderência; canais reais, chat interno e suporte futuro permanecem adiados.
+Retenção institucional e critérios/documentos de dependentes ficam para depois.
+Estados e propostas anteriores abaixo são históricos quando divergirem desta revisão;
+nenhum código foi implementado pelo plan/tasks e localhost permanece desligado.
+
+
+## Cargos iniciais definidos — 21/09/2026
+
+Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores, inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição de cargos permanece com Administrador.
+
+Desenho em [001](../specs/001-project-foundation/contracts/roles.md); criação dos novos cargos e adequações ainda pendentes no código.
+
+## Inventário conferido no código — 21/09/2026
+
+Base ed31baf. Revisão estática, sem homologação remota nem testes novos.
+Fonte rastreável: [revisão de código/backlog](../specs/002-integrated-modules/code-audit-2026-09-21.md).
+
+| Área | Implementado | Pendente |
+| --- | --- | --- |
+| Colaboradores / Conta | Contas, permissões, senha inicial, perfil/e-mail/senha/recuperação, sessões | Cadastro público ainda habilitado em dev; homologação SMTP; erros de concorrência; exportação geral |
+| Auditoria / Processamentos | Eventos, filtros, detalhe, listagem de jobs e reenvio | Exportação atual JSONL/fila; três formatos/direto; autorização do worker e do download genérico |
+| Notícias | Editor/mídia/versões, publicar/programar, rotas e páginas públicas | Revogação no worker, ocultação completa no Início, exportação e evidência HTTP T027 |
+| Associados | Cadastro/foto/dependentes/documentos/análises/situação e adaptador OAB | OAB hospedada/homologada, critérios institucionais, credencial externa/identidade app, exportação |
+| Parceiros | Administração/diretório/categorias/contratos/benefícios, API pública e moderação | Portal, QR/resgates, coleta externa de avaliações e exportação |
+| Agendamentos | Catálogo, horários/almoço, reserva/remarcação/cancelamento, histórico e FullCalendar | Permissões, conflito por beneficiário, sinalização de bloqueados, CAL06, app/site/expansões, exportação |
+| Mensagens | Protótipo de campanhas/modelos/públicos/preferências e programação | M016, meios/provedores e entrega real, exportação |
+| Relatórios | Três abas, consultas salvas, exportadores e coleta no painel | Novo padrão direto/três formatos/ordem de colunas, permissão geral, acesso a dados de Agenda, coleta externa |
+| Início / Meu trabalho | Atalhos, notícias publicadas, rascunhos e cadastros sem análise | Ocultação por acesso; demais pendências operacionais em T053 |
+| App/site / Portal | Leitura pública de notícias/benefícios e ingestão de analytics como infraestrutura | Interfaces completas/identidade externa/reservas/portal e integração efetiva |
+| CAASSH / RH / chat / tickets | CAASSH apenas sinalizado desativado | Créditos suspenso; demais possibilidades sem construção autorizada |
+
+Todos os módulos/abas entram no [padrão de exportação](EXPORT-STANDARD.md).
+Existência de teste ou tarefa histórica concluída não comprova as novas regras.
+Preservação de campos existe, mas erros de concorrência ainda exigem adequação (001 T097).
+
+## Decisões consolidadas — atualização de 21/09/2026
+
+**Decisão vigente — 21/09/2026:** a finalidade de Mensagens foi confirmada: comunicados e campanhas aos associados, com seleção de público e programação. O código existente continua sendo um protótipo, sem homologação do produto. A definição de finalidade substitui a pendência de 17/09; revisão de aderência do protótipo e critérios de continuidade permanecem em M016. Meios, provedores e envio real continuam adiados. Conversa interna do painel e suporte por tickets do app/site são possibilidades de módulos futuros separados, com nomes e funcionamento sujeitos a pesquisa posterior; não estão em implementação.
 
 Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
@@ -12,12 +56,13 @@ Agendamentos já possui uma primeira versão administrativa implementada; app/si
 
 A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
 oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
-e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+e histórico. Q8 de 21/09 redefine o acesso: sessão administrativa e concessão do
+módulo. Código existente ainda precisa de adequação (008 AC01–AC03).
 Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
 [evidências](../specs/008-scheduling-management/evidence/release-review.md).
 Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
-Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
-primeira interface do usuário no app/site; CAASSH continua desativado.
+Exceções, avaliações e demais estados permanecem posteriores. O calendário foi priorizado em 18/09 e está implementado; CAL06 segue aberto.
+A primeira interface do usuário no app/site segue pendente; CAASSH continua desativado.
 
 Atualizado em 09/09/2026 por orientação do responsável: incluir todos os módulos no escopo da mesma
 entrega, reaproveitar a fundação e fundir Operações com Auditoria. Melhorias posteriores não
@@ -38,7 +83,7 @@ O módulo administrativo de estabelecimentos externos é detalhado na
 [tarefas](../specs/007-partners-management/tasks.md). Possui sete páginas: lista de
 parceiros, novo parceiro, detalhe com Cadastro/Unidades/Contratos/Benefícios/Avaliações/Histórico,
 lista geral de benefícios, unidades, categorias e configurações do app. Cadastros novos
-dispensam motivo; alterações exigem justificativa, com auditoria preservada em ambos.
+e alterações dispensam motivo, com auditoria preservada em ambos.
 O [mapa de interface](../specs/007-partners-management/interface.md)
 registra suas funções e a harmonização com Associados e Notícias.
 
@@ -111,7 +156,7 @@ acesso às APIs administrativas por esse vínculo.
 4. Unidade própria de atendimento e unidade de parceiro têm responsabilidades distintas. Endereço
    semelhante não é motivo para unificá-las numa entidade institucional indistinta.
 5. Avaliação referencia atendimento ou benefício; moderação preserva o teor original e registra
-   motivo.
+   motivo histórico opcional.
 6. Mensagem transacional referencia o evento do domínio; campanha referencia conteúdo e público.
    Ambas usam a mesma infraestrutura de envio e acompanhamento.
 7. O portal consulta os mesmos registros autorizados do parceiro. QR representa uma solicitação
@@ -124,7 +169,7 @@ acesso às APIs administrativas por esse vínculo.
 ## Fusão de Operações com Auditoria
 
 - Uma entrada principal **Auditoria** reúne **Eventos** e **Processamentos**.
-- `audit:read` permite consultar eventos; `audit:export` continua necessário para exportá-los.
+- `audit:read` permite consultar eventos. `audit:export` ainda existe no código legado; alvo é permissão geral mais leitura da subárea, conforme EX01/DX01.
 - `jobs:read` permite acompanhar processamentos; `jobs:redrive` continua necessário para reenviar.
 - Quem só pode acompanhar jobs acessa Processamentos sem ganhar acesso aos eventos.
 - Quem só pode consultar eventos não ganha acesso aos jobs nem às ações de reenvio.
@@ -203,8 +248,9 @@ responde por Agendamentos: o painel básico já está implementado; depois vêm
 a interface app/site e novas funções escolhidas. A antiga etapa de pesquisa foi superada.
 
 **Atualização de Agendamentos em 15/09/2026:** administração pela CAAB da oferta e
-das reservas do app/site. Qualquer pessoa com acesso válido ao painel administrativo
-pode consultar e alterar Agendamentos, sem concessão extra ou restrição por unidade.
+das reservas do app/site. Q8 de 21/09 substitui o acesso automático: consulta e
+alteração exigem sessão administrativa e acesso concedido a Agendamentos; sem
+restrição por unidade presumida.
 Inclui unidades com vários serviços, profissionais, procedimentos, funcionamento e
 gestão de avaliações. Autenticação e auditoria permanecem; a regra não altera outros
 módulos. Não pressupor área administrativa independente de negócios/profissionais.
@@ -217,14 +263,13 @@ A primeira versão administrativa de **Agendamentos** está implementada (US1/US
 são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
 A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.
 
-## Mensagens — protótipo pendente de revisão de finalidade (17/09/2026)
+## Mensagens — comunicados e campanhas; protótipo com finalidade confirmada (21/09/2026)
 
 Spec [009-messaging](../specs/009-messaging/spec.md), entrada `/messages`: campanhas,
 modelos, públicos, preferências, prévia, programação cancelável e histórico. Permissão
 única `messages:access`, administrável na gestão de acessos existente. Meios de envio
 adiados pelo usuário; não há transmissão, métricas de entrega ou automações de eventos.
-A visão de comunicação acima é uma proposta sujeita à revisão de finalidade,
-não uma definição final aprovada. **Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+A finalidade foi confirmada em 21/09; aderência do protótipo e continuidade ainda exigem revisão. **Decisão vigente — 21/09/2026:** a finalidade de Mensagens foi confirmada: comunicados e campanhas aos associados, com seleção de público e programação. O código existente continua sendo um protótipo, sem homologação do produto. A definição de finalidade substitui a pendência de 17/09; revisão de aderência do protótipo e critérios de continuidade permanecem em M016. Meios, provedores e envio real continuam adiados. Conversa interna do painel e suporte por tickets do app/site são possibilidades de módulos futuros separados, com nomes e funcionamento sujeitos a pesquisa posterior; não estão em implementação.
 
 Mensagens: aba Agendamentos com busca, período, reagendamento e cancelamento; segmentação por dados explícitos do cadastro e situação administrativa. Sem teto de destinatários, prévia agregada e seleção visual paginada. Navegação: Notícias primeiro módulo após Início, Mensagens imediatamente antes de Auditoria.
 
@@ -241,3 +286,36 @@ domínios. Homologação humana em DEV permanece posterior ao PR.
 
 Exportação em todos os demais módulos foi registrada como requisito transversal
 no programa 002 (EXP01–EXP03); esses botões não estão incluídos nesta entrega.
+
+## Possibilidades futuras de comunicação — nomes a definir (21/09/2026)
+
+| Possibilidade | Uso previsto | Próximo passo |
+| --- | --- | --- |
+| Conversa interna do painel | Usuários administrativos conversam entre si. | Pesquisa de uso/implementação, nomenclatura e escopo (002 FUT01). |
+| Suporte por tickets do app/site | Usuário abre ticket sobre um problema, conversa com a equipe e recebe atendimento até a resolução. | Pesquisa de operação/implementação, nomenclatura e escopo (002 FUT02). |
+
+Descrições provisórias; nomes finais não escolhidos. São módulos distintos de
+Mensagens (campanhas/comunicados), registrados como possibilidades futuras. Não
+há spec própria, implementação, fornecedor ou integração autorizados nesta etapa.
+A pesquisa ainda será executada; depois, definir escopo e decisão de construção.
+
+## Exportação transversal — fluxo alvo de 21/09/2026
+
+“Exportar [módulo]” abre tela com filtros pertinentes (datas, ordenação, ações,
+áreas, nomes etc.); Excel/CSV/PDF iniciam download direto de todos os resultados
+autorizados. Sem teto funcional de registros/período, prazo de disponibilidade ou
+etapa obrigatória de fila/histórico para baixar. Permissão geral de exportação +
+acesso ao módulo/dados, com conversão automática das permissões antigas (Q3/Q4).
+Substitui como requisito as descrições históricas de Relatórios acima; implementação
+integrada ainda usa fila e limites. Adequação em 002 EXP06/EXP07, 010 DX01–DX03 e
+specs responsáveis. Não autoriza apagar arquivos legados ou reativar módulos suspensos.
+
+## Permissões de Notícias e Agendamentos — Q8 de 21/09/2026
+
+Ambos exigem acesso concedido ao usuário; conta administrativa sozinha não autoriza.
+Sem acesso, ocultar barra lateral, busca e Início e negar consultas/ações privadas
+por URL/API. Leitura pública das notícias publicadas permanece. Exportação exige
+também a permissão geral. Adequação documentada em 004/008 AC01–AC03, ainda não
+implementada em Agendamentos. Q9 preserva consulta/alteração separadas; Notícias
+já possui news:read/write/publish no código, a conferir e preservar. Não criar
+permissão única. Transição técnica de Agendamentos pendente.

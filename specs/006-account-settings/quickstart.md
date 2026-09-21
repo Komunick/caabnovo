@@ -1,3 +1,58 @@
+# Validação do incremento — Conta: conciliação e regressão dos controles existentes
+
+**Operação vigente — 21/09/2026:** localhost permanece desligado até ordem explícita.
+Rotinas abaixo são roteiros para ambiente autorizado; usar banco descartável em
+testes e preservar o banco principal. Portas/branches antigas são histórico, não
+origem de preview atual. Nenhum teste foi executado pela revisão documental.
+
+## Estado e pré-requisitos
+
+Pré-requisitos de execução futura: Node 24/pnpm do package.json, dependências fixadas,
+PostgreSQL 18 descartável/Testcontainers e Chromium no CI. Nunca usar banco do preview
+ou contas reais como seed. Localhost continua desligado; os comandos abaixo são roteiro,
+não foram executados neste planejamento. Variáveis/segredos seguem `.github/workflows/ci.yml`.
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm test:unit
+corepack pnpm test:contract
+corepack pnpm test:integration apps/web/tests/integration/account-settings.test.ts
+corepack pnpm test:e2e account-settings.spec.ts --project=chromium
+corepack pnpm test:a11y --project=chromium
+```
+
+O job browser existente prepara ambiente/contas sintéticos; não copiar seus seeds
+para o preview principal. Testes de migração/conflito usam banco descartável. Antes
+de entrega de código, completar format/lint/typecheck/build/security e evidências
+visuais pelo workflow de CI, sem iniciar builds/serviços pesados no computador.
+
+## Jornada independente
+
+Usuário comum acessa sua conta, não altera outra nem ganha permissão; gestor concede sem MFA/justificativa, recusas permanecem específicas e último administrador protegido.
+
+Verificar apenas os controles e a matriz de coordenação descritos no plano, sem ampliar funções pessoais ou institucionais.
+
+Matriz negativa: anônimo, sessão revogada, sem acesso, leitura sem geral, geral sem
+leitura, leitura+geral sem escrita, campo proibido, operação de outro usuário e
+revogação entre lotes. Preservar filtros após falha; interrupção não retorna sucesso.
+Testar teclado,390 px, desktop e temas. Módulos negados têm zero entradas no menu,
+busca e Início; controles pessoais da conta continuam disponíveis.
+
+## Evidência esperada
+
+Registrar comandos, versões/commit, fixtures sintéticas, resultados, arquivos
+validados e capturas em `specs/006-account-settings/evidence/plan-2026-09-21-validation.md`
+(arquivo futuro). Nunca marcar tarefas como concluídas por este roteiro.
+Requisitos e representações: [modelo](data-model.md), [contrato](contracts/exports.md).
+
+## Roteiro anterior — histórico
+
+Não executar serviços/seeds indicados abaixo no preview principal. O roteiro atual
+usa CI/banco descartável; passos substituídos não autorizam reativação local.
+
+<details>
+<summary>Roteiro anterior preservado</summary>
+
 # Validação local e transição de ambiente
 
 ## Localhost
@@ -41,3 +96,5 @@ lê o modo de e-mail durante a requisição, sem preservar a configuração loca
 Reverter o código da feature preserva usuários e credenciais. Pedidos pendentes deixam de ser confirmáveis pela interface anterior e expiram; não remover tabelas nem alterar o histórico de auditoria para reverter uma versão.
 
 A remoção dos segredos de MFA pela migração 0012 não é revertida pelo rollback do código. Uma eventual reintrodução do autenticador exige uma nova decisão de escopo e um novo cadastro das chaves; não restaurar segredos antigos.
+
+</details>

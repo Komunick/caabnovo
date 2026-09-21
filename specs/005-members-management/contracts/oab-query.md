@@ -3,6 +3,10 @@
 Complementa [oab-legacy.md](oab-legacy.md). O contrato do consumidor antigo é a evidência
 de partida; testes simulados não comprovam disponibilidade nem credenciais vigentes.
 
+## Exportação
+
+A Consulta OAB não oferece botão nem exportação própria de seu resultado, tanto na consulta avulsa quanto na consulta pelo cadastro. É uma exceção explícita ao padrão transversal, por decisão do usuário em 21/09/2026.
+
 ## HTTP privado
 
 `POST /api/v1/members/oab-query`

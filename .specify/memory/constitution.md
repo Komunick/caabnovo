@@ -1,5 +1,6 @@
 <!--
 Sync Impact Report
+- 2026-09-21, 1.1.1 -> 2.0.0 (MAJOR): concilia princípio V com a decisão explícita de 14/09/2026 de retirar justificativas obrigatórias. Remoção de obrigação normativa; preserva autorização, confirmação, autoria, alterações e motivos históricos. Migração funcional já registrada em 0019_optional_action_reasons.sql; não executar novamente nem alterar dados nesta emenda. Sem seções adicionadas/removidas, sem placeholders pendentes. Emenda documental preparada na entrega atual, sem presumir aprovação de PR.
 - 2026-09-17, 1.1.0 -> 1.1.1 (PATCH): esclarece que a retirada de MFA em 10/09 ocorreu por reclamações, conforme confirmação do usuário. Sem mudança de princípio ou controle.
 - 2026-09-10, 1.0.0 -> 1.1.0: requisito de MFA retirado por solicitação explícita; permissões, sessões e auditoria preservadas.
 - Version change: scaffold sem versão -> 1.0.0
@@ -85,8 +86,11 @@ DEVEM ser incluídos somente quando permitidos e com campos sensíveis redigidos
 cookies, segredos, arquivos completos e dados pessoais desnecessários NÃO DEVEM ser registrados.
 
 O histórico de registros auditáveis DEVE ser preservado. Esses registros DEVEM usar exclusão lógica,
-salvo exigência legal de descarte devidamente documentada. Ações sensíveis DEVEM exigir justificativa
-registrada e autorização específica; a aplicação NÃO PODE editar nem apagar eventos de auditoria.
+salvo exigência legal de descarte devidamente documentada. Ações sensíveis DEVEM exigir
+autorização específica e a confirmação aplicável, sem campo ou exigência de justificativa humana,
+conforme decisão de 14/09/2026. Motivos históricos DEVEM permanecer legíveis; novos eventos
+registram autoria, ação, data e alterações, sem inventar explicação humana. A aplicação NÃO PODE
+editar nem apagar eventos de auditoria.
 
 Racional: uma trilha íntegra permite atribuição de responsabilidade e investigação sem ampliar a
 exposição de dados.
@@ -169,4 +173,4 @@ A conformidade DEVE ser revisada em cada Pull Request e novamente antes de qualq
 `main`. Divergências entre documentos DEVEM ser resolvidas pela ordem de precedência acima e, quando
 afetarem governança, por emenda versionada.
 
-**Version**: 1.1.1 | **Ratified**: 2026-09-04 | **Last Amended**: 2026-09-17
+**Version**: 2.0.0 | **Ratified**: 2026-09-04 | **Last Amended**: 2026-09-21

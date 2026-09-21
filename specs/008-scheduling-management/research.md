@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Exigir acesso concedido, impedir sobreposição da mesma pessoa, sinalizar reservas mantidas após bloqueio e exportar a agenda/oferta.
+
+**Fundamento:** Duas reservas concorrentes da mesma pessoa em profissionais/unidades distintos: uma aceita; titular/dependentes distintos podem coincidir. Bloqueio mantém reserva/vaga e mostra aviso. Sem read some/nega; só read não altera. Exportação não herda teto visual.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `apps/web/modules/scheduling/access.ts`, `apps/web/modules/scheduling/booking-service.ts`, `apps/web/modules/scheduling/availability-service.ts`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Pesquisa e decisões — entrega incremental
 
 ## Calendário administrativo — pesquisa em 18/09/2026
@@ -132,7 +152,7 @@ Decisão: aplicar componentes e tokens já usados no projeto, não a aparência 
 
 ## Estado ao navegar — 16/09/2026
 
-Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+Os guias locais do Next 16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
 compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
 à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
 identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF

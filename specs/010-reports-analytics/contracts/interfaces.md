@@ -2,6 +2,25 @@
 
 Contratos estritos em `packages/contracts/src/reports.ts`. Respostas `no-store`.
 
+## Contrato alvo da exportação — Q6 de 21/09/2026
+
+“Exportar Relatórios” abre filtros; selecionar Excel/CSV/PDF inicia o download do
+arquivo completo na mesma operação, sem resposta de job para acompanhamento em
+outra tela. Preservar filtro/período, ordenação dos registros e agrupamento. Receber seleção
+ordenada de colunas autorizadas (Q7) e respeitá-la nos três formatos; recusar campos
+restritos no servidor. A ordem das colunas é independente da ordenação das linhas.
+Sem teto funcional de linhas ou duração do período, sem expiração para baixar.
+Falhas explícitas com configuração preservada; nunca tratar truncamento como sucesso.
+O endpoint e o mecanismo de entrega incremental serão detalhados em DX01, antes
+da implementação. Revalidar permissões; não transformar o arquivo em conteúdo público.
+
+## Contrato implementado no PR34 — histórico anterior à Q6
+
+Tabela e limites abaixo descrevem o código integrado, ainda não adaptado. Filas,
+histórico, prazo e tetos de exportação não são requisitos alvo; DX01–DX03 os adequarão.
+As interfaces de consulta, coleta e ingestão permanecem, salvo ajustes de contrato
+estritamente necessários para permitir exportação sem limite de período.
+
 | Método/caminho | Entrada/resultado |
 | --- | --- |
 | GET `/api/v1/reports?q=<JSON codificado>` | `ReportQuery`: catálogo autorizado, resumo, uso e tabela em `view=details`. |
@@ -102,3 +121,17 @@ pois seu agente HTTP não identifica visitantes. Coleta nunca bloqueia uso princ
 Fontes aparecem após primeiro evento aceito. Sem eventos, UI informa ausência
 de dados; não presume falha técnica, zero histórico ou instrumentação externa.
 Retenção institucional depende da política do projeto (T089).
+
+## Autorização alvo — clarify de 21/09/2026
+
+Solicitação, geração e download exigem permissão geral de exportação, acesso a
+Relatórios e leitura dos domínios/dados envolvidos, além da propriedade já exigida.
+A permissão geral não concede acesso a Relatórios ou a outro domínio. Substitui
+reports:export como requisito alvo; o código integrado ainda usa a permissão antiga.
+Adequação de autorização pendente em EX01/EX02; fluxo/payload de exportação serão
+adequados em DX01–DX03 conforme Q6. Nenhum contrato de código foi alterado no clarify.
+
+Q4: converter automaticamente as permissões antigas de exportação na permissão geral
+para quem já as possui, sem alterar leitura dos módulos/dados. A conversão não foi
+executada neste clarify; validar sua idempotência e a ausência de concessão a quem
+não possuía exportação, junto à matriz de autorização de EX01/EX02.

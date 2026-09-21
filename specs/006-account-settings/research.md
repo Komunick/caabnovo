@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Preservar conta pessoal e recusas de concessão durante a adequação transversal, sem reintroduzir MFA ou justificativa.
+
+**Fundamento:** Usuário comum acessa sua conta, não altera outra nem ganha permissão; gestor concede sem MFA/justificativa, recusas permanecem específicas e último administrador protegido.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `apps/web/modules/auth/account-settings-service.ts`, `apps/web/modules/users/role-assignment-service.ts`, `apps/web/modules/users/ui/role-grant-error.ts`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Referências de mercado: configurações pessoais
 
 **Atualização de escopo — 10/09/2026:** as referências abaixo são históricas. O usuário dispensou foto/avatar e, posteriormente, determinou a remoção integral do autenticador, inclusive de Configurações. Essas opções não fazem parte da entrega atual; ver [spec.md](spec.md) e [authenticator-removal.md](authenticator-removal.md).
@@ -57,7 +77,7 @@ Fonte: Next.js loading e navegação, pesquisados no spec001/research.md. Evidê
 
 ## Estado ao navegar — 16/09/2026
 
-Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+Os guias locais do Next 16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
 compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
 à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
 identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
@@ -73,3 +93,12 @@ Node oferece sorteio criptográfico sem viés de módulo. Reutilizar hashPasswor
 Diagnóstico: criação anterior só inseria user e recuperação exige account.password existente. Corrigir atomicamente. Reenvio idempotente não pode recuperar senha do hash ou substituí-la. A única conta legada sem senha poderá receber credencial por ação explícita, com autoridade e concorrência verificadas. Respostas com no-store; segredo só em memória transitória, fora de logs/rascunhos/storage. Nenhum dado real na implementação.
 
 Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+
+## Correção de segurança — 17/09/2026
+
+[Better Auth — opções](https://better-auth.com/docs/reference/options): usar disableSignUp e lista fechada de rotas, sem opção para reabrir inscrição em testes. [Next.js — CSP](https://nextjs.org/docs/app/guides/content-security-policy) e documentação embutida 16.3.4: nonce via proxy exige renderização dinâmica e header CSP no request ao renderer. Passar nonce ao Script de tema. Manter estilos inline para UI; scripts em produção sem unsafe-inline/eval. connect-src limita a self e ViaCEP já usado. [Next.js — headers](https://nextjs.org/docs/app/api-reference/config/next-config-js/headers): cabeçalhos globais/específicos por rota, sem relaxar downloads. Snapshot em user_access congelaria RBAC; função legada preserva baseline somente para usuários anteriores e mantém concessões dinâmicas. Seeds restritos a app/banco loopback. Não se presume acesso ao firewall ou segredos efetivos da hospedagem. GitHub excluído pelo usuário.
+
+
+## Compatibilidade com a VM — 17/09/2026
+
+Decisão de compatibilidade de 17/09/2026: a configuração efetiva da VM não foi inspecionada. A pesquisa anterior permanece como histórico; suas propostas de CSP, permissões, seeds e ambiente ficam adiadas. Manter somente a opção disableSignUp já pesquisada e atualizações de dependências já testadas. CI aprovado do conjunto anterior não substitui validação do conjunto reduzido nem teste na VM.

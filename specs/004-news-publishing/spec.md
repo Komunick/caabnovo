@@ -1,8 +1,28 @@
 # Feature Specification: Notícias e publicação editorial
 
+## Checkpoint de revisão de código — 21/09/2026
+
+Editor, mídia, publicação, rotas públicas e permissões web separadas existem. Worker de publicação não consulta concessões do solicitante; AC02/AC03 devem cobrir revogação com conta ativa. Início ainda renderiza notícias sem news:read. T027 exige só a evidência HTTP específica, não repetir como ausente a jornada UI comprovada. Exportação própria DX01 pendente; erros de editor coordenados em 001 T097.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
 **Feature Branch**: `feature/news-publishing` **Created**: 2026-09-09 **Status**: Função completa implementada e validada. **Input**: Criar
 o spec e iniciar Notícias com pesquisa atual de mercado; atualizações futuras permanecem neste spec.
 Programa: [002/US2](../002-integrated-modules/spec.md).
+
+## Clarifications
+
+### Session 2026-09-21
+
+- Q: Notícias e Agendamentos também devem exigir permissão de acesso por usuário? → A: Sim (A), exigir acesso concedido também a Notícias e Agendamentos. Substitui a liberação automática para qualquer conta administrativa; sem acesso, ocultar o módulo na barra lateral, busca e Início e negar rotas/ações privadas.
+
+- Q: Em Notícias e Agendamentos, o acesso concedido deve liberar todas as operações ou separar consulta e alteração? → A: Separar consultar e alterar (B), preservando o padrão existente indicado pelo usuário; não unificar as permissões. Permissões adicionais já existentes, como publicar Notícias, permanecem.
+
+Checkpoint de 21/09/2026: Q9 preserva consulta/alteração separadas. Notícias já possui controles no código; documentação corrigida. Agendamentos apresenta lacuna de autorização (ver planos/tarefas). Nenhum teste de aplicação executado. Registros anteriores: FR-004/cenários/contratos atualizados; AC01–AC03 pendentes.
+Nenhuma permissão concedida, código alterado ou teste executado. Leitura pública
+de notícias publicadas preservada; acesso editorial exige concessões próprias já
+encontradas no código, cuja separação será preservada (Q9).
 
 ## User Scenarios & Testing
 
@@ -33,9 +53,13 @@ revisão publicada. Cobrir conteúdo ativo malicioso, arquivos indisponíveis e 
 
 **Acceptance Scenarios**:
 
-1. Acesso ao painel é suficiente: não há permissão adicional de Notícias nem segunda aprovação.
+1. Consulta exige sessão administrativa e permissão de consultar Notícias. Criar/editar
+   exige também alteração; publicar/programar/arquivar preserva a permissão adicional
+   existente de publicação. Conta somente de consulta não altera nem publica. Sem
+   consulta, ocultar barra lateral/busca/Início e negar URL/API privados. Não introduzir
+   segunda aprovação editorial.
 2. Publicar exige título, endereço legível, conteúdo com texto ou mídia válida e ao menos um canal.
-3. Prévia identifica rascunho e canal, exige o mesmo acesso ao painel e não é indexável/publicamente
+3. Prévia identifica rascunho e canal, exige acesso concedido a Notícias e não é indexável/publicamente
    cacheada.
 4. Imagens exigem descrição acessível e arquivo liberado pela verificação existente.
 5. Em notícias publicadas, substituir “Salvar rascunho” por “Retirar publicação e salvar rascunho”: retirar todos os destinos e salvar a revisão numa única transação. A preparação interna de uma publicação/agendamento preserva a versão pública até a ação explícita.
@@ -76,8 +100,14 @@ do consumidor.
   histórico.
 - **FR-003**: Permitir rascunho incompleto; distinguir erros de estrutura de pendências para
   publicar.
-- **FR-004**: Reutilizar o acesso ao painel, inclusive verificação no servidor; não exigir nova
-  permissão nem revisor. Decisão expressa do usuário em 09/09/2026.
+- **FR-004**: Exigir sessão administrativa válida e acesso concedido a Notícias,
+  revalidado no servidor em consultas, prévias, comandos e execução de ações
+  programadas. Sem concessão, ocultar da barra lateral, busca e Início e negar
+  acesso privado por URL/API. Decisão Q8 de 21/09/2026 substitui a exceção de 09/09;
+  não introduz segunda aprovação editorial nem altera a leitura pública autorizada.
+  Q9 mantém consultar e alterar separadamente; preserva também a permissão existente
+  de publicar. Alterar exige consultar; publicar mantém seus pré-requisitos. Somente
+  consulta não autoriza criação, edição, publicação, programação ou arquivamento.
 - **FR-005**: Preservar a versão publicada enquanto outra revisão está em elaboração. Para salvar manualmente como rascunho, a ação deve explicitar a retirada da publicação e executá-la junto com o salvamento; notícias sem publicação mantêm “Salvar rascunho”.
 - **FR-006**: Prévia e publicação aceitam somente conteúdo sem código ativo e mídias verificadas;
   embeds dependem de provedores explicitamente permitidos.
@@ -168,8 +198,12 @@ sessões, arquivos e eventos de auditoria continuam pertencendo à fundação ex
 - **SC-001**: Criar, salvar e reabrir rascunho em até 2 minutos no cenário de homologação.
 - **SC-002**: Nenhum rascunho vaza nem sobrescreve publicação nos testes de edição/consulta
   simultâneas.
-- **SC-003**: Todos os cenários de acesso negado, mídia inválida e conflito falham sem mudança
-  pública.
+- **SC-003**: Todos os cenários de acesso negado, mídia inválida e conflito falham sem
+  mudança pública. Conta administrativa sem acesso a Notícias não vê entradas do
+  módulo nem acessa dados privados por URL/API; revogação impede a próxima ação
+  protegida, inclusive publicação programada. Perfil somente de consulta não altera;
+  perfil com alteração, mas sem publicar, não publica/programa/arquiva. Leitura pública
+  publicada permanece.
 - **SC-004**: Repetir uma ação agendada três vezes produz um único efeito por revisão/destino.
 - **SC-005**: Jornada completa por teclado sem falhas críticas de acessibilidade automatizada.
 
@@ -178,9 +212,10 @@ sessões, arquivos e eventos de auditoria continuam pertencendo à fundação ex
 - Este spec inclui a função editorial completa no painel, API de leitura e página pública.
 - **Decisão do usuário em 09/09/2026**: qualquer pessoa pode ler notícias publicadas, inclusive
   as destinadas ao mobile. Regra revisável neste mesmo spec. Rascunhos, histórico, agenda e
-  escrita continuam com sessão ativa do painel.
-- Autorização do painel já inclui o acesso a Notícias, conforme confirmação do usuário. Não alterar
-  permissões de outros módulos nem o MFA administrativo existente.
+  escrita exigem sessão ativa do painel e acesso concedido a Notícias.
+- Q8 de 21/09/2026: sessão administrativa sozinha não concede Notícias. A gestão
+  de acesso existente concede/revoga o módulo; preservar credenciais e os demais
+  controles. MFA permanece removido conforme decisão vigente do projeto.
 - App e site consultam a API pública v1 no mesmo ambiente do painel. Este repositório entrega
   o conteúdo e sua página pública; não contém o código do aplicativo mobile nem do site externo.
   Não é necessária credencial de leitura nesta fase. Não enviar push nem confirmar consumo
@@ -204,24 +239,12 @@ definem a origem confiável; em produção, configuração pública ausente ou i
 
 ## Justificativas de criação e alteração — 14/09/2026
 
-Decisão expressa do usuário: cadastros novos dispensam motivo; alterações de registros
-existentes exigem justificativa informada pelo operador, validada no servidor e gravada
-na auditoria na mesma transação. Criação continua auditada, identificada como criação
-pelo servidor; não atribuir ao operador uma justificativa que ele não escreveu.
-
-Abrange Colaboradores, Associados (incluindo novos vínculos/documentos e substituições),
-Notícias e Configurações. Parceiros já segue o padrão. Primeira inclusão de foto é
-criação; substituição/remoção exige motivo verificado com o estado bloqueado no banco.
-Notícia nova, duplicação e novo agendamento dispensam motivo. Edição, recuperação,
-arquivamento, publicação/retirada e cancelamento/reenvio exigem motivo. Execução
-programada registra sua origem automática. Perfil, senha e solicitação de troca de
-e-mail em Configurações exigem motivo; confirmação por token conclui a solicitação já
-auditada. Login, recuperação de senha, leitura, filtros, tema e uploads técnicos não
-são alterações cadastrais. Preservar autorização, idempotência e controle de versão.
-
-Aceite: criação funciona sem motivo; edição sem motivo, vazia ou só com espaços é
-recusada sem mutação; alterações válidas preservam motivo e ator na auditoria; a UI
-mostra o campo somente quando necessário. Nenhuma migration ou alteração de dados.
+A regra intermediária que dispensava motivo somente na criação foi substituída
+pela decisão final de 14/09/2026: nenhuma ação exige campo de motivo ou
+justificativa. Preservar autor, data, alterações e motivos históricos existentes,
+além de autorização, confirmação, idempotência e controle de versão.
+Aceite vigente: criar e alterar sem preencher/enviar motivo, sem esse controle
+na interface. Não apagar dados históricos nem inventar explicação humana.
 
 ## Descrição opcional da capa — 14/09/2026
 
@@ -236,7 +259,7 @@ inseridas no corpo, verificação dos arquivos, autorização ou propriedade da 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos possui primeira versão administrativa (spec 008), com app/site e expansões pendentes; OAB-BA permanece pendente da hospedagem.
 
 
 Refinamento solicitado pelo usuário em 16/09/2026:
@@ -260,3 +283,36 @@ Refinamento solicitado pelo usuário em 16/09/2026:
 ## Homologação e prontidão — 16/09/2026
 
 Pedido atual: salvar, reabrir e editar rascunho com imagem sintética no DEV publicado. Validar evidências reais, preservar dados existentes e não declarar concluída uma aprovação institucional ausente. Homologação da OAB depende da inscrição autorizada e do resultado esperado; descarte não executa sem política aprovada.
+
+
+### US4 — Exportar dados autorizados (Priority: P2)
+
+O operador com permissão geral de exportação e consulta da função abre
+“Exportar Notícias”, ajusta filtros,
+seleciona/reordena colunas e escolhe Excel, CSV ou PDF para download direto.
+Abrange dados/abas consultáveis da função, sem teto funcional de registros/período,
+sem prazo de arquivo nem fila/histórico obrigatório. Não exportar bytes de anexos,
+segredos ou campos sem autorização.
+
+Teste independente: Conta sem user_access e sem papel não recebe Notícias; leitor/editor/publicador mantêm ações distintas; publicado público continua; três formatos não vazam revisão privada no contexto de publicada.
+Em erro, manter filtros/colunas; três formatos preservam conjunto e ordem escolhidos.
+Campos restritos enviados diretamente são recusados no servidor. Este detalhamento
+aplica o padrão transversal já decidido, sem implementação ou nova homologação.
+
+
+Checkpoint de 21/09/2026 — plan concluído: desenho, pesquisa, modelo, contratos e
+roteiro atualizados. Nenhum código, serviço, migration ou teste de aplicação executado.
+Tarefas serão detalhadas em seguida; políticas e funções adiadas permanecem pendentes.
+
+
+Diagnóstico complementar do plan em 21/09: embora as guardas news:read/write/publish
+existam, a view effective_user_permission de 0014 ainda concede as três chaves a contas
+sem user_access. Remover esse baseline separadamente da migração de exportação;
+preservar grants explícitos/papéis válidos e leitura pública. Q8 ainda requer essa correção.
+
+Checkpoint de 21/09/2026 — tasks concluídas: 10 tarefas novas (T029–T038), com histórias, dependências, caminhos e aceite; nenhuma implementação/teste de aplicação executado. Ver tasks.md.
+
+Checkpoint final de21/09/2026 — plan seguido de tasks encerrados. Conferência
+documental de IDs, fases, links e preservação do histórico concluída; código,
+testes de aplicação e homologações não executados. Próximo passo recomendado:
+análise cruzada antes da implementação. Detalhes no relatório do programa002.

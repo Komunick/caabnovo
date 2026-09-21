@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Consolidar exports:generate, ocultação por acesso e infraestrutura comum; oferecer exportação de Colaboradores sem alterar a gestão existente.
+
+**Fundamento:** Perfis Associados+Colaboradores com geral exportam só essas fontes; conversão preserva herança expirada/revogada e override vazio; sem módulo não há elemento nas três superfícies; writer respeita colunas, grande volume, CSRF, revogação e interrupção.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `apps/web/modules/auth/permissions.ts`, `packages/contracts/src/user-access.ts`, `packages/db/src/repositories/user-access.ts`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Research: Fundação do Sistema CAAB
 
 **Date**: 2026-09-04
@@ -324,7 +344,7 @@ Reutilizar dialog/links existentes; sem indexador de dados pessoais, biblioteca 
 
 ## Abertura de telas e navegação — 15/09/2026
 
-Fontes oficiais consultadas: [Next.js: Linking and Navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating), [loading](https://nextjs.org/docs/app/api-reference/file-conventions/loading), [useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status) e os guias distribuídos com Next16.3.4 instalado em apps/web/node_modules/next/dist/docs.
+Fontes oficiais consultadas: [Next.js: Linking and Navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating), [loading](https://nextjs.org/docs/app/api-reference/file-conventions/loading), [useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status) e os guias distribuídos com Next 16.3.4 instalado em apps/web/node_modules/next/dist/docs.
 
 Diagnóstico do código45e22b3: nenhuma loading.tsx no painel; rotas dinâmicas aguardam consultas antes de mostrar o destino. A inicial aguarda Promise.allSettled de publicações, rascunhos e associados antes de renderizar até os atalhos. Links já usam next/link; não há motivo para introduzir roteador ou dependência nova. Layout autenticado deve continuar validando acesso antes de mostrar o painel.
 
@@ -345,7 +365,7 @@ Complemento da validação: CI35089210281 aprovou todos os gates de5740428, mas 
 
 ## Estado ao navegar — 16/09/2026
 
-Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+Os guias locais do Next 16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
 compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
 à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
 identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF
@@ -371,3 +391,9 @@ Node oferece sorteio criptográfico sem viés de módulo. Reutilizar hashPasswor
 Diagnóstico: criação anterior só inseria user e recuperação exige account.password existente. Corrigir atomicamente. Reenvio idempotente não pode recuperar senha do hash ou substituí-la. A única conta legada sem senha poderá receber credencial por ação explícita, com autoridade e concorrência verificadas. Respostas com no-store; segredo só em memória transitória, fora de logs/rascunhos/storage. Nenhum dado real na implementação.
 
 Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+
+## Revisão I1 após analyze — 21/09/2026
+
+Fonte: decisão explícita do usuário, não nova pesquisa externa. Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores, inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição de cargos permanece com Administrador.
+
+A guarda atual changeUserAccess exige que o ator possua cada chave; será substituída pela distinção entre concessão e uso. A view0014 também precisa reconhecer Administrador apesar do override. Estratégia detalhada em [cargos](contracts/roles.md); nenhuma implementação ou emenda constitucional necessária para permissões concretas autorizadas pelo produto.

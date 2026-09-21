@@ -2,12 +2,18 @@
 
 Contrato HTTP completo: [openapi.yaml](openapi.yaml). Decisão expressa do usuário em 09/09/2026:
 qualquer pessoa pode ler notícias publicadas. A política fica centralizada em public-service.ts
-e poderá mudar neste mesmo spec. Acesso editorial continua herdado da sessão ativa do painel,
-sem news:* ou segunda aprovação. Publicar não envia push.
+e poderá mudar neste mesmo spec. Q8 de 21/09 exige sessão administrativa ativa e
+concessão de acesso a Notícias para operações editoriais, revalidada no servidor;
+Q9 preserva news:read para consulta, news:read + news:write para criar/editar e
+news:read + news:write + news:publish para publicar/programar/arquivar. Não há segunda
+aprovação editorial. Controles existem no código; AC01–AC03 conferem/validam e
+corrigem apenas lacunas comprovadas.
+Publicar não envia push.
 
 ## Administração
 
-Base /api/v1/news. Todas as operações exigem sessão ativa; escrita exige origem/CSRF. JSON tem
+Base /api/v1/news. Todas as operações exigem sessão ativa e acesso concedido a Notícias;
+escrita exige origem/CSRF. JSON tem
 limite de 1 MiB inclusive streaming. Cache private, no-store e noindex. Autor vem da sessão e
 é revalidado dentro da transação; estado e autoria enviados pelo cliente são rejeitados.
 
@@ -52,7 +58,7 @@ cancelled pertence à ação; queued/running/failed/succeeded e tentativas perte
 Job tem cinco tentativas previstas. Ao esgotá-las, cancelar e criar novo agendamento após corrigir
 a causa. Retry manual exige apenas o acesso editorial e usa a mesma infraestrutura/auditoria.
 
-Erros: 401 sessão; 403 origem/CSRF ou permissão existente de arquivos; 404 notícia/versão/ação;
+Erros: 401 sessão; 403 acesso a Notícias ausente/revogado, origem/CSRF ou permissão de arquivos; 404 notícia/versão/ação;
 409 versão obsoleta, arquivada, chave reutilizada para outro comando, ação incompatível ou slug
 duplicado; 413 corpo grande; 422 estrutura/precondições/horário; 500 erro seguro sem detalhes internos.
 

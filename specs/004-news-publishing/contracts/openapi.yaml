@@ -2,7 +2,9 @@ openapi: 3.1.1
 info:
   title: CAAB News API
   version: 1.0.0
-  description: Editorial management using the existing panel session. Published content is publicly
+  description: Editorial management requires an active panel session and granted News module access
+    (Q8/Q9, 2026-09-21). Preserve separate news:read, news:write and news:publish
+    permissions already present in code; AC01-AC03 track review and validation. Published content is publicly
     readable by explicit user decision on 2026-09-09; drafts and history remain private. Delivery is
     pull-based and does not imply consumer acknowledgement or push notification.
 servers:
@@ -2645,7 +2647,7 @@ components:
     ChangeJustification:
       type: string
       maxLength: 1000
-      description: Operator reason, required after trimming whitespace; recorded in audit.
+      description: Optional legacy operator reason; omission or empty text is accepted and historical values remain preserved.
     ChangeCommand:
       type: object
       additionalProperties: false

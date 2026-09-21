@@ -1,3 +1,101 @@
+# Implementation Plan: Auditoria e Processamentos: exportação direta
+
+**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21
+**Spec**: [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+
+## Summary
+
+Exportar eventos e processamentos nos três formatos, preservando redação, separação de permissões e arquivos legados.
+
+US1 descoberta por subárea; US2 continuidade; US3 consultas/reenvios existentes; US4 histórico legível preservado; US5 exportação.
+
+## Technical Context
+
+TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout;
+PostgreSQL 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO
+novo. Testes Vitest 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas,
+teclado e tokens compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos
+e PDFKit existente, sujeitos a spike/versão fixada no código; nenhum pacote instalado agora.
+
+**Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a
+transferência integral arbitrária. Exportações não têm teto funcional de registros/período.
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md):
+medir tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova
+de estresse/grande volume nesta rodada; manter produto sem teto funcional de registros.
+**Restrições**: banco único, autorização atual por ação; sem localhost, deploy, seed real,
+limpeza de dados ou implementação nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+
+## Constitution Check
+
+Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
+Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no
+PostgreSQL e UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já
+retiradas; autenticação continua sem MFA. Abstração de exportação cobre oito consumidores
+reais, sem CRUD genérico. Não há violação de desenho sem justificativa. Aprovações
+institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução de gates.
+
+## Phase 0 — Research
+
+Decisões, alternativas e fontes em [research.md](research.md), com pesquisa transversal
+[de 21/09](../002-integrated-modules/research-2026-09-21.md). Leitura estática conclui
+as escolhas necessárias para este recorte; limitações operacionais viram validações
+de implementação, não requisitos indefinidos. Sem consulta a contas/dados de produção.
+
+## Phase 1 — Design
+
+- Manter audit:read e jobs:read separados; exports:generate sozinho não abre a área. Seleção de subárea define fonte e autorização, nunca exigir ambas.
+- Adaptador consome repositórios audit-query/job-execution e a mesma redação autorizada da interface. Filtros período/ator/ação/entidade ou tipo/estado, ordenação estável timestamp+ID, sem página/limit no conjunto exportado.
+- Novos botões usam fluxo comum Excel/CSV/PDF; auditoria JSONL/fila/download assinado existentes tornam-se compatibilidade legada, sem eliminar jobs/arquivos nem o endpoint antigo.
+- Converter autorização do worker e download legado para chave geral preservando propriedade, auditoria e demais controles. Exportar Processamentos não concede reenvio.
+- Writer deve suportar campos históricos longos e valores redigidos, com contagem de registros lógicos; nunca exportar payload bruto/segredos por selecionar uma coluna.
+
+Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
+e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
+rascunhos/filtros e dados em falhas, sem exigir justificativa. Catálogo de colunas é
+allowlist por função; servidor não confia no catálogo antigo do navegador.
+
+## Project Structure
+
+- `apps/web/modules/audit/audit-export-service.ts` (existente).
+- `apps/web/modules/audit/ui/audit-export-dialog.tsx` (existente).
+- `packages/db/src/repositories/audit-query.ts` (existente).
+- `packages/db/src/repositories/job-execution.ts` (existente).
+- `apps/worker/src/jobs/audit-export.ts` (existente).
+- `apps/web/modules/audit/export-adapter.ts` e `export-adapter.test.ts` (novos planejados).
+- `apps/web/app/(admin)/audit/exportar/page.tsx` (nova planejada).
+
+## Rollout, migração e rollback
+
+Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001.
+Preparar compatibilidade de leitura de chaves/snapshots antes de ativar migrações e
+novos botões. Conta sem acesso não ganha concessão para preservar conveniência.
+Diagnosticar conflitos antes da restrição008; parar sem corrigir registros automaticamente.
+Rollback da UI/API deve preservar grants convertidos, dados e arquivos; não publicar
+binário antigo que dependa exclusivamente de audit:export/reports:export após conversão.
+Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
+
+## Validation e próximo passo
+
+Perfis só eventos e só jobs exportam apenas sua subárea; matriz geral+leitura; campos redigidos e colunas reordenadas nos três formatos; downloads legados continuam protegidos.
+
+Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior
+nunca conclui tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação:
+speckit-tasks, organizado por história, com dependências e critérios independentes.
+
+## Complexity Tracking
+
+Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm
+as regras dos domínios. Sem microserviço, linguagem nova ou nova fonte de verdade.
+Estado operacional serve somente à transferência atual; não é fila/histórico obrigatório.
+
+## Histórico anterior — referência, não sequência executável atual
+
+O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência,
+valem o desenho de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+
+<details>
+<summary>Plano anterior preservado</summary>
+
 # Implementation Plan: Auditoria e Processamentos
 
 **Branch**: `feature/product-direction` | **Date**: 2026-09-09 | **Spec**: [spec.md](spec.md)
@@ -90,3 +188,34 @@ Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenam
 em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
 React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
 Não usar cache público, localStorage ou salvamento automático no banco.
+
+## Permissão geral de exportação — 21/09/2026
+
+Adequar autorização de exportação à permissão geral, preservando leitura da subárea,
+redação, propriedade e controles de servidor. Converter automaticamente a permissão
+antiga na geral para quem já a possui, coordenando 001 AX01/002 EXP04 sem alterar leitura. O desenho original sem mudança de permissões é histórico
+da fusão; esta evolução permanece documental, com EX01/EX02 pendentes.
+
+## Exportação direta — Q6 de 21/09/2026
+
+FR-011 aplica o fluxo transversal à subárea autorizada: ação nomeada, tela com
+filtros pertinentes e Excel/CSV/PDF com download direto, sem limite funcional de
+registros/período, prazo ou fila/histórico obrigatório. JSONL/jobs descritos em
+incrementos anteriores documentam o código existente e não limitam o novo requisito.
+Preservar eventos, redação, autorização e dados legados. Planejar volume/formatos
+em coordenação com 002 EXP06/EXP07; sem implementação neste clarify.
+
+Q7: seletor de campos autorizados e ordenação de colunas na tela de exportação,
+com seleção inicial adequada à subárea. Excel/CSV/PDF respeitam exatamente a seleção
+e ordem; manter redação e validação de campos no servidor. DX01/DX02 pendentes.
+
+## Checkpoint de revisão de código — 21/09/2026
+
+Eventos/Processamentos e reenvio existem. Exportação atual é JSONL por fila, não Excel/CSV/PDF direto. Worker não revalida permissões; download genérico de audit_export passa com files:read. EX01/EX02 devem fechar esses caminhos além da migração para permissão geral; DX01/DX02 permanecem pendentes.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
+Executar adequações e seus testes em retomada de implementação. Preservar dados e decisões adiadas; a revisão atual altera somente documentação.
+
+</details>

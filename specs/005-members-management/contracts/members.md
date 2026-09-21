@@ -30,7 +30,7 @@ Sessão ativa e `members:read` em todas as rotas; `members:write` para criar, ed
 | Rota | Contrato |
 | --- | --- |
 | GET /api/v1/members | q/page/archived/registrationStatus/oabState, 25 itens sem CPF; oabState opcional, sigla de UF válida em maiúsculas; filtros combinados e preservados na paginação |
-| POST /api/v1/members | perfil e justificativa |
+| POST /api/v1/members | perfil; justificativa legada opcional |
 | GET /api/v1/members/{id} | perfil, relações, documentos e avaliações |
 | POST /api/v1/members/{id}/commands | action: update/archive/restore/link/unlink/document/review/assess |
 | GET /api/v1/members/{id}/history | page, 50 eventos contextuais |
@@ -43,17 +43,12 @@ Mobile: sem lista pública ou provisionamento nesta entrega; futura identidade v
 
 Revisões: cada documento inclui reviews[] com id/result/reason/actorName/createdAt, da mais recente à mais antiga. Respostas sem files:read não incluem evidências documentais. Histórico inclui eventos de vínculos dos quais a pessoa é dependente.
 
-## Justificativa — revisão de 14/09/2026
+## Compatibilidade de justificativa — decisão final de 14/09/2026
 
-Criação do associado (`POST /members`), novo vínculo (`link`), documento sem
-`replacesId` e primeira foto dispensam `justification`. Campo opcional de criação
-permanece aceito para compatibilidade com clientes anteriores. Substituir documento,
-substituir/remover foto e demais comandos de alteração exigem motivo válido.
-A condição da foto é conferida no servidor com lock/versão do associado; omitir o
-motivo em uma substituição não pode contornar a regra. Criações e alterações mantêm
-auditoria atômica. Atualizar frontend/backend juntos; clientes administrativos que
-alteram registros devem enviar o motivo. APIs públicas de leitura não mudam.
-
+Criação e todos os comandos aceitam omissão/vazio de justification, inclusive
+substituição de documento/foto, avaliações e bloqueio. Preservar o texto histórico
+opcional e seus limites; clientes atuais não precisam enviar motivo. Fonte,
+resultado, versão, permissões, idempotência e auditoria atômica permanecem.
 
 ## Regra final de justificativas — 14/09/2026
 

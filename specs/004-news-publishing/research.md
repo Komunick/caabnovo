@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Preservar a separação editorial existente, retirar o acesso implícito e exportar as listas/revisões autorizadas.
+
+**Fundamento:** Conta sem user_access e sem papel não recebe Notícias; leitor/editor/publicador mantêm ações distintas; publicado público continua; três formatos não vazam revisão privada no contexto de publicada.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `apps/web/modules/news/payload/transaction.ts`, `apps/web/modules/news/news-service.ts`, `apps/web/modules/news/ui/news-index.tsx`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Pesquisa e decisões — Notícias
 
 Data: 09/09/2026. Evidência documental oficial atual; não houve teste de demos nem consulta ao
@@ -137,7 +157,7 @@ desenho recomendado; a interface de dados já pode ser testada sem assumir APIs/
 O E2E encontrou Desfazer sem estado inicial após reabrir o editor. O HistoryPlugin instalado cria
 histórico vazio por padrão; inicializá-lo com editor.getEditorState() preserva a primeira operação
 e tags HISTORY_PUSH_TAG separam ações de bloco. A jornada corrigida passou com imagens, prévia,
-recuperação e Axe em 390px.
+recuperação e Axe em 390 px.
 
 ## Fechamento da decisão de distribuição em 09/09/2026
 
@@ -205,7 +225,7 @@ o filtro Exibir já aceito; a mudança de coleção após retirada aplica-se às
 
 ## Estado ao navegar — 16/09/2026
 
-Os guias locais do Next16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
+Os guias locais do Next 16.3.4 (preserving-ui-state e cacheComponents) confirmam que layouts
 compartilhados conservam estado; Activity do framework retém somente três rotas e não atende
 à preservação geral solicitada. Usar contexto em memória no layout autenticado, separado por
 identidade e formulário; manter versões originais para conflito seguro. O padrão do campo UF

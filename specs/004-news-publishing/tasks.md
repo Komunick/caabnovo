@@ -1,3 +1,95 @@
+# Tasks: Notícias: concessão explícita e exportação — incremento de 21/09/2026
+
+**Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
+[contrato](contracts/exports.md), [quickstart](quickstart.md).
+**Branch da entrega:** `docs/project-clarify-20260921`. Nenhuma tarefa nova executada.
+**Lista ativa:** T029–T038; testes foram pedidos nas specs e nos gates do projeto.
+Caminhos novos são destinos planejados; conferir referências contra o inventário de
+artefatos deste incremento antes de editar. Nenhum arquivo de código foi criado agora.
+
+## Rastreabilidade e escopo
+
+AC01–AC03: detalhados em US1/US2/US3, migração única em001. Nova exportação: US4.
+
+O histórico abaixo conserva marcadores e evidências originais. IDs provisórios
+detalhados aqui não são uma segunda execução; usar a lista ativa. Pendências de
+política/pesquisa/homologação e funções suspensas continuam pendentes e não são
+autorizadas por constarem neste arquivo. Não repetir tarefas já concluídas.
+
+## Setup
+
+- [ ] T029 Conferir o catálogo real de telas/abas e filtros contra `specs/004-news-publishing/contracts/exports.md`; mapear campos permitidos/defaults e projeções atuais, sem criar fonte ou ampliar permissão.
+
+## Foundational
+
+- [ ] T030 Preparar fixtures sintéticas isoladas e contratos da função em `apps/web/modules/news/export-fixtures.ts` (novo, exclusivo de testes), com datas empatadas, zero resultados, texto longo, campos restritos e filtros combinados; depende dos schemas de 001.
+
+## US1 — Rascunhos e acesso
+
+**Objetivo/aceite independente:** Conta sem override/papel editorial não acessa rascunhos; leitor/editor/publicador mantêm operações distintas.
+
+- [ ] T031 [US1] Atualizar caso legado de baseline editorial em `apps/web/tests/integration/user-permissions.test.ts` e validar guardas existentes em `apps/web/modules/news/payload/transaction.ts` e `apps/web/modules/news/http/news-route.test.ts`; corrigir só bypass comprovado, preservando read/write/publish.
+
+## US2 — Publicação
+
+**Objetivo/aceite independente:** Leitura pública da versão publicada permanece e não vaza rascunho/revisão privada.
+
+- [ ] T032 [US2] Validar leitura pública independente de grant administrativo e distinção revisão/publicada em `apps/web/tests/integration/news.test.ts` e `apps/web/modules/news/http/public-route.test.ts`, sem adicionar aprovação editorial.
+
+## US3 — Programações
+
+**Objetivo/aceite independente:** Revogar news:publish antes da execução programada impede publicação/retirada, inclusive com conta ainda ativa; erro/estado seguro e auditável.
+
+- [ ] T033 [US3] Validar revogação de autoridade antes da execução agendada em `apps/web/tests/integration/news-worker.test.ts`; corrigir a guarda ausente em `packages/news/src/action-runner.ts` para reler read/write/publish antes de publicar/retirar, preservando transação/idempotência e política editorial.
+
+## US4 — Exportação autorizada
+
+**Objetivo/aceite independente:** Publicadas/rascunhos/arquivadas exportam três formatos, revisão correta e texto integral, sem alterar publicação.
+
+- [ ] T034 [US4] Escrever testes do adaptador em `apps/web/modules/news/export-adapter.test.ts` (novo): filtro+sort, columns em ordem pedida, campo proibido, dados completos e matriz de autorização conforme `specs/004-news-publishing/contracts/exports.md`.
+- [ ] T035 [US4] Implementar `apps/web/modules/news/export-adapter.ts` (novo) reutilizando as consultas/projeções do domínio, IDs/dependências para reautorização por lote e cursor do núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados.
+- [ ] T036 [US4] Integrar ação/tela em `apps/web/app/(admin)/news/exportar/page.tsx` (nova) e nas listas/abas existentes de `apps/web/modules/news/ui/`; passar contexto/filtros, preservar rascunho e oferecer os três formatos com defaults e reordenação acessível.
+- [ ] T037 [US4] Validar arquivos reais nos três formatos, ordem/contagem/IDs/filtros e negações em `apps/web/tests/integration/news.test.ts` e `apps/web/tests/e2e/news.spec.ts`; usar o parser independente do núcleo 001 e confirmar erro recuperável sem corte.
+
+## Polish
+
+- [ ] T038 Executar gates/testes da função no CI e registrar resultados/capturas/limites em `specs/004-news-publishing/evidence/plan-2026-09-21-validation.md` (novo); marcar conclusão somente com evidência, preservando tarefas institucionais e históricas.
+
+## Dependências e ordem de execução
+
+Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes
+antecedem código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura
+de 001 (concessões, schemas, writers, rotas e UI) precede adaptadores/exportações dos
+demais specs. Migração 0025 precede0026;0027 antes de transferências;0028 depende do
+diagnóstico de conflitos e não altera dados automaticamente. Regressões004/006 e
+regras008 podem avançar após catálogo/migrações mesmo antes do núcleo de exportação.
+Aceite transversal002 depende das evidências das funções. Spec009 exige gate M016.
+Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
+
+## Paralelismo por história
+
+Após pré-requisitos, os adaptadores de domínios diferentes podem avançar em paralelo
+porque têm arquivos próprios. Dentro desta função, manter testes→adaptador→UI→E2E
+sequencial; não dividir edições no mesmo arquivo. [P] identifica arquivos independentes
+prontos após a base da fase: writers separados em001 e relatórios de aceite em002.
+Para cada história sem par de arquivos independente, não há paralelismo interno seguro;
+ela pode avançar junto da história equivalente de outro domínio após as dependências.
+Migrações/catálogo/registro central têm um único responsável na spec001, sem edições simultâneas.
+
+## Estratégia incremental e MVP
+
+Primeiro invariantes de acesso/migração e descoberta; depois fluxo completo de
+Relatórios usando núcleo 001 como prova vertical (três formatos, todos os dados).
+Isso é marco de validação, não redução do escopo: completar depois cada função
+do contrato, incluindo003/004/005/007/008 e Colaboradores;009 permanece condicionada.
+Reservas Q1/Q2 seguem incremento independente008 após permissões. Políticas adiadas,
+chat/suporte, CAASSH, portal e app/site não são parte do MVP.
+
+## Histórico e backlog anterior — não executar automaticamente
+
+<details>
+<summary>Tarefas anteriores, evidências e pendências preservadas</summary>
+
 # Tasks: Notícias e publicação editorial
 
 **Status**: função completa implementada e validada; PR único para dev. Testes obrigatórios conforme spec. Este arquivo recebe também futuras mudanças da
@@ -167,3 +259,26 @@ Evidências desta correção: [validação e revisão visual](evidence/withdrawa
 - [x] HV01 Executar a verificação aplicável e registrar resultados reais, inclusive impedimentos; ver [evidências](evidence/readiness-2026-09-16.md).
 - [x] HV02 Corrigir e testar as lacunas técnicas/documentais; retenção executável e OAB publicada continuam dependências externas explícitas.
 - [x] HV03 Registrar resultados e impedimentos externos sem aprovações fictícias; CI final acompanha o PR.
+
+## Acesso concedido a Notícias — Q8 de 21/09/2026
+
+- [ ] AC01 Conferir e preservar news:read/news:write/news:publish e seus pré-requisitos no catálogo/gestão já existentes; corrigir documentação antiga e apenas lacunas comprovadas, sem nova permissão única ou concessões automáticas.
+- [ ] AC02 Conferir guardas já existentes e corrigir somente lacunas em páginas/consultas/prévias/comandos e worker, preservando consulta/alteração/publicação separadas; ocultar módulo sem acesso na barra lateral, busca e Início, preservando leitura pública e exportação sob permissão geral.
+- [ ] AC03 Validar sem acesso, somente consulta, consulta+alteração sem publicação e acesso completo, revogação antes de comando/execução agendada, URL/API direta, leitura pública preservada e ausência nas três superfícies; registrar evidências reais.
+
+Q9: o código já possui guardas e concessões separadas; não reconstruir o controle nem
+tratar textos de testes antigos como prova de ausência. Leitura estática realizada,
+mas testes/CI não executados neste clarify; AC01–AC03 não marcadas concluídas.
+
+## Exportação transversal — revisão de 21/09/2026
+
+- [ ] DX01 Detalhar, implementar e validar a exportação de Notícias conforme 002 EXP06/EXP07 e docs/EXPORT-STANDARD.md: ação nomeada, filtros pertinentes, seleção/ordem de colunas, Excel/CSV/PDF integrais e download direto, consulta ao módulo mais permissão geral, recusa de campos restritos e revogação. Sem teto funcional, fila/histórico obrigatório ou prazo de download; sem alterar anexos/documentos. A07 (missing). Tarefa do módulo que executa a coordenação transversal, não um segundo projeto.
+
+## Evidências para AC02/AC03 — revisão de 21/09/2026
+
+A04: runNewsAction verifica conta ativa, mas não consulta effective_user_permission;
+a guarda da transação web não é chamada no worker. Validar revogação de consulta,
+alteração/publicação antes da execução com conta ainda ativa. A06: PublishedNews é
+incondicional no Início. Preservar rotas públicas; não afirmar guarda já completa.
+
+</details>

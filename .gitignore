@@ -31,3 +31,6 @@ Thumbs.db
 .agents/**/.env*
 .agents/**/credentials*
 .agents/**/auth*
+
+# Per-worktree Spec Kit selection; choose the responsible spec explicitly
+.specify/feature.json

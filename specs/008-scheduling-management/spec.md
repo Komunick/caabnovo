@@ -1,10 +1,35 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Checkpoint de revisão de código — 21/09/2026
+
+Primeira versão administrativa e FullCalendar estão na base integrada. Falta concessão consultar/alterar (AC01–AC03), conflito do beneficiário (BEN01–BEN03), indicação de bloqueio posterior (BLQ01/BLQ02) e exportação DX01. CAL06 permanece validação visual/documental, sem alteração de PR34 já integrado. Horários semanais/almoço e conflito do profissional já existem; T021–T024 são expansões.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
 **Feature Branch**: `feature/scheduling-management-20260915`
 **Created**: 2026-09-15
 **Status**: Primeira versão (US1 + US2) implementada e validada em 15/09/2026; evidências em evidence/release-review.md.
 **Input**: Começar com básico funcional, evoluir até o legado e depois novas funções.
 **Confirmação do usuário**: primeira entrega opera pelo painel; conexão real ao app/site na etapa seguinte.
+
+## Clarifications
+
+### Session 2026-09-20
+
+- Q: Impedir reservas sobrepostas da mesma pessoa, mesmo com profissionais ou unidades diferentes? → A: Sim, por beneficiário atendido. Associado e cada dependente são pessoas distintas; o vínculo familiar não reúne suas agendas nem impede reservas simultâneas entre eles.
+- Q: O que acontece com reservas futuras existentes quando o associado é bloqueado, incluindo dependentes afetados? → A: Manter as reservas e sinalizar para decisão manual da equipe, sem cancelamento automático. Novas reservas e remarcações continuam sujeitas ao impedimento vigente.
+
+### Session 2026-09-21
+
+- Q: Notícias e Agendamentos também devem exigir permissão de acesso por usuário? → A: Sim (A), exigir acesso concedido também a Notícias e Agendamentos. Substitui a liberação automática para qualquer conta administrativa; sem acesso, ocultar o módulo na barra lateral, busca e Início e negar rotas/ações privadas.
+
+- Q: Em Notícias e Agendamentos, o acesso concedido deve liberar todas as operações ou separar consulta e alteração? → A: Separar consultar e alterar (B), preservando o padrão existente indicado pelo usuário; não unificar as permissões. Permissões adicionais já existentes, como publicar Notícias, permanecem.
+
+Checkpoint de 21/09/2026: Q9 preserva consulta/alteração separadas. Notícias já possui controles no código; documentação corrigida. Agendamentos apresenta lacuna de autorização (ver planos/tarefas). Nenhum teste de aplicação executado. Registros anteriores: Q8 substitui sessão suficiente por acesso concedido ao
+módulo; FR-001/cenários/SC-008 e contrato atualizados, AC01–AC03 pendentes. Nenhum
+código, migration, conta ou teste alterado. Q9 define consulta/alteração separadas;
+adequação e transição técnica ainda pendentes, sem conceder acesso automaticamente.
 
 ## User Scenarios & Testing
 
@@ -35,7 +60,8 @@ limites/intervalos inválidos/sessão revogada não expõem dados ou agenda inco
 
 ### US1 — Configurar oferta e realizar uma reserva (Priority: P1)
 
-Qualquer pessoa com acesso válido ao painel consegue cadastrar uma unidade, seus
+Pessoa com sessão administrativa válida e acesso concedido a Agendamentos consegue
+cadastrar uma unidade, seus
 serviços, procedimentos e profissionais; configurar horários e reservar para uma
 pessoa já cadastrada em Associados. A jornada inclui os pré-requisitos necessários:
 não depender de cadastros feitos diretamente no banco ou de dados fictícios.
@@ -55,6 +81,12 @@ criar reserva, recarregar a tela e encontrá-la no dia e horário escolhidos.
 4. Dada repetição do mesmo envio após falha de conexão, permanece uma única reserva.
 5. Dado associado ou titular vigente bloqueado, a criação é recusada sem alterar
    cadastros; o impedimento também vale para dependentes conforme decisão anterior.
+6. Dado um beneficiário com reserva Agendada, criar ou remarcar outra reserva para
+   a mesma pessoa em intervalo sobreposto é recusado, inclusive com outro profissional
+   ou unidade. Envios concorrentes não podem persistir a sobreposição.
+7. Dado um associado e seus dependentes com identificadores próprios, suas reservas
+   podem ocorrer simultaneamente, respeitando disponibilidade e impedimentos de cada
+   pessoa e profissional. Duas reservas do mesmo dependente continuam sujeitas ao bloqueio.
 
 ### US2 — Consultar e gerenciar reservas (Priority: P1)
 
@@ -73,8 +105,15 @@ histórico e cancelar, conferindo a liberação do horário.
    o registro permanece consultável e a vaga é liberada.
 4. Ao editar a mesma reserva em duas telas, a segunda alteração desatualizada é
    recusada com orientação de recarregar, sem sobrescrever a primeira.
-5. Uma conta com acesso válido ao painel, sem concessão específica de Agendamentos,
-   usa todas essas ações; sessão inválida/revogada não consulta nem altera reservas.
+5. Conta administrativa sem concessão de Agendamentos não vê o módulo na barra
+   lateral, busca ou Início e não consulta/altera reservas por URL/API. Acesso concedido
+   de consulta habilita entrada ao módulo; somente consulta não cria, altera, remarca
+   ou cancela reservas nem muda oferta/horários. Alterações exigem também permissão
+   de alterar. Sessão inválida ou concessão revogada impede as ações correspondentes.
+6. Ao bloquear um associado com reservas futuras, suas reservas e as dos dependentes
+   afetados permanecem Agendadas, ocupando os horários, e recebem indicação textual
+   de bloqueio para decisão manual da equipe. O vínculo não altera a situação própria
+   do dependente. Cancelamento manual autorizado continua disponível e auditado.
 
 ### US3 — Ampliar até cobrir o legado (Priority: P2)
 
@@ -98,6 +137,10 @@ de funcionalidades ainda não definidos serão detalhados antes de seu código.
 - Unidade/profissional fechado, horário passado, fim antes do início, duração não
   contida em um expediente ou sobreposição parcial entre procedimentos diferentes.
 - Um atendimento termina exatamente quando outro começa: não há sobreposição.
+- Conflito do beneficiário usa a pessoa atendida, nunca a conta do operador nem o
+  titular do grupo familiar. Homônimos com cadastros distintos não são reunidos por nome.
+- Reserva cancelada não ocupa a agenda do beneficiário. Remarcação desconsidera a
+  própria reserva e, se recusada, conserva integralmente seu horário anterior.
 - Bloqueio administrativo ou mudança de dependência durante confirmação/remarcação.
 - Alteração de duração, expediente ou desativação com reservas futuras existentes.
 - Horário que atravessa meia-noite: fora do recorte inicial; explicar no cadastro.
@@ -107,8 +150,15 @@ de funcionalidades ainda não definidos serão detalhados antes de seu código.
 
 ### Functional Requirements — primeira entrega
 
-- **FR-001**: Permitir consulta e alteração a qualquer pessoa com acesso válido ao
-  painel, sem permissão específica adicional; preservar autenticação e auditoria.
+- **FR-001**: Exigir sessão administrativa válida e acesso concedido a Agendamentos,
+  revalidado no servidor para consultas e alterações, inclusive calendário, catálogo,
+  disponibilidade e seleção de beneficiários. Sem acesso, ocultar o módulo na barra
+  lateral, busca e Início e negar URL/API; preservar autenticação e auditoria.
+  Q8 de 21/09/2026 substitui a liberação automática por sessão do painel. Q9 exige
+  permissões separadas de consultar e alterar; alterar depende de consultar. Somente
+  consulta permite ler agenda/detalhes/oferta/horários, sem criar/alterar cadastros,
+  configurar horários, reservar, remarcar ou cancelar. Exportação depende da consulta
+  e da permissão geral, sem exigir alteração.
 - **FR-002**: Cadastrar/editar unidades, serviços e procedimentos com duração positiva,
   profissionais e vínculos de habilitação, usando os formulários do próprio painel.
 - **FR-003**: Permitir vários serviços por unidade e vários profissionais habilitados
@@ -137,6 +187,17 @@ de funcionalidades ainda não definidos serão detalhados antes de seu código.
   permitir fluxo completo por teclado e em tela de 390 px, com estados além da cor.
 - **FR-015**: A primeira entrega funciona apenas no painel, sem chamar ou gravar no
   legado, sem alterar o app/site existente e sem publicar API anônima de reservas.
+- **FR-016**: Impedir criação e remarcação de reservas Agendadas com sobreposição
+  para o mesmo beneficiário, globalmente entre profissionais e unidades, inclusive
+  sob concorrência. Usar o identificador individual da pessoa atendida: associado
+  e cada dependente possuem agendas independentes. Preservar também a prevenção
+  de conflito do profissional; intervalos adjacentes e reservas canceladas não conflitam.
+- **FR-017**: Bloqueio posterior à reserva DEVE preservar as reservas futuras do
+  beneficiário e dos dependentes afetados pelos vínculos vigentes, com seus horários
+  e histórico, e sinalizá-las na agenda e nos detalhes para decisão manual da equipe.
+  Não cancelar, remarcar ou liberar vagas automaticamente. Preservar as recusas de
+  novas reservas/remarcações enquanto houver impedimento e permitir cancelamento
+  manual conforme autorização existente. A indicação não cria nova situação da reserva.
 
 ### Key Entities
 
@@ -156,6 +217,21 @@ funcionamento/jornada; Pessoa beneficiária já cadastrada; Agendamento; histór
   remove o registro original nem exige motivo.
 - **SC-005**: Completar os fluxos por teclado e em 390 px, em temas claro/escuro,
   sem corte de ações ou dependência de arrastar elementos.
+- **SC-006**: Em 20 criações concorrentes sobrepostas para a mesma pessoa, com
+  profissionais disponíveis distintos, persiste exatamente uma reserva. Validar
+  associado e dependente separadamente, sobreposição parcial, unidades diferentes,
+  remarcação recusada com rollback, cancelamento e intervalos adjacentes; permitir
+  reservas simultâneas entre titular e dependentes distintos quando os demais requisitos forem atendidos.
+- **SC-007**: Após bloquear um titular da massa sintética, 100% das reservas futuras
+  próprias e dos dependentes afetados mantêm identidade, horário, situação e ocupação,
+  com sinalização textual na agenda/detalhes. Pessoas sem vínculo afetado permanecem
+  inalteradas; novas reservas/remarcações impedidas são recusadas e cancelamento
+  manual preserva histórico e libera somente a vaga cancelada.
+
+- **SC-008**: Conta administrativa sem concessão do módulo não consulta/altera
+  Agendamentos nem encontra entradas na barra lateral/busca/Início; após revogação,
+  a próxima ação protegida é negada. Somente consulta não executa mutações por UI/API;
+  consultar+alterar mantém as jornadas de gestão. Alterar sem consultar é recusado.
 
 ## Assumptions
 
@@ -185,7 +261,7 @@ Pedido do usuário após PR28: padronizar todas as telas de Agendamentos com as 
 - UI-F02 Mostrar Nova reserva no cabeçalho da agenda. Expor Unidades, Serviços, Procedimentos, Profissionais, Habilitações e Horários em abas identificadas, com ação específica de inclusão em cada cadastro, disponível mesmo sem resultados.
 - UI-F03 Abas e filtros devem manter contexto na URL/recarga. Formulários de cadastro identificam a ação e oferecem salvar/cancelar, com foco de entrada e retorno. Não perder dados após erro de envio.
 - UI-F04 Reduzir ruído dos filtros e seletores; usar listagens tabulares, estados vazios orientados à ação e formulário de reserva organizado por beneficiário, atendimento e horário.
-- UI-F05 Validar inclusão de todos os tipos, edição, reserva/remarcação/cancelamento, teclado, 390px/desktop, temas e contraste transitório. Preservar contratos, permissões e integridade atuais; não criar novas funções do roadmap.
+- UI-F05 Validar inclusão de todos os tipos, edição, reserva/remarcação/cancelamento, teclado, 390 px/desktop, temas e contraste transitório. Preservar contratos, permissões e integridade atuais; não criar novas funções do roadmap.
 
 
 ## Edições durante navegação — decisão de 16/09/2026
@@ -198,3 +274,30 @@ Pedido do usuário após PR28: padronizar todas as telas de Agendamentos com as 
 
 - **SL01**: Substituir busca e select separados por um único controle editável de seleção,
   como UF; preservar filtros dependentes, pesquisa real, paginação, identidade e validação.
+
+
+### US4 — Exportar dados autorizados (Priority: P2)
+
+O operador com permissão geral de exportação e consulta da função abre
+“Exportar Agendamentos”, ajusta filtros,
+seleciona/reordena colunas e escolhe Excel, CSV ou PDF para download direto.
+Abrange dados/abas consultáveis da função, sem teto funcional de registros/período,
+sem prazo de arquivo nem fila/histórico obrigatório. Não exportar bytes de anexos,
+segredos ou campos sem autorização.
+
+Teste independente: Duas reservas concorrentes da mesma pessoa em profissionais/unidades distintos: uma aceita; titular/dependentes distintos podem coincidir. Bloqueio mantém reserva/vaga e mostra aviso. Sem read some/nega; só read não altera. Exportação não herda teto visual.
+Em erro, manter filtros/colunas; três formatos preservam conjunto e ordem escolhidos.
+Campos restritos enviados diretamente são recusados no servidor. Este detalhamento
+aplica o padrão transversal já decidido, sem implementação ou nova homologação.
+
+
+Checkpoint de 21/09/2026 — plan concluído: desenho, pesquisa, modelo, contratos e
+roteiro atualizados. Nenhum código, serviço, migration ou teste de aplicação executado.
+Tarefas serão detalhadas em seguida; políticas e funções adiadas permanecem pendentes.
+
+Checkpoint de 21/09/2026 — tasks concluídas: 15 tarefas novas (T025–T039), com histórias, dependências, caminhos e aceite; nenhuma implementação/teste de aplicação executado. Ver tasks.md.
+
+Checkpoint final de21/09/2026 — plan seguido de tasks encerrados. Conferência
+documental de IDs, fases, links e preservação do histórico concluída; código,
+testes de aplicação e homologações não executados. Próximo passo recomendado:
+análise cruzada antes da implementação. Detalhes no relatório do programa002.
