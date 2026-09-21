@@ -26,9 +26,13 @@ exportação direta pendentes. Não interpretar bibliotecas apenas recomendadas 
 
 **Decisão vigente — 21/09/2026:** Mensagens prepara comunicados/campanhas aos associados, com público e programação. Finalidade confirmada; protótipo sem homologação, aderência/continuidade em M016 e meios/envio real adiados.
 
-Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
+de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
+definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os
+requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
-Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
+Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões
+continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
 
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
@@ -41,7 +45,22 @@ Esta atualização substitui o estado anterior de “somente pesquisa” para es
 Exceções, avaliações e demais estados permanecem posteriores. Calendário administrativo foi priorizado em 18/09 e está integrado, com CAL06 pendente;
 a primeira interface do usuário no app/site continua pendente; CAASSH continua desativado.
 
-## 1. Contexto
+## 1. Contexto e fontes da stack
+
+Revisão de 17/09/2026: este documento distingue implementação, requisitos de operação e opções
+futuras. Versões exatas vêm dos manifests de cada checkout e do lockfile; não duplicar uma tabela de
+versões que envelheça separadamente das dependências. Configuração no repositório não comprova
+instalação ou estado da hospedagem.
+
+| Fonte                                                                                      | Informação verificável                                                               |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| [package.json](../package.json), [.nvmrc](../.nvmrc) e [workspace](../pnpm-workspace.yaml) | Node, pnpm, qualidade e organização do monorepo.                                     |
+| [Web](../apps/web/package.json)                                                            | Next.js, React, Better Auth, Payload, Lexical, Tailwind, Radix Dialog, Lucide e Zod. |
+| [Worker](../apps/worker/package.json)                                                      | Node/TypeScript, pg-boss, pg, file-type, Pino e OpenTelemetry.                       |
+| [Banco](../packages/db/package.json)                                                       | Drizzle ORM/Kit e pg.                                                                |
+| [Notícias](../packages/news/package.json)                                                  | Payload e seu adaptador PostgreSQL.                                                  |
+| [Compose](../compose.yaml)                                                                 | PostgreSQL, ClamAV e coletor OpenTelemetry para o ambiente configurado.              |
+| [Ferramentas e skills](TOOLING.md)                                                         | Processo de trabalho, seleção de especificação e verificação documental.             |
 
 Esta arquitetura atende ao novo painel CAAB e ao portal do parceiro. O desenho contempla contratos
 para app/site; alterar esses consumidores ou conectar serviços externos depende de escopo e contrato
@@ -65,16 +84,19 @@ Módulos principais:
 
 ## 2. Arquitetura
 
-Arquitetura recomendada:
+Arquitetura implementada no repositório:
 
-**Aplicação web Next.js + BFF + Payload CMS, PostgreSQL para dados e arquivos e um worker dedicado.**
+**Aplicação web Next.js + BFF + Payload CMS, PostgreSQL para dados e arquivos e um worker
+dedicado.**
 
 Fluxos principais:
 
 - Navegador interno → BFF Next.js → domínio/PostgreSQL.
 - Painel de notícias → Payload → PostgreSQL, incluindo conteúdo binário.
-- App/site → API versionada → somente conteúdo publicado para o respectivo canal.
-- BFF → fila durável → worker → publicação, mídia, notificações e integrações.
+- Contrato para app/site → API versionada → somente conteúdo publicado para o respectivo canal. A
+  conexão dos consumidores externos depende de escopo próprio.
+- BFF → fila durável → worker → publicação, mídia e exportações. Notificações e novas integrações
+  dependem de implementação e autorização específicas.
 
 Usar um monólito modular. Separar serviços somente quando carga, segurança, implantação ou
 responsabilidade operacional demonstrarem uma fronteira real.
@@ -84,8 +106,8 @@ responsabilidade operacional demonstrarem uma fronteira real.
 - **TypeScript:** aplicação, APIs, componentes, CMS, worker e testes.
 - **SQL:** migrations, constraints, índices, views e políticas do banco.
 - **CSS via Tailwind:** apresentação baseada em design tokens.
-- **Python opcional:** somente para processamento isolado que tenha biblioteca claramente superior,
-  como OCR ou análise de arquivos.
+- **Python:** usado como ferramenta auxiliar de manutenção; não integra o runtime do produto. Um
+  processamento de produto em Python continua sendo opção futura, sujeita a justificativa concreta.
 
 Não adicionar outra linguagem ao núcleo sem justificativa concreta.
 
@@ -127,7 +149,7 @@ explícita de domínio.
 
 ### 5.3 Editor
 
-Lexical permanece a escolha prevista para o editor com Payload. Qualquer alternativa deve ser
+Lexical está implementado no editor de Notícias, integrado ao Payload. Qualquer alternativa deve ser
 justificada pelas necessidades do projeto novo e pela compatibilidade com a fundação; o legado não é
 fonte de requisito nem de implementação.
 
@@ -174,15 +196,15 @@ primeira entrega usou lista diária com componentes existentes. O incremento aut
 em 18/09/2026 adiciona FullCalendar Standard como camada visual, sem mudar a autoridade
 do servidor sobre vagas e reservas. App/site continua pendente.
 
-Direção: avaliar núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário
-em 15/09/2026: Cal.com é referência de pesquisa e **não deve ser integrado, salvo
-se nenhuma outra possibilidade for encontrada**. A abertura anterior para integração
-futura foi substituída por essa condição; conveniência não a satisfaz.
+Implementação: núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário em 15/09/2026:
+Cal.com é referência de pesquisa e **não deve ser integrado, salvo se nenhuma outra possibilidade
+for encontrada**. A abertura anterior para integração futura foi substituída por essa condição;
+conveniência não a satisfaz.
 
-A pesquisa não demonstrou esgotamento de alternativas. Não instalar SDK, incorporar
-código, subir serviço ou integrar API/iframe do Cal.com nesta etapa. Registrar
-requisitos, alternativas e impedimentos se a exceção vier a ser investigada.
-Detalhes em [pesquisa de Agendamentos](../specs/002-integrated-modules/pesquisa-gestao-agendamentos-2026-09-15.md).
+A pesquisa não demonstrou esgotamento de alternativas. Não instalar SDK, incorporar código, subir
+serviço ou integrar API/iframe do Cal.com nesta etapa. Registrar requisitos, alternativas e
+impedimentos se a exceção vier a ser investigada. Detalhes em
+[pesquisa de Agendamentos](../specs/002-integrated-modules/pesquisa-gestao-agendamentos-2026-09-15.md).
 
 ### 7.2 Integridade
 
@@ -195,7 +217,8 @@ Detalhes em [pesquisa de Agendamentos](../specs/002-integrated-modules/pesquisa-
 - Chave de idempotência na criação para evitar duplicação por retry.
 - Histórico de transições preservado.
 
-FullCalendar é apenas a camada visual; nunca decide disponibilidade final.
+Se FullCalendar vier a ser adotado, será apenas camada visual; a disponibilidade final permanece no
+domínio e no banco.
 
 ## 8. Banco de dados
 
@@ -208,8 +231,10 @@ FullCalendar é apenas a camada visual; nunca decide disponibilidade final.
 - Valores financeiros futuros em unidade monetária mínima e moeda explícita.
 - Exclusão lógica em entidades auditáveis.
 
-ORM recomendado: Drizzle ORM ou o adaptador exigido pelo Payload. Evitar manter dois modelos
-concorrentes das mesmas tabelas. SQL explícito é aceitável para constraints e consultas críticas.
+Drizzle ORM já é usado em `packages/db` e pelo adaptador de autenticação Better Auth. Notícias
+utiliza o adaptador PostgreSQL do Payload. Há consultas SQL explícitas com pg. Preservar o
+proprietário de cada tabela; não criar modelos concorrentes das mesmas tabelas. SQL explícito
+continua apropriado para constraints e consultas críticas.
 
 ## 9. Autenticação e autorização
 
@@ -217,7 +242,9 @@ A fundação do projeto novo já utiliza Better Auth, sessões e autorização n
 implementação, sem criar provedores ou tabelas de autenticação por módulo. Requisitos:
 
 - Cookies de sessão `HttpOnly`, `Secure` e `SameSite` apropriado.
-- E-mail e senha para administradores, com permissões e auditoria. Autenticador removido em 10/09/2026 por reclamações, conforme motivo confirmado pelo usuário em 17/09/2026; ver `specs/006-account-settings/authenticator-removal.md`.
+- E-mail e senha para administradores, com permissões e auditoria. Autenticador removido em
+  10/09/2026 por reclamações, conforme motivo confirmado pelo usuário em 17/09/2026; ver
+  `specs/006-account-settings/authenticator-removal.md`.
 - Expiração e revogação de sessões.
 - Desativação imediata de usuário.
 - RBAC com permissões concretas por ação.
@@ -241,9 +268,9 @@ O usuário autenticado nunca fornece o próprio papel ou escopo como fonte confi
 - Imagens processadas em worker com biblioteca atualizada.
 - Vídeos grandes processados fora do request web.
 
-Guardar binários no PostgreSQL foi autorizado pelo usuário em 14/09/2026. Não servir uploads
-de uma pasta executável. Incluir os bytes nos backups e validar restauração por checksum.
-Configuração e transição: [armazenamento no banco](DATABASE-FILE-STORAGE.md).
+Guardar binários no PostgreSQL foi autorizado pelo usuário em 14/09/2026. Não servir uploads de uma
+pasta executável. Incluir os bytes nos backups e validar restauração por checksum. Configuração e
+transição: [armazenamento no banco](DATABASE-FILE-STORAGE.md).
 
 ## 11. Validação e APIs
 
@@ -263,8 +290,8 @@ solicitante.
 
 Consulta institucional implementada: OAB-BA/Implanta, relatório STATUS CAAB, conforme
 [contrato da spec005](../specs/005-members-management/contracts/oab-query.md) e
-[registro LEG-001](LEGACY-REUSE.md). CNA/ConfirmADV são referências oficiais para
-conferência nacional; não substituem automaticamente o relatório CAAB.
+[registro LEG-001](LEGACY-REUSE.md). CNA/ConfirmADV são referências oficiais para conferência
+nacional; não substituem automaticamente o relatório CAAB.
 
 Regras:
 
@@ -282,7 +309,8 @@ Usar worker Node.js separado para:
 - Publicação e despublicação agendada.
 - Distribuição de notícia por canal.
 - Processamento e antivírus de mídia.
-- Geração de thumbnails.
+- Geração de thumbnails quando houver handler implementado; não presumir esse recurso pela
+  existência do worker.
 - Exportações.
 - Notificações futuras.
 - Sincronizações autorizadas.
@@ -361,34 +389,28 @@ Cobertura obrigatória por risco:
 - Bloqueio/desbloqueio de associado.
 - Redação de dados nos logs.
 
-## 17. Estrutura sugerida
+## 17. Estrutura existente
 
 ```text
 apps/
   web/
     app/
     components/
-    modules/
-      news/
-      scheduling/
-      members/
-      partners/
-      employees/
-      audit/
+    modules/       # auth, users, news, members, partners, scheduling,
+                   # messaging, audit, files, jobs, shared e workspace
   worker/
 packages/
-  domain/
   db/
-  ui/
+  news/
   contracts/
   config/
 infra/
-  app/
-  worker/
   postgres/
-  storage/
-  caddy/
+  clamav/
+  observability/
+  github/
 docs/
+specs/
 ```
 
 Começar com poucos packages. Criar nova separação apenas quando houver fronteira real de
@@ -396,14 +418,19 @@ reutilização ou implantação.
 
 ## 18. Infraestrutura
 
-Modelo inicial:
+Configuração encontrada no repositório:
 
-- Containers Docker para web, worker e serviços necessários.
-- PostgreSQL gerenciado ou self-hosted com operação madura.
-- Armazenamento exclusivo no PostgreSQL, incluindo imagens, documentos e exportações.
-- Caddy como reverse proxy quando self-hosted.
-- Ambientes separados: local, DEV e PROD.
-- Banco e credenciais separados por ambiente.
+- Docker Compose declara PostgreSQL, ClamAV e coletor OpenTelemetry.
+- Web e worker são aplicações Node; a forma de hospedá-los deve ser conferida no ambiente de
+  destino.
+- Arquivos, imagens, documentos e exportações são armazenados no PostgreSQL.
+- MinIO/S3 não são backend atual e não possuem fallback; registros antigos são históricos.
+- Caddy foi uma opção de desenho, não um componente cuja implantação foi comprovada nesta revisão.
+
+Requisitos operacionais: separar local, DEV e PROD, com bancos e credenciais próprios. O estado
+remoto precisa de evidência do ambiente; não pode ser inferido do Compose. Localhost permanece
+desligado até ordem explícita; ao ligar, usar a versão mais recente do repositório local, conforme
+[fluxo de entrega](DELIVERY-WORKFLOW.md).
 
 Self-hosting só deve ir para produção com backup, monitoramento, atualização e restauração sob
 responsabilidade definida.
@@ -420,10 +447,11 @@ responsabilidade definida.
 ## 20. Ferramentas de qualidade
 
 - ESLint.
-- Prettier.
+- Prettier para código; documentos alterados têm verificação explícita por `format:docs:check`,
+  descrita em [TOOLING.md](TOOLING.md). O comando geral não os inclui automaticamente.
 - TypeScript strict.
 - Lockfile obrigatório.
-- Renovate ou Dependabot com revisão.
+- Renovate/Dependabot: opções para automação futura; não há configuração encontrada nesta revisão.
 - CI para lint, typecheck, testes, build, auditoria de dependências e migrations.
 
 ## 21. Decisão resumida
@@ -449,8 +477,12 @@ eventos permitidos e HMAC; não adiciona provedor ou serviço de analytics exter
 
 ## Estado vigente — Agendamentos e CAASSH, consolidado em 17/09/2026
 
-A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da [spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta, remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja apenas em pesquisa.
+A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da
+[spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta,
+remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes
+continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja
+apenas em pesquisa.
 
-**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
-são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
-A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.
+**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima são referências
+históricas, sem ativação ou implementação autorizada no ciclo atual. A revisão deverá confirmar
+finalidade, escopo e eventuais dependências antes da retomada.

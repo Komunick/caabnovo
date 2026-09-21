@@ -5,13 +5,13 @@ packages:
 # Drizzle and Better Auth share a Vitest peer context; keep its transformer on Vite 8's range.
 overrides:
   "drizzle-kit>esbuild": "0.28.2"
+  "@esbuild-kit/core-utils>esbuild": "0.28.2"
+  "tsx>esbuild": "0.28.2"
+  "monaco-editor>dompurify": "3.4.15"
+  "docker-compose>yaml": "2.9.1"
 
 allowBuilds:
   cpu-features: false
   esbuild: true
   protobufjs: true
   ssh2: false
-
-minimumReleaseAgeExclude:
-  - "@aws-sdk/client-s3@3.1127.0"
-  - "@aws-sdk/s3-request-presigner@3.1127.0"

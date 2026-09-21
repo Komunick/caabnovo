@@ -1,6 +1,6 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
-**Pendências preservadas pela revisão de código — 21/09:** T096 (fechar cadastro público, A03) e T097 (preservar conflitos dos formulários, A11) continuam pendentes e executáveis em retomada autorizada. A lista incremental T098–T120 não as substitui nem suspende.
+**Pendências preservadas pela revisão de código — 21/09:** T096 (fechar cadastro público, A03) foi conciliada com a correção preparada e aguarda validação desta entrega; T097 (preservar conflitos dos formulários, A11) continua pendente e executável em retomada autorizada. A lista incremental T098–T120 não as substitui nem suspende.
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/exports.md), [quickstart](quickstart.md).
@@ -628,3 +628,8 @@ sem news:read, mantendo a leitura pública externa. Agendamentos no catálogo at
 é incondicional. Não considerar somente menus como cobertura do requisito (A06).
 
 </details>
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. A remoção anterior da dependência direta de Payload no worker foi mantida; o uso existente fica em packages/news. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

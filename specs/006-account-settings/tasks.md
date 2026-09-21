@@ -149,3 +149,8 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [ ] T025 Homologar envio SMTP real de recuperação de senha e confirmação de troca de e-mail, com destinatários de teste autorizados, URL HTTPS, entrega/expiração/uso único e revogação; registrar evidências sem substituir entrega externa por Mailpit/configuração sintética. Origem: FR-013/FR-016, A12 (partial). Código de transporte existe; ambiente remoto não conferido nesta revisão.
 
 </details>
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. A remoção anterior da dependência direta de Payload no worker foi mantida; o uso existente fica em packages/news. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

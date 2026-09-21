@@ -2,6 +2,7 @@ import { keyboardActivate, keyboardType, tabTo } from "./keyboard";
 import { randomUUID } from "node:crypto";
 import { expect, test } from "./fixtures";
 import { expectWcag22AA } from "./accessibility";
+import { provisionAccount } from "./provision-account";
 
 test("edits own name, changes password, confirms email and signs out through the account menu", async ({
   page,
@@ -13,7 +14,8 @@ test("edits own name, changes password, confirms email and signs out through the
   const newEmail = `changed-${email}`;
   const password = "Synthetic-Settings-Only-Password-2026!";
   const newPassword = "Synthetic-Settings-New-Password-2026!";
-  const signup = await page.request.post("/api/auth/sign-up/email", {
+  await provisionAccount({ email, password, name: "Conta Sintética" });
+  const signup = await page.request.post("/api/auth/sign-in/email", {
     headers: { origin: baseURL! },
     data: { email, password, name: "Conta Sintética" },
   });

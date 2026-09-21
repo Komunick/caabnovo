@@ -193,3 +193,8 @@ análise cruzada antes da implementação. Detalhes no relatório do programa002
 ## Cargos e recusas — decisão I1 de21/09/2026
 
 Concessões usam [001 cargos](../001-project-foundation/contracts/roles.md). Gestor pode conceder alteração de módulo que ele próprio somente consulta a terceiros; esse caso não é concessão acima da autoridade. Autogestão do Gestor e concessão por Colaborador permanecem recusadas; somente Administrador atribui cargos. Configurações pessoais não concedem gestão de terceiros.
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. A remoção anterior da dependência direta de Payload no worker foi mantida; o uso existente fica em packages/news. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

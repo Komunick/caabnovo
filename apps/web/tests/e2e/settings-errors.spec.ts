@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { expect, test, syntheticUsers } from "./fixtures";
 import { expectWcag22AA } from "./accessibility";
 import { keyboardActivate } from "./keyboard";
+import { provisionAccount } from "./provision-account";
 
 test("reports recovery unavailability and permits a retry by keyboard", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -30,16 +31,11 @@ test("shows grant refusal reasons and grants administrator without MFA", async (
   baseURL,
 }) => {
   test.setTimeout(90000);
-  const signup = await page.request.post("/api/auth/sign-up/email", {
-    headers: { origin: baseURL! },
-    data: {
-      email: `grant-${randomUUID()}@example.test`,
-      name: "Destinatário Sintético",
-      password: "SyntheticGrantPassword2026",
-    },
+  const user = await provisionAccount({
+    email: `grant-${randomUUID()}@example.test`,
+    name: "Destinatário Sintético",
+    password: "SyntheticGrantPassword2026",
   });
-  expect(signup.ok()).toBe(true);
-  const { user } = await signup.json();
   const login = await page.request.post("/api/auth/sign-in/email", {
     headers: { origin: baseURL! },
     data: syntheticUsers.administrator,

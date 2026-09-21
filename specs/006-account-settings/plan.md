@@ -171,3 +171,8 @@ Executar adequações e seus testes em retomada de implementação. Preservar da
 ## Complemento vigente I1 — 21/09/2026
 
 Regressão T027/T028 deve usar a matriz dos três cargos de001. Gestor com consulta global, exportação geral e Relatórios completos pode conceder alteração de outro módulo que não possui a terceiro; não mostrar GRANT_BEYOND_AUTHORITY nesse caso. Gestor não altera a si nem atribui cargos; Colaborador não concede. Preservar Conta/Sessões e último Administrador.
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. A remoção anterior da dependência direta de Payload no worker foi mantida; o uso existente fica em packages/news. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

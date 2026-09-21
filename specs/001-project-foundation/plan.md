@@ -510,3 +510,8 @@ Executar adequações e seus testes em retomada de implementação. Preservar da
 ## Complemento I1: base do Gestor — 21/09/2026
 
 Consulta global, exports:generate e todas as permissões de Relatórios são base do cargo Gestor; alterações em outros módulos exigem concessão adicional. Resolver a base antes do override; não materializar em arrays individuais. Catalogar operações por finalidade, inclusive chaves unificadas de Mensagens, para separar consulta/mutação sem liberar escrita implicitamente. Atualizar guards/UI/testes em T101/T103/T114/T116; coordenação009 mantém M016 e nenhum envio real.
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. A remoção anterior da dependência direta de Payload no worker foi mantida; o uso existente fica em packages/news. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).

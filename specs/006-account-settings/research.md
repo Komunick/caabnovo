@@ -93,3 +93,12 @@ Node oferece sorteio criptográfico sem viés de módulo. Reutilizar hashPasswor
 Diagnóstico: criação anterior só inseria user e recuperação exige account.password existente. Corrigir atomicamente. Reenvio idempotente não pode recuperar senha do hash ou substituí-la. A única conta legada sem senha poderá receber credencial por ação explícita, com autoridade e concorrência verificadas. Respostas com no-store; segredo só em memória transitória, fora de logs/rascunhos/storage. Nenhum dado real na implementação.
 
 Revisão de vocabulário solicitada em 17/09/2026: lista permitida revisada de 252 palavras. Removidos nomes de animais usados como insultos, referências corporais, palavras ambíguas e termos pouco familiares. Não identificados termos ofensivos na lista remanescente; variação regional impede garantia universal. Novas palavras exigem revisão humana. Regressão impede reintroduzir os exemplos removidos. Não gerar palavras livremente nem consultar dicionário remoto em runtime.
+
+## Correção de segurança — 17/09/2026
+
+[Better Auth — opções](https://better-auth.com/docs/reference/options): usar disableSignUp e lista fechada de rotas, sem opção para reabrir inscrição em testes. [Next.js — CSP](https://nextjs.org/docs/app/guides/content-security-policy) e documentação embutida 16.3.4: nonce via proxy exige renderização dinâmica e header CSP no request ao renderer. Passar nonce ao Script de tema. Manter estilos inline para UI; scripts em produção sem unsafe-inline/eval. connect-src limita a self e ViaCEP já usado. [Next.js — headers](https://nextjs.org/docs/app/api-reference/config/next-config-js/headers): cabeçalhos globais/específicos por rota, sem relaxar downloads. Snapshot em user_access congelaria RBAC; função legada preserva baseline somente para usuários anteriores e mantém concessões dinâmicas. Seeds restritos a app/banco loopback. Não se presume acesso ao firewall ou segredos efetivos da hospedagem. GitHub excluído pelo usuário.
+
+
+## Compatibilidade com a VM — 17/09/2026
+
+Decisão de compatibilidade de 17/09/2026: a configuração efetiva da VM não foi inspecionada. A pesquisa anterior permanece como histórico; suas propostas de CSP, permissões, seeds e ambiente ficam adiadas. Manter somente a opção disableSignUp já pesquisada e atualizações de dependências já testadas. CI aprovado do conjunto anterior não substitui validação do conjunto reduzido nem teste na VM.

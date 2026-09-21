@@ -4,6 +4,7 @@ import { beforeAll, afterAll, describe, expect, it } from "vitest";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { verifyPassword } from "better-auth/crypto";
 import { createAuth } from "../../modules/auth/auth-factory";
+import { provisionTestUser } from "../support/provision-user";
 import { resetIdentifier } from "../../modules/auth/password-recovery-service";
 import { changeAccountSettings } from "../../modules/auth/account-settings-service";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
@@ -31,9 +32,8 @@ function sessionCookie(response: Response) {
 }
 async function account() {
   const email = `hardening-${randomUUID()}@example.test`;
-  const response = await auth.handler(
-    request("/sign-up/email", { email, name: "Synthetic Account", password }),
-  );
+  await provisionTestUser(database.pool, { email, name: "Synthetic Account", password });
+  const response = await auth.handler(request("/sign-in/email", { email, password }));
   expect(response.status).toBe(200);
   const { user } = await response.json();
   return { id: user.id as string, email, cookie: sessionCookie(response) };

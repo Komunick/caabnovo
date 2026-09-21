@@ -572,3 +572,8 @@ Checkpoint I1 de21/09/2026: três cargos e limites de autoridade definidos pelo 
 Complemento final I1 — 21/09/2026: Gestor possui consulta a todos os módulos, exportação geral e acesso completo a Relatórios. Pode conceder a terceiros alterações de outros módulos que não possui, sem autogestão. Plan/tasks/contrato conciliados; implementação pendente. D1 corrigido documentalmente; U1/C1 aguardam esclarecimento.
 
 Checkpoint I3 — 21/09/2026: correção documental autorizada após o segundo analyze. O contrato de cargos agora referencia as decisões aprovadas de U1/C1 e seus documentos de aceite, substituindo a indicação desatualizada de esclarecimento pendente. Nenhuma regra de cargos alterada; implementação e testes de aplicação permanecem pendentes.
+
+
+## Consolidação de segurança — 21/09/2026
+
+Correção preparada em 17/09 incorporada nesta entrega: cadastro público por e-mail bloqueado, provisionamento sintético dos testes sem endpoint de cadastro e atualizações de dependências preservadas. A remoção anterior da dependência direta de Payload no worker foi mantida; o uso existente fica em packages/news. Nenhuma migration ou alteração de infraestrutura retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam planejadas, sem execução implícita. Validação do conjunto conciliado em andamento; localhost permanece desligado. Evidências: [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
