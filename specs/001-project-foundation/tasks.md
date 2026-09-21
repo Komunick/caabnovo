@@ -1,16 +1,10 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
-**Pendências preservadas pela revisão de código — 21/09:** T096 (fechar cadastro público, A03) foi
-implementada e validada no CI de 7d4d507, com integração em dev pendente no PR #35; T097 (preservar
-conflitos dos formulários, A11) continua pendente e executável em retomada autorizada. A lista
-incremental T098–T120 não as substitui nem suspende.
-
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/exports.md), [quickstart](quickstart.md). **Branch da entrega:**
-`feature/access-export-foundation-20260921`. T097 em implementação; validação de navegador pendente.
-**Lista ativa:** T098–T120; testes foram pedidos nas specs e nos gates do projeto. Caminhos novos
-são destinos planejados; conferir referências contra o inventário de artefatos deste incremento
-antes de editar. Checkpoint de execução na spec; tarefas só serão marcadas após evidência completa.
+`feature/access-export-foundation-20260921`. Lista ativa: T097–T123 e coordenação005 LC01/LC02, 008
+LC01. Implementação concluída, gates finais em andamento conforme checkpoint da spec e
+[evidências](evidence/plan-2026-09-21-validation.md). T096 já integrada pelo PR35; não repetir.
 
 ## Rastreabilidade e escopo
 
@@ -40,7 +34,8 @@ já concluídas.
       preparar registro finito de adaptadores em `apps/web/modules/exports/catalog.ts` (novo), sem
       SQL livre.
 - [ ] T101 Cobrir migração de chaves, herança expirada/revogada, override vazio, deduplicação/versão
-      e baseline editorial em `apps/web/tests/integration/user-access.test.ts` e
+      e baseline editorial em `apps/web/tests/integration/access-foundation-migrations.test.ts`,
+      `apps/web/tests/integration/user-access.test.ts` e
       `apps/web/tests/integration/user-permissions.test.ts`, comparando efetivo antes/depois das
       duas migrações separadamente; acrescentar os seis cenários de
       `specs/001-project-foundation/contracts/roles.md`, incluindo Administrador com override
@@ -130,9 +125,9 @@ sem senha/hash/token.
       excluir senha inicial/hash/tokens e manter ordenação/escopo por campo.
 - [ ] T116 [US2] Integrar ação e tela em `apps/web/app/(admin)/users/page.tsx` e
       `apps/web/app/(admin)/users/exportar/page.tsx` (nova); cobrir três cargos, perfil parcial e
-      três formatos em `apps/web/tests/e2e/user-administration.spec.ts`; provar Gestor sem escrita
-      em outro módulo concedendo essa escrita a terceiro, autogestão negada e Colaborador sem
-      concessão.
+      três formatos em `apps/web/tests/e2e/direct-exports.spec.ts` e regressões em
+      `apps/web/tests/e2e/user-administration.spec.ts`; provar Gestor sem escrita em outro módulo
+      concedendo essa escrita a terceiro, autogestão negada e Colaborador sem concessão.
 
 ## US4 — Descoberta autorizada
 
@@ -145,8 +140,8 @@ cartão/contador no Início; revogação vale na próxima ação e Conta/Sessõe
       preservadas.
 - [ ] T118 [US4] Cobrir sidebar/busca/Início e revogação em
       `apps/web/modules/workspace/areas.test.ts`, `apps/web/modules/workspace/search.test.ts` e
-      `apps/web/tests/e2e/workspace-experience.spec.ts`, incluindo geral isolada e scheduling sem
-      acesso.
+      `apps/web/tests/e2e/workspace-experience.spec.ts` e
+      `apps/web/tests/e2e/direct-exports.spec.ts`, incluindo geral isolada e scheduling sem acesso.
 
 ## US5 — Operação observável
 
@@ -170,9 +165,10 @@ auditável e sem spinner infinito ou afirmação de gravação local.
 T096 (cadastro público) foi conciliada nesta entrega e validada no CI de 7d4d507: HTTP negado sem
 criação de usuário/credencial/sessão, login/recuperação e provisionamento administrativo cobertos
 pelas suítes de integração. PR #35 ainda sem merge. T097 (preservação de erro/versão dos rascunhos)
-continua aberta. T097 atua em `apps/web/components/workspace-drafts.tsx` e estados dos editores de
-Notícias/acessos, com `apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas pendências
-resolvidas por plan/tasks nem recriar correções já existentes sem confronto.
+foi executada nesta entrega; resultado atual no checkpoint e nas evidências. T097 atua em
+`apps/web/components/workspace-drafts.tsx` e estados dos editores de Notícias/acessos, com
+`apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas pendências resolvidas por
+plan/tasks nem recriar correções já existentes sem confronto.
 
 ## Dependências e ordem de execução
 

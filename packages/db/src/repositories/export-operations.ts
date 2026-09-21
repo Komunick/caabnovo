@@ -39,6 +39,7 @@ async function audit(
 }
 export async function beginExportOperation(pool: Pool, operation: OperationIdentity) {
   return withTransaction(pool, async (db) => {
+    await db.query("SET LOCAL statement_timeout='5s'");
     const inserted = await db.query(
       "INSERT INTO export_operation(request_id,actor_id,module,dataset,format,correlation_id) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING RETURNING request_id",
       [

@@ -12,10 +12,10 @@ serão executados após implementação/gates, somente neste recorte.
   quality, browser e security aprovados. Inclui T097, cargos/acessos, ciclo de colaboradores,
   associados e nova senha. Foram corrigidas fixtures antigas; não relaxadas as autorizações.
 - [CI35640590161](https://github.com/Komunick/caabnovo/actions/runs/35640590161), commit67c4292:
-  quality/security aprovados; navegador em acompanhamento neste checkpoint. Quality:385 testes
-  unitários,145 de contrato,233 de integração; formatação, lint, tipos, migrations e build
-  aprovados. CI usa Node24.20.0, PostgreSQL18 descartável, Ubuntu do workflow; limites do runner são
-  os fornecidos pelo GitHub. Não foi medido hardware físico dedicado.
+  quality, browser e security aprovados. Quality:385 testes unitários,145 de contrato,233 de
+  integração; formatação, lint, tipos, migrations e build aprovados. CI usa Node24.20.0,
+  PostgreSQL18 descartável, Ubuntu do workflow; limites do runner são os fornecidos pelo GitHub. Não
+  foi medido hardware físico dedicado.
 
 ## Perfil inicial de exportação (100 registros sintéticos)
 
@@ -32,6 +32,17 @@ verificação. O pico é amostrado nos writes, não um profiler contínuo; não 
 Teste ajustado na revisão seguinte separa geração de verificação. As100 linhas foram conferidas nos
 três formatos. Pools estavam ociosos ao final; testes cobriram revogação sob backpressure,
 interrupção, unicidade de requestId e dono. Não é prova de grande volume/estresse.
+
+## Validação complementar
+
+CI35641862727, commit385f0d6: quality e security aprovados. Inclui snapshot entre lotes sob
+alteração concorrente, PDF longo em faixas horizontais e erro de writer. Navegador testa
+adicionalmente Gestor concedendo escrita que não possui, gerando senha sem escrita geral e reserva
+mantida/cancelada após exclusão. Navegador ainda em andamento neste checkpoint.
+
+A rodada seguinte inicia as30 aberturas do painel em paralelo aos downloads (a primeira rodada as
+abria entre formatos) e confere erro real de configuração seguido de nova tentativa com o formulário
+preservado. A evidência de desempenho anterior não comprova simultaneidade.
 
 ## Pendências de fechamento
 

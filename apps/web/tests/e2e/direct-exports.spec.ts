@@ -28,6 +28,7 @@ test("direct exports keep filters and keyboard column order and download 100 rec
   const sql = db();
   await sql.connect();
   const prefix = `Exportação ${crypto.randomUUID().slice(0, 8)}`;
+  const monitor = await page.context().newPage();
   try {
     await sql.query(
       `INSERT INTO "user"(name,email) SELECT $1||' '||lpad(n::text,3,'0'),$2||n||'@example.test' FROM generate_series(1,100)n`,
@@ -42,6 +43,23 @@ test("direct exports keep filters and keyboard column order and download 100 rec
     await page.getByRole("textbox", { name: "Nome", exact: true }).fill(prefix);
     await page.getByRole("button", { name: "Mover E-mail para cima", exact: true }).focus();
     await page.keyboard.press("Enter");
+    // Reject a tampered request in the real endpoint, then retry with the intact form.
+    await page.route(
+      "**/api/v1/exports/download",
+      async (route) => {
+        const body = new URLSearchParams(route.request().postData()!);
+        const input = JSON.parse(body.get("config")!);
+        input.columns.push("passwordHash");
+        body.set("config", JSON.stringify(input));
+        await route.continue({ postData: body.toString() });
+      },
+      { times: 1 },
+    );
+    await page.getByRole("button", { name: "Exportar em CSV", exact: true }).click();
+    await expect(page.getByRole("alert")).toContainText(
+      "Confira os filtros e as colunas selecionadas",
+    );
+    await expect(page.getByRole("textbox", { name: "Nome", exact: true })).toHaveValue(prefix);
     const samples: number[] = [];
     for (const [format, label] of [
       ["xlsx", "Excel"],
@@ -50,6 +68,17 @@ test("direct exports keep filters and keyboard column order and download 100 rec
     ] as const) {
       const downloadPromise = page.waitForEvent("download");
       await page.getByRole("button", { name: `Exportar em ${label}`, exact: true }).click();
+      // Open the ordinary panel concurrently with the download, in the same session.
+      const measurePanel = (async () => {
+        for (let n = 0; n < 10; n++) {
+          const start = performance.now();
+          await monitor.goto("/users");
+          await expect(
+            monitor.getByRole("heading", { name: "Colaboradores", exact: true }),
+          ).toBeVisible();
+          samples.push(performance.now() - start);
+        }
+      })();
       const download = await downloadPromise;
       expect(download.suggestedFilename()).toMatch(new RegExp(`\\.${format}$`));
       expect(await download.failure()).toBeNull();
@@ -76,20 +105,7 @@ test("direct exports keep filters and keyboard column order and download 100 rec
         page.getByRole("status").filter({ hasText: "Geração e transferência concluídas" }),
       ).toContainText("100 registros");
       await expect(page.getByRole("textbox", { name: "Nome", exact: true })).toHaveValue(prefix);
-      for (let n = 0; n < 10; n++) {
-        const start = performance.now();
-        await page.goto("/users");
-        await expect(
-          page.getByRole("heading", { name: "Colaboradores", exact: true }),
-        ).toBeVisible();
-        samples.push(performance.now() - start);
-      }
-      await page.getByRole("link", { name: "Exportar colaboradores", exact: true }).click();
-      // Hard navigation deliberately starts a new workspace; restore this test's filter.
-      await page.getByRole("textbox", { name: "Nome", exact: true }).fill(prefix);
-      if (format !== "pdf") {
-        await page.getByRole("button", { name: "Mover E-mail para cima", exact: true }).click();
-      }
+      await measurePanel;
     }
     const sorted = [...samples].sort((a, b) => a - b),
       p95 = sorted[Math.ceil(sorted.length * 0.95) - 1]!;
@@ -103,7 +119,7 @@ test("direct exports keep filters and keyboard column order and download 100 rec
         p95,
         records: 100,
         node: process.version,
-        scope: "30 normal page openings in the export validation round",
+        scope: "30 normal page openings started concurrently with the three downloads",
       }),
       contentType: "application/json",
     });
@@ -128,6 +144,7 @@ test("direct exports keep filters and keyboard column order and download 100 rec
     const downloaded = await empty;
     expect(readCsv(await readFile((await downloaded.path())!))).toHaveLength(1);
   } finally {
+    await monitor.close();
     await sql.end();
   }
 });

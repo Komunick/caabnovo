@@ -9,18 +9,21 @@ seções correspondentes dos documentos das funções afetadas. Excluir tarefas 
 funcionalidades não alteradas e os adaptadores dos demais módulos ainda não implementados desta
 análise. Decisão explícita do usuário; não executar análise integral do projeto.
 
-## Checkpoint de exportação direta — 21/09/2026
+## Checkpoint atual — 21/09/2026
 
-CI `35637568416` do commit `7f6304f`: quality aprovado, incluindo integração e build; navegador do
-incremento anterior `35636649322` aprovado. Nova validação de navegador em acompanhamento. As
-correções eram de fixtures; regras de autorização foram preservadas.
+Implementação do recorte concluída: T097, cargos/acessos, base de exportação e adaptador de
+Colaboradores, ciclo de colaboradores/associados, nova senha e decisão sobre reservas. CI35640590161
+(commit67c4292) aprovado em quality, browser e security, incluindo os três formatos com100 registros
+e acessibilidade. CI35641862727 (385f0d6) aprovou quality/security; navegador complementar em
+andamento. Detalhes e limites no [relatório de validação](evidence/plan-2026-09-21-validation.md).
 
-Implementado localmente o núcleo de exportação, estado operacional (migration0027), três writers,
-catálogo/POST/status, tela compartilhada e adaptador de Colaboradores. Dezesseis testes focados
-passaram antes da integração da tela; tipos passaram. Novos testes de integração e navegador com100
-registros foram escritos, ainda sem execução. Próximo passo: gates do incremento e revisão de
-cobertura/limites antes oferecer a entrega. Clarify e analyze continuam previstos após concluir os
-gates.
+Ajuste final em validação: medir aberturas do painel em paralelo aos downloads e testar erro de
+configuração seguido de nova tentativa com os filtros preservados; limitar espera de instruções SQL
+também na criação do estado operacional. Não é limite de registros/período da exportação. Próximo
+passo: concluir gates, executar clarify → analyze somente no diff autorizado e abrir PR para dev,
+conforme pedido explícito do usuário. Localhost desligado; nenhuma migration aplicada ao banco
+local. As três marcações documentais continuam abertas. Checkpoints abaixo são históricos e
+registram o estado de suas etapas, não substituem este checkpoint atual.
 
 ## Checkpoint de implementação — CI 35636649322
 
