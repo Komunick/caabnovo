@@ -513,3 +513,27 @@ Sessões/recuperações antigas são revogadas e a versão impede rotação dupl
 transitório. Cargo é validado novamente sob lock: Administrador/Gestor, sem autogeração nem
 redefinição de Administrador por Gestor. Testes de integração usam contas sintéticas, banco
 descartável e relógio do banco.
+
+## Implementação do streaming — 21/09/2026
+
+Fontes: [ExcelJS4.4](https://github.com/exceljs/exceljs/tree/v4.4.0),
+[pg-cursor](https://node-postgres.com/apis/cursor) e [PDFKit](https://pdfkit.org/docs/text.html);
+confrontadas com as versões fixadas instaladas. O StreamBuf interno do ExcelJS ignora backpressure.
+O writer usa uma ponte restrita a `_openStream`, com PassThrough limitado, conversão imediata de
+StringBuf para bytes e espera após cada commit. Essa ponte exige nova validação quando ExcelJS
+mudar; nenhum fork de node_modules. Testes independentes de arquivo, consumidor lento e fronteira
+simulada de planilha cobrem a compatibilidade atual.
+
+XLSX inclui uma legenda separada, marcadores de registro/coluna/parte e escape de prefixos naturais.
+Não acrescenta coluna de negócio. A virada física acima de um milhão de linhas não é validada nesta
+rodada. PDF usa fonte padrão para português; caracteres fora da cobertura são representados
+reversivelmente por `\u{hex}` e barras originais são escapadas, com legenda no documento. Não
+elimina caracteres. A decisão de fonte não comprova qualidade tipográfica de idiomas fora do
+português.
+
+Pools separados de dados e controle têm dois slots cada, somados aos dez slots do pool web existente
+(até14 por processo). Aquisição tem timeout operacional de5s e libera conexão tardia após
+cancelamento. Cursor usa lotes de100 e snapshot; o limite de lote não é teto de exportação.
+Heartbeat de10s revalida autorização mesmo sob backpressure; ausência por60s registra interrupção,
+sem prazo de arquivo. A massa de 100 registros continua diagnóstica, sem alegação de escalabilidade
+comprovada.

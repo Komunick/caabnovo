@@ -279,6 +279,15 @@ const functions: readonly FunctionDefinition[] = [
     permissions: ["users:update"],
   },
   {
+    id: "users-export",
+    area: "users",
+    href: "/users/exportar",
+    label: "Exportar colaboradores",
+    description: "Filtrar dados e baixar em Excel, CSV ou PDF.",
+    keywords: "exportacao excel csv pdf contas acessos",
+    permissions: ["users:read", "exports:generate"],
+  },
+  {
     id: "audit-export",
     area: "audit",
     href: "/audit",

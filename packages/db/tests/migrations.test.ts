@@ -51,6 +51,7 @@ describe("database foundation migrations", () => {
       "0024_reports.sql",
       "0025_general_export_permission.sql",
       "0026_explicit_module_access.sql",
+      "0027_export_operations.sql",
       "0028_account_member_lifecycle.sql",
     ]);
   });

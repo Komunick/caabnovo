@@ -49,6 +49,11 @@ export default async function UsersPage({
         <p className="eyebrow">Controle de acesso</p>
         <h1>Colaboradores</h1>
         <p>Contas internas, estado atual e funções efetivas.</p>
+        {actor.permissions.has("exports:generate") ? (
+          <Link className="secondary-button" href="/users/exportar">
+            Exportar colaboradores
+          </Link>
+        ) : null}
       </header>
       {actor.permissions.has(PERMISSIONS.usersCreate) ? (
         <UserForm mode="create" roles={roles} />
@@ -77,7 +82,7 @@ export default async function UsersPage({
                 <th scope="col">Nome</th>
                 <th scope="col">E-mail</th>
                 <th scope="col">Estado</th>
-                <th scope="col">Funções</th>
+                {actor.permissions.has(PERMISSIONS.rolesRead) ? <th scope="col">Funções</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -98,7 +103,9 @@ export default async function UsersPage({
                         ? "Ativo"
                         : "Desativado"}
                   </td>
-                  <td>{user.roles.map(({ name }) => name).join(", ") || "Sem função"}</td>
+                  {actor.permissions.has(PERMISSIONS.rolesRead) ? (
+                    <td>{user.roles.map(({ name }) => name).join(", ") || "Sem função"}</td>
+                  ) : null}
                 </tr>
               ))}
             </tbody>

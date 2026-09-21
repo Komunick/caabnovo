@@ -1,5 +1,18 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Checkpoint de exportação direta — 21/09/2026
+
+CI `35637568416` do commit `7f6304f`: quality aprovado, incluindo integração e build; navegador do
+incremento anterior `35636649322` aprovado. Nova validação de navegador em acompanhamento. As
+correções eram de fixtures; regras de autorização foram preservadas.
+
+Implementado localmente o núcleo de exportação, estado operacional (migration0027), três writers,
+catálogo/POST/status, tela compartilhada e adaptador de Colaboradores. Dezesseis testes focados
+passaram antes da integração da tela; tipos passaram. Novos testes de integração e navegador com100
+registros foram escritos, ainda sem execução. Próximo passo: gates do incremento e revisão de
+cobertura/limites antes oferecer a entrega. Clarify e analyze continuam previstos após concluir os
+gates.
+
 ## Checkpoint de implementação — CI 35636649322
 
 Incremento `929c8e0` enviado na entrega ativa. CI aprovou formatação, lint, tipos, 373 testes
