@@ -83,7 +83,7 @@ beforeEach(async () => {
     accessPermissionSchema.options,
   ]);
   await admin.query(
-    "INSERT INTO role(code,name,is_administrative) VALUES ('administrator','Administrador',true) ON CONFLICT(code) DO NOTHING",
+    "INSERT INTO role(code,name,description,is_administrative) VALUES ('administrator','Administrador','Synthetic administrator',true) ON CONFLICT(code) DO NOTHING",
   );
   await admin.query(
     "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'Synthetic role' FROM role WHERE code='administrator'",
@@ -193,7 +193,9 @@ describe("initial credential provisioning", () => {
   });
   it("rejects disabled users and a revoked administrative role", async () => {
     const userId = await legacy();
-    await admin.query("UPDATE user_role SET revoked_at=now() WHERE user_id=$1", [actor.userId]);
+    await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+      actor.userId,
+    ]);
     await admin.query(
       "UPDATE user_access SET permissions=ARRAY['users:create','users:update','roles:grant'] WHERE user_id=$1",
       [actor.userId],
@@ -201,7 +203,9 @@ describe("initial credential provisioning", () => {
     await expect(
       initializeUserPassword(database.pool, { ...context(), userId }),
     ).rejects.toMatchObject({ status: 403 });
-    await admin.query("UPDATE user_role SET revoked_at=NULL WHERE user_id=$1", [actor.userId]);
+    await admin.query("UPDATE user_role SET revoked_at=NULL,revoked_by=NULL WHERE user_id=$1", [
+      actor.userId,
+    ]);
     await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
       actor.userId,
       accessPermissionSchema.options,
@@ -219,7 +223,9 @@ describe("initial credential provisioning", () => {
     await expect(
       initializeUserPassword(database.pool, { ...context(), userId: actor.userId }),
     ).rejects.toMatchObject({ status: 403 });
-    await admin.query("UPDATE user_role SET revoked_at=now() WHERE user_id=$1", [actor.userId]);
+    await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+      actor.userId,
+    ]);
     await admin.query(
       "UPDATE user_access SET permissions=ARRAY['news:read','news:write','news:publish'] WHERE user_id=$1",
       [actor.userId],

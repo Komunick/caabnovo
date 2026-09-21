@@ -36,7 +36,7 @@ async function seedUser(email: string) {
       [id],
     );
     await admin.query(
-      "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$1,now()+interval '1 hour')",
+      "INSERT INTO session(id,token,user_id,expires_at) VALUES($1::text,$1::text,$1::uuid,now()+interval '1 hour')",
       [id],
     );
   }

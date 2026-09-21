@@ -44,7 +44,7 @@ beforeEach(async () => {
     [userId],
   );
   await admin.query(
-    "INSERT INTO role(code,name,is_administrative) VALUES ('administrator','Administrador',true) ON CONFLICT(code) DO NOTHING",
+    "INSERT INTO role(code,name,description,is_administrative) VALUES ('administrator','Administrador','Synthetic administrator',true) ON CONFLICT(code) DO NOTHING",
   );
   await admin.query(
     "INSERT INTO user_role(user_id,role_id,granted_by,justification,valid_from) SELECT $1,id,$1,'Synthetic test',now() FROM role WHERE code='administrator'",
@@ -257,7 +257,9 @@ it("allows only administrators and managers to reset another collaborator and pr
     "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['users:read','users:reset-password'],$1)",
     [managerId],
   );
-  await admin.query("UPDATE user_role SET revoked_at=now() WHERE user_id=$1", [managerId]);
+  await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+    managerId,
+  ]);
   await expect(
     resetUserPassword(database.pool, {
       ...context(),

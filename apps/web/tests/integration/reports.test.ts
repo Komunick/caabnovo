@@ -29,6 +29,7 @@ let container: StartedPostgreSqlContainer,
   other: ReportActor;
 const permissions = [
   "reports:read",
+  "scheduling:read",
   "exports:generate",
   "members:read",
   "partners:read",

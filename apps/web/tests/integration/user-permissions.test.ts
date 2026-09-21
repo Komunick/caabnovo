@@ -102,7 +102,9 @@ describe("individual permissions in PostgreSQL", () => {
       code: "SELF_ESCALATION_DENIED",
     });
     const update = await command(["members:read"]);
-    await admin.query("UPDATE user_role SET revoked_at=now() WHERE user_id=$1", [manager.id]);
+    await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+      manager.id,
+    ]);
     await expect(changeUserAccess(db.pool, update)).rejects.toMatchObject({
       code: "PERMISSION_DENIED",
     });
@@ -166,15 +168,19 @@ it("lets a manager grant writes they cannot use but never grants delegation to a
     manager.id,
     all,
   ]);
-  await admin.query("UPDATE user_role SET revoked_at=now() WHERE user_id=$1", [manager.id]);
+  await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+    manager.id,
+  ]);
   await expect(changeUserAccess(db.pool, await command([]))).rejects.toMatchObject({ status: 403 });
 });
 
 it("administrator keeps every current capability even when individual overrides are empty", async () => {
   await admin.query(
-    "INSERT INTO role(code,name,is_administrative) VALUES ('administrator','Administrador',true) ON CONFLICT(code) DO NOTHING",
+    "INSERT INTO role(code,name,description,is_administrative) VALUES ('administrator','Administrador','Synthetic administrator',true) ON CONFLICT(code) DO NOTHING",
   );
-  await admin.query("UPDATE user_role SET revoked_at=now() WHERE user_id=$1", [manager.id]);
+  await admin.query("UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1", [
+    manager.id,
+  ]);
   await admin.query(
     "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'Synthetic administrator' FROM role WHERE code='administrator'",
     [manager.id],

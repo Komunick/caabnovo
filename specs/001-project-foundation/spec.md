@@ -1,5 +1,16 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Checkpoint de implementação — CI 35636649322
+
+Incremento `929c8e0` enviado na entrega ativa. CI aprovou formatação, lint, tipos, 373 testes
+unitários e 141 testes de contrato. Integração falhou em 60 casos: fixtures antigas dependiam de
+acesso editorial implícito, cadastros sintéticos omitiram descrição de cargo e combinaram UUID/texto
+no mesmo parâmetro SQL, revogações sintéticas estavam incompletas e a lista esperada de migrations
+não incluía o incremento. Correções em validação; navegador ainda em execução. Nenhuma dessas
+tarefas está concluída. Próximo passo: repetir integração com as fixtures corrigidas e concluir
+T105–T120. Localhost permanece desligado. Ao concluir implementação e gates, executar clarify e
+depois analyze, conforme pedido do usuário. T097 e ciclo de vida continuam no escopo autorizado.
+
 ## Checkpoint de revisão de código — 21/09/2026
 
 Contas, permissões individuais, senha inicial e sessões estão implementadas; MFA foi retirado.

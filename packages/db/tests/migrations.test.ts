@@ -49,6 +49,9 @@ describe("database foundation migrations", () => {
       "0022_messaging_history.sql",
       "0023_messaging_audiences.sql",
       "0024_reports.sql",
+      "0025_general_export_permission.sql",
+      "0026_explicit_module_access.sql",
+      "0028_account_member_lifecycle.sql",
     ]);
   });
 

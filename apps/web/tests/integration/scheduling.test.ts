@@ -634,6 +634,10 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
   it("uses the same lock as actual block, link and unlink commands and rereads eligibility after waiting", async () => {
     const data = await offer();
     const holder = await person();
+    await admin.query(
+      "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write','members:read','members:write','members:review'] WHERE user_id=$1",
+      [context.actor.userId],
+    );
     const roleId = (
       await admin.query(
         "INSERT INTO role(code,name,description) VALUES('scheduling-members-test','Sintético','Teste') RETURNING id",
@@ -693,6 +697,10 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
       "UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1 AND role_id=$2",
       [context.actor.userId, roleId],
     );
+    await admin.query(
+      "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write'] WHERE user_id=$1",
+      [context.actor.userId],
+    );
   });
   it("rejects rescheduling after beneficiary blocking, preserving the old reservation", async () => {
     const data = await offer();
@@ -730,6 +738,10 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
     );
   });
   it("orders actual block, link and unlink commands before a waiting reservation", async () => {
+    await admin.query(
+      "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write','members:read','members:write','members:review'] WHERE user_id=$1",
+      [context.actor.userId],
+    );
     const roleId = (
       await admin.query(
         "INSERT INTO role(code,name,description) VALUES('scheduling-race-test','Corrida sintética','Teste') RETURNING id",
@@ -813,6 +825,10 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
     await admin.query(
       "UPDATE user_role SET revoked_at=now(),revoked_by=user_id WHERE user_id=$1 AND role_id=$2",
       [context.actor.userId, roleId],
+    );
+    await admin.query(
+      "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write'] WHERE user_id=$1",
+      [context.actor.userId],
     );
   });
 });
