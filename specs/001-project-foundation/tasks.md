@@ -1,3 +1,120 @@
+# Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
+
+**Pendências preservadas pela revisão de código — 21/09:** T096 (fechar cadastro público, A03) e T097 (preservar conflitos dos formulários, A11) continuam pendentes e executáveis em retomada autorizada. A lista incremental T098–T120 não as substitui nem suspende.
+
+**Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
+[contrato](contracts/exports.md), [quickstart](quickstart.md).
+**Branch da entrega:** `docs/project-clarify-20260921`. Nenhuma tarefa nova executada.
+**Lista ativa:** T098–T120; testes foram pedidos nas specs e nos gates do projeto.
+Caminhos novos são destinos planejados; conferir referências contra o inventário de
+artefatos deste incremento antes de editar. Nenhum arquivo de código foi criado agora.
+
+## Rastreabilidade e escopo
+
+AX01–AX04 e DX01: detalhados pelas fases de permissões, descoberta, núcleo e Colaboradores abaixo. T089 continua política institucional adiada.
+
+O histórico abaixo conserva marcadores e evidências originais. IDs provisórios
+detalhados aqui não são uma segunda execução; usar a lista ativa. Pendências de
+política/pesquisa/homologação e funções suspensas continuam pendentes e não são
+autorizadas por constarem neste arquivo. Não repetir tarefas já concluídas.
+
+## Setup
+
+- [ ] T098 Validar pg-cursor/ExcelJS/PDFKit sob Node 24 com consumidor lento e célula longa; preparar parser de teste independente em `apps/web/tests/helpers/read-export.ts` (novo; leitura distinta dos writers), fixar versões aprovadas em `apps/web/package.json`, `pnpm-lock.yaml` e registrar RSS/compatibilidade em `specs/001-project-foundation/research.md`, sem atualizar a stack inteira.
+
+## Foundational
+
+- [ ] T099 Criar testes do contrato comum para datasets/colunas ordenadas, formatos, datas e campos proibidos em `packages/contracts/tests/exports.test.ts` (novo), incluindo ausência de teto de registros/período.
+- [ ] T100 Implementar schemas e catálogo tipado de exportação em `packages/contracts/src/exports.ts` (novo), exportar em `packages/contracts/src/index.ts` e preparar registro finito de adaptadores em `apps/web/modules/exports/catalog.ts` (novo), sem SQL livre.
+- [ ] T101 Cobrir migração de chaves, herança expirada/revogada, override vazio, deduplicação/versão e baseline editorial em `apps/web/tests/integration/user-access.test.ts` e `apps/web/tests/integration/user-permissions.test.ts`, comparando efetivo antes/depois das duas migrações separadamente; acrescentar os seis cenários de `specs/001-project-foundation/contracts/roles.md`, incluindo Administrador com override vazio/novas permissões e Gestor com consulta global/exportação/Relatórios completos, concedendo a terceiro uma escrita que não possui.
+- [ ] T102 Adicionar conversão idempotente audit:export/reports:export→exports:generate em `packages/db/migrations/0025_general_export_permission.sql` (nova); preservar user_role, leitura e override, incrementar version só quando array mudar e atualizar `apps/web/modules/auth/permissions.ts`.
+- [ ] T103 Implementar cargos/resolução de I1 em `packages/db/migrations/0026_explicit_module_access.sql`: Gestor/Colaborador, scheduling:read/write/access:manage, Administrador com todo o catálogo apesar de override, Gestor com consulta global/exportação/Relatórios completos apesar de override, e remoção do baseline news geral para os demais. Atualizar `packages/contracts/src/user-access.ts` e `packages/db/src/repositories/user-roles.ts`; distinguir Gestor do último Administrador, preservar vigência/revogação/dependências e não atribuir cargos a contas por inferência. Seguir `specs/001-project-foundation/contracts/roles.md`.
+- [ ] T104 Preparar compatibilidade de autorização antes do rollout em `packages/db/src/repositories/report-storage.ts`, `apps/worker/src/jobs/report-export.ts`, `apps/worker/src/jobs/audit-export.ts` e `apps/web/modules/files/file-service.ts`; normalizar só chaves antigas, mantendo dono/domínios/revogação e arquivos intactos; audit_export exige dono/grants atuais também no download genérico/binário, sem fallback apenas files:read. Para Relatórios aplicar `specs/010-reports-analytics/contracts/legacy-downloads.md`, complementando snapshots antigos com dependências de conteúdo/gerador; não tratar ausência de scheduling:read salvo como autorização.
+- [ ] T105 Criar testes de streaming/abort/reautorização por lote/pool indisponível simulado e estados, usando até100 registros conforme C1, em `apps/web/modules/exports/service.test.ts` (novo); comprovar interrupção total quando um registro perde acesso, sem omissão silenciosa.
+- [ ] T106 Criar estado operacional mínimo em `packages/db/migrations/0027_export_operations.sql` e `packages/db/src/repositories/export-operations.ts` (novos), com requestId único, dono, estados/heartbeat e contagens, sem dados exportados/filtros pessoais ou fila.
+- [ ] T107 Implementar cursor/snapshot e pipeline cancelável em `apps/web/modules/exports/service.ts` e `apps/web/modules/exports/query.ts` (novos), separando pools de dados/controle, revalidando sessão/grants/IDs/campos antes de cada lote e fechando todos os recursos em falha.
+- [ ] T108 [P] Implementar CSV incremental em `apps/web/modules/exports/formats/csv.ts` e testes adjacentes (novos), com escape, BOM, neutralização de fórmulas e identificadores textuais; sem Buffer completo.
+- [ ] T109 [P] Implementar XLSX incremental em `apps/web/modules/exports/formats/xlsx.ts` e testes adjacentes (novos), commit por linha, múltiplas planilhas, continuação Unicode/linhas/células e reconstrução exata de múltiplas colunas longas.
+- [ ] T110 [P] Implementar PDFKit incremental em `apps/web/modules/exports/formats/pdf.ts` e testes adjacentes (novos), paginação vertical/faixas horizontais, cabeçalhos e ordem de colunas, sem bufferPages ou corte de valores.
+- [ ] T111 Implementar catálogo, POST de formulário e status próprios em `apps/web/app/api/v1/exports/catalog/route.ts`, `apps/web/app/api/v1/exports/download/route.ts` e `apps/web/app/api/v1/exports/operations/[requestId]/route.ts` (novos); CSRF/Origin, attachment/no-store e envelope de erro do frame conforme contrato.
+- [ ] T112 Implementar tela compartilhada em `apps/web/modules/exports/ui/export-screen.tsx` (nova), filtros e ordem de colunas por teclado, três formatos/formulário nativo, polling sem spinner infinito e postMessage validado por origem/source/requestId; preservar rascunhos após erro e não usar blob integral.
+
+## US1 — Acesso interno seguro
+
+**Objetivo/aceite independente:** Sessões inválidas/revogadas e CSRF recusados; autenticação e concessão válidas funcionam sem MFA, sem autoelevação ou dados secretos exportados.
+
+- [ ] T113 [US1] Validar sessão atual, sem MFA, sem escalada e sem segredo exportado em `apps/web/tests/integration/auth-session.test.ts` e `apps/web/tests/contract/exports.test.ts` (novo), incluindo CSRF/Origin inválidos, consulta de operação alheia e revogação durante stream.
+
+## US2 — Acessos e Colaboradores
+
+**Objetivo/aceite independente:** Administrador possui todo o catálogo; Gestor consulta todos os módulos, exporta e tem Relatórios completos, concede acessos a terceiros sem mudar os próprios acessos/cargo; Colaborador não concede; Colaboradores oferece três formatos com campos autorizados, sem senha/hash/token.
+
+- [ ] T114 [US2] Atualizar rótulos e seleção de acessos em `apps/web/modules/users/access-labels.ts`, `apps/web/modules/users/ui/user-access-form.tsx` e `apps/web/modules/users/user-access-service.ts`; geral independente de módulos, dependências válidas e conflito de version sem perda de edição. Aplicar `specs/001-project-foundation/contracts/roles.md` também em `apps/web/modules/users/role-assignment-service.ts` e `packages/db/src/repositories/user-access.ts`: Gestor tem consulta global, exportação geral e Relatórios completos; concede a terceiros inclusive alterações que não possui; proibir autogestão e atribuição de cargos; Colaborador não concede; Administrador atribui cargos/acessos. Gestor consulta/exporta Colaboradores, mas não recebe suas demais mutações por gerir acessos. Classificar leitura versus mutação em guardas com chave unificada, incluindo `apps/web/modules/messaging/http/routes.ts` e contrato009; cobrir tentativa direta de escrita pelo Gestor sem concessão, coordenando M016 sem ativar envio real.
+- [ ] T115 [US2] Implementar `apps/web/modules/users/export-adapter.ts` e teste adjacente (novos), consultando `packages/db/src/repositories/users.ts` e autorizações de acessos existentes; excluir senha inicial/hash/tokens e manter ordenação/escopo por campo.
+- [ ] T116 [US2] Integrar ação e tela em `apps/web/app/(admin)/users/page.tsx` e `apps/web/app/(admin)/users/exportar/page.tsx` (nova); cobrir três cargos, perfil parcial e três formatos em `apps/web/tests/e2e/user-administration.spec.ts`; provar Gestor sem escrita em outro módulo concedendo essa escrita a terceiro, autogestão negada e Colaborador sem concessão.
+
+## US4 — Descoberta autorizada
+
+**Objetivo/aceite independente:** Módulo negado não produz sidebar, resultado de busca ou cartão/contador no Início; revogação vale na próxima ação e Conta/Sessões permanecem.
+
+- [ ] T117 [US4] Ajustar `apps/web/modules/workspace/areas.ts`, `apps/web/modules/workspace/search.ts` e `apps/web/app/(admin)/page.tsx` para zero entradas/cartões/contadores sem consulta; ações de mutação exigem escrita, Conta/Sessões preservadas.
+- [ ] T118 [US4] Cobrir sidebar/busca/Início e revogação em `apps/web/modules/workspace/areas.test.ts`, `apps/web/modules/workspace/search.test.ts` e `apps/web/tests/e2e/workspace-experience.spec.ts`, incluindo geral isolada e scheduling sem acesso.
+
+## US5 — Operação observável
+
+**Objetivo/aceite independente:** Distinguir geração, transferência, falha e interrupção com estado auditável e sem spinner infinito ou afirmação de gravação local.
+
+- [ ] T119 [US5] Validar auditoria/estado de início/falha/cancelamento/interrupção e fim do stream em `apps/web/tests/integration/export-operations.test.ts` (novo), heartbeat sob backpressure e falha de controle sem sucesso falso; nunca afirmar gravação no disco do cliente.
+
+## Polish
+
+- [ ] T120 Executar gates aplicáveis e validação com100 registros/arquivos/teclado/390 px/temas no CI conforme `specs/002-integrated-modules/export-validation-100.md`, sem prova de estresse/grande volume; registrar resultados reais e rollback compatível em `specs/001-project-foundation/evidence/plan-2026-09-21-validation.md` (novo), preservando T089 pendente.
+
+## Pendências anteriores que continuam prioritárias
+
+T096 (cadastro público) e T097 (preservação de erro/versão dos rascunhos) continuam
+abertas com seus IDs no histórico, sem serem substituídas por esta lista. Antes de
+entregar o novo acesso, T096 deve conciliar a correção já preparada e validar HTTP em
+`apps/web/modules/auth/auth-factory.ts` e `apps/web/tests/integration/auth-session.test.ts`.
+T097 atua em `apps/web/components/workspace-drafts.tsx` e estados dos editores de
+Notícias/acessos, com `apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas
+pendências resolvidas por plan/tasks nem recriar correções já existentes sem confronto.
+
+## Dependências e ordem de execução
+
+Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes
+antecedem código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura
+de 001 (concessões, schemas, writers, rotas e UI) precede adaptadores/exportações dos
+demais specs. Migração 0025 precede0026;0027 antes de transferências;0028 depende do
+diagnóstico de conflitos e não altera dados automaticamente. Regressões004/006 e
+regras008 podem avançar após catálogo/migrações mesmo antes do núcleo de exportação.
+Aceite transversal002 depende das evidências das funções. Spec009 exige gate M016.
+Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
+
+## Paralelismo por história
+
+Após pré-requisitos, os adaptadores de domínios diferentes podem avançar em paralelo
+porque têm arquivos próprios. Dentro desta função, manter testes→adaptador→UI→E2E
+sequencial; não dividir edições no mesmo arquivo. [P] identifica arquivos independentes
+prontos após a base da fase: writers separados em001 e relatórios de aceite em002.
+Para cada história sem par de arquivos independente, não há paralelismo interno seguro;
+ela pode avançar junto da história equivalente de outro domínio após as dependências.
+Migrações/catálogo/registro central têm um único responsável na spec001, sem edições simultâneas.
+
+## Estratégia incremental e MVP
+
+Primeiro invariantes de acesso/migração e descoberta; depois fluxo completo de
+Relatórios usando núcleo 001 como prova vertical (três formatos, todos os dados).
+Isso é marco de validação, não redução do escopo: completar depois cada função
+do contrato, incluindo003/004/005/007/008 e Colaboradores;009 permanece condicionada.
+Reservas Q1/Q2 seguem incremento independente008 após permissões. Políticas adiadas,
+chat/suporte, CAASSH, portal e app/site não são parte do MVP.
+
+## Histórico e backlog anterior — não executar automaticamente
+
+<details>
+<summary>Tarefas anteriores, evidências e pendências preservadas</summary>
+
 ---
 
 description: "Dependency-ordered implementation tasks for the CAAB Foundation"
@@ -486,3 +603,28 @@ Pedido explícito do usuário: Notícias primeiro (após Início), Mensagens pen
 - [x] IP003 Exibir recibo de senha e permitir geração inicial para cadastro sem senha.
 - [x] IP004 Testar login, recuperação, autorização, concorrência, rollback e não exposição.
 - [x] IP005 Validar interface desktop/mobile, acessibilidade, gates e preparar PR para dev.
+
+## Clarify de acesso e exportação — 21/09/2026
+
+- [ ] AX01 Adequar catálogo e gestão de permissões à permissão geral de exportação, combinada com acesso ao módulo/dados; converter automaticamente quem já possui alguma permissão de exportação, sem conceder a quem não a possui e sem alterar leitura dos módulos; garantir idempotência e validar ambos os perfis.
+- [ ] AX02 Conferir e ajustar ocultação completa dos módulos sem acesso na barra lateral, busca e Início; manter autorização de URL/API e atualização após revogação.
+- [ ] AX03 Validar por interface/API perfis sem acesso, acesso parcial, com/sem exportação e revogação; zero cartões, atalhos ou resultados dos módulos negados. Registrar evidências reais.
+
+- [ ] DX01 Detalhar/adequar exportação de Colaboradores conforme 002 EXP06/EXP07, com filtros, seleção e ordenação de colunas autorizadas e download direto Excel/CSV/PDF integral; preservar autorização e validar os três formatos sem prazo ou limite funcional de período/registros.
+
+- [ ] AX04 Integrar Notícias/Agendamentos à gestão de acesso por módulo e catálogo, coordenando consulta/alteração separadas e transição técnica com 004/008 AC01; validar ocultação e acesso privado negado sem concessão, sem alterar leitura pública.
+
+Q10 de 21/09/2026: T089 permanece pendente por definição institucional posterior;
+descarte automático desligado. Não marcar a política ou seus controles como
+concluídos pelo adiamento e não alterar o gate de produção.
+
+## Phase 9: Convergence — revisão de 21/09/2026
+
+- [ ] T096 CRÍTICA: fechar cadastro público por e-mail na versão integrada, conciliando a correção de segurança já preparada em entrega separada; validar HTTP negado e provisionamento administrativo, sem reaplicar mudanças de infraestrutura retiradas. Origem: US1/FR-001–FR-004, Constituição IV; achado A03 (contradicts).
+- [ ] T097 Preservar mensagens de conflito e versão original ao navegar entre abas/módulos em todos os formulários; começar por NewsEditor e UserAccessForm, ampliar inventário dos estados de erro e validar retorno/salvar/cancelar/sair. Origem: decisão transversal de edição de 16/09 e DP01/DP02; A11 (partial).
+
+Detalhamento de AX02/AX03: ocultar também a seção de notícias publicadas do Início
+sem news:read, mantendo a leitura pública externa. Agendamentos no catálogo atual
+é incondicional. Não considerar somente menus como cobertura do requisito (A06).
+
+</details>

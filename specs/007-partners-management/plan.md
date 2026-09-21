@@ -1,3 +1,100 @@
+# Implementation Plan: Parceiros e benefícios: exportação autorizada
+
+**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21
+**Spec**: [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+
+## Summary
+
+Aplicar o padrão de exportação aos dados e abas existentes de Parceiros preservando contratos, vigência e publicação.
+
+US1 estabelecimentos, US2 contratos, US3 benefícios, US4 permissões e US5 exportação. Portal, resgate, crédito e coleta externa permanecem fora.
+
+## Technical Context
+
+TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout;
+PostgreSQL 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO
+novo. Testes Vitest 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas,
+teclado e tokens compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos
+e PDFKit existente, sujeitos a spike/versão fixada no código; nenhum pacote instalado agora.
+
+**Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a
+transferência integral arbitrária. Exportações não têm teto funcional de registros/período.
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md):
+medir tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova
+de estresse/grande volume nesta rodada; manter produto sem teto funcional de registros.
+**Restrições**: banco único, autorização atual por ação; sem localhost, deploy, seed real,
+limpeza de dados ou implementação nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+
+## Constitution Check
+
+Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
+Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no
+PostgreSQL e UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já
+retiradas; autenticação continua sem MFA. Abstração de exportação cobre oito consumidores
+reais, sem CRUD genérico. Não há violação de desenho sem justificativa. Aprovações
+institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução de gates.
+
+## Phase 0 — Research
+
+Decisões, alternativas e fontes em [research.md](research.md), com pesquisa transversal
+[de 21/09](../002-integrated-modules/research-2026-09-21.md). Leitura estática conclui
+as escolhas necessárias para este recorte; limitações operacionais viram validações
+de implementação, não requisitos indefinidos. Sem consulta a contas/dados de produção.
+
+## Phase 1 — Design
+
+- Reutilizar parceiros/serviços do domínio; separar datasets para evitar joins que multipliquem registros. Exportar configurações consultáveis como campos/valores, sem segredos.
+- Conferir consulta/edição/publicação e arquivos privados; read+geral libera somente as fontes permitidas. Exportar não renova contrato, aprova, modera ou publica benefício.
+- Contratos incluem referência/estado/vigência/condições; documentos apenas metadados autorizados. Histórico conserva autor/data/alterações e motivos históricos sem nova obrigatoriedade.
+- Integrar ação em listas e abas do cadastro com contexto e filtros atuais. Aplicar todos os formatos também às unidades/categorias/benefícios/avaliações consultáveis; não deixar botão sem destino em vazio.
+
+Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
+e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
+rascunhos/filtros e dados em falhas, sem exigir justificativa. Catálogo de colunas é
+allowlist por função; servidor não confia no catálogo antigo do navegador.
+
+## Project Structure
+
+- `apps/web/modules/partners/partner-service.ts` (existente).
+- `apps/web/modules/partners/directory-service.ts` (existente).
+- `apps/web/modules/partners/access.ts` (existente).
+- `apps/web/modules/partners/ui/partner-list-page.tsx` (existente).
+- `apps/web/modules/partners/ui/partner-editor.tsx` (existente).
+- `apps/web/modules/partners/export-adapter.ts` e `export-adapter.test.ts` (novos planejados).
+- `apps/web/app/(admin)/partners/exportar/page.tsx` (nova planejada).
+
+## Rollout, migração e rollback
+
+Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001.
+Preparar compatibilidade de leitura de chaves/snapshots antes de ativar migrações e
+novos botões. Conta sem acesso não ganha concessão para preservar conveniência.
+Diagnosticar conflitos antes da restrição008; parar sem corrigir registros automaticamente.
+Rollback da UI/API deve preservar grants convertidos, dados e arquivos; não publicar
+binário antigo que dependa exclusivamente de audit:export/reports:export após conversão.
+Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
+
+## Validation e próximo passo
+
+Três formatos por dataset, mesmo filtro/ordem/colunas; leitura sem exportação e exportação sem leitura negadas; documentos/contatos privados preservam seu controle; exportação não muda publicação ou contrato.
+
+Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior
+nunca conclui tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação:
+speckit-tasks, organizado por história, com dependências e critérios independentes.
+
+## Complexity Tracking
+
+Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm
+as regras dos domínios. Sem microserviço, linguagem nova ou nova fonte de verdade.
+Estado operacional serve somente à transferência atual; não é fila/histórico obrigatório.
+
+## Histórico anterior — referência, não sequência executável atual
+
+O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência,
+valem o desenho de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+
+<details>
+<summary>Plano anterior preservado</summary>
+
 # Implementation Plan: Parceiros e benefícios
 
 **Branch**: `feature/partners-management` | **Date**: 2026-09-11 | **Spec**: [spec.md](spec.md)
@@ -14,7 +111,7 @@ conforme [interface.md](interface.md); nenhum cadastro duplicado de portal ou lo
 ## Technical Context
 
 TypeScript 6, Node 24, Next 16.3.4/React 19, Zod, PostgreSQL/pg e componentes compartilhados
-já instalados. Storage S3-compatible/ClamAV/worker existentes. Vitest/contratos,
+já instalados. Storage PostgreSQL bytea/ClamAV/worker existentes. Vitest/contratos,
 Testcontainers/PostgreSQL, Playwright e Axe. Web responsiva administrativa e API v1 de leitura.
 Paginação de 25 registros e filtros server-side; volumes de produção não presumidos.
 
@@ -45,7 +142,7 @@ conversão ou política de avaliação. Revisão humana sensível no PR, sem mer
 
 Aplicar a regra de criação sem justificativa também às categorias, contratos e
 rascunhos de benefícios. Contratos e formulários distinguem criação de edição pelo
-ID do registro; o servidor exige motivo para edições e transições de estado.
+ID do registro; edições e transições exigem autorização e auditoria, sem motivo obrigatório.
 Auditoria de criação usa descrição automática quando não há motivo informado.
 Sem migration ou reescrita dos eventos anteriores. Cobrir rejeição de edição sem
 motivo, criação sem motivo e trilha de auditoria em contratos, integração e E2E.
@@ -122,3 +219,14 @@ Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenam
 em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
 React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
 Não usar cache público, localStorage ou salvamento automático no banco.
+
+## Checkpoint de revisão de código — 21/09/2026
+
+Administração, unidades, categorias, contratos, benefícios, API pública e moderação implementados. Portal/QR/resgates/coleta externa de avaliações não estão conectados. Não há ação própria de exportação do módulo; DX01 detalha EXP06/EXP07 sem duplicar construção de cadastros existentes.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
+Executar adequações e seus testes em retomada de implementação. Preservar dados e decisões adiadas; a revisão atual altera somente documentação.
+
+</details>

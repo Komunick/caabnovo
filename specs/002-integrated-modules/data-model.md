@@ -20,3 +20,12 @@ Documentos referenciam stored_file; exportações referenciam job/arquivo. Migra
 numeradas quando o domínio for implementado, com FKs, validação de escopo e versão/concorrência. Não
 criar tabelas especulativas para simular módulos prontos. Arquivamento lógico não implementa
 retenção.
+
+
+## Modelo vigente do incremento — 21/09/2026
+
+Não criar cadastro central. Identidades e dados permanecem com cada domínio; export_operation é estado técnico mínimo de uma requisição. Relatórios só lê fontes autorizadas. Programas futuros não geram tabelas, tipos, rotas ou grants neste recorte. Retenção e P01 continuam entradas institucionais futuras.
+
+Nenhuma entidade de negócio nova nesta revisão.
+Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.0.0
+e contratos de 21/09 prevalecem. Mudanças descritas são planejamento, sem migration executada.

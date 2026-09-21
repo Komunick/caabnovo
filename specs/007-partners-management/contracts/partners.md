@@ -1,10 +1,9 @@
 # Contratos v1 de Parceiros
 
-Revisão de 14/09/2026: motivo opcional na criação de parceiro, unidade, categoria,
-contrato e rascunho de benefício, com descrição automática na auditoria. Motivo de
-3 a 1000 caracteres obrigatório em edições e transições, validado após trim no servidor.
-Identificadores de unidade/benefício/categoria distinguem edição de criação; enviar
-um ID existente nunca dispensa a justificativa. Configuração e moderação mantêm motivo.
+Regra vigente de 14/09/2026: todas as operações dispensam motivo escrito,
+incluindo criação, edição, publicação, configuração e moderação. Contratos aceitam
+omissão/vazio e preservam limites para texto legado opcional. Permissões, versão,
+idempotência, confirmação aplicável e auditoria continuam obrigatórias.
 
 ## Diretório, configuração e avaliações
 
@@ -55,7 +54,7 @@ consomem este contrato sem exigir alteração dos respectivos frontends nesta en
 Perfis de parceiro/unidade aceitam postalCode (oito dígitos, opcional), address,
 city e state (UF válida); telefone aceita DDD + oito/nove dígitos, normalizado em
 números. E-mail e URL http/https são validados pelo contrato compartilhado. No
-comando unit, justification é opcional somente sem unitId; edição exige motivo.
+comando unit, justification é opcional com ou sem unitId; criação e edição dispensam motivo.
 Criação de parceiro/unidade sem motivo registra descrição automática na auditoria.
 Novos campos de contato/endereço do parceiro não são incluídos na projeção pública.
 

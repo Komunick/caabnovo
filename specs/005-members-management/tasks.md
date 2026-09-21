@@ -1,6 +1,94 @@
+# Tasks: Associados: preservação manual, agenda e exportação — incremento de 21/09/2026
+
+**Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
+[contrato](contracts/exports.md), [quickstart](quickstart.md).
+**Branch da entrega:** `docs/project-clarify-20260921`. Nenhuma tarefa nova executada.
+**Lista ativa:** T041–T049; testes foram pedidos nas specs e nos gates do projeto.
+Caminhos novos são destinos planejados; conferir referências contra o inventário de
+artefatos deste incremento antes de editar. Nenhum arquivo de código foi criado agora.
+
+## Rastreabilidade e escopo
+
+AE04: detalhada em US3/US4 e coordenação008. POL01/P01 permanecem adiadas; nenhuma tarefa ativa define critérios institucionais.
+
+O histórico abaixo conserva marcadores e evidências originais. IDs provisórios
+detalhados aqui não são uma segunda execução; usar a lista ativa. Pendências de
+política/pesquisa/homologação e funções suspensas continuam pendentes e não são
+autorizadas por constarem neste arquivo. Não repetir tarefas já concluídas.
+
+## Setup
+
+- [ ] T041 Conferir o catálogo real de telas/abas e filtros contra `specs/005-members-management/contracts/exports.md`; mapear campos permitidos/defaults e projeções atuais, sem criar fonte ou ampliar permissão.
+
+## Foundational
+
+- [ ] T042 Preparar fixtures sintéticas isoladas e contratos da função em `apps/web/modules/members/export-fixtures.ts` (novo, exclusivo de testes), com datas empatadas, zero resultados, texto longo, campos restritos e filtros combinados; depende dos schemas de 001.
+
+## US3 — Situação administrativa
+
+**Objetivo/aceite independente:** Bloqueio/desbloqueio mantém situação própria de dependentes e análise manual sem novas exigências.
+
+- [ ] T043 [US3] Estender `apps/web/tests/integration/members.test.ts` para bloqueio/desbloqueio e vínculos futuros/encerrados/cadeias sob lock; manter situação própria dos dependentes e fluxo manual, sem documento obrigatório ou decisão automática.
+
+## US4 — Consumidores da mesma pessoa
+
+**Objetivo/aceite independente:** Reserva/vínculo/bloqueio concorrentes usam identidade/lock corretos; reservas existentes e ocupação são preservadas, sem ampliar dados consultáveis.
+
+- [ ] T044 [US4] Validar com `apps/web/tests/integration/scheduling.test.ts` a projeção mínima e bloqueio concorrente mantendo reservas/vagas; ajustar `packages/db/src/repositories/members.ts` apenas se houver lacuna e coordenar os testes AE04/BLQ com008.
+
+## US5 — Exportação autorizada
+
+**Objetivo/aceite independente:** Associados/dependentes e metadados autorizados exportam três formatos completos; documentos/segredos restritos são recusados.
+
+- [ ] T045 [US5] Escrever testes do adaptador em `apps/web/modules/members/export-adapter.test.ts` (novo): filtro+sort, columns em ordem pedida, campo proibido, dados completos e matriz de autorização conforme `specs/005-members-management/contracts/exports.md`; Consulta OAB não integra o catálogo de datasets exportáveis.
+- [ ] T046 [US5] Implementar `apps/web/modules/members/export-adapter.ts` (novo) reutilizando as consultas/projeções do domínio, IDs/dependências para reautorização por lote e cursor do núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados.
+- [ ] T047 [US5] Integrar ação/tela em `apps/web/app/(admin)/members/exportar/page.tsx` (nova) e nas listas/abas existentes de `apps/web/modules/members/ui/`; passar contexto/filtros, preservar rascunho e oferecer os três formatos com defaults e reordenação acessível; não adicionar botão de exportação à Consulta OAB, avulsa ou pelo cadastro.
+- [ ] T048 [US5] Validar arquivos reais nos três formatos, ordem/contagem/IDs/filtros e negações em `apps/web/tests/integration/members.test.ts` e `apps/web/tests/e2e/members.spec.ts`; usar o parser independente do núcleo 001 e confirmar erro recuperável sem corte e ausência de botão/dataset de exportação da Consulta OAB, inclusive para quem tem permissão geral.
+
+## Polish
+
+- [ ] T049 Executar gates/testes da função no CI e registrar resultados/capturas/limites em `specs/005-members-management/evidence/plan-2026-09-21-validation.md` (novo); marcar conclusão somente com evidência, preservando tarefas institucionais e históricas.
+
+## Dependências e ordem de execução
+
+Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes
+antecedem código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura
+de 001 (concessões, schemas, writers, rotas e UI) precede adaptadores/exportações dos
+demais specs. Migração 0025 precede0026;0027 antes de transferências;0028 depende do
+diagnóstico de conflitos e não altera dados automaticamente. Regressões004/006 e
+regras008 podem avançar após catálogo/migrações mesmo antes do núcleo de exportação.
+Aceite transversal002 depende das evidências das funções. Spec009 exige gate M016.
+Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
+
+## Paralelismo por história
+
+Após pré-requisitos, os adaptadores de domínios diferentes podem avançar em paralelo
+porque têm arquivos próprios. Dentro desta função, manter testes→adaptador→UI→E2E
+sequencial; não dividir edições no mesmo arquivo. [P] identifica arquivos independentes
+prontos após a base da fase: writers separados em001 e relatórios de aceite em002.
+Para cada história sem par de arquivos independente, não há paralelismo interno seguro;
+ela pode avançar junto da história equivalente de outro domínio após as dependências.
+Migrações/catálogo/registro central têm um único responsável na spec001, sem edições simultâneas.
+
+## Estratégia incremental e MVP
+
+Primeiro invariantes de acesso/migração e descoberta; depois fluxo completo de
+Relatórios usando núcleo 001 como prova vertical (três formatos, todos os dados).
+Isso é marco de validação, não redução do escopo: completar depois cada função
+do contrato, incluindo003/004/005/007/008 e Colaboradores;009 permanece condicionada.
+Reservas Q1/Q2 seguem incremento independente008 após permissões. Políticas adiadas,
+chat/suporte, CAASSH, portal e app/site não são parte do MVP.
+
+## Histórico e backlog anterior — não executar automaticamente
+
+<details>
+<summary>Tarefas anteriores, evidências e pendências preservadas</summary>
+
 # Tasks: Associados
 
 ## Coordenação com Agendamentos — 15/09/2026
+
+- [ ] AE04 Validar em conjunto com BLQ01/BLQ02 da spec 008 que bloqueio preserva reservas existentes e situação própria dos dependentes, sinaliza os afetados pelos vínculos vigentes e mantém impedimento de criação/remarcação. Decisão de 20/09/2026; sem evidência de execução ainda.
 
 - [x] AE01 Compartilhar lock transacional e projeção mínima de elegibilidade com spec 008.
 - [x] AE02 Preservar regras/permissões do módulo e cobrir cadeias de titulares vigentes.
@@ -139,7 +227,7 @@ O retorno do usuário iniciou T017. O módulo permanece em revisão funcional, s
 - [x] T027 Posicionar Associados imediatamente após Notícias no menu administrativo,
   preservando as permissões existentes e a mesma ordem na navegação do workspace.
 
-- [ ] T028 Homologar a API OAB-BA com dados de teste autorizados pela instituição e confirmar a configuração no ambiente de entrega. A conexão local foi ativada, mas o teste real foi descartado após o esclarecimento do usuário sobre falta de autorização. Não reutilizar aquela inscrição, conservar seus resultados ou apresentar testes simulados como homologação institucional.
+- [ ] T028 Homologar a API OAB-BA com dados de teste autorizados pela instituição e confirmar a configuração no ambiente de entrega. O adaptador existe; localhost está desligado. O teste anterior não autorizado foi descartado, e a tentativa autorizada em DEV de 16/09 retornou OAB_NOT_CONFIGURED; configuração/homologação foram adiadas. Não reutilizar aquela inscrição, conservar seus resultados ou apresentar testes simulados como homologação institucional.
 
 
 T025 concluída localmente em 10/09/2026; T028 reaberta na revisão após o esclarecimento do usuário. O resultado da consulta real foi removido a pedido do usuário; não conservar número, situação ou capturas nem reutilizar essa inscrição em testes. Limite de seis dígitos aplicado no campo e no servidor. Não houve configuração da hospedagem ou PR.
@@ -225,3 +313,18 @@ Adicionar categoria, gênero, cidade e UF de residência opcionais, com validaç
 persistência e edição nas permissões/versões/auditoria existentes. Registros atuais
 permanecem sem esses dados até preenchimento explícito. Não confundir residência e OAB.
 Validar criação/edição/consulta e preservar dados nas demais operações de cadastro.
+
+## Dependentes e documentos — Q11 de 21/09/2026
+
+- [ ] POL01 Definir posteriormente com a instituição os critérios de dependentes,
+      vínculos aceitos e documentos mínimos de P01; registrar fonte, vigência e
+      critérios de aceite antes de implementar regras dependentes. Até lá, manter
+      cadastro/análise manual e validações existentes, sem automação presumida.
+
+O adiamento documentado não conclui P01/POL01 nem representa validação institucional.
+
+## Exportação transversal — revisão de 21/09/2026
+
+- [ ] DX01 Detalhar, implementar e validar a exportação de Associados e dependentes conforme 002 EXP06/EXP07 e docs/EXPORT-STANDARD.md: ação nomeada, filtros pertinentes, seleção/ordem de colunas, Excel/CSV/PDF integrais e download direto, consulta ao módulo mais permissão geral, recusa de campos restritos e revogação. Sem teto funcional, fila/histórico obrigatório ou prazo de download; sem alterar anexos/documentos. A07 (missing). Tarefa do módulo que executa a coordenação transversal, não um segundo projeto.
+
+</details>

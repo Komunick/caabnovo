@@ -37,18 +37,19 @@ em desktop/390 px, claro/escuro, teclado e Axe.
 
 - **Cadastro:** nome, razão social, CNPJ opcional, categoria, contatos e situação; arquivar/restaurar.
 - **Unidades:** locais e regiões atendidas, endereço, contato, disponibilidade presencial/remota e situação.
-- **Contratos:** referência, condições, datas, documento privado, confirmação de aprovação e encerramento com motivo; preserva versões anteriores.
+- **Contratos:** referência, condições, datas, documento privado, confirmação de aprovação e encerramento sem justificativa obrigatória; preserva versões anteriores.
 - **Benefícios:** título, descrição, condições de uso, público, unidade/contrato, vigência e canais; rascunho, prévia, publicar e ocultar.
-- **Histórico:** autor, ação em linguagem simples, data e justificativa das alterações.
+- **Histórico:** autor, ação em linguagem simples, data e alterações; preservar justificativas históricas existentes.
 
 Formulários de adicionar/editar unidade, contrato ou benefício permanecem dentro da aba,
 com título claro e ações Salvar/Cancelar. Nenhuma tela de RH, crédito, solicitação ou login
 de parceiro pertence a este módulo. Portal externo e coleta de avaliações do app têm seus
 próprios contratos e dependências.
 
-Revisão de 14/09/2026: cadastros novos de parceiro, unidade, categoria, contrato e
-benefício não exibem motivo. Formulários de edição exigem motivo, assim como mudanças
-de situação, publicação/retirada, decisões contratuais, moderação e configurações.
+Decisão vigente: cadastros, edições, mudanças de situação, publicação/retirada,
+decisões contratuais, moderação e configurações não exigem justificativa. A regra
+anterior de 14/09 foi retirada; preservar confirmação quando cabível, autorização,
+auditoria e dados históricos.
 
 ## Harmonização obrigatória
 

@@ -37,3 +37,14 @@ expiração de sessão, mas não política completa de retenção aprovada. O ar
 `retention-approval.json` permanece PENDING, sem aprovador ou prazos inventados.
 O runtime e a promoção recusam até uma aprovação estruturalmente válida enquanto os
 controles por categoria não estiverem implementados. Não há job de descarte habilitado.
+
+## Decisão de produto — clarify de 21/09/2026 (Q10)
+
+O usuário escolheu manter a definição institucional dos prazos para cadastros,
+documentos e auditoria para depois, com descarte automático desligado. Nenhum prazo,
+aprovador ou autorização de exclusão/anonimização foi definido nesta etapa.
+`retention-approval.json` permanece PENDING, sem alteração; T089 da fundação continua
+pendente e o gate de produção é preservado. Adiar a definição não aprova retenção
+permanente nem significa que a política foi concluída. O padrão de exportação com
+download direto, sem prazo de disponibilidade, é uma decisão separada do tratamento
+dos dados originais. Nenhum job, dado, configuração operacional ou conta foi alterado.

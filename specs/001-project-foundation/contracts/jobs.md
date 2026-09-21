@@ -52,7 +52,7 @@ retention and dead-letter behavior. Defaults are not accepted without explicit r
   unnecessary personal data are forbidden.
 - Payloads contain identifiers and immutable parameters only; handlers reload current protected data.
 - Scanner/storage/network unavailability never marks a file safe; retry or terminal failure applies.
-- Manual redrive requires permission, reason and audit event.
+- Manual redrive requires permission and an audit event; written reason is optional legacy content.
 
 
 ## Regra final de justificativas — 14/09/2026

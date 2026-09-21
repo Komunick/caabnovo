@@ -1,3 +1,76 @@
+# Tasks: Conta: conciliação e regressão dos controles existentes — incremento de 21/09/2026
+
+**Pendências preservadas pela revisão de código — 21/09:** T025 (homologação SMTP, A12) continua pendente, dependente de ambiente/destinatários autorizados. T026–T029 não comprovam nem substituem entrega externa.
+
+**Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
+[contrato](contracts/exports.md), [quickstart](quickstart.md).
+**Branch da entrega:** `docs/project-clarify-20260921`. Nenhuma tarefa nova executada.
+**Lista ativa:** T026–T029; testes foram pedidos nas specs e nos gates do projeto.
+Caminhos novos são destinos planejados; conferir referências contra o inventário de
+artefatos deste incremento antes de editar. Nenhum arquivo de código foi criado agora.
+
+## Rastreabilidade e escopo
+
+Tarefas históricas preservadas; novo recorte limitado à conciliação/regressão de US3.
+
+O histórico abaixo conserva marcadores e evidências originais. IDs provisórios
+detalhados aqui não são uma segunda execução; usar a lista ativa. Pendências de
+política/pesquisa/homologação e funções suspensas continuam pendentes e não são
+autorizadas por constarem neste arquivo. Não repetir tarefas já concluídas.
+
+## Setup
+
+- [ ] T026 Conferir retirada de MFA/justificativas em `specs/006-account-settings/contracts/account-settings.md`, `specs/006-account-settings/data-model.md` e `specs/006-account-settings/authenticator-removal.md`; não criar exportação de credenciais.
+
+## Foundational
+
+- [ ] T027 Preparar cenários de concessão com catálogo convertido em `apps/web/tests/integration/user-permissions.test.ts`, usando `specs/001-project-foundation/contracts/roles.md`: três cargos, Gestor com consulta global/exportação/Relatórios completos, concedendo escrita de outro módulo que não possui, autogestão/cargos negados e Colaborador sem concessão; preservar último Administrador e configurações pessoais sem gestão de terceiros.
+
+## US3 — Recusas de concessão
+
+**Objetivo/aceite independente:** Concessões recusadas por causa correta; autorização válida sem MFA/motivo, sem acesso a outra conta nem remoção do último gestor.
+
+- [ ] T028 [US3] Validar concessão/recusas sem MFA ou motivo em `apps/web/tests/integration/account-settings.test.ts` e `apps/web/tests/e2e/account-settings.spec.ts`; corrigir somente regressões comprovadas em `apps/web/modules/users/ui/role-grant-error.ts`, sem alterar política de senha/recuperação.
+
+## Polish
+
+- [ ] T029 Registrar regressão de titularidade, sessão e mensagens de erro em `specs/006-account-settings/evidence/plan-2026-09-21-validation.md` (novo), sem reexecutar limpeza ou migration do autenticador.
+
+## Dependências e ordem de execução
+
+Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes
+antecedem código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura
+de 001 (concessões, schemas, writers, rotas e UI) precede adaptadores/exportações dos
+demais specs. Migração 0025 precede0026;0027 antes de transferências;0028 depende do
+diagnóstico de conflitos e não altera dados automaticamente. Regressões004/006 e
+regras008 podem avançar após catálogo/migrações mesmo antes do núcleo de exportação.
+Aceite transversal002 depende das evidências das funções. Spec009 exige gate M016.
+Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
+
+## Paralelismo por história
+
+Após pré-requisitos, os adaptadores de domínios diferentes podem avançar em paralelo
+porque têm arquivos próprios. Dentro desta função, manter testes→adaptador→UI→E2E
+sequencial; não dividir edições no mesmo arquivo. [P] identifica arquivos independentes
+prontos após a base da fase: writers separados em001 e relatórios de aceite em002.
+Para cada história sem par de arquivos independente, não há paralelismo interno seguro;
+ela pode avançar junto da história equivalente de outro domínio após as dependências.
+Migrações/catálogo/registro central têm um único responsável na spec001, sem edições simultâneas.
+
+## Estratégia incremental e MVP
+
+Primeiro invariantes de acesso/migração e descoberta; depois fluxo completo de
+Relatórios usando núcleo 001 como prova vertical (três formatos, todos os dados).
+Isso é marco de validação, não redução do escopo: completar depois cada função
+do contrato, incluindo003/004/005/007/008 e Colaboradores;009 permanece condicionada.
+Reservas Q1/Q2 seguem incremento independente008 após permissões. Políticas adiadas,
+chat/suporte, CAASSH, portal e app/site não são parte do MVP.
+
+## Histórico e backlog anterior — não executar automaticamente
+
+<details>
+<summary>Tarefas anteriores, evidências e pendências preservadas</summary>
+
 # Tarefas: Configurações da conta
 
 - [x] T001 Criar branch própria baseada em dev e retirar o código de Configurações da branch de Associados.
@@ -70,3 +143,9 @@ Evidências RM03: [validação final de 15/09/2026](../001-project-foundation/ev
 - [x] IP003 Exibir recibo de senha e permitir geração inicial para cadastro sem senha.
 - [x] IP004 Testar login, recuperação, autorização, concorrência, rollback e não exposição.
 - [x] IP005 Validar interface desktop/mobile, acessibilidade, gates e preparar PR para dev.
+
+## Phase 1: Convergence — revisão de 21/09/2026
+
+- [ ] T025 Homologar envio SMTP real de recuperação de senha e confirmação de troca de e-mail, com destinatários de teste autorizados, URL HTTPS, entrega/expiração/uso único e revogação; registrar evidências sem substituir entrega externa por Mailpit/configuração sintética. Origem: FR-013/FR-016, A12 (partial). Código de transporte existe; ambiente remoto não conferido nesta revisão.
+
+</details>

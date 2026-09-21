@@ -1,8 +1,17 @@
 # CAAB — Sistema Interno de Gestão
 
-## Estado consolidado — 17/09/2026
+**Estado de implementação — 21/09/2026:** este PRD reúne produto e expansões,
+não comprova entrega de todas as funções listadas. O [inventário atual](MODULES.md)
+e a [revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md)
+distinguem código, decisões ainda não implementadas, homologação e suspensões.
+MFA e justificativas obrigatórias foram retirados; Mensagens é protótipo de
+campanhas/comunicados; CAASSH está desativado, RH é possibilidade futura e
+Colaboradores significa contas/permissões. Exportações seguem [padrão vigente](EXPORT-STANDARD.md),
+ainda pendente no código. Retenção e critérios institucionais seguem adiados.
 
-**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+## Estado consolidado — 21/09/2026
+
+**Decisão vigente — 21/09/2026:** Mensagens destina-se a comunicados e campanhas aos associados, com seleção de público e programação. A finalidade foi confirmada; o protótipo ainda precisa da revisão de aderência e continuidade M016 e não está homologado. Meios, provedores e envio real permanecem adiados. Chat interno e suporte por tickets são possibilidades futuras separadas.
 
 Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
@@ -10,14 +19,16 @@ Agendamentos já possui uma primeira versão administrativa implementada; app/si
 
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
-A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
+A primeira versão do painel foi implementada na entrega histórica feature/scheduling-management-20260915 e está integrada:
 oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
-e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+e histórico. O código ainda aceita toda sessão ativa, lacuna de autorização A01.
+A decisão vigente exige concessões separadas de consulta e alteração; a adequação está pendente.
 Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
 [evidências](../specs/008-scheduling-management/evidence/release-review.md).
 Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
-Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
-primeira interface do usuário no app/site; CAASSH continua desativado.
+Exceções, avaliações e demais estados permanecem posteriores. O calendário administrativo
+foi priorizado em 18/09 e CAL01–CAL05 estão implementadas, com CAL06 pendente de validação
+final. A interface do usuário no app/site continua posterior; CAASSH permanece desativado.
 
 ## 1. Controle do documento
 
@@ -27,9 +38,9 @@ primeira interface do usuário no app/site; CAASSH continua desativado.
 
 **Versão:** 0.3
 
-**Status:** Escopo consolidado; Mensagens em protótipo sob revisão de finalidade; Recursos Humanos como possibilidade futura
+**Status:** Escopo consolidado; Mensagens em protótipo com finalidade confirmada e aderência pendente; Recursos Humanos como possibilidade futura
 
-**Data:** 17/09/2026 (revisão das decisões; versão inicial de 09/09/2026)
+**Data:** 21/09/2026 (revisão de código e decisões; versão inicial de 09/09/2026)
 
 **Escopo desta versão:** todos os módulos do painel e portal do parceiro
 
@@ -103,8 +114,8 @@ por contratos de API versionados.
 
 ## 5. Não objetivos da primeira versão
 
-- Refazer o aplicativo móvel.
-- Refazer o site institucional externo.
+- Reescrita integral do aplicativo móvel sem recorte; primeira interface autorizada para planejamento em UI01/UI02.
+- Reescrita integral do site externo sem recorte; primeira interface autorizada para planejamento em UI01/UI02.
 - Implantar prontuário médico ou sistema clínico completo.
 - Substituir folha de pagamento ou sistema de recursos humanos.
 - Automatizar consulta à OAB por scraping ou contornar CAPTCHA.
@@ -114,10 +125,12 @@ por contratos de API versionados.
 
 ## 6. Usuários e funções
 
+**Decisão vigente de21/09/2026:** os cargos iniciais são Administrador, Gestor e Colaborador. Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores, inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição de cargos permanece com Administrador. As categorias profissionais abaixo são descrições de atuação/propostas anteriores, não cargos adicionais a criar nesta entrega. Contrato vigente: [cargos](../specs/001-project-foundation/contracts/roles.md).
+
 ### 6.1 Administrador
 
 Gerencia usuários, permissões, configurações, cadastros e auditoria. Pode executar ações sensíveis
-mediante confirmação e justificativa.
+mediante autorização e confirmação aplicável, sem justificativa obrigatória.
 
 ### 6.2 Comunicação
 
@@ -164,7 +177,7 @@ apenas pelo nome do cargo.
 - Disponibilidade e bloqueios de agenda.
 - Criação, remarcação e cancelamento de agendamentos.
 - Gestão de associados e registro de verificação da OAB.
-- Bloqueio e desbloqueio de associados com justificativa.
+- Bloqueio e desbloqueio de associados sem justificativa obrigatória, com auditoria.
 - Gestão de parceiros e serviços parceiros.
 - Gestão de contas e permissões, apresentada como Colaboradores.
 - Logs de alterações e histórico dos registros críticos.
@@ -242,7 +255,7 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 ### 8.5 Bloqueio de associado
 
 1. Usuário autorizado solicita o bloqueio.
-2. Sistema exige motivo e, quando aplicável, data de término.
+2. Sistema registra a alteração e, quando aplicável, data de término, sem exigir justificativa.
 3. Ação é confirmada no servidor.
 4. Bloqueio passa a impedir apenas as ações definidas pela política da CAAB.
 5. O registro permanece pesquisável e o evento entra na auditoria.
@@ -284,7 +297,7 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 | AGE-003 | Calcular horários usando a duração do serviço.                  | MVP        |
 | AGE-004 | Impedir sobreposição de agendamentos confirmados.               | MVP        |
 | AGE-005 | Criar, confirmar, concluir, cancelar e remarcar agendamentos.   | MVP        |
-| AGE-006 | Registrar motivo de cancelamento e remarcação.                  | MVP        |
+| AGE-006 | Registrar autor, ação e mudanças de cancelamento/remarcação, sem exigir justificativa.                  | MVP        |
 | AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional. | MVP        |
 | AGE-008 | Manter histórico das transições.                                | MVP        |
 | AGE-009 | Integrar calendários externos.                                  | Pós-MVP    |
@@ -293,7 +306,7 @@ Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não 
 `Cancelado`.
 
 Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é
-terminal; correções administrativas exigem permissão especial e justificativa.
+terminal no desenho de expansão; correções administrativas exigem autorização e auditoria, sem justificativa obrigatória. A versão atual usa Agendado/Cancelado; os demais estados dependem da spec 008.
 
 ### 9.4 Associados
 
@@ -301,7 +314,7 @@ terminal; correções administrativas exigem permissão especial e justificativa
 | ------- | --------------------------------------------------------------- | ---------- |
 | ASS-001 | Criar, visualizar e atualizar associados.                       | MVP        |
 | ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional.      | MVP        |
-| ASS-003 | Ativar, bloquear e desbloquear com justificativa.               | MVP        |
+| ASS-003 | Ativar, bloquear e desbloquear sem motivo obrigatório, com auditoria.               | MVP        |
 | ASS-004 | Registrar situação, fonte e data da verificação da OAB.         | MVP        |
 | ASS-005 | Manter histórico cadastral e de bloqueios.                      | MVP        |
 | ASS-006 | Evitar duplicidade por identificadores definidos.               | MVP        |
@@ -364,13 +377,13 @@ ficam reservados como histórico e não representam tarefas aprovadas ou conclu�
 | COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                 | Evidência suportada por canal.             |
 | COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                              | Política de composição do público.         |
 | CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                    | Regras aprovadas de Caassh.                |
-| CRE-002 | Conceder individualmente/em lote com prévia, justificativa e idempotência.                                           | Autoridade e limites de concessão.         |
+| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                                           | Autoridade e limites de concessão.         |
 | CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                | Regras de utilização e correção.           |
 | POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                   | Tarefas delegáveis.                        |
 | POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                | Estados e responsáveis da operação.        |
 | POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                     | Cadastro autoritativo único.               |
 | REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                              | Público e uso esperado.                    |
-| REL-002 | Reutilizar arquivos/jobs para exportação e produzir PDF somente quando houver finalidade documental.                 | Retenção e formato.                        |
+| REL-002 | Oferecer Excel/CSV/PDF com download direto, filtros e seleção/ordem de colunas autorizadas.                 | Retenção e formato.                        |
 
 ## 10. Modelo conceitual de dados
 
@@ -422,7 +435,7 @@ ficam reservados como histórico e não representam tarefas aprovadas ou conclu�
 
 - Login.
 - Recuperação de acesso.
-- Segundo fator para funções exigidas.
+- E-mail/senha e permissões concretas; segundo fator retirado em 10/09/2026.
 - Sessões ativas e encerramento remoto para administradores.
 
 ### 11.2 Dashboard
@@ -650,11 +663,12 @@ API ou migration para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
 002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Estado vigente — Agendamentos e CAASSH, consolidado em 17/09/2026
+## Estado vigente — Agendamentos e CAASSH, consolidado em 21/09/2026
 
-**Atualização de Agendamentos em 15/09/2026:** a CAAB gerencia no painel o serviço
-de reservas do app/site. Qualquer pessoa com acesso válido ao painel pode consultar
-e alterar Agendamentos, sem concessão adicional do módulo. Escopo confirmado:
+**Atualização de Agendamentos em 21/09/2026:** a CAAB gerencia no painel o serviço
+de reservas. Consulta e alteração exigem concessões separadas; alteração depende de
+consulta. O acesso indiscriminado por sessão persiste no código e precisa ser corrigido
+(A01), inclusive em Relatórios (A02). Escopo confirmado:
 unidades com um ou mais serviços, profissionais, procedimentos, funcionamento e
 consulta/gestão de avaliações. Autenticação e auditoria permanecem; outros módulos
 mantêm suas permissões. Ações específicas de avaliações e regras operacionais ainda

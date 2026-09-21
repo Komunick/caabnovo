@@ -1,14 +1,14 @@
 # Modelo de dados
 
-Revisão de 14/09/2026: categorias, contratos e rascunhos de benefícios também usam
-descrição automática na auditoria de criação sem motivo. Edições e transições mantêm
-justificativa explícita. Sem migration ou alteração de registros/eventos anteriores.
+Regra vigente de 14/09/2026: nenhuma criação, edição ou transição exige
+justificativa. Migration 0019 removeu obrigatoriedades; preservar campos e motivos
+históricos. Auditoria registra ação/autor/alterações, sem inventar motivo humano.
 
 Revisão de contatos em 11/09/2026: postalCode/address/city/state no profile JSONB
 do parceiro e postalCode no da unidade, todos opcionais e sem nova migration.
 Entradas futuras normalizam CEP/telefone; registros legados não são reescritos.
-Criações de parceiro/unidade têm justificativa automática na auditoria quando
-não fornecida; alterações mantêm justificativa explícita obrigatória.
+Criações e alterações de parceiro/unidade dispensam justificativa; motivos
+históricos permanecem legíveis e não são preenchidos retroativamente.
 
 ## Complemento de diretório — migration 0017
 
@@ -23,7 +23,7 @@ não fornecida; alterações mantêm justificativa explícita obrigatória.
   leitura pública do app; site mantém critérios e canais próprios.
 - `partner_review`: fonte/id externo único, parceiro, benefício opcional pertencente
   ao mesmo parceiro, referência privada e rótulo do autor, nota 1–5, opinião original,
-  data recebida, estado pending/published/hidden e versão. Moderação exige motivo,
+  data recebida, estado pending/published/hidden e versão. Moderação dispensa motivo e preserva
   data e ator. O runtime só pode atualizar colunas de moderação; não pode alterar
   opinião, nota, autoria ou excluir avaliações. Não há endpoint anônimo de ingestão.
 
@@ -50,3 +50,12 @@ Suspender/arquivar limpa as publicações do parceiro para não republicar sozin
 Arquivos owner_type=partner e owner_id=partner.id; PDF/JPEG/PNG privados, disponíveis e limpos.
 Documentos nunca fazem parte da projeção externa. Contatos administrativos e CNPJ não são auditados
 em snapshots nem publicados. Histórico registra IDs e transições, autor/motivo/correlação.
+
+
+## Modelo vigente do incremento — 21/09/2026
+
+Parceiro, unidade, contrato, benefício, categoria e avaliação permanecem de seus repositórios. Iteradores por entidade preservam IDs/ordem e evitam repetir parceiros por quantidade de contratos. Nenhuma cópia de cadastro ou alteração de regras contratuais; somente export_operation comum.
+
+Entidades técnicas/ciclo de vida em [contrato comum](../002-integrated-modules/contracts/direct-exports.md); sem cópia de domínio.
+Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.0.0
+e contratos de 21/09 prevalecem. Mudanças descritas são planejamento, sem migration executada.

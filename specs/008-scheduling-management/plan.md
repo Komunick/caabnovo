@@ -1,3 +1,104 @@
+# Implementation Plan: Agendamentos: acesso, integridade por pessoa e exportação
+
+**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21
+**Spec**: [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+
+## Summary
+
+Exigir acesso concedido, impedir sobreposição da mesma pessoa, sinalizar reservas mantidas após bloqueio e exportar a agenda/oferta.
+
+US1 configuração/reserva, US2 operação, US4 exportação. US3 expansões/app/site não entra neste recorte; preservar FullCalendar já integrado.
+
+## Technical Context
+
+TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout;
+PostgreSQL 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO
+novo. Testes Vitest 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas,
+teclado e tokens compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos
+e PDFKit existente, sujeitos a spike/versão fixada no código; nenhum pacote instalado agora.
+
+**Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a
+transferência integral arbitrária. Exportações não têm teto funcional de registros/período.
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md):
+medir tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova
+de estresse/grande volume nesta rodada; manter produto sem teto funcional de registros.
+**Restrições**: banco único, autorização atual por ação; sem localhost, deploy, seed real,
+limpeza de dados ou implementação nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+
+## Constitution Check
+
+Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
+Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no
+PostgreSQL e UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já
+retiradas; autenticação continua sem MFA. Abstração de exportação cobre oito consumidores
+reais, sem CRUD genérico. Não há violação de desenho sem justificativa. Aprovações
+institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução de gates.
+
+## Phase 0 — Research
+
+Decisões, alternativas e fontes em [research.md](research.md), com pesquisa transversal
+[de 21/09](../002-integrated-modules/research-2026-09-21.md). Leitura estática conclui
+as escolhas necessárias para este recorte; limitações operacionais viram validações
+de implementação, não requisitos indefinidos. Sem consulta a contas/dados de produção.
+
+## Phase 1 — Design
+
+- Guardas conferem scheduling:read e write (com read) no banco, inclusive após espera por lock. Catálogo/busca/páginas/HTTP/UI usam mesmas dependências; visitante com apenas read não muta oferta, horários, reservas ou arquivo.
+- Preservar projeção mínima de beneficiário autorizada pela agenda; reports.bookings passa a exigir scheduling:read. Não conceder members:read por efeito colateral.
+- Pré-diagnóstico SQL lista pares scheduled com mesmo member_id e ranges sobrepostos, inclusive datas passadas. Migração 0028 adiciona EXCLUDE USING gist(member_id WITH =, tstzrange(starts_at,ends_at,'[)') WITH &&) WHERE(status='scheduled'); preservar constraint profissional. Se houver conflitos, parar sem alterar dados e pedir decisão sobre casos concretos.
+- Criar/remarcar revalida disponibilidade e ambos conflitos na transação; mapear constraint/SQLSTATE para mensagem recuperável. Disponibilidade aceita beneficiário selecionado e retira intervalos ocupados; constraint é garantia final. Remarcação falha mantém reserva original.
+- Projetar eligibilityWarning: blocked|null em lote em lista/calendário/detalhe, usando vínculos/lock existentes. Aviso desaparece ao cessar bloqueio efetivo. Não mudar status, versão, horário, histórico ou ocupação da reserva; cancelamento manual autorizado permanece possível.
+- Exportação usa mesma projeção com aviso e intervalo solicitado, independente de limites visuais do calendário. Oferta e horários são datasets próprios; não fabricar agenda de funcionamento futuro sem reservas.
+
+Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
+e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
+rascunhos/filtros e dados em falhas, sem exigir justificativa. Catálogo de colunas é
+allowlist por função; servidor não confia no catálogo antigo do navegador.
+
+## Project Structure
+
+- `apps/web/modules/scheduling/access.ts` (existente).
+- `apps/web/modules/scheduling/booking-service.ts` (existente).
+- `apps/web/modules/scheduling/availability-service.ts` (existente).
+- `apps/web/modules/scheduling/beneficiary-service.ts` (existente).
+- `packages/contracts/src/scheduling.ts` (existente).
+- `apps/web/modules/scheduling/ui/booking-detail.tsx` (existente).
+- `packages/db/src/repositories/members.ts` (existente).
+- `apps/web/modules/scheduling/export-adapter.ts` e `export-adapter.test.ts` (novos planejados).
+- `apps/web/app/(admin)/scheduling/exportar/page.tsx` (nova planejada).
+
+## Rollout, migração e rollback
+
+Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001.
+Preparar compatibilidade de leitura de chaves/snapshots antes de ativar migrações e
+novos botões. Conta sem acesso não ganha concessão para preservar conveniência.
+Diagnosticar conflitos antes da restrição008; parar sem corrigir registros automaticamente.
+Rollback da UI/API deve preservar grants convertidos, dados e arquivos; não publicar
+binário antigo que dependa exclusivamente de audit:export/reports:export após conversão.
+Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
+
+## Validation e próximo passo
+
+Duas reservas concorrentes da mesma pessoa em profissionais/unidades distintos: uma aceita; titular/dependentes distintos podem coincidir. Bloqueio mantém reserva/vaga e mostra aviso. Sem read some/nega; só read não altera. Exportação não herda teto visual.
+
+Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior
+nunca conclui tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação:
+speckit-tasks, organizado por história, com dependências e critérios independentes.
+
+## Complexity Tracking
+
+Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm
+as regras dos domínios. Sem microserviço, linguagem nova ou nova fonte de verdade.
+Estado operacional serve somente à transferência atual; não é fila/histórico obrigatório.
+
+## Histórico anterior — referência, não sequência executável atual
+
+O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência,
+valem o desenho de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+
+<details>
+<summary>Plano anterior preservado</summary>
+
 # Implementation Plan: Agendamentos em três etapas
 
 **Branch**: `feature/scheduling-management-20260915` | **Date**: 2026-09-15
@@ -10,7 +111,7 @@ A branch real foi conferida com git e é a indicada acima.
 
 ### Continuidade vigente — 18/09/2026
 
-Entrega ativa: `feature/reports-analytics-20260918`, worktree registrada em checkpoint.md,
+Entrega original do calendário: `feature/reports-analytics-20260918` (PR34 integrado);
 PR34 ainda aberto. Incremento CAL-F01–CAL-F06: FullCalendar Standard 7.1.0/React e
 temporal-polyfill 1.0.1, importação dinâmica somente ao abrir a grade. Plugins
 daygrid/timegrid e tema classic adaptado aos tokens; locale pt-BR e America/Bahia.
@@ -57,8 +158,8 @@ até o legado e, por último, selecionar sugestões novas. [Roadmap e limites](r
 - **Performance Goals**: lista diária paginada (25 padrão/100 máximo), sem carregar
   catálogo/histórico inteiro; alvo de primeira resposta útil em 2s em ambiente de
   validação com 10 mil reservas sintéticas. É alvo proposto, não SLA comprovado.
-- **Constraints**: UTC persistido, America/Bahia exibido; sem novas permissões
-  específicas de Agendamentos, motivo obrigatório, dados clínicos ou créditos.
+- **Constraints**: UTC persistido, America/Bahia exibido; Q8 exige acesso concedido a
+  Agendamentos. Sem motivo obrigatório, dados clínicos ou créditos.
 - **Scale/Scope**: várias unidades e serviços; uma pessoa e um profissional por reserva
   na primeira entrega. Um profissional pode ter vínculos válidos em várias unidades,
   mantendo prevenção global de conflito para sua identidade.
@@ -68,7 +169,8 @@ até o legado e, por último, selecionar sugestões novas. [Roadmap e limites](r
 Pré/pós-design: solução coesa no monólito, PostgreSQL como autoridade, contratos
 versionados, auditoria, minimização e acessibilidade. Sem nova infraestrutura.
 Decisões explícitas do usuário prevalecem sobre trechos históricos locais:
-qualquer acesso válido ao painel autoriza Agendamentos; motivos não são obrigatórios.
+Q8 de 21/09 exige acesso concedido a Agendamentos além da sessão administrativa;
+motivos não são obrigatórios.
 Não ampliar permissões de outros módulos. Branch feature vigente conforme instrução
 do ambiente; exceção de Processamentos em outra branch está registrada no mapa local.
 Gates de implementação continuam exigidos; planejamento não equivale a aprovação de
@@ -110,8 +212,25 @@ são contas de login. Não antecipar motor genérico de recursos, turmas ou paga
 
 ## Integridade e concorrência
 
+- Decisão de 20/09/2026 (FR-017; implementação pendente): bloqueio administrativo
+  não modifica reservas existentes nem libera ocupação. Consultas de agenda/detalhes
+  devem projetar a sinalização do impedimento próprio ou de titular vigente com a
+  mesma regra de elegibilidade dos comandos, sem copiar o status para dependentes.
+  Preservar Agendado/Cancelado e a auditoria; não criar rotina automática de cancelamento.
+  Validar lista/calendário/detalhes e cancelamento manual com pessoas sintéticas.
+
 - Intervalos [início,fim); exclusion constraint GiST por profissional e intervalo
   para status scheduled. Extensão btree_gist aplicada pela migration.
+- Decisão de 20/09/2026 (FR-016; implementação pendente): acrescentar proteção
+  transacional e restrição no PostgreSQL por member_id e intervalo para scheduled,
+  preservando a restrição por profissional. member_id identifica a pessoa atendida;
+  nunca usar o titular para agrupar dependentes nem user.id do operador.
+  Antes de aplicar nova migration, diagnosticar sobreposições preexistentes e
+  exigir resolução explícita, sem cancelar, apagar ou remarcar dados automaticamente.
+  Criar/remarcar deve revalidar ambos os conflitos; a própria reserva fica excluída
+  da comparação ao remarcar. Canceladas não ocupam intervalo; limites são [início,fim).
+  Cobrir concorrência, rollback e independência de titular/dependentes em banco
+  descartável e na jornada da interface quando a implementação for retomada.
 - Criar/remarcar em transação, com lock de configuração/identidades e releitura.
   Escritas em horários/catálogo usam a mesma ordem de locks. Erro na remarcação faz rollback.
 - Mudanças em bloqueio/vínculo de dependência precisam participar do mesmo protocolo.
@@ -160,3 +279,34 @@ Branch fix/scheduling-select-20260916, baseada em dev após PR29. Usar armazenam
 em memória no layout autenticado, por rota/formulário/cadastro, com controles nativos e estado
 React preservados. Integrar sucesso/cancelamento aos descartes e testar navegação entre módulos.
 Não usar cache público, localStorage ou salvamento automático no banco.
+
+## Acesso concedido a Agendamentos — Q8 de 21/09/2026
+
+Adequar catálogo/gestão de acesso, shell e todas as guardas do módulo: páginas,
+calendário, oferta, disponibilidade, busca mínima de beneficiários e comandos.
+Sem concessão, ocultar módulo na barra lateral, busca e Início; URL/API continuam
+protegidas no servidor e revalidam revogação. Não conceder leitura completa de
+Associados como efeito colateral. Exportação exige também permissão geral.
+Q9 define consulta/alteração separadas; AC01 detalha a adequação/transição técnica.
+A conversão Q4 de exportação não autoriza
+conceder novos acessos de módulos. AC01–AC03 pendentes, sem código ou teste novo.
+
+Leitura do código em 21/09: `scheduling/access.ts` verifica sessão e usa o parâmetro
+write para lock de elegibilidade, sem conferir concessões de consulta/alteração;
+`workspace/areas.ts` inclui Agendamentos incondicionalmente. Catálogo de permissões
+e `user-access.ts` ainda não incluem Agendamentos. Registrar a lacuna e adequar ao
+padrão existente dos demais módulos, sem alterar Notícias para uma permissão única.
+Consulta controla descoberta/leitura; alteração depende de consulta e controla
+mutações de oferta/horários/reservas. Exportação continua independente de alteração,
+sob consulta + permissão geral. Leitura estática, sem testes nesta sessão.
+
+## Checkpoint de revisão de código — 21/09/2026
+
+Primeira versão administrativa e FullCalendar estão na base integrada. Falta concessão consultar/alterar (AC01–AC03), conflito do beneficiário (BEN01–BEN03), indicação de bloqueio posterior (BLQ01/BLQ02) e exportação DX01. CAL06 permanece validação visual/documental, sem alteração de PR34 já integrado. Horários semanais/almoço e conflito do profissional já existem; T021–T024 são expansões.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
+Executar adequações e seus testes em retomada de implementação. Preservar dados e decisões adiadas; a revisão atual altera somente documentação.
+
+</details>

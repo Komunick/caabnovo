@@ -1,3 +1,64 @@
+# Validação do incremento — Fundação, Colaboradores e infraestrutura de exportação
+
+**Estado de 21/09/2026:** roteiro de validação, não evidência de execução.
+Localhost permanece desligado; comandos de infraestrutura dependem de ordem explícita.
+Testes usam banco descartável; nunca aplicar seeds ao banco do preview principal.
+Reutilizar a entrega ativa conforme mapa local e workflow, não a branch original já integrada.
+Prazos/controles de retenção continuam pendentes (T089); não executar descarte nem
+afirmar aprovação institucional. Lacunas atuais em [revisão](../002-integrated-modules/code-audit-2026-09-21.md).
+
+## Estado e pré-requisitos
+
+Pré-requisitos de execução futura: Node 24/pnpm do package.json, dependências fixadas,
+PostgreSQL 18 descartável/Testcontainers e Chromium no CI. Nunca usar banco do preview
+ou contas reais como seed. Localhost continua desligado; os comandos abaixo são roteiro,
+não foram executados neste planejamento. Variáveis/segredos seguem `.github/workflows/ci.yml`.
+
+```powershell
+corepack pnpm install --frozen-lockfile
+corepack pnpm test:unit
+corepack pnpm test:contract
+corepack pnpm test:integration apps/web/tests/integration/user-access.test.ts
+corepack pnpm test:e2e user-administration.spec.ts --project=chromium
+corepack pnpm test:a11y --project=chromium
+```
+
+O job browser existente prepara ambiente/contas sintéticos; não copiar seus seeds
+para o preview principal. Testes de migração/conflito usam banco descartável. Antes
+de entrega de código, completar format/lint/typecheck/build/security e evidências
+visuais pelo workflow de CI, sem iniciar builds/serviços pesados no computador.
+
+## Jornada independente
+
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md). Medições/aceite definidos ali substituem massas grandes nesta rodada; nenhum teste de estresse ou alegação de capacidade em grande volume. U1 usa fixtures legadas sintéticas e as permissões atuais, conforme [contrato](../010-reports-analytics/contracts/legacy-downloads.md).
+
+Executar os seis cenários de [cargos](contracts/roles.md), incluindo nova permissão disponível ao Administrador com override vazio e Gestor com consulta a todos os módulos, exportação e Relatórios completos, concedendo edição de Associados a terceiro sem possuir essa edição; testar UI/API, revogação e último Administrador.
+
+Perfis Associados+Colaboradores com geral exportam só essas fontes; conversão preserva herança expirada/revogada e override vazio; sem módulo não há elemento nas três superfícies; writer respeita colunas, grande volume, CSRF, revogação e interrupção.
+
+Para cada dataset do contrato, abrir Exportar [módulo], variar filtros, selecionar/reordenar colunas por teclado e baixar Excel/CSV/PDF. Ler arquivos com parsers independentes, confrontar IDs/contagem/conteúdo/ordem com a massa conhecida. Vazio mantém cabeçalho; mais de uma página não corta resultados.
+
+Matriz negativa: anônimo, sessão revogada, sem acesso, leitura sem geral, geral sem
+leitura, leitura+geral sem escrita, campo proibido, operação de outro usuário e
+revogação entre lotes. Preservar filtros após falha; interrupção não retorna sucesso.
+Testar teclado,390 px, desktop e temas. Módulos negados têm zero entradas no menu,
+busca e Início; controles pessoais da conta continuam disponíveis.
+
+## Evidência esperada
+
+Registrar comandos, versões/commit, fixtures sintéticas, resultados, arquivos
+validados e capturas em `specs/001-project-foundation/evidence/plan-2026-09-21-validation.md`
+(arquivo futuro). Nunca marcar tarefas como concluídas por este roteiro.
+Requisitos e representações: [modelo](data-model.md), [contrato](contracts/exports.md).
+
+## Roteiro anterior — histórico
+
+Não executar serviços/seeds indicados abaixo no preview principal. O roteiro atual
+usa CI/banco descartável; passos substituídos não autorizam reativação local.
+
+<details>
+<summary>Roteiro anterior preservado</summary>
+
 # Quickstart Validation Guide: Fundação do Sistema CAAB
 
 Este guia descreve a validação esperada depois da implementação. Os comandos são contratos do plano;
@@ -64,12 +125,12 @@ pnpm security:scan
 Every command must exit successfully before a Pull Request can merge. Contract validation regenerates
 OpenAPI and fails if [openapi.yaml](./contracts/openapi.yaml) drifts from runtime schemas.
 
-## Scenario 1: Authentication and MFA
+## Scenario 1: Authentication and permissions
 
 1. Sign in with an active ordinary test user and confirm only permitted navigation/actions appear.
 2. Call a forbidden operation directly and confirm safe `403`, no protected data and a security event.
-3. Sign in with an administrator test user; confirm no authenticated administrative session exists
-   before a valid TOTP challenge.
+3. Sign in with an administrator test user using e-mail/password; confirm no MFA challenge
+   and deny actions outside the granted permissions.
 4. Revoke the session and repeat the next protected request; confirm immediate `401`.
 5. Disable the user and confirm all sessions are revoked.
 
@@ -77,7 +138,7 @@ Expected evidence: automated tests for SC-001/SC-002, redacted security events a
 
 ## Scenario 2: Roles and least privilege
 
-1. Create a synthetic user with a non-administrative role and justification.
+1. Create a synthetic user with a non-administrative role, without a written justification.
 2. Verify the user receives exactly the role's active permissions.
 3. Attempt to grant a permission the acting administrator cannot manage; confirm denial.
 4. Grant then revoke an allowed role and confirm the next request observes the change.
@@ -112,13 +173,13 @@ and authorized. See [data-model.md](./data-model.md) for transitions.
 2. Confirm one domain job/effect and a stable status reference.
 3. Simulate a retryable failure; confirm finite retries, monotonic progress and correlation continuity.
 4. Exhaust retries; confirm safe terminal failure and visible queue age/depth metrics.
-5. Redrive as an authorized operator with justification; confirm audit and no duplicate business effect.
+5. Redrive as an authorized operator without a written justification; confirm audit and no duplicate business effect.
 
 Expected evidence: SC-007/SC-010 pass and the [jobs contract](./contracts/jobs.md) is honored.
 
 ## Scenario 6: Accessibility and responsiveness
 
-1. Complete login, MFA, navigation, user administration and audit search using keyboard only.
+1. Complete login, navigation, user administration and audit search using keyboard only.
 2. Run automated Axe checks on each essential page and important error/loading state.
 3. Manually verify focus order/visibility, accessible names, contrast, zoom/reflow and a screen reader.
 4. Check that no state is communicated by color or icon alone and all UI icons use Lucide React.
@@ -161,3 +222,5 @@ The Foundation is ready for merge to `dev` only when:
   controls pass with synthetic data and unresolved items block production promotion.
 - Security/privacy-sensitive changes have a named human reviewer.
 - Rollback and migration notes contain no destructive shortcut or real personal data.
+
+</details>

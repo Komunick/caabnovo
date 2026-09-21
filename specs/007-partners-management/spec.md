@@ -1,5 +1,12 @@
 # Feature Specification: Parceiros e benefícios
 
+## Checkpoint de revisão de código — 21/09/2026
+
+Administração, unidades, categorias, contratos, benefícios, API pública e moderação implementados. Portal/QR/resgates/coleta externa de avaliações não estão conectados. Não há ação própria de exportação do módulo; DX01 detalha EXP06/EXP07 sem duplicar construção de cadastros existentes.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
 **Feature Branch**: `feature/partners-management`
 **Created**: 2026-09-11
 **Status**: Em complementação após revisão do usuário
@@ -25,11 +32,11 @@ O operador cadastra um estabelecimento parceiro e suas unidades, encontra-o por 
 O operador registra referência, condições e datas de um contrato, anexa documentação privada quando disponível e registra a confirmação administrativa de aprovação.
 
 **Why this priority**: a oferta exige condições contratuais rastreáveis.
-**Independent Test**: registrar contrato, anexar documento verificado, aprovar com motivo, encerrar e conferir o histórico.
+**Independent Test**: registrar contrato, anexar documento verificado, aprovar sem exigir motivo, encerrar e conferir o histórico.
 
 **Acceptance Scenarios**:
 1. Fim anterior ao início é recusado. Vigência é inclusiva por data local; contrato futuro, pendente ou encerrado não habilita exibição externa.
-2. Aprovar exige referência, condições, datas e justificativa do responsável. Nenhum prazo contratual, desconto ou exigência documental institucional é preenchido automaticamente.
+2. Aprovar exige referência, condições, datas e identificação do responsável, sem exigir justificativa. Nenhum prazo contratual, desconto ou exigência documental institucional é preenchido automaticamente.
 3. Documento de outro parceiro, arquivo não verificado, excluído ou usuário sem permissão não pode ser vinculado/baixado.
 4. Contrato registrado é preservado; correção/renovação usa novo registro e encerramento explícito do anterior, sem reescrever evidência.
 
@@ -56,7 +63,7 @@ O administrador concede consulta, edição e publicação individualmente em Col
 **Acceptance Scenarios**:
 1. Toda operação privada exige sessão e permissão atuais. Edição e publicação dependem de consulta; arquivos usam também suas permissões próprias.
 2. Ações simultâneas não sobrescrevem silenciosamente. Repetir o mesmo envio não cria outro registro.
-3. Histórico mostra autor, ação em linguagem simples, data e motivo, sem documentos completos, contatos privados ou segredos.
+3. Histórico mostra autor, ação em linguagem simples, data e motivos históricos existentes, sem documentos completos, contatos privados ou segredos.
 4. As sete páginas e seis abas descritas em [interface.md](interface.md) preservam layout, botões, filtros, foco e temas das telas de referência.
 
 ### Edge Cases
@@ -81,7 +88,7 @@ Não considerar o módulo concluído até validar esses caminhos no preview 3107
   seleção explícita, incluindo seleção vazia. Persistência e efeito no contrato de
   leitura do app são obrigatórios; o canal site permanece independente.
 - **FR-016**: Exibir avaliações no detalhe do parceiro com nota/opinião original,
-  data e estado; moderação exige motivo e preserva nota/texto/autoria. Não inventar
+  data e estado; moderação não exige motivo e preserva nota/texto/autoria. Não inventar
   avaliações nem declarar conexão ao app que ainda não exista.
 - **FR-017**: Consulta usa partners:read; categorias usam partners:write; configuração
   do app e moderação usam partners:publish. Todas as alterações têm versão,
@@ -107,11 +114,10 @@ Desativação não apaga categorias, parceiros, unidades ou avaliações.
   de entrada, com DDD de dois dígitos e número de oito (fixo) ou nove (celular).
   Exibir parênteses do DDD e traço automaticamente ao completar o número.
 - **FR-020 (ampliado em 14/09/2026)**: Criar parceiro, unidade, categoria, contrato ou
-  rascunho de benefício não exige campo de motivo. Editar registros existentes ou
-  desativar unidade/categoria exige justificativa também no servidor. Criação permanece
-  auditada com ator/data e descrição automática, sem solicitar justificativa ao operador.
-  Aprovação/encerramento de contratos, publicação/retirada, moderação e alterações das
-  configurações continuam exigindo motivo por alterarem registros ou estados existentes.
+  rascunho de benefício, editar registros, desativar unidade/categoria, aprovar/encerrar
+  contratos, publicar/retirar, moderar e alterar configurações não exigem campo de
+  motivo nem justificativa no servidor. Preservar autorização, auditoria com ator/data
+  e alterações, confirmação e controle de concorrência; motivos históricos permanecem legíveis.
 - **FR-021**: CNPJ com máscara compatível com letras, e-mail e site com limites e
   aviso junto ao campo inválido; conservar preenchimento e impedir envio inválido.
   Usar máscaras/validações compartilhadas da fundação. A consulta de CEP é direta
@@ -119,7 +125,7 @@ Desativação não apaga categorias, parceiros, unidades ou avaliações.
 
 - **FR-001**: Cadastro único de estabelecimento com nome de exibição, razão social opcional, CNPJ opcional, categoria, descrição e contatos administrativos opcionais. CNPJ válido e único quando informado; validação não comprova situação na Receita.
 - **FR-002**: Manter unidades e abrangência presencial/remota, endereço/localidade, contato e estado ativo/inativo por parceiro.
-- **FR-003**: Registrar contratos com referência, condições, início/fim, estado pendente/aprovado/encerrado, arquivo privado opcional e autoria; aprovação e encerramento exigem motivo.
+- **FR-003**: Registrar contratos com referência, condições, início/fim, estado pendente/aprovado/encerrado, arquivo privado opcional e autoria; aprovação e encerramento preservam autorização e auditoria, sem exigir motivo.
 - **FR-004**: Reutilizar envio privado verificado de PDF/JPEG/PNG até o limite de 25 MB existente; somente arquivos pertencentes ao parceiro podem ser utilizados.
 - **FR-005**: Manter rascunho e publicação de benefício, título/descrição/condições/público, unidade/contrato, período e canais app/site. Benefício não concede elegibilidade ou crédito.
 - **FR-006**: Exibição externa exige todos os pré-requisitos e vigências atuais do parceiro, unidade, contrato e versão publicada. Ocultar não apaga evidência nem republica sozinho.
@@ -146,7 +152,7 @@ Parceiro (estabelecimento), unidade (local/abrangência), contrato (condições 
 - **SC-002**: Todos os cenários de vigência e autorização recusam exibição/alteração indevida, inclusive acesso entre parceiros a arquivos.
 - **SC-003**: Repetição não duplica registros e conflito não sobrescreve outra edição; falha de auditoria impede efeito parcial.
 - **SC-004**: Sete páginas e a aba Avaliações testadas nos dois temas; interface principal acessível por teclado e sem overflow em 390 px.
-- **SC-005**: Cada mudança relevante pode ser atribuída a um autor e motivo no histórico.
+- **SC-005**: Cada mudança relevante pode ser atribuída a um autor, data e ação no histórico, sem exigir motivo; motivos históricos permanecem legíveis.
 
 ## Assumptions
 
@@ -164,7 +170,7 @@ Todos os controles das sete páginas e seis abas adotam validação e mensagens 
 
 ## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
 
-Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos continua somente em pesquisa e OAB-BA permanece pendente da hospedagem.
+Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação, arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios. Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado, condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem. Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece na interface. Agendamentos possui primeira versão administrativa (spec 008), com app/site e expansões pendentes; OAB-BA permanece pendente da hospedagem.
 
 
 ## Edições durante navegação — decisão de 16/09/2026
@@ -174,3 +180,30 @@ Decisão final do usuário: remover os campos de motivo/justificativa de todas a
 - Salvar com sucesso, cancelar/descartar explicitamente ou encerrar a sessão encerra a edição.
   Falhas de validação/rede conservam os dados; manter as proteções de versão/autorização.
 - Compartilhar a infraestrutura do painel e validar ida/volta, sem misturar registros ou usuários.
+
+
+### US5 — Exportar dados autorizados (Priority: P2)
+
+O operador com permissão geral de exportação e consulta da função abre
+“Exportar Parceiros e benefícios”, ajusta filtros,
+seleciona/reordena colunas e escolhe Excel, CSV ou PDF para download direto.
+Abrange dados/abas consultáveis da função, sem teto funcional de registros/período,
+sem prazo de arquivo nem fila/histórico obrigatório. Não exportar bytes de anexos,
+segredos ou campos sem autorização.
+
+Teste independente: Três formatos por dataset, mesmo filtro/ordem/colunas; leitura sem exportação e exportação sem leitura negadas; documentos/contatos privados preservam seu controle; exportação não muda publicação ou contrato.
+Em erro, manter filtros/colunas; três formatos preservam conjunto e ordem escolhidos.
+Campos restritos enviados diretamente são recusados no servidor. Este detalhamento
+aplica o padrão transversal já decidido, sem implementação ou nova homologação.
+
+
+Checkpoint de 21/09/2026 — plan concluído: desenho, pesquisa, modelo, contratos e
+roteiro atualizados. Nenhum código, serviço, migration ou teste de aplicação executado.
+Tarefas serão detalhadas em seguida; políticas e funções adiadas permanecem pendentes.
+
+Checkpoint de 21/09/2026 — tasks concluídas: 7 tarefas novas (T039–T045), com histórias, dependências, caminhos e aceite; nenhuma implementação/teste de aplicação executado. Ver tasks.md.
+
+Checkpoint final de21/09/2026 — plan seguido de tasks encerrados. Conferência
+documental de IDs, fases, links e preservação do histórico concluída; código,
+testes de aplicação e homologações não executados. Próximo passo recomendado:
+análise cruzada antes da implementação. Detalhes no relatório do programa002.

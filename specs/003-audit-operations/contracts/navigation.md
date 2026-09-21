@@ -1,5 +1,11 @@
 # Contrato da área
 
+**Alvo de 21/09/2026, ainda não implementado:** exportações de Eventos e
+Processamentos exigem consulta à subárea mais permissão geral, com filtros,
+seleção/ordem de colunas e download direto Excel/CSV/PDF. A rota de histórico
+listada abaixo descreve compatibilidade legada, não etapa obrigatória do novo fluxo.
+EX01/EX02 também cobrem o worker e o bypass por files:read identificado em A05.
+
 ## Consulta e reenvio US3 — 15/09/2026
 
 `/audit/jobs`: jobs:read obrigatório. Query `status` (queued/running/succeeded/failed),

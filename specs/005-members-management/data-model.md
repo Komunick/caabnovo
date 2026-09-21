@@ -40,3 +40,12 @@ Nome retornado, CPF, detalhes financeiros, credenciais e JSON bruto não são pe
 Falha final de autenticação/autorização deixa somente o início e impede a entrega do resultado.
 Ausência de configuração falha antes de iniciar a consulta e não produz resultado fictício.
 Nenhum registro em `member_assessment` é inserido ou atualizado por uma consulta integrada.
+
+
+## Modelo vigente do incremento — 21/09/2026
+
+member.id identifica cada pessoa individualmente; vínculo familiar não une agendas. export_operation referencia somente ator/dataset, não cria pessoa/login. Q11 mantém valores não verificados desconhecidos e decisões humanas com fonte/autor/data; motivos históricos preservados, sem campo obrigatório. Projeção de aviso em 008 não é novo campo persistido em member.
+
+Entidades técnicas/ciclo de vida em [contrato comum](../002-integrated-modules/contracts/direct-exports.md); sem cópia de domínio.
+Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.0.0
+e contratos de 21/09 prevalecem. Mudanças descritas são planejamento, sem migration executada.

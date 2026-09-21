@@ -7,8 +7,8 @@ entrega própria. Comparação com o sistema antigo em [LEG-002](../../../docs/L
 
 `POST /api/v1/members/:id/commands`, mesma sessão, origem, CSRF e Idempotency-Key existentes.
 Exige `members:read` e `members:review`, revalidados no banco. Nenhuma nova permissão concedida
-a outros perfis. Corpo estrito: `{ action, expectedVersion, justification }`, justificativa
-com 3–1000 caracteres após trim.
+a outros perfis. Corpo estrito: `{ action, expectedVersion, justification? }`; justificativa
+legada opcional, omissão/vazio aceitos, até 1000 caracteres após trim.
 
 | Ação | Origem | Destino |
 | --- | --- | --- |

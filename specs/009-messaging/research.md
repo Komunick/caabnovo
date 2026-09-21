@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Avaliar o protótipo de campanhas/comunicados conforme a finalidade confirmada e planejar exportações sem iniciar canais reais.
+
+**Fundamento:** Após M016, conferir preparo/segmentação/programação sem envio real; exports respeitam a projeção mínima e formatos/colunas; nenhum botão/tela de chat ou ticket; alterações no protótipo dependem do gate registrado.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `apps/web/modules/messaging/http/routes.ts`, `apps/web/modules/messaging/ui/list-page.tsx`, `apps/web/modules/messaging/ui/schedules.tsx`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Pesquisa — Mensagens
 
 Consultada em 16/09/2026 antes da implementação, em documentação oficial.

@@ -6,7 +6,7 @@ detalhado pronto para implementação. Evidência de execução ainda não exist
 
 ## Content Quality
 
-- [x] Spec descreve necessidades e resultados, sem frameworks ou código.
+- [ ] Spec descreve necessidades e resultados, sem frameworks ou código.
 - [x] Jornada de valor e atores explícitos; acesso ao painel conforme usuário.
 - [x] Seções obrigatórias preenchidas; exemplos distinguidos de políticas.
 - [x] Pesquisa atual com fontes oficiais e alternativas no research.md.

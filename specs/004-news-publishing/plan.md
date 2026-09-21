@@ -1,3 +1,102 @@
+# Implementation Plan: Notícias: concessão explícita e exportação
+
+**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21
+**Spec**: [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+
+## Summary
+
+Preservar a separação editorial existente, retirar o acesso implícito e exportar as listas/revisões autorizadas.
+
+US1 rascunhos, US2 publicação, US3 programação/distribuição e US4 exportação. Não alterar API pública nem acrescentar aprovação editorial.
+
+## Technical Context
+
+TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout;
+PostgreSQL 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO
+novo. Testes Vitest 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas,
+teclado e tokens compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos
+e PDFKit existente, sujeitos a spike/versão fixada no código; nenhum pacote instalado agora.
+
+**Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a
+transferência integral arbitrária. Exportações não têm teto funcional de registros/período.
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md):
+medir tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova
+de estresse/grande volume nesta rodada; manter produto sem teto funcional de registros.
+**Restrições**: banco único, autorização atual por ação; sem localhost, deploy, seed real,
+limpeza de dados ou implementação nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+
+## Constitution Check
+
+Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
+Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no
+PostgreSQL e UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já
+retiradas; autenticação continua sem MFA. Abstração de exportação cobre oito consumidores
+reais, sem CRUD genérico. Não há violação de desenho sem justificativa. Aprovações
+institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução de gates.
+
+## Phase 0 — Research
+
+Decisões, alternativas e fontes em [research.md](research.md), com pesquisa transversal
+[de 21/09](../002-integrated-modules/research-2026-09-21.md). Leitura estática conclui
+as escolhas necessárias para este recorte; limitações operacionais viram validações
+de implementação, não requisitos indefinidos. Sem consulta a contas/dados de produção.
+
+## Phase 1 — Design
+
+- A view effective_user_permission ainda concede news:read/write/publish a quem não tem user_access; guardas transacionais existentes não eliminam essa exceção. Fundação 001 remove o baseline na migração 0026; preservar grants explícitos e papéis válidos.
+- Conferir news/payload/transaction.ts, prévias, uploads, comandos e execução programada. Corrigir somente bypass comprovado; não substituir controles por permissão única. Notícia publicada pública continua consultável sem login.
+- Adaptador distingue revisão publicada do rascunho atual segundo a aba; filtros e sort reaproveitam news-service. Exportar não publica, agenda, retira ou duplica notícia.
+- Texto rico exportado como texto autorizado, sem executar HTML/embeds; metadados de mídia podem aparecer quando consultáveis, bytes/token de arquivo não. Revisões/arquivadas respeitam o contexto escolhido.
+
+Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
+e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
+rascunhos/filtros e dados em falhas, sem exigir justificativa. Catálogo de colunas é
+allowlist por função; servidor não confia no catálogo antigo do navegador.
+
+## Project Structure
+
+- `apps/web/modules/news/payload/transaction.ts` (existente).
+- `apps/web/modules/news/news-service.ts` (existente).
+- `apps/web/modules/news/ui/news-index.tsx` (existente).
+- `apps/web/modules/news/http/news-route.ts` (existente).
+- `apps/web/tests/integration/user-permissions.test.ts` (existente).
+- `apps/web/modules/news/export-adapter.ts` e `export-adapter.test.ts` (novos planejados).
+- `apps/web/app/(admin)/news/exportar/page.tsx` (nova planejada).
+
+Leitura estática complementar: packages/news/src/action-runner.ts verifica conta ativa, mas não as permissões efetivas. Corrigir a autorização do worker em toda execução; isso é lacuna comprovada, não apenas hipótese de teste.
+
+## Rollout, migração e rollback
+
+Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001.
+Preparar compatibilidade de leitura de chaves/snapshots antes de ativar migrações e
+novos botões. Conta sem acesso não ganha concessão para preservar conveniência.
+Diagnosticar conflitos antes da restrição008; parar sem corrigir registros automaticamente.
+Rollback da UI/API deve preservar grants convertidos, dados e arquivos; não publicar
+binário antigo que dependa exclusivamente de audit:export/reports:export após conversão.
+Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
+
+## Validation e próximo passo
+
+Conta sem user_access e sem papel não recebe Notícias; leitor/editor/publicador mantêm ações distintas; publicado público continua; três formatos não vazam revisão privada no contexto de publicada.
+
+Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior
+nunca conclui tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação:
+speckit-tasks, organizado por história, com dependências e critérios independentes.
+
+## Complexity Tracking
+
+Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm
+as regras dos domínios. Sem microserviço, linguagem nova ou nova fonte de verdade.
+Estado operacional serve somente à transferência atual; não é fila/histórico obrigatório.
+
+## Histórico anterior — referência, não sequência executável atual
+
+O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência,
+valem o desenho de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+
+<details>
+<summary>Plano anterior preservado</summary>
+
 # Implementation Plan: Notícias e publicação editorial
 
 Spec: [spec.md](spec.md). Função completa em um PR para dev; alterações futuras permanecem
@@ -133,3 +232,34 @@ Não usar cache público, localStorage ou salvamento automático no banco.
 2. Validar as jornadas autorizadas com registros sintéticos isolados; nunca publicar a notícia de teste.
 3. Corrigir lacunas técnicas em uma única branch, com testes dos controles e CI remoto.
 4. Registrar resultados por ambiente, pendências externas e limites; abrir PR para dev sem merge ou aprovação.
+
+## Acesso concedido a Notícias — Q8 de 21/09/2026
+
+Corrigir a documentação antiga de sessão suficiente: o código já utiliza
+news:read/news:write/news:publish no catálogo/gestão e em guardas. Preservar esse modelo. Proteger páginas, prévia, consultas, comandos,
+mídia privada e execução agendada; revalidar concessão atual no servidor, incluindo
+worker. Ocultar barra lateral, busca e Início quando sem acesso; preservar API e
+página de notícias publicadas, sem segunda aprovação editorial. Exportação também
+exige permissão geral. Q9 confirma consulta/alteração separadas e preserva a permissão
+existente de publicar; não criar permissão única nem alterar concessões por esta
+clarificação. AC01–AC03 serão conferência/validação e correção de lacunas encontradas.
+Trechos anteriores sem permissão própria eram documentação desatualizada, não prova
+do comportamento atual. Localhost desligado; somente documentação e leitura de código.
+
+Evidência de leitura em 21/09: `modules/auth/permissions.ts` e
+`modules/users/access-labels.ts` definem consultar/editar/publicar; `user-access.ts`
+exige read para write e read/write para publish. `news/payload/transaction.ts`
+revalida permissões atuais; `news/access.ts` protege mídia e `workspace/areas.ts`
+condiciona Notícias a news:read. Isso corrige o diagnóstico anterior baseado em specs
+antigas, sem declarar teste ou revisão completa executados.
+
+## Checkpoint de revisão de código — 21/09/2026
+
+Editor, mídia, publicação, rotas públicas e permissões web separadas existem. Worker de publicação não consulta concessões do solicitante; AC02/AC03 devem cobrir revogação com conta ativa. Início ainda renderiza notícias sem news:read. T027 exige só a evidência HTTP específica, não repetir como ausente a jornada UI comprovada. Exportação própria DX01 pendente; erros de editor coordenados em 001 T097.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
+Executar adequações e seus testes em retomada de implementação. Preservar dados e decisões adiadas; a revisão atual altera somente documentação.
+
+</details>

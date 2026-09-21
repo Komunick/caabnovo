@@ -79,6 +79,10 @@ houver pouca memória local; testes usam bancos descartáveis.
 - Verificação de dependências e segredos.
 - Testes de autorização quando uma rota, ação ou papel for alterado.
 - Teste de acessibilidade quando houver mudança de UI relevante.
+- Exportações seguem o [padrão obrigatório](EXPORT-STANDARD.md): Excel, CSV e PDF
+  em todos os módulos/abas aplicáveis, com filtros e download direto. Conferir os
+  três formatos, seleção/ordem das colunas, completude dos dados e permissões antes
+  de concluir sua entrega.
 
 ## 6. Regras para migrations
 

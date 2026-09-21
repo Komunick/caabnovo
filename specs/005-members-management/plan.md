@@ -1,6 +1,110 @@
+# Implementation Plan: Associados: preservação manual, agenda e exportação
+
+**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21
+**Spec**: [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+
+## Summary
+
+Exportar dados autorizados de Associados e conferir efeitos de bloqueio na agenda sem presumir políticas institucionais.
+
+US1 cadastro/vínculos; US2 documentos; US3 situações; US4 consumidores e US5 exportação. P01/POL01, credencial, OAB hospedada e acesso externo continuam pendentes.
+
+## Technical Context
+
+TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout;
+PostgreSQL 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO
+novo. Testes Vitest 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas,
+teclado e tokens compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos
+e PDFKit existente, sujeitos a spike/versão fixada no código; nenhum pacote instalado agora.
+
+**Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a
+transferência integral arbitrária. Exportações não têm teto funcional de registros/período.
+Aplicar o [perfil C1 de100 registros](../002-integrated-modules/export-validation-100.md):
+medir tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova
+de estresse/grande volume nesta rodada; manter produto sem teto funcional de registros.
+**Restrições**: banco único, autorização atual por ação; sem localhost, deploy, seed real,
+limpeza de dados ou implementação nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+
+## Constitution Check
+
+Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
+Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no
+PostgreSQL e UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já
+retiradas; autenticação continua sem MFA. Abstração de exportação cobre oito consumidores
+reais, sem CRUD genérico. Não há violação de desenho sem justificativa. Aprovações
+institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução de gates.
+
+## Phase 0 — Research
+
+Decisões, alternativas e fontes em [research.md](research.md), com pesquisa transversal
+[de 21/09](../002-integrated-modules/research-2026-09-21.md). Leitura estática conclui
+as escolhas necessárias para este recorte; limitações operacionais viram validações
+de implementação, não requisitos indefinidos. Sem consulta a contas/dados de produção.
+
+## Phase 1 — Design
+
+- Consulta OAB fica fora da exportação: não criar botão nem dataset de seu resultado, avulso ou pelo cadastro. Preservar a exportação dos dados cadastrais autorizados.
+- Reutilizar members:read/write/review; exportação precisa read+geral e permissões específicas já aplicáveis aos dados privados. Não incluir documentos binários, criar chamada OAB ou ampliar leitura mínima de Agendamentos.
+- Preservar findSchedulingBeneficiary e lockMemberEligibility em bloqueios/desbloqueios/ativação/vínculos/arquivo; spec 008 deriva aviso de bloqueio sem mutar estado da reserva ou status próprio de dependentes.
+- Testar vínculo vigente versus futuro/encerrado, cadeias de titulares, reserva mantida e remarcação negada. Nenhum novo critério de parentesco, documento obrigatório ou aprovação automática é criado.
+- Adapter por dataset usa consulta parametrizada com paginação interna de memória; filtros e ordem da tela não restringem o arquivo à página. Metadados documentais seguem acesso atual de Arquivos; históricos não ganham dados fora da projeção permitida.
+
+Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
+e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
+rascunhos/filtros e dados em falhas, sem exigir justificativa. Catálogo de colunas é
+allowlist por função; servidor não confia no catálogo antigo do navegador.
+
+## Project Structure
+
+- `apps/web/modules/members/member-service.ts` (existente).
+- `packages/db/src/repositories/members.ts` (existente).
+- `apps/web/modules/members/access.ts` (existente).
+- `apps/web/modules/members/ui/member-editor.tsx` (existente).
+- `apps/web/modules/members/ui/member-administrative-status.tsx` (existente).
+- `apps/web/modules/members/export-adapter.ts` e `export-adapter.test.ts` (novos planejados).
+- `apps/web/app/(admin)/members/exportar/page.tsx` (nova planejada).
+
+## Rollout, migração e rollback
+
+Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001.
+Preparar compatibilidade de leitura de chaves/snapshots antes de ativar migrações e
+novos botões. Conta sem acesso não ganha concessão para preservar conveniência.
+Diagnosticar conflitos antes da restrição008; parar sem corrigir registros automaticamente.
+Rollback da UI/API deve preservar grants convertidos, dados e arquivos; não publicar
+binário antigo que dependa exclusivamente de audit:export/reports:export após conversão.
+Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
+
+## Validation e próximo passo
+
+Exportar associados/dependentes sem acesso a Relatórios; negar documento/campo restrito; bloqueio mantém reservas e vaga, sinaliza vínculos vigentes e não afeta situação própria; manter análise manual sem novas exigências.
+
+Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior
+nunca conclui tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação:
+speckit-tasks, organizado por história, com dependências e critérios independentes.
+
+## Complexity Tracking
+
+Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm
+as regras dos domínios. Sem microserviço, linguagem nova ou nova fonte de verdade.
+Estado operacional serve somente à transferência atual; não é fila/histórico obrigatório.
+
+## Histórico anterior — referência, não sequência executável atual
+
+O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência,
+valem o desenho de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+
+<details>
+<summary>Plano anterior preservado</summary>
+
 # Implementation Plan: Associados
 
 ## Coordenação com Agendamentos — 15/09/2026
+
+Clarificação de 20/09/2026: manter reservas futuras após bloqueio e projetar sua
+sinalização para decisão manual conforme spec 008, FR-017. Reutilizar vínculos e
+impedimentos vigentes sem alterar a situação própria do dependente. A evolução
+da agenda fica em BLQ01/BLQ02 da spec 008; regressão conjunta pendente, sem retomada
+de implementação neste /clarify.
 
 Extrair o lock de vínculos 5010/1 para lockMemberEligibility no repositório.
 Usá-lo antes dos locks de linhas em todos os comandos que alteram a elegibilidade
@@ -172,3 +276,23 @@ Adicionar categoria, gênero, cidade e UF de residência opcionais, com validaç
 persistência e edição nas permissões/versões/auditoria existentes. Registros atuais
 permanecem sem esses dados até preenchimento explícito. Não confundir residência e OAB.
 Validar criação/edição/consulta e preservar dados nas demais operações de cadastro.
+
+## Regras institucionais de dependentes e documentos — Q11 de 21/09/2026
+
+Manter cadastro/análise manual existentes enquanto P01 aguarda definição
+institucional. Não implementar critérios de parentesco, obrigatoriedade documental,
+aprovação ou reprovação automáticas por suposição. Preservar integridade de pessoas
+e vínculos, arquivos e acessos. Decisão não muda bloqueios administrativos e regras
+de reserva já confirmados. POL01 permanece pendente; nenhuma alteração de código
+ou teste foi executada para registrar esse adiamento.
+
+## Checkpoint de revisão de código — 21/09/2026
+
+Cadastro, foto, dependentes, análise manual, situação e adaptador OAB implementados. Bloqueio próprio/por titular já impede novas reservas; falta indicação na agenda/detalhes e regressão AE04. T028 continua homologação/configuração adiada; POL01 e P02/P03/P04/D02 são decisões institucionais/externas pendentes. Exportação própria DX01 ausente.
+
+Revisão estática da base `ed31baf`; nenhum teste de aplicação ou homologação nesta etapa.
+Evidências e limites: [revisão transversal](../002-integrated-modules/code-audit-2026-09-21.md).
+
+Executar adequações e seus testes em retomada de implementação. Preservar dados e decisões adiadas; a revisão atual altera somente documentação.
+
+</details>

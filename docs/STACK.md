@@ -1,8 +1,30 @@
 # CAAB — Referência de Stack e Arquitetura
 
+## Desenho vigente após clarify — 21/09/2026
+
+Permissão geral `exports:generate` intersecta consulta de módulo/dados; sem acesso,
+zero descoberta no menu/busca/Início. Notícias preserva read/write/publish, mas a
+concessão implícita da view será removida; Agendamentos terá read/write explícitos.
+Exportações novas usam filtros/colunas e Excel/CSV/PDF diretos, sem teto funcional
+ou prazo/histórico obrigatório; dados/arquivos legados preservados. Desenho e tarefas
+em [programa002](../specs/002-integrated-modules/plan.md).
+Mensagens tem finalidade confirmada (comunicados/campanhas), mas continua protótipo
+sob revisão de aderência; canais reais, chat interno e suporte futuro permanecem adiados.
+Retenção institucional e critérios/documentos de dependentes ficam para depois.
+Estados e propostas anteriores abaixo são históricos quando divergirem desta revisão;
+nenhum código foi implementado pelo plan/tasks e localhost permanece desligado.
+
+
+**Revisão de 21/09/2026:** arquitetura e opções não equivalem a implementação.
+Estado por módulo e controles pendentes em [MODULES](MODULES.md) e na
+[revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md).
+O calendário FullCalendar está integrado; conflito por beneficiário e concessões
+de Agendamentos ainda não. Relatórios existe, com adaptações de autorização e
+exportação direta pendentes. Não interpretar bibliotecas apenas recomendadas como instaladas.
+
 ## Estado consolidado — 17/09/2026
 
-**Decisão vigente — 17/09/2026:** Mensagens está em **fase de protótipo, pendente de revisão da finalidade de sua construção**. O código e as evidências existentes documentam o protótipo, não uma conclusão ou homologação do módulo. Revisar finalidade e escopo antes de autorizar sua continuidade; meios, provedores e envio real permanecem adiados.
+**Decisão vigente — 21/09/2026:** Mensagens prepara comunicados/campanhas aos associados, com público e programação. Finalidade confirmada; protótipo sem homologação, aderência/continuidade em M016 e meios/envio real adiados.
 
 Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
@@ -12,12 +34,12 @@ Agendamentos já possui uma primeira versão administrativa implementada; app/si
 
 A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
 oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
-e histórico. Acesso para toda sessão ativa do painel, sem concessão adicional.
+e histórico. O código ainda aceita sessão ativa sem concessão; isso é lacuna. Q8/Q9 exigem consultar/alterar separadas, em 008 AC01–AC03.
 Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
 [evidências](../specs/008-scheduling-management/evidence/release-review.md).
 Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
-Exceções, avaliações e demais estados permanecem posteriores. A próxima etapa é a
-primeira interface do usuário no app/site; CAASSH continua desativado.
+Exceções, avaliações e demais estados permanecem posteriores. Calendário administrativo foi priorizado em 18/09 e está integrado, com CAL06 pendente;
+a primeira interface do usuário no app/site continua pendente; CAASSH continua desativado.
 
 ## 1. Contexto
 
@@ -128,7 +150,7 @@ adotadas nesta entrega; componentes e formulários próprios permanecem implemen
 - Lucide React para ícones.
 - TanStack Table para tabelas administrativas.
 - TanStack Query para cache, polling e mutations.
-- React Hook Form para formulários.
+- React Hook Form: opção histórica não incorporada; formulários atuais usam React e validação Zod.
 - Zod para validação compartilhada.
 - FullCalendar Standard para visualizações de agenda.
 
@@ -289,7 +311,7 @@ Tabela append-only com:
 - Antes e depois, com campos sensíveis redigidos.
 - Data UTC.
 - Origem e request ID.
-- Motivo exigido em ações sensíveis.
+- Ações sensíveis autorizadas e auditadas, sem motivo escrito obrigatório; preservar motivos históricos.
 
 ### 14.2 Logs técnicos
 
@@ -299,7 +321,7 @@ cookies, arquivos completos ou dados pessoais sem necessidade operacional aprova
 Auditoria de negócio e logs técnicos possuem finalidades e retenções distintas.
 
 A experiência reúne Eventos e Processamentos na área Auditoria. A fusão não mistura tabelas nem
-permissões: `audit:read`, `audit:export`, `jobs:read` e `jobs:redrive` continuam independentes. URLs
+permissões de leitura/operação: `audit:read`, `jobs:read` e `jobs:redrive`. `audit:export` é legado; sua substituição pela permissão geral combinada com leitura está pendente em 003 EX01. URLs
 existentes podem permanecer compatíveis. Jobs e exportações reutilizam os serviços atuais.
 
 ## 15. Segurança
@@ -418,7 +440,7 @@ eventos permitidos e HMAC; não adiciona provedor ou serviço de analytics exter
 - Tailwind + shadcn/ui + Radix UI.
 - Lucide React para ícones.
 - TanStack Table/Query.
-- React Hook Form + Zod.
+- React e Zod; React Hook Form permanece opção histórica não incorporada.
 - FullCalendar Standard para a interface da agenda.
 - Agenda própria em avaliação; Cal.com somente se nenhuma outra possibilidade for encontrada.
 - Conteúdo de arquivos exclusivamente no PostgreSQL; adaptadores legados retirados.

@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Ordenar as adequações de todas as funções, manter escopo institucional adiado e rastrear validações por módulo sem reconstruir funções aceitas.
+
+**Fundamento:** Percorrer a matriz de módulos/subáreas, três formatos, zero descoberta sem acesso, dados completos e campos autorizados; reconciliar tarefas/evidências por função e políticas adiadas sem marcar homologação ausente.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `docs/EXPORT-STANDARD.md`, `docs/MODULES.md`, `docs/STACK.md`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 # Decisões e entradas por domínio
 
 ## Contraste durante troca de tema — 15/09/2026

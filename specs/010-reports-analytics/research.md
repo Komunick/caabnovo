@@ -1,3 +1,23 @@
+# Pesquisa vigente — 21/09/2026
+
+**Decisão:** Substituir a jornada nova de exportação por filtros/colunas e download direto nas três abas, preservando métricas, consultas e arquivos antigos.
+
+**Fundamento:** Três abas baixam Excel/CSV/PDF; >50 mil linhas e >366 dias integral, colunas em ordem exata, campos restritos rejeitados, valores longos completos, downloads legados protegidos; coleta US4 permanece sem afetar reserva.
+
+**Alternativas:** rejeitar cópia de cadastro, concessão implícita, exportar pela página
+visual, gerar Buffer integral e reintroduzir fila/limites funcionais. Quando a função
+não implementa exportação nesta fase, preservar seus controles existentes.
+
+**Evidência local:** `packages/contracts/src/reports.ts`, `packages/db/src/repositories/reports.ts`, `packages/db/src/repositories/report-storage.ts`.
+Desenho concreto em [plan.md](plan.md). Fontes oficiais, data, limitações e alternativas
+na [pesquisa transversal](../002-integrated-modules/research-2026-09-21.md).
+Essa revisão não homologa dependências, desempenho ou produto; testes estão no quickstart.
+
+## Pesquisa anterior — contexto histórico
+
+Decisões de fluxo/armazenamento/exportação anteriores são substituídas pelo plan de 21/09
+onde conflitarem; referências antigas não autorizam funções adiadas.
+
 ﻿# Pesquisa — 18/09/2026
 
 ## Coleta própria

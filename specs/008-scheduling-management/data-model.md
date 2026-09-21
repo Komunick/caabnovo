@@ -30,7 +30,22 @@ vigentes usa findSchedulingBeneficiary, preservando findMemberSummary; contrato 
 do módulo, sem copiar documentos/dados financeiros. Locks de cadastro e vínculos
 devem coordenar todos os comandos envolvidos para tornar a checagem válida sob concorrência.
 
+Decisão de 20/09/2026, a implementar em nova migration: reservas scheduled também
+devem impedir sobreposição por member_id e intervalo [starts_at, ends_at), entre
+quaisquer profissionais/unidades. Associado e cada dependente possuem member.id
+próprio; dependência não unifica identidade ou ocupação. Manter a restrição existente
+por profissional. Não reescrever a migration 0020 nem alterar reservas antigas
+automaticamente para viabilizar a nova restrição.
+
 Alteração de jornada/ativação: verificar reservas futuras sob o mesmo lock de escrita
 de reservas, recusar se houver incompatibilidade. Cancelar libera ocupação, sem excluir.
 Recursos físicos, capacidade de grupo e fila não geram tabelas nesta primeira entrega.
 
+
+## Modelo vigente do incremento — 21/09/2026
+
+scheduling_booking conserva scheduled/cancelled, member_id individual e intervalo UTC [). Nova exclusão por pessoa é independente de professional_id e unit_id. eligibilityWarning derivado não vira coluna de status; sem trigger de cancelamento. Dados de titular no aviso são mínimos, sem revelar documentos/finanças. Campo opcional beneficiaryId da consulta de disponibilidade é validado e reautorizado; nenhuma listagem pública. Reserva cancelada não ocupa; intervalos adjacentes são válidos.
+
+Entidades técnicas/ciclo de vida em [contrato comum](../002-integrated-modules/contracts/direct-exports.md); sem cópia de domínio.
+Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.0.0
+e contratos de 21/09 prevalecem. Mudanças descritas são planejamento, sem migration executada.

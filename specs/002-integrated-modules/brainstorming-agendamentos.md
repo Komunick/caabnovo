@@ -1,5 +1,10 @@
 # Brainstorming: Agendamentos
 
+> Registro histórico de pesquisa de 15/09. Em 21/09, a primeira versão administrativa
+> e CAL01–CAL05 já estão implementadas; CAL06, app/site e expansões permanecem pendentes.
+> Estado vigente na [spec 008](../008-scheduling-management/spec.md) e na
+> [revisão de código](code-audit-2026-09-21.md). O texto abaixo não representa o backlog atual.
+
 Atualizado em 15/09/2026. Estado: brainstorming e pesquisa em andamento; sem implementação.
 
 ## Planejamento incremental iniciado — 15/09/2026

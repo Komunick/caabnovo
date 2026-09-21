@@ -186,5 +186,5 @@ Não houve acesso a configurações, logs privados, banco ou infraestrutura remo
 
 Novos arquivos usam `FILE_STORAGE_BACKEND=database` (padrão), com conteúdo no PostgreSQL
 principal e upload/download pela origem do painel. As instruções S3 deste relatório passam
-a valer para o legado ou modo S3 explícito. Seguir [configuração e transição](DATABASE-FILE-STORAGE.md)
+a valer apenas como histórico; não há modo S3 disponível na versão atual. Seguir [configuração e transição](DATABASE-FILE-STORAGE.md)
 para a migration aditiva, cópia com checksum, backup e validação no DEV publicado.
