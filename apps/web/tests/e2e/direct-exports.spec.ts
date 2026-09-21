@@ -56,9 +56,9 @@ test("direct exports keep filters and keyboard column order and download 100 rec
       { times: 1 },
     );
     await page.getByRole("button", { name: "Exportar em CSV", exact: true }).click();
-    await expect(page.getByRole("alert")).toContainText(
-      "Confira os filtros e as colunas selecionadas",
-    );
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Confira os filtros e as colunas selecionadas" }),
+    ).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Nome", exact: true })).toHaveValue(prefix);
     const samples: number[] = [];
     for (const [format, label] of [

@@ -11,6 +11,12 @@ análise. Decisão explícita do usuário; não executar análise integral do pr
 
 ## Checkpoint atual — 21/09/2026
 
+Clarify iniciado somente no diff; uma pergunta enviada sobre Gestor redefinir senha de
+Administrador, aguardando resposta. CIc18ac5b aprovou quality/security e encontrou um seletor de
+alerta ambíguo no novo teste; corrigido para o alerta de configuração. Teste de conflito também
+passa a percorrer a paginação, sem depender da posição aleatória do UUID na massa sintética. Essas
+correções de testes e a apresentação dos filtros estão em validação; não concluir T120 ainda.
+
 Revisão visual dos artefatos385f0d6 encontrou filtros com estilo nativo; corrigidos com FormField,
 filter-grid, grupos de acesso e tokens compartilhados. Nova imagem desktop e revisão móvel em
 validação no CI. Reserva mantida conferida visualmente, com aviso preservado. CI385f0d6 passou por

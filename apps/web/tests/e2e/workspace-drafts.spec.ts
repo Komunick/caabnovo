@@ -245,11 +245,22 @@ test("access conflicts preserve selection and baseline without leaking to anothe
   const conflict = page.getByRole("alert").filter({ hasText: "Os acessos mudaram" });
   await expect(conflict).toBeVisible();
   await area(page, "/users");
-  await page.locator(`a[href="/users/${users[1].id}"]`).first().click();
+  // The export fixture adds 100 accounts; a random UUID may be on a later page.
+  const otherUser = page.locator(`a[href="/users/${users[1].id}"]`).first();
+  let pagesVisited = 0;
+  await expect(page.getByRole("table", { name: "Contas cadastradas" })).toBeVisible();
+  while ((await otherUser.count()) === 0 && pagesVisited < 10) {
+    const next = page.getByRole("link", { name: "Próxima", exact: true });
+    const href = await next.getAttribute("href");
+    expect(href).toBeTruthy();
+    await next.click();
+    await expect(page).toHaveURL(new URL(href!, page.url()).href);
+    pagesVisited++;
+  }
+  await otherUser.click();
   await expect(conflict).toHaveCount(0);
   await expect(checkbox).not.toBeChecked();
-  await page.goBack();
-  await page.goBack();
+  for (let step = 0; step < pagesVisited + 2; step++) await page.goBack();
   await expect(conflict).toBeVisible();
   await expect(checkbox).toBeChecked();
   await page.getByRole("button", { name: "Salvar acessos", exact: true }).click();
