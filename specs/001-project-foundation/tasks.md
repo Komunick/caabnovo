@@ -1,5 +1,49 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Guia de design — incremento documental de 22/09/2026
+
+Escopo: DS-FR01–DS-FR08 e DS-SC01–DS-SC04 da US4, cenários DS1/DS2. Branch separada por pedido do
+usuário: `docs/design-guide-20260922`. T124–T132 pertencem ao PR37, integrado em `3907248` e já
+incorporado por fast-forward nesta entrega. Não reexecutar suas implementações.
+
+### Preparação e fundamentos
+
+- [x] T133 Consolidar pesquisa oficial e inventário em `specs/001-project-foundation/research.md`,
+      com alternativas, fontes/data e limites de evidência; cobre DS-FR02/DS-FR08.
+
+### US4 / DS1 — referência para telas CAAB
+
+- [x] T134 [US4] Criar `design.md` com identidade, temas, tipografia, medidas, formas, profundidade,
+      ícones e índice/fontes; conferir cascata vigente; cobre DS-FR01/DS-FR02.
+- [x] T135 [US4] Completar `design.md` com composição de lista/formulário/exportação, componentes,
+      estados, rascunhos, permissões, linguagem, responsividade e acessibilidade; incluir matrizes
+      de posição/ordem de campos/botões, localização/formato/aplicação de filtros e
+      máscaras/validação conforme complemento do usuário; cobre DS-FR03–06.
+
+Aceite independente: leitor consegue reconstruir a hierarquia das três jornadas e localizar as
+fontes dos valores e controles, distinguindo regras de evidência e pendência.
+
+### US4 / DS2 — manutenção e adaptação
+
+- [x] T136 [US4] Completar manutenção e adaptação em `design.md`; conciliar `docs/UI-BUTTONS.md` e
+      adicionar entrada em `docs/TOOLING.md`; cobre DS-FR01/DS-FR07.
+
+Aceite independente: roteiro separa estrutura reutilizável da marca, caminhos, módulos, permissões e
+decisões institucionais da CAAB, sem criar dependência genérica.
+
+### Verificação e fechamento
+
+- [x] T137 Conferir links/âncoras, tokens/medidas, formatação e diff; registrar matriz de cobertura,
+      análise, evidência visual consultada e limitações em
+      `specs/001-project-foundation/evidence/design-guide-2026-09-22.md`; cobre DS-FR08/DS-SC01–04.
+- [ ] T138 Fechar checkpoint DS em `specs/001-project-foundation/spec.md`, `plan.md` e `tasks.md`,
+      conferir sincronização da principal e preparar entrega documental em PR próprio para dev;
+      cobre DS-FR06–08. Não aprovar nem integrar PRs.
+
+Dependências: T133 → T134 → T135 → T136 → T137 → T138. Execução sequencial porque o guia e os
+artefatos compartilham conteúdo. MVP documental: T133–T135; entrega solicitada inclui as seis. Não
+executar tarefas antigas nem marcar checklist global 13/16 como concluído por esta entrega.
+
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/collaborator-contact.md). **Branch da entrega:**
 `feature/collaborators-contact-20260921`. Incremento atual: T124–T129 e005 LC03, concluídos conforme

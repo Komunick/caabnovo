@@ -1,5 +1,28 @@
 # Validação do incremento — Fundação, Colaboradores e infraestrutura de exportação
 
+## Guia de design — validação documental DS, 22/09/2026
+
+Somente T133–T138. Não executar os cenários operacionais históricos abaixo para validar um Markdown.
+Pré-requisitos: checkout da entrega, Node e Prettier já disponíveis; nenhum servidor ou banco.
+
+1. Abrir `design.md`; percorrer índice, referências e exemplos de listagem, formulário e exportação.
+   Confirmar nove estados e critérios claro/escuro, desktop/celular, teclado e edição concorrente.
+2. Comparar valores com `apps/web/styles/tokens.css` e as últimas regras relevantes de
+   `apps/web/app/globals.css`; conferir componentes citados e exceções dos módulos.
+3. Conferir cada destino relativo e âncora dos documentos alterados. Fontes externas têm URL e data
+   em `research.md`. Capturas consultadas têm procedência e limites na evidência DS.
+4. Executar `pnpm format:docs:check design.md docs/UI-BUTTONS.md docs/TOOLING.md` incluindo também
+   os cinco artefatos alterados da spec001 e `evidence/design-guide-2026-09-22.md`. É possível usar
+   diretamente o Prettier já instalado, com `--ignore-path .gitignore --check` e a mesma lista.
+5. Executar `git diff --check`; revisar `git diff --stat` e o conteúdo. Esperado: somente
+   documentos, nenhum arquivo de aplicação, dependência, migration, segredo ou configuração local no
+   PR.
+6. Conferir DS-FR01–08/DS-SC01–04 na matriz da evidência e concluir apenas T133–T138 comprovadas.
+
+Não confundir revisão de imagens históricas, cálculo estático de contraste ou análise documental com
+nova homologação funcional/WCAG. Gates de CI da branch são registrados separadamente; merge continua
+dependendo da revisão e autorização aplicáveis.
+
 **Estado de21/09/2026:** roteiro reproduzível; execuções reais registradas em
 [evidências do incremento](evidence/plan-2026-09-21-validation.md). Localhost permanece desligado;
 comandos de infraestrutura dependem de ordem explícita. Testes usam banco descartável; nunca aplicar

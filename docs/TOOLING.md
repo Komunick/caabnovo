@@ -1,5 +1,13 @@
 # Ferramentas, skills e verificação documental
 
+## Referência de design do projeto
+
+Antes de desenhar, implementar ou revisar uma interface, consultar [design.md](../design.md). O guia
+reúne identidade, temas, componentes, posição de campos/botões, máscaras/validações,
+localização/formato dos filtros, jornadas e critérios de revisão da CAAB. É contexto documental; não
+executa regras automaticamente. Padrões de negócio continuam nas specs das funções. Atualizar guia e
+evidência quando uma alteração visual autorizada mudar o padrão compartilhado.
+
 Revisado em 17/09/2026. A stack do produto está em [STACK.md](STACK.md). Este documento descreve o
 processo de trabalho; uma ferramenta disponível ao agente não se torna dependência da aplicação nem
 uma automação em execução.

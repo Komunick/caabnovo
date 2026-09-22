@@ -1,5 +1,66 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
+## Incremento documental DS — 22/09/2026
+
+**Branch:** `docs/design-guide-20260922`, separada por pedido explícito. **Spec:** DS-FR01–DS-FR08
+em [spec.md](spec.md). **Tarefas:** T133–T138; nenhuma tarefa histórica é reaberta por este plano.
+
+### Summary e Technical Context
+
+Criar `design.md` na raiz: guia em português, oito seções visuais inspiradas no formato oficial
+DESIGN.md, seguidas de interação/acessibilidade, estado de adoção, manutenção e adaptação. Sem YAML
+de tokens duplicado, gerador, dependência nova ou promessa de importação automática. Código continua
+executando tokens e estilos; documento registra sua aplicação, precedência e lacunas. Os valores de
+CSS devem considerar a cascata final, não somente a primeira declaração.
+
+### Constitution Check
+
+I: reutilizar componentes e documentação; nenhuma abstração ou biblioteca nova. II–III: nenhum
+serviço, API, dado ou schema alterado. IV–VI: conservar acesso, privacidade e decisões
+institucionais, sem dados reais nas ilustrações ou execução de integrações. VII: Lucide e WCAG 2.2
+AA como critérios, sem atestar conformidade por inspeção estática. Entrega por branch própria/PR
+para dev; sem merge, aprovação, deploy ou localhost. Gates completos do repositório continuam
+obrigatórios antes de merge; a validação local deste incremento usa formatação, links, valores e
+revisão documental.
+
+### Fases e estrutura
+
+1. Pesquisa oficial em `research.md` e inventário de tokens, CSS final, componentes e imagens
+   sintéticas. Capturas históricas servem como evidência contextual, nunca como aprovação atual.
+2. Guia em `design.md`, com índice, fontes relativas e regras de uso; esquema textual de listagem,
+   formulário e exportação, tabela dos dois temas e estados/critério de revisão.
+3. Conciliar `docs/UI-BUTTONS.md`, mantendo resultados históricos identificados; adicionar ponto de
+   entrada em `docs/TOOLING.md`. Registrar achados em `evidence/design-guide-2026-09-22.md`.
+4. Conferir formatação explícita, destinos/âncoras, medidas e coerência; revisar o diff para
+   garantir alteração exclusivamente documental. Registrar limites e concluir apenas tarefas
+   comprovadas.
+
+Complemento confirmado durante implementação: matrizes de posição/ordem de campos e ações,
+localização/formato/comportamento de filtros e máscaras/validação no guia. Conferir contratos
+`brazilian-contact.ts`, `users.ts`, `members.ts`, `partners.ts` e `oab-lookup.ts`, distinguindo
+validação cadastral de busca parcial. Sem padronizar comportamentos divergentes por mudança de
+código.
+
+Modelo documental: regra (identificador/escopo/status/fonte), referência (arquivo ou URL/data/base)
+e evidência (procedência/limites). Nenhuma entidade de negócio ou contrato externo novo; por isso
+`data-model.md` e `contracts/` existentes não recebem entidades/endpoints artificiais. O contrato de
+leitura é o índice do guia e seus critérios DS. Validação reproduzível em `quickstart.md`.
+
+### Trade-offs e rollback
+
+Um guia central facilita uso independente; detalhes históricos ficam na pesquisa/evidência. Listar
+valores observados facilita revisão, mas exige atualização junto ao CSS. Não copiar cada seletor nem
+promover desvios encontrados a padrão desejado. Para adaptar outro projeto, trocar identidade,
+fontes e regras de domínio e validar seus componentes. Rollback é reverter o commit documental, sem
+alterar aplicação ou banco. A inclusão do guia não conclui pendências funcionais da Fundação.
+
+### Checkpoint DS
+
+Specify/clarify, pesquisa/plano/tarefas, analyze somente leitura e implementação documental
+concluídos no recorte DS. Base `3907248`; guia e referências conferidos, com evidência dos limites.
+T133–T137 concluídas; próximo passo T138: preparar PR documental próprio para dev, sem aprovar ou
+integrar. Os artefatos e tarefas funcionais históricos abaixo permanecem preservados.
+
 **Branch da entrega**: `feature/access-export-foundation-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: recorte implementado e validado; evidências no checkpoint e
 relatório do incremento.

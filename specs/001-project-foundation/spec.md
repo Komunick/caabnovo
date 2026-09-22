@@ -1,5 +1,86 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Guia de design do projeto — 22/09/2026
+
+Pedido: criar `design.md` próprio da CAAB, pesquisado e fundamentado nas interfaces existentes, com
+possibilidade de servir de base a outros projetos. Incremento documental da US4, sem novo módulo ou
+spec concorrente. Escopo do ciclo Spec Kit: somente DS-FR01–DS-FR08 e T133–T138.
+
+**Cenário DS1 (P1):** quem desenha, implementa ou revisa uma tela encontra uma referência central
+para reproduzir o padrão de Parceiros/Associados, incluindo as decisões posteriores de interface.
+Aceite independente: localizar valores, componentes, composição e estados pelos links do guia;
+conferir uma listagem, um formulário e uma exportação contra as fontes citadas.
+
+**Cenário DS2 (P2):** quem inicia outro projeto identifica o que pode reaproveitar e o que precisa
+substituir. Aceite independente: o roteiro separa princípios de interação da marca, domínio,
+permissões, caminhos e decisões institucionais da CAAB, sem criar biblioteca ou template genérico.
+
+### Requisitos do incremento documental
+
+- **DS-FR01:** disponibilizar um único guia central, em português, com índice e identificação de
+  versão/data/base consultada; acessível a partir da documentação de trabalho do projeto.
+- **DS-FR02:** descrever identidade, cores dos dois temas, tipografia, medidas, espaçamento,
+  profundidade, formas, ícones e marca com referências verificáveis e distinção entre valores
+  declarados e aparência efetivamente aplicada.
+- **DS-FR03:** documentar cabeçalho, navegação/abas, inclusão explícita com Plus, quadro de lista,
+  busca/filtros, tabela/paginação, formulário, seleção digitável, diálogo e exportação, com exemplo
+  de composição e indicação de quando usar cada padrão. Complemento explícito do usuário nesta
+  sessão: incluir posição e ordem dos campos/botões, agrupamento e ações no celular,
+  formato/localização/aplicação dos filtros, máscaras por tipo de campo, momento de validação e
+  posição das mensagens de erro; distinguir cadastro de busca parcial.
+- **DS-FR04:** cobrir vazio, carregamento, sucesso, erro de campo, falha de operação, concorrência,
+  sem acesso, somente consulta e indisponibilidade; preservar edições durante navegação, com limpeza
+  ao salvar/cancelar/sair e limites de persistência explicitados.
+- **DS-FR05:** reunir critérios verificáveis de acessibilidade, responsividade, temas, teclado,
+  linguagem e datas; não declarar homologação global com base em capturas ou testes históricos.
+- **DS-FR06:** distinguir regra vigente, implementação observada, pendência e evidência histórica;
+  preservar a exceção de Consulta OAB, os três formatos e a seleção/ordem de colunas; não ampliar
+  escopo de módulos futuros nem transformar decisões pendentes em funcionalidades prontas.
+- **DS-FR07:** orientar manutenção e adaptação a outros projetos, identificando fontes e fluxo de
+  mudança; conciliar a referência antiga de botões sem apagar sua evidência histórica.
+- **DS-FR08:** registrar pesquisa em fontes oficiais, decisões e alternativas; validar coerência,
+  links locais, valores citados e formatação, com evidência e limitações reais da entrega.
+
+### Critérios de sucesso do incremento
+
+- **DS-SC01:** os oito grupos de requisitos possuem tarefas e evidência documental correspondente.
+- **DS-SC02:** todas as cores e medidas apresentadas como existentes correspondem às fontes
+  indicadas; todos os links locais novos resolvem para arquivos ou seções existentes.
+- **DS-SC03:** listagem, formulário e exportação têm roteiro verificável; os nove estados de DS-FR04
+  têm resposta prevista; claro/escuro, desktop/celular e teclado constam dos critérios de revisão.
+- **DS-SC04:** o guia contém um roteiro de adaptação sem transferir regras institucionais da CAAB
+  automaticamente; não há mudança de aplicação, banco, permissões ou serviços neste incremento.
+
+**Casos de borda:** documento antigo diverge do estilo atual; regra aprovada ainda sem
+implementação; captura antiga diverge da versão consultada; fonte Inter não instalada; datas nativas
+variam com o navegador; tabela larga em celular; revogação de acesso durante edição/exportação; erro
+de concorrência ao retornar ao formulário; outro projeto possui identidade e regras diferentes.
+
+**Premissas e limites:** foco no painel administrativo; login e leitura pública somente nas partes
+compartilhadas, sem inventar um design de app/site futuros. O nome canônico será `design.md`, como
+solicitado, sem segunda cópia que difira apenas por maiúsculas. Referências visuais serão capturas
+sintéticas existentes com origem/data; localhost permanece desligado. A revisão do documento não
+autoriza corrigir lacunas funcionais descobertas. A especificação existente continua responsável
+pela fundação; requisitos de outras funções permanecem nos respectivos specs.
+
+**Clarify DS — 22/09/2026:** nenhuma pergunta adicional necessária: escopo, atores, informação,
+jornada de leitura, qualidade, dependências, casos de borda, limites, termos e aceite estão claros
+para esta entrega documental. A instrução posterior do usuário exige branch separada porque fará
+merge do PR37; adotada `docs/design-guide-20260922`. A possibilidade de reutilização não autoriza
+criar produto genérico, alterar aparência ou implementar pendências. O checklist global permanece
+13/16; as três ressalvas históricas não são encerradas por este documento. O pedido expresso de
+implementar o guia autoriza somente este recorte documental.
+
+**Checkpoint DS — validação documental concluída:** specify, clarify, plan/tasks, analyze e
+implementação documental executados no recorte DS. O complemento de campos/botões/filtros foi
+incorporado e conferido. Base atualizada para dev `3907248` após merge do PR37; branch anterior
+preservada. Nove documentos passaram por formatação explícita; 67 referências locais novas, 18
+âncoras, 25 pares de tokens de cor e dez medidas representativas conferidos sem falhas. Diff
+exclusivamente documental. Evidência em
+[design-guide-2026-09-22.md](evidence/design-guide-2026-09-22.md). T133–T137 concluídas; T138
+aguarda preparação do PR próprio. Nenhuma homologação funcional nova, alteração de produto ou
+serviço iniciado. Hooks ausentes. Demais checkpoints abaixo são históricos.
+
 ## Checkpoint de padronização visual — 22/09/2026
 
 Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,
