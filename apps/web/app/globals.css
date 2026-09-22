@@ -3773,7 +3773,7 @@ thead th {
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-border);
 }
-.user-create-form .form-field {
+.user-create-form > .form-field {
   margin: 0;
 }
 .user-create-form > fieldset {
