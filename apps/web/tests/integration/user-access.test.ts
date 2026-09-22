@@ -640,11 +640,15 @@ it("denies promotion by managers, expired sessions, for inactive targets and una
   await admin.query("UPDATE session SET revoked_at=now() WHERE user_id=$1", [f.actorId]);
   await expect(promoteRole(database.pool, f.command)).rejects.toMatchObject({ status: 401 });
   await admin.query("UPDATE session SET revoked_at=NULL WHERE user_id=$1", [f.actorId]);
-  await admin.query("UPDATE \"user\" SET status='disabled' WHERE id=$1", [f.targetUserId]);
+  await admin.query("UPDATE \"user\" SET status='disabled',deactivated_at=now() WHERE id=$1", [
+    f.targetUserId,
+  ]);
   await expect(promoteRole(database.pool, f.command)).rejects.toMatchObject({
     code: "USER_NOT_FOUND",
   });
-  await admin.query("UPDATE \"user\" SET status='active' WHERE id=$1", [f.targetUserId]);
+  await admin.query("UPDATE \"user\" SET status='active',deactivated_at=NULL WHERE id=$1", [
+    f.targetUserId,
+  ]);
   await revokeRole(database.pool, { ...f.command, reason: "" });
   await grantRole(database.pool, { ...f.command, roleId: f.managerId, justification: "" });
   await expect(
