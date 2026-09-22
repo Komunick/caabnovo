@@ -15,7 +15,12 @@ import {
 import { findUserById } from "@caab/db/repositories/users";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { resetUserPassword } from "../../modules/users/initial-password-service";
-import { createMember, commandMember, listMembers } from "../../modules/members/member-service";
+import {
+  createMember,
+  commandMember,
+  listMembers,
+  getMember,
+} from "../../modules/members/member-service";
 import { verifyPassword } from "better-auth/crypto";
 import type { RequestActor } from "../../modules/shared/request-context";
 
@@ -180,6 +185,16 @@ describe("account and member lifecycle", () => {
     const member = await createMember(database.pool, context(), {
       profile: { name: "Lifecycle member" },
     });
+    for (const justification of ["", "   "]) {
+      await expect(
+        commandMember(database.pool, context(), member.id, {
+          action: "delete",
+          justification,
+          expectedVersion: member.version,
+        }),
+      ).rejects.toThrow();
+    }
+    expect((await getMember(database.pool, actor, member.id)).version).toBe(member.version);
     const scheduled = await commandMember(database.pool, context(), member.id, {
       action: "delete",
       justification: "Encerramento sintético",
@@ -198,15 +213,30 @@ describe("account and member lifecycle", () => {
       expectedVersion: scheduled.version,
     });
     expect(restored.deletionEffectiveAt).toBeNull();
+    expect(restored.deletionReason).toBeNull();
     const again = await commandMember(database.pool, context(), member.id, {
       action: "delete",
-      justification: "Encerramento sintético",
+      justification: "Segunda solicitação sintética",
       expectedVersion: restored.version,
     });
+    expect(again.deletionReason).toBe("Segunda solicitação sintética");
+    const history = await admin.query(
+      "SELECT reason,actor_user_id,occurred_at FROM audit_event WHERE entity_type='member' AND entity_id=$1 AND action='member.delete' ORDER BY occurred_at",
+      [member.id],
+    );
+    expect(history.rows.map((row) => row.reason)).toEqual([
+      "Encerramento sintético",
+      "Segunda solicitação sintética",
+    ]);
+    expect(history.rows.every((row) => row.actor_user_id === actor.userId && row.occurred_at)).toBe(
+      true,
+    );
     await admin.query(
       "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
       [member.id],
     );
+    // The synthetic effective date has no matching audit occurrence: do not reuse an older reason.
+    expect((await getMember(database.pool, actor, member.id)).deletionReason).toBeNull();
     expect((await listMembers(database.pool, actor, {})).items.map((m) => m.id)).not.toContain(
       member.id,
     );

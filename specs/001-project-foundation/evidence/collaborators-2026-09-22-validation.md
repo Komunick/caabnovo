@@ -37,10 +37,17 @@ nem seeds. Nenhum PR aberto, aprovado ou integrado.
   em1aa1126, sem relaxar constraints, autorização ou validação de formulário.
 - [CI35726464328](https://github.com/Komunick/caabnovo/actions/runs/35726464328), 1aa1126:
   quality/security aprovados:387 unitários,161 contratos,237 integração, migrations, lint, tipos,
-  formatação e build de produção. Navegador em andamento neste checkpoint.
+  formatação e build de produção. Navegador:93 passaram e uma falha no teste novo, que usava GET
+  inexistente em/users/:id. Corrigido para consultar a listagem autorizada existente com exclusões
+  incluídas.
 - [CI35726706723](https://github.com/Komunick/caabnovo/actions/runs/35726706723), 8921766: inclui
   tabela responsiva, alinhamento dos filtros, timeout ViaCEP e imagens claro/escuro. Em andamento
   neste checkpoint; não representa validação concluída.
+
+- CI35727158415 (57a16d2): espaçamento compartilhado do endereço restaurado; navegador ainda contém
+  a mesma consulta incorreta do teste de reativação. Nova rodada necessária.
+- Complemento dos testes de Associados: motivos distintos em duas solicitações, ausência de motivo
+  atual após restauração, autoria/data preservadas e legado sem herdar a ocorrência anterior.
 
 ## Cobertura e revisão
 

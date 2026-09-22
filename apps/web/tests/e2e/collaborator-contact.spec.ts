@@ -109,6 +109,16 @@ test("CPF reactivation preserves the prior record and cancellation leaves it exc
   });
   expect(created.status()).toBe(201);
   const user = await created.json();
+  async function readUser() {
+    const response = await page.request.get("/api/v1/users", {
+      params: { q: user.email, deleted: "all" },
+    });
+    expect(response.status()).toBe(200);
+    const result = await response.json();
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].id).toBe(user.id);
+    return result.items[0];
+  }
   await withDatabase(async (db) => {
     const expired = await db.query<{ deletion_effective_at: Date }>(
       `UPDATE "user" SET status='disabled',deactivated_at=now(),deletion_effective_at=date_trunc('milliseconds',clock_timestamp()-interval '1 second'),version=version+1 WHERE id=$1 RETURNING deletion_effective_at`,
@@ -137,9 +147,7 @@ test("CPF reactivation preserves the prior record and cancellation leaves it exc
   await page.getByRole("button", { name: "Reativar colaborador existente", exact: true }).click();
   await expectWcag22AA(page);
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
-  expect((await (await page.request.get(`/api/v1/users/${user.id}`)).json()).status).toBe(
-    "disabled",
-  );
+  expect((await readUser()).status).toBe("disabled");
   await page.getByRole("button", { name: "Reativar colaborador existente", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar reativação", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/users/${user.id}$`));
@@ -148,7 +156,7 @@ test("CPF reactivation preserves the prior record and cancellation leaves it exc
   await expect(page.getByRole("button", { name: "Excluir colaborador", exact: true })).toHaveCount(
     0,
   );
-  const saved = await (await page.request.get(`/api/v1/users/${user.id}`)).json();
+  const saved = await readUser();
   expect(saved).toMatchObject({
     id: user.id,
     name: user.name,
