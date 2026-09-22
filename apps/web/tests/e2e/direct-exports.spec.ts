@@ -364,7 +364,12 @@ test("exports collaborator contact filtered by CPF and pending deletion in Excel
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
     await page.getByRole("heading", { name: "Exportar colaboradores", exact: true }).click();
+    await expectWcag22AA(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width,
+    );
     await page.screenshot({
+      animations: "disabled",
       path: info.outputPath(`collaborator-export-filters-${width}.png`),
       fullPage: true,
     });

@@ -1,5 +1,32 @@
 # Validação de Colaboradores e motivos de exclusão — 22/09/2026
 
+## Complemento da revisão e padronização — 22/09/2026
+
+Escopo001 T130–T132,003 UI03 e010 UI03, no mesmo PR37 aberto. Códigoe9d05ed contém fuso
+America/Bahia na lista, CEP ausente sem rótulo residual na ficha e exportação por CPF com/sem
+máscara/parcial e Exclusão pendente. CPF malformado retorna422 antes do download. Integração
+confirma datas inclusivas, limite do próximo dia e igualdade lista/exportação em janeiro de2018,
+incluindo combinações e exportação por lotes.
+
+Cabeçalho de quadro compartilhado em Colaboradores/Auditoria/Relatórios posiciona exportação acima
+dos filtros, com botão secundário, Download e adaptação ao celular. Novo colaborador usa o mesmo
+posicionamento/estilo primário de Parceiros/Associados. Os módulos sem botão de exportação ainda
+dependem de implementação própria; suas pendências e as migrações de fluxo em Auditoria/Relatórios
+continuam abertas.
+
+[CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572): quality e security
+aprovados;387 unitários,167 contratos,238 integração, migrations, formatação, lint, tipos e build.
+Localmente:167 contratos,19 unitários de exportação e3 de Relatórios, lint/tipos web e formatação
+explícita dos documentos.
+[CI35734203068](https://github.com/Komunick/caabnovo/actions/runs/35734203068) aprovou
+integralmente93ed931, antes da padronização. Imagem da ficha sem CEP e filtros desktop revisados;
+captura móvel ocorreu durante animação do menu. Teste ajustado para capturar estado final, verificar
+a11y móvel e ausência de transbordamento, sem mudar a aplicação. Browser/imagens do conjunto visual
+ainda pendentes; nenhuma tarefa adicional marcada concluída antes desse resultado. Localhost/Docker
+permaneceram desligados e o banco local não recebeu migrations/seeds.
+
+O restante deste relatório preserva as evidências do incremento anterior.
+
 Escopo: 001 T124–T129 e 005 LC03. Documentação de dependentes incluída conforme autorização;
 POL01/POL02 não implementadas. Localhost permanece desligado e o banco local não recebeu migrations
 nem seeds. Preparação concluída para abertura autorizada de PR; sem aprovação ou integração.
