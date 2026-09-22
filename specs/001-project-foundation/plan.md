@@ -58,8 +58,9 @@ alterar aplicação ou banco. A inclusão do guia não conclui pendências funci
 
 Specify/clarify, pesquisa/plano/tarefas, analyze somente leitura e implementação documental
 concluídos no recorte DS. Base `3907248`; guia e referências conferidos, com evidência dos limites.
-T133–T137 concluídas; próximo passo T138: preparar PR documental próprio para dev, sem aprovar ou
-integrar. Os artefatos e tarefas funcionais históricos abaixo permanecem preservados.
+T133–T138 concluídas; [PR38](https://github.com/Komunick/caabnovo/pull/38) documental aberto em
+rascunho, sem aprovação ou integração. CI automático em andamento no fechamento; gates não
+declarados aprovados. Artefatos e tarefas funcionais históricos abaixo permanecem preservados.
 
 **Branch da entrega**: `feature/access-export-foundation-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: recorte implementado e validado; evidências no checkpoint e

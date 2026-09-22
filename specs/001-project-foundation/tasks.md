@@ -36,13 +36,17 @@ decisões institucionais da CAAB, sem criar dependência genérica.
 - [x] T137 Conferir links/âncoras, tokens/medidas, formatação e diff; registrar matriz de cobertura,
       análise, evidência visual consultada e limitações em
       `specs/001-project-foundation/evidence/design-guide-2026-09-22.md`; cobre DS-FR08/DS-SC01–04.
-- [ ] T138 Fechar checkpoint DS em `specs/001-project-foundation/spec.md`, `plan.md` e `tasks.md`,
+- [x] T138 Fechar checkpoint DS em `specs/001-project-foundation/spec.md`, `plan.md` e `tasks.md`,
       conferir sincronização da principal e preparar entrega documental em PR próprio para dev;
       cobre DS-FR06–08. Não aprovar nem integrar PRs.
 
 Dependências: T133 → T134 → T135 → T136 → T137 → T138. Execução sequencial porque o guia e os
 artefatos compartilham conteúdo. MVP documental: T133–T135; entrega solicitada inclui as seis. Não
 executar tarefas antigas nem marcar checklist global 13/16 como concluído por esta entrega.
+
+Fechamento: T133–T138 concluídas; [PR38](https://github.com/Komunick/caabnovo/pull/38) aberto em
+rascunho para dev. Nove documentos validados, 68 referências locais novas/18 âncoras e valores
+conferidos. CI automático em andamento; testes funcionais não presumidos. Sem aprovação ou merge.
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/collaborator-contact.md). **Branch da entrega:**

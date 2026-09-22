@@ -106,7 +106,7 @@ e explícita coexistentes. Nenhuma dessas observações autoriza alterar produto
 
 Conferência concluída: nove documentos passaram por Prettier explícito com
 `--ignore-path .gitignore --check`; `git diff --check` sem falhas. Inspeção do diff e leitura do
-guia confirmaram escopo documental. Verificação dos links novos por árvore Markdown: 67 destinos
+guia confirmaram escopo documental. Verificação dos links novos por árvore Markdown: 68 destinos
 locais e 18 âncoras válidos; 25 linhas de cores comparadas a tokens claro/escuro; dez medidas
 representativas encontradas nas fontes e revisadas quanto à cascata. Valores restantes de
 campos/medidas conferidos por leitura dos contratos e componentes. Oito requisitos únicos, seis
@@ -115,6 +115,8 @@ matrizes do guia.
 
 O verificador foi auxiliar local descartável, sem dependência ou suíte nova no produto. A pesquisa
 externa foi consultada via navegador de pesquisa; links de CI apenas identificam evidência anterior.
-T133–T137 concluídas; T138 em preparação do PR. Lint/typecheck/build/E2E de produto não foram
-executados localmente nesta tarefa; CI da nova entrega deve ser conferido separadamente. Localhost,
-Docker, dados, contas, migrations, permissões e dependências permaneceram inalterados.
+T133–T138 concluídas; [PR38](https://github.com/Komunick/caabnovo/pull/38) aberto em rascunho, sem
+aprovação ou merge. CI automático iniciado pelo push/PR e ainda em andamento no fechamento;
+lint/typecheck/build/E2E de produto não foram executados localmente nem declarados aprovados para
+esta entrega. Conferir os checks atuais do PR antes de integrar. Localhost, Docker, dados, contas,
+migrations, permissões e dependências permaneceram inalterados.

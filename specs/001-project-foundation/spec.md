@@ -74,12 +74,14 @@ implementar o guia autoriza somente este recorte documental.
 **Checkpoint DS — validação documental concluída:** specify, clarify, plan/tasks, analyze e
 implementação documental executados no recorte DS. O complemento de campos/botões/filtros foi
 incorporado e conferido. Base atualizada para dev `3907248` após merge do PR37; branch anterior
-preservada. Nove documentos passaram por formatação explícita; 67 referências locais novas, 18
+preservada. Nove documentos passaram por formatação explícita; 68 referências locais novas, 18
 âncoras, 25 pares de tokens de cor e dez medidas representativas conferidos sem falhas. Diff
 exclusivamente documental. Evidência em
-[design-guide-2026-09-22.md](evidence/design-guide-2026-09-22.md). T133–T137 concluídas; T138
-aguarda preparação do PR próprio. Nenhuma homologação funcional nova, alteração de produto ou
-serviço iniciado. Hooks ausentes. Demais checkpoints abaixo são históricos.
+[design-guide-2026-09-22.md](evidence/design-guide-2026-09-22.md). T133–T138 concluídas;
+[PR38](https://github.com/Komunick/caabnovo/pull/38) aberto em rascunho para dev. CI automático
+ainda em andamento na conferência de fechamento; não declarado aprovado. Nenhuma homologação
+funcional nova, alteração de produto ou serviço iniciado. Hooks ausentes. Demais checkpoints abaixo
+são históricos.
 
 ## Checkpoint de padronização visual — 22/09/2026
 
