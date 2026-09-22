@@ -125,8 +125,8 @@ export async function listUsers(
          WHERE fr.user_id=u.id AND fr.revoked_at IS NULL AND fr.valid_from<=now() AND (fr.valid_until IS NULL OR fr.valid_until>now()) AND rr.status='active' AND rr.deleted_at IS NULL))
          OR EXISTS (SELECT 1 FROM user_role fr JOIN role rr ON rr.id=fr.role_id WHERE fr.user_id=u.id AND fr.role_id::text=$8
            AND fr.revoked_at IS NULL AND fr.valid_from<=now() AND (fr.valid_until IS NULL OR fr.valid_until>now()) AND rr.status='active' AND rr.deleted_at IS NULL))
-       AND ($9::date IS NULL OR u.created_at>=($9::date::timestamp AT TIME ZONE 'America/Sao_Paulo'))
-       AND ($10::date IS NULL OR u.created_at<(($10::date+1)::timestamp AT TIME ZONE 'America/Sao_Paulo'))
+       AND ($9::date IS NULL OR u.created_at>=($9::date::timestamp AT TIME ZONE 'America/Bahia'))
+       AND ($10::date IS NULL OR u.created_at<(($10::date+1)::timestamp AT TIME ZONE 'America/Bahia'))
      GROUP BY u.id
      ORDER BY u.id
      LIMIT $3`,

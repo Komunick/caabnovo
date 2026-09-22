@@ -76,6 +76,23 @@ it("catalog exposes only permitted columns and status hides another owner's oper
   );
   const body = await response.json();
   expect(body.formats).toEqual(["xlsx", "csv", "pdf"]);
+  expect(body.filters).toContainEqual({ key: "cpf", label: "CPF", type: "text" });
+  expect(
+    body.filters.find((filter: { key: string }) => filter.key === "deleted").options,
+  ).toContainEqual({ value: "pending", label: "Exclusão pendente" });
   expect(body.columns.map((c: { key: string }) => c.key)).not.toContain("roles");
   expect((await f.routes.status(new Request(origin), rid)).status).toBe(404);
 });
+
+it.each(["abc", "%", "_", ". -", "123456789012", "123' OR TRUE--"])(
+  "rejects malformed CPF filter %s before opening a download",
+  async (cpf) => {
+    const f = fixture();
+    const response = await f.routes.download(
+      post({ config: JSON.stringify({ ...config, filters: { cpf } }) }),
+    );
+    expect(response.status).toBe(422);
+    expect(f.prepare).not.toHaveBeenCalled();
+    expect(f.failed).toHaveBeenCalledOnce();
+  },
+);

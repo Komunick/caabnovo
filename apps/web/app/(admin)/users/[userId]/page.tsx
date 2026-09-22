@@ -113,7 +113,7 @@ export default async function UserDetailPage({
             <dt>Endereço</dt>
             <dd>
               {user.address
-                ? `${formatBrazilianAddress(user.address)} — ${user.address.city}/${user.address.state} — CEP ${user.address.postalCode}`
+                ? `${formatBrazilianAddress(user.address)} — ${user.address.city}/${user.address.state}${user.address.postalCode ? ` — CEP ${user.address.postalCode}` : ""}`
                 : "Não informado"}
             </dd>
           </dl>

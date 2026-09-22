@@ -986,3 +986,10 @@ ampliação.
 Fechamento22/09: CI35728053078 (3ca6410) aprovado em quality/browser/security. Ver relatório do
 incremento para cobertura, imagens e limites. T126 inclui preparação do PR autorizada pelo usuário;
 sem homologar políticas institucionais pendentes ou marcar o checklist13/16 como concluído.
+
+## Correções da revisão — 22/09/2026
+
+- [ ] T130 Padronizar datas de Colaboradores em America/Bahia e corrigir CEP vazio na ficha somente
+      leitura; validar limite histórico e apresentação por interface.
+- [ ] T131 Adicionar CPF com/sem máscara e parcial e Exclusão pendente à exportação; validar
+      combinações, entrada inválida, catálogo, Excel/CSV/PDF, gates e evidências.

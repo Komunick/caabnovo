@@ -680,7 +680,7 @@ Localhost permanece desligado; gates pesados no CI.
 
 Complemento22/09: controles de senha/situação juntos após a lista de funções; senha secundária,
 desativação abaixo e exclusão visível somente para desativado. Filtros SQL parametrizados incluem
-função vigente/sem função, datas de cadastro inclusivas em America/Sao_Paulo e exclusão pendente.
+função vigente/sem função, datas de cadastro inclusivas em America/Bahia e exclusão pendente.
 Paginação mantém parâmetros. Critérios adicionados a T127; CI deve validar UI e consultas
 combinadas.
 
@@ -693,3 +693,12 @@ página e rolagem restrita à tabela.
 Fechamento22/09: etapas de implementação/gates e revisão de imagens concluídas no CI35728053078
 (3ca6410); T124–T129/005 LC03 encerradas conforme relatório de evidências. Próximo passo autorizado:
 abrir PR para dev. Sem ativar localhost, aplicar migrations locais ou implementar POL01/POL02.
+
+## Correções da revisão — 22/09/2026
+
+T130 padroniza o SQL da lista em America/Bahia e omite o segmento CEP quando vazio na ficha somente
+leitura. T131 amplia o catálogo compartilhado da exportação com CPF parcial normalizado e
+Cadastros/Exclusão pendente, em consultas parametrizadas. Preservar permissões, paginação, Atuais e
+formatos. Validar limites históricos de datas, combinação de filtros e rejeição de CPF malformado,
+além da jornada de download Excel/CSV/PDF e ficha sem CEP. Sem migration ou ativação local de
+serviços.

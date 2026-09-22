@@ -329,7 +329,9 @@ test("manager grants a write they do not possess, resets a colleague password, a
   }
 });
 
-test("exports selected collaborator contact fields in Excel, CSV and PDF", async ({ page }) => {
+test("exports collaborator contact filtered by CPF and pending deletion in Excel, CSV and PDF", async ({
+  page,
+}, info) => {
   await login(page);
   const contact = syntheticUserContact();
   const name = `Contato exportação ${crypto.randomUUID()}`;
@@ -342,8 +344,32 @@ test("exports selected collaborator contact fields in Excel, CSV and PDF", async
     data: { ...contact, name, email: `contact-${crypto.randomUUID()}@example.test`, roleIds: [] },
   });
   expect(response.status()).toBe(201);
+  const user = await response.json();
+  const deleted = await page.request.post(`/api/v1/users/${user.id}/lifecycle`, {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": crypto.randomUUID(),
+      "idempotency-key": crypto.randomUUID(),
+    },
+    data: { action: "delete", version: user.version, reason: "Exportação sintética de pendentes" },
+  });
+  expect(deleted.status()).toBe(200);
   await page.goto("/users/exportar");
   await page.getByRole("textbox", { name: "Nome", exact: true }).fill(name);
+  await page
+    .getByRole("textbox", { name: "CPF", exact: true })
+    .fill(contact.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"));
+  await page.getByLabel("Cadastros", { exact: true }).selectOption("pending");
+  await expectWcag22AA(page);
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.getByRole("heading", { name: "Exportar colaboradores", exact: true }).click();
+    await page.screenshot({
+      path: info.outputPath(`collaborator-export-filters-${width}.png`),
+      fullPage: true,
+    });
+  }
+
   for (const label of ["CPF", "Telefone", "Endereço"])
     await page.getByRole("checkbox", { name: label, exact: true }).check();
   for (const [format, label] of [

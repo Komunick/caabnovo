@@ -442,13 +442,13 @@ it("combines dates, role, status, pending deletion and pagination filters", asyn
     email: "second@example.test",
     roleIds: [],
   });
-  await admin.query(`UPDATE "user" SET created_at='2026-09-02T02:59:59Z' WHERE id=$1`, [user.id]);
-  await admin.query(`UPDATE "user" SET created_at='2026-09-02T03:00:00Z' WHERE id=$1`, [second.id]);
+  await admin.query(`UPDATE "user" SET created_at='2018-01-15T02:30:00Z' WHERE id=$1`, [user.id]);
+  await admin.query(`UPDATE "user" SET created_at='2018-01-15T03:00:00Z' WHERE id=$1`, [second.id]);
   const query = {
     q: "Lifecycle",
     roleId: "none",
-    createdFrom: "2026-09-01",
-    createdTo: "2026-09-01",
+    createdFrom: "2018-01-14",
+    createdTo: "2018-01-14",
     limit: 1,
   };
   expect((await listUsers(database.pool, query)).items.map((item) => item.id)).toEqual([user.id]);

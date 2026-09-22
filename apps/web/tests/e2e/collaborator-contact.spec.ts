@@ -213,3 +213,35 @@ test("legacy accounts accept gradual address completion and retain unsaved field
   await page.reload();
   await expect(page.getByLabel("Cidade", { exact: true })).toHaveValue("Salvador");
 });
+
+test("read-only collaborator address omits the CEP label when CEP is absent", async ({
+  page,
+}, info) => {
+  await login(page);
+  const contact = syntheticUserContact();
+  const response = await page.request.post("/api/v1/users", {
+    headers: headers(page),
+    data: {
+      ...contact,
+      address: { ...contact.address, postalCode: "" },
+      name: "Ficha sem CEP",
+      email: `readonly-no-cep-${crypto.randomUUID()}@example.test`,
+      roleIds: [],
+    },
+  });
+  expect(response.status()).toBe(201);
+  const user = await response.json();
+  const deleted = await page.request.post(`/api/v1/users/${user.id}/lifecycle`, {
+    headers: headers(page),
+    data: { action: "delete", version: user.version, reason: "Encerramento sintético" },
+  });
+  expect(deleted.status()).toBe(200);
+  await page.goto(`/users/${user.id}`);
+  const address = page.getByRole("region", { name: "Dados cadastrais" }).locator("dd").nth(2);
+  await expect(address).toHaveText("Rua Sintética, s/n, Bairro Teste — Salvador/BA");
+  await expect(address).not.toContainText("CEP");
+  await page.screenshot({
+    path: info.outputPath("collaborator-readonly-no-cep.png"),
+    fullPage: true,
+  });
+});

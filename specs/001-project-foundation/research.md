@@ -560,3 +560,14 @@ endereço manual e ignorando resposta obsoleta.
 reforça validação no servidor além do cliente. Regras de CPF/legado/motivo vêm das decisões do
 usuário; sem enriquecimento de dados. Consultadas em22/09/2026. Integração de CEP simulada nos
 testes.
+
+## Datas e filtros de Colaboradores — 22/09/2026
+
+Fonte oficial consultada:
+[PostgreSQL, Date/Time Types, seção 8.5.3](https://www.postgresql.org/docs/current/datatype-datetime.html).
+Nomes completos IANA aplicam regras históricas de fuso/horário de verão; igualdade do deslocamento
+atual não garante igualdade para datas antigas. Decisão: usar America/Bahia na lista e exportação,
+com limite inicial inclusivo e próximo dia exclusivo. Testar 15/01/2018 02:30 UTC, ainda dia14 na
+Bahia. Sem alterar os instantes armazenados. CPF e pendência usam catálogo/SQL compartilhados pelos
+três formatos; CPF aceita parte dos dígitos e máscara, mas rejeita conteúdo malformado. Pesquisa
+limitada ao comportamento técnico; não modifica política de exclusão ou retenção.

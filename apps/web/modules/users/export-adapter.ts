@@ -80,6 +80,7 @@ export const usersExport: ExportAdapter = {
   filters: [
     { key: "name", label: "Nome", type: "text" },
     { key: "email", label: "E-mail", type: "text" },
+    { key: "cpf", label: "CPF", type: "text" },
     { key: "from", label: "Cadastro a partir de", type: "date" },
     { key: "to", label: "Cadastro até", type: "date" },
     {
@@ -97,6 +98,7 @@ export const usersExport: ExportAdapter = {
       type: "choice",
       options: [
         { value: "excluded", label: "Atuais" },
+        { value: "pending", label: "Exclusão pendente" },
         { value: "only", label: "Excluídos" },
         { value: "all", label: "Todos" },
       ],
@@ -116,6 +118,13 @@ export const usersExport: ExportAdapter = {
           `u.${key}::text ILIKE ${param(`%${String(value).replace(/[\\%_]/g, "\\$&")}%`)} ESCAPE '\\'`,
         );
     }
+    const cpf = String(input.filters.cpf ?? "").trim();
+    if (cpf) {
+      const digits = cpf.replace(/\D/g, "");
+      if (!/^[\d. -]+$/.test(cpf) || digits.length < 1 || digits.length > 11)
+        throw new ExportError("EXPORT_CONFIGURATION_INVALID", 422);
+      where.push(`u.cpf LIKE ${param(`%${digits}%`)}`);
+    }
     if (input.filters.status) where.push(`u.status=${param(input.filters.status)}::user_status`);
     if (input.filters.from)
       where.push(
@@ -127,6 +136,7 @@ export const usersExport: ExportAdapter = {
       );
     const deleted = input.filters.deleted || "excluded";
     if (deleted === "only") where.push("u.deletion_effective_at<=transaction_timestamp()");
+    else if (deleted === "pending") where.push("u.deletion_effective_at>transaction_timestamp()");
     else if (deleted !== "all")
       where.push(
         "(u.deletion_effective_at IS NULL OR u.deletion_effective_at>transaction_timestamp())",

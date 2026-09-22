@@ -9,7 +9,17 @@ seções correspondentes dos documentos das funções afetadas. Excluir tarefas 
 funcionalidades não alteradas e os adaptadores dos demais módulos ainda não implementados desta
 análise. Decisão explícita do usuário; não executar análise integral do projeto.
 
-## Checkpoint atual — 22/09/2026
+## Checkpoint de correção da revisão — 22/09/2026
+
+Correções autorizadas no PR37 aberto: datas de Colaboradores em America/Bahia, CEP vazio sem rótulo
+residual na ficha somente leitura e filtros de exportação por CPF (com/sem máscara ou parte dos
+dígitos) e Exclusão pendente. Os três formatos compartilham filtros; Atuais continua incluindo
+pendentes. CPF preenchido sem dígitos válidos não pode ampliar silenciosamente o resultado.
+Implementação e regressões preparadas. Contratos167, lint dos arquivos alterados e tipos web
+aprovados localmente; integração/build/browser/security pendentes de CI. Validação específica dos
+filtros ocorre antes de abrir o download. Localhost permanece desligado. Próximo: CI e imagens.
+
+## Checkpoint anterior — 22/09/2026
 
 Incremento001 T124–T129 e005 LC03 implementado e validado em3ca6410 pelo
 [CI35728053078](https://github.com/Komunick/caabnovo/actions/runs/35728053078): quality, browser e
