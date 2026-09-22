@@ -1,3 +1,4 @@
+import { expectExportAboveFilters } from "./panel-actions";
 import { syntheticUserContact } from "../helpers/user-contact";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
@@ -332,6 +333,15 @@ test("collaborator list uses compact shared actions and collapsible filters", as
       );
       expect(await scroll.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
     }
+    const panel = page.getByRole("region", { name: "Contas cadastradas", exact: true });
+    await expectExportAboveFilters(
+      panel,
+      panel.getByRole("link", { name: "Exportar colaboradores", exact: true }),
+      filters,
+    );
+    await expect(
+      page.locator(".page-header").getByRole("link", { name: "Novo colaborador", exact: true }),
+    ).toHaveClass(/button--primary.*button--add/);
     for (const theme of ["light", "dark"]) {
       await page.evaluate((theme) => {
         document.documentElement.dataset.theme = theme;

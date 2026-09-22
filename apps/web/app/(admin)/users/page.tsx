@@ -1,3 +1,4 @@
+import { PanelHeading } from "@/components/ui/panel-heading";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { Plus, Download } from "lucide-react";
@@ -54,21 +55,20 @@ export default async function UsersPage({
         <p className="eyebrow">Controle de acesso</p>
         <h1>Colaboradores</h1>
         <p>Contas internas, estado atual e funções efetivas.</p>
-        <div className="module-header-actions">
+        {actor.permissions.has(PERMISSIONS.usersCreate) && (
+          <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/users/new">
+            <Plus aria-hidden="true" /> Novo colaborador
+          </Link>
+        )}
+      </header>
+      <section className="panel" aria-labelledby="user-list-title">
+        <PanelHeading id="user-list-title" title="Contas cadastradas">
           {actor.permissions.has("exports:generate") && (
             <Link className={buttonVariants()} href="/users/exportar">
               <Download size={18} aria-hidden="true" /> Exportar colaboradores
             </Link>
           )}
-          {actor.permissions.has(PERMISSIONS.usersCreate) && (
-            <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/users/new">
-              <Plus aria-hidden="true" /> Novo colaborador
-            </Link>
-          )}
-        </div>
-      </header>
-      <section className="panel" aria-labelledby="user-list-title">
-        <h2 id="user-list-title">Contas cadastradas</h2>
+        </PanelHeading>
         <UserFilters query={query} roles={roles.map(({ id, name }) => ({ id, name }))} />
         {!parsed.success ? (
           <p role="alert">A página solicitada é inválida. Exibindo a primeira página.</p>

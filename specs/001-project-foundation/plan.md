@@ -702,3 +702,11 @@ Cadastros/Exclusão pendente, em consultas parametrizadas. Preservar permissões
 formatos. Validar limites históricos de datas, combinação de filtros e rejeição de CPF malformado,
 além da jornada de download Excel/CSV/PDF e ficha sem CEP. Sem migration ou ativação local de
 serviços.
+
+## Padronização de ações — 22/09/2026
+
+Reutilizar Button/buttonVariants e um cabeçalho compartilhado para os quadros. Mover exportações
+existentes de Colaboradores, Auditoria e Relatórios acima dos filtros, mantendo permissões e fluxos
+existentes. Remover agrupamento especial do cabeçalho de Colaboradores para seguir a inclusão de
+Parceiros/Associados. Validar posição, cores, navegação e responsividade em temas claro/escuro nos
+testes existentes.

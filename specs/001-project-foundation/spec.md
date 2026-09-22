@@ -1,5 +1,14 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Checkpoint de padronização visual — 22/09/2026
+
+Pedido autorizado no mesmo PR37: ações de exportação dentro do quadro, acima dos filtros, alinhadas
+à direita no desktop e acomodadas no celular. Compartilhar posição, espaçamento, ícone Download e
+botão secundário. Colaboradores mantém Novo colaborador no cabeçalho, primário com Plus, como
+Parceiros/Associados; senha cinza e exclusão restrita aos desativados preservadas. Implementação e
+validação visual em andamento. Esta alteração de posição não conclui adequações de exportação ainda
+pendentes.
+
 ## Recorte de revisão solicitado — 21/09/2026
 
 Ao terminar a implementação e os gates, executar clarify e depois analyze somente nas alterações

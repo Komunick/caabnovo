@@ -1,4 +1,5 @@
 "use client";
+import { PanelHeading } from "@/components/ui/panel-heading";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Download, Plus, Presentation, X } from "lucide-react";
@@ -281,8 +282,27 @@ export function ReportsPage({
               </Button>
             ))}
           </nav>
-          <section className="panel">
-            <h2>Período e filtros</h2>
+          <section className="panel" aria-labelledby="report-filters-title">
+            <PanelHeading id="report-filters-title" title="Período e filtros">
+              {data?.canExport && (
+                <>
+                  {(
+                    ["pdf", "csv", ...(query.view === "details" ? ["xlsx"] : [])] as (
+                      "pdf" | "csv" | "xlsx"
+                    )[]
+                  ).map((format) => (
+                    <Button
+                      key={format}
+                      disabled={pending || dirtyFilters}
+                      onClick={() => void exportFile(format)}
+                    >
+                      <Download size={18} aria-hidden="true" />
+                      {`Exportar ${format === "xlsx" ? "Excel" : format.toUpperCase()}`}
+                    </Button>
+                  ))}
+                </>
+              )}
+            </PanelHeading>
             <div className={styles.actions}>
               {(["week", "month"] as const).map((preset) => (
                 <Button
@@ -565,24 +585,7 @@ export function ReportsPage({
                 </strong>{" "}
                 · Atualizado em {dateTime(data.summary.updatedAt)}
               </p>
-              {!presentation && data.canExport && (
-                <>
-                  {(
-                    ["pdf", "csv", ...(query.view === "details" ? ["xlsx"] : [])] as (
-                      "pdf" | "csv" | "xlsx"
-                    )[]
-                  ).map((format) => (
-                    <Button
-                      key={format}
-                      disabled={pending || dirtyFilters}
-                      onClick={() => void exportFile(format)}
-                    >
-                      <Download size={16} aria-hidden="true" />
-                      {`Exportar ${format === "xlsx" ? "Excel" : format.toUpperCase()}`}
-                    </Button>
-                  ))}
-                </>
-              )}
+
               {query.view === "executive" && !presentation && (
                 <Button onClick={() => setPresentation(true)}>
                   <Presentation size={16} aria-hidden="true" />

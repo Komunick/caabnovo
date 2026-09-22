@@ -571,3 +571,13 @@ com limite inicial inclusivo e próximo dia exclusivo. Testar 15/01/2018 02:30 U
 Bahia. Sem alterar os instantes armazenados. CPF e pendência usam catálogo/SQL compartilhados pelos
 três formatos; CPF aceita parte dos dígitos e máscara, mas rejeita conteúdo malformado. Pesquisa
 limitada ao comportamento técnico; não modifica política de exclusão ou retenção.
+
+## Consistência das ações — 22/09/2026
+
+Fonte oficial:
+[W3C, WCAG 2.2, identificação consistente](https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification.html).
+A orientação favorece identificação consistente de funções repetidas entre páginas. Decisão de
+interface solicitada pelo usuário: exportação no topo do quadro de filtros, com ícone e estilo
+compartilhados; inclusão primária preservada no cabeçalho. A posição é decisão do produto, não uma
+exigência literal desse critério WCAG. Validar foco, contraste e adaptação ao celular; não alterar
+contratos de exportação neste ajuste visual.

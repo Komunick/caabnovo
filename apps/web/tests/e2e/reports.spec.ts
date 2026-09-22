@@ -1,3 +1,4 @@
+import { expectExportAboveFilters } from "./panel-actions";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { test, expect, syntheticUsers } from "./fixtures";
@@ -120,6 +121,9 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await expectWcag22AA(page);
   await expectThemeContrast(page, ".module-tabs .button");
   await page.setViewportSize({ width: 1440, height: 1000 });
+  const filtersPanel = page.getByRole("region", { name: "Período e filtros", exact: true });
+  const exportAction = filtersPanel.getByRole("button", { name: "Exportar CSV", exact: true });
+  await expectExportAboveFilters(filtersPanel, exportAction, filtersPanel.locator("form"));
   await page.screenshot({ path: testInfo.outputPath("reports-desktop-light.png"), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => {
@@ -129,6 +133,7 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
+  await expectExportAboveFilters(filtersPanel, exportAction, filtersPanel.locator("form"));
   await page.screenshot({ path: testInfo.outputPath("reports-mobile-dark.png"), fullPage: true });
   await page.getByRole("button", { name: `Excluir ${name}`, exact: true }).click();
   await expect(page.getByText("Consulta excluída.")).toBeVisible();

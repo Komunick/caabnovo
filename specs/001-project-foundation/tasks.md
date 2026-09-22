@@ -993,3 +993,10 @@ sem homologar políticas institucionais pendentes ou marcar o checklist13/16 com
       leitura; validar limite histórico e apresentação por interface.
 - [ ] T131 Adicionar CPF com/sem máscara e parcial e Exclusão pendente à exportação; validar
       combinações, entrada inválida, catálogo, Excel/CSV/PDF, gates e evidências.
+
+## Padronização de ações — 22/09/2026
+
+- [ ] T132 Mover a exportação existente para dentro do quadro acima dos filtros com cabeçalho
+      compartilhado, botão secundário e ícone; preservar acesso/fluxo e validar posição,
+      responsividade, temas e acessibilidade no CI. Colaboradores usa inclusão primária no cabeçalho
+      conforme Parceiros/Associados.
