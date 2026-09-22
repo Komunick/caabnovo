@@ -320,7 +320,7 @@ it("keeps CPF reserved, returns the correct deletion occurrence and restores wit
   });
   // A distinct historical occurrence is seeded with a past effective date in this disposable DB.
   const expired = await admin.query<{ deletion_effective_at: Date; version: number }>(
-    `UPDATE "user" SET status='disabled', deletion_effective_at=date_trunc('milliseconds',clock_timestamp()-interval '1 second'),version=version+1 WHERE id=$1 RETURNING deletion_effective_at,version`,
+    `UPDATE "user" SET status='disabled', deactivated_at=now(), deletion_effective_at=date_trunc('milliseconds',clock_timestamp()-interval '1 second'),version=version+1 WHERE id=$1 RETURNING deletion_effective_at,version`,
     [user.id],
   );
   await writeAuditEvent(admin, {
@@ -390,7 +390,7 @@ it("keeps CPF reserved, returns the correct deletion occurrence and restores wit
     true,
   );
   await admin.query(
-    `UPDATE "user" SET status='disabled',deletion_effective_at=clock_timestamp()-interval '2 seconds' WHERE id=$1`,
+    `UPDATE "user" SET status='disabled',deactivated_at=now(),deletion_effective_at=clock_timestamp()-interval '2 seconds' WHERE id=$1`,
     [user.id],
   );
   expect(await lookupUserCpf(database.pool, actor, { cpf: user.cpf })).toMatchObject({

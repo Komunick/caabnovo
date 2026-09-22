@@ -11,20 +11,26 @@ análise. Decisão explícita do usuário; não executar análise integral do pr
 
 ## Checkpoint atual — 22/09/2026
 
-Retomada autorizada em 22/09/2026. Q5 respondida com A: cadastros existentes permanecem utilizáveis
-e editáveis, com preenchimento gradual dos dados faltantes; obrigatoriedade completa somente para
-novos cadastros. As cinco decisões do clarify estão respondidas e registradas. Fechamento documental
-do clarify concluído; próxima etapa é analyze somente de 001 T124–T129 e 005 LC03, seguido de
-implementação. Não abrir PR, conforme orientação expressa de 22/09. Documentação de dependentes pode
-integrar a entrega; POL01/POL02 continuam sem implementação autorizada neste incremento e a pergunta
-sobre nova análise permanece pendente.
+Clarify concluído (cinco respostas) e analyze restrito a001 T124–T129/005 LC03 concluído: nove
+grupos de requisitos, sete tarefas, cobertura100%, sem bloqueadores. Implementação enviada para CI
+em55caeb7. CI35724853202: segurança, formatação, lint, tipos,387 unitários e161 contratos passaram;
+integração236/237. Navegador89 passaram, quatro falharam e um foi intermitente; build e gate
+separado de a11y ainda não passaram. Falhas identificadas: fixtures de desativação sem data, testes
+apontando para cadastro antigo, texto esperado diferente da validação compartilhada e concorrência
+entre limpar filtros e digitar nova busca. Correções em validação; tarefas abertas.
 
-Decisões anteriores mantidas: CPF único com aviso/motivo e oferta de reativação; motivo obrigatório
-para excluir colaboradores ou associados; reativação mantém os dados anteriores; rua, número,
-bairro, cidade e UF obrigatórios em novos cadastros, CEP/complemento opcionais e consulta de CEP por
-API. Na retomada, concluir revisão documental do clarify e executar analyze restrito ao incremento
-antes de implementar. Código e ajustes visuais anteriores estão preservados; os resultados a seguir
-pertencem ao recorte anterior e não validam este incremento.
+Requisitos implementados: CPF único, consulta autorizada e reativação sem substituir os dados;
+motivo obrigatório nas duas exclusões, preservado por ocorrência; endereço obrigatório apenas nos
+novos cadastros, CEP/complemento opcionais, consulta ViaCEP e edição gradual do legado.
+Lista/filtros e ações seguem o padrão compartilhado; nova senha cinza, junto das funções e acima de
+desativar; exclusão visível somente em desativados. Filtros incluem nome/CPF/e-mail, situação,
+função/sem função, intervalo de cadastro e estado da exclusão.
+
+Não abrir PR conforme pedido expresso. Documentação de dependentes pode acompanhar; POL01/POL02 não
+foram implementadas e a pergunta sobre nova análise permanece aberta. Localhost e Docker foram
+desligados após o usuário revogar a ativação em22/09; não reativar. Banco preservado, nenhuma
+migration ou seed executada nele. Prosseguir com CI e revisão de imagens sintéticas. Resultados
+abaixo pertencem ao incremento anterior integrado no PR36.
 
 Recorte implementado e validado: T097–T123,005 LC01/LC02 e008 LC01. CI35644236348 (57d6b56) aprovado
 em quality/browser/security, incluindo387 unitários,145 contrato,234 integração,89 E2E, 6

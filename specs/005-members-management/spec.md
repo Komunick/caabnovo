@@ -1,5 +1,14 @@
 # Feature Specification: Associados e dependentes
 
+## Checkpoint LC03 — 22/09/2026
+
+Clarify/analyze restritos concluídos e motivo obrigatório na exclusão implementado em contrato,
+diálogo e serviço, com auditoria por ocorrência e leitura do motivo atual. CI35724853202 passou os
+cenários de associado em integração e navegador; a entrega conjunta ainda tem falhas em
+Colaboradores e não está validada por inteiro. LC03 aguarda fechamento dos gates e das evidências.
+Documentação de dependentes acompanha por autorização; POL01/POL02 não implementadas. Localhost
+desligado, sem mudança no banco local e sem PR.
+
 ## Checkpoint documental — requisitos de documentos, 21/09/2026
 
 Usuário definiu documentos de titular/cônjuge/filho/enteado e limite de até 25 anos para filhos e

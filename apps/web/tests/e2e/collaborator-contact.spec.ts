@@ -106,7 +106,7 @@ test("CPF reactivation preserves the prior record and cancellation leaves it exc
   const user = await created.json();
   await withDatabase(async (db) => {
     const expired = await db.query<{ deletion_effective_at: Date }>(
-      `UPDATE "user" SET status='disabled',deletion_effective_at=date_trunc('milliseconds',clock_timestamp()-interval '1 second'),version=version+1 WHERE id=$1 RETURNING deletion_effective_at`,
+      `UPDATE "user" SET status='disabled',deactivated_at=now(),deletion_effective_at=date_trunc('milliseconds',clock_timestamp()-interval '1 second'),version=version+1 WHERE id=$1 RETURNING deletion_effective_at`,
       [user.id],
     );
     await db.query(

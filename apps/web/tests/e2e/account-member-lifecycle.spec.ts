@@ -111,9 +111,7 @@ test("administrator reactivates, replaces password, schedules deletion and resto
     await page.getByRole("button", { name: "Excluir colaborador", exact: true }).click();
     await page.getByLabel("Motivo da exclusão", { exact: true }).fill("   ");
     await page.getByRole("button", { name: "Confirmar exclusão", exact: true }).click();
-    await expect(page.getByRole("dialog").getByRole("alert")).toHaveText(
-      "Informe o motivo da exclusão.",
-    );
+    await expect(page.getByRole("dialog").getByRole("alert")).toHaveText("Preencha este campo.");
     await page
       .getByLabel("Motivo da exclusão", { exact: true })
       .fill("Encerramento sintético do vínculo");

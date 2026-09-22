@@ -58,7 +58,7 @@ export function UserFilters({
         apply(filters);
       }}
     >
-      <fieldset disabled={!hydrated}>
+      <fieldset disabled={!hydrated || pending}>
         <div className="filter-toolbar">
           <SearchField
             id="user-search"
