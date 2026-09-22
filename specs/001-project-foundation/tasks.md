@@ -1028,7 +1028,14 @@ posterior de aplicação/testes. PR preparado para revisão humana, sem aprovaç
 
 ## Promover cargo — 22/09/2026
 
-- [ ] T141 Implementar promoção transacional ao próximo cargo, preservando validade, acessos,
+- [x] T141 Implementar promoção transacional ao próximo cargo, preservando validade, acessos,
       histórico e auditoria; validar autorização, conflito concorrente e rollback.
-- [ ] T142 Colocar Promover ao lado de Revogar cargo, com confirmação, destino/descrição, cores e
-      responsividade compartilhadas; validar UI/a11y e CI sem abrir/reabrir PR.
+- [x] T142 Colocar Promover ao lado de Revogar cargo, com confirmação, destino/descrição, cores e
+      responsividade compartilhadas; validar UI/a11y e CI. PR somente mediante pedido explícito.
+
+Fechamento T141/T142: quality/security CI35747105170 em1a4e0d0 (387 unitários,169 contratos, 247
+integração, build/lint/tipos/formatação); browser CI35746642120 eme46e12a (95 E2E,6 a11y). Código de
+aplicação/E2E igual entre esses commits; a diferença corrige somente a fixture de conta inativa no
+teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR explicitamente;
+PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
+[evidências](evidence/single-role-2026-09-22-validation.md).

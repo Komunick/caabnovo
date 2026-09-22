@@ -726,4 +726,8 @@ T141 adiciona promoção atômica usando as mesmas guardas, lock e auditoria de 
 com cargo de origem na rota para detectar conflito. Hierarquia compartilhada entre UI e servidor.
 T142 adiciona ação secundária ao lado da revogação, confirmação com destino/descrição, estados
 indisponíveis e testes de concorrência, rollback, acessos preservados, erros e UI/a11y. Sem nova
-migration. CI remoto para banco/E2E; não iniciar localhost nem abrir/reabrir PR.
+migration. CI remoto para banco/E2E; não iniciar localhost. Abrir/reabrir PR somente sob pedido
+explícito.
+
+Atualização: usuário autorizou expressamente o PR desta entrega após o fechamento anterior; PR39
+reaberto. A regra permanente de abertura somente sob pedido continua válida.

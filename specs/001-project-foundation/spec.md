@@ -12,10 +12,18 @@ validade. O cargo atual enviado na rota precisa continuar vigente: duas requisi�
 promoção produzem um sucesso e um conflito, sem avançar dois níveis. Falha de concessão ou auditoria
 desfaz a revogação. Não alterar a migration 0030 já validada.
 
-Checkpoint T141/T142: implementação concluída; 169 contratos, lint alterado e tipos web aprovados.
-Próximo: integração, rollback/concorrência, E2E/a11y e capturas pelo CI. PR39 permanece fechado; não
-abrir/reabrir PR sem novo pedido explícito. Localhost desligado. Próximo: API transacional, ação
-compartilhada no detalhe, testes de autorização/concorrência/UI.
+Checkpoint T141/T142 concluídas. Quality/security do
+[CI35747105170](https://github.com/Komunick/caabnovo/actions/runs/35747105170), em1a4e0d0: 387
+unitários,169 contratos,247 integração, formatação, lint, tipos e build aprovados. Navegador
+aprovado no [CI35746642120](https://github.com/Komunick/caabnovo/actions/runs/35746642120),
+eme46e12a: 95 E2E e6 a11y. Entre esses commits mudou somente a fixture do teste de integração;
+aplicação e E2E idênticos. Capturas da promoção revisadas em1280/390px: botões juntos, secundário
+para Promover e vermelho para Revogar. A falha anterior da fixture foi corrigida e o teste passou.
+
+Usuário pediu explicitamente “faça o PR” após solicitar seu fechamento. PR39 reaberto para esta
+entrega; futuras aberturas continuam exigindo pedido. Nenhuma aprovação/integração executada.
+Fechamento apenas documental após essas validações; novas execuções automáticas seguem no PR.
+Localhost/Docker desligados. Próximo: revisão humana e eventual integração expressamente autorizada.
 
 ## Cargo único — 22/09/2026
 
