@@ -3,7 +3,7 @@ import { Client } from "pg";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabaseClient, runMigrations } from "@caab/db";
-import { grantRole, revokeRole } from "../../modules/users/role-assignment-service";
+import { grantRole, revokeRole, promoteRole } from "../../modules/users/role-assignment-service";
 import { createUser, changeUser } from "../../modules/users/user-service";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
 
@@ -523,4 +523,155 @@ it("allows granting again after the earlier validity has expired without deletin
   expect(
     (await admin.query("SELECT id FROM user_role WHERE user_id=$1", [targetUserId])).rowCount,
   ).toBe(2);
+});
+
+async function promotionFixture() {
+  const actorId = await seedUser("manager@example.test");
+  const targetUserId = await seedUser("promotion@example.test");
+  const roleId = await seedRole("collaborator"),
+    managerId = await seedRole("manager");
+  const validUntil = new Date(Date.now() + 3600000);
+  await grantRole(database.pool, {
+    ...context(actorId),
+    targetUserId,
+    roleId,
+    justification: "",
+    validUntil,
+  });
+  await admin.query(
+    "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['users:read'],$2)",
+    [targetUserId, actorId],
+  );
+  return {
+    actorId,
+    targetUserId,
+    roleId,
+    managerId,
+    validUntil,
+    command: { ...context(actorId), targetUserId, roleId },
+  };
+}
+it("promotes one level at a time, preserving individual access, validity and auditable history", async () => {
+  const f = await promotionFixture();
+  const access = (await admin.query("SELECT * FROM user_access WHERE user_id=$1", [f.targetUserId]))
+    .rows;
+  await promoteRole(database.pool, f.command);
+  let current = (
+    await admin.query(
+      "SELECT role_id,valid_until FROM user_role WHERE user_id=$1 AND revoked_at IS NULL",
+      [f.targetUserId],
+    )
+  ).rows;
+  expect(current).toEqual([{ role_id: f.managerId, valid_until: f.validUntil }]);
+  await promoteRole(database.pool, { ...f.command, roleId: f.managerId });
+  const administrator = await seedRole("administrator", true);
+  current = (
+    await admin.query(
+      "SELECT role_id,valid_until FROM user_role WHERE user_id=$1 AND revoked_at IS NULL",
+      [f.targetUserId],
+    )
+  ).rows;
+  expect(current).toEqual([{ role_id: administrator, valid_until: f.validUntil }]);
+  await expect(
+    promoteRole(database.pool, { ...f.command, roleId: administrator }),
+  ).rejects.toMatchObject({ code: "ROLE_PROMOTION_UNAVAILABLE" });
+  expect(
+    (await admin.query("SELECT * FROM user_access WHERE user_id=$1", [f.targetUserId])).rows,
+  ).toEqual(access);
+  expect(
+    (await admin.query("SELECT id FROM user_role WHERE user_id=$1", [f.targetUserId])).rowCount,
+  ).toBe(3);
+  expect(
+    (
+      await admin.query(
+        "SELECT id FROM audit_event WHERE entity_id=$1 AND after->>'promotion'='true'",
+        [f.targetUserId],
+      )
+    ).rowCount,
+  ).toBe(4);
+});
+it("prevents a double click from promoting two levels", async () => {
+  const f = await promotionFixture();
+  const result = await Promise.allSettled([
+    promoteRole(database.pool, f.command),
+    promoteRole(database.pool, f.command),
+  ]);
+  expect(result.filter((item) => item.status === "fulfilled")).toHaveLength(1);
+  expect(result.find((item) => item.status === "rejected")).toMatchObject({
+    reason: { code: "ROLE_PROMOTION_CONFLICT", status: 409 },
+  });
+  expect(
+    (
+      await admin.query("SELECT role_id FROM user_role WHERE user_id=$1 AND revoked_at IS NULL", [
+        f.targetUserId,
+      ])
+    ).rows,
+  ).toEqual([{ role_id: f.managerId }]);
+});
+it("rolls back revocation, grant, security and audit if promotion auditing fails", async () => {
+  const f = await promotionFixture();
+  const before = (await admin.query("SELECT * FROM user_role WHERE user_id=$1", [f.targetUserId]))
+    .rows;
+  const events = (await admin.query("SELECT * FROM audit_event ORDER BY id")).rows;
+  const security = (await admin.query("SELECT * FROM security_event ORDER BY id")).rows;
+  const { writeAuditEvent } = await import("@caab/db/repositories/audit-writer");
+  await expect(
+    promoteRole(database.pool, f.command, {
+      writeAudit: async (client, input) => {
+        if (input.action === "user.role.granted")
+          throw new Error("synthetic promotion audit failure");
+        return writeAuditEvent(client, input);
+      },
+    }),
+  ).rejects.toThrow("synthetic promotion audit failure");
+  expect(
+    (await admin.query("SELECT * FROM user_role WHERE user_id=$1", [f.targetUserId])).rows,
+  ).toEqual(before);
+  expect((await admin.query("SELECT * FROM audit_event ORDER BY id")).rows).toEqual(events);
+  expect((await admin.query("SELECT * FROM security_event ORDER BY id")).rows).toEqual(security);
+});
+it("denies promotion by managers, expired sessions, for inactive targets and unavailable successors", async () => {
+  const f = await promotionFixture();
+  await admin.query("UPDATE role SET status='inactive' WHERE id=$1", [f.managerId]);
+  await expect(promoteRole(database.pool, f.command)).rejects.toMatchObject({
+    code: "ROLE_PROMOTION_UNAVAILABLE",
+  });
+  await admin.query("UPDATE role SET status='active' WHERE id=$1", [f.managerId]);
+  await admin.query("UPDATE session SET revoked_at=now() WHERE user_id=$1", [f.actorId]);
+  await expect(promoteRole(database.pool, f.command)).rejects.toMatchObject({ status: 401 });
+  await admin.query("UPDATE session SET revoked_at=NULL WHERE user_id=$1", [f.actorId]);
+  await admin.query("UPDATE \"user\" SET status='disabled' WHERE id=$1", [f.targetUserId]);
+  await expect(promoteRole(database.pool, f.command)).rejects.toMatchObject({
+    code: "USER_NOT_FOUND",
+  });
+  await admin.query("UPDATE \"user\" SET status='active' WHERE id=$1", [f.targetUserId]);
+  await revokeRole(database.pool, { ...f.command, reason: "" });
+  await grantRole(database.pool, { ...f.command, roleId: f.managerId, justification: "" });
+  await expect(
+    promoteRole(database.pool, { ...f.command, actor: context(f.targetUserId).actor }),
+  ).rejects.toMatchObject({ status: 403 });
+});
+
+it("does not promote expired or unranked legacy assignments", async () => {
+  const f = await promotionFixture();
+  await admin.query(
+    "UPDATE user_role SET valid_from=now()-interval '2 days',valid_until=now()-interval '1 day' WHERE user_id=$1",
+    [f.targetUserId],
+  );
+  await expect(promoteRole(database.pool, f.command)).rejects.toMatchObject({
+    code: "ROLE_PROMOTION_CONFLICT",
+  });
+  const legacy = await seedRole("legacy-role");
+  await grantRole(database.pool, { ...f.command, roleId: legacy, justification: "" });
+  await expect(promoteRole(database.pool, { ...f.command, roleId: legacy })).rejects.toMatchObject({
+    code: "ROLE_PROMOTION_UNAVAILABLE",
+  });
+  expect(
+    (
+      await admin.query(
+        "SELECT role_id FROM user_role WHERE user_id=$1 AND revoked_at IS NULL AND valid_until IS NULL",
+        [f.targetUserId],
+      )
+    ).rows,
+  ).toEqual([{ role_id: legacy }]);
 });

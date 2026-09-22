@@ -592,3 +592,12 @@ tstzrange por usuário impede sobreposição mesmo entre requisições concorren
 consecutivos. Validar antes na API para erro legível; manter constraint como garantia final.
 Pesquisa técnica não define hierarquia institucional: Administrador > Gestor > Colaborador foi
 confirmado pelo usuário nesta rodada. Não expandir atribuições dos cargos.
+
+## Promoção atômica — 22/09/2026
+
+Fonte oficial consultada:
+[PostgreSQL — Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html). A
+promoção precisa confirmar revogação, concessão e auditoria como uma única operação; falha reverte
+tudo. Reutilizar transação e locks existentes, além da exclusão da 0030. No cliente, reutilizar o
+diálogo de confirmação e Button secundário existentes. Controles seguem o guia `use client` da
+instalação local do Next.js; nenhuma dependência adicional.

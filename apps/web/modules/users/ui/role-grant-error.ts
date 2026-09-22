@@ -1,4 +1,6 @@
 const messages: Record<string, string> = {
+  ROLE_PROMOTION_CONFLICT: "O cargo mudou ou expirou. Atualize a página antes de promover.",
+  ROLE_PROMOTION_UNAVAILABLE: "Este cargo não possui uma promoção disponível.",
   ROLE_GRANT_DENIED: "Você não tem permissão para conceder funções.",
   PERMISSION_DENIED: "Você não tem permissão para realizar esta ação.",
   GRANT_BEYOND_AUTHORITY: "Esta função contém permissões que você não pode conceder.",

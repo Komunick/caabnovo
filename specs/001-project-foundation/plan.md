@@ -719,3 +719,11 @@ usuário/intervalo, evitando corrida entre cargos diferentes. Migration0030 norm
 hierarquia confirmada, auditoria de sistema e histórico preservado; não toca user_access. Testar
 banco antigo, idempotência da migration, intervalos consecutivos/expirados, concorrência, último
 administrador, permissões, teclado/rascunhos e capturas em temas e tamanhos existentes.
+
+## Promover cargo — 22/09/2026
+
+T141 adiciona promoção atômica usando as mesmas guardas, lock e auditoria de concessão/revogação,
+com cargo de origem na rota para detectar conflito. Hierarquia compartilhada entre UI e servidor.
+T142 adiciona ação secundária ao lado da revogação, confirmação com destino/descrição, estados
+indisponíveis e testes de concorrência, rollback, acessos preservados, erros e UI/a11y. Sem nova
+migration. CI remoto para banco/E2E; não iniciar localhost nem abrir/reabrir PR.

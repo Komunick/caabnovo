@@ -1,14 +1,31 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Promover cargo — 22/09/2026
+
+Pedido: botão Promover ao lado de Revogar cargo. Promover avança um nível na hierarquia Colaborador
+→ Gestor → Administrador, com confirmação exibindo cargo atual, destino e descrição. Somente
+Administrador autorizado pode promover; ocultar para conta inativa, Administrador e cargos legados
+sem hierarquia definida. Não inventar promoção de cargos legados.
+
+A promoção troca o cargo em uma transação, preservando histórico, acessos individuais e término da
+validade. O cargo atual enviado na rota precisa continuar vigente: duas requisições para a mesma
+promoção produzem um sucesso e um conflito, sem avançar dois níveis. Falha de concessão ou auditoria
+desfaz a revogação. Não alterar a migration 0030 já validada.
+
+Checkpoint T141/T142: implementação concluída; 169 contratos, lint alterado e tipos web aprovados.
+Próximo: integração, rollback/concorrência, E2E/a11y e capturas pelo CI. PR39 permanece fechado; não
+abrir/reabrir PR sem novo pedido explícito. Localhost desligado. Próximo: API transacional, ação
+compartilhada no detalhe, testes de autorização/concorrência/UI.
+
 ## Cargo único — 22/09/2026
 
 Novo pedido em entrega separada, após PR37 integrado: cada colaborador pode ter no máximo um cargo
 vigente. Cadastro usa seleção única com descrição abaixo de cada cargo; detalhe mostra a descrição
-do cargo atribuído e não oferece concessão adicional. Para trocar, revogar o cargo atual antes de
-conceder outro; proteção do último Administrador permanece. Zero cargos continua permitido, sem
-inventar acesso. API de criação rejeita mais de um roleId (422); concessão conflitante retorna409,
-inclusive sob concorrência. Validades não podem se sobrepor no banco; histórico revogado/expirado
-permanece, permitindo nova concessão após o término.
+do cargo atribuído e não oferece concessão adicional. Promoções usam a troca atômica descrita acima;
+outras trocas exigem revogação prévia. Proteção do último Administrador permanece. Zero cargos
+continua permitido, sem inventar acesso. API de criação rejeita mais de um roleId (422); concessão
+conflitante retorna409, inclusive sob concorrência. Validades não podem se sobrepor no banco;
+histórico revogado/expirado permanece, permitindo nova concessão após o término.
 
 Usuário confirmou regularizar duplicidades mantendo Administrador > Gestor > Colaborador, sem apagar
 histórico nem alterar acessos individuais. Migration nova registra revogações automáticas como

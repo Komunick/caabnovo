@@ -153,11 +153,23 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
     ),
   ).toBeVisible();
   await expectWcag22AA(page);
-  await page.screenshot({
-    path: testInfo.outputPath("collaborator-role-assigned.png"),
-    fullPage: true,
-    animations: "disabled",
-  });
+  const promotion = page.getByRole("button", { name: "Promover", exact: true });
+  const revokeCurrent = page.getByRole("button", { name: "Revogar Colaborador", exact: true });
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(promotion).toBeVisible();
+    const promoteBox = await promotion.boundingBox(),
+      revokeBox = await revokeCurrent.boundingBox();
+    expect(Math.abs(promoteBox!.y - revokeBox!.y)).toBeLessThan(3);
+    expect(promoteBox!.x + promoteBox!.width).toBeLessThanOrEqual(revokeBox!.x);
+    await expect(promotion).toHaveClass(/button--secondary/);
+    await expectWcag22AA(page);
+    await page.getByRole("region", { name: "Funções e permissões", exact: true }).screenshot({
+      path: testInfo.outputPath(`collaborator-promotion-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await page.setViewportSize({ width: 1280, height: 720 });
   const roleList = await page.request.get("/api/v1/roles");
   const roles = await roleList.json();
   const otherRole = roles.find((role: { code: string }) => role.code === "manager");
@@ -170,7 +182,23 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   );
   expect(conflicting.status()).toBe(409);
   expect(await conflicting.json()).toMatchObject({ code: "USER_ROLE_CONFLICT" });
-  await page.getByRole("button", { name: "Revogar Colaborador", exact: true }).click();
+  await promotion.click();
+  const confirmation = page.getByRole("dialog", { name: "Promover para Gestor" });
+  await expect(confirmation).toContainText("O cargo Colaborador será substituído por Gestor.");
+  await confirmation.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await expect(revokeCurrent).toBeVisible();
+  await promotion.click();
+  await page.getByRole("button", { name: "Confirmar promoção", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Revogar Gestor", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Conceder função", exact: true })).toHaveCount(0);
+  await promotion.click();
+  await expect(page.getByRole("dialog", { name: "Promover para Administrador" })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar promoção", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Revogar Administrador", exact: true }),
+  ).toBeVisible();
+  await expect(promotion).toHaveCount(0);
+  await page.getByRole("button", { name: "Revogar Administrador", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar revogação" }).click();
   const grantButton = page.getByRole("button", { name: "Conceder função" });
   await expect(grantButton).toBeEnabled();

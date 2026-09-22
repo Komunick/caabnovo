@@ -1025,3 +1025,10 @@ em `9763323`, quality/browser/security aprovados. 387 unitários, 168 contratos,
 E2E e 6 a11y. Capturas desktop/celular e claro/escuro revisadas; histórico, acessos individuais,
 concorrência e reexecução do runner de migrations cobertos. Fechamento documental sem alteração
 posterior de aplicação/testes. PR preparado para revisão humana, sem aprovação/merge.
+
+## Promover cargo — 22/09/2026
+
+- [ ] T141 Implementar promoção transacional ao próximo cargo, preservando validade, acessos,
+      histórico e auditoria; validar autorização, conflito concorrente e rollback.
+- [ ] T142 Colocar Promover ao lado de Revogar cargo, com confirmação, destino/descrição, cores e
+      responsividade compartilhadas; validar UI/a11y e CI sem abrir/reabrir PR.
