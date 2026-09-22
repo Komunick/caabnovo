@@ -2,7 +2,26 @@
 
 Escopo: 001 T124–T129 e 005 LC03. Documentação de dependentes incluída conforme autorização;
 POL01/POL02 não implementadas. Localhost permanece desligado e o banco local não recebeu migrations
-nem seeds. Nenhum PR aberto, aprovado ou integrado.
+nem seeds. Preparação concluída para abertura autorizada de PR; sem aprovação ou integração.
+
+## Resultado final
+
+[CI35728053078](https://github.com/Komunick/caabnovo/actions/runs/35728053078), código3ca6410:
+quality, browser e security aprovados. Foram387 unitários,161 contratos,237 integração, 94 E2E (sem
+falhas ou retries reportados) e6 testes do gate separado de acessibilidade, além de2 cenários de
+Relatórios executados antes da suíte completa. Migrations, formatação, lint, tipos, build e
+varreduras de segurança aprovados. Fechamento posterior altera somente documentos.
+
+Imagens finais de lista/cadastro/ações e exportação revisadas. No celular, só a tabela rola
+horizontalmente; teste confirma ausência de transbordamento da página. Nova senha discreta fica
+junto das funções e acima de desativar. Espaçamento do endereço compartilhado restaurado.
+Lista/ações verificadas em1280/390 e claro/escuro; exportação inclui foco visível de teclado.
+[Artefato de Colaboradores](https://github.com/Komunick/caabnovo/actions/runs/35728053078/artifacts/10694174428)
+e [exportação](https://github.com/Komunick/caabnovo/actions/runs/35728053078/artifacts/10693894710).
+Medição diagnóstica:30 aberturas do painel de exportação, p95 de554,1ms,100 registros sintéticos,
+Node24.20.0 no runner do CI; não constitui benchmark de produção.
+
+T124–T129 e005 LC03 concluídas. Usuário autorizou abrir PR após finalizar; sem aprovação/merge.
 
 ## Decisões e implementação
 
@@ -40,14 +59,14 @@ nem seeds. Nenhum PR aberto, aprovado ou integrado.
   formatação e build de produção. Navegador:93 passaram e uma falha no teste novo, que usava GET
   inexistente em/users/:id. Corrigido para consultar a listagem autorizada existente com exclusões
   incluídas.
-- [CI35726706723](https://github.com/Komunick/caabnovo/actions/runs/35726706723), 8921766: inclui
-  tabela responsiva, alinhamento dos filtros, timeout ViaCEP e imagens claro/escuro. Em andamento
-  neste checkpoint; não representa validação concluída.
-
-- CI35727158415 (57a16d2): espaçamento compartilhado do endereço restaurado; navegador ainda contém
-  a mesma consulta incorreta do teste de reativação. Nova rodada necessária.
-- Complemento dos testes de Associados: motivos distintos em duas solicitações, ausência de motivo
-  atual após restauração, autoria/data preservadas e legado sem herdar a ocorrência anterior.
+- [CI35726706723](https://github.com/Komunick/caabnovo/actions/runs/35726706723),8921766:
+  quality/security aprovados;92 E2E passaram, uma falha pelo GET inexistente e um teste de navegação
+  intermitente. Corrigida a espera de navegação antes de voltar pelo histórico.
+- CI35727158415 e35727809845 foram cancelados após substituição pela rodada final. Não são tratados
+  como validação completa. O gate integral foi executado na versão final acima.
+- Revisão visual detectou tabela móvel alargando o grid da página;3ca6410 restringe o grid e
+  acrescenta verificação de rolagem somente na tabela. Complemento de Associados confere motivos
+  distintos, autoria/data, ausência após restauração e legado sem herdar motivo anterior.
 
 ## Cobertura e revisão
 

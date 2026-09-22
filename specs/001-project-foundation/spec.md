@@ -11,42 +11,23 @@ análise. Decisão explícita do usuário; não executar análise integral do pr
 
 ## Checkpoint atual — 22/09/2026
 
-Clarify concluído (cinco respostas) e analyze restrito a001 T124–T129/005 LC03 concluído: nove
-grupos de requisitos, sete tarefas, cobertura100%, sem bloqueadores. Implementação enviada para CI
-em55caeb7. CI35724853202: segurança, formatação, lint, tipos,387 unitários e161 contratos passaram;
-integração236/237. Navegador89 passaram, quatro falharam e um foi intermitente; build e gate
-separado de a11y ainda não passaram. Falhas identificadas: fixtures de desativação sem data, testes
-apontando para cadastro antigo, texto esperado diferente da validação compartilhada e concorrência
-entre limpar filtros e digitar nova busca. Correções em validação; tarefas abertas.
+Incremento001 T124–T129 e005 LC03 implementado e validado em3ca6410 pelo
+[CI35728053078](https://github.com/Komunick/caabnovo/actions/runs/35728053078): quality, browser e
+security aprovados;387 unitários,161 contratos,237 integração,94 E2E e6 a11y, mais formatação, lint,
+tipos, migrations e build. Imagens sintéticas1280/390 revisadas, com lista/ações em claro e escuro.
+[Evidências e limites](evidence/collaborators-2026-09-22-validation.md).
 
-Requisitos implementados: CPF único, consulta autorizada e reativação sem substituir os dados;
-motivo obrigatório nas duas exclusões, preservado por ocorrência; endereço obrigatório apenas nos
-novos cadastros, CEP/complemento opcionais, consulta ViaCEP e edição gradual do legado.
-Lista/filtros e ações seguem o padrão compartilhado; nova senha cinza, junto das funções e acima de
-desativar; exclusão visível somente em desativados. Filtros incluem nome/CPF/e-mail, situação,
-função/sem função, intervalo de cadastro e estado da exclusão.
+Clarify concluído (cinco respostas); analyze somente do incremento: nove grupos de requisitos, sete
+tarefas, cobertura100%, sem bloqueadores. Checklist13/16 preservado por autorização. CPF único e
+reativação preservando dados, motivo por ocorrência nas duas exclusões, endereço novo obrigatório
+com CEP/complemento opcionais, legado gradual, filtros e ações implementados. Documentação de
+dependentes acompanha; POL01/POL02 não implementadas e reanálise ainda pendente.
 
-Orientação final de22/09: abrir PR para dev após concluir implementação, gates e revisão de imagens.
-Não aprovar nem integrar. Documentação de dependentes pode acompanhar; POL01/POL02 não foram
-implementadas e a pergunta sobre nova análise permanece aberta. Localhost e Docker foram desligados
-após o usuário revogar a ativação em22/09; não reativar. Banco preservado, nenhuma migration ou seed
-executada nele. Prosseguir com CI e revisão de imagens sintéticas. Resultados abaixo pertencem ao
-incremento anterior integrado no PR36.
-
-Recorte implementado e validado: T097–T123,005 LC01/LC02 e008 LC01. CI35644236348 (57d6b56) aprovado
-em quality/browser/security, incluindo387 unitários,145 contrato,234 integração,89 E2E, 6
-acessibilidade, migrations e build. Exportação Colaboradores com100 registros, três formatos,
-recuperação de erro e p95 de479,7ms nas30 aberturas do painel. Imagens finais conferidas.
-[Resultados e limites](evidence/plan-2026-09-21-validation.md).
-
-Clarify apenas das alterações concluído:1 pergunta respondida, Gestor não redefine Administrador.
-Demais categorias claras. Checklist13/16 preservado por autorização, sem hooks. Analyze posterior
-somente leitura:23 requisitos,30 tarefas, cobertura100%, sem achados relevantes. A documentação não
-declara novos adaptadores, descarte institucional ou homologação dos demais módulos concluídos.
-
-O recorte anterior foi integrado no PR36; não alterar esse PR ou reutilizar sua branch. Localhost
-desligado, banco local preservado. Checkpoints abaixo são históricos e não substituem este estado
-atual.
+Orientação final do usuário: abrir PR para dev após concluir. Entrega pronta para essa abertura; sem
+aprovação ou merge autorizados. Fechamento posterior ao CI altera somente documentação. Localhost e
+Docker desligados após revogação da ativação; nenhuma migration ou seed no banco local. Recorte
+anterior T097–T123/005 LC01–LC02/008 LC01 foi integrado no PR36 e não deve ser alterado. Checkpoints
+seguintes são históricos e não substituem este estado.
 
 ## Checkpoint de implementação — CI 35636649322
 

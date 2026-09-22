@@ -440,8 +440,11 @@ recuperação e decisão da reserva mantêm histórico/ocupação. Detalhes no
 [relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Somente os
 itens LC acima foram concluídos; exportação própria e pendências anteriores permanecem.
 
-- [ ] LC03 Após clarify/analyze, exigir motivo não vazio para solicitar exclusão de associado;
+- [x] LC03 Após clarify/analyze, exigir motivo não vazio para solicitar exclusão de associado;
       atualizar contrato, diálogo, serviço e persistência/auditoria. Validar UI/API, vazio/espaços,
       autorização, ocorrência/histórico após desfazer/restaurar e legado sem motivo. Preservar sete
       dias e regras de reservas/dependentes; exceção documental coordenada por001 T129. Não executar
       POL01/POL02 neste incremento; sua documentação pode acompanhar a entrega conforme22/09.
+
+LC03 concluída em22/09, CI35728053078 (3ca6410): integração e interface aprovadas, com histórico de
+motivos preservado e legado sem texto inventado. Evidências coordenadas por001 T126/T129.

@@ -689,3 +689,7 @@ proibição anterior de abertura foi substituída; aprovação/merge continuam s
 permanece desligado. Revisão de imagens acrescentou contenção da tabela no grid da lista móvel e
 preservação do espaçamento compartilhado do endereço. E2E confere ausência de transbordamento da
 página e rolagem restrita à tabela.
+
+Fechamento22/09: etapas de implementação/gates e revisão de imagens concluídas no CI35728053078
+(3ca6410); T124–T129/005 LC03 encerradas conforme relatório de evidências. Próximo passo autorizado:
+abrir PR para dev. Sem ativar localhost, aplicar migrations locais ou implementar POL01/POL02.

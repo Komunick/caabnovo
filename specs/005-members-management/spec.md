@@ -2,12 +2,14 @@
 
 ## Checkpoint LC03 — 22/09/2026
 
-Clarify/analyze restritos concluídos e motivo obrigatório na exclusão implementado em contrato,
-diálogo e serviço, com auditoria por ocorrência e leitura do motivo atual. CI35724853202 passou os
-cenários de associado em integração e navegador; a entrega conjunta ainda tem falhas em
-Colaboradores e não está validada por inteiro. LC03 aguarda fechamento dos gates e das evidências.
-Documentação de dependentes acompanha por autorização; POL01/POL02 não implementadas. Localhost
-desligado, sem mudança no banco local e sem PR.
+Motivo obrigatório de exclusão implementado e validado no CI35728053078 (3ca6410), com
+quality/browser/security aprovados. Contrato, diálogo, serviço e auditoria por ocorrência preservam
+autoria/data/histórico após restauração; legado sem motivo não herda outra ocorrência. Testes
+incluem vazio/espaços, duas solicitações com motivos diferentes, sete dias e recuperação.
+[Relatório](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md). LC03
+concluída. Documentação de dependentes acompanha por autorização; POL01/POL02 não implementadas.
+Localhost desligado, banco local preservado. Usuário autorizou abrir PR após fechamento dos gates;
+sem aprovação ou merge autorizados. Checkpoints seguintes são históricos.
 
 ## Checkpoint documental — requisitos de documentos, 21/09/2026
 

@@ -372,3 +372,7 @@ solicitação, confirmação e persistência atômica com autor/data/ocorrência
 permitida e preservar após desfazer/restaurar; manter prazo de sete dias e reservas existentes.
 Conciliar exceção com governança via001 T129. LC03 executa apenas Associados após clarify/analyze,
 sem implementar políticas P01/documentos/dependentes ou exigir motivos nas demais ações.
+
+Fechamento LC03 em22/09: CI35728053078 (3ca6410) aprovado, incluindo motivos vazios/espaços, duas
+ocorrências distintas, restauração/histórico, autoria/data e ausência de motivo no legado. Sem
+mudança nos sete dias, vínculos, reservas, análise manual ou políticas POL01/POL02.
