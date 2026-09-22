@@ -255,7 +255,14 @@ históricos não aprovam as decisões novas.
 
 ## Padronização de ações — 22/09/2026
 
-- [ ] UI03 Mover a exportação existente para dentro do quadro acima dos filtros com cabeçalho
+- [x] UI03 Mover a exportação existente para dentro do quadro acima dos filtros com cabeçalho
       compartilhado, botão secundário e ícone; preservar acesso/fluxo e validar posição,
       responsividade, temas e acessibilidade no CI. Colaboradores usa inclusão primária no cabeçalho
       conforme Parceiros/Associados.
+
+Validação da padronização22/09:
+[CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) aprovou
+quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, Auditoria e
+Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
+filtros. Ver
+[evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).

@@ -14,16 +14,24 @@ posicionamento/estilo primário de Parceiros/Associados. Os módulos sem botão 
 dependem de implementação própria; suas pendências e as migrações de fluxo em Auditoria/Relatórios
 continuam abertas.
 
-[CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572): quality e security
-aprovados;387 unitários,167 contratos,238 integração, migrations, formatação, lint, tipos e build.
-Localmente:167 contratos,19 unitários de exportação e3 de Relatórios, lint/tipos web e formatação
-explícita dos documentos.
-[CI35734203068](https://github.com/Komunick/caabnovo/actions/runs/35734203068) aprovou
-integralmente93ed931, antes da padronização. Imagem da ficha sem CEP e filtros desktop revisados;
-captura móvel ocorreu durante animação do menu. Teste ajustado para capturar estado final, verificar
-a11y móvel e ausência de transbordamento, sem mudar a aplicação. Browser/imagens do conjunto visual
-ainda pendentes; nenhuma tarefa adicional marcada concluída antes desse resultado. Localhost/Docker
-permaneceram desligados e o banco local não recebeu migrations/seeds.
+[CI35736033889](https://github.com/Komunick/caabnovo/actions/runs/35736033889),027d1f6:
+quality/browser/security aprovados;387 unitários,167 contratos,238 integração, 95 E2E sem
+falhas/flaky e6 a11y, mais2 cenários prévios de Relatórios. Migrations, formatação, lint, tipos,
+build e segurança passaram. Localmente:167 contratos, 19 unitários de exportação e3 de Relatórios,
+lint/tipos web e formatação explícita dos documentos. T130–T132,003 UI03 e010 UI03 concluídas.
+Fechamento posterior muda somente documentos; a aplicação validada permanece idêntica.
+
+[CI35734203068](https://github.com/Komunick/caabnovo/actions/runs/35734203068) aprovou93ed931, antes
+da padronização. A rodadae9d05ed também passou integralmente. Revisão detectou captura móvel durante
+a animação do menu;027d1f6 ajustou somente o teste para capturar estado final, verificar a11y móvel
+e ausência de transbordamento. Nova imagem revisada:
+[exportação](https://github.com/Komunick/caabnovo/actions/runs/35736033889/artifacts/10697393514).
+Ficha sem CEP conferida. Imagens da padronização revisadas em desktop/celular e claro/escuro:
+[Colaboradores](https://github.com/Komunick/caabnovo/actions/runs/35734927572/artifacts/10697467462),
+[Auditoria](https://github.com/Komunick/caabnovo/actions/runs/35734927572/artifacts/10697182161) e
+[Relatórios](https://github.com/Komunick/caabnovo/actions/runs/35734927572/artifacts/10698136299).
+Localhost/Docker permaneceram desligados e o banco local não recebeu migrations/seeds. PR37
+atualizado na mesma branch, sem aprovação ou integração.
 
 O restante deste relatório preserva as evidências do incremento anterior.
 

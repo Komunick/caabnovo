@@ -2,12 +2,16 @@
 
 ## Checkpoint de padronização visual — 22/09/2026
 
-Pedido autorizado no mesmo PR37: ações de exportação dentro do quadro, acima dos filtros, alinhadas
-à direita no desktop e acomodadas no celular. Compartilhar posição, espaçamento, ícone Download e
-botão secundário. Colaboradores mantém Novo colaborador no cabeçalho, primário com Plus, como
-Parceiros/Associados; senha cinza e exclusão restrita aos desativados preservadas. Implementação e
-validação visual em andamento. Esta alteração de posição não conclui adequações de exportação ainda
-pendentes.
+Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,
+posição, botão secundário e ícone compartilhados em Colaboradores, Auditoria e Relatórios. Novo
+colaborador segue a inclusão primária com Plus de Parceiros/Associados. Senha cinza e exclusão
+restrita aos desativados preservadas.
+[CI35736033889](https://github.com/Komunick/caabnovo/actions/runs/35736033889) aprovou027d1f6 em
+quality/browser/security:387 unitários,167 contratos,238 integração,95 E2E e6 a11y,
+migrations/build/lint/tipos/formatação/segurança. Imagens desktop/celular e claro/escuro revisadas;
+captura móvel da exportação corrigida e conferida. Tarefas deste complemento concluídas. Esta
+padronização não conclui adequações de exportação pendentes nos módulos. PR segue aberto, sem
+aprovação ou merge; localhost permanece desligado.
 
 ## Checkpoint de revisão de código — 21/09/2026
 

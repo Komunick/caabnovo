@@ -989,14 +989,25 @@ sem homologar políticas institucionais pendentes ou marcar o checklist13/16 com
 
 ## Correções da revisão — 22/09/2026
 
-- [ ] T130 Padronizar datas de Colaboradores em America/Bahia e corrigir CEP vazio na ficha somente
+- [x] T130 Padronizar datas de Colaboradores em America/Bahia e corrigir CEP vazio na ficha somente
       leitura; validar limite histórico e apresentação por interface.
-- [ ] T131 Adicionar CPF com/sem máscara e parcial e Exclusão pendente à exportação; validar
+- [x] T131 Adicionar CPF com/sem máscara e parcial e Exclusão pendente à exportação; validar
       combinações, entrada inválida, catálogo, Excel/CSV/PDF, gates e evidências.
 
 ## Padronização de ações — 22/09/2026
 
-- [ ] T132 Mover a exportação existente para dentro do quadro acima dos filtros com cabeçalho
+- [x] T132 Mover a exportação existente para dentro do quadro acima dos filtros com cabeçalho
       compartilhado, botão secundário e ícone; preservar acesso/fluxo e validar posição,
       responsividade, temas e acessibilidade no CI. Colaboradores usa inclusão primária no cabeçalho
       conforme Parceiros/Associados.
+
+Validação da padronização22/09:
+[CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) aprovou
+quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, Auditoria e
+Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
+filtros. Ver
+[evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).
+
+Fechamento T130–T132: CI35736033889 aprovou027d1f6 em todos os gates (95 E2E,6 a11y), com captura
+móvel corrigida e revisada. Sem alteração adicional de aplicação no fechamento documental; PR37
+permanece aberto e localhost desligado.
