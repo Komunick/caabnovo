@@ -42,6 +42,8 @@ test("optional CEP supports lookup, failures and delayed responses without repla
     const url = route.request().url();
     if (url.includes("11111111")) return route.fulfill({ json: { erro: true } });
     if (url.includes("22222222")) return route.abort();
+    // Leave the request pending to exercise the component's five-second timeout.
+    if (url.includes("44444444")) return;
     if (url.includes("33333333"))
       await new Promise<void>((resolve) => {
         release = resolve;
@@ -69,6 +71,9 @@ test("optional CEP supports lookup, failures and delayed responses without repla
   await expect(page.getByText(/CEP não encontrado/)).toBeVisible();
   await cep.fill("22222222");
   await expect(page.getByText(/Não foi possível consultar o CEP/)).toBeVisible();
+  await cep.fill("44444444");
+  await expect(page.getByText("Consultando CEP…", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Não foi possível consultar o CEP/)).toBeVisible({ timeout: 8000 });
   await cep.fill("33333333");
   await expect.poll(() => Boolean(release)).toBe(true);
   await page.getByLabel("Rua", { exact: true }).fill("Rua manual preservada");
@@ -154,11 +159,16 @@ test("CPF reactivation preserves the prior record and cancellation leaves it exc
   });
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    await expectWcag22AA(page);
-    await page.screenshot({
-      path: info.outputPath(`collaborator-actions-${width}.png`),
-      fullPage: true,
-    });
+    for (const theme of ["light", "dark"]) {
+      await page.evaluate((value) => {
+        document.documentElement.dataset.theme = value;
+      }, theme);
+      await expectWcag22AA(page);
+      await page.screenshot({
+        path: info.outputPath(`collaborator-actions-${theme}-${width}.png`),
+        fullPage: true,
+      });
+    }
   }
 });
 

@@ -75,7 +75,7 @@ export default async function UsersPage({
         ) : null}
         {page.items.length === 0 ? <p>Nenhuma conta encontrada nesta página.</p> : null}
         <TableContainer aria-label="Tabela de contas; use as setas para percorrer horizontalmente">
-          <Table caption="Contas cadastradas">
+          <Table caption="Contas cadastradas" className="users-table">
             <thead>
               <tr>
                 <th scope="col">Nome</th>

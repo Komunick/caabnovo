@@ -49,6 +49,7 @@ export function UserFilters({
   return (
     <DraftForm
       draftKey="users-filters"
+      className="user-list-filters"
       action="/users"
       role="search"
       aria-label="Filtros de colaboradores"

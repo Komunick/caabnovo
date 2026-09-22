@@ -3747,6 +3747,21 @@ thead th {
 .news-list-header p {
   margin-top: 0.4rem;
 }
+.user-list-filters > fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.users-table {
+  min-width: 42rem;
+}
+.users-table :is(th, td):nth-child(n + 3) {
+  min-width: 6rem;
+}
+.users-table thead th {
+  white-space: nowrap;
+}
 .user-create-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
