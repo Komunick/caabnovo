@@ -6,6 +6,7 @@ import { writeSecurityEvent } from "@caab/db/repositories/security-events";
 import { findRoleById } from "@caab/db/repositories/roles";
 import {
   findActiveUserRole,
+  findOverlappingUserRole,
   insertUserRole,
   lockAndCountActiveAdministrators,
   revokeUserRole,
@@ -73,8 +74,18 @@ export async function grantRole(
         justification: command.justification,
         validUntil: command.validUntil,
       });
-      if (await findActiveUserRole(client, target.id, role.id)) {
-        throw new UserAccessError("ROLE_ALREADY_ASSIGNED", 409, "Role is already assigned");
+      const existing = await findOverlappingUserRole(
+        client,
+        target.id,
+        policy.validFrom,
+        policy.validUntil,
+      );
+      if (existing) {
+        throw new UserAccessError(
+          existing.roleId === role.id ? "ROLE_ALREADY_ASSIGNED" : "USER_ROLE_CONFLICT",
+          409,
+          "User already has a role for this period",
+        );
       }
       await insertUserRole(client, {
         userId: target.id,
@@ -108,6 +119,13 @@ export async function grantRole(
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && error.code === "23505") {
       throw new UserAccessError("ROLE_ALREADY_ASSIGNED", 409, "Role is already assigned");
+    }
+    if (typeof error === "object" && error && "code" in error && error.code === "23P01") {
+      throw new UserAccessError(
+        "USER_ROLE_CONFLICT",
+        409,
+        "User already has a role for this period",
+      );
     }
     throw error;
   }

@@ -5,6 +5,8 @@ const messages: Record<string, string> = {
   SELF_ESCALATION_DENIED:
     "Você não pode conceder funções à própria conta. Solicite a outro administrador.",
   ROLE_ALREADY_ASSIGNED: "Este colaborador já possui esta função. Atualize a página para conferir.",
+  USER_ROLE_CONFLICT:
+    "Este colaborador já possui um cargo. Atualize a página e revogue o cargo atual antes de conceder outro.",
   USER_NOT_FOUND: "O colaborador não foi encontrado ou está desativado.",
   ROLE_NOT_FOUND: "Esta função não está mais disponível. Atualize a página.",
   VALIDATION_FAILED: "Confira a função selecionada.",

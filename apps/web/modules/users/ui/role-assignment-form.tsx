@@ -1,7 +1,7 @@
 "use client";
+import { RoleOptions, roleDescription } from "./role-options";
 import { useDraftState } from "@/components/workspace-drafts";
-import { DraftSelect, DraftForm } from "@/components/ui/draft-controls";
-import { FormField } from "@/components/ui/form-field";
+import { DraftForm } from "@/components/ui/draft-controls";
 
 import { Plus } from "lucide-react";
 
@@ -80,7 +80,12 @@ export function RoleAssignmentForm({
         <ul className="role-list">
           {assignedRoles.map((role) => (
             <li key={role.id}>
-              <span>{role.name}</span>
+              <span>
+                {role.name}
+                <small className="role-description">
+                  {roleDescription(roles.find((candidate) => candidate.id === role.id) ?? role)}
+                </small>
+              </span>
               {canRevoke ? (
                 <SensitiveActionDialog
                   triggerLabel={`Revogar ${role.name}`}
@@ -95,21 +100,16 @@ export function RoleAssignmentForm({
       ) : (
         <p>Nenhuma função ativa.</p>
       )}
+      {assignedRoles.length > 0 && canGrant && (
+        <p className="role-description">
+          Cada colaborador pode ter um cargo. Para trocar, revogue o cargo atual antes de conceder
+          outro.
+        </p>
+      )}
       {children}
-      {canGrant && available.length ? (
+      {canGrant && assignedRoles.length === 0 && available.length ? (
         <DraftForm draftKey="users-role-assignment-form-1" onSubmit={grant}>
-          <FormField id="role-id" label="Função">
-            <DraftSelect id="role-id" name="roleId" required defaultValue="">
-              <option value="" disabled>
-                Selecione
-              </option>
-              {available.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </DraftSelect>
-          </FormField>
+          <RoleOptions roles={available} name="roleId" />
 
           {error ? <p role="alert">{error}</p> : null}
           <button

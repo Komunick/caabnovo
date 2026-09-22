@@ -1,4 +1,5 @@
 "use client";
+import { RoleOptions } from "./role-options";
 import { useDraftCache, useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { Button } from "@/components/ui/button";
@@ -135,7 +136,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
           name: data.get("name"),
           email: data.get("email"),
           ...contact,
-          roleIds: data.getAll("roleIds"),
+          roleIds: data.getAll("roleIds").filter(Boolean),
         };
     const validated = (editing ? updateUserRequestSchema : createUserRequestSchema).safeParse(
       payload,
@@ -327,14 +328,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
         {props.mode === "create" ? (
           <>
             {props.roles.length ? (
-              <fieldset className="user-role-options">
-                <legend>Funções iniciais</legend>
-                {props.roles.map((role) => (
-                  <label className="checkbox-field" key={role.id}>
-                    <DraftInput name="roleIds" type="checkbox" value={role.id} /> {role.name}
-                  </label>
-                ))}
-              </fieldset>
+              <RoleOptions roles={props.roles} name="roleIds" optional />
             ) : null}
           </>
         ) : null}

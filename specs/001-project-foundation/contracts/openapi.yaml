@@ -719,6 +719,7 @@ components:
           maxLength: 160
         roleIds:
           type: array
+          maxItems: 1
           uniqueItems: true
           items:
             type: string
@@ -810,6 +811,8 @@ components:
             - administrative
             - permissions
           properties:
+            description:
+              type: string
             administrative:
               type: boolean
             permissions:

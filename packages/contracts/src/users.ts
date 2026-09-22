@@ -83,7 +83,7 @@ export const createUserRequestSchema = z
     phone: userPhoneSchema,
     address: userAddressSchema,
     name: z.string().trim().min(1).max(160),
-    roleIds: z.array(idSchema),
+    roleIds: z.array(idSchema).max(1, "Selecione apenas um cargo."),
     justification: creationJustificationSchema,
   })
   .strict()

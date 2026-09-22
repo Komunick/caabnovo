@@ -1,5 +1,33 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Cargo único — 22/09/2026
+
+Novo pedido em entrega separada, após PR37 integrado: cada colaborador pode ter no máximo um cargo
+vigente. Cadastro usa seleção única com descrição abaixo de cada cargo; detalhe mostra a descrição
+do cargo atribuído e não oferece concessão adicional. Para trocar, revogar o cargo atual antes de
+conceder outro; proteção do último Administrador permanece. Zero cargos continua permitido, sem
+inventar acesso. API de criação rejeita mais de um roleId (422); concessão conflitante retorna409,
+inclusive sob concorrência. Validades não podem se sobrepor no banco; histórico revogado/expirado
+permanece, permitindo nova concessão após o término.
+
+Usuário confirmou regularizar duplicidades mantendo Administrador > Gestor > Colaborador, sem apagar
+histórico nem alterar acessos individuais. Migration nova registra revogações automáticas como
+sistema, sem atribuir a um usuário fictício. Vínculos históricos sem sobreposição são preservados;
+cargos legados não reconhecidos ficam abaixo dos três cargos atuais, com desempate determinístico. A
+prioridade considera primeiro os cargos ativos e vigentes; um cargo expirado não substitui o cargo
+atual. Depois são tratados vínculos futuros e históricos que tenham sobreposição. Sem mudança de
+poderes dos cargos, MFA, localhost ou banco local.
+
+Checkpoint: implementação concluída, validação em andamento. Lint dos arquivos alterados e
+TypeScript web aprovados. Execução local de unitários/contratos: 554 aprovados, uma falha de
+ambiente no subprocesso do worker (`uv_os_get_passwd ENOMEM`); resolução inicial das dependências da
+worktree corrigida. Migration, concorrência, E2E, acessibilidade e build serão executados no CI, sem
+ativar localhost/Docker. Próximo: revisar os gates e imagens antes de abrir o novo PR.
+
+Implantar a migration 0030 antes da aplicação. Rollback da aplicação preserva a constraint, as
+revogações auditadas e os acessos individuais; não apagar coluna/histórico nem restaurar cargos
+simultâneos. Clientes antigos que enviem mais de um cargo recebem 422; concessões adicionais, 409.
+
 ## Checkpoint de padronização visual — 22/09/2026
 
 Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,

@@ -710,3 +710,12 @@ existentes de Colaboradores, Auditoria e Relatórios acima dos filtros, mantendo
 existentes. Remover agrupamento especial do cabeçalho de Colaboradores para seguir a inclusão de
 Parceiros/Associados. Validar posição, cores, navegação e responsividade em temas claro/escuro nos
 testes existentes.
+
+## Cargo único — 22/09/2026
+
+T139 limita roleIds a1; seleção nativa por radio com descrições compartilhadas e rascunho preservado
+no cadastro/detalhe. T140 bloqueia concessão conflitante e aplica exclusão PostgreSQL por
+usuário/intervalo, evitando corrida entre cargos diferentes. Migration0030 normaliza conflitos com a
+hierarquia confirmada, auditoria de sistema e histórico preservado; não toca user_access. Testar
+banco antigo, idempotência da migration, intervalos consecutivos/expirados, concorrência, último
+administrador, permissões, teclado/rascunhos e capturas em temas e tamanhos existentes.

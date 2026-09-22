@@ -1011,3 +1011,11 @@ filtros. Ver
 Fechamento T130–T132: CI35736033889 aprovou027d1f6 em todos os gates (95 E2E,6 a11y), com captura
 móvel corrigida e revisada. Sem alteração adicional de aplicação no fechamento documental; PR37
 permanece aberto e localhost desligado.
+
+## Cargo único — 22/09/2026
+
+- [ ] T139 Seleção única, descrições abaixo de cada cargo no cadastro e detalhe, contrato de criação
+      com até1 cargo e rascunhos preservados; validar API/UI/a11y.
+- [ ] T140 Impedir concessões simultâneas de cargos diferentes, regularizar legados pela hierarquia
+      aprovada com histórico/acessos individuais preservados e validar migration, concorrência,
+      intervalos, guardas/auditoria e CI; preparar novo PR.

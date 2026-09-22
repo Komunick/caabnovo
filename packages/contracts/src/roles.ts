@@ -5,6 +5,7 @@ import { roleReferenceSchema } from "./auth";
 const permissionSchema = z.string().regex(/^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$/);
 
 export const roleSchema = roleReferenceSchema.extend({
+  description: z.string().optional(),
   administrative: z.boolean(),
   permissions: z.array(permissionSchema),
 });

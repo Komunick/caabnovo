@@ -450,3 +450,77 @@ describe("collaborator profile persistence", () => {
     expect(JSON.stringify(events.rows)).not.toContain("71999990001");
   });
 });
+
+it("serializes different grants, rejects a second role and allows an audited replacement after revocation", async () => {
+  const actorId = await seedUser("manager@example.test");
+  const targetUserId = await seedUser("single-role@example.test");
+  const roleIds = [await seedRole("manager"), await seedRole("collaborator")];
+  const results = await Promise.allSettled(
+    roleIds.map((roleId) =>
+      grantRole(database.pool, {
+        ...context(actorId),
+        targetUserId,
+        roleId,
+        justification: "",
+      }),
+    ),
+  );
+  expect(results.filter((item) => item.status === "fulfilled")).toHaveLength(1);
+  expect(results.find((item) => item.status === "rejected")).toMatchObject({
+    reason: { code: "USER_ROLE_CONFLICT", status: 409 },
+  });
+  const active = (
+    await admin.query("SELECT role_id FROM user_role WHERE user_id=$1 AND revoked_at IS NULL", [
+      targetUserId,
+    ])
+  ).rows;
+  expect(active).toHaveLength(1);
+  const next = roleIds.find((id) => id !== active[0].role_id)!;
+  await expect(
+    admin.query(
+      "INSERT INTO user_role(user_id,role_id,granted_by,justification) VALUES($1,$2,$3,'')",
+      [targetUserId, next, actorId],
+    ),
+  ).rejects.toMatchObject({ code: "23P01", constraint: "user_role_single_period" });
+  await revokeRole(database.pool, {
+    ...context(actorId),
+    targetUserId,
+    roleId: active[0].role_id,
+    reason: "",
+  });
+  await grantRole(database.pool, {
+    ...context(actorId),
+    targetUserId,
+    roleId: next,
+    justification: "",
+  });
+  expect(
+    (
+      await admin.query("SELECT role_id FROM user_role WHERE user_id=$1 AND revoked_at IS NULL", [
+        targetUserId,
+      ])
+    ).rows,
+  ).toEqual([{ role_id: next }]);
+  expect(
+    (
+      await admin.query(
+        "SELECT action FROM audit_event WHERE entity_id=$1 ORDER BY occurred_at,id",
+        [targetUserId],
+      )
+    ).rows.map((row) => row.action),
+  ).toEqual(["user.role.granted", "user.role.revoked", "user.role.granted"]);
+});
+
+it("allows granting again after the earlier validity has expired without deleting history", async () => {
+  const actorId = await seedUser("manager@example.test");
+  const targetUserId = await seedUser("expired-role@example.test");
+  const roleId = await seedRole("collaborator");
+  await admin.query(
+    "INSERT INTO user_role(user_id,role_id,granted_by,justification,valid_from,valid_until) VALUES($1,$2,$3,'',now()-interval '2 days',now()-interval '1 day')",
+    [targetUserId, roleId, actorId],
+  );
+  await grantRole(database.pool, { ...context(actorId), targetUserId, roleId, justification: "" });
+  expect(
+    (await admin.query("SELECT id FROM user_role WHERE user_id=$1", [targetUserId])).rowCount,
+  ).toBe(2);
+});

@@ -167,3 +167,27 @@ describe("collaborator contact requirements", () => {
     ).toEqual({ street: "Rua Sintética" });
   });
 });
+
+it("rejects two different initial roles at the HTTP boundary", async () => {
+  const create = vi.fn();
+  const route = createUsersRoute({ resolveActor: async () => actor, list: vi.fn(), create });
+  const response = await route.POST(
+    new Request("https://caab.example.test/api/v1/users", {
+      method: "POST",
+      headers: {
+        origin: "https://caab.example.test",
+        "content-type": "application/json",
+        "x-csrf-token": crypto.randomUUID(),
+        "idempotency-key": crypto.randomUUID(),
+      },
+      body: JSON.stringify({
+        ...syntheticUserContact(),
+        name: "Cargo único",
+        email: "single@example.test",
+        roleIds: [crypto.randomUUID(), crypto.randomUUID()],
+      }),
+    }),
+  );
+  expect(response.status).toBe(422);
+  expect(create).not.toHaveBeenCalled();
+});

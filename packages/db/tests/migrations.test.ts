@@ -54,7 +54,16 @@ describe("database foundation migrations", () => {
       "0027_export_operations.sql",
       "0028_account_member_lifecycle.sql",
       "0029_user_contact_details.sql",
+      "0030_single_user_role.sql",
     ]);
+  });
+
+  it("does not reapply migrations when the runner executes again", async () => {
+    const before = (await admin.query("SELECT * FROM caab_schema_migration ORDER BY name")).rows;
+    await runMigrations(container.getConnectionUri());
+    expect((await admin.query("SELECT * FROM caab_schema_migration ORDER BY name")).rows).toEqual(
+      before,
+    );
   });
 
   it("provisions the isolated pg-boss schema for the runtime role", async () => {
