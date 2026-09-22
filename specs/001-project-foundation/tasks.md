@@ -1014,8 +1014,14 @@ permanece aberto e localhost desligado.
 
 ## Cargo único — 22/09/2026
 
-- [ ] T139 Seleção única, descrições abaixo de cada cargo no cadastro e detalhe, contrato de criação
+- [x] T139 Seleção única, descrições abaixo de cada cargo no cadastro e detalhe, contrato de criação
       com até1 cargo e rascunhos preservados; validar API/UI/a11y.
-- [ ] T140 Impedir concessões simultâneas de cargos diferentes, regularizar legados pela hierarquia
+- [x] T140 Impedir concessões simultâneas de cargos diferentes, regularizar legados pela hierarquia
       aprovada com histórico/acessos individuais preservados e validar migration, concorrência,
       intervalos, guardas/auditoria e CI; preparar novo PR.
+
+Validação T139/T140: [CI 35743401759](https://github.com/Komunick/caabnovo/actions/runs/35743401759)
+em `9763323`, quality/browser/security aprovados. 387 unitários, 168 contratos, 242 integração, 95
+E2E e 6 a11y. Capturas desktop/celular e claro/escuro revisadas; histórico, acessos individuais,
+concorrência e reexecução do runner de migrations cobertos. Fechamento documental sem alteração
+posterior de aplicação/testes. PR preparado para revisão humana, sem aprovação/merge.

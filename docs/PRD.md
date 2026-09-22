@@ -1,34 +1,42 @@
 # CAAB — Sistema Interno de Gestão
 
-**Estado de implementação — 21/09/2026:** este PRD reúne produto e expansões,
-não comprova entrega de todas as funções listadas. O [inventário atual](MODULES.md)
-e a [revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md)
-distinguem código, decisões ainda não implementadas, homologação e suspensões.
-MFA e justificativas obrigatórias foram retirados; Mensagens é protótipo de
-campanhas/comunicados; CAASSH está desativado, RH é possibilidade futura e
-Colaboradores significa contas/permissões. Exportações seguem [padrão vigente](EXPORT-STANDARD.md),
-ainda pendente no código. Retenção e critérios institucionais seguem adiados.
+**Estado de implementação — 21/09/2026:** este PRD reúne produto e expansões, não comprova entrega
+de todas as funções listadas. O [inventário atual](MODULES.md) e a
+[revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md) distinguem código,
+decisões ainda não implementadas, homologação e suspensões. MFA e justificativas obrigatórias foram
+retirados; Mensagens é protótipo de campanhas/comunicados; CAASSH está desativado, RH é
+possibilidade futura e Colaboradores significa contas/permissões. Exportações seguem
+[padrão vigente](EXPORT-STANDARD.md), ainda pendente no código. Retenção e critérios institucionais
+seguem adiados.
 
 ## Estado consolidado — 21/09/2026
 
-**Decisão vigente — 21/09/2026:** Mensagens destina-se a comunicados e campanhas aos associados, com seleção de público e programação. A finalidade foi confirmada; o protótipo ainda precisa da revisão de aderência e continuidade M016 e não está homologado. Meios, provedores e envio real permanecem adiados. Chat interno e suporte por tickets são possibilidades futuras separadas.
+**Decisão vigente — 21/09/2026:** Mensagens destina-se a comunicados e campanhas aos associados, com
+seleção de público e programação. A finalidade foi confirmada; o protótipo ainda precisa da revisão
+de aderência e continuidade M016 e não está homologado. Meios, provedores e envio real permanecem
+adiados. Chat interno e suporte por tickets são possibilidades futuras separadas.
 
-Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
+de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
+definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os
+requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
-Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
+Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões
+continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
 
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
-A primeira versão do painel foi implementada na entrega histórica feature/scheduling-management-20260915 e está integrada:
-oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
-e histórico. O código ainda aceita toda sessão ativa, lacuna de autorização A01.
-A decisão vigente exige concessões separadas de consulta e alteração; a adequação está pendente.
-Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
-[evidências](../specs/008-scheduling-management/evidence/release-review.md).
-Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
-Exceções, avaliações e demais estados permanecem posteriores. O calendário administrativo
-foi priorizado em 18/09 e CAL01–CAL05 estão implementadas, com CAL06 pendente de validação
-final. A interface do usuário no app/site continua posterior; CAASSH permanece desativado.
+A primeira versão do painel foi implementada na entrega histórica
+feature/scheduling-management-20260915 e está integrada: oferta, horários semanais/almoço, reservas
+futuras, consulta, remarcação, cancelamento e histórico. O código ainda aceita toda sessão ativa,
+lacuna de autorização A01. A decisão vigente exige concessões separadas de consulta e alteração; a
+adequação está pendente. Validação e limites na
+[spec 008](../specs/008-scheduling-management/spec.md) e nas
+[evidências](../specs/008-scheduling-management/evidence/release-review.md). Esta atualização
+substitui o estado anterior de “somente pesquisa” para esse recorte. Exceções, avaliações e demais
+estados permanecem posteriores. O calendário administrativo foi priorizado em 18/09 e CAL01–CAL05
+estão implementadas, com CAL06 pendente de validação final. A interface do usuário no app/site
+continua posterior; CAASSH permanece desativado.
 
 ## 1. Controle do documento
 
@@ -38,19 +46,19 @@ final. A interface do usuário no app/site continua posterior; CAASSH permanece 
 
 **Versão:** 0.3
 
-**Status:** Escopo consolidado; Mensagens em protótipo com finalidade confirmada e aderência pendente; Recursos Humanos como possibilidade futura
+**Status:** Escopo consolidado; Mensagens em protótipo com finalidade confirmada e aderência
+pendente; Recursos Humanos como possibilidade futura
 
 **Data:** 21/09/2026 (revisão de código e decisões; versão inicial de 09/09/2026)
 
 **Escopo desta versão:** todos os módulos do painel e portal do parceiro
 
-**Prioridade atualizada em 15/09/2026:** após concluir e validar a primeira versão
-funcional de Agendamentos no painel, o próximo passo será a primeira versão da
-interface do usuário no app/site, antes das demais expansões e módulos pendentes.
-Essa etapa terá spec, plano, tarefas e critérios próprios, reutilizando os dados e
-serviços do painel. A exclusão de refazer app/site na seção 5 limita a entrega
-administrativa inicial; não exclui essa próxima etapa confirmada do produto.
-Ver [sequência vigente](../specs/002-integrated-modules/plan.md).
+**Prioridade atualizada em 15/09/2026:** após concluir e validar a primeira versão funcional de
+Agendamentos no painel, o próximo passo será a primeira versão da interface do usuário no app/site,
+antes das demais expansões e módulos pendentes. Essa etapa terá spec, plano, tarefas e critérios
+próprios, reutilizando os dados e serviços do painel. A exclusão de refazer app/site na seção 5
+limita a entrega administrativa inicial; não exclui essa próxima etapa confirmada do produto. Ver
+[sequência vigente](../specs/002-integrated-modules/plan.md).
 
 O aplicativo e o site externo participam do desenho dos contratos de conteúdo, benefícios, cadastro,
 credencial, agenda e mensagens. Alterações nesses consumidores, contratação de serviços e migração
@@ -114,8 +122,10 @@ por contratos de API versionados.
 
 ## 5. Não objetivos da primeira versão
 
-- Reescrita integral do aplicativo móvel sem recorte; primeira interface autorizada para planejamento em UI01/UI02.
-- Reescrita integral do site externo sem recorte; primeira interface autorizada para planejamento em UI01/UI02.
+- Reescrita integral do aplicativo móvel sem recorte; primeira interface autorizada para
+  planejamento em UI01/UI02.
+- Reescrita integral do site externo sem recorte; primeira interface autorizada para planejamento em
+  UI01/UI02.
 - Implantar prontuário médico ou sistema clínico completo.
 - Substituir folha de pagamento ou sistema de recursos humanos.
 - Automatizar consulta à OAB por scraping ou contornar CAPTCHA.
@@ -125,7 +135,15 @@ por contratos de API versionados.
 
 ## 6. Usuários e funções
 
-**Decisão vigente de21/09/2026:** os cargos iniciais são Administrador, Gestor e Colaborador. Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores, inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição de cargos permanece com Administrador. As categorias profissionais abaixo são descrições de atuação/propostas anteriores, não cargos adicionais a criar nesta entrega. Contrato vigente: [cargos](../specs/001-project-foundation/contracts/roles.md).
+**Decisão vigente de21/09/2026:** os cargos iniciais são Administrador, Gestor e Colaborador.
+Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo
+exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e
+acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores,
+inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui
+cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição
+de cargos permanece com Administrador. As categorias profissionais abaixo são descrições de
+atuação/propostas anteriores, não cargos adicionais a criar nesta entrega. Contrato vigente:
+[cargos](../specs/001-project-foundation/contracts/roles.md).
 
 ### 6.1 Administrador
 
@@ -156,7 +174,10 @@ Mantém serviços parceiros, vigências, documentos, unidades atendidas e situa�
 
 ### 6.7 Gestão de Colaboradores e possibilidade de Recursos Humanos
 
-Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
+de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
+definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os
+requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
 ### 6.8 Auditor
 
@@ -203,7 +224,8 @@ entrega integrada, inclusive os anteriormente ausentes ou adiados:
 - Comunicação: notícias/destaques, públicos, campanhas e modelos automáticos com acompanhamento.
 - Créditos: Caassh, configuração do programa, concessões individuais/em lote, extrato e correções.
 - Portal do parceiro: acesso por organização, solicitações avulsas ou identificadas por QR.
-- Equipe e acesso: Colaboradores é a gestão das contas e permissões existentes, sem cadastro de RH separado.
+- Equipe e acesso: Colaboradores é a gestão das contas e permissões existentes, sem cadastro de RH
+  separado.
 - Auditoria: Eventos e Processamentos reunidos, preservando autorizações independentes.
 - Relatórios: consultas e exportações dos mesmos registros dos domínios.
 
@@ -290,35 +312,37 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 
 ### 9.3 Agenda e disponibilidade
 
-| ID      | Requisito                                                       | Prioridade |
-| ------- | --------------------------------------------------------------- | ---------- |
-| AGE-001 | Configurar jornada recorrente por profissional e unidade.       | MVP        |
-| AGE-002 | Configurar intervalos, bloqueios e indisponibilidades.          | MVP        |
-| AGE-003 | Calcular horários usando a duração do serviço.                  | MVP        |
-| AGE-004 | Impedir sobreposição de agendamentos confirmados.               | MVP        |
-| AGE-005 | Criar, confirmar, concluir, cancelar e remarcar agendamentos.   | MVP        |
-| AGE-006 | Registrar autor, ação e mudanças de cancelamento/remarcação, sem exigir justificativa.                  | MVP        |
-| AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional. | MVP        |
-| AGE-008 | Manter histórico das transições.                                | MVP        |
-| AGE-009 | Integrar calendários externos.                                  | Pós-MVP    |
+| ID      | Requisito                                                                              | Prioridade |
+| ------- | -------------------------------------------------------------------------------------- | ---------- |
+| AGE-001 | Configurar jornada recorrente por profissional e unidade.                              | MVP        |
+| AGE-002 | Configurar intervalos, bloqueios e indisponibilidades.                                 | MVP        |
+| AGE-003 | Calcular horários usando a duração do serviço.                                         | MVP        |
+| AGE-004 | Impedir sobreposição de agendamentos confirmados.                                      | MVP        |
+| AGE-005 | Criar, confirmar, concluir, cancelar e remarcar agendamentos.                          | MVP        |
+| AGE-006 | Registrar autor, ação e mudanças de cancelamento/remarcação, sem exigir justificativa. | MVP        |
+| AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional.                        | MVP        |
+| AGE-008 | Manter histórico das transições.                                                       | MVP        |
+| AGE-009 | Integrar calendários externos.                                                         | Pós-MVP    |
 
 Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não compareceu` e
 `Cancelado`.
 
 Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é
-terminal no desenho de expansão; correções administrativas exigem autorização e auditoria, sem justificativa obrigatória. A versão atual usa Agendado/Cancelado; os demais estados dependem da spec 008.
+terminal no desenho de expansão; correções administrativas exigem autorização e auditoria, sem
+justificativa obrigatória. A versão atual usa Agendado/Cancelado; os demais estados dependem da
+spec 008.
 
 ### 9.4 Associados
 
-| ID      | Requisito                                                       | Prioridade |
-| ------- | --------------------------------------------------------------- | ---------- |
-| ASS-001 | Criar, visualizar e atualizar associados.                       | MVP        |
-| ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional.      | MVP        |
-| ASS-003 | Ativar, bloquear e desbloquear sem motivo obrigatório, com auditoria.               | MVP        |
-| ASS-004 | Registrar situação, fonte e data da verificação da OAB.         | MVP        |
-| ASS-005 | Manter histórico cadastral e de bloqueios.                      | MVP        |
-| ASS-006 | Evitar duplicidade por identificadores definidos.               | MVP        |
-| ASS-007 | Automatizar consulta somente por integração oficial autorizada. | Pós-MVP    |
+| ID      | Requisito                                                             | Prioridade |
+| ------- | --------------------------------------------------------------------- | ---------- |
+| ASS-001 | Criar, visualizar e atualizar associados.                             | MVP        |
+| ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional.            | MVP        |
+| ASS-003 | Ativar, bloquear e desbloquear sem motivo obrigatório, com auditoria. | MVP        |
+| ASS-004 | Registrar situação, fonte e data da verificação da OAB.               | MVP        |
+| ASS-005 | Manter histórico cadastral e de bloqueios.                            | MVP        |
+| ASS-006 | Evitar duplicidade por identificadores definidos.                     | MVP        |
+| ASS-007 | Automatizar consulta somente por integração oficial autorizada.       | Pós-MVP    |
 
 ### 9.5 Parceiros
 
@@ -332,21 +356,24 @@ terminal no desenho de expansão; correções administrativas exigem autorizaç�
 
 ### 9.6 Colaboradores
 
-Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
+de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
+definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os
+requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
 
-COL-001–COL-005 foram retirados do escopo de RH em 11/09/2026; seus IDs
-ficam reservados como histórico e não representam tarefas aprovadas ou concluídas.
+COL-001–COL-005 foram retirados do escopo de RH em 11/09/2026; seus IDs ficam reservados como
+histórico e não representam tarefas aprovadas ou concluídas.
 
 ### 9.7 Usuários e permissões
 
-| ID      | Requisito                                                  | Prioridade |
-| ------- | ---------------------------------------------------------- | ---------- |
-| SEG-001 | Autenticar usuários e permitir desativação imediata.       | MVP        |
-| SEG-002 | Aplicar autorização no servidor em todas as ações.         | MVP        |
-| SEG-003 | Permitir múltiplas funções por usuário.                    | MVP        |
-| SEG-004 | MFA retirado em 10/09/2026 por reclamações; motivo registrado em 17/09/2026. | Retirado |
-| SEG-005 | Testar automaticamente a matriz de permissões.             | MVP        |
-| SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis. | MVP        |
+| ID      | Requisito                                                                                                                                | Prioridade |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| SEG-001 | Autenticar usuários e permitir desativação imediata.                                                                                     | MVP        |
+| SEG-002 | Aplicar autorização no servidor em todas as ações.                                                                                       | MVP        |
+| SEG-003 | Permitir no máximo um cargo vigente por colaborador, com descrição das opções e acessos individuais preservados (decisão de 22/09/2026). | MVP        |
+| SEG-004 | MFA retirado em 10/09/2026 por reclamações; motivo registrado em 17/09/2026.                                                             | Retirado   |
+| SEG-005 | Testar automaticamente a matriz de permissões.                                                                                           | MVP        |
+| SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis.                                                                               | MVP        |
 
 ### 9.8 Auditoria
 
@@ -377,13 +404,13 @@ ficam reservados como histórico e não representam tarefas aprovadas ou conclu�
 | COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                 | Evidência suportada por canal.             |
 | COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                              | Política de composição do público.         |
 | CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                    | Regras aprovadas de Caassh.                |
-| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                                           | Autoridade e limites de concessão.         |
+| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                           | Autoridade e limites de concessão.         |
 | CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                | Regras de utilização e correção.           |
 | POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                   | Tarefas delegáveis.                        |
 | POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                | Estados e responsáveis da operação.        |
 | POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                     | Cadastro autoritativo único.               |
 | REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                              | Público e uso esperado.                    |
-| REL-002 | Oferecer Excel/CSV/PDF com download direto, filtros e seleção/ordem de colunas autorizadas.                 | Retenção e formato.                        |
+| REL-002 | Oferecer Excel/CSV/PDF com download direto, filtros e seleção/ordem de colunas autorizadas.                          | Retenção e formato.                        |
 
 ## 10. Modelo conceitual de dados
 
@@ -416,7 +443,8 @@ ficam reservados como histórico e não representam tarefas aprovadas ou conclu�
 - **Bloqueio do associado:** tipo, motivo, início, fim, responsável e situação.
 - **Parceiro:** dados institucionais, categoria, contatos, vigência e status.
 - **Serviço parceiro:** parceiro, descrição, condições, abrangência e status.
-- **Colaborador/Usuário:** a mesma conta de acesso, com identidade de autenticação, funções, permissões e status; a interface usa Colaboradores.
+- **Colaborador/Usuário:** a mesma conta de acesso, com identidade de autenticação, funções,
+  permissões e status; a interface usa Colaboradores.
 - **Recursos Humanos:** possibilidade futura, sem entidade ou campos aprovados nesta revisão.
 - **Evento de auditoria:** registro imutável da ação e seu contexto.
 
@@ -426,7 +454,8 @@ ficam reservados como histórico e não representam tarefas aprovadas ou conclu�
 - Datas persistidas em UTC e exibidas em `America/Bahia`.
 - Exclusão lógica para entidades auditáveis.
 - Valores sensíveis criptografados quando necessário.
-- Arquivos e metadados no PostgreSQL, conforme a decisão vigente de armazenamento; sem fallback S3/MinIO.
+- Arquivos e metadados no PostgreSQL, conforme a decisão vigente de armazenamento; sem fallback
+  S3/MinIO.
 - Estados controlados por enums ou máquinas de estado explícitas.
 
 ## 11. Telas necessárias
@@ -502,7 +531,8 @@ ficam reservados como histórico e não representam tarefas aprovadas ou conclu�
 
 - OWASP ASVS nível 2 como baseline verificável.
 - Autorização server-side e menor privilégio.
-- MFA retirado em 10/09/2026 por reclamações, conforme motivo confirmado pelo usuário em 17/09/2026; manter senha, sessões, autorização e auditoria.
+- MFA retirado em 10/09/2026 por reclamações, conforme motivo confirmado pelo usuário em 17/09/2026;
+  manter senha, sessões, autorização e auditoria.
 - Proteção contra CSRF, XSS, injeção, IDOR e força bruta.
 - Sanitização do conteúdo rico no armazenamento e/ou renderização.
 - Lista permitida de provedores e formatos para embeds.
@@ -604,7 +634,7 @@ PRs separados acompanham as funcionalidades/specs concluídos e validados, confo
 | Upload malicioso                       | Validação em camadas, storage isolado e antivírus.                                                                     |
 | Permissões se tornarem inconsistentes  | Matriz central e testes automatizados de autorização.                                                                  |
 | Dependência excessiva do CMS           | Limitar Payload ao conteúdo e cadastros adequados; regras críticas ficam no domínio.                                   |
-| Cal.com duplicar a fonte de verdade    | Referência de pesquisa; integrar somente se nenhuma outra possibilidade for encontrada (15/09/2026).                  |
+| Cal.com duplicar a fonte de verdade    | Referência de pesquisa; integrar somente se nenhuma outra possibilidade for encontrada (15/09/2026).                   |
 
 ## 19. Entradas necessárias antes da construção
 
@@ -630,52 +660,60 @@ PRs separados acompanham as funcionalidades/specs concluídos e validados, confo
 - Lucide React será a biblioteca padrão de ícones.
 - Payload CMS e Lexical são a escolha inicial para notícias.
 - PostgreSQL será a fonte de verdade dos domínios operacionais.
-- Agendamentos: avaliar domínio próprio; Cal.com é referência, com integração somente se nenhuma outra possibilidade for encontrada (15/09/2026).
+- Agendamentos: avaliar domínio próprio; Cal.com é referência, com integração somente se nenhuma
+  outra possibilidade for encontrada (15/09/2026).
 - Consulta à OAB será manual até existir integração oficial autorizada.
 - O sistema será um monólito modular com worker, não um conjunto prematuro de microserviços.
 
 ### Rastreabilidade de reaproveitamento — decisão de 10/09/2026
 
-Sempre que uma integração, configuração, regra, recurso visual ou trecho do sistema antigo
-for reaproveitado por solicitação autorizada, registrar origem, adaptações, validação e pontos
-que podem precisar de mudanças em [LEGACY-REUSE.md](LEGACY-REUSE.md), vinculando a spec
-correspondente. Segredos e dados pessoais não entram na documentação. A pesquisa e validação
-da integração OAB-BA, explicitamente solicitadas pelo usuário, estão registradas em LEG-001;
-as regras institucionais antigas de ativo/inativo e finanças não foram adotadas implicitamente.
+Sempre que uma integração, configuração, regra, recurso visual ou trecho do sistema antigo for
+reaproveitado por solicitação autorizada, registrar origem, adaptações, validação e pontos que podem
+precisar de mudanças em [LEGACY-REUSE.md](LEGACY-REUSE.md), vinculando a spec correspondente.
+Segredos e dados pessoais não entram na documentação. A pesquisa e validação da integração OAB-BA,
+explicitamente solicitadas pelo usuário, estão registradas em LEG-001; as regras institucionais
+antigas de ativo/inativo e finanças não foram adotadas implicitamente.
 
 # Colaboradores, Usuários e Parceiros: decisão de escopo
 
-Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à
-atual gestão de Usuários. Parceiros representa externos, como estabelecimentos e conveniados.
-Não há módulo separado de equipe interna/RH no escopo atual.
+Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à atual gestão de
+Usuários. Parceiros representa externos, como estabelecimentos e conveniados. Não há módulo separado
+de equipe interna/RH no escopo atual.
 
-Decisão de 17/09/2026: Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
+Decisão de 17/09/2026: Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`;
+não há cadastro separado de RH. Um módulo futuro chamado **Recursos Humanos** permanece como
+possibilidade, pendente de definição de finalidade, escopo e autorização de construção. Essa
+possibilidade não reativa os requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou
+permissões.
 
-A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional
-foi descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH,
-foram retirados do escopo; não são tarefas implementadas.
+A interpretação anterior de Colaboradores como cadastro de setor, cargo e situação funcional foi
+descartada. COL-001–COL-005 e T032–T035 do programa 002, como definidos para RH, foram retirados do
+escopo; não são tarefas implementadas.
 
-A interface adota **Colaboradores** na mesma gestão de contas, rotas `/users`, identificadores
-e permissões existentes. Menu, catálogo, busca, cabeçalho, página, ações e mensagens usam
-o nome Colaboradores. A busca também reconhece o termo Usuários. Não há novo cadastro,
-API ou migration para essa renomeação.
+A interface adota **Colaboradores** na mesma gestão de contas, rotas `/users`, identificadores e
+permissões existentes. Menu, catálogo, busca, cabeçalho, página, ações e mensagens usam o nome
+Colaboradores. A busca também reconhece o termo Usuários. Não há novo cadastro, API ou migration
+para essa renomeação.
 
-Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa
-002 e no PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
+Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
+PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
 ## Estado vigente — Agendamentos e CAASSH, consolidado em 21/09/2026
 
-**Atualização de Agendamentos em 21/09/2026:** a CAAB gerencia no painel o serviço
-de reservas. Consulta e alteração exigem concessões separadas; alteração depende de
-consulta. O acesso indiscriminado por sessão persiste no código e precisa ser corrigido
-(A01), inclusive em Relatórios (A02). Escopo confirmado:
-unidades com um ou mais serviços, profissionais, procedimentos, funcionamento e
-consulta/gestão de avaliações. Autenticação e auditoria permanecem; outros módulos
-mantêm suas permissões. Ações específicas de avaliações e regras operacionais ainda
-em brainstorming. Cal.com somente como referência, salvo se nenhuma alternativa for encontrada.
+**Atualização de Agendamentos em 21/09/2026:** a CAAB gerencia no painel o serviço de reservas.
+Consulta e alteração exigem concessões separadas; alteração depende de consulta. O acesso
+indiscriminado por sessão persiste no código e precisa ser corrigido (A01), inclusive em Relatórios
+(A02). Escopo confirmado: unidades com um ou mais serviços, profissionais, procedimentos,
+funcionamento e consulta/gestão de avaliações. Autenticação e auditoria permanecem; outros módulos
+mantêm suas permissões. Ações específicas de avaliações e regras operacionais ainda em
+brainstorming. Cal.com somente como referência, salvo se nenhuma alternativa for encontrada.
 
-A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da [spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta, remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja apenas em pesquisa.
+A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da
+[spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta,
+remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes
+continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja
+apenas em pesquisa.
 
-**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima
-são referências históricas, sem ativação ou implementação autorizada no ciclo atual.
-A revisão deverá confirmar finalidade, escopo e eventuais dependências antes da retomada.
+**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima são referências
+históricas, sem ativação ou implementação autorizada no ciclo atual. A revisão deverá confirmar
+finalidade, escopo e eventuais dependências antes da retomada.

@@ -18,11 +18,16 @@ prioridade considera primeiro os cargos ativos e vigentes; um cargo expirado nã
 atual. Depois são tratados vínculos futuros e históricos que tenham sobreposição. Sem mudança de
 poderes dos cargos, MFA, localhost ou banco local.
 
-Checkpoint: implementação concluída, validação em andamento. Lint dos arquivos alterados e
-TypeScript web aprovados. Execução local de unitários/contratos: 554 aprovados, uma falha de
-ambiente no subprocesso do worker (`uv_os_get_passwd ENOMEM`); resolução inicial das dependências da
-worktree corrigida. Migration, concorrência, E2E, acessibilidade e build serão executados no CI, sem
-ativar localhost/Docker. Próximo: revisar os gates e imagens antes de abrir o novo PR.
+Checkpoint: T139/T140 concluídas. O
+[CI 35743401759](https://github.com/Komunick/caabnovo/actions/runs/35743401759) aprovou quality,
+browser e security em `9763323`: 387 unitários, 168 contratos, 242 testes de integração, 95 E2E e 6
+testes de acessibilidade; formatação, lint, tipos, migrations e build aprovados. Capturas de
+cadastro e detalhe revisadas em desktop/celular e temas claro/escuro: seleção única e descrições
+abaixo dos cargos. Ver [evidências](evidence/single-role-2026-09-22-validation.md). Localmente, uma
+falha de ambiente no subprocesso do worker (`uv_os_get_passwd ENOMEM`) passou na reexecução isolada
+fora da restrição (14/14). Fechamento somente documental após esse CI; código da aplicação e testes
+permanecem iguais. Localhost/Docker continuam desligados. Próximo: revisão humana do novo PR e
+autorização explícita antes de integração.
 
 Implantar a migration 0030 antes da aplicação. Rollback da aplicação preserva a constraint, as
 revogações auditadas e os acessos individuais; não apagar coluna/histórico nem restaurar cargos
@@ -363,8 +368,8 @@ verificando progresso, tentativas, resultado terminal, correlação e mensagens 
   imediatamente após a alteração.
 - **FR-006**: Administradores autorizados DEVEM poder criar, consultar, atualizar e desativar contas
   sem excluir seu histórico auditável.
-- **FR-007**: O sistema DEVE permitir que uma conta possua múltiplas funções e que cada função reúna
-  permissões concretas por ação.
+- **FR-007**: O sistema DEVE permitir no máximo um cargo vigente por conta (decisão de 22/09/2026),
+  preservando acessos individuais e histórico. Cada cargo reúne permissões concretas por ação.
 - **FR-008**: Concessão DEVE respeitar autoridade de gestão, distinta da permissão de uso.
   Administrador concede cargos e permissões a qualquer colaborador; Gestor concede acessos de
   qualquer módulo a outros colaboradores, inclusive alterações que não possui, sem alterar os
