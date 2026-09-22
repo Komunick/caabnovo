@@ -1,3 +1,5 @@
+import { listUsers } from "@caab/db/repositories/users";
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import { Writable } from "node:stream";
 import { afterAll, beforeAll, expect, it } from "vitest";
@@ -257,4 +259,54 @@ it("releases a connection acquired after its queued request was cancelled", asyn
   held.release();
   await new Promise((resolve) => setTimeout(resolve, 30));
   expect(data.pool.idleCount).toBe(data.pool.totalCount);
+});
+
+it("combines CPF and pending export filters with the same historical Bahia dates as the list", async () => {
+  const cpf = syntheticUserContact().cpf;
+  const inserted = await admin.query<{ id: string }>(
+    `INSERT INTO "user"(name,email,cpf,status,deactivated_at,deletion_effective_at,created_at)
+     VALUES ('FilterFixture pending','filter-pending@example.test',$1,'disabled',now(),now()+interval '24 hours','2018-01-15T02:30:00Z'),
+     ('FilterFixture active','filter-active@example.test',NULL,'active',NULL,NULL,'2018-01-14T03:00:00Z'),
+     ('FilterFixture expired','filter-expired@example.test',NULL,'disabled',now(),now()-interval '1 hour','2018-01-14T02:59:59Z'),
+     ('FilterFixture next day','filter-next@example.test',NULL,'disabled',now(),now()+interval '24 hours','2018-01-15T03:00:00Z')
+     RETURNING id`,
+    [cpf],
+  );
+  const [pending, active, expired, nextDay] = inserted.rows.map((row) => row.id);
+  async function ids(filters: ExportRequest["filters"]) {
+    const result: string[] = [];
+    for await (const batch of exportBatches(
+      data.pool,
+      usersExport,
+      { ...input, filters: { name: "FilterFixture", ...filters } },
+      new AbortController().signal,
+      1,
+    ))
+      result.push(...batch.map((row) => row.id));
+    return result.sort();
+  }
+  const dates = { from: "2018-01-14", to: "2018-01-14" };
+  expect(await ids({})).toEqual([pending!, active!, nextDay!].sort());
+  expect(await ids({ deleted: "only" })).toEqual([expired]);
+  expect(await ids({ deleted: "all" })).toEqual(inserted.rows.map((row) => row.id).sort());
+  expect(await ids({ deleted: "pending" })).toEqual([pending!, nextDay!].sort());
+  expect(await ids({ ...dates, deleted: "pending" })).toEqual([pending]);
+  expect(await ids({ ...dates, deleted: "pending", status: "active" })).toEqual([]);
+  const listed = await listUsers(data.pool, {
+    q: "FilterFixture",
+    createdFrom: dates.from,
+    createdTo: dates.to,
+    limit: 100,
+  });
+  expect(await ids(dates)).toEqual([pending!, active!].sort());
+  expect(await ids(dates)).toEqual(listed.items.map((row) => row.id).sort());
+  for (const value of [
+    cpf,
+    cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+    cpf.slice(0, 6),
+  ])
+    expect(await ids({ ...dates, cpf: value, deleted: "pending", status: "disabled" })).toEqual([
+      pending,
+    ]);
+  expect(await ids({ cpf, deleted: "only" })).toEqual([]);
 });

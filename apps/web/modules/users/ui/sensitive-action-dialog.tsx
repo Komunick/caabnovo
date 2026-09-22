@@ -1,5 +1,7 @@
 "use client";
-import { DraftForm } from "@/components/ui/draft-controls";
+import { DraftForm, DraftTextarea } from "@/components/ui/draft-controls";
+import { FormField } from "@/components/ui/form-field";
+import { useDraftCache, useDraftState } from "@/components/workspace-drafts";
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,14 +12,21 @@ export function SensitiveActionDialog({
   title,
   confirmLabel,
   onConfirm,
+  requireReason = false,
+  intent = "danger",
   description = "Confirme para concluir esta ação.",
 }: Readonly<{
   triggerLabel: string;
   title: string;
   confirmLabel: string;
   description?: string;
-  onConfirm(): Promise<void>;
+  requireReason?: boolean;
+  intent?: "danger" | "secondary" | "neutral";
+  onConfirm(reason: string): Promise<void>;
 }>) {
+  const drafts = useDraftCache();
+  const draftKey = `sensitive-action:${title}`;
+  const [reason, setReason] = useDraftState(`${draftKey}:reason`, "");
   const [hydrated, setHydrated] = useState(false);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -27,10 +36,17 @@ export function SensitiveActionDialog({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    event.stopPropagation();
+    if (requireReason && !reason.trim()) {
+      setError("Informe o motivo da exclusão.");
+      return;
+    }
     setPending(true);
     setError("");
     try {
-      await onConfirm();
+      await onConfirm(reason.trim());
+      setReason("");
+      drafts.clear(`${draftKey}:`);
       setOpen(false);
     } catch {
       setError("Não foi possível concluir a ação.");
@@ -40,20 +56,43 @@ export function SensitiveActionDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (pending) return;
+        setOpen(next);
+        if (!next) {
+          setReason("");
+          drafts.clear(`${draftKey}:`);
+          setError("");
+        }
+      }}
+    >
       <DialogTrigger asChild>
-        <Button intent="danger" disabled={!hydrated}>
+        <Button intent={intent} disabled={!hydrated}>
           {triggerLabel}
         </Button>
       </DialogTrigger>
       <DialogContent title={title} description={description}>
-        <DraftForm draftKey="users-sensitive-action-dialog-1" onSubmit={submit}>
+        <DraftForm draftKey={draftKey} onSubmit={submit}>
+          {requireReason && (
+            <FormField id={`${draftKey}-reason`} label="Motivo da exclusão">
+              <DraftTextarea
+                name="reason"
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                required
+                maxLength={1000}
+                disabled={pending}
+              />
+            </FormField>
+          )}
           {error ? <p role="alert">{error}</p> : null}
           <div className="button-row">
             <DialogClose asChild>
               <Button disabled={pending}>Cancelar</Button>
             </DialogClose>
-            <Button intent="danger" type="submit" disabled={pending}>
+            <Button intent={intent} type="submit" disabled={pending}>
               {pending ? "Aguarde…" : confirmLabel}
             </Button>
           </div>

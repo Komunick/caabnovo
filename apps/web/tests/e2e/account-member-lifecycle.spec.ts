@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import type { Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -46,11 +47,27 @@ test("administrator reactivates, replaces password, schedules deletion and resto
   await login(page);
   const email = `lifecycle-${crypto.randomUUID()}@example.test`;
   const user = await create(page, "/api/v1/users", {
+    ...syntheticUserContact(),
     name: "Colaborador ciclo de vida",
     email,
     roleIds: [],
   });
   await page.goto(`/users/${user.id}`);
+  const resetButton = page.getByRole("button", { name: "Gerar nova senha", exact: true });
+  await expect(resetButton).toHaveClass(/button--neutral/);
+  await expect(
+    page
+      .getByRole("region", { name: "Funções e permissões" })
+      .getByRole("button", { name: "Gerar nova senha", exact: true }),
+  ).toBeVisible();
+  const resetBox = await resetButton.boundingBox();
+  const disableBox = await page
+    .getByRole("button", { name: "Desativar colaborador", exact: true })
+    .boundingBox();
+  expect(resetBox!.y).toBeLessThan(disableBox!.y);
+  await expect(page.getByRole("button", { name: "Excluir colaborador", exact: true })).toHaveCount(
+    0,
+  );
   await page.getByRole("button", { name: "Desativar colaborador", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar desativação", exact: true }).click();
   await expect(page.getByText("Desativado", { exact: true })).toBeVisible();
@@ -86,7 +103,18 @@ test("administrator reactivates, replaces password, schedules deletion and resto
     expect(current.status()).toBe(200);
     await receipt.getByRole("link", { name: "Abrir colaborador" }).click();
     await expect(page.getByLabel("Nova senha", { exact: true })).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Excluir colaborador", exact: true }),
+    ).toHaveCount(0);
+    await page.getByRole("button", { name: "Desativar colaborador", exact: true }).click();
+    await page.getByRole("button", { name: "Confirmar desativação", exact: true }).click();
     await page.getByRole("button", { name: "Excluir colaborador", exact: true }).click();
+    await page.getByLabel("Motivo da exclusão", { exact: true }).fill("   ");
+    await page.getByRole("button", { name: "Confirmar exclusão", exact: true }).click();
+    await expect(page.getByRole("dialog").getByRole("alert")).toHaveText("Preencha este campo.");
+    await page
+      .getByLabel("Motivo da exclusão", { exact: true })
+      .fill("Encerramento sintético do vínculo");
     await page.getByRole("button", { name: "Confirmar exclusão", exact: true }).click();
     await expect(
       page.getByText("Exclusão em 24 horas — conta bloqueada", { exact: true }),
@@ -113,12 +141,19 @@ test("member deletion waits seven days and offers undo and restoration with reta
   });
   await page.goto(`/members/${member.id}`);
   await page.getByRole("button", { name: "Excluir associado", exact: true }).click();
+  await expectWcag22AA(page);
+  await page
+    .getByLabel("Motivo da exclusão", { exact: true })
+    .fill("Encerramento sintético do vínculo");
   await page.getByRole("button", { name: "Confirmar exclusão", exact: true }).click();
   await expect(page.getByText(/Exclusão prevista para/)).toBeVisible();
   await page.getByRole("button", { name: "Desfazer exclusão do associado", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar restauração", exact: true }).click();
   await expect(page.getByText(/Exclusão prevista para/)).toHaveCount(0);
   await page.getByRole("button", { name: "Excluir associado", exact: true }).click();
+  await page
+    .getByLabel("Motivo da exclusão", { exact: true })
+    .fill("Encerramento sintético do vínculo");
   await page.getByRole("button", { name: "Confirmar exclusão", exact: true }).click();
   await expect(page.getByText(/Exclusão prevista para/)).toBeVisible();
   await expire("member", member.id);

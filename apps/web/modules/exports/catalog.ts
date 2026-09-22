@@ -64,6 +64,8 @@ export function authorizeExport(adapter: ExportAdapter, actor: RequestActor, inp
   } catch {
     throw new ExportError("EXPORT_CONFIGURATION_INVALID", 422);
   }
+  // Validate adapter-specific filters before opening the download stream.
+  adapter.query(input);
   return catalog;
 }
 /** Registration is code-owned; clients can never supply SQL or import an adapter. */

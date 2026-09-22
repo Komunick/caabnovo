@@ -15,6 +15,7 @@ export default async function UserExportsPage() {
   return (
     <ExportScreen
       sourcePermission="users:read"
+      backHref="/users"
       catalog={{
         ...authorizedCatalog(usersExport, actor),
         formats: ["xlsx", "csv", "pdf"],

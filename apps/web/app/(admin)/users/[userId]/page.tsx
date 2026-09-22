@@ -3,12 +3,13 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { listActiveRoles } from "@caab/db/repositories/roles";
 import { findUserById } from "@caab/db/repositories/users";
-import { roleSchema, userSchema } from "@caab/contracts";
+import { roleSchema, userSchema, formatBrazilianAddress } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { PERMISSIONS } from "@/modules/auth/permissions";
 import { getDatabase } from "@/modules/shared/database";
 import { serializeUser } from "@/modules/users/user-service";
 import { RoleAssignmentForm } from "@/modules/users/ui/role-assignment-form";
+import { UserStatusActions } from "@/modules/users/ui/user-status-actions";
 import { UserLifecycle } from "@/modules/users/ui/user-lifecycle";
 import { UserForm } from "@/modules/users/ui/user-form";
 import { UserAccessForm } from "@/modules/users/ui/user-access-form";
@@ -51,6 +52,23 @@ export default async function UserDetailPage({
     }),
   );
 
+  const accountActions = (
+    <div className="user-account-actions">
+      {hasPassword &&
+      user.status === "active" &&
+      actor.userId !== user.id &&
+      actor.permissions.has(PERMISSIONS.usersResetPassword) &&
+      (!base.administrator || actor.permissions.has(PERMISSIONS.rolesGrant)) ? (
+        <ResetPasswordForm userId={user.id} email={user.email} version={user.version} />
+      ) : null}
+      <UserStatusActions
+        user={user}
+        canDisable={actor.permissions.has(PERMISSIONS.usersDisable)}
+        canReactivate={actor.permissions.has(PERMISSIONS.usersUpdate)}
+      />
+    </div>
+  );
+
   return (
     <div className="page-stack">
       <header>
@@ -77,13 +95,6 @@ export default async function UserDetailPage({
       access.permissions.every((permission) => actor.permissions.has(permission)) ? (
         <InitializePasswordForm userId={user.id} email={user.email} />
       ) : null}
-      {hasPassword &&
-      user.status === "active" &&
-      actor.userId !== user.id &&
-      actor.permissions.has(PERMISSIONS.usersResetPassword) &&
-      (!base.administrator || actor.permissions.has(PERMISSIONS.rolesGrant)) ? (
-        <ResetPasswordForm userId={user.id} email={user.email} version={user.version} />
-      ) : null}
       {actor.permissions.has(PERMISSIONS.usersUpdate) && !user.deletionEffectiveAt ? (
         <UserForm
           mode="edit"
@@ -91,6 +102,23 @@ export default async function UserDetailPage({
           canDisable={actor.permissions.has(PERMISSIONS.usersDisable)}
         />
       ) : null}
+      {(!actor.permissions.has(PERMISSIONS.usersUpdate) || user.deletionEffectiveAt) && (
+        <section className="panel" aria-label="Dados cadastrais">
+          <h2>Dados cadastrais</h2>
+          <dl>
+            <dt>CPF</dt>
+            <dd>{user.cpf ?? "Não informado"}</dd>
+            <dt>Telefone</dt>
+            <dd>{user.phone ?? "Não informado"}</dd>
+            <dt>Endereço</dt>
+            <dd>
+              {user.address
+                ? `${formatBrazilianAddress(user.address)} — ${user.address.city}/${user.address.state}${user.address.postalCode ? ` — CEP ${user.address.postalCode}` : ""}`
+                : "Não informado"}
+            </dd>
+          </dl>
+        </section>
+      )}
       <UserLifecycle
         user={user}
         canDelete={actor.permissions.has(PERMISSIONS.usersDelete)}
@@ -111,8 +139,14 @@ export default async function UserDetailPage({
           assignedRoles={user.roles}
           canGrant={actor.permissions.has(PERMISSIONS.rolesGrant)}
           canRevoke={actor.permissions.has(PERMISSIONS.rolesRevoke)}
-        />
-      ) : null}
+        >
+          {accountActions}
+        </RoleAssignmentForm>
+      ) : (
+        <section className="panel" aria-label="Ações da conta">
+          {accountActions}
+        </section>
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
@@ -106,6 +107,7 @@ describe.sequential("user access transactions", () => {
     const roleId = await seedRole("initial-role");
     const created = await createUser(database.pool, {
       ...context(actorId),
+      ...syntheticUserContact(),
       name: "Novo colaborador",
       email: "new@example.test",
       roleIds: [roleId],
@@ -315,5 +317,136 @@ describe.sequential("user access transactions", () => {
       [targetId],
     );
     expect(persisted.rows[0]).toMatchObject({ status: "active", version: 1, revoked_at: null });
+  });
+});
+
+describe("collaborator profile persistence", () => {
+  it("persists normalized contact data, detects duplicates and version conflicts, and keeps legacy accounts", async () => {
+    const actorId = await seedUser("manager@example.test");
+    const contact = syntheticUserContact();
+    const command = {
+      ...context(actorId),
+      ...contact,
+      name: "Pessoa Teste",
+      email: "contact@example.test",
+      roleIds: [],
+      idempotencyKey: crypto.randomUUID(),
+    };
+    const created = await createUser(database.pool, command);
+    expect(created).toMatchObject(contact);
+    const { findUserById, listUsers } = await import("@caab/db/repositories/users");
+    expect(await findUserById(database.pool, created.id)).toMatchObject(contact);
+    for (const q of [
+      "Pessoa Teste",
+      "contact@example.test",
+      contact.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+    ]) {
+      expect(
+        (await listUsers(database.pool, { q, limit: 100 })).items.map((user) => user.id),
+      ).toEqual([created.id]);
+    }
+    expect((await listUsers(database.pool, { q: "%", limit: 100 })).items).toHaveLength(0);
+    expect(
+      (await listUsers(database.pool, { q: "Pessoa Teste", status: "disabled", limit: 100 })).items,
+    ).toHaveLength(0);
+
+    await expect(
+      createUser(database.pool, { ...command, phone: "71999990001" }),
+    ).rejects.toMatchObject({ code: "IDEMPOTENCY_CONFLICT" });
+    await expect(
+      createUser(database.pool, {
+        ...command,
+        email: "duplicate@example.test",
+        idempotencyKey: crypto.randomUUID(),
+      }),
+    ).rejects.toMatchObject({ code: "USER_CPF_CONFLICT" });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        actor: { ...context(actorId).actor, permissions: new Set(["users:disable"]) },
+        userId: created.id,
+        version: 1,
+        status: "disabled",
+        phone: "71999990002",
+        justification: "",
+      }),
+    ).rejects.toThrow();
+    const legacy = await seedUser("legacy-contact@example.test");
+    expect(await findUserById(database.pool, legacy)).toMatchObject({
+      cpf: null,
+      phone: null,
+      address: null,
+    });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: legacy,
+        version: 1,
+        cpf: contact.cpf,
+        justification: "",
+      }),
+    ).rejects.toMatchObject({ code: "USER_CPF_CONFLICT" });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: legacy,
+        version: 1,
+        name: "Legado preservado",
+        justification: "",
+      }),
+    ).resolves.toMatchObject({ version: 2, cpf: null });
+    const partial = await changeUser(database.pool, {
+      ...context(actorId),
+      userId: legacy,
+      version: 2,
+      address: { street: "Rua gradativa" },
+      justification: "",
+    });
+    expect(partial).toMatchObject({
+      version: 3,
+      cpf: null,
+      phone: null,
+      address: { street: "Rua gradativa", city: "", postalCode: "" },
+    });
+    const more = await changeUser(database.pool, {
+      ...context(actorId),
+      userId: legacy,
+      version: 3,
+      address: { city: "Salvador" },
+      justification: "",
+    });
+    expect(more.address).toMatchObject({ street: "Rua gradativa", city: "Salvador" });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: legacy,
+        version: 4,
+        address: { street: "" },
+        justification: "",
+      }),
+    ).rejects.toMatchObject({ code: "VALIDATION_FAILED" });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: created.id,
+        version: 1,
+        phone: "(71) 99999-0001",
+        address: { ...contact.address, number: "42" },
+        justification: "",
+      }),
+    ).resolves.toMatchObject({ phone: "71999990001", address: { number: "42" }, version: 2 });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: created.id,
+        version: 1,
+        phone: "71999990002",
+        justification: "",
+      }),
+    ).rejects.toMatchObject({ code: "USER_VERSION_CONFLICT" });
+    const events = await admin.query("SELECT * FROM audit_event WHERE entity_id=$1", [created.id]);
+    expect(JSON.stringify(events.rows)).not.toContain(contact.cpf);
+    expect(JSON.stringify(events.rows)).not.toContain(contact.address.street);
+    expect(JSON.stringify(events.rows)).not.toContain("71999990001");
   });
 });

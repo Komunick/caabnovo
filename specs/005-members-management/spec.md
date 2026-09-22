@@ -1,5 +1,25 @@
 # Feature Specification: Associados e dependentes
 
+## Checkpoint LC03 — 22/09/2026
+
+Motivo obrigatório de exclusão implementado e validado no CI35728053078 (3ca6410), com
+quality/browser/security aprovados. Contrato, diálogo, serviço e auditoria por ocorrência preservam
+autoria/data/histórico após restauração; legado sem motivo não herda outra ocorrência. Testes
+incluem vazio/espaços, duas solicitações com motivos diferentes, sete dias e recuperação.
+[Relatório](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md). LC03
+concluída. Documentação de dependentes acompanha por autorização; POL01/POL02 não implementadas.
+Localhost desligado, banco local preservado. Usuário autorizou abrir PR após fechamento dos gates;
+sem aprovação ou merge autorizados. Checkpoints seguintes são históricos.
+
+## Checkpoint documental — requisitos de documentos, 21/09/2026
+
+Usuário definiu documentos de titular/cônjuge/filho/enteado e limite de até 25 anos para filhos e
+enteados. Matriz vigente em [open-decisions.md](open-decisions.md). P01 está parcialmente resolvida:
+pergunta 4 sobre nova análise continua pendente. Planejamento/implementação da matriz em POL02;
+POL01 preserva a pergunta aberta. Somente documentação nesta rodada, sem código, migration,
+aplicação retroativa, testes de aplicação ou alteração do CI. Próximo passo: detalhar a aplicação da
+matriz e validar os cenários quando sua implementação for retomada.
+
 ## Checkpoint da entrega ativa — 21/09/2026
 
 Incremento de ciclo de vida implementado e validado no CI35644236348 (57d6b56), com dados
@@ -45,9 +65,20 @@ Associados; outra instância implementará Caassh.
   definição posterior? → A: Sim (A); definir posteriormente e manter o cadastro e a análise manual
   atuais. Não presumir critérios institucionais, obrigatoriedade documental ou aprovação automática.
 
-Checkpoint de 21/09/2026: Q11 mantém P01 pendente de definição institucional posterior e preserva a
-operação manual atual. FR-006 e SC-006 delimitam o comportamento; nenhuma regra nova implementada,
-análise concluída ou teste executado neste clarify.
+Checkpoint histórico de Q11: o adiamento integral foi substituído pelas respostas posteriores
+abaixo; nenhuma implementação decorre desse registro.
+
+### Complemento da sessão de 21/09/2026 — documentos
+
+- Q: Quais documentos são exigidos para titular? → A: Carteira da OAB.
+- Q: Quais documentos são exigidos para dependentes? → A: Cônjuge: identidade e comprovante de
+  casamento ou união estável. Filho menor: identidade; maior: identidade e matrícula em instituição
+  de ensino superior. Enteado: identidade e comprovante de casamento ou união estável; maior também
+  apresenta matrícula em instituição de ensino superior. Filhos e enteados têm limite de até 25
+  anos.
+- Q: Quais vínculos são aceitos e comprovados? → A: Respondido na matriz de cônjuge, filho e enteado
+  acima.
+- Q: Quais alterações exigem nova análise? → A: Sem resposta por enquanto.
 
 ## User Scenarios & Testing
 
@@ -139,13 +170,16 @@ decisão vencida, versão obsoleta, sessão revogada, comando repetido e falha n
 - **FR-005**: Registrar decisões manuais independentes para cadastro, vínculo, OAB, finanças,
   credencial e elegibilidade; exibir fonte, método, operador, data, validade e aviso de alteração
   cadastral.
-- **FR-006**: Não inferir regras de dependência, documentação obrigatória, elegibilidade ou
-  concessão de crédito. Operador registra regra aplicada; campos não verificados permanecem
-  desconhecidos. Q11 de 21/09/2026 adia a definição institucional de quem pode ser dependente e
-  quais documentos são obrigatórios (P01). Manter cadastro e análise manual atuais; não acrescentar
-  lista obrigatória, aprovação ou reprovação automática com base em critérios ainda não definidos.
-  Preservar validações de identidade, integridade dos vínculos, segurança dos arquivos e permissões
-  existentes.
+- **FR-006**: Adotar a matriz documental de P01 em [open-decisions.md](open-decisions.md): titular
+  apresenta carteira da OAB; cônjuge apresenta identidade e comprovante de casamento ou união
+  estável; filho menor apresenta identidade e filho maior também apresenta comprovante de matrícula
+  em instituição de ensino superior; enteado apresenta identidade e comprovante de casamento ou
+  união estável, acrescentando matrícula em instituição de ensino superior se maior. Filhos e
+  enteados têm limite de até 25 anos. Planejamento/implementação pendentes em POL02. Preservar
+  análise manual e campos desconhecidos, sem aprovação automática ou exigências adicionais
+  presumidas. As alterações que exigem nova análise continuam pendentes em POL01; manter controles
+  existentes até decisão específica. Preservar identidade, integridade dos vínculos, arquivos
+  privados, histórico e permissões.
 - **FR-007**: Manter histórico contextual e auditoria transacionais e proteção contra edição
   concorrente/repetição.
 - **FR-008**: Preservar fronteira entre Usuários, Associados e Caassh; cadastro não provisiona
@@ -243,10 +277,12 @@ independentes. Regras de impedimento de benefícios por finalidade permanecem em
   390 px, sem perda de ações.
 - **SC-005**: Mudança de uma dimensão não altera outra; Caassh referencia a mesma pessoa sem
   duplicação cadastral.
-- **SC-006**: Enquanto P01 estiver pendente, cadastro, vínculo e revisão documental mantêm a
-  operação manual atual, sem exigir documentos ou aprovar/reprovar pessoas por critérios
-  institucionais inventados. Validações de CPF informado, duplicidade, ciclos de vínculo, arquivos
-  privados e autorização permanecem aplicáveis.
+- **SC-006**: Na implementação de POL02, conferir os seis perfis da matriz P01 (titular, cônjuge,
+  filho menor/maior e enteado menor/maior), com exigências documentais correspondentes e limite de
+  até 25 anos para filhos/enteados. Não exigir matrícula de menor nem estender o limite ao cônjuge.
+  Preservar análise manual, dados existentes, privacidade e validações; não declarar aprovação
+  automática nem criar gatilhos de reanálise enquanto a pergunta 4 permanecer sem resposta. Estes
+  cenários são futuros, sem execução nesta atualização.
 
 ## Ajustes do formulário confirmados em 10/09/2026
 
@@ -330,10 +366,11 @@ formato. Busca mista preservada e registros antigos não são reescritos em lote
 ## Justificativas de criação e alteração — 14/09/2026
 
 A regra intermediária que dispensava motivo somente na criação foi substituída pela decisão final de
-14/09/2026: nenhuma ação exige campo de motivo ou justificativa. Preservar autor, data, alterações e
-motivos históricos existentes, além de autorização, confirmação, idempotência e controle de versão.
-Aceite vigente: criar e alterar sem preencher/enviar motivo, sem esse controle na interface. Não
-apagar dados históricos nem inventar explicação humana.
+14/09/2026: dispensa geral de motivo ou justificativa, com exceção posterior da solicitação de
+exclusão de Associados confirmada em 21/09/2026 (LC03). Preservar autor, data, alterações e motivos
+históricos existentes, além de autorização, confirmação, idempotência e controle de versão. Aceite
+vigente: criar e alterar sem preencher/enviar motivo, sem esse controle na interface. Não apagar
+dados históricos nem inventar explicação humana.
 
 ## Resultado da consulta OAB — revisão de 14/09/2026
 
@@ -353,16 +390,17 @@ Decisão do usuário após consulta individual autorizada somente para leitura:
 - Testes automatizados usam exclusivamente dados sintéticos e um provedor simulado; não repetir a
   consulta real.
 
-## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+## Dispensa de justificativas — 14/09, com exceção de exclusão em 21/09/2026
 
-Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua
+Decisão do usuário em 14/09: remover os campos de motivo/justificativa das demais ações e sua
 obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação,
 arquivamento, acessos, situações, documentos, avaliações, configurações, exportações e reenvios.
 Esta decisão substitui as exigências anteriores, inclusive as exceções de primeira
 criação/publicação. Auditoria preserva ator, ação, data e alterações, sem inventar explicação
 humana. Dados históricos de motivo permanecem legíveis. Campos operacionais (fonte, resultado,
 condições e vigência), permissões, autenticação, concorrência e confirmação de ações permanecem.
-Aceite: jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece
+Exceção de 21/09: solicitar exclusão exige motivo, autor e data por ocorrência (LC03). Aceite: as
+demais jornadas funcionam sem preencher ou enviar motivo; nenhum controle de justificativa aparece
 na interface. Agendamentos possui primeira versão administrativa (spec 008), com app/site e
 expansões pendentes; OAB-BA permanece pendente da hospedagem.
 
@@ -468,3 +506,13 @@ essas ações sem criar estado administrativo paralelo.
 
 Checkpoint: código existente identificado no serviço e em MemberAdministrativeStatus / MemberEditor;
 nenhuma nova validação executada nesta ampliação. Localhost desligado.
+
+Motivo da exclusão — decisão vigente do usuário em 21/09/2026: solicitar exclusão de associado exige
+motivo obrigatório, também validado pelo servidor; vazio ou somente espaços é recusado. Esta é
+exceção explícita à dispensa geral de motivos registrada em14/09; as demais ações continuam
+dispensadas. Registrar motivo, autor e data da ocorrência antes de iniciar o prazo de sete dias;
+preservar histórico após desfazer/restaurar. Exclusões antigas sem motivo exibem “Motivo não
+registrado” em consulta autorizada. Não inventar motivos retroativos nem mudar reservas/dependentes.
+Checkpoint: decisão documental, LC03 pendente; implementação somente após clarify/analyze deste
+recorte. Documentação de dependentes P01 incluída por autorização de22/09; implementação fora do
+incremento.

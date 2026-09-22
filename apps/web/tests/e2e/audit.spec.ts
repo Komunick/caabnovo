@@ -1,3 +1,4 @@
+import { expectExportAboveFilters } from "./panel-actions";
 import type { Page } from "@playwright/test";
 import { expectWcag22AA } from "./accessibility";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -97,6 +98,12 @@ test("administrator reads complete human details with support codes collapsed on
   await expect(page.getByText(description, { exact: true }).first()).toBeVisible();
   await expect(page.getByText("user.updated", { exact: true }).first()).toBeHidden();
   await expectWcag22AA(page);
+  const filtersPanel = page.getByRole("region", { name: "Filtros de atividades", exact: true });
+  const exportAction = filtersPanel.getByRole("button", {
+    name: "Exportar auditoria",
+    exact: true,
+  });
+  await expectExportAboveFilters(filtersPanel, exportAction, filtersPanel.locator("form"));
   await page.screenshot({
     animations: "disabled",
     path: testInfo.outputPath("audit-plain-desktop.png"),
@@ -139,6 +146,8 @@ test("administrator reads complete human details with support codes collapsed on
   await expect(details).toBeFocused();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  await expectExportAboveFilters(filtersPanel, exportAction, filtersPanel.locator("form"));
+  await expectWcag22AA(page);
   await page.screenshot({
     animations: "disabled",
     path: testInfo.outputPath("audit-plain-list-mobile-dark.png"),

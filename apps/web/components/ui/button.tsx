@@ -7,6 +7,7 @@ export const buttonVariants = cva("button", {
     intent: {
       primary: "button--primary",
       secondary: "button--secondary",
+      neutral: "button--neutral",
       danger: "button--danger",
       ghost: "button--ghost",
     },

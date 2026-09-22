@@ -1,4 +1,5 @@
 "use client";
+import { Download } from "lucide-react";
 import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
 import { FormField } from "@/components/ui/form-field";
 
@@ -54,7 +55,9 @@ export function AuditExportDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="compact">Exportar auditoria</Button>
+        <Button>
+          <Download size={18} aria-hidden="true" /> Exportar auditoria
+        </Button>
       </DialogTrigger>
       <DialogContent
         title="Exportar auditoria"

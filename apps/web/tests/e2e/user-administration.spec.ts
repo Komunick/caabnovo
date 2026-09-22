@@ -1,3 +1,5 @@
+import { expectExportAboveFilters } from "./panel-actions";
+import { syntheticUserContact } from "../helpers/user-contact";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import { expectWcag22AA } from "./accessibility";
@@ -26,10 +28,46 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await expect(page.getByRole("heading", { name: "Colaboradores" })).toBeVisible();
   await expectWcag22AA(page);
 
+  await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   const createButton = page.getByRole("button", { name: "Criar colaborador" });
   await expect(createButton).toBeEnabled();
   await page.getByLabel("Nome").fill(name);
   await page.getByLabel("E-mail").fill(email);
+  await createButton.click();
+  await expect(page.getByLabel("CPF", { exact: true })).toHaveAttribute("required", "");
+  await expect(page.getByRole("region", { name: "Senha inicial do colaborador" })).toHaveCount(0);
+  const contact = syntheticUserContact();
+  await page.route("https://viacep.com.br/**", (route) => route.abort());
+  await page.getByLabel("CPF", { exact: true }).fill(contact.cpf);
+  await page.getByLabel("Telefone", { exact: true }).fill(contact.phone);
+  await page.getByLabel("CEP (opcional)", { exact: true }).fill(contact.address.postalCode);
+  await page.getByLabel("Rua", { exact: true }).fill(contact.address.street);
+  await page.getByLabel("Número", { exact: true }).fill(contact.address.number);
+  await page.getByLabel("Bairro", { exact: true }).fill(contact.address.neighborhood);
+  await page.getByLabel("Cidade", { exact: true }).fill(contact.address.city);
+  await page.getByLabel("Estado (UF)", { exact: true }).fill(contact.address.state);
+  await page
+    .getByRole("navigation", { name: "Navegação administrativa" })
+    .getByRole("link", { name: "Início", exact: true })
+    .click();
+  await page
+    .getByRole("navigation", { name: "Navegação administrativa" })
+    .getByRole("link", { name: "Colaboradores", exact: true })
+    .click();
+  await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
+  await expect(page.getByLabel("Rua", { exact: true })).toHaveValue(contact.address.street);
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue(name);
+  await page.screenshot({
+    path: testInfo.outputPath("collaborator-fields-desktop.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expectWcag22AA(page);
+  await page.screenshot({
+    path: testInfo.outputPath("collaborator-fields-mobile.png"),
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1280, height: 720 });
   await expect(page.getByLabel("Justificativa", { exact: true })).toHaveCount(0);
   await createButton.click();
   const receipt = page.getByRole("region", { name: "Senha inicial do colaborador" });
@@ -74,13 +112,20 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await expect(page.getByRole("button", { name: "Gerar senha inicial" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name })).toBeVisible();
 
+  await expect(page.getByLabel("CPF", { exact: true })).toHaveValue(
+    contact.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+  );
+  await expect(page.getByLabel("Rua", { exact: true })).toHaveValue(contact.address.street);
   const saveButton = page.getByRole("button", { name: "Salvar alterações" });
   await expect(saveButton).toBeEnabled();
   await expectWcag22AA(page);
   await page.getByLabel("Nome").fill(updatedName);
+  await page.getByLabel("Número", { exact: true }).fill("42");
   await expect(page.getByLabel("Justificativa", { exact: true })).toHaveCount(0);
   await saveButton.click();
   await expect(page.getByRole("heading", { name: updatedName })).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel("Número", { exact: true })).toHaveValue("42");
 
   const grantButton = page.getByRole("button", { name: "Conceder função" });
   await expect(grantButton).toBeEnabled();
@@ -221,5 +266,92 @@ test("manager can reach accounts beyond the first hundred and recover from inval
   } finally {
     await database.query('DELETE FROM "user" WHERE id = ANY($1::uuid[])', [insertedIds]);
     await database.end();
+  }
+});
+
+test("collaborator list uses compact shared actions and collapsible filters", async ({
+  page,
+}, info) => {
+  await signIn(page, syntheticUsers.administrator.email, syntheticUsers.administrator.password);
+  const contact = syntheticUserContact();
+  const name = `Lista compacta ${randomUUID()}`;
+  const response = await page.request.post("/api/v1/users", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": randomUUID(),
+      "idempotency-key": randomUUID(),
+    },
+    data: { ...contact, name, email: `list-${randomUUID()}@example.test`, roleIds: [] },
+  });
+  expect(response.status()).toBe(201);
+  await page.goto("/users");
+  await expect(page.getByLabel("CPF", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Novo colaborador", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Exportar colaboradores", exact: true })).toHaveClass(
+    /button--secondary/,
+  );
+  const filters = page.getByRole("search", { name: "Filtros de colaboradores" });
+  const search = filters.getByRole("searchbox", { name: "Nome, CPF ou e-mail" });
+  await expect(filters.getByLabel("Situação", { exact: true })).toBeHidden();
+  await search.fill(name);
+  await filters.getByRole("button", { name: "Buscar", exact: true }).click();
+  const table = page.getByRole("table", { name: "Contas cadastradas" });
+  await expect(table.getByRole("link")).toHaveText([name]);
+  await filters.getByRole("button", { name: "Filtros", exact: true }).click();
+  await filters.getByLabel("Função atribuída", { exact: true }).selectOption("none");
+  await expect(table.getByRole("link")).toHaveText([name]);
+  await filters.getByLabel("Cadastrado de", { exact: true }).fill("2000-01-01");
+  await filters.getByLabel("Cadastrado até", { exact: true }).fill("2000-12-31");
+  await filters.getByRole("button", { name: "Aplicar filtros", exact: true }).click();
+  await expect(
+    page.getByText("Nenhuma conta encontrada nesta página.", { exact: true }),
+  ).toBeVisible();
+  await filters.getByRole("button", { name: "Limpar filtros", exact: true }).click();
+  await search.fill(contact.cpf);
+  await filters.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(table.getByRole("link")).toHaveText([name]);
+  await filters.getByLabel("Situação", { exact: true }).selectOption("disabled");
+  await expect(
+    page.getByText("Nenhuma conta encontrada nesta página.", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Novo colaborador", exact: true })).toBeVisible();
+  await filters.getByRole("button", { name: "Limpar filtros", exact: true }).click();
+  await search.fill(contact.cpf);
+  await filters.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(table.getByRole("link")).toHaveText([name]);
+  for (const [width, height] of [
+    [1280, 900],
+    [390, 844],
+  ]) {
+    await page.setViewportSize({ width: width!, height: height! });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width!,
+    );
+    if (width === 390) {
+      const scroll = page.getByLabel(
+        "Tabela de contas; use as setas para percorrer horizontalmente",
+      );
+      expect(await scroll.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
+    }
+    const panel = page.getByRole("region", { name: "Contas cadastradas", exact: true });
+    await expectExportAboveFilters(
+      panel,
+      panel.getByRole("link", { name: "Exportar colaboradores", exact: true }),
+      filters,
+    );
+    await expect(
+      page.locator(".page-header").getByRole("link", { name: "Novo colaborador", exact: true }),
+    ).toHaveClass(/button--primary.*button--add/);
+    for (const theme of ["light", "dark"]) {
+      await page.evaluate((theme) => {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem("caab-theme", theme);
+      }, theme);
+      await expectWcag22AA(page);
+      await page.screenshot({
+        path: info.outputPath(`collaborator-list-${theme}-${width}.png`),
+        fullPage: true,
+      });
+    }
   }
 });

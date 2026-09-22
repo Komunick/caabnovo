@@ -3747,6 +3747,27 @@ thead th {
 .news-list-header p {
   margin-top: 0.4rem;
 }
+.users-page {
+  grid-template-columns: minmax(0, 1fr);
+}
+.users-page > .panel {
+  min-width: 0;
+}
+.user-list-filters > fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.users-table {
+  min-width: 42rem;
+}
+.users-table :is(th, td):nth-child(n + 3) {
+  min-width: 6rem;
+}
+.users-table thead th {
+  white-space: nowrap;
+}
 .user-create-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3758,7 +3779,7 @@ thead th {
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-border);
 }
-.user-create-form .form-field {
+.user-create-form > .form-field {
   margin: 0;
 }
 .user-create-form > fieldset {
@@ -3771,7 +3792,7 @@ thead th {
 .user-create-form > .form-field:has(textarea) {
   grid-column: 1;
 }
-.user-create-form > .primary-button {
+.user-create-form > .button--primary {
   justify-self: end;
   align-self: end;
 }
@@ -4188,7 +4209,7 @@ thead th {
   .settings-panels > section:first-child .form-field {
     margin-bottom: 1rem;
   }
-  .user-create-form > .primary-button {
+  .user-create-form > .button--primary {
     justify-self: start;
   }
   .home-card-actions .button {
@@ -4832,7 +4853,8 @@ thead th {
 /* Export ordering shares the panel controls, spacing and surface tokens. */
 .export-column-order {
   display: grid;
-  gap: var(--space-2);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -4842,7 +4864,7 @@ thead th {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-2);
-  padding-block: var(--space-2);
+  padding-block: 0.2rem;
   border-bottom: 1px solid var(--color-border);
 }
 .export-column-order > li > span {
@@ -4852,4 +4874,90 @@ thead th {
   min-width: 44px;
   min-height: 44px;
   padding: 0.5rem;
+}
+
+.user-create-form > .user-contact-address,
+.user-create-form > .user-contact-instructions {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+.panel-heading > h2 {
+  margin: 0;
+}
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+@media (max-width: 600px) {
+  .panel-heading > .panel-actions {
+    flex-basis: 100%;
+  }
+}
+.export-form {
+  display: grid;
+  gap: 1.25rem;
+}
+.export-fields {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.export-fields > legend {
+  padding: 0;
+  font-weight: 700;
+}
+.export-filters {
+  margin-top: 0.75rem;
+}
+.export-hint {
+  margin: 0.4rem 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+.export-position {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+.export-column-order .access-option {
+  align-items: center;
+  min-width: 0;
+}
+.export-column-order .button-row {
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+}
+.export-form > [role="status"]:empty {
+  display: none;
+}
+@media (max-width: 900px) {
+  .export-column-order {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.user-account-actions {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  margin-block: 1rem;
+}
+.button--neutral {
+  background: var(--color-surface-subtle);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  box-shadow: none;
+}
+.button--neutral:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-muted) 15%, var(--color-surface));
 }

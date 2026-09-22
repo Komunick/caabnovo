@@ -2,9 +2,10 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import type { ExportCatalog, ExportFormat, ExportOperation, ExportRequest } from "@caab/contracts";
 import { useDraftState } from "@/components/workspace-drafts";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import Link from "next/link";
+import { ArrowUp, ArrowDown, Download, ArrowLeft } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { PermissionGate } from "@/components/workspace-permissions";
 const terminal = new Set(["completed", "failed", "cancelled", "interrupted"]);
 const messageFor = (code: string) =>
@@ -18,9 +19,11 @@ const messageFor = (code: string) =>
 export function ExportScreen({
   catalog,
   sourcePermission,
+  backHref,
 }: {
   catalog: ExportCatalog;
   sourcePermission: string;
+  backHref: string;
 }) {
   const key = `export:${catalog.module}:${catalog.dataset}`;
   const [filters, setFilters] = useDraftState<Record<string, string>>(`${key}:filters`, {});
@@ -144,13 +147,16 @@ export function ExportScreen({
     <PermissionGate permission={sourcePermission}>
       <PermissionGate permission="exports:generate">
         <div className="page-stack">
-          <header>
+          <header className="page-header">
             <p className="eyebrow">{catalog.label}</p>
             <h1>Exportar {catalog.label.toLocaleLowerCase("pt-BR")}</h1>
-            <p>Escolha os filtros, as colunas e o formato. Datas no horário da Bahia.</p>
+            <p>Escolha os dados e baixe no formato desejado. Datas no horário da Bahia.</p>
+            <Link href={backHref} className={buttonVariants({ size: "compact" })}>
+              <ArrowLeft size={18} aria-hidden="true" /> Voltar à lista
+            </Link>
           </header>
           <form
-            className="panel page-stack"
+            className="panel export-form"
             action="/api/v1/exports/download"
             method="post"
             target={frameName}
@@ -159,9 +165,9 @@ export function ExportScreen({
             <input type="hidden" name="requestId" ref={requestId} />
             <input type="hidden" name="config" ref={configuration} />
             <input type="hidden" name="csrfToken" value={catalog.csrfToken} />
-            <fieldset className="access-group" disabled={active}>
+            <fieldset className="export-fields" disabled={active}>
               <legend>Filtros</legend>
-              <div className="filter-grid">
+              <div className="list-filters export-filters">
                 {catalog.filters.map((filter) => (
                   <FormField
                     key={filter.key}
@@ -170,12 +176,10 @@ export function ExportScreen({
                   >
                     {filter.type === "choice" ? (
                       <select
-                        value={filters[filter.key] ?? ""}
+                        value={filters[filter.key] ?? (filter.key === "deleted" ? "excluded" : "")}
                         onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
                       >
-                        <option value="">
-                          {filter.key === "deleted" ? "Cadastros atuais" : "Todos"}
-                        </option>
+                        {filter.key !== "deleted" && <option value="">Todos</option>}
                         {filter.options?.map((option) => (
                           <option key={option.value} value={option.value}>
                             {option.label}
@@ -214,54 +218,61 @@ export function ExportScreen({
                 </FormField>
               </div>
             </fieldset>
-            <fieldset className="access-group" disabled={active}>
-              <legend>Colunas</legend>
-              <div className="access-grid">
-                {catalog.columns.map((column) => (
-                  <label className="access-option" key={column.key}>
-                    <input
-                      type="checkbox"
-                      checked={columns.includes(column.key)}
-                      onChange={(e) =>
-                        setColumns(
-                          e.target.checked
-                            ? [...columns, column.key]
-                            : columns.filter((key) => key !== column.key),
-                        )
-                      }
-                    />
-                    {column.label}
-                  </label>
-                ))}
-              </div>
-              <p>Use as setas para definir a ordem das colunas no arquivo.</p>
+            <fieldset className="export-fields" disabled={active}>
+              <legend>Colunas do arquivo</legend>
+              <p className="export-hint">
+                Marque as colunas e use as setas para ordenar. {columns.length} selecionadas.
+              </p>
               <ol className="export-column-order" aria-label="Ordem das colunas">
-                {columns.map((key, index) => {
-                  const label =
-                    catalog.columns.find((c) => c.key === key)?.label ?? "Coluna indisponível";
+                {[
+                  ...columns,
+                  ...catalog.columns
+                    .filter((column) => !columns.includes(column.key))
+                    .map((column) => column.key),
+                ].map((key) => {
+                  const column = catalog.columns.find((candidate) => candidate.key === key);
+                  if (!column) return null;
+                  const index = columns.indexOf(key);
+                  const selected = index >= 0;
                   return (
                     <li key={key}>
-                      <span>
-                        {index + 1}. {label}
-                      </span>
-                      <div className="button-row">
-                        <Button
-                          size="compact"
-                          disabled={index === 0}
-                          aria-label={`Mover ${label} para cima`}
-                          onClick={() => move(index, -1)}
-                        >
-                          <ArrowUp size={18} aria-hidden="true" />
-                        </Button>
-                        <Button
-                          size="compact"
-                          disabled={index === columns.length - 1}
-                          aria-label={`Mover ${label} para baixo`}
-                          onClick={() => move(index, 1)}
-                        >
-                          <ArrowDown size={18} aria-hidden="true" />
-                        </Button>
-                      </div>
+                      <label className="access-option">
+                        <input
+                          type="checkbox"
+                          checked={selected}
+                          onChange={(event) =>
+                            setColumns(
+                              event.target.checked
+                                ? [...columns, key]
+                                : columns.filter((value) => value !== key),
+                            )
+                          }
+                        />
+                        <span>{column.label}</span>
+                      </label>
+                      {selected && (
+                        <div className="button-row">
+                          <span className="export-position" aria-hidden="true">
+                            {index + 1}
+                          </span>
+                          <Button
+                            size="compact"
+                            disabled={index === 0}
+                            aria-label={`Mover ${column.label} para cima`}
+                            onClick={() => move(index, -1)}
+                          >
+                            <ArrowUp size={18} aria-hidden="true" />
+                          </Button>
+                          <Button
+                            size="compact"
+                            disabled={index === columns.length - 1}
+                            aria-label={`Mover ${column.label} para baixo`}
+                            onClick={() => move(index, 1)}
+                          >
+                            <ArrowDown size={18} aria-hidden="true" />
+                          </Button>
+                        </div>
+                      )}
                     </li>
                   );
                 })}
@@ -280,10 +291,11 @@ export function ExportScreen({
                   key={value}
                   type="submit"
                   value={value}
-                  intent={format === value ? "primary" : "secondary"}
+                  intent="primary"
+                  size="compact"
                   disabled={active}
                 >
-                  Exportar em {label}
+                  <Download size={18} aria-hidden="true" /> Exportar em {label}
                 </Button>
               ))}
             </div>

@@ -1,3 +1,4 @@
+import { PanelHeading } from "@/components/ui/panel-heading";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auditListQuerySchema } from "@caab/contracts";
@@ -60,26 +61,25 @@ export default async function AuditPage({
           <h1>Auditoria</h1>
           <p>Quem fez, o que mudou e quando aconteceu.</p>
         </div>
-        {actor.permissions.has(PERMISSIONS.auditExport) ? (
-          <AuditExportDialog
-            filters={{
-              ...(query.actorId ? { actorId: query.actorId } : {}),
-              ...(query.action ? { action: query.action } : {}),
-              ...(query.entityType ? { entityType: query.entityType } : {}),
-              ...(query.from ? { from: query.from } : {}),
-              ...(query.to ? { to: query.to } : {}),
-            }}
-          />
-        ) : null}
       </header>
       <AuditNavigation
         events={actor.permissions.has(PERMISSIONS.auditRead)}
         jobs={actor.permissions.has(PERMISSIONS.jobsRead)}
       />
       <section className="audit-filter-panel" aria-labelledby="audit-filters-title">
-        <h2 id="audit-filters-title" className="sr-only">
-          Filtros de atividades
-        </h2>
+        <PanelHeading id="audit-filters-title" title="Filtros de atividades">
+          {actor.permissions.has(PERMISSIONS.auditExport) ? (
+            <AuditExportDialog
+              filters={{
+                ...(query.actorId ? { actorId: query.actorId } : {}),
+                ...(query.action ? { action: query.action } : {}),
+                ...(query.entityType ? { entityType: query.entityType } : {}),
+                ...(query.from ? { from: query.from } : {}),
+                ...(query.to ? { to: query.to } : {}),
+              }}
+            />
+          ) : null}
+        </PanelHeading>
         {!parsed.success ? (
           <p role="alert">Um ou mais filtros foram ignorados por serem inválidos.</p>
         ) : null}

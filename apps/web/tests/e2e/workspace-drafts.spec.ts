@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -42,7 +43,7 @@ test("keeps unfinished forms through all workspace modules and clears completed 
   await page.getByLabel("Título", { exact: true }).fill(title);
   await page.getByLabel("Resumo", { exact: true }).fill("Resumo ainda não salvo");
   await page.locator("#news-body").fill("Conteúdo ainda não salvo");
-  await area(page, "/users");
+  await create(page, "/users");
   await page.locator("#create-name").fill("Colaborador em edição");
   await page.locator("#create-email").fill("pendente@example.test");
   await area(page, "/scheduling");
@@ -76,7 +77,7 @@ test("keeps unfinished forms through all workspace modules and clears completed 
   );
   await expect(page.locator("#partner-city")).toHaveValue("Salvador");
   await expect(page.locator("#partner-state")).toHaveValue("BA");
-  await area(page, "/users");
+  await create(page, "/users");
   await expect(page.locator("#create-name")).toHaveValue("Colaborador em edição");
   await expect(page.locator("#create-email")).toHaveValue("pendente@example.test");
   await area(page, "/scheduling");
@@ -224,6 +225,7 @@ test("access conflicts preserve selection and baseline without leaking to anothe
         "idempotency-key": randomUUID(),
       },
       data: {
+        ...syntheticUserContact(),
         name: `Rascunho acesso ${index}`,
         email: `draft-${randomUUID()}@example.test`,
         roleIds: [],

@@ -1,10 +1,11 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
-[contrato](contracts/exports.md), [quickstart](quickstart.md). **Branch da entrega:**
-`feature/access-export-foundation-20260921`. Lista ativa: T097–T123 e coordenação005 LC01/LC02, 008
-LC01. Implementação e gates concluídos conforme checkpoint da spec e
-[evidências](evidence/plan-2026-09-21-validation.md). T096 já integrada pelo PR35; não repetir.
+[contrato](contracts/collaborator-contact.md). **Branch da entrega:**
+`feature/collaborators-contact-20260921`. Incremento atual: T124–T129 e005 LC03, concluídos conforme
+[evidências](evidence/collaborators-2026-09-22-validation.md). T097–T123 e coordenações anteriores
+já integradas no PR36; referências históricas abaixo não reabrem essas entregas. Abertura de PR
+autorizada após fechamento; aprovação/merge não autorizados.
 
 ## Rastreabilidade e escopo
 
@@ -945,3 +946,68 @@ Retenção confirmada: colaborador com bloqueio imediato e exclusão lógica ap�
 têm prazo de sete dias (spec005 LC01) e reservas exigem decisão explícita do responsável (spec008
 LC01). T097 e T098–T120 permanecem no escopo previamente autorizado e não são concluídas por esta
 ampliação.
+
+## Dados obrigatórios de Colaboradores — 21/09/2026
+
+- [x] T124 Implementar contratos, migration0029, persistência/serialização e atualização dos dados
+      obrigatórios (CEP e complemento opcionais), unicidade de CPF, idempotência e auditoria sem
+      novos dados pessoais. Conforme Q5, exigir preenchimento integral apenas em novos cadastros;
+      preservar acesso e edição do legado incompleto, validando os valores fornecidos sem exigir
+      completar os demais campos ausentes. Cobrir atualização parcial de cadastro incompleto.
+- [x] T125 Atualizar formulário/detalhe com máscaras, endereço compartilhado, legado, rascunhos e
+      colunas opcionais de exportação; reutilizar API de CEP existente com preenchimento revisável e
+      alternativa manual. Validar CEP vazio, sucesso, inválido, não encontrado, falha/timeout e
+      resposta atrasada sem sobrescrever edição manual; preservar acessos, senha e ciclo de vida.
+- [x] T126 Validar contratos, integração, E2E/a11y, formatos, migração e gates; registrar evidências
+      reais e preparar novo PR para dev. Documentação de dependentes incluída por autorização de
+      22/09; implementação de POL01/POL02 permanece fora deste incremento.
+
+- [x] T127 Corrigir lista/cadastro/filtros de Colaboradores e compactar exportação no padrão
+      compartilhado; validar busca/status/paginação, rascunhos, seleção/ordem/download, teclado,
+      vazio e screenshots responsivos antes de concluir a entrega. Complemento22/09: função/sem
+      função, cadastro de/até e exclusão pendente; senha cinza junto das funções e acima de
+      desativar; exclusão visível apenas em contas desativadas. Cobrir ordem e visibilidade por
+      estado/permissão.
+
+- [x] T128 Após concluir clarify e analyze, implementar detecção de CPF de conta excluída no
+      cadastro, aviso/motivo e confirmação de reativação da identidade existente. Manter dados
+      anteriores, abrir cadastro para revisão/edição e não aplicar dados da tentativa de criação.
+      Preservar guardas/versão; testar conta ativa duplicada, excluída com/sem motivo, recusa da
+      reativação, acesso negado, concorrência e preservação de dados quando a tentativa de inclusão
+      contém informações diferentes. Não marcar implementação concluída pelo registro desta decisão.
+
+- [x] T129 Conciliar documentação de governança com a decisão explícita de motivo obrigatório nas
+      exclusões de Colaboradores/Associados; após clarify/analyze, exigir e registrar motivo na
+      exclusão de colaborador (contrato, confirmação, serviço, persistência/auditoria). Validar
+      vazio/espaços, ocorrência correta no aviso por CPF, acesso negado, histórico sem motivo e
+      preservação após restauração. Associados tem execução própria005 LC03; outras ações continuam
+      dispensadas. Não reescrever migrations anteriores nem inventar motivos retroativos.
+
+Fechamento22/09: CI35728053078 (3ca6410) aprovado em quality/browser/security. Ver relatório do
+incremento para cobertura, imagens e limites. T126 inclui preparação do PR autorizada pelo usuário;
+sem homologar políticas institucionais pendentes ou marcar o checklist13/16 como concluído.
+
+## Correções da revisão — 22/09/2026
+
+- [x] T130 Padronizar datas de Colaboradores em America/Bahia e corrigir CEP vazio na ficha somente
+      leitura; validar limite histórico e apresentação por interface.
+- [x] T131 Adicionar CPF com/sem máscara e parcial e Exclusão pendente à exportação; validar
+      combinações, entrada inválida, catálogo, Excel/CSV/PDF, gates e evidências.
+
+## Padronização de ações — 22/09/2026
+
+- [x] T132 Mover a exportação existente para dentro do quadro acima dos filtros com cabeçalho
+      compartilhado, botão secundário e ícone; preservar acesso/fluxo e validar posição,
+      responsividade, temas e acessibilidade no CI. Colaboradores usa inclusão primária no cabeçalho
+      conforme Parceiros/Associados.
+
+Validação da padronização22/09:
+[CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) aprovou
+quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, Auditoria e
+Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
+filtros. Ver
+[evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).
+
+Fechamento T130–T132: CI35736033889 aprovou027d1f6 em todos os gates (95 E2E,6 a11y), com captura
+móvel corrigida e revisada. Sem alteração adicional de aplicação no fechamento documental; PR37
+permanece aberto e localhost desligado.

@@ -23,6 +23,7 @@ test("common e-mail feedback protects login, recovery, collaborators and setting
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/$/, { timeout: 30000 });
   await page.goto("/users");
+  await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   const createEmail = page.locator("#create-email");
   await createEmail.fill("nome@invalido");
   await createEmail.press("Tab");
@@ -114,6 +115,7 @@ test("text, date and OAB fields give consistent feedback across modules", async 
   await expect(birth).not.toHaveAttribute("aria-invalid", "true");
   await expectWcag22AA(page);
   await page.goto("/users");
+  await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   await page.locator("#create-name").fill(" ");
   await page.locator("#create-name").press("Tab");
   await expect(page.locator("#create-name-error")).toHaveText("Preencha este campo.");

@@ -537,3 +537,47 @@ cancelamento. Cursor usa lotes de100 e snapshot; o limite de lote não é teto d
 Heartbeat de10s revalida autorização mesmo sob backpressure; ausência por60s registra interrupção,
 sem prazo de arquivo. A massa de 100 registros continua diagnóstica, sem alegação de escalabilidade
 comprovada.
+
+## Cadastro completo de Colaboradores — pesquisa de 21/09/2026
+
+- [W3C WAI — Labeling Controls](https://www.w3.org/WAI/tutorials/forms/labels/) e
+  [Form Instructions](https://www.w3.org/WAI/tutorials/forms/instructions/): rótulos associados,
+  identificação da obrigatoriedade e instruções próximas aos campos. Decisão: reutilizar os
+  controles compartilhados, máscaras/erros locais e complemento explicitamente opcional.
+- [OWASP — Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html):
+  validação no servidor é necessária independentemente do cliente. Decisão: mesmo contrato de
+  CPF/telefone/endereço, normalização e constraints/índice no banco; ausência rejeitada na criação.
+- Limites: fontes técnicas não definem política institucional de dados. Obrigatoriedade vem do
+  usuário; não consultar Receita/OAB, não enriquecer dados pessoais nem presumir retenção.
+  Reutilizar CPF e endereço brasileiros já existentes no projeto, sem nova dependência.
+
+## Complemento de22/09 — CEP e validação
+
+[ViaCEP](https://viacep.com.br/) confirma entrada de oito dígitos, HTTP400 para formato inválido e
+retorno erro para inexistente. Reutilizar o componente existente, sem consultas em massa, permitindo
+endereço manual e ignorando resposta obsoleta.
+[OWASP Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)
+reforça validação no servidor além do cliente. Regras de CPF/legado/motivo vêm das decisões do
+usuário; sem enriquecimento de dados. Consultadas em22/09/2026. Integração de CEP simulada nos
+testes.
+
+## Datas e filtros de Colaboradores — 22/09/2026
+
+Fonte oficial consultada:
+[PostgreSQL, Date/Time Types, seção 8.5.3](https://www.postgresql.org/docs/current/datatype-datetime.html).
+Nomes completos IANA aplicam regras históricas de fuso/horário de verão; igualdade do deslocamento
+atual não garante igualdade para datas antigas. Decisão: usar America/Bahia na lista e exportação,
+com limite inicial inclusivo e próximo dia exclusivo. Testar 15/01/2018 02:30 UTC, ainda dia14 na
+Bahia. Sem alterar os instantes armazenados. CPF e pendência usam catálogo/SQL compartilhados pelos
+três formatos; CPF aceita parte dos dígitos e máscara, mas rejeita conteúdo malformado. Pesquisa
+limitada ao comportamento técnico; não modifica política de exclusão ou retenção.
+
+## Consistência das ações — 22/09/2026
+
+Fonte oficial:
+[W3C, WCAG 2.2, identificação consistente](https://www.w3.org/WAI/WCAG22/Understanding/consistent-identification.html).
+A orientação favorece identificação consistente de funções repetidas entre páginas. Decisão de
+interface solicitada pelo usuário: exportação no topo do quadro de filtros, com ícone e estilo
+compartilhados; inclusão primária preservada no cabeçalho. A posição é decisão do produto, não uma
+exigência literal desse critério WCAG. Validar foco, contraste e adaptação ao celular; não alterar
+contratos de exportação neste ajuste visual.

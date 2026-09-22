@@ -164,11 +164,10 @@ export function ResetPasswordForm({
       />
     );
   return (
-    <section className="panel page-stack" aria-labelledby="reset-password-title">
-      <h2 id="reset-password-title">Senha de acesso</h2>
-      <p>Gere uma nova senha para entregar ao colaborador por um canal privado.</p>
+    <div>
       {error && <p role="alert">{error}</p>}
       <SensitiveActionDialog
+        intent="neutral"
         triggerLabel="Gerar nova senha"
         title="Gerar nova senha do colaborador"
         confirmLabel="Confirmar nova senha"
@@ -202,6 +201,6 @@ export function ResetPasswordForm({
           }
         }}
       />
-    </section>
+    </div>
   );
 }

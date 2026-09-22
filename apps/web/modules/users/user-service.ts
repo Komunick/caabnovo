@@ -1,4 +1,13 @@
 import "server-only";
+import {
+  createUserRequestSchema,
+  updateUserRequestSchema,
+  userStoredAddressSchema,
+  userLifecycleSchema,
+  userCpfLookupSchema,
+  type UserCpfLookupResult,
+  type UserAddress,
+} from "@caab/contracts";
 import { createHash } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { withTransaction } from "@caab/db";
@@ -49,6 +58,9 @@ export function serializeUser(user: UserRecord) {
     id: user.id,
     email: user.email,
     name: user.name,
+    cpf: user.cpf,
+    phone: user.phone,
+    address: user.address,
     status: user.status,
     twoFactorEnabled: user.twoFactorEnabled,
     roles: user.roles,
@@ -56,6 +68,7 @@ export function serializeUser(user: UserRecord) {
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt?.toISOString() ?? null,
     deletionEffectiveAt: user.deletionEffectiveAt?.toISOString() ?? null,
+    deletionReason: user.deletionReason ?? null,
   };
 }
 
@@ -64,6 +77,9 @@ export async function createUser(
   command: CommandContext & {
     email: string;
     name: string;
+    cpf: string;
+    phone: string;
+    address: UserAddress;
     roleIds: string[];
     justification?: string;
     idempotencyKey?: string;
@@ -71,6 +87,15 @@ export async function createUser(
   overrides: ServiceDependencies = {},
 ) {
   requirePermission(command.actor, PERMISSIONS.usersCreate);
+  const input = createUserRequestSchema.parse({
+    email: command.email,
+    name: command.name,
+    cpf: command.cpf,
+    phone: command.phone,
+    address: command.address,
+    roleIds: command.roleIds,
+    justification: command.justification,
+  });
   const reason = command.justification?.trim() || "";
   const deps = dependencies(overrides);
   try {
@@ -82,6 +107,9 @@ export async function createUser(
           JSON.stringify({
             email: command.email.trim().toLowerCase(),
             name: command.name.trim(),
+            cpf: input.cpf,
+            phone: input.phone,
+            address: input.address,
             roleIds: [...command.roleIds].sort(),
           }),
         )
@@ -123,7 +151,7 @@ export async function createUser(
           );
         }
       }
-      const created = await insertUser(client, { email: command.email, name: command.name });
+      const created = await insertUser(client, input);
       const initialPassword = await insertInitialCredential(client, created.id);
       for (const roleId of command.roleIds) {
         const role = await findRoleById(client, roleId);
@@ -181,6 +209,8 @@ export async function createUser(
     });
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && error.code === "23505") {
+      if ("constraint" in error && error.constraint === "user_cpf_unique")
+        throw new UserAccessError("USER_CPF_CONFLICT", 409, "CPF already exists");
       throw new UserAccessError("USER_EMAIL_CONFLICT", 409, "Email already exists");
     }
     throw error;
@@ -193,6 +223,9 @@ export async function changeUser(
     userId: string;
     version: number;
     name?: string;
+    cpf?: string;
+    phone?: string;
+    address?: Partial<UserAddress>;
     status?: "active" | "disabled";
     justification: string;
   },
@@ -202,6 +235,19 @@ export async function changeUser(
     command.actor,
     command.status === "disabled" ? PERMISSIONS.usersDisable : PERMISSIONS.usersUpdate,
   );
+  const changesProfile = [command.name, command.cpf, command.phone, command.address].some(
+    (value) => value !== undefined,
+  );
+  if (changesProfile) requirePermission(command.actor, PERMISSIONS.usersUpdate);
+  const input = updateUserRequestSchema.parse({
+    name: command.name,
+    status: command.status,
+    cpf: command.cpf,
+    phone: command.phone,
+    address: command.address,
+    version: command.version,
+    justification: command.justification,
+  });
   const reason = command.justification.trim();
   const deps = dependencies(overrides);
   return withTransaction(pool, async (client: PoolClient) => {
@@ -211,6 +257,8 @@ export async function changeUser(
       command.status === "disabled" ? PERMISSIONS.usersDisable : PERMISSIONS.usersUpdate,
       command.userId,
     );
+    if (changesProfile)
+      await currentAuthority(client, command.actor, PERMISSIONS.usersUpdate, command.userId);
     const before = await findUserById(client, command.userId);
     if (!before) throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
     if (before.deletionEffectiveAt)
@@ -230,7 +278,20 @@ export async function changeUser(
         "The last active administrator cannot be disabled",
       );
     }
-    const updated = await updateUser(client, command);
+    const address = input.address
+      ? userStoredAddressSchema.parse({ ...before.address, ...input.address })
+      : undefined;
+    if (address && before.address) {
+      for (const field of ["street", "number", "neighborhood", "city", "state"] as const) {
+        if (before.address[field] && !address[field])
+          throw new UserAccessError(
+            "VALIDATION_FAILED",
+            422,
+            "Previously provided address fields cannot be cleared",
+          );
+      }
+    }
+    const updated = await updateUser(client, { ...input, address, userId: command.userId });
     if (!updated) {
       throw new UserAccessError("USER_VERSION_CONFLICT", 409, "User version changed");
     }
@@ -248,7 +309,14 @@ export async function changeUser(
       entityType: "user",
       entityId: updated.id,
       before: { name: before.name, status: before.status, version: before.version },
-      after: { name: updated.name, status: updated.status, version: updated.version },
+      after: {
+        name: updated.name,
+        status: updated.status,
+        version: updated.version,
+        changedFields: ["cpf", "phone", "address"].filter(
+          (field) => input[field as keyof typeof input] !== undefined,
+        ),
+      },
       reason,
       origin: "web",
       requestId: command.requestId,
@@ -269,15 +337,36 @@ export async function changeUser(
       context: { actorUserId: command.actor.userId, revokedSessions },
     });
     return serializeUser(updated);
+  }).catch((error: unknown) => {
+    if (
+      typeof error === "object" &&
+      error &&
+      "code" in error &&
+      error.code === "23505" &&
+      "constraint" in error &&
+      error.constraint === "user_cpf_unique"
+    )
+      throw new UserAccessError("USER_CPF_CONFLICT", 409, "CPF already exists");
+    throw error;
   });
 }
 
 export async function changeUserLifecycle(
   pool: Pool,
-  command: CommandContext & { userId: string; version: number; action: "delete" | "restore" },
+  command: CommandContext & {
+    userId: string;
+    version: number;
+    action: "delete" | "restore";
+    reason?: string;
+  },
   overrides: ServiceDependencies = {},
 ) {
   const deps = dependencies(overrides);
+  const input = userLifecycleSchema.parse({
+    action: command.action,
+    version: command.version,
+    ...(command.action === "delete" ? { reason: command.reason } : {}),
+  });
   return withTransaction(pool, async (client) => {
     await currentAuthority(
       client,
@@ -321,6 +410,7 @@ export async function changeUserLifecycle(
       actorUserId: command.actor.userId,
       effectiveIdentity: command.effectiveIdentity,
       action: command.action === "delete" ? "user.deletion.requested" : "user.deletion.restored",
+      reason: input.action === "delete" ? input.reason : undefined,
       entityType: "user",
       entityId: before.id,
       before: {
@@ -344,6 +434,36 @@ export async function changeUserLifecycle(
       correlationId: command.correlationId,
       context: { actorUserId: command.actor.userId },
     });
-    return serializeUser(updated);
+    return serializeUser((await findUserById(client, before.id))!);
+  });
+}
+
+/** CPF stays in the POST body; return only what the creation flow needs. */
+export async function lookupUserCpf(
+  pool: Pool,
+  actor: RequestActor,
+  raw: unknown,
+): Promise<UserCpfLookupResult> {
+  requirePermission(actor, PERMISSIONS.usersCreate);
+  requirePermission(actor, PERMISSIONS.usersRead);
+  const input = userCpfLookupSchema.parse(raw);
+  return withTransaction(pool, async (client) => {
+    const current = await currentAuthority(client, actor, PERMISSIONS.usersCreate);
+    requirePermission(current, PERMISSIONS.usersRead);
+    const result = await client.query<{ id: string; deleted: boolean }>(
+      `SELECT id,coalesce(deletion_effective_at<=clock_timestamp(),false) AS deleted FROM "user" WHERE cpf=$1`,
+      [input.cpf],
+    );
+    const match = result.rows[0];
+    if (!match) return { status: "available" };
+    if (!match.deleted) return { status: "existing" };
+    const user = (await findUserById(client, match.id))!;
+    return {
+      status: "deleted",
+      id: user.id,
+      version: user.version,
+      reason: user.deletionReason ?? null,
+      canRestore: current.permissions.has(PERMISSIONS.usersUpdate),
+    };
   });
 }

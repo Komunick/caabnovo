@@ -1,19 +1,22 @@
+import { PanelHeading } from "@/components/ui/panel-heading";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { listActiveRoles } from "@caab/db/repositories/roles";
+import { Plus, Download } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { listUsers } from "@caab/db/repositories/users";
-import { roleSchema, userListQuerySchema } from "@caab/contracts";
+import { listActiveRoles } from "@caab/db/repositories/roles";
+import { userListQuerySchema } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { PERMISSIONS } from "@/modules/auth/permissions";
 import { getDatabase } from "@/modules/shared/database";
-import { UserForm } from "@/modules/users/ui/user-form";
+import { UserFilters } from "@/modules/users/ui/user-filters";
 import { Table, TableContainer } from "@/components/ui/table";
 import { Pagination } from "@/components/ui/pagination";
 
 export default async function UsersPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ cursor?: string | string[]; deleted?: string | string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }>) {
   const requestHeaders = await headers();
   const actor = await resolveRequestActor(
@@ -22,61 +25,57 @@ export default async function UsersPage({
   if (!actor?.permissions.has(PERMISSIONS.usersRead)) {
     return <p role="alert">Você não tem permissão para acessar colaboradores.</p>;
   }
+  const raw = await searchParams;
   const parsed = userListQuerySchema.safeParse({
-    cursor: (await searchParams).cursor,
-    deleted: (await searchParams).deleted,
+    ...raw,
+    status: raw.status || undefined,
     limit: 100,
   });
   const query = parsed.success ? parsed.data : userListQuerySchema.parse({ limit: 100 });
   const database = getDatabase();
-  const [page, roleRecords] = await Promise.all([
-    listUsers(database.pool, query),
-    actor.permissions.has(PERMISSIONS.rolesRead) ? listActiveRoles(database.pool) : [],
-  ]);
-  const roles = roleRecords.map((role) =>
-    roleSchema.parse({
-      id: role.id,
-      code: role.code,
-      name: role.name,
-      administrative: role.administrative,
-      permissions: role.permissions,
-    }),
-  );
+  const page = await listUsers(database.pool, query);
+  const roles = actor.permissions.has(PERMISSIONS.rolesRead)
+    ? await listActiveRoles(database.pool)
+    : [];
+  const pageLink = (cursor?: string) => {
+    const params = new URLSearchParams();
+    if (cursor) params.set("cursor", cursor);
+    if (query.q) params.set("q", query.q);
+    if (query.status) params.set("status", query.status);
+    if (query.deleted !== "excluded") params.set("deleted", query.deleted);
+    if (query.roleId) params.set("roleId", query.roleId);
+    if (query.createdFrom) params.set("createdFrom", query.createdFrom);
+    if (query.createdTo) params.set("createdTo", query.createdTo);
+    return `/users${params.size ? `?${params}` : ""}`;
+  };
 
   return (
-    <div className="page-stack">
-      <header>
+    <div className="page-stack users-page">
+      <header className="page-header">
         <p className="eyebrow">Controle de acesso</p>
         <h1>Colaboradores</h1>
         <p>Contas internas, estado atual e funções efetivas.</p>
-        {actor.permissions.has("exports:generate") ? (
-          <Link className="secondary-button" href="/users/exportar">
-            Exportar colaboradores
+        {actor.permissions.has(PERMISSIONS.usersCreate) && (
+          <Link className={buttonVariants({ intent: "primary", size: "add" })} href="/users/new">
+            <Plus aria-hidden="true" /> Novo colaborador
           </Link>
-        ) : null}
+        )}
       </header>
-      {actor.permissions.has(PERMISSIONS.usersCreate) ? (
-        <UserForm mode="create" roles={roles} />
-      ) : null}
       <section className="panel" aria-labelledby="user-list-title">
-        <h2 id="user-list-title">Contas cadastradas</h2>
-        <form method="get" className="button-row">
-          <label htmlFor="user-deleted">Exibir colaboradores</label>
-          <select id="user-deleted" name="deleted" defaultValue={query.deleted}>
-            <option value="excluded">Cadastros atuais</option>
-            <option value="only">Excluídos</option>
-            <option value="all">Todos</option>
-          </select>
-          <button type="submit" className="secondary-button">
-            Aplicar filtro
-          </button>
-        </form>
+        <PanelHeading id="user-list-title" title="Contas cadastradas">
+          {actor.permissions.has("exports:generate") && (
+            <Link className={buttonVariants()} href="/users/exportar">
+              <Download size={18} aria-hidden="true" /> Exportar colaboradores
+            </Link>
+          )}
+        </PanelHeading>
+        <UserFilters query={query} roles={roles.map(({ id, name }) => ({ id, name }))} />
         {!parsed.success ? (
           <p role="alert">A página solicitada é inválida. Exibindo a primeira página.</p>
         ) : null}
         {page.items.length === 0 ? <p>Nenhuma conta encontrada nesta página.</p> : null}
         <TableContainer aria-label="Tabela de contas; use as setas para percorrer horizontalmente">
-          <Table caption="Contas cadastradas">
+          <Table caption="Contas cadastradas" className="users-table">
             <thead>
               <tr>
                 <th scope="col">Nome</th>
@@ -112,18 +111,8 @@ export default async function UsersPage({
           </Table>
         </TableContainer>
         <Pagination
-          firstHref={
-            query.cursor
-              ? query.deleted === "excluded"
-                ? "/users"
-                : `/users?deleted=${query.deleted}`
-              : undefined
-          }
-          nextHref={
-            page.nextCursor
-              ? `/users?cursor=${encodeURIComponent(page.nextCursor)}${query.deleted === "excluded" ? "" : `&deleted=${query.deleted}`}`
-              : undefined
-          }
+          firstHref={query.cursor ? pageLink() : undefined}
+          nextHref={page.nextCursor ? pageLink(page.nextCursor) : undefined}
         />
       </section>
     </div>

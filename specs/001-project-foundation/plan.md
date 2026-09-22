@@ -610,3 +610,103 @@ adaptadores de exportação dos demais módulos permanecem para suas próprias t
 clarify → analyze somente nas alterações e documentos correspondentes; não revisar requisitos
 históricos sem relação com a entrega. Checklists documentais preservam as três marcações abertas por
 autorização do usuário.
+
+## Incremento: dados de Colaboradores — 21/09/2026
+
+1. Migration0029 aditiva: CPF/telefone/endereço em user, permitindo NULL no legado e índice único de
+   CPF normalizado. Não preencher identidades ou aplicar no banco local.
+2. Contrato obrigatório na criação, atualização parcial com versão, repositório/serviço e
+   fingerprint de idempotência incluindo os dados normalizados. Conflito de CPF explícito.
+3. Reutilizar ValidatedTextField/BrazilianAddressFields e rascunhos existentes; tornar endereço
+   obrigatório apenas neste cadastro, com CEP e complemento opcionais conforme Q4, sem mudar
+   Parceiros/Unidades. Detalhe de leitura e edição.
+4. Colunas opcionais no adaptador existente, protegidas pela mesma leitura.
+5. Contratos, integração com PostgreSQL descartável, E2E/a11y móvel/desktop e exportações; tipos,
+   lint, formatação e build. CI executa serviços/build/navegador; localhost permanece desligado.
+
+Rollback: aplicação anterior pode ignorar colunas aditivas; preservar dados e migration aplicada.
+
+## Adequação visual — 21/09/2026
+
+Reutilizar Button/buttonVariants, SearchField, FilterToggle, FormField e classes filter-toolbar/
+list-filters. Mover UserForm de /users para /users/new com guarda equivalente; criar UserFilters
+controlado com rascunho e sincronização de URL. Estender consulta SQL parametrizada para busca e
+situação; preservar cursor/filtros e links de retorno. ExportScreen mantém streaming/estado e
+condensa seleção+ordem em um controle por coluna. Capturar telas 390px/desktop/claro/escuro no CI.
+
+Clarify Q1 do incremento: manter CPF único inclusive após exclusão; no cadastro autorizado,
+identificar conta excluída e apresentar motivo e proposta de reativação confirmada, reutilizando
+identidade e fluxo de restauração existente. Planejar consulta mínima protegida e revalidar estado,
+versão e autorização na confirmação. Não criar conta nem restaurar automaticamente. Q2 confirmou
+motivo obrigatório para novas exclusões de colaboradores e associados; legado sem motivo deve ser
+identificado sem texto inventado. Implementação aguarda conclusão de clarify e analyze, conforme
+ordem vigente do usuário.
+
+Decisão Q2: exigir motivo não vazio na solicitação de exclusão, persistido com a ocorrência,
+autor/data e protegido por autorização. Reutilizar trilha de auditoria; não editar migrations
+aplicadas nem apagar motivos ao restaurar. Coordenar Associados005 LC03; não alterar prazos ou
+reativações não relacionadas. Preparar emenda documental explícita ao princípio V (dispensa geral
+anterior) e às regras transversais, limitada às duas exclusões, antes de implementar. Ordem atual:
+concluir clarify, alinhar artefatos, analyze somente do recorte e então implement.
+
+Clarify Q3: reativar a conta encontrada pelo CPF mantém seus dados existentes. Após confirmação
+bem-sucedida, abrir o cadastro para revisão/edição; não incluir os campos da tentativa de criação no
+comando de restauração. Eventuais mudanças cadastrais são salvas separadamente, com versão e
+permissões usuais. Validar dados antigos diferentes dos recém-digitados e ausência de sobrescrita.
+
+Clarify Q4: CEP/complemento opcionais; rua, número (aceita s/n), bairro, cidade e UF obrigatórios.
+Reutilizar integração ViaCEP existente em BrazilianAddressFields, com consulta ao completar oito
+dígitos, máscara, revisão dos valores, cancelamento de respostas antigas e preenchimento manual
+quando vazio/não encontrado/indisponível. Tornar obrigatoriedade do CEP independente dos demais
+campos no componente e no contrato de Colaboradores. Validar sucesso, ausência, CEP inválido,
+falha/tempo esgotado e resposta atrasada com edição manual. Sem implementação durante o clarify.
+
+Clarify Q5 (A): preservar acesso e edição dos colaboradores existentes com dados incompletos;
+permitir completar gradualmente, sem exigir todos os campos ausentes ao salvar edição. Manter
+obrigatoriedade integral apenas na criação e validar os valores fornecidos na atualização parcial.
+Verificar edição de outro campo com CPF/telefone/endereço ainda ausentes. Resposta registrada com o
+trabalho pausado; analyze e implementação não foram retomados.
+
+Retomada de 22/09: cinco decisões integradas; emenda explícita 2.1.0 ao princípio V preparada fora
+do analyze. Escopo de execução: T124–T129 e 005 LC03. Ordem: contratos/modelo, serviços e
+autorização, UI e regressões, gates e evidências. T126 encerra após todas as demais validações.
+Preservar motivos por ocorrência em auditoria append-only e referência ao evento de solicitação
+atual; restauração não apaga histórico. Consulta mínima de CPF via POST autenticado, sem CPF na
+URL/logs, exige users:create e users:read; restauração exige users:update e versão atual. CEP
+opcional também no servidor; edição de endereço legado aceita preenchimento gradual, validando
+campos informados e impedindo apagar os obrigatórios já preenchidos. Documentação de dependentes
+incluída por autorização de 22/09, sem executar POL01/POL02. Usuário determinou não abrir PR ainda.
+Localhost permanece desligado; gates pesados no CI.
+
+Complemento22/09: controles de senha/situação juntos após a lista de funções; senha secundária,
+desativação abaixo e exclusão visível somente para desativado. Filtros SQL parametrizados incluem
+função vigente/sem função, datas de cadastro inclusivas em America/Bahia e exclusão pendente.
+Paginação mantém parâmetros. Critérios adicionados a T127; CI deve validar UI e consultas
+combinadas.
+
+Atualização final de22/09: usuário autorizou abrir PR para dev quando testes e revisão terminarem. A
+proibição anterior de abertura foi substituída; aprovação/merge continuam sem autorização. Localhost
+permanece desligado. Revisão de imagens acrescentou contenção da tabela no grid da lista móvel e
+preservação do espaçamento compartilhado do endereço. E2E confere ausência de transbordamento da
+página e rolagem restrita à tabela.
+
+Fechamento22/09: etapas de implementação/gates e revisão de imagens concluídas no CI35728053078
+(3ca6410); T124–T129/005 LC03 encerradas conforme relatório de evidências. Próximo passo autorizado:
+abrir PR para dev. Sem ativar localhost, aplicar migrations locais ou implementar POL01/POL02.
+
+## Correções da revisão — 22/09/2026
+
+T130 padroniza o SQL da lista em America/Bahia e omite o segmento CEP quando vazio na ficha somente
+leitura. T131 amplia o catálogo compartilhado da exportação com CPF parcial normalizado e
+Cadastros/Exclusão pendente, em consultas parametrizadas. Preservar permissões, paginação, Atuais e
+formatos. Validar limites históricos de datas, combinação de filtros e rejeição de CPF malformado,
+além da jornada de download Excel/CSV/PDF e ficha sem CEP. Sem migration ou ativação local de
+serviços.
+
+## Padronização de ações — 22/09/2026
+
+Reutilizar Button/buttonVariants e um cabeçalho compartilhado para os quadros. Mover exportações
+existentes de Colaboradores, Auditoria e Relatórios acima dos filtros, mantendo permissões e fluxos
+existentes. Remover agrupamento especial do cabeçalho de Colaboradores para seguir a inclusão de
+Parceiros/Associados. Validar posição, cores, navegação e responsividade em temas claro/escuro nos
+testes existentes.

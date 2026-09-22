@@ -1,3 +1,4 @@
+import { syntheticUserContact } from "../helpers/user-contact";
 import { Client } from "pg";
 import { readFile, writeFile } from "node:fs/promises";
 import { expect, syntheticUsers, test } from "./fixtures";
@@ -169,7 +170,7 @@ test("general export alone exposes no administrative module and revocation hides
       "x-csrf-token": crypto.randomUUID(),
       "idempotency-key": crypto.randomUUID(),
     },
-    data: { name: "Colaborador parcial sintético", email, roleIds: [] },
+    data: { ...syntheticUserContact(), name: "Colaborador parcial sintético", email, roleIds: [] },
   });
   expect(created.status()).toBe(201);
   const body = await created.json();
@@ -246,7 +247,12 @@ test("manager grants a write they do not possess, resets a colleague password, a
         "x-csrf-token": crypto.randomUUID(),
         "idempotency-key": crypto.randomUUID(),
       },
-      data: { name: label, email: `role-${crypto.randomUUID()}@example.test`, roleIds: [] },
+      data: {
+        ...syntheticUserContact(),
+        name: label,
+        email: `role-${crypto.randomUUID()}@example.test`,
+        roleIds: [],
+      },
     });
     expect(response.status()).toBe(201);
     return response.json();
@@ -277,7 +283,7 @@ test("manager grants a write they do not possess, resets a colleague password, a
         "x-csrf-token": crypto.randomUUID(),
         "idempotency-key": crypto.randomUUID(),
       },
-      data: { name: "Write must be denied" },
+      data: { ...syntheticUserContact(), name: "Write must be denied" },
     });
     expect(denied.status()).toBe(403);
     await view.goto(`/users/${colleague.id}`);
@@ -320,5 +326,77 @@ test("manager grants a write they do not possess, resets a colleague password, a
     await managerContext.close();
     await colleagueContext.close();
     await sql.end();
+  }
+});
+
+test("exports collaborator contact filtered by CPF and pending deletion in Excel, CSV and PDF", async ({
+  page,
+}, info) => {
+  await login(page);
+  const contact = syntheticUserContact();
+  const name = `Contato exportação ${crypto.randomUUID()}`;
+  const response = await page.request.post("/api/v1/users", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": crypto.randomUUID(),
+      "idempotency-key": crypto.randomUUID(),
+    },
+    data: { ...contact, name, email: `contact-${crypto.randomUUID()}@example.test`, roleIds: [] },
+  });
+  expect(response.status()).toBe(201);
+  const user = await response.json();
+  const deleted = await page.request.post(`/api/v1/users/${user.id}/lifecycle`, {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": crypto.randomUUID(),
+      "idempotency-key": crypto.randomUUID(),
+    },
+    data: { action: "delete", version: user.version, reason: "Exportação sintética de pendentes" },
+  });
+  expect(deleted.status()).toBe(200);
+  await page.goto("/users/exportar");
+  await page.getByRole("textbox", { name: "Nome", exact: true }).fill(name);
+  await page
+    .getByRole("textbox", { name: "CPF", exact: true })
+    .fill(contact.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"));
+  await page.getByLabel("Cadastros", { exact: true }).selectOption("pending");
+  await expectWcag22AA(page);
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.getByRole("heading", { name: "Exportar colaboradores", exact: true }).click();
+    await expectWcag22AA(page);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width,
+    );
+    await page.screenshot({
+      animations: "disabled",
+      path: info.outputPath(`collaborator-export-filters-${width}.png`),
+      fullPage: true,
+    });
+  }
+
+  for (const label of ["CPF", "Telefone", "Endereço"])
+    await page.getByRole("checkbox", { name: label, exact: true }).check();
+  for (const [format, label] of [
+    ["xlsx", "Excel"],
+    ["csv", "CSV"],
+    ["pdf", "PDF"],
+  ] as const) {
+    const promise = page.waitForEvent("download");
+    await page.getByRole("button", { name: `Exportar em ${label}`, exact: true }).click();
+    const download = await promise;
+    expect(await download.failure()).toBeNull();
+    const bytes = await readFile((await download.path())!);
+    const content =
+      format === "pdf"
+        ? (await readPdf(bytes)).join(" ")
+        : JSON.stringify(format === "csv" ? readCsv(bytes) : readXlsx(bytes));
+    expect(content).toContain(contact.cpf);
+    expect(content).toContain(contact.phone);
+    expect(content).toContain(contact.address.street);
+    expect(content).toContain(contact.address.postalCode);
+    await expect(
+      page.getByRole("status").filter({ hasText: "Geração e transferência concluídas" }),
+    ).toContainText("1 registros");
   }
 });
