@@ -49,7 +49,7 @@ export default async function UsersPage({
   };
 
   return (
-    <div className="page-stack">
+    <div className="page-stack users-page">
       <header className="page-header">
         <p className="eyebrow">Controle de acesso</p>
         <h1>Colaboradores</h1>

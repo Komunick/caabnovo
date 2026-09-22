@@ -323,6 +323,15 @@ test("collaborator list uses compact shared actions and collapsible filters", as
     [390, 844],
   ]) {
     await page.setViewportSize({ width: width!, height: height! });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width!,
+    );
+    if (width === 390) {
+      const scroll = page.getByLabel(
+        "Tabela de contas; use as setas para percorrer horizontalmente",
+      );
+      expect(await scroll.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
+    }
     for (const theme of ["light", "dark"]) {
       await page.evaluate((theme) => {
         document.documentElement.dataset.theme = theme;

@@ -204,7 +204,9 @@ test("legacy accounts accept gradual address completion and retain unsaved field
     .getByRole("navigation", { name: "Navegação administrativa" })
     .getByRole("link", { name: "Início", exact: true })
     .click();
+  await expect(page).toHaveURL(/\/$/);
   await page.goBack();
+  await expect(page).toHaveURL(new RegExp(`/users/${id}$`));
   await expect(page.getByLabel("Cidade (opcional)", { exact: true })).toHaveValue("Salvador");
   await page.getByRole("button", { name: "Salvar alterações", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Alterações salvas." })).toBeVisible();

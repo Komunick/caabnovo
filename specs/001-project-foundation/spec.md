@@ -26,11 +26,12 @@ Lista/filtros e ações seguem o padrão compartilhado; nova senha cinza, junto 
 desativar; exclusão visível somente em desativados. Filtros incluem nome/CPF/e-mail, situação,
 função/sem função, intervalo de cadastro e estado da exclusão.
 
-Não abrir PR conforme pedido expresso. Documentação de dependentes pode acompanhar; POL01/POL02 não
-foram implementadas e a pergunta sobre nova análise permanece aberta. Localhost e Docker foram
-desligados após o usuário revogar a ativação em22/09; não reativar. Banco preservado, nenhuma
-migration ou seed executada nele. Prosseguir com CI e revisão de imagens sintéticas. Resultados
-abaixo pertencem ao incremento anterior integrado no PR36.
+Orientação final de22/09: abrir PR para dev após concluir implementação, gates e revisão de imagens.
+Não aprovar nem integrar. Documentação de dependentes pode acompanhar; POL01/POL02 não foram
+implementadas e a pergunta sobre nova análise permanece aberta. Localhost e Docker foram desligados
+após o usuário revogar a ativação em22/09; não reativar. Banco preservado, nenhuma migration ou seed
+executada nele. Prosseguir com CI e revisão de imagens sintéticas. Resultados abaixo pertencem ao
+incremento anterior integrado no PR36.
 
 Recorte implementado e validado: T097–T123,005 LC01/LC02 e008 LC01. CI35644236348 (57d6b56) aprovado
 em quality/browser/security, incluindo387 unitários,145 contrato,234 integração,89 E2E, 6

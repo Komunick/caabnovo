@@ -683,3 +683,9 @@ desativação abaixo e exclusão visível somente para desativado. Filtros SQL p
 função vigente/sem função, datas de cadastro inclusivas em America/Sao_Paulo e exclusão pendente.
 Paginação mantém parâmetros. Critérios adicionados a T127; CI deve validar UI e consultas
 combinadas.
+
+Atualização final de22/09: usuário autorizou abrir PR para dev quando testes e revisão terminarem. A
+proibição anterior de abertura foi substituída; aprovação/merge continuam sem autorização. Localhost
+permanece desligado. Revisão de imagens acrescentou contenção da tabela no grid da lista móvel e
+preservação do espaçamento compartilhado do endereço. E2E confere ausência de transbordamento da
+página e rolagem restrita à tabela.
