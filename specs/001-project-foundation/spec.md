@@ -9,7 +9,22 @@ seções correspondentes dos documentos das funções afetadas. Excluir tarefas 
 funcionalidades não alteradas e os adaptadores dos demais módulos ainda não implementados desta
 análise. Decisão explícita do usuário; não executar análise integral do projeto.
 
-## Checkpoint atual — 21/09/2026
+## Checkpoint atual — 22/09/2026
+
+Retomada autorizada em 22/09/2026. Q5 respondida com A: cadastros existentes permanecem utilizáveis
+e editáveis, com preenchimento gradual dos dados faltantes; obrigatoriedade completa somente para
+novos cadastros. As cinco decisões do clarify estão respondidas e registradas. Fechamento documental
+do clarify concluído; próxima etapa é analyze somente de 001 T124–T129 e 005 LC03, seguido de
+implementação. Não abrir PR, conforme orientação expressa de 22/09. Documentação de dependentes pode
+integrar a entrega; POL01/POL02 continuam sem implementação autorizada neste incremento e a pergunta
+sobre nova análise permanece pendente.
+
+Decisões anteriores mantidas: CPF único com aviso/motivo e oferta de reativação; motivo obrigatório
+para excluir colaboradores ou associados; reativação mantém os dados anteriores; rua, número,
+bairro, cidade e UF obrigatórios em novos cadastros, CEP/complemento opcionais e consulta de CEP por
+API. Na retomada, concluir revisão documental do clarify e executar analyze restrito ao incremento
+antes de implementar. Código e ajustes visuais anteriores estão preservados; os resultados a seguir
+pertencem ao recorte anterior e não validam este incremento.
 
 Recorte implementado e validado: T097–T123,005 LC01/LC02 e008 LC01. CI35644236348 (57d6b56) aprovado
 em quality/browser/security, incluindo387 unitários,145 contrato,234 integração,89 E2E, 6
@@ -22,7 +37,7 @@ Demais categorias claras. Checklist13/16 preservado por autorização, sem hooks
 somente leitura:23 requisitos,30 tarefas, cobertura100%, sem achados relevantes. A documentação não
 declara novos adaptadores, descarte institucional ou homologação dos demais módulos concluídos.
 
-Próximo passo: abrir PR para dev conforme pedido explícito, sem aprovar/integrar. Localhost
+O recorte anterior foi integrado no PR36; não alterar esse PR ou reutilizar sua branch. Localhost
 desligado, banco local preservado. Checkpoints abaixo são históricos e não substituem este estado
 atual.
 
@@ -59,6 +74,30 @@ com branches dev e main obrigatórias."
 ## Clarifications
 
 ### Session 2026-09-21
+
+- Q: Como tratar colaboradores existentes sem CPF, telefone ou endereço completo? → A: Manter acesso
+  e edição normalmente, permitindo completar os dados aos poucos (A). Todos os campos obrigatórios
+  serão exigidos apenas em novos cadastros; salvar uma edição de cadastro existente não exige
+  completar os demais campos ainda ausentes.
+
+- Q: Quais campos do endereço devem ser obrigatórios no cadastro de colaboradores? → A: Rua, número
+  (aceitando s/n), bairro, cidade e UF obrigatórios; CEP e complemento opcionais (B). Integrar o CEP
+  à API para auxiliar no preenchimento do endereço. CEP ausente, não encontrado ou consulta
+  indisponível não impede o preenchimento manual dos demais campos.
+
+- Q: Ao reativar pelo CPF, manter os dados anteriores ou substituí-los pelos dados preenchidos na
+  tentativa de novo cadastro? → A: Manter os dados existentes e abrir o cadastro para revisão e
+  edição (A). Não aplicar automaticamente os dados da tentativa de cadastro à conta restaurada.
+
+- Q: Exclusões de colaboradores e associados devem exigir motivo? → A: Sim. Motivo obrigatório nas
+  duas exclusões, conforme determinação explícita do usuário. Exceção à dispensa anterior; não
+  estender às demais ações. Exclusões históricas sem motivo mostram “Motivo não registrado”.
+
+- Q: O CPF deve continuar reservado ao colaborador mesmo após sua exclusão? → A: Sim (A). Ao tentar
+  cadastrar um colaborador, verificar se o CPF já existe. Se pertencer a uma conta excluída, mostrar
+  aviso de usuário excluído, o motivo da exclusão e perguntar se deseja reativar a conta existente;
+  não criar outra identidade com o mesmo CPF. Motivo obrigatório em novas exclusões confirmado na
+  resposta seguinte.
 
 - Q: O Gestor poderá gerar nova senha para uma conta com cargo Administrador? → A: Não (A). Somente
   Administrador redefine outro Administrador; Gestor pode redefinir outros gestores e colaboradores.
@@ -292,12 +331,14 @@ verificando progresso, tentativas, resultado terminal, correlação e mensagens 
   qualquer módulo a outros colaboradores, inclusive alterações que não possui, sem alterar os
   próprios acessos/cargo ou atribuir cargos; Colaborador não concede nada.
 - **FR-009**: Alterações sensíveis de contas, funções, permissões e sessões DEVEM exigir confirmação
-  e autorização específica, sem campo ou exigência de justificativa.
+  e autorização específica. Somente solicitações de exclusão de Colaboradores/Associados exigem
+  motivo; demais ações dispensam justificativa.
 - **FR-010**: Toda tentativa relevante de autenticação, revogação de sessão e mudança de acesso DEVE
   produzir evento de segurança pesquisável por pessoal autorizado.
 - **FR-011**: Toda alteração crítica DEVE produzir evento de auditoria append-only com ator, ação,
   entidade, identificador, data, origem, identificador de correlação, sem exigir ou inventar
-  justificativa humana. Motivos históricos permanecem legíveis.
+  justificativa humana nas demais ações. Exclusões de Colaboradores/Associados preservam motivo,
+  autor e data por ocorrência, conforme decisão de 21/09. Motivos históricos permanecem legíveis.
 - **FR-012**: Eventos de auditoria DEVEM preservar valores anteriores e posteriores somente quando
   permitidos e DEVEM redigir campos sensíveis.
 - **FR-013**: A aplicação NÃO DEVE permitir alteração nem exclusão de eventos de auditoria.
@@ -780,26 +821,84 @@ corrigido aguardando nova execução. Tarefas permanecem abertas.
 
 Decisão do usuário: criar um colaborador exige nome, CPF, e-mail, endereço e telefone. CPF com
 dígitos verificadores válidos; telefone brasileiro com DDD; normalizar máscaras antes de persistir.
-Endereço estruturado segue os controles existentes: CEP, rua, número (aceita s/n), bairro, cidade e
-UF obrigatórios; complemento opcional. Consulta de CEP é auxiliar: preenchimento manual continua
-possível se indisponível.
+Endereço estruturado: rua, número (aceita s/n), bairro, cidade e UF obrigatórios. CEP e complemento
+opcionais, conforme Q4. Integrar o CEP à API de consulta já usada no projeto para auxiliar no
+preenchimento de rua, bairro, cidade e UF. Número e complemento continuam manuais; os valores
+recebidos podem ser revisados. CEP vazio não dispara consulta nem bloqueia o cadastro. Quando
+informado, validar oito dígitos com máscara opcional. Não encontrado, falha ou demora na API permite
+preencher manualmente; não sobrescrever alterações manuais com resposta antiga.
 
 Novos cadastros incompletos são recusados também pela API. Dados existentes permanecem nulos até
-preenchimento explícito, sem bloquear login, gestão de acessos ou ciclo de vida. O detalhe
+preenchimento explícito, sem bloquear login, edição cadastral, gestão de acessos ou ciclo de vida.
+Salvar uma edição de cadastro existente não exige completar os demais campos ainda ausentes,
+conforme Q5; validar os valores informados sem impor preenchimento retroativo integral. O detalhe
 autorizado permite consultar e corrigir CPF, telefone e endereço, preservando versão, rascunho e
 permissões existentes. E-mail mantém o fluxo seguro de troca já existente. CPF identifica unicamente
 o colaborador, inclusive contas desativadas/excluídas; não reutilizar identidade de conta antiga.
-Duplicidade retorna conflito sem expor a conta correspondente. Exportação de Colaboradores oferece
-estes campos como colunas opcionais em Excel/CSV/PDF, sob users:read e exports:generate. Não incluir
-os novos dados pessoais em logs/auditoria ou na sessão global; auditoria registra quais campos
-mudaram.
+CPF já cadastrado não cria outra conta. No cadastro autorizado, se corresponder a conta excluída,
+exibir aviso de usuário excluído e o motivo da exclusão, oferecendo confirmação para reativar o
+cadastro existente. A consulta e a reativação continuam sujeitas às permissões correspondentes;
+reativação não ocorre automaticamente ao informar o CPF. Ao confirmar, manter os dados anteriores e
+abrir o cadastro existente para revisão e edição; não substituir informações com os dados
+preenchidos na tentativa de novo cadastro. Alterações posteriores exigem salvar explicitamente e
+respeitam as permissões e a versão do cadastro. Não inventar motivo para registros antigos sem essa
+informação: informar que o motivo não foi registrado. Novas exclusões de colaboradores e associados
+exigem motivo informado pelo responsável; vazio ou somente espaços é recusado também pelo servidor.
+Conta ativa com o mesmo CPF continua sendo duplicidade, sem oferecer reativação. Exportação de
+Colaboradores oferece estes campos como colunas opcionais em Excel/CSV/PDF, sob users:read e
+exports:generate. Não incluir os novos dados pessoais em logs/auditoria ou na sessão global;
+auditoria registra quais campos mudaram.
 
 Aceite: criação completa e leitura após recarregar; dados ausentes/inválidos recusados; CPF
-duplicado e atualização concorrente recusados; legado continua utilizável; campos persistem na
-navegação; consulta sem edição funciona; três formatos mantêm seleção/ordem.
+duplicado não cria outra identidade; conta excluída encontrada pelo CPF oferece aviso, motivo e
+confirmação de reativação; confirmar preserva os dados anteriores e abre o cadastro para revisão,
+sem aplicar os dados da tentativa de inclusão; atualização concorrente recusada; legado continua
+utilizável; campos persistem na navegação; consulta sem edição funciona; três formatos mantêm
+seleção/ordem. Cadastro sem CEP é aceito com os demais campos obrigatórios; consulta de CEP preenche
+endereço revisável e sua falha mantém o preenchimento manual disponível.
 
 Checkpoint: implementação local preparada. 151 contratos, tipos, lint e formatação aprovados.
 Unitários: 386 passaram; falha do subprocesso do worker na sandbox Windows (uv_os_get_passwd ENOMEM)
 desapareceu na reexecução isolada autorizada (14/14). Integração/migration, build, navegador e
 acessibilidade aguardam CI; tarefas ainda não concluídas. Registros locais de dependentes permanecem
 fora desta entrega.
+
+## Correção visual solicitada — 21/09/2026
+
+Usuário rejeitou apresentação da exportação, botão fora do padrão, excesso de espaço do módulo e
+filtros de Colaboradores. Aplicar padrão Parceiros/Associados: header e Button compartilhados, Novo
+colaborador com Plus em /users/new (lista sem formulário sempre aberto), busca por nome/CPF/ e-mail,
+filtros recolhíveis de situação/exclusão e limpar filtros. Consulta/paginação preservam filtros no
+servidor; inclusão continua visível no vazio. Exportação compacta com filtros em grade,
+seleção/ordenação na mesma lista sem duplicar colunas, retorno à lista e downloads nos três
+formatos. Preservar rascunhos, teclado, alvos acessíveis, temas e autorização. Implementação em
+andamento; CI do cadastro anterior não homologa esta correção visual.
+
+Ordem vigente solicitada pelo usuário: clarify → analyze → implement, limitada a este incremento.
+Implementação interrompida antes de continuar/publicar a correção visual. Campos cadastrais já foram
+enviados ao PR; correção visual permanece local. Unicidade/reuso do CPF confirmados na primeira
+resposta, com oferta de reativação e exibição do motivo da exclusão. Motivo obrigatório em novas
+exclusões confirmado para colaboradores e associados. Obrigatoriedade do endereço e consulta à API
+confirmadas em Q4. Q5 confirmou acesso e edição normais do legado, com preenchimento gradual e
+obrigatoriedade integral apenas na criação. T124–T129 e005 LC03 abertas.
+
+Motivo obrigatório aplica-se à solicitação de exclusão, antes de começar o prazo de 24 horas
+(colaborador) ou sete dias (associado). Preservar motivo, autor e data dessa ocorrência, inclusive
+após desfazer ou reativar. Não inferir a causa a partir de logs nem preencher motivos retroativos.
+Exibir o motivo apenas na consulta autorizada; a confirmação de reativação não exige novo motivo. A
+implementação aguarda o término do clarify e o analyze. Conciliar a exceção explícita com os
+artefatos de governança antes de implementar, mantendo dispensadas as demais justificativas.
+
+Complemento de UI confirmado em 22/09: Gerar nova senha usa botão secundário cinza, próximo das
+revogações de função e acima de Desativar colaborador, sem painel de destaque. Excluir colaborador
+só aparece quando desativado; restauração permanece acessível conforme permissões. Filtros da lista:
+busca por nome/CPF/e-mail, situação, função (inclusive sem função), cadastro de/até e exclusão
+(atual/pendente/excluído/todos). Combinar filtros, preservar paginação e limpar em uma ação.
+Checkpoint: código em implementação; typecheck web passou antes deste complemento. Contratos,
+integração e UI novos ainda não executados. Sem PR, localhost ou alterações no banco local.
+
+Checkpoint de validação22/09: 161 contratos e lint aprovados. Unitários386/387 na sandbox; um teste
+de subprocesso do worker falhou por uv_os_get_passwd ENOMEM, e a reexecução isolada fora da sandbox
+passou14/14 sem alteração do worker. Typecheck web aprovado. Novos E2E preparados,
+integração/migration/build/navegador/acessibilidade ainda aguardam CI. Nenhuma tarefa de aceite
+encerrada antecipadamente. Usuário proíbe abertura de PR; push de branch para CI não abre PR.

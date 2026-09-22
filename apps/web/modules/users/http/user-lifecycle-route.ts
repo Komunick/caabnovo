@@ -10,6 +10,7 @@ export function createUserLifecycleRoute(deps: {
     userId: string;
     action: "delete" | "restore";
     version: number;
+    reason?: string;
     effectiveIdentity: string;
     requestId: string;
     correlationId: string;

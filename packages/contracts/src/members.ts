@@ -112,7 +112,11 @@ export const memberCommandSchema = z
       action: z.literal("photo"),
       fileId: uuid.nullable(),
     }),
-    z.strictObject({ ...base, action: z.literal("delete") }),
+    z.strictObject({
+      ...base,
+      action: z.literal("delete"),
+      justification: z.string().trim().min(1).max(1000),
+    }),
     z.strictObject({ ...base, action: z.literal("restore-deleted") }),
     z.strictObject({ ...base, action: z.literal("archive") }),
     z.strictObject({ ...base, action: z.literal("restore") }),
@@ -216,6 +220,7 @@ export interface MemberRelationship {
   endedAt: string | null;
 }
 export interface MemberRecord {
+  deletionReason?: string | null;
   photoFileId: string | null;
   administrativeStatus: MemberAdministrativeStatus;
   administrativeDecision: { reason: string; changedAt: string; actorName: string } | null;

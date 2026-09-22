@@ -5,7 +5,7 @@ import { FormField } from "@/components/ui/form-field";
 
 import { Plus } from "lucide-react";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Role, RoleReference } from "@caab/contracts";
 import { SensitiveActionDialog } from "./sensitive-action-dialog";
@@ -21,12 +21,14 @@ export function RoleAssignmentForm({
   assignedRoles,
   canGrant,
   canRevoke,
+  children,
 }: Readonly<{
   userId: string;
   roles: Role[];
   assignedRoles: RoleReference[];
   canGrant: boolean;
   canRevoke: boolean;
+  children?: ReactNode;
 }>) {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
@@ -93,6 +95,7 @@ export function RoleAssignmentForm({
       ) : (
         <p>Nenhuma função ativa.</p>
       )}
+      {children}
       {canGrant && available.length ? (
         <DraftForm draftKey="users-role-assignment-form-1" onSubmit={grant}>
           <FormField id="role-id" label="Função">

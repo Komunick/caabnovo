@@ -32,6 +32,9 @@
 - Preservar histórico de alterações relevantes.
 - Preferir exclusão lógica em registros auditáveis.
 - Eventos de auditoria são append-only para a aplicação.
+- Solicitar exclusão de Colaborador ou Associado exige motivo não vazio, preservado com autor e data
+  por ocorrência, inclusive após desfazer/restaurar (decisão de 21/09/2026). Demais ações dispensam
+  justificativa; histórico sem motivo mostra “Motivo não registrado”, sem backfill.
 - Datas são armazenadas em UTC e exibidas no timezone do negócio.
 - Operações concorrentes críticas usam transação e restrição no banco.
 - Jobs devem ser idempotentes sempre que possível e registrar progresso e erro útil.
@@ -67,4 +70,3 @@
 - Atualizar documentação e matriz de permissões quando afetadas.
 - Não misturar refatoração ampla com mudança funcional sem necessidade.
 - Não duplicar fonte de verdade entre CAAB, CMS, calendário ou integrações.
-

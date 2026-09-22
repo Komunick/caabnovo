@@ -136,6 +136,7 @@ export function MemberEditor({
       {canWrite && (
         <section className="panel" aria-label="Exclusão do associado">
           <SensitiveActionDialog
+            requireReason={!member.deletionEffectiveAt}
             triggerLabel={
               member.deletionEffectiveAt
                 ? deleted
@@ -152,16 +153,20 @@ export function MemberEditor({
                 ? "O cadastro voltará às consultas normais. Reservas canceladas não serão recriadas e a situação administrativa será preservada."
                 : "A exclusão lógica ocorrerá em sete dias. Dados, vínculos e reservas serão preservados. O responsável por cada reserva decidirá se deseja mantê-la ou cancelá-la."
             }
-            onConfirm={async () => {
+            onConfirm={async (reason) => {
               if (
                 !(await command({
                   action: member.deletionEffectiveAt ? "restore-deleted" : "delete",
+                  ...(!member.deletionEffectiveAt ? { justification: reason } : {}),
                 }))
               )
                 throw new Error("Member lifecycle refused");
             }}
           />
         </section>
+      )}
+      {member.deletionEffectiveAt && (
+        <p>Motivo da exclusão: {member.deletionReason || "Motivo não registrado"}</p>
       )}
       {error && (
         <div className={styles.notice} role="alert">
@@ -551,7 +556,10 @@ export function MemberEditor({
                     <strong>
                       {actionLabels[item.action.replace("member.", "")] ?? "Alteração registrada"}
                     </strong>
-                    <p>{item.reason}</p>
+                    <p>
+                      {item.reason ||
+                        (item.action === "member.delete" ? "Motivo não registrado" : "")}
+                    </p>
                     {item.after?.previousAdministrativeStatus &&
                       item.after.administrativeStatus && (
                         <p>

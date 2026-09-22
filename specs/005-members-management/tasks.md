@@ -9,8 +9,9 @@ código foi criado agora.
 
 ## Rastreabilidade e escopo
 
-AE04: detalhada em US3/US4 e coordenação008. POL01/P01 permanecem adiadas; nenhuma tarefa ativa
-define critérios institucionais.
+AE04: detalhada em US3/US4 e coordenação008. P01 tem documentos/vínculos e limite etário
+confirmados; POL01 mantém somente a definição de reanálise pendente. POL02 registra aplicação futura
+da matriz, fora das tarefas T041–T049 já existentes.
 
 O histórico abaixo conserva marcadores e evidências originais. IDs provisórios detalhados aqui não
 são uma segunda execução; usar a lista ativa. Pendências de política/pesquisa/homologação e funções
@@ -399,12 +400,20 @@ dados nas demais operações de cadastro.
 
 ## Dependentes e documentos — Q11 de 21/09/2026
 
-- [ ] POL01 Definir posteriormente com a instituição os critérios de dependentes, vínculos aceitos e
-      documentos mínimos de P01; registrar fonte, vigência e critérios de aceite antes de
-      implementar regras dependentes. Até lá, manter cadastro/análise manual e validações
-      existentes, sem automação presumida.
+- [ ] POL01 Definir posteriormente quais alterações cadastrais/documentais exigem nova análise
+      (pergunta 4). Documentos, vínculos e limite etário já estão confirmados em
+      `open-decisions.md`; não reabrir as perguntas 1–3 nem presumir gatilhos adicionais.
 
-O adiamento documentado não conclui P01/POL01 nem representa validação institucional.
+- [ ] POL02 Planejar, adequar e validar cadastro/vínculos e revisão documental conforme a matriz P01
+      de `open-decisions.md`: carteira OAB do titular; documentos por cônjuge/filho/enteado,
+      diferenciação menor/maior e limite de até 25 anos para filhos/enteados. Atualizar
+      contratos/modelo/roteiro da função antes da implementação, conferir os seis perfis com dados
+      sintéticos e preservar análise manual, privacidade, histórico e cadastros existentes. Não
+      presumir renovação documental, aprovação automática, bloqueio etário automático, cancelamento
+      de reservas ou os gatilhos de nova análise ainda sem resposta.
+
+As perguntas 1–3 foram respondidas; POL01 não está concluída porque a pergunta 4 continua aberta.
+POL02 está pendente, sem código nem teste executado nesta atualização.
 
 ## Exportação transversal — revisão de 21/09/2026
 
@@ -430,3 +439,9 @@ interface em `account-member-lifecycle`, `members` e `scheduling`, conforme a fu
 recuperação e decisão da reserva mantêm histórico/ocupação. Detalhes no
 [relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Somente os
 itens LC acima foram concluídos; exportação própria e pendências anteriores permanecem.
+
+- [ ] LC03 Após clarify/analyze, exigir motivo não vazio para solicitar exclusão de associado;
+      atualizar contrato, diálogo, serviço e persistência/auditoria. Validar UI/API, vazio/espaços,
+      autorização, ocorrência/histórico após desfazer/restaurar e legado sem motivo. Preservar sete
+      dias e regras de reservas/dependentes; exceção documental coordenada por001 T129. Não executar
+      POL01/POL02 neste incremento; sua documentação pode acompanhar a entrega conforme22/09.

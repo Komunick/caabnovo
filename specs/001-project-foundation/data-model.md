@@ -301,7 +301,8 @@ Migrations0025/0026/0027/0028 validadas em banco descartável do CI, sem aplica�
 Migration0029 acrescenta a `user`: `cpf text` normalizado (11 dígitos, índice único inclusive contas
 excluídas), `phone text` com DDD (10/11 dígitos), `address jsonb` estruturado. Todos permitem NULL
 para preservar o legado. Contratos/serviços exigem dados válidos na criação e não aceitam esvaziar
-campos já preenchidos. Endereço contém CEP, rua, número, complemento opcional, bairro, cidade e UF.
+campos já preenchidos. Endereço contém rua, número, bairro, cidade e UF; CEP e complemento são
+opcionais. Atualizações permitem completar o legado gradualmente sem exigir campos ainda ausentes.
 Validação de dígitos verificadores e obrigatoriedade ocorre no servidor; constraints verificam
 formato de armazenamento. Versão/auditoria/idempotência existentes continuam atômicas.
 

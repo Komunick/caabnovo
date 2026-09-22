@@ -28,17 +28,28 @@ export const userAddressSchema = brazilianAddressSchema
     neighborhood: z.string().trim().min(1).max(100),
     number: z.string().trim().min(1).max(20),
     city: z.string().trim().min(1).max(100),
-    postalCode: brazilianAddressSchema.shape.postalCode.refine((value) => value.length === 8),
     state: brazilianAddressSchema.shape.state.refine((value) => value.length === 2),
   })
   .strict();
-export type UserAddress = z.infer<typeof userAddressSchema>;
+export const userStoredAddressSchema = brazilianAddressSchema.strict();
+export const userAddressUpdateSchema = z.strictObject({
+  postalCode: userStoredAddressSchema.shape.postalCode.removeDefault().optional(),
+  street: userStoredAddressSchema.shape.street.removeDefault().optional(),
+  neighborhood: userStoredAddressSchema.shape.neighborhood.removeDefault().optional(),
+  number: userStoredAddressSchema.shape.number.removeDefault().optional(),
+  complement: userStoredAddressSchema.shape.complement.removeDefault().optional(),
+  city: userStoredAddressSchema.shape.city.removeDefault().optional(),
+  state: userStoredAddressSchema.shape.state.removeDefault().optional(),
+  address: userStoredAddressSchema.shape.address.removeDefault().optional(),
+});
+export type UserAddress = z.infer<typeof userStoredAddressSchema>;
 
 export const userSchema = currentUserSchema.omit({ permissions: true }).extend({
   cpf: userCpfSchema.nullable().optional(),
   phone: userPhoneSchema.nullable().optional(),
-  address: userAddressSchema.nullable().optional(),
+  address: userStoredAddressSchema.nullable().optional(),
   deletionEffectiveAt: z.iso.datetime({ offset: true }).nullable().optional(),
+  deletionReason: z.string().nullable().optional(),
 });
 
 export const initialPasswordResponseSchema = z.object({
@@ -56,9 +67,13 @@ export type CreatedUser = z.infer<typeof createdUserSchema>;
 export const userPageSchema = pageSchema(userSchema);
 
 export const userListQuerySchema = paginationQuerySchema.extend({
+  q: z.string().trim().max(160).default(""),
   cursor: idSchema.optional(),
   status: userStatusSchema.optional(),
-  deleted: z.enum(["excluded", "only", "all"]).default("excluded"),
+  deleted: z.enum(["excluded", "pending", "only", "all"]).default("excluded"),
+  roleId: z.union([idSchema, z.literal("none")]).optional(),
+  createdFrom: z.iso.date().optional(),
+  createdTo: z.iso.date().optional(),
 });
 
 export const createUserRequestSchema = z
@@ -83,7 +98,7 @@ export const updateUserRequestSchema = z
     status: userStatusSchema.optional(),
     cpf: userCpfSchema.optional(),
     phone: userPhoneSchema.optional(),
-    address: userAddressSchema.optional(),
+    address: userAddressUpdateSchema.optional(),
     version: z.number().int().positive(),
     justification: nonEmptyReasonSchema.max(1000).default(""),
   })
@@ -102,6 +117,24 @@ export type UserListQuery = z.infer<typeof userListQuerySchema>;
 export type CreateUserRequest = z.infer<typeof createUserRequestSchema>;
 export type UpdateUserRequest = z.infer<typeof updateUserRequestSchema>;
 
-export const userLifecycleSchema = z
-  .object({ action: z.enum(["delete", "restore"]), version: z.number().int().positive() })
-  .strict();
+export const userLifecycleSchema = z.discriminatedUnion("action", [
+  z.strictObject({
+    action: z.literal("delete"),
+    version: z.number().int().positive(),
+    reason: z.string().trim().min(1).max(1000),
+  }),
+  z.strictObject({ action: z.literal("restore"), version: z.number().int().positive() }),
+]);
+export const userCpfLookupSchema = z.strictObject({ cpf: userCpfSchema });
+export const userCpfLookupResultSchema = z.discriminatedUnion("status", [
+  z.strictObject({ status: z.literal("available") }),
+  z.strictObject({ status: z.literal("existing") }),
+  z.strictObject({
+    status: z.literal("deleted"),
+    id: idSchema,
+    version: z.number().int().positive(),
+    reason: z.string().nullable(),
+    canRestore: z.boolean(),
+  }),
+]);
+export type UserCpfLookupResult = z.infer<typeof userCpfLookupResultSchema>;

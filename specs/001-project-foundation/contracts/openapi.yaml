@@ -87,6 +87,12 @@ paths:
       operationId: listUsers
       summary: List users visible to an authorized administrator
       parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+            maxLength: 160
+          description: Busca literal por nome/e-mail ou CPF com ou sem máscara.
         - $ref: "#/components/parameters/Cursor"
         - $ref: "#/components/parameters/Limit"
         - name: status
@@ -650,11 +656,13 @@ components:
     UserAddress:
       type: object
       additionalProperties: false
-      required: [postalCode, street, number, neighborhood, city, state]
+      required: [street, number, neighborhood, city, state]
       properties:
         postalCode:
           type: string
-          description: CEP brasileiro com oito dígitos; aceita máscara de entrada.
+          description:
+            Opcional; quando informado, CEP brasileiro com oito dígitos, aceitando máscara de
+            entrada.
         street:
           type: string
           minLength: 1
@@ -735,7 +743,20 @@ components:
           type: string
           description: Telefone brasileiro com DDD; normalizado sem máscara.
         address:
-          $ref: "#/components/schemas/UserAddress"
+          type: object
+          additionalProperties: false
+          description:
+            Atualização parcial; campos omitidos preservam o valor anterior. Legado pode ser
+            completado gradualmente.
+          properties:
+            postalCode: { type: string, pattern: "^(?:[0-9]{5}-?[0-9]{3})?$" }
+            street: { type: string, maxLength: 300 }
+            number: { type: string, maxLength: 20 }
+            neighborhood: { type: string, maxLength: 100 }
+            city: { type: string, maxLength: 100 }
+            state: { type: string, description: UF brasileira ou vazio no legado incompleto. }
+            complement: { type: string, maxLength: 150 }
+            address: { type: string, maxLength: 600 }
         name:
           type: string
           minLength: 1

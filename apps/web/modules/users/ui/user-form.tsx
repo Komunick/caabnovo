@@ -1,13 +1,14 @@
 "use client";
 import { useDraftCache, useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftForm } from "@/components/ui/draft-controls";
+import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 
 import { Plus } from "lucide-react";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { CreatedUser, Role, User } from "@caab/contracts";
+import type { CreatedUser, Role, User, UserCpfLookupResult } from "@caab/contracts";
 import {
   requiredEmailSchema,
   contactFieldMessages,
@@ -15,6 +16,7 @@ import {
   userPhoneSchema,
   createUserRequestSchema,
   updateUserRequestSchema,
+  userCpfLookupResultSchema,
 } from "@caab/contracts";
 import { BrazilianAddressFields } from "@/components/ui/brazilian-address-fields";
 import { ValidatedTextField } from "@/components/ui/validated-text-field";
@@ -58,6 +60,44 @@ export function UserForm(props: Readonly<UserFormProps>) {
   // Credential receipts are intentionally excluded from persistent form drafts.
   const [created, setCreated] = useState<CreatedUser | null>(null);
   const attempt = useRef<{ body: string; key: string } | null>(null);
+  const [cpfQuery, setCpfQuery] = useDraftState("user-form:cpf-query", "");
+  const [cpfMatch, setCpfMatch] = useState<UserCpfLookupResult | null>(null);
+  const [cpfError, setCpfError] = useState("");
+
+  async function lookupCpf(cpf: string, signal?: AbortSignal) {
+    const response = await fetch("/api/v1/users/lookup-cpf", {
+      method: "POST",
+      headers: mutationHeaders(),
+      body: JSON.stringify({ cpf }),
+      cache: "no-store",
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(5000)])
+        : AbortSignal.timeout(5000),
+    });
+    if (!response.ok) throw new Error("Não foi possível consultar o CPF. Tente novamente.");
+    return userCpfLookupResultSchema.parse(await response.json());
+  }
+
+  useEffect(() => {
+    setCpfMatch(null);
+    setCpfError("");
+    if (props.mode !== "create" || !userCpfSchema.safeParse(cpfQuery).success) return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      void lookupCpf(cpfQuery, controller.signal)
+        .then((match) => {
+          if (!controller.signal.aborted) setCpfMatch(match);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted)
+            setCpfError("Não foi possível consultar o CPF. A consulta será repetida ao cadastrar.");
+        });
+    }, 250);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [cpfQuery, props.mode]);
 
   useEffect(() => setHydrated(true), []);
 
@@ -106,7 +146,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
         cpf: "CPF",
         phone: "Telefone",
         email: "E-mail",
-        address: "Endereço completo (CEP, rua, número, bairro, cidade e UF)",
+        address: "Endereço (rua, número, bairro, cidade e UF; CEP opcional)",
       };
       setError(
         `Confira: ${[...new Set(validated.error.issues.map((issue) => labels[String(issue.path[0])] ?? "Dados do cadastro"))].join(", ")}.`,
@@ -126,6 +166,8 @@ export function UserForm(props: Readonly<UserFormProps>) {
       });
       if (!response.ok) {
         setError(await errorMessage(response));
+        if (!editing && response.status === 409)
+          setCpfMatch(await lookupCpf(String(data.get("cpf") ?? "")).catch(() => null));
       } else {
         drafts.clear("users-user-form-1:");
         if (!editing) {
@@ -136,6 +178,8 @@ export function UserForm(props: Readonly<UserFormProps>) {
             return;
           }
           setCreated(created);
+          setCpfQuery("");
+          drafts.clear();
           attempt.current = null;
           return;
         }
@@ -151,23 +195,6 @@ export function UserForm(props: Readonly<UserFormProps>) {
     } finally {
       setPending(false);
     }
-  }
-
-  async function changeStatus(status: "active" | "disabled") {
-    if (props.mode !== "edit") return;
-    const response = await fetch(`/api/v1/users/${props.user.id}`, {
-      method: "PATCH",
-      headers: mutationHeaders(),
-      body: JSON.stringify({
-        status,
-        version,
-      }),
-    });
-    if (!response.ok) throw new Error(await errorMessage(response));
-    const saved = await response.json();
-    setVersion(saved.version);
-    setError("");
-    router.refresh();
   }
 
   if (created)
@@ -187,8 +214,8 @@ export function UserForm(props: Readonly<UserFormProps>) {
       </h2>
       <DraftForm draftKey="users-user-form-1" className="user-create-form" onSubmit={submit}>
         <p className="user-contact-instructions">
-          Nome, CPF, e-mail, telefone e endereço são obrigatórios para novos colaboradores.
-          Complemento é opcional.
+          Nome, CPF, e-mail, telefone e endereço são obrigatórios para novos colaboradores. CEP e
+          complemento são opcionais. Cadastros existentes podem ser completados aos poucos.
         </p>
         <FormField id={`${props.mode}-name`} label="Nome">
           <DraftInput
@@ -218,7 +245,43 @@ export function UserForm(props: Readonly<UserFormProps>) {
           required={props.mode === "create" || !!props.user.cpf}
           defaultValue={props.user?.cpf ?? ""}
           maxLength={14}
+          onValueChange={props.mode === "create" ? (input) => setCpfQuery(input.value) : undefined}
         />
+        {props.mode === "create" && cpfError && <p role="status">{cpfError}</p>}
+        {props.mode === "create" && cpfMatch?.status === "existing" && (
+          <p role="alert">Este CPF já está cadastrado em Colaboradores.</p>
+        )}
+        {props.mode === "create" && cpfMatch?.status === "deleted" && (
+          <div className="page-stack" role="status">
+            <p>Este CPF pertence a um colaborador excluído.</p>
+            <p>Motivo da exclusão: {cpfMatch.reason || "Motivo não registrado"}</p>
+            {cpfMatch.canRestore ? (
+              <SensitiveActionDialog
+                triggerLabel="Reativar colaborador existente"
+                title="Reativar colaborador existente"
+                confirmLabel="Confirmar reativação"
+                description="Os dados anteriores serão mantidos. O cadastro será aberto para revisão; os dados digitados nesta inclusão não serão aplicados."
+                onConfirm={async () => {
+                  const response = await fetch(`/api/v1/users/${cpfMatch.id}/lifecycle`, {
+                    method: "POST",
+                    headers: mutationHeaders(),
+                    body: JSON.stringify({ action: "restore", version: cpfMatch.version }),
+                  });
+                  if (!response.ok) {
+                    const message = await errorMessage(response);
+                    setError(message);
+                    throw new Error(message);
+                  }
+                  drafts.clear();
+                  router.push(`/users/${cpfMatch.id}`);
+                  router.refresh();
+                }}
+              />
+            ) : (
+              <p>Você não tem permissão para reativar este colaborador.</p>
+            )}
+          </div>
+        )}
         {props.mode === "create" && (
           <ValidatedTextField
             id="create-email"
@@ -256,7 +319,9 @@ export function UserForm(props: Readonly<UserFormProps>) {
           <BrazilianAddressFields
             prefix={`${props.mode}-user`}
             initial={props.user?.address ?? undefined}
-            required={props.mode === "create" || !!props.user.address}
+            required={props.mode === "create"}
+            postalCodeRequired={false}
+            preserveRequired={props.mode === "edit"}
           />
         </div>
         {props.mode === "create" ? (
@@ -276,8 +341,9 @@ export function UserForm(props: Readonly<UserFormProps>) {
 
         {error ? <p role="alert">{error}</p> : null}
         {message ? <p role="status">{message}</p> : null}
-        <button
-          className={`primary-button ${props.mode === "create" ? "button--add" : "compact-button"}`}
+        <Button
+          intent="primary"
+          size={props.mode === "create" ? "add" : "compact"}
           type="submit"
           disabled={!hydrated || pending}
         >
@@ -287,27 +353,8 @@ export function UserForm(props: Readonly<UserFormProps>) {
             : props.mode === "create"
               ? "Criar colaborador"
               : "Salvar alterações"}
-        </button>
+        </Button>
       </DraftForm>
-      {props.mode === "edit" && props.canDisable && props.user.status === "active" ? (
-        <div className="user-danger-action">
-          <SensitiveActionDialog
-            triggerLabel="Desativar colaborador"
-            title="Desativar colaborador"
-            confirmLabel="Confirmar desativação"
-            onConfirm={() => changeStatus("disabled")}
-          />
-        </div>
-      ) : null}
-      {props.mode === "edit" && props.user.status === "disabled" ? (
-        <SensitiveActionDialog
-          triggerLabel="Reativar colaborador"
-          title="Reativar colaborador"
-          confirmLabel="Confirmar reativação"
-          description="O colaborador poderá entrar novamente com sua senha. As sessões encerradas não serão restauradas."
-          onConfirm={() => changeStatus("active")}
-        />
-      ) : null}
     </section>
   );
 }

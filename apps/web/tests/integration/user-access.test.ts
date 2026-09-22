@@ -334,8 +334,22 @@ describe("collaborator profile persistence", () => {
     };
     const created = await createUser(database.pool, command);
     expect(created).toMatchObject(contact);
-    const { findUserById } = await import("@caab/db/repositories/users");
+    const { findUserById, listUsers } = await import("@caab/db/repositories/users");
     expect(await findUserById(database.pool, created.id)).toMatchObject(contact);
+    for (const q of [
+      "Pessoa Teste",
+      "contact@example.test",
+      contact.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+    ]) {
+      expect(
+        (await listUsers(database.pool, { q, limit: 100 })).items.map((user) => user.id),
+      ).toEqual([created.id]);
+    }
+    expect((await listUsers(database.pool, { q: "%", limit: 100 })).items).toHaveLength(0);
+    expect(
+      (await listUsers(database.pool, { q: "Pessoa Teste", status: "disabled", limit: 100 })).items,
+    ).toHaveLength(0);
+
     await expect(
       createUser(database.pool, { ...command, phone: "71999990001" }),
     ).rejects.toMatchObject({ code: "IDEMPOTENCY_CONFLICT" });
@@ -381,6 +395,36 @@ describe("collaborator profile persistence", () => {
         justification: "",
       }),
     ).resolves.toMatchObject({ version: 2, cpf: null });
+    const partial = await changeUser(database.pool, {
+      ...context(actorId),
+      userId: legacy,
+      version: 2,
+      address: { street: "Rua gradativa" },
+      justification: "",
+    });
+    expect(partial).toMatchObject({
+      version: 3,
+      cpf: null,
+      phone: null,
+      address: { street: "Rua gradativa", city: "", postalCode: "" },
+    });
+    const more = await changeUser(database.pool, {
+      ...context(actorId),
+      userId: legacy,
+      version: 3,
+      address: { city: "Salvador" },
+      justification: "",
+    });
+    expect(more.address).toMatchObject({ street: "Rua gradativa", city: "Salvador" });
+    await expect(
+      changeUser(database.pool, {
+        ...context(actorId),
+        userId: legacy,
+        version: 4,
+        address: { street: "" },
+        justification: "",
+      }),
+    ).rejects.toMatchObject({ code: "VALIDATION_FAILED" });
     await expect(
       changeUser(database.pool, {
         ...context(actorId),

@@ -145,12 +145,25 @@ describe("collaborator contact requirements", () => {
       expect(createUserRequestSchema.safeParse({ ...body, cpf }).success).toBe(false);
     for (const phone of ["", "123", "(00) 99999-0000"])
       expect(createUserRequestSchema.safeParse({ ...body, phone }).success).toBe(false);
-    for (const field of ["postalCode", "street", "number", "neighborhood", "city", "state"])
+    for (const field of ["street", "number", "neighborhood", "city", "state"])
       expect(
         createUserRequestSchema.safeParse({ ...body, address: { ...body.address, [field]: "" } })
           .success,
       ).toBe(false);
     expect(updateUserRequestSchema.safeParse({ version: 1, name: "Legacy" }).success).toBe(true);
     expect(updateUserRequestSchema.safeParse({ version: 1, cpf: "" }).success).toBe(false);
+    expect(
+      createUserRequestSchema.safeParse({ ...body, address: { ...body.address, postalCode: "" } })
+        .success,
+    ).toBe(true);
+    expect(
+      createUserRequestSchema.safeParse({
+        ...body,
+        address: { ...body.address, postalCode: "123" },
+      }).success,
+    ).toBe(false);
+    expect(
+      updateUserRequestSchema.parse({ version: 1, address: { street: "Rua Sintética" } }).address,
+    ).toEqual({ street: "Rua Sintética" });
   });
 });

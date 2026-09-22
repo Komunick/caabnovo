@@ -61,6 +61,9 @@ async function authorized<T>(
 const memberSelect = `SELECT jsonb_build_object(
  'id',m.id,'version',m.version,'archivedAt',m.archived_at,'createdAt',m.created_at,'updatedAt',m.updated_at,
  'deletionEffectiveAt',m.deletion_effective_at,'deleted',coalesce(m.deletion_effective_at<=clock_timestamp(),false),
+ 'deletionReason',(SELECT a.reason FROM audit_event a WHERE a.entity_type='member' AND a.entity_id=m.id::text
+   AND a.action='member.delete' AND (a.after->>'deletionEffectiveAt')::timestamptz=date_trunc('milliseconds',m.deletion_effective_at)
+   ORDER BY a.occurred_at DESC,a.id DESC LIMIT 1),
  'administrativeStatus',m.administrative_status,'photoFileId',m.photo_file_id,
  'administrativeDecision',CASE WHEN m.administrative_changed_at IS NULL THEN NULL ELSE jsonb_build_object(
  'reason',m.administrative_reason,'changedAt',m.administrative_changed_at,

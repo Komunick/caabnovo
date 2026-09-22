@@ -27,6 +27,7 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await expect(page.getByRole("heading", { name: "Colaboradores" })).toBeVisible();
   await expectWcag22AA(page);
 
+  await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   const createButton = page.getByRole("button", { name: "Criar colaborador" });
   await expect(createButton).toBeEnabled();
   await page.getByLabel("Nome").fill(name);
@@ -38,7 +39,7 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await page.route("https://viacep.com.br/**", (route) => route.abort());
   await page.getByLabel("CPF", { exact: true }).fill(contact.cpf);
   await page.getByLabel("Telefone", { exact: true }).fill(contact.phone);
-  await page.getByLabel("CEP", { exact: true }).fill(contact.address.postalCode);
+  await page.getByLabel("CEP (opcional)", { exact: true }).fill(contact.address.postalCode);
   await page.getByLabel("Rua", { exact: true }).fill(contact.address.street);
   await page.getByLabel("Número", { exact: true }).fill(contact.address.number);
   await page.getByLabel("Bairro", { exact: true }).fill(contact.address.neighborhood);
@@ -52,6 +53,7 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
     .getByRole("navigation", { name: "Navegação administrativa" })
     .getByRole("link", { name: "Colaboradores", exact: true })
     .click();
+  await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   await expect(page.getByLabel("Rua", { exact: true })).toHaveValue(contact.address.street);
   await expect(page.getByLabel("Nome", { exact: true })).toHaveValue(name);
   await page.screenshot({
@@ -263,5 +265,74 @@ test("manager can reach accounts beyond the first hundred and recover from inval
   } finally {
     await database.query('DELETE FROM "user" WHERE id = ANY($1::uuid[])', [insertedIds]);
     await database.end();
+  }
+});
+
+test("collaborator list uses compact shared actions and collapsible filters", async ({
+  page,
+}, info) => {
+  await signIn(page, syntheticUsers.administrator.email, syntheticUsers.administrator.password);
+  const contact = syntheticUserContact();
+  const name = `Lista compacta ${randomUUID()}`;
+  const response = await page.request.post("/api/v1/users", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": randomUUID(),
+      "idempotency-key": randomUUID(),
+    },
+    data: { ...contact, name, email: `list-${randomUUID()}@example.test`, roleIds: [] },
+  });
+  expect(response.status()).toBe(201);
+  await page.goto("/users");
+  await expect(page.getByLabel("CPF", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Novo colaborador", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Exportar colaboradores", exact: true })).toHaveClass(
+    /button--secondary/,
+  );
+  const filters = page.getByRole("search", { name: "Filtros de colaboradores" });
+  const search = filters.getByRole("searchbox", { name: "Nome, CPF ou e-mail" });
+  await expect(filters.getByLabel("Situação", { exact: true })).toBeHidden();
+  await search.fill(name);
+  await filters.getByRole("button", { name: "Buscar", exact: true }).click();
+  const table = page.getByRole("table", { name: "Contas cadastradas" });
+  await expect(table.getByRole("link")).toHaveText([name]);
+  await filters.getByRole("button", { name: "Filtros", exact: true }).click();
+  await filters.getByLabel("Função atribuída", { exact: true }).selectOption("none");
+  await expect(table.getByRole("link")).toHaveText([name]);
+  await filters.getByLabel("Cadastrado de", { exact: true }).fill("2000-01-01");
+  await filters.getByLabel("Cadastrado até", { exact: true }).fill("2000-12-31");
+  await filters.getByRole("button", { name: "Aplicar filtros", exact: true }).click();
+  await expect(
+    page.getByText("Nenhuma conta encontrada nesta página.", { exact: true }),
+  ).toBeVisible();
+  await filters.getByRole("button", { name: "Limpar filtros", exact: true }).click();
+  await search.fill(contact.cpf);
+  await filters.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(table.getByRole("link")).toHaveText([name]);
+  await filters.getByLabel("Situação", { exact: true }).selectOption("disabled");
+  await expect(
+    page.getByText("Nenhuma conta encontrada nesta página.", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Novo colaborador", exact: true })).toBeVisible();
+  await filters.getByRole("button", { name: "Limpar filtros", exact: true }).click();
+  await search.fill(contact.cpf);
+  await filters.getByRole("button", { name: "Buscar", exact: true }).click();
+  await expect(table.getByRole("link")).toHaveText([name]);
+  for (const [width, height] of [
+    [1280, 900],
+    [390, 844],
+  ]) {
+    await page.setViewportSize({ width: width!, height: height! });
+    for (const theme of ["light", "dark"]) {
+      await page.evaluate((theme) => {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem("caab-theme", theme);
+      }, theme);
+      await expectWcag22AA(page);
+      await page.screenshot({
+        path: info.outputPath(`collaborator-list-${theme}-${width}.png`),
+        fullPage: true,
+      });
+    }
   }
 });

@@ -1,5 +1,6 @@
 <!--
 Sync Impact Report
+- 2026-09-22, 2.0.0 -> 2.1.0 (MINOR): incorpora a decisão explícita de 21/09 de exigir motivo somente nas solicitações de exclusão de Colaboradores e Associados. Preserva dispensa nas demais ações, motivos históricos e auditoria append-only. Novos eventos registram motivo/autor/data por ocorrência; sem backfill ou alteração de migrations anteriores. Emenda preparada para revisão humana na seção de governança do PR deste incremento, sem aprovação presumida.
 - 2026-09-21, 1.1.1 -> 2.0.0 (MAJOR): concilia princípio V com a decisão explícita de 14/09/2026 de retirar justificativas obrigatórias. Remoção de obrigação normativa; preserva autorização, confirmação, autoria, alterações e motivos históricos. Migração funcional já registrada em 0019_optional_action_reasons.sql; não executar novamente nem alterar dados nesta emenda. Sem seções adicionadas/removidas, sem placeholders pendentes. Emenda documental preparada na entrega atual, sem presumir aprovação de PR.
 - 2026-09-17, 1.1.0 -> 1.1.1 (PATCH): esclarece que a retirada de MFA em 10/09 ocorreu por reclamações, conforme confirmação do usuário. Sem mudança de princípio ou controle.
 - 2026-09-10, 1.0.0 -> 1.1.0: requisito de MFA retirado por solicitação explícita; permissões, sessões e auditoria preservadas.
@@ -19,17 +20,18 @@ Sync Impact Report
 - Removed sections: nenhuma; seções genéricas do scaffold foram concretizadas
 - Follow-up TODOs: nenhum
 -->
+
 # Constituição do Projeto CAAB
 
 ## Core Principles
 
 ### I. Simplicidade antes da abstração
 
-Toda alteração DEVE aplicar KISS, DRY e YAGNI. A solução DEVE atender ao requisito atual da
-forma mais direta, legível e operável possível. Uma abstração somente PODE ser criada depois de
-existirem pelo menos três repetições reais, equivalentes e demonstráveis, com responsabilidade
-única e benefício superior à indireção adicionada. Similaridade aparente, reutilização hipotética
-ou necessidade futura não confirmada NÃO justificam abstração.
+Toda alteração DEVE aplicar KISS, DRY e YAGNI. A solução DEVE atender ao requisito atual da forma
+mais direta, legível e operável possível. Uma abstração somente PODE ser criada depois de existirem
+pelo menos três repetições reais, equivalentes e demonstráveis, com responsabilidade única e
+benefício superior à indireção adicionada. Similaridade aparente, reutilização hipotética ou
+necessidade futura não confirmada NÃO justificam abstração.
 
 Racional: simplicidade reduz custo de revisão, teste, operação, remoção e evolução do sistema.
 
@@ -41,9 +43,9 @@ dados. Regras críticas DEVEM residir no servidor e no módulo responsável, nun
 interface ou no CMS. A criação de serviços separados exige evidência verificável de uma fronteira
 real de carga, segurança, implantação ou responsabilidade operacional.
 
-Toda comunicação destinada ao aplicativo ou ao site externo DEVE usar API documentada e
-versionada. Mudanças de contrato DEVEM preservar compatibilidade durante uma migração planejada ou
-introduzir uma nova versão explícita.
+Toda comunicação destinada ao aplicativo ou ao site externo DEVE usar API documentada e versionada.
+Mudanças de contrato DEVEM preservar compatibilidade durante uma migração planejada ou introduzir
+uma nova versão explícita.
 
 Racional: fronteiras modulares preservam coesão sem antecipar a complexidade operacional de
 microserviços, enquanto contratos versionados protegem consumidores externos.
@@ -51,8 +53,8 @@ microserviços, enquanto contratos versionados protegem consumidores externos.
 ### III. Integridade no PostgreSQL
 
 O PostgreSQL DEVE ser a fonte de verdade para agenda, associados, permissões e auditoria. CMS,
-cache, interface, calendário ou integração externa NÃO PODEM manter uma autoridade concorrente
-sobre esses domínios.
+cache, interface, calendário ou integração externa NÃO PODEM manter uma autoridade concorrente sobre
+esses domínios.
 
 Conflitos de agendamento DEVEM ser impedidos no servidor por transação e por restrição adequada no
 banco. A confirmação DEVE revalidar a disponibilidade dentro da transação; validações visuais ou
@@ -65,8 +67,11 @@ distintos.
 ### IV. Segurança, privacidade e menor privilégio
 
 Toda ação executada no servidor DEVE autenticar a identidade quando não for pública e DEVE aplicar
-autorização server-side com negação por padrão e menor privilégio. Administradores DEVEM autenticar-se por e-mail e senha e possuir as permissões concretas para cada ação. A exigência de MFA foi removida em 10/09/2026 por reclamações, por decisão explícita do responsável pelo produto; motivação confirmada em 17/09/2026 (specs/006-account-settings/authenticator-removal.md).
-Papéis ou escopos informados pelo cliente NÃO PODEM ser tratados como fonte confiável.
+autorização server-side com negação por padrão e menor privilégio. Administradores DEVEM
+autenticar-se por e-mail e senha e possuir as permissões concretas para cada ação. A exigência de
+MFA foi removida em 10/09/2026 por reclamações, por decisão explícita do responsável pelo produto;
+motivação confirmada em 17/09/2026 (specs/006-account-settings/authenticator-removal.md). Papéis ou
+escopos informados pelo cliente NÃO PODEM ser tratados como fonte confiável.
 
 O projeto DEVE adotar OWASP ASVS nível 2 como baseline verificável e cumprir a LGPD por meio de
 finalidade, minimização, acesso controlado, retenção definida e descarte apropriado. Conteúdo rico
@@ -81,16 +86,20 @@ ou conteúdo externo é malicioso.
 ### V. Auditoria, histórico e responsabilidade
 
 Alterações críticas DEVEM gerar auditoria append-only para a aplicação, contendo ator, ação,
-entidade, identificador, data, origem e identificador de requisição; valores anteriores e posteriores
-DEVEM ser incluídos somente quando permitidos e com campos sensíveis redigidos. Senhas, tokens,
-cookies, segredos, arquivos completos e dados pessoais desnecessários NÃO DEVEM ser registrados.
+entidade, identificador, data, origem e identificador de requisição; valores anteriores e
+posteriores DEVEM ser incluídos somente quando permitidos e com campos sensíveis redigidos. Senhas,
+tokens, cookies, segredos, arquivos completos e dados pessoais desnecessários NÃO DEVEM ser
+registrados.
 
 O histórico de registros auditáveis DEVE ser preservado. Esses registros DEVEM usar exclusão lógica,
-salvo exigência legal de descarte devidamente documentada. Ações sensíveis DEVEM exigir
-autorização específica e a confirmação aplicável, sem campo ou exigência de justificativa humana,
-conforme decisão de 14/09/2026. Motivos históricos DEVEM permanecer legíveis; novos eventos
-registram autoria, ação, data e alterações, sem inventar explicação humana. A aplicação NÃO PODE
-editar nem apagar eventos de auditoria.
+salvo exigência legal de descarte devidamente documentada. Ações sensíveis DEVEM exigir autorização
+específica e a confirmação aplicável. Conforme decisão de 21/09/2026, solicitações de exclusão de
+Colaboradores e Associados DEVEM exigir motivo humano não vazio, preservado com autor e data por
+ocorrência, inclusive após desfazer ou restaurar. As demais ações permanecem sem campo ou exigência
+de justificativa humana, conforme decisão de 14/09/2026. Motivos históricos DEVEM permanecer
+legíveis; ausência histórica é apresentada como “Motivo não registrado”, sem preenchimento
+retroativo. Novos eventos registram autoria, ação, data e alterações. A aplicação NÃO PODE editar
+nem apagar eventos de auditoria.
 
 Racional: uma trilha íntegra permite atribuição de responsabilidade e investigação sem ampliar a
 exposição de dados.
@@ -127,7 +136,8 @@ carga cognitiva.
 - Estados relevantes DEVEM usar valores controlados e transições server-side explícitas; textos
   livres NÃO PODEM funcionar como máquina de estado.
 - Datas persistidas DEVEM usar UTC e ser exibidas no timezone de negócio definido pelo produto.
-- Operações críticas sujeitas a retry DEVEM aceitar estratégia de idempotência proporcional ao risco.
+- Operações críticas sujeitas a retry DEVEM aceitar estratégia de idempotência proporcional ao
+  risco.
 - Decisões de implementação DEVEM permanecer coerentes com `docs/STACK.md`, salvo emenda aprovada ou
   decisão arquitetural documentada que não contradiga esta constituição.
 - Regras de negócio ainda não confirmadas NÃO DEVEM ser inventadas. Lacunas DEVEM ser registradas na
@@ -135,10 +145,11 @@ carga cognitiva.
 
 ## Fluxo de Entrega e Gates de Qualidade
 
-Toda mudança DEVE partir de branch curta `feature/*`, `fix/*`, `chore/*` ou `docs/*` e entrar por Pull
-Request direcionado a `dev`. Commits ou pushes diretos em `dev` e `main` são proibidos. Produção
-somente PODE receber Pull Request de promoção de `dev` para `main`, e o merge em `main` somente PODE
-ser executado por mantenedor humano. CI, revisão e proteções de branch NÃO PODEM ser contornados.
+Toda mudança DEVE partir de branch curta `feature/*`, `fix/*`, `chore/*` ou `docs/*` e entrar por
+Pull Request direcionado a `dev`. Commits ou pushes diretos em `dev` e `main` são proibidos.
+Produção somente PODE receber Pull Request de promoção de `dev` para `main`, e o merge em `main`
+somente PODE ser executado por mantenedor humano. CI, revisão e proteções de branch NÃO PODEM ser
+contornados.
 
 Antes do merge, a mudança DEVE passar por lint, typecheck, testes aplicáveis e build de produção.
 Testes de autorização são obrigatórios sempre que rota, ação, permissão ou papel for criado ou
@@ -158,10 +169,10 @@ Esta constituição prevalece sobre práticas, documentos e convenções conflit
 esta constituição.
 
 Uma emenda DEVE ser proposta em Pull Request próprio ou em seção claramente identificada de um Pull
-Request, descrever motivação e impacto, atualizar o Sync Impact Report e obter aprovação de mantenedor
-humano. Mudanças incompatíveis com regras vigentes exigem versão MAJOR e plano de migração; novas
-regras ou expansões materiais exigem versão MINOR; esclarecimentos sem alteração normativa exigem
-versão PATCH.
+Request, descrever motivação e impacto, atualizar o Sync Impact Report e obter aprovação de
+mantenedor humano. Mudanças incompatíveis com regras vigentes exigem versão MAJOR e plano de
+migração; novas regras ou expansões materiais exigem versão MINOR; esclarecimentos sem alteração
+normativa exigem versão PATCH.
 
 Toda especificação, plano, lista de tarefas e Pull Request DEVE demonstrar conformidade com os
 princípios aplicáveis. Revisores DEVEM bloquear alterações que violem uma regra obrigatória ou que
@@ -173,4 +184,4 @@ A conformidade DEVE ser revisada em cada Pull Request e novamente antes de qualq
 `main`. Divergências entre documentos DEVEM ser resolvidas pela ordem de precedência acima e, quando
 afetarem governança, por emenda versionada.
 
-**Version**: 2.0.0 | **Ratified**: 2026-09-04 | **Last Amended**: 2026-09-21
+**Version**: 2.1.0 | **Ratified**: 2026-09-04 | **Last Amended**: 2026-09-22

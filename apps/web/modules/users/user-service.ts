@@ -2,6 +2,10 @@ import "server-only";
 import {
   createUserRequestSchema,
   updateUserRequestSchema,
+  userStoredAddressSchema,
+  userLifecycleSchema,
+  userCpfLookupSchema,
+  type UserCpfLookupResult,
   type UserAddress,
 } from "@caab/contracts";
 import { createHash } from "node:crypto";
@@ -64,6 +68,7 @@ export function serializeUser(user: UserRecord) {
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt?.toISOString() ?? null,
     deletionEffectiveAt: user.deletionEffectiveAt?.toISOString() ?? null,
+    deletionReason: user.deletionReason ?? null,
   };
 }
 
@@ -220,7 +225,7 @@ export async function changeUser(
     name?: string;
     cpf?: string;
     phone?: string;
-    address?: UserAddress;
+    address?: Partial<UserAddress>;
     status?: "active" | "disabled";
     justification: string;
   },
@@ -273,7 +278,20 @@ export async function changeUser(
         "The last active administrator cannot be disabled",
       );
     }
-    const updated = await updateUser(client, { ...input, userId: command.userId });
+    const address = input.address
+      ? userStoredAddressSchema.parse({ ...before.address, ...input.address })
+      : undefined;
+    if (address && before.address) {
+      for (const field of ["street", "number", "neighborhood", "city", "state"] as const) {
+        if (before.address[field] && !address[field])
+          throw new UserAccessError(
+            "VALIDATION_FAILED",
+            422,
+            "Previously provided address fields cannot be cleared",
+          );
+      }
+    }
+    const updated = await updateUser(client, { ...input, address, userId: command.userId });
     if (!updated) {
       throw new UserAccessError("USER_VERSION_CONFLICT", 409, "User version changed");
     }
@@ -335,10 +353,20 @@ export async function changeUser(
 
 export async function changeUserLifecycle(
   pool: Pool,
-  command: CommandContext & { userId: string; version: number; action: "delete" | "restore" },
+  command: CommandContext & {
+    userId: string;
+    version: number;
+    action: "delete" | "restore";
+    reason?: string;
+  },
   overrides: ServiceDependencies = {},
 ) {
   const deps = dependencies(overrides);
+  const input = userLifecycleSchema.parse({
+    action: command.action,
+    version: command.version,
+    ...(command.action === "delete" ? { reason: command.reason } : {}),
+  });
   return withTransaction(pool, async (client) => {
     await currentAuthority(
       client,
@@ -382,6 +410,7 @@ export async function changeUserLifecycle(
       actorUserId: command.actor.userId,
       effectiveIdentity: command.effectiveIdentity,
       action: command.action === "delete" ? "user.deletion.requested" : "user.deletion.restored",
+      reason: input.action === "delete" ? input.reason : undefined,
       entityType: "user",
       entityId: before.id,
       before: {
@@ -405,6 +434,36 @@ export async function changeUserLifecycle(
       correlationId: command.correlationId,
       context: { actorUserId: command.actor.userId },
     });
-    return serializeUser(updated);
+    return serializeUser((await findUserById(client, before.id))!);
+  });
+}
+
+/** CPF stays in the POST body; return only what the creation flow needs. */
+export async function lookupUserCpf(
+  pool: Pool,
+  actor: RequestActor,
+  raw: unknown,
+): Promise<UserCpfLookupResult> {
+  requirePermission(actor, PERMISSIONS.usersCreate);
+  requirePermission(actor, PERMISSIONS.usersRead);
+  const input = userCpfLookupSchema.parse(raw);
+  return withTransaction(pool, async (client) => {
+    const current = await currentAuthority(client, actor, PERMISSIONS.usersCreate);
+    requirePermission(current, PERMISSIONS.usersRead);
+    const result = await client.query<{ id: string; deleted: boolean }>(
+      `SELECT id,coalesce(deletion_effective_at<=clock_timestamp(),false) AS deleted FROM "user" WHERE cpf=$1`,
+      [input.cpf],
+    );
+    const match = result.rows[0];
+    if (!match) return { status: "available" };
+    if (!match.deleted) return { status: "existing" };
+    const user = (await findUserById(client, match.id))!;
+    return {
+      status: "deleted",
+      id: user.id,
+      version: user.version,
+      reason: user.deletionReason ?? null,
+      canRestore: current.permissions.has(PERMISSIONS.usersUpdate),
+    };
   });
 }

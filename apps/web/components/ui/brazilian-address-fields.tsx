@@ -23,11 +23,15 @@ export function BrazilianAddressFields({
   initial,
   className,
   required = false,
+  postalCodeRequired = required,
+  preserveRequired = false,
 }: {
   prefix: string;
   initial?: Partial<BrazilianAddress>;
   className?: string;
   required?: boolean;
+  postalCodeRequired?: boolean;
+  preserveRequired?: boolean;
 }) {
   const [address, setAddress] = useDraftState<Address>(`address:${prefix}`, {
     street: initial?.street ?? "",
@@ -138,8 +142,8 @@ export function BrazilianAddressFields({
         <ValidatedTextField
           id={`${prefix}-postalCode`}
           name="postalCode"
-          label={required ? "CEP" : "CEP (opcional)"}
-          required={required}
+          label={postalCodeRequired ? "CEP" : "CEP (opcional)"}
+          required={postalCodeRequired}
           hint="Digite oito números para preencher endereço, cidade e UF."
           schema={postalCodeSchema}
           message={contactFieldMessages.postalCode}
@@ -182,12 +186,18 @@ export function BrazilianAddressFields({
           <FormField
             key={name}
             id={`${prefix}-${name}`}
-            label={required && name !== "complement" ? label.replace(" (opcional)", "") : label}
+            label={
+              (required || (preserveRequired && initial?.[name])) && name !== "complement"
+                ? label.replace(" (opcional)", "")
+                : label
+            }
             hint={name === "number" ? "Ex.: 123, 12A ou s/n." : undefined}
           >
             <DraftInput
               name={name}
-              required={required && name !== "complement"}
+              required={
+                (required || (preserveRequired && !!initial?.[name])) && name !== "complement"
+              }
               maxLength={max}
               autoComplete={autoComplete}
               disabled={!converting}
@@ -196,10 +206,13 @@ export function BrazilianAddressFields({
             />
           </FormField>
         ))}
-        <FormField id={`${prefix}-city`} label={required ? "Cidade" : "Cidade (opcional)"}>
+        <FormField
+          id={`${prefix}-city`}
+          label={required || (preserveRequired && initial?.city) ? "Cidade" : "Cidade (opcional)"}
+        >
           <DraftInput
             name="city"
-            required={required}
+            required={required || (preserveRequired && !!initial?.city)}
             autoComplete="address-level2"
             maxLength={100}
             value={address.city}
@@ -208,13 +221,17 @@ export function BrazilianAddressFields({
         </FormField>
         <FormField
           id={`${prefix}-state`}
-          label={required ? "Estado (UF)" : "Estado (UF) (opcional)"}
+          label={
+            required || (preserveRequired && initial?.state)
+              ? "Estado (UF)"
+              : "Estado (UF) (opcional)"
+          }
           error={stateError}
         >
           <DraftInput
             ref={stateInput}
             name="state"
-            required={required}
+            required={required || (preserveRequired && !!initial?.state)}
             list={`${prefix}-state-options`}
             autoComplete="address-level1"
             maxLength={2}

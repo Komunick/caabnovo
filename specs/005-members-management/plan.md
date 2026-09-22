@@ -1,5 +1,14 @@
 # Implementation Plan: Associados: preservação manual, agenda e exportação
 
+## Atualização do plano — requisitos de documentos, 21/09/2026
+
+Usuário definiu documentos de titular/cônjuge/filho/enteado e limite de até 25 anos para filhos e
+enteados. Matriz vigente em [open-decisions.md](open-decisions.md). P01 está parcialmente resolvida:
+pergunta 4 sobre nova análise continua pendente. Planejamento/implementação da matriz em POL02;
+POL01 preserva a pergunta aberta. Somente documentação nesta rodada, sem código, migration,
+aplicação retroativa, testes de aplicação ou alteração do CI. Próximo passo: detalhar a aplicação da
+matriz e validar os cenários quando sua implementação for retomada.
+
 **Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
 
@@ -8,8 +17,9 @@
 Exportar dados autorizados de Associados e conferir efeitos de bloqueio na agenda sem presumir
 políticas institucionais.
 
-US1 cadastro/vínculos; US2 documentos; US3 situações; US4 consumidores e US5 exportação. P01/POL01,
-credencial, OAB hospedada e acesso externo continuam pendentes.
+US1 cadastro/vínculos; US2 documentos; US3 situações; US4 consumidores e US5 exportação. P01 tem
+matriz documental definida e implementação pendente em POL02; POL01 mantém a pergunta de reanálise
+aberta. Credencial, OAB hospedada e acesso externo continuam pendentes.
 
 ## Technical Context
 
@@ -25,7 +35,8 @@ integral arbitrária. Exportações não têm teto funcional de registros/perío
 tempo/recursos e validar integridade, resposta do painel e recuperação. Sem prova de estresse/grande
 volume nesta rodada; manter produto sem teto funcional de registros. **Restrições**: banco único,
 autorização atual por ação; sem localhost, deploy, seed real, limpeza de dados ou implementação
-nesta fase. Q10/Q11 e módulos futuros continuam adiados.
+nesta fase. Q10 e módulos futuros continuam adiados; Q11 foi parcialmente respondida pela matriz
+P01, ainda sem implementação.
 
 ## Constitution Check
 
@@ -318,11 +329,13 @@ dados nas demais operações de cadastro.
 
 ## Regras institucionais de dependentes e documentos — Q11 de 21/09/2026
 
-Manter cadastro/análise manual existentes enquanto P01 aguarda definição institucional. Não
-implementar critérios de parentesco, obrigatoriedade documental, aprovação ou reprovação automáticas
-por suposição. Preservar integridade de pessoas e vínculos, arquivos e acessos. Decisão não muda
-bloqueios administrativos e regras de reserva já confirmados. POL01 permanece pendente; nenhuma
-alteração de código ou teste foi executada para registrar esse adiamento.
+O adiamento integral de Q11 foi substituído nos pontos respondidos pela matriz de
+[open-decisions.md](open-decisions.md). Documentos e vínculos estão definidos; reanálise permanece
+em POL01. POL02 planejará e implementará a aplicação da matriz na função existente, preservando
+análise manual, histórico e controles de acesso. Não migrar, excluir, bloquear ou cancelar dados
+existentes automaticamente. Definir cenários dos seis perfis e do limite etário antes de
+implementar; não inventar validade documental ou novos gatilhos de reanálise. Nenhum código/teste
+foi executado por este registro.
 
 ## Checkpoint de revisão de código — 21/09/2026
 
@@ -353,3 +366,9 @@ CI35641862727, com migração0028 aditiva, controle de versão e auditoria. Tare
 atualizadas; exportação própria continua planejada. Sem aplicação ao banco local. Clarify do recorte
 concluído; analyze restrito às alterações concluído sem achados relevantes; gates compartilhados
 aprovados em57d6b56.
+
+Complemento de21/09 — motivo obrigatório de exclusão: incorporar validação de texto não vazio na
+solicitação, confirmação e persistência atômica com autor/data/ocorrência. Exibir na consulta
+permitida e preservar após desfazer/restaurar; manter prazo de sete dias e reservas existentes.
+Conciliar exceção com governança via001 T129. LC03 executa apenas Associados após clarify/analyze,
+sem implementar políticas P01/documentos/dependentes ou exigir motivos nas demais ações.

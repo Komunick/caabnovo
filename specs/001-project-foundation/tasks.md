@@ -949,8 +949,35 @@ ampliação.
 ## Dados obrigatórios de Colaboradores — 21/09/2026
 
 - [ ] T124 Implementar contratos, migration0029, persistência/serialização e atualização dos dados
-      obrigatórios, unicidade de CPF, idempotência e auditoria sem novos dados pessoais.
+      obrigatórios (CEP e complemento opcionais), unicidade de CPF, idempotência e auditoria sem
+      novos dados pessoais. Conforme Q5, exigir preenchimento integral apenas em novos cadastros;
+      preservar acesso e edição do legado incompleto, validando os valores fornecidos sem exigir
+      completar os demais campos ausentes. Cobrir atualização parcial de cadastro incompleto.
 - [ ] T125 Atualizar formulário/detalhe com máscaras, endereço compartilhado, legado, rascunhos e
-      colunas opcionais de exportação; preservar acessos, senha e ciclo de vida.
+      colunas opcionais de exportação; reutilizar API de CEP existente com preenchimento revisável e
+      alternativa manual. Validar CEP vazio, sucesso, inválido, não encontrado, falha/timeout e
+      resposta atrasada sem sobrescrever edição manual; preservar acessos, senha e ciclo de vida.
 - [ ] T126 Validar contratos, integração, E2E/a11y, formatos, migração e gates; registrar evidências
-      reais e atualizar o PR aberto, preservando documentos locais de dependentes fora do commit.
+      reais e preparar novo PR para dev. Documentação de dependentes incluída por autorização de
+      22/09; implementação de POL01/POL02 permanece fora deste incremento.
+
+- [ ] T127 Corrigir lista/cadastro/filtros de Colaboradores e compactar exportação no padrão
+      compartilhado; validar busca/status/paginação, rascunhos, seleção/ordem/download, teclado,
+      vazio e screenshots responsivos antes de concluir a entrega. Complemento22/09: função/sem
+      função, cadastro de/até e exclusão pendente; senha cinza junto das funções e acima de
+      desativar; exclusão visível apenas em contas desativadas. Cobrir ordem e visibilidade por
+      estado/permissão.
+
+- [ ] T128 Após concluir clarify e analyze, implementar detecção de CPF de conta excluída no
+      cadastro, aviso/motivo e confirmação de reativação da identidade existente. Manter dados
+      anteriores, abrir cadastro para revisão/edição e não aplicar dados da tentativa de criação.
+      Preservar guardas/versão; testar conta ativa duplicada, excluída com/sem motivo, recusa da
+      reativação, acesso negado, concorrência e preservação de dados quando a tentativa de inclusão
+      contém informações diferentes. Não marcar implementação concluída pelo registro desta decisão.
+
+- [ ] T129 Conciliar documentação de governança com a decisão explícita de motivo obrigatório nas
+      exclusões de Colaboradores/Associados; após clarify/analyze, exigir e registrar motivo na
+      exclusão de colaborador (contrato, confirmação, serviço, persistência/auditoria). Validar
+      vazio/espaços, ocorrência correta no aviso por CPF, acesso negado, histórico sem motivo e
+      preservação após restauração. Associados tem execução própria005 LC03; outras ações continuam
+      dispensadas. Não reescrever migrations anteriores nem inventar motivos retroativos.

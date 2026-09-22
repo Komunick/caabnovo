@@ -255,9 +255,9 @@ const functions: readonly FunctionDefinition[] = [
   {
     id: "user-new",
     area: "users",
-    href: "/users",
+    href: "/users/new",
     label: "Cadastrar colaborador",
-    description: "Abrir a lista para criar uma conta de colaborador.",
+    description: "Cadastrar uma conta de colaborador com identificação e contato.",
     keywords: "novo criar usuario funcionario equipe",
     permissions: ["users:create"],
   },

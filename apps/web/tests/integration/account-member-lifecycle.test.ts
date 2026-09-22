@@ -6,7 +6,14 @@ import { createDatabaseClient, runMigrations } from "@caab/db";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
 import { readUserPermissions } from "@caab/db/repositories/user-access";
 import { listUsers } from "@caab/db/repositories/users";
-import { createUser, changeUser, changeUserLifecycle } from "../../modules/users/user-service";
+import {
+  createUser,
+  changeUser,
+  changeUserLifecycle,
+  lookupUserCpf,
+} from "../../modules/users/user-service";
+import { findUserById } from "@caab/db/repositories/users";
+import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { resetUserPassword } from "../../modules/users/initial-password-service";
 import { createMember, commandMember, listMembers } from "../../modules/members/member-service";
 import { verifyPassword } from "better-auth/crypto";
@@ -82,8 +89,10 @@ describe("account and member lifecycle", () => {
       userId: user.id,
       version: user.version,
       action: "delete",
+      reason: "Encerramento sintético",
     });
     expect(deleted.status).toBe("disabled");
+    expect(deleted.deletionReason).toBe("Encerramento sintético");
     expect(Date.parse(deleted.deletionEffectiveAt!) - Date.now()).toBeGreaterThan(23.99 * 3600000);
     expect(Date.parse(deleted.deletionEffectiveAt!) - Date.now()).toBeLessThanOrEqual(24 * 3600000);
     expect(
@@ -130,6 +139,7 @@ describe("account and member lifecycle", () => {
         userId: actor.userId,
         version: 1,
         action: "delete",
+        reason: "Encerramento sintético",
       }),
     ).rejects.toMatchObject({ code: "LAST_ADMINISTRATOR" });
   });
@@ -172,12 +182,14 @@ describe("account and member lifecycle", () => {
     });
     const scheduled = await commandMember(database.pool, context(), member.id, {
       action: "delete",
+      justification: "Encerramento sintético",
       expectedVersion: member.version,
     });
     expect(Date.parse(scheduled.deletionEffectiveAt!) - Date.now()).toBeGreaterThan(
       6.99 * 86400000,
     );
     expect(scheduled.archivedAt).toBeNull();
+    expect(scheduled.deletionReason).toBe("Encerramento sintético");
     expect((await listMembers(database.pool, actor, {})).items.map((m) => m.id)).toContain(
       member.id,
     );
@@ -188,6 +200,7 @@ describe("account and member lifecycle", () => {
     expect(restored.deletionEffectiveAt).toBeNull();
     const again = await commandMember(database.pool, context(), member.id, {
       action: "delete",
+      justification: "Encerramento sintético",
       expectedVersion: restored.version,
     });
     await admin.query(
@@ -270,4 +283,176 @@ it("allows only administrators and managers to reset another collaborator and pr
       version: reset.version,
     }),
   ).rejects.toMatchObject({ status: 403 });
+});
+
+it("keeps CPF reserved, returns the correct deletion occurrence and restores without overwriting profile", async () => {
+  const user = await colleague();
+  expect(await lookupUserCpf(database.pool, actor, { cpf: user.cpf })).toEqual({
+    status: "existing",
+  });
+  expect(await lookupUserCpf(database.pool, actor, { cpf: syntheticUserContact().cpf })).toEqual({
+    status: "available",
+  });
+  for (const reason of ["", "   "]) {
+    await expect(
+      changeUserLifecycle(database.pool, {
+        ...context(),
+        userId: user.id,
+        version: 1,
+        action: "delete",
+        reason,
+      }),
+    ).rejects.toThrow();
+  }
+  expect((await findUserById(database.pool, user.id))?.version).toBe(1);
+  const first = await changeUserLifecycle(database.pool, {
+    ...context(),
+    userId: user.id,
+    version: 1,
+    action: "delete",
+    reason: "First occurrence",
+  });
+  await changeUserLifecycle(database.pool, {
+    ...context(),
+    userId: user.id,
+    version: first.version,
+    action: "restore",
+  });
+  // A distinct historical occurrence is seeded with a past effective date in this disposable DB.
+  const expired = await admin.query<{ deletion_effective_at: Date; version: number }>(
+    `UPDATE "user" SET status='disabled', deletion_effective_at=date_trunc('milliseconds',clock_timestamp()-interval '1 second'),version=version+1 WHERE id=$1 RETURNING deletion_effective_at,version`,
+    [user.id],
+  );
+  await writeAuditEvent(admin, {
+    actorUserId: actor.userId,
+    effectiveIdentity: actor.userId,
+    action: "user.deletion.requested",
+    entityType: "user",
+    entityId: user.id,
+    reason: "Current occurrence",
+    after: { deletionEffectiveAt: expired.rows[0]!.deletion_effective_at.toISOString() },
+    origin: "web",
+    requestId: crypto.randomUUID(),
+    correlationId: crypto.randomUUID(),
+  });
+  const found = await lookupUserCpf(database.pool, actor, { cpf: user.cpf });
+  expect(found).toEqual({
+    status: "deleted",
+    id: user.id,
+    version: expired.rows[0]!.version,
+    reason: "Current occurrence",
+    canRestore: true,
+  });
+  await expect(
+    createUser(database.pool, {
+      ...context(),
+      ...syntheticUserContact(),
+      cpf: user.cpf!,
+      name: "Replacement data",
+      email: "replacement@example.test",
+      roleIds: [],
+    }),
+  ).rejects.toMatchObject({ code: "USER_CPF_CONFLICT" });
+  await expect(
+    changeUserLifecycle(database.pool, {
+      ...context(),
+      userId: user.id,
+      version: 1,
+      action: "restore",
+    }),
+  ).rejects.toMatchObject({ code: "USER_VERSION_CONFLICT" });
+  const restore = {
+    ...context(),
+    userId: user.id,
+    version: expired.rows[0]!.version,
+    action: "restore" as const,
+  };
+  const attempts = await Promise.allSettled([
+    changeUserLifecycle(database.pool, restore),
+    changeUserLifecycle(database.pool, restore),
+  ]);
+  expect(attempts.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+  expect(await findUserById(database.pool, user.id)).toMatchObject({
+    name: user.name,
+    email: user.email,
+    cpf: user.cpf,
+    phone: user.phone,
+    address: user.address,
+    status: "active",
+    deletionEffectiveAt: null,
+  });
+  const history = await admin.query(
+    "SELECT reason,actor_user_id,occurred_at FROM audit_event WHERE entity_id=$1 AND action='user.deletion.requested' ORDER BY occurred_at",
+    [user.id],
+  );
+  expect(history.rows.map((row) => row.reason)).toEqual(["First occurrence", "Current occurrence"]);
+  expect(history.rows.every((row) => row.actor_user_id === actor.userId && row.occurred_at)).toBe(
+    true,
+  );
+  await admin.query(
+    `UPDATE "user" SET status='disabled',deletion_effective_at=clock_timestamp()-interval '2 seconds' WHERE id=$1`,
+    [user.id],
+  );
+  expect(await lookupUserCpf(database.pool, actor, { cpf: user.cpf })).toMatchObject({
+    status: "deleted",
+    reason: null,
+  });
+  await admin.query("UPDATE session SET revoked_at=now() WHERE id=$1", [actor.sessionId]);
+  await expect(lookupUserCpf(database.pool, actor, { cpf: user.cpf })).rejects.toMatchObject({
+    status: 401,
+  });
+});
+
+it("combines dates, role, status, pending deletion and pagination filters", async () => {
+  const user = await colleague();
+  const second = await createUser(database.pool, {
+    ...context(),
+    ...syntheticUserContact(),
+    name: "Lifecycle second",
+    email: "second@example.test",
+    roleIds: [],
+  });
+  await admin.query(`UPDATE "user" SET created_at='2026-09-02T02:59:59Z' WHERE id=$1`, [user.id]);
+  await admin.query(`UPDATE "user" SET created_at='2026-09-02T03:00:00Z' WHERE id=$1`, [second.id]);
+  const query = {
+    q: "Lifecycle",
+    roleId: "none",
+    createdFrom: "2026-09-01",
+    createdTo: "2026-09-01",
+    limit: 1,
+  };
+  expect((await listUsers(database.pool, query)).items.map((item) => item.id)).toEqual([user.id]);
+  const role = await admin.query<{ id: string }>("SELECT id FROM role WHERE code='administrator'");
+  expect(
+    (await listUsers(database.pool, { roleId: role.rows[0]!.id, limit: 100 })).items.map(
+      (item) => item.id,
+    ),
+  ).toEqual([actor.userId]);
+  await changeUserLifecycle(database.pool, {
+    ...context(),
+    userId: user.id,
+    version: user.version,
+    action: "delete",
+    reason: "Filtered occurrence",
+  });
+  expect(
+    (
+      await listUsers(database.pool, { ...query, status: "disabled", deleted: "pending" })
+    ).items.map((item) => item.id),
+  ).toEqual([user.id]);
+  expect(
+    (await listUsers(database.pool, { ...query, status: "active", deleted: "pending" })).items,
+  ).toEqual([]);
+  const all = await listUsers(database.pool, { q: "Lifecycle", roleId: "none", limit: 1 });
+  expect(all.nextCursor).not.toBeNull();
+  expect(
+    (
+      await listUsers(database.pool, {
+        q: "Lifecycle",
+        roleId: "none",
+        cursor: all.nextCursor!,
+        limit: 1,
+      })
+    ).items[0]!.id,
+  ).not.toBe(all.items[0]!.id);
 });

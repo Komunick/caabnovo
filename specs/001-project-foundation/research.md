@@ -550,3 +550,13 @@ comprovada.
 - Limites: fontes técnicas não definem política institucional de dados. Obrigatoriedade vem do
   usuário; não consultar Receita/OAB, não enriquecer dados pessoais nem presumir retenção.
   Reutilizar CPF e endereço brasileiros já existentes no projeto, sem nova dependência.
+
+## Complemento de22/09 — CEP e validação
+
+[ViaCEP](https://viacep.com.br/) confirma entrada de oito dígitos, HTTP400 para formato inválido e
+retorno erro para inexistente. Reutilizar o componente existente, sem consultas em massa, permitindo
+endereço manual e ignorando resposta obsoleta.
+[OWASP Input Validation](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)
+reforça validação no servidor além do cliente. Regras de CPF/legado/motivo vêm das decisões do
+usuário; sem enriquecimento de dados. Consultadas em22/09/2026. Integração de CEP simulada nos
+testes.
