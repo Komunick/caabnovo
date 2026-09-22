@@ -710,3 +710,24 @@ existentes de Colaboradores, Auditoria e Relatórios acima dos filtros, mantendo
 existentes. Remover agrupamento especial do cabeçalho de Colaboradores para seguir a inclusão de
 Parceiros/Associados. Validar posição, cores, navegação e responsividade em temas claro/escuro nos
 testes existentes.
+
+## Cargo único — 22/09/2026
+
+T139 limita roleIds a1; seleção nativa por radio com descrições compartilhadas e rascunho preservado
+no cadastro/detalhe. T140 bloqueia concessão conflitante e aplica exclusão PostgreSQL por
+usuário/intervalo, evitando corrida entre cargos diferentes. Migration0030 normaliza conflitos com a
+hierarquia confirmada, auditoria de sistema e histórico preservado; não toca user_access. Testar
+banco antigo, idempotência da migration, intervalos consecutivos/expirados, concorrência, último
+administrador, permissões, teclado/rascunhos e capturas em temas e tamanhos existentes.
+
+## Promover cargo — 22/09/2026
+
+T141 adiciona promoção atômica usando as mesmas guardas, lock e auditoria de concessão/revogação,
+com cargo de origem na rota para detectar conflito. Hierarquia compartilhada entre UI e servidor.
+T142 adiciona ação secundária ao lado da revogação, confirmação com destino/descrição, estados
+indisponíveis e testes de concorrência, rollback, acessos preservados, erros e UI/a11y. Sem nova
+migration. CI remoto para banco/E2E; não iniciar localhost. Abrir/reabrir PR somente sob pedido
+explícito.
+
+Atualização: usuário autorizou expressamente o PR desta entrega após o fechamento anterior; PR39
+reaberto. A regra permanente de abertura somente sob pedido continua válida.

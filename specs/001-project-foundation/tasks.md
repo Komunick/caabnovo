@@ -1011,3 +1011,31 @@ filtros. Ver
 Fechamento T130–T132: CI35736033889 aprovou027d1f6 em todos os gates (95 E2E,6 a11y), com captura
 móvel corrigida e revisada. Sem alteração adicional de aplicação no fechamento documental; PR37
 permanece aberto e localhost desligado.
+
+## Cargo único — 22/09/2026
+
+- [x] T139 Seleção única, descrições abaixo de cada cargo no cadastro e detalhe, contrato de criação
+      com até1 cargo e rascunhos preservados; validar API/UI/a11y.
+- [x] T140 Impedir concessões simultâneas de cargos diferentes, regularizar legados pela hierarquia
+      aprovada com histórico/acessos individuais preservados e validar migration, concorrência,
+      intervalos, guardas/auditoria e CI; preparar novo PR.
+
+Validação T139/T140: [CI 35743401759](https://github.com/Komunick/caabnovo/actions/runs/35743401759)
+em `9763323`, quality/browser/security aprovados. 387 unitários, 168 contratos, 242 integração, 95
+E2E e 6 a11y. Capturas desktop/celular e claro/escuro revisadas; histórico, acessos individuais,
+concorrência e reexecução do runner de migrations cobertos. Fechamento documental sem alteração
+posterior de aplicação/testes. PR preparado para revisão humana, sem aprovação/merge.
+
+## Promover cargo — 22/09/2026
+
+- [x] T141 Implementar promoção transacional ao próximo cargo, preservando validade, acessos,
+      histórico e auditoria; validar autorização, conflito concorrente e rollback.
+- [x] T142 Colocar Promover ao lado de Revogar cargo, com confirmação, destino/descrição, cores e
+      responsividade compartilhadas; validar UI/a11y e CI. PR somente mediante pedido explícito.
+
+Fechamento T141/T142: quality/security CI35747105170 em1a4e0d0 (387 unitários,169 contratos, 247
+integração, build/lint/tipos/formatação); browser CI35746642120 eme46e12a (95 E2E,6 a11y). Código de
+aplicação/E2E igual entre esses commits; a diferença corrige somente a fixture de conta inativa no
+teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR explicitamente;
+PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
+[evidências](evidence/single-role-2026-09-22-validation.md).

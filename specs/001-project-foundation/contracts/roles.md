@@ -88,3 +88,22 @@ individual; substitui a restrição inicial desta ampliação a apenas Administr
 users:create/users:update/roles:grant para esta ação. Gestor não redefine senha de Administrador;
 autogeração usa as Configurações pessoais. A conta destinatária precisa estar ativa. A geração
 inicial continua em endpoint próprio.
+
+## Cargo único — decisão de22/09/2026
+
+roleIds na criação aceita zero ou um identificador; mais de um resulta422. Conceder um cargo durante
+a validade de outro retorna409 USER_ROLE_CONFLICT; repetição do mesmo cargo mantém
+ROLE_ALREADY_ASSIGNED. Revogar antes de trocar, preservando proteção do último Administrador e
+autorização atual. Não há soma de cargos. Intervalos consecutivos/expirados são históricos válidos;
+não sobrepor intervalos não revogados. Migration0030 normaliza duplicidades com prioridade
+Administrador, Gestor, Colaborador, depois legado; preserva user_access, linhas de atribuição e
+eventos anteriores, acrescentando auditoria de sistema às revogações automáticas.
+
+## Promoção — 22/09/2026
+
+POST /api/v1/users/{userId}/roles/{roleId}/promote, sem corpo. Exige sessão, origem/CSRF e
+Administrador com roles:grant e roles:revoke. roleId é o cargo atual esperado. Resposta204; 403 sem
+autoridade;404 conta/cargo indisponível;409 cargo mudou, expirou ou não tem sucessor. Próximo cargo:
+collaborator→manager→administrator; não aceitar destino arbitrário. Preservar valid_until e
+user_access. Revogar e conceder com dois eventos auditáveis na mesma transação/correlação; falha de
+auditoria não pode deixar a conta sem cargo.

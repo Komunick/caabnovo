@@ -1,5 +1,63 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Promover cargo — 22/09/2026
+
+Pedido: botão Promover ao lado de Revogar cargo. Promover avança um nível na hierarquia Colaborador
+→ Gestor → Administrador, com confirmação exibindo cargo atual, destino e descrição. Somente
+Administrador autorizado pode promover; ocultar para conta inativa, Administrador e cargos legados
+sem hierarquia definida. Não inventar promoção de cargos legados.
+
+A promoção troca o cargo em uma transação, preservando histórico, acessos individuais e término da
+validade. O cargo atual enviado na rota precisa continuar vigente: duas requisições para a mesma
+promoção produzem um sucesso e um conflito, sem avançar dois níveis. Falha de concessão ou auditoria
+desfaz a revogação. Não alterar a migration 0030 já validada.
+
+Checkpoint T141/T142 concluídas. Quality/security do
+[CI35747105170](https://github.com/Komunick/caabnovo/actions/runs/35747105170), em1a4e0d0: 387
+unitários,169 contratos,247 integração, formatação, lint, tipos e build aprovados. Navegador
+aprovado no [CI35746642120](https://github.com/Komunick/caabnovo/actions/runs/35746642120),
+eme46e12a: 95 E2E e6 a11y. Entre esses commits mudou somente a fixture do teste de integração;
+aplicação e E2E idênticos. Capturas da promoção revisadas em1280/390px: botões juntos, secundário
+para Promover e vermelho para Revogar. A falha anterior da fixture foi corrigida e o teste passou.
+
+Usuário pediu explicitamente “faça o PR” após solicitar seu fechamento. PR39 reaberto para esta
+entrega; futuras aberturas continuam exigindo pedido. Nenhuma aprovação/integração executada.
+Fechamento apenas documental após essas validações; novas execuções automáticas seguem no PR.
+Localhost/Docker desligados. Próximo: revisão humana e eventual integração expressamente autorizada.
+
+## Cargo único — 22/09/2026
+
+Novo pedido em entrega separada, após PR37 integrado: cada colaborador pode ter no máximo um cargo
+vigente. Cadastro usa seleção única com descrição abaixo de cada cargo; detalhe mostra a descrição
+do cargo atribuído e não oferece concessão adicional. Promoções usam a troca atômica descrita acima;
+outras trocas exigem revogação prévia. Proteção do último Administrador permanece. Zero cargos
+continua permitido, sem inventar acesso. API de criação rejeita mais de um roleId (422); concessão
+conflitante retorna409, inclusive sob concorrência. Validades não podem se sobrepor no banco;
+histórico revogado/expirado permanece, permitindo nova concessão após o término.
+
+Usuário confirmou regularizar duplicidades mantendo Administrador > Gestor > Colaborador, sem apagar
+histórico nem alterar acessos individuais. Migration nova registra revogações automáticas como
+sistema, sem atribuir a um usuário fictício. Vínculos históricos sem sobreposição são preservados;
+cargos legados não reconhecidos ficam abaixo dos três cargos atuais, com desempate determinístico. A
+prioridade considera primeiro os cargos ativos e vigentes; um cargo expirado não substitui o cargo
+atual. Depois são tratados vínculos futuros e históricos que tenham sobreposição. Sem mudança de
+poderes dos cargos, MFA, localhost ou banco local.
+
+Checkpoint: T139/T140 concluídas. O
+[CI 35743401759](https://github.com/Komunick/caabnovo/actions/runs/35743401759) aprovou quality,
+browser e security em `9763323`: 387 unitários, 168 contratos, 242 testes de integração, 95 E2E e 6
+testes de acessibilidade; formatação, lint, tipos, migrations e build aprovados. Capturas de
+cadastro e detalhe revisadas em desktop/celular e temas claro/escuro: seleção única e descrições
+abaixo dos cargos. Ver [evidências](evidence/single-role-2026-09-22-validation.md). Localmente, uma
+falha de ambiente no subprocesso do worker (`uv_os_get_passwd ENOMEM`) passou na reexecução isolada
+fora da restrição (14/14). Fechamento somente documental após esse CI; código da aplicação e testes
+permanecem iguais. Localhost/Docker continuam desligados. Próximo: revisão humana do novo PR e
+autorização explícita antes de integração.
+
+Implantar a migration 0030 antes da aplicação. Rollback da aplicação preserva a constraint, as
+revogações auditadas e os acessos individuais; não apagar coluna/histórico nem restaurar cargos
+simultâneos. Clientes antigos que enviem mais de um cargo recebem 422; concessões adicionais, 409.
+
 ## Checkpoint de padronização visual — 22/09/2026
 
 Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,
@@ -335,8 +393,8 @@ verificando progresso, tentativas, resultado terminal, correlação e mensagens 
   imediatamente após a alteração.
 - **FR-006**: Administradores autorizados DEVEM poder criar, consultar, atualizar e desativar contas
   sem excluir seu histórico auditável.
-- **FR-007**: O sistema DEVE permitir que uma conta possua múltiplas funções e que cada função reúna
-  permissões concretas por ação.
+- **FR-007**: O sistema DEVE permitir no máximo um cargo vigente por conta (decisão de 22/09/2026),
+  preservando acessos individuais e histórico. Cada cargo reúne permissões concretas por ação.
 - **FR-008**: Concessão DEVE respeitar autoridade de gestão, distinta da permissão de uso.
   Administrador concede cargos e permissões a qualquer colaborador; Gestor concede acessos de
   qualquer módulo a outros colaboradores, inclusive alterações que não possui, sem alterar os

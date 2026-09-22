@@ -13,6 +13,7 @@ export function SensitiveActionDialog({
   confirmLabel,
   onConfirm,
   requireReason = false,
+  errorMessage,
   intent = "danger",
   description = "Confirme para concluir esta ação.",
 }: Readonly<{
@@ -21,6 +22,7 @@ export function SensitiveActionDialog({
   confirmLabel: string;
   description?: string;
   requireReason?: boolean;
+  errorMessage?(error: unknown): string;
   intent?: "danger" | "secondary" | "neutral";
   onConfirm(reason: string): Promise<void>;
 }>) {
@@ -48,8 +50,8 @@ export function SensitiveActionDialog({
       setReason("");
       drafts.clear(`${draftKey}:`);
       setOpen(false);
-    } catch {
-      setError("Não foi possível concluir a ação.");
+    } catch (error) {
+      setError(errorMessage?.(error) ?? "Não foi possível concluir a ação.");
     } finally {
       setPending(false);
     }

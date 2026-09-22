@@ -1,11 +1,13 @@
 import "server-only";
 import type { Pool, PoolClient } from "pg";
+import { nextRoleCode } from "@caab/contracts";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { writeSecurityEvent } from "@caab/db/repositories/security-events";
-import { findRoleById } from "@caab/db/repositories/roles";
+import { findRoleById, listActiveRoles } from "@caab/db/repositories/roles";
 import {
   findActiveUserRole,
+  findOverlappingUserRole,
   insertUserRole,
   lockAndCountActiveAdministrators,
   revokeUserRole,
@@ -73,8 +75,18 @@ export async function grantRole(
         justification: command.justification,
         validUntil: command.validUntil,
       });
-      if (await findActiveUserRole(client, target.id, role.id)) {
-        throw new UserAccessError("ROLE_ALREADY_ASSIGNED", 409, "Role is already assigned");
+      const existing = await findOverlappingUserRole(
+        client,
+        target.id,
+        policy.validFrom,
+        policy.validUntil,
+      );
+      if (existing) {
+        throw new UserAccessError(
+          existing.roleId === role.id ? "ROLE_ALREADY_ASSIGNED" : "USER_ROLE_CONFLICT",
+          409,
+          "User already has a role for this period",
+        );
       }
       await insertUserRole(client, {
         userId: target.id,
@@ -108,6 +120,13 @@ export async function grantRole(
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && error.code === "23505") {
       throw new UserAccessError("ROLE_ALREADY_ASSIGNED", 409, "Role is already assigned");
+    }
+    if (typeof error === "object" && error && "code" in error && error.code === "23P01") {
+      throw new UserAccessError(
+        "USER_ROLE_CONFLICT",
+        409,
+        "User already has a role for this period",
+      );
     }
     throw error;
   }
@@ -179,5 +198,85 @@ export async function revokeRole(
       correlationId: command.correlationId,
       context: { actorUserId: command.actor.userId, roleId: role.id },
     });
+  });
+}
+
+export async function promoteRole(
+  pool: Pool,
+  command: CommandContext & { targetUserId: string; roleId: string },
+  overrides: ServiceDependencies = {},
+): Promise<void> {
+  const deps = dependencies(overrides);
+  await withTransaction(pool, async (client) => {
+    const actor = await currentAuthority(
+      client,
+      command.actor,
+      "roles:grant",
+      command.targetUserId,
+    );
+    validateRoleRevocation({ actor, targetUserId: command.targetUserId, reason: "" });
+    const target = await findUserById(client, command.targetUserId);
+    if (!target || target.status !== "active")
+      throw new UserAccessError("USER_NOT_FOUND", 404, "User not found");
+    const current = await findRoleById(client, command.roleId);
+    if (!current || current.status !== "active")
+      throw new UserAccessError("ROLE_NOT_FOUND", 404, "Role not found");
+    const assignment = await findActiveUserRole(client, target.id, current.id);
+    if (!assignment)
+      throw new UserAccessError("ROLE_PROMOTION_CONFLICT", 409, "Current role changed or expired");
+    const nextCode = nextRoleCode(current.code);
+    if (!nextCode)
+      throw new UserAccessError("ROLE_PROMOTION_UNAVAILABLE", 409, "Role has no successor");
+    const next = (await listActiveRoles(client)).find((role) => role.code === nextCode);
+    if (!next)
+      throw new UserAccessError("ROLE_PROMOTION_UNAVAILABLE", 409, "Next role unavailable");
+    const reason = `Promoção de ${current.name} para ${next.name}.`;
+    const policy = validateRoleGrant({
+      actor,
+      targetUserId: target.id,
+      rolePermissions: next.permissions,
+      roleAdministrative: next.administrative,
+      justification: reason,
+      validUntil: assignment.validUntil,
+    });
+    await revokeUserRole(client, { assignmentId: assignment.id, revokedBy: actor.userId, reason });
+    await insertUserRole(client, {
+      userId: target.id,
+      roleId: next.id,
+      grantedBy: actor.userId,
+      ...policy,
+    });
+    for (const [role, granted] of [
+      [current, false],
+      [next, true],
+    ] as const) {
+      await deps.writeAudit(client, {
+        actorUserId: actor.userId,
+        effectiveIdentity: command.effectiveIdentity,
+        action: granted ? "user.role.granted" : "user.role.revoked",
+        entityType: "user",
+        entityId: target.id,
+        before: { roleId: role.id, assigned: !granted },
+        after: {
+          roleId: role.id,
+          assigned: granted,
+          promotion: true,
+          validUntil: assignment.validUntil?.toISOString(),
+        },
+        reason,
+        origin: "web",
+        requestId: command.requestId,
+        correlationId: command.correlationId,
+      });
+      await deps.writeSecurity(client, {
+        userId: target.id,
+        eventType: granted ? "role_grant" : "role_revocation",
+        outcome: "success",
+        reasonCode: granted ? "ROLE_GRANTED" : "ROLE_REVOKED",
+        requestId: command.requestId,
+        correlationId: command.correlationId,
+        context: { actorUserId: actor.userId, roleId: role.id, promotion: true },
+      });
+    }
   });
 }

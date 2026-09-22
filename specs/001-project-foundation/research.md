@@ -581,3 +581,23 @@ interface solicitada pelo usuário: exportação no topo do quadro de filtros, c
 compartilhados; inclusão primária preservada no cabeçalho. A posição é decisão do produto, não uma
 exigência literal desse critério WCAG. Validar foco, contraste e adaptação ao celular; não alterar
 contratos de exportação neste ajuste visual.
+
+## Cargo único e seleção acessível — 22/09/2026
+
+Fontes oficiais:
+[PostgreSQL, restrições de intervalos](https://www.postgresql.org/docs/current/rangetypes.html#RANGETYPES-CONSTRAINT)
+e [W3C APG, grupo de radios](https://www.w3.org/WAI/ARIA/apg/patterns/radio/). Decisão: radios
+nativos com nome acessível e descrição associada; não simular checkbox exclusivo. Exclusão GiST de
+tstzrange por usuário impede sobreposição mesmo entre requisições concorrentes e permite intervalos
+consecutivos. Validar antes na API para erro legível; manter constraint como garantia final.
+Pesquisa técnica não define hierarquia institucional: Administrador > Gestor > Colaborador foi
+confirmado pelo usuário nesta rodada. Não expandir atribuições dos cargos.
+
+## Promoção atômica — 22/09/2026
+
+Fonte oficial consultada:
+[PostgreSQL — Transactions](https://www.postgresql.org/docs/current/tutorial-transactions.html). A
+promoção precisa confirmar revogação, concessão e auditoria como uma única operação; falha reverte
+tudo. Reutilizar transação e locks existentes, além da exclusão da 0030. No cliente, reutilizar o
+diálogo de confirmação e Button secundário existentes. Controles seguem o guia `use client` da
+instalação local do Next.js; nenhuma dependência adicional.

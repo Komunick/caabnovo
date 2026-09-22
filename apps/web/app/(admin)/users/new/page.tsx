@@ -23,6 +23,7 @@ export default async function NewUserPage() {
       id: role.id,
       code: role.code,
       name: role.name,
+      description: role.description,
       administrative: role.administrative,
       permissions: role.permissions,
     }),

@@ -47,6 +47,7 @@ export default async function UserDetailPage({
       id: role.id,
       code: role.code,
       name: role.name,
+      description: role.description,
       administrative: role.administrative,
       permissions: role.permissions,
     }),
@@ -139,6 +140,7 @@ export default async function UserDetailPage({
           assignedRoles={user.roles}
           canGrant={actor.permissions.has(PERMISSIONS.rolesGrant)}
           canRevoke={actor.permissions.has(PERMISSIONS.rolesRevoke)}
+          active={user.status === "active"}
         >
           {accountActions}
         </RoleAssignmentForm>

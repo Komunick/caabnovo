@@ -4961,3 +4961,45 @@ thead th {
 .button--neutral:hover:not(:disabled) {
   background: color-mix(in srgb, var(--color-muted) 15%, var(--color-surface));
 }
+
+.role-options {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+.role-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+.role-option > input[type="radio"] {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--color-action);
+}
+.role-option > span {
+  min-width: 0;
+  font-weight: 650;
+}
+.role-option small,
+.role-description {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--color-muted-strong);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.role-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  justify-content: flex-end;
+}

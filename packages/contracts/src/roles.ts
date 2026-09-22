@@ -5,6 +5,7 @@ import { roleReferenceSchema } from "./auth";
 const permissionSchema = z.string().regex(/^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$/);
 
 export const roleSchema = roleReferenceSchema.extend({
+  description: z.string().optional(),
   administrative: z.boolean(),
   permissions: z.array(permissionSchema),
 });
@@ -18,3 +19,10 @@ export const roleChangeRequestSchema = z
 
 export type Role = z.infer<typeof roleSchema>;
 export type RoleChangeRequest = z.infer<typeof roleChangeRequestSchema>;
+
+/** Only these standard roles have an ordered promotion path. */
+export function nextRoleCode(code: string): "manager" | "administrator" | null {
+  if (code === "collaborator") return "manager";
+  if (code === "manager") return "administrator";
+  return null;
+}

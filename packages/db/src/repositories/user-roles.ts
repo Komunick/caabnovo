@@ -68,8 +68,25 @@ export async function findActiveUserRole(
     `SELECT id, user_id, role_id, granted_by, justification, valid_from, valid_until, revoked_at
      FROM user_role
      WHERE user_id = $1 AND role_id = $2 AND revoked_at IS NULL
+       AND valid_from<=clock_timestamp() AND (valid_until IS NULL OR valid_until>clock_timestamp())
      FOR UPDATE`,
     [userId, roleId],
+  );
+  return result.rows[0] ? mapAssignment(result.rows[0]) : null;
+}
+
+export async function findOverlappingUserRole(
+  client: PoolClient,
+  userId: string,
+  validFrom: Date,
+  validUntil: Date | null,
+): Promise<UserRoleRecord | null> {
+  const result = await client.query<UserRoleRow>(
+    `SELECT id,user_id,role_id,granted_by,justification,valid_from,valid_until,revoked_at
+     FROM user_role WHERE user_id=$1 AND revoked_at IS NULL
+       AND tstzrange(valid_from,valid_until,'[)') && tstzrange($2::timestamptz,$3::timestamptz,'[)')
+     ORDER BY valid_from,id LIMIT 1 FOR UPDATE`,
+    [userId, validFrom, validUntil],
   );
   return result.rows[0] ? mapAssignment(result.rows[0]) : null;
 }

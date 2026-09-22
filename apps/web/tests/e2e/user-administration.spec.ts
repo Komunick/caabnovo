@@ -31,6 +31,20 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   const createButton = page.getByRole("button", { name: "Criar colaborador" });
   await expect(createButton).toBeEnabled();
+  const administrator = page.getByRole("radio", { name: "Administrador", exact: true });
+  const manager = page.getByRole("radio", { name: "Gestor", exact: true });
+  const collaborator = page.getByRole("radio", { name: "Colaborador", exact: true });
+  await administrator.check();
+  await manager.check();
+  await expect(administrator).not.toBeChecked();
+  await collaborator.check();
+  await expect(manager).not.toBeChecked();
+  await expect(page.locator('input[name="roleIds"]:checked')).toHaveCount(1);
+  await expect(collaborator).toHaveAccessibleDescription(
+    /Utiliza apenas os módulos e ações concedidos/,
+  );
+  await expect(administrator).toHaveAccessibleDescription(/Acesso completo ao painel/);
+  await expect(manager).toHaveAccessibleDescription(/Não concede cargos/);
   await page.getByLabel("Nome").fill(name);
   await page.getByLabel("E-mail").fill(email);
   await createButton.click();
@@ -57,6 +71,8 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await page.getByRole("link", { name: "Novo colaborador", exact: true }).click();
   await expect(page.getByLabel("Rua", { exact: true })).toHaveValue(contact.address.street);
   await expect(page.getByLabel("Nome", { exact: true })).toHaveValue(name);
+  await expect(collaborator).toBeChecked();
+  await expect(page.locator('input[name="roleIds"]:checked')).toHaveCount(1);
   await page.screenshot({
     path: testInfo.outputPath("collaborator-fields-desktop.png"),
     fullPage: true,
@@ -127,12 +143,70 @@ test("administrator creates, updates, grants, revokes and disables a user", asyn
   await page.reload();
   await expect(page.getByLabel("Número", { exact: true })).toHaveValue("42");
 
+  await expect(page.getByRole("button", { name: "Conceder função" })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Revogar Colaborador", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Utiliza apenas os módulos e ações concedidos. Não administra cargos nem acessos de outras pessoas.",
+    ),
+  ).toBeVisible();
+  await expectWcag22AA(page);
+  const promotion = page.getByRole("button", { name: "Promover", exact: true });
+  const revokeCurrent = page.getByRole("button", { name: "Revogar Colaborador", exact: true });
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(promotion).toBeVisible();
+    const promoteBox = await promotion.boundingBox(),
+      revokeBox = await revokeCurrent.boundingBox();
+    expect(Math.abs(promoteBox!.y - revokeBox!.y)).toBeLessThan(3);
+    expect(promoteBox!.x + promoteBox!.width).toBeLessThanOrEqual(revokeBox!.x);
+    await expect(promotion).toHaveClass(/button--secondary/);
+    await expectWcag22AA(page);
+    await page.getByRole("region", { name: "Funções e permissões", exact: true }).screenshot({
+      path: testInfo.outputPath(`collaborator-promotion-${width}.png`),
+      animations: "disabled",
+    });
+  }
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const roleList = await page.request.get("/api/v1/roles");
+  const roles = await roleList.json();
+  const otherRole = roles.find((role: { code: string }) => role.code === "manager");
+  const conflicting = await page.request.put(
+    `/api/v1/users/${page.url().split("/").pop()}/roles/${otherRole.id}`,
+    {
+      headers: { origin: new URL(page.url()).origin, "x-csrf-token": randomUUID() },
+      data: {},
+    },
+  );
+  expect(conflicting.status()).toBe(409);
+  expect(await conflicting.json()).toMatchObject({ code: "USER_ROLE_CONFLICT" });
+  await promotion.click();
+  const confirmation = page.getByRole("dialog", { name: "Promover para Gestor" });
+  await expect(confirmation).toContainText("O cargo Colaborador será substituído por Gestor.");
+  await confirmation.getByRole("button", { name: "Cancelar", exact: true }).click();
+  await expect(revokeCurrent).toBeVisible();
+  await promotion.click();
+  await page.getByRole("button", { name: "Confirmar promoção", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Revogar Gestor", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Conceder função", exact: true })).toHaveCount(0);
+  await promotion.click();
+  await expect(page.getByRole("dialog", { name: "Promover para Administrador" })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar promoção", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Revogar Administrador", exact: true }),
+  ).toBeVisible();
+  await expect(promotion).toHaveCount(0);
+  await page.getByRole("button", { name: "Revogar Administrador", exact: true }).click();
+  await page.getByRole("button", { name: "Confirmar revogação" }).click();
   const grantButton = page.getByRole("button", { name: "Conceder função" });
   await expect(grantButton).toBeEnabled();
-  await page.getByLabel("Função", { exact: true }).selectOption({ label: "Consulta de usuários" });
+  await page.getByRole("radio", { name: "Consulta de usuários", exact: true }).check();
   await expect(page.getByLabel("Justificativa da função")).toHaveCount(0);
   await grantButton.click();
   await expect(page.getByText("Consulta de usuários", { exact: true })).toBeVisible();
+  await expect(grantButton).toHaveCount(0);
   await page.getByRole("button", { name: "Revogar Consulta de usuários" }).click();
   await expect(page.getByLabel("Motivo da revogação")).toHaveCount(0);
   await page.getByRole("button", { name: "Confirmar revogação" }).click();
