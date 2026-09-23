@@ -66,6 +66,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Quem pode consultar e, quando permitidas, remarcar ou cancelar reservas de um dependente? →
   A: O titular pode fazê-lo enquanto o vínculo estiver vigente; o dependente pode fazê-lo nas
   próprias reservas, inclusive quando a reserva foi criada pelo titular.
+- Q: Ao concluir uma reserva no app/site, ela é confirmada imediatamente ou aguarda a equipe? →
+  A: Cada serviço define se a confirmação é imediata ou se exige aprovação da equipe.
 
 ## User Scenarios & Testing
 
@@ -173,8 +175,9 @@ prevista no programa 002. As decisões em aberto abaixo devem ser resolvidas ant
 contrato externo e gerar tarefas executáveis.
 
 **Jornada de valor:** uma pessoa descobre os serviços publicados no canal antes do login. Depois
-de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas, confirma
-uma reserva e a reencontra em suas próximas reservas. Pode solicitar remarcação ou cancelamento
+de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
+uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
+aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas. Pode solicitar remarcação ou cancelamento
 quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
@@ -186,17 +189,20 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
    autenticado só pode selecionar a si mesmo. A reserva fica vinculada ao identificador individual
    do beneficiário, enquanto autor e origem são registrados separadamente. Tentar confirmar uma
    reserva para pessoa fora dessa regra, inclusive por URL/API, é negado.
-3. Depois do login, com oferta e beneficiário válidos, a consulta apresenta datas/horários efetivamente calculados
-   pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece próxima data ou outra
+3. Depois do login, com oferta e beneficiário válidos, a consulta apresenta datas/horários
+   efetivamente calculados pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece próxima data ou outra
    combinação autorizada quando houver, sem mostrar uma grade vazia como confirmação de ausência
    definitiva. A prévia de vaga não a retém.
-4. Na confirmação, o servidor revalida identidade, representação, elegibilidade, oferta,
-   disponibilidade e conflitos por profissional e beneficiário dentro da transação. Duas pessoas
-   disputando a última vaga produzem uma reserva; a outra recebe conflito recuperável e mantém
-   suas escolhas para buscar alternativa. Repetir o mesmo comando não duplica reserva.
+4. Ao enviar a reserva, o servidor revalida identidade, representação, elegibilidade, oferta,
+   disponibilidade e conflitos por profissional e beneficiário. Serviço com confirmação imediata
+   gera reserva confirmada; serviço com aprovação gera reserva identificada como aguardando
+   aprovação, sem comunicar confirmação ao usuário. Em ambos os fluxos, a transição é auditada,
+   um envio repetido não duplica reserva e um conflito conserva as escolhas para buscar alternativa.
+   A decisão da equipe exige autorização e revalidação antes de confirmar.
 5. Reserva criada no app/site aparece no painel com mesmo identificador, horário, beneficiário e
-   situação; reserva criada no painel ocupa a vaga vista no app/site. A origem é distinguível no
-   histórico sem duplicar os registros do domínio.
+   situação, inclusive quando aguarda aprovação. A equipe pode aprovar ou recusar uma solicitação
+   pendente com decisão auditada e situação atualizada para o usuário. Reserva criada no painel
+   ocupa a vaga vista no app/site. A origem é distinguível no histórico sem duplicar registros.
 6. Titular com vínculo vigente e o próprio dependente veem as reservas futuras e históricas do
    dependente, mesmo quando criadas pelo outro, com situação textual, dados mínimos da oferta e
    ações permitidas. Quando a política liberar remarcação/cancelamento no canal, ambos podem agir
@@ -222,8 +228,12 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
   único de Associados, sem copiar seus dados para Agendamentos.
 - **2C-FR-03:** Aplicar a mesma fonte de disponibilidade e as mesmas restrições transacionais da
-  agenda administrativa. A seleção visual é provisória; confirmação exige revalidação e
-  idempotência. Intervalos são [início, fim), persistidos em UTC e apresentados em America/Bahia.
+  agenda administrativa. A seleção visual é provisória; envio e aprovação exigem revalidação e
+  idempotência. A regra configurada no serviço determina confirmação imediata ou estado
+  aguardando aprovação, exibido sem ambiguidade nos canais. A equipe autorizada aprova ou recusa
+  com auditoria; uma solicitação pendente nunca é apresentada como confirmada. A política de
+  ocupação da vaga durante a espera permanece pendente. Intervalos são [início, fim), persistidos
+  em UTC e apresentados em America/Bahia.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
   históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
@@ -242,10 +252,11 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
   identificador, beneficiário, horário e situação após recarga; remarcar/cancelar preserva a
   trilha e altera a ocupação apenas uma vez.
-- **2C-SC-02:** Em 20 confirmações simultâneas da mesma vaga por painel e canal externo,
-  exatamente uma reserva ativa ocupa o profissional; quando todas tentam reservar o mesmo
+- **2C-SC-02:** Em 20 confirmações imediatas simultâneas da mesma vaga por painel e canal externo,
+  exatamente uma reserva confirmada ocupa o profissional; quando todas tentam reservar o mesmo
   beneficiário em profissionais livres distintos, exatamente uma reserva sobreposta persiste.
-  Vinte repetições idênticas do envio resultam em um único registro/evento.
+  Vinte repetições idênticas do envio resultam em um único registro/evento. Em serviço com
+  aprovação, nenhuma solicitação é exibida como confirmada antes da decisão da equipe.
 - **2C-SC-03:** A matriz de titular sem vínculo vigente, dependente tentando reservar para titular
   ou outro dependente, sessão revogada, reserva de terceiro e oferta fora do canal retorna zero
   detalhes privados ou mutações aceitas. O titular perde acesso às reservas do dependente ao
@@ -264,8 +275,9 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   “qualquer profissional disponível” versus profissional específico.
 - Antecedência, horizonte futuro, remarcação/cancelamento pelo usuário e tratamento de reservas
   afetadas por indisponibilidade posterior. Não inferir prazos nem penalidades do mercado.
-- Situação atribuída à reserva externa após confirmação e necessidade de aprovação humana,
-  se alguma; conteúdo e canal de mensagens transacionais.
+- Política de ocupação/expiração da vaga enquanto a solicitação aguarda aprovação; prazos e
+  responsabilidade pela decisão. Conteúdo e canal de mensagens transacionais. A necessidade de
+  aprovação é configurada por serviço, conforme decisão de 23/09/2026.
 - Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
 
 **Fora deste recorte:** turmas/capacidade, salas/equipamentos, lista de espera, múltiplos serviços
