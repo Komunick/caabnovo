@@ -46,7 +46,8 @@ critérios nesta spec, mantendo o básico funcionando.
 | 2E Comunicações e fechamento | Lembretes/notificações legados necessários, limites de uso aceitos, preservação/migração de dados e revisão da cobertura. | Entrega rastreável, sem duplicação de mensagens; matriz de equivalência e migração verificadas. |
 
 O mínimo de estados e comandos necessário à aprovação por serviço integra o corte 2C caso ainda não
-tenha sido entregue em 2B. A política de ocupação da vaga pendente será definida antes do contrato.
+tenha sido entregue em 2B. A solicitação pendente ocupa a vaga até a equipe aprovar ou recusar,
+sem expiração automática; sua fila de análise deve ser visível no painel.
 
 A proposta anterior de executar 2A–2E em ordem foi substituída: app/site é o próximo
 passo após a etapa 1. Os demais incrementos serão priorizados depois; dependências
