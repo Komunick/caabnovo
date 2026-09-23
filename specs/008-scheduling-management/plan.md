@@ -170,7 +170,7 @@ contrato externo responsável sem substituir consumidores do painel.
 ### Experiência e acessibilidade
 
 O planejamento de navegação externa cobre descoberta da oferta, identificação do beneficiário,
-seleção de vaga, revisão/confirmacão e “Minhas reservas”, com recuperação de conflito sem
+seleção de vaga, revisão/confirmação e “Minhas reservas”, com recuperação de conflito sem
 perder escolhas. O painel mantém Lista/Dia/Semana/Mês e ações existentes. A pesquisa identifica
 padrões, mas não define aparência: ler o guia canônico docs/caab-design.md da pasta principal
 e a spec da interface app/site antes de desenhar telas. O guia local estava inacessível nesta
