@@ -179,8 +179,8 @@ contrato externo e gerar tarefas executáveis.
 **Jornada de valor:** uma pessoa descobre os serviços publicados no canal antes do login. Depois
 de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
-aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas. Pode solicitar remarcação ou cancelamento
-quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha no painel.
+aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
+Pode solicitar remarcação ou cancelamento quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
 
@@ -189,17 +189,17 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
    o canal não aparecem nem são reserváveis pela API externa.
 2. O titular autenticado pode selecionar a si ou um dependente com vínculo vigente; o dependente
    autenticado só pode selecionar a si mesmo. A reserva fica vinculada ao identificador individual
-   do beneficiário, enquanto autor e origem são registrados separadamente. Tentar confirmar uma
+   do beneficiário, enquanto autor e origem são registrados separadamente. Tentar enviar uma
    reserva para pessoa fora dessa regra, inclusive por URL/API, é negado.
 3. Depois do login, com oferta e beneficiário válidos, a consulta apresenta datas/horários
-   efetivamente calculados pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece próxima data ou outra
-   combinação autorizada quando houver, sem mostrar uma grade vazia como confirmação de ausência
+   efetivamente calculados pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece
+   próxima data ou outra combinação autorizada quando houver, sem mostrar uma grade vazia como
+   confirmação de ausência
    definitiva. A prévia de vaga não a retém.
 4. Ao enviar a reserva, o servidor revalida identidade, representação, elegibilidade, oferta,
-   disponibilidade e conflitos por profissional e beneficiário. Serviço usa confirmação imediata
+   disponibilidade e conflitos por profissional e beneficiário. O serviço usa confirmação imediata
    por padrão; se a equipe a desativar nesse serviço, novos envios geram reserva identificada
-   como aguardando
-   aprovação, sem comunicar confirmação ao usuário. Em ambos os fluxos, a transição é auditada,
+   como aguardando aprovação, sem comunicar confirmação ao usuário. Em ambos os fluxos, a transição é auditada,
    um envio repetido não duplica reserva e um conflito conserva as escolhas para buscar alternativa.
    A decisão da equipe exige autorização e revalidação antes de confirmar.
 5. Reserva criada no app/site aparece no painel com mesmo identificador, horário, beneficiário e
@@ -227,15 +227,15 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   visibilidade explícita por canal; APIs administrativas e suas sessões não são reutilizadas
   pelo cliente externo.
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
-  confirmar para si e dependentes com vínculo vigente; dependente só pode confirmar para si.
+  solicitar para si e dependentes com vínculo vigente; dependente só pode solicitar para si.
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
   único de Associados, sem copiar seus dados para Agendamentos.
 - **2C-FR-03:** Aplicar a mesma fonte de disponibilidade e as mesmas restrições transacionais da
   agenda administrativa. A seleção visual é provisória; envio e aprovação exigem revalidação e
   idempotência. A confirmação imediata vem ativada por padrão em cada serviço; a equipe pode
   desativá-la para exigir aprovação dos novos envios. A situação resultante é exibida sem
-  ambiguidade nos canais. A equipe autorizada aprova ou recusa
-  com auditoria; uma solicitação pendente nunca é apresentada como confirmada. A política de
+  ambiguidade nos canais. A equipe autorizada aprova ou recusa com auditoria; uma solicitação
+  pendente nunca é apresentada como confirmada. A política de
   ocupação da vaga durante a espera permanece pendente. Intervalos são [início, fim), persistidos
   em UTC e apresentados em America/Bahia.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
