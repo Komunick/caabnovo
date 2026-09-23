@@ -56,6 +56,12 @@ concedido ao módulo; FR-001/cenários/SC-008 e contrato atualizados, AC01–AC0
 código, migration, conta ou teste alterado. Q9 define consulta/alteração separadas; adequação e
 transição técnica ainda pendentes, sem conceder acesso automaticamente.
 
+### Session 2026-09-23
+
+- Q: Na primeira versão do app/site, quem poderá confirmar uma reserva para um dependente? →
+  A: O titular pode reservar para si e seus dependentes; cada dependente pode reservar somente
+  para si mesmo.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -170,10 +176,10 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
 
 1. Uma oferta publicada para o canal mostra unidade, procedimento, duração e informações essenciais;
    ofertas não publicadas para o canal não aparecem nem são reserváveis pela API externa.
-2. A pessoa autenticada seleciona a si ou um dependente somente quando o vínculo vigente autoriza
-   agir por essa pessoa. A reserva fica vinculada ao identificador individual do beneficiário,
-   enquanto o autor e a origem do comando são registrados separadamente. Acesso à reserva de
-   outra pessoa ou vínculo revogado é negado por URL/API.
+2. O titular autenticado pode selecionar a si ou um dependente com vínculo vigente; o dependente
+   autenticado só pode selecionar a si mesmo. A reserva fica vinculada ao identificador individual
+   do beneficiário, enquanto autor e origem são registrados separadamente. Tentar confirmar uma
+   reserva para pessoa fora dessa regra, inclusive por URL/API, é negado.
 3. Com oferta e beneficiário válidos, a consulta apresenta datas/horários efetivamente calculados
    pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece próxima data ou outra
    combinação autorizada quando houver, sem mostrar uma grade vazia como confirmação de ausência
@@ -202,9 +208,10 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   por canal e projeção mínima; a escolha de acesso público ao catálogo/vagas continua pendente.
   Reservar, remarcar, cancelar e consultar reservas próprias exigem identidade externa validada.
   APIs administrativas e suas sessões não são reutilizadas pelo cliente externo.
-- **2C-FR-02:** Resolver o ator externo e a representação vigente do beneficiário no servidor a cada
-  comando; nunca confiar em titular, dependente, papel, elegibilidade ou vínculo enviados pelo
-  navegador. Usar o cadastro único de Associados, sem copiar seus dados para Agendamentos.
+- **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
+  confirmar para si e dependentes com vínculo vigente; dependente só pode confirmar para si.
+  Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
+  único de Associados, sem copiar seus dados para Agendamentos.
 - **2C-FR-03:** Aplicar a mesma fonte de disponibilidade e as mesmas restrições transacionais da
   agenda administrativa. A seleção visual é provisória; confirmação exige revalidação e
   idempotência. Intervalos são [início, fim), persistidos em UTC e apresentados em America/Bahia.
@@ -227,15 +234,17 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   exatamente uma reserva ativa ocupa o profissional; quando todas tentam reservar o mesmo
   beneficiário em profissionais livres distintos, exatamente uma reserva sobreposta persiste.
   Vinte repetições idênticas do envio resultam em um único registro/evento.
-- **2C-SC-03:** A matriz de usuário sem vínculo, vínculo revogado, sessão revogada, reserva de
-  terceiro e oferta fora do canal retorna zero detalhes privados ou mutações aceitas.
+- **2C-SC-03:** A matriz de titular sem vínculo vigente, dependente tentando reservar para titular
+  ou outro dependente, sessão revogada, reserva de terceiro e oferta fora do canal retorna zero
+  detalhes privados ou mutações aceitas.
 - **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
   identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
 
 **Decisões de produto pendentes para fechar 2C:**
 
-- Mecanismo de identidade externa e autorização de titular para agir por cada dependente;
-  criação/revogação do vínculo e visibilidade do histórico.
+- Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
+  vínculo e visibilidade do histórico de reservas feitas pelo titular para um dependente.
+  A regra de quem pode confirmar foi decidida em 23/09/2026.
 - Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
   “qualquer profissional disponível” versus profissional específico.
 - Antecedência, horizonte futuro, remarcação/cancelamento pelo usuário e tratamento de reservas
