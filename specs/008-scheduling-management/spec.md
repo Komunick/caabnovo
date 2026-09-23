@@ -63,6 +63,9 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   para si mesmo.
 - Q: Antes de entrar na conta, uma pessoa pode consultar serviços e horários disponíveis? →
   A: Os serviços podem ser consultados sem login; horários disponíveis exigem autenticação.
+- Q: Quem pode consultar e, quando permitidas, remarcar ou cancelar reservas de um dependente? →
+  A: O titular pode fazê-lo enquanto o vínculo estiver vigente; o dependente pode fazê-lo nas
+  próprias reservas, inclusive quando a reserva foi criada pelo titular.
 
 ## User Scenarios & Testing
 
@@ -194,10 +197,12 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
 5. Reserva criada no app/site aparece no painel com mesmo identificador, horário, beneficiário e
    situação; reserva criada no painel ocupa a vaga vista no app/site. A origem é distinguível no
    histórico sem duplicar os registros do domínio.
-6. A pessoa autorizada vê suas reservas futuras e históricas com situação textual, dados mínimos
-   da oferta e ações permitidas. Remarcação preserva o identificador/histórico e, se recusada,
-   mantém a vaga anterior. Cancelamento preserva o registro e libera a vaga apenas após confirmação
-   válida, sem motivo obrigatório.
+6. Titular com vínculo vigente e o próprio dependente veem as reservas futuras e históricas do
+   dependente, mesmo quando criadas pelo outro, com situação textual, dados mínimos da oferta e
+   ações permitidas. Quando a política liberar remarcação/cancelamento no canal, ambos podem agir
+   sob as mesmas verificações de autorização. Remarcação preserva identificador/histórico e, se
+   recusada, mantém a vaga anterior; cancelamento preserva o registro e libera a vaga apenas após
+   confirmação válida, sem motivo obrigatório.
 7. Sessão expirada, representação revogada, bloqueio de beneficiário, alteração de oferta ou
    conflito entre prévia e confirmação recebem resposta clara e sem dados de terceiros. Ações
    privadas não vazam por cache, histórico do navegador ou API de outro canal.
@@ -220,8 +225,11 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   agenda administrativa. A seleção visual é provisória; confirmação exige revalidação e
   idempotência. Intervalos são [início, fim), persistidos em UTC e apresentados em America/Bahia.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
-  históricas; preservar trilha, autor e origem. Remarcação/cancelamento usam versão e regras
-  aprovadas; negação ou conflito não altera a reserva anterior.
+  históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
+  somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
+  criadas pelo titular. Quando remarcação/cancelamento externo estiverem liberados, titular com
+  vínculo vigente e dependente podem agir nessas reservas, com versão e regras aprovadas;
+  negação ou conflito não altera a reserva anterior.
 - **2C-FR-05:** Não gerar comparecimento, conclusão, falta, avaliação, pagamento, penalidade,
   lista de espera, atribuição automática ou mensagem real por inferência. Essas capacidades têm
   cortes e políticas próprios.
@@ -240,16 +248,18 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   Vinte repetições idênticas do envio resultam em um único registro/evento.
 - **2C-SC-03:** A matriz de titular sem vínculo vigente, dependente tentando reservar para titular
   ou outro dependente, sessão revogada, reserva de terceiro e oferta fora do canal retorna zero
-  detalhes privados ou mutações aceitas. Visitante sem login vê apenas serviços publicados para
-  o canal; a consulta anônima de horários disponíveis é negada.
+  detalhes privados ou mutações aceitas. O titular perde acesso às reservas do dependente ao
+  cessar o vínculo; o dependente mantém acesso às próprias reservas criadas pelo titular.
+  Visitante sem login vê apenas serviços publicados para o canal; a consulta anônima de horários
+  disponíveis é negada.
 - **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
   identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
 
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
-  vínculo e visibilidade do histórico de reservas feitas pelo titular para um dependente.
-  A regra de quem pode confirmar foi decidida em 23/09/2026.
+  vínculo e revogação de acesso quando ele cessa. As regras de reserva e de acesso ao histórico
+  de dependentes foram decididas em 23/09/2026.
 - Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
   “qualquer profissional disponível” versus profissional específico.
 - Antecedência, horizonte futuro, remarcação/cancelamento pelo usuário e tratamento de reservas
