@@ -121,11 +121,12 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    conflito por beneficiário e sinalização de bloqueio descritas em AC/BEN/BLQ. A
    exportação DX01 tem entrega própria e não é pré-requisito técnico para a reserva externa.
    CAL06 é revisão da interface administrativa, sem alterar o núcleo de vagas.
-2. Vincular cada identidade externa ao cadastro individual em Associados e aplicar a decisão de
-   23/09: titular reserva para si e seus dependentes; dependente reserva somente para si.
-   Fechar visibilidade do histórico e revogação de acesso antes do contrato. Não usar conta
-   administrativa como conta do app/site nem expor a seleção administrativa de beneficiários
-   como API pública.
+2. Vincular cada identidade externa ao cadastro individual em Associados e aplicar as decisões de
+   23/09: titular reserva para si e seus dependentes; dependente reserva somente para si. O titular
+   consulta e, quando permitido, gerencia reservas do dependente enquanto o vínculo estiver vigente;
+   o dependente acessa todas as próprias reservas, inclusive as feitas pelo titular. Revogar o
+   acesso do titular quando o vínculo cessar. Não usar conta administrativa como conta do app/site
+   nem expor a seleção administrativa de beneficiários como API pública.
 3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
    migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
 4. Aplicar a decisão de 23/09: serviços publicados para o canal ficam visíveis antes do login;
@@ -142,7 +143,9 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   contrato versionado e projeções próprias, sem compartilhar endpoints/sessão administrativos.
   Nenhum SDK, iframe ou banco de fornecedor é fonte de verdade.
 - O domínio Associados resolve a pessoa atendida e o direito vigente do ator externo de agir por
-  ela. A fronteira recebe identificadores mínimos e resultado autorizado; documentos, finanças,
+  ela. Para leitura e ações sobre reservas do dependente, revalidar o vínculo do titular a cada
+  comando; o dependente mantém acesso às próprias reservas independentemente de quem as criou.
+  A fronteira recebe identificadores mínimos e resultado autorizado; documentos, finanças,
   papéis e dados de titular não são copiados para Agendamentos.
 - Separar ator, beneficiário e origem do comando. Antes de escolher migration, conferir se
   created_by e eventos atuais exigem FK de usuário administrativo; uma identidade externa não
@@ -191,10 +194,11 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   beneficiário em unidades/profissionais distintos não sobrepõe; titular e dependente distintos
   podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico.
 - Jornada com identidades sintéticas: titular reserva para si e dependente; dependente reserva
-  para si e é negado ao tentar reservar para titular ou outro dependente. Recarregar painel e canal
-  externo, consultar histórico autorizado, remarcar, cancelar, revogar vínculo/sessão e revalidar
-  bloqueio. Testar
-  horário com navegador em outro fuso e mudança de oferta entre prévia e confirmação.
+  para si e é negado ao tentar reservar para titular ou outro dependente. Ambos consultam a
+  reserva do dependente criada pelo titular; após cessar o vínculo, só o dependente a consulta.
+  Quando remarcação/cancelamento forem liberados, cobrir essas ações por ambos com vínculo
+  vigente e negar o titular após revogação. Recarregar painel e canal externo, revogar sessão,
+  revalidar bloqueio, testar fuso diferente e mudança de oferta entre prévia e confirmação.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -213,8 +217,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa, gestão do vínculo e visibilidade do histórico de dependentes;
-profissional opcional; política por canal para antecedência/remarcação/cancelamento; estado inicial
+Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
+por canal para antecedência/remarcação/cancelamento; estado inicial
 e eventual confirmação humana; mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
