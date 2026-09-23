@@ -63,3 +63,23 @@ version; cancelar reutiliza o comando existente. Nova exclusão não herda decis
 derivado da data efetiva atual do associado e não remove o nome do histórico.
 
 Migration0028 validada no CI descartável; sem aplicação local.
+
+## Extensão proposta para 2C — 23/09/2026
+
+Esta seção planeja a reserva externa e não descreve migration aplicada. O serviço terá política de
+confirmação imediata ativada por padrão, desativável pela equipe para novos envios. A alteração da
+política não muda a situação das reservas existentes.
+
+Um envio externo pode criar reserva confirmada ou aguardando aprovação. A pendência conserva o mesmo
+identificador, beneficiário e intervalo até a decisão da equipe; aprovação altera sua situação sem
+criar segunda reserva, e recusa registra uma situação terminal e libera a ocupação. Não há expiração
+automática. Os nomes finais dos novos estados e comandos devem ser conciliados com os contratos
+existentes antes da migration.
+
+Pendências e reservas confirmadas ocupam o intervalo do profissional e do beneficiário, inclusive
+em disputas entre painel e app/site. A migration aditiva deve estender as restrições de exclusão e
+o protocolo transacional para considerar ambas as situações ocupantes; recusa e cancelamento não
+ocupam. Conferir conflitos preexistentes antes de ativar a restrição, sem alterar dados por
+inferência. Decisões de aprovação/recusa exigem permissão de alteração, controle de versão,
+revalidação e evento auditado. A fila administrativa precisa expor a idade da pendência para que a
+equipe resolva solicitações sem prazo automático.
