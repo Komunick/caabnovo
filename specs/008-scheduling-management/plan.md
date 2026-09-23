@@ -129,10 +129,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    nem expor a seleção administrativa de beneficiários como API pública.
 3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
    migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
-4. Aplicar a decisão de 23/09: serviços publicados para o canal ficam visíveis antes do login;
-   vagas exigem autenticação. Definir políticas externas de antecedência, confirmação,
-   remarcação e cancelamento. Regras sem decisão permanecem bloqueadoras do contrato externo,
-   sem default copiado de fornecedores.
+4. Aplicar as decisões de 23/09: serviços publicados para o canal ficam visíveis antes do login;
+   vagas exigem autenticação. Confirmação imediata é o padrão por serviço e pode ser desativada
+   pela equipe para exigir aprovação de novos envios. Definir ocupação/expiração da vaga pendente,
+   antecedência, remarcação e cancelamento antes do contrato externo.
 5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
    executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
@@ -161,24 +161,30 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   tudo na transação. A constraint de profissional e a proteção por beneficiário garantem conflitos
   sob concorrência. Uma prévia ou calendário externo não reserva a vaga.
 - Criação, remarcação e cancelamento mantêm idempotência, versão, histórico e auditoria; falha
-  de confirmação não altera a reserva anterior. Nenhum status de comparecimento ou avaliação é
+  de confirmação não altera a reserva anterior. Modelar confirmação imediata como padrão do
+  serviço, com opção administrativa de exigir aprovação para novos envios. Distinguir estado
+  aguardando aprovação de reserva confirmada; aprovação/recusa pela equipe requer permissão de
+  alteração, revalidação, concorrência segura e auditoria. A política de ocupação/expiração da
+  vaga pendente ainda precisa ser decidida. Nenhum status de comparecimento ou avaliação é
   inferido do horário.
 
 ### Contratos a detalhar depois das decisões
 
-Preparar contrato externo versionado para: oferta visível por canal; consulta de vagas por
-procedimento/unidade/profissional e beneficiário quando necessário; confirmação; próximas e
-históricas próprias; detalhe; remarcação; cancelamento. Definir autenticação, autorização,
-campos mínimos, paginação/limites de consulta, fuso, códigos de conflito e sessão revogada.
-Não fixar caminhos, payloads ou estado inicial antes de decidir identidade e políticas.
+Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
+por serviço; consulta de vagas por procedimento/unidade/profissional e beneficiário quando
+necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
+detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
+permissão e auditoria. Definir autenticação, autorização, campos mínimos, paginação/limites de
+consulta, fuso, códigos de conflito e sessão revogada. Não fixar caminhos ou payloads antes de
+decidir identidade e demais políticas.
 Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md) e criar
 contrato externo responsável sem substituir consumidores do painel.
 
 ### Experiência e acessibilidade
 
 O planejamento de navegação externa cobre descoberta de serviços antes do login e, depois de
-autenticar, identificação do beneficiário, seleção de vaga, revisão/confirmação e “Minhas reservas”,
-com recuperação de conflito sem
+autenticar, identificação do beneficiário, seleção de vaga, revisão/envio e “Minhas reservas”,
+com situação explícita de confirmação ou espera de aprovação e recuperação de conflito sem
 perder escolhas. O painel mantém Lista/Dia/Semana/Mês e ações existentes. A pesquisa identifica
 padrões, mas não define aparência: ler o guia canônico docs/caab-design.md da pasta principal
 e a spec da interface app/site antes de desenhar telas. O guia local estava inacessível nesta
@@ -192,7 +198,9 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   ou reservas; ator sem vínculo não enumera nem lê reserva de terceiro.
 - Integração em PostgreSQL descartável: painel versus app/site disputam mesma vaga; mesmo
   beneficiário em unidades/profissionais distintos não sobrepõe; titular e dependente distintos
-  podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico.
+  podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico. Serviço novo
+  confirma imediatamente; ao desativar a opção, novos envios ficam pendentes sem alterar reservas
+  já confirmadas. Aprovação/recusa exige acesso de alteração, revalida dados e não duplica eventos.
 - Jornada com identidades sintéticas: titular reserva para si e dependente; dependente reserva
   para si e é negado ao tentar reservar para titular ou outro dependente. Ambos consultam a
   reserva do dependente criada pelo titular; após cessar o vínculo, só o dependente a consulta.
@@ -218,8 +226,8 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência/remarcação/cancelamento; estado inicial
-e eventual confirmação humana; mensagens reais; contas e reservas do legado. Até resolvê-las,
+por canal para antecedência/remarcação/cancelamento; ocupação/expiração da vaga enquanto aguarda
+aprovação; mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
 ## Histórico anterior — referência, não sequência executável atual
