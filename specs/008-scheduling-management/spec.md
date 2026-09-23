@@ -153,6 +153,89 @@ Scenarios**:
 3. A avaliação permanece associada ao atendimento e ao autor conforme contrato específico; gestão
    não implica reescrever automaticamente a opinião recebida.
 
+### Detalhamento 2C — primeira reserva no app/site (rascunho de 23/09/2026)
+
+**Estado:** continuação documental de US3 baseada na [pesquisa de mercado de 23/09](research.md).
+Descreve resultados e invariantes para a primeira experiência externa; não aprova integração,
+implantação ou implementação. A interface completa do app/site terá a especificação própria já
+prevista no programa 002. As decisões em aberto abaixo devem ser resolvidas antes de fechar o
+contrato externo e gerar tarefas executáveis.
+
+**Jornada de valor:** uma pessoa com identidade externa válida encontra um procedimento oferecido
+no canal, identifica o beneficiário que está autorizada a representar, consulta vagas, confirma
+uma reserva e a reencontra em suas próximas reservas. Pode solicitar remarcação ou cancelamento
+quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha no painel.
+
+**Cenários de aceite do recorte 2C:**
+
+1. Uma oferta publicada para o canal mostra unidade, procedimento, duração e informações essenciais;
+   ofertas não publicadas para o canal não aparecem nem são reserváveis pela API externa.
+2. A pessoa autenticada seleciona a si ou um dependente somente quando o vínculo vigente autoriza
+   agir por essa pessoa. A reserva fica vinculada ao identificador individual do beneficiário,
+   enquanto o autor e a origem do comando são registrados separadamente. Acesso à reserva de
+   outra pessoa ou vínculo revogado é negado por URL/API.
+3. Com oferta e beneficiário válidos, a consulta apresenta datas/horários efetivamente calculados
+   pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece próxima data ou outra
+   combinação autorizada quando houver, sem mostrar uma grade vazia como confirmação de ausência
+   definitiva. A prévia de vaga não a retém.
+4. Na confirmação, o servidor revalida identidade, representação, elegibilidade, oferta,
+   disponibilidade e conflitos por profissional e beneficiário dentro da transação. Duas pessoas
+   disputando a última vaga produzem uma reserva; a outra recebe conflito recuperável e mantém
+   suas escolhas para buscar alternativa. Repetir o mesmo comando não duplica reserva.
+5. Reserva criada no app/site aparece no painel com mesmo identificador, horário, beneficiário e
+   situação; reserva criada no painel ocupa a vaga vista no app/site. A origem é distinguível no
+   histórico sem duplicar os registros do domínio.
+6. A pessoa autorizada vê suas reservas futuras e históricas com situação textual, dados mínimos
+   da oferta e ações permitidas. Remarcação preserva o identificador/histórico e, se recusada,
+   mantém a vaga anterior. Cancelamento preserva o registro e libera a vaga apenas após confirmação
+   válida, sem motivo obrigatório.
+7. Sessão expirada, representação revogada, bloqueio de beneficiário, alteração de oferta ou
+   conflito entre prévia e confirmação recebem resposta clara e sem dados de terceiros. Ações
+   privadas não vazam por cache, histórico do navegador ou API de outro canal.
+8. A jornada de descoberta, escolha, confirmação e consulta funciona por teclado e em tela móvel,
+   com foco visível, status além da cor e mensagens anunciáveis, conforme WCAG 2.2 AA e o guia de
+   design CAAB vigente. A revisão do guia local e a validação visual são gates antes do código.
+
+**Requisitos específicos propostos para 2C:**
+
+- **2C-FR-01:** Expor catálogo e vagas por contrato externo versionado, com visibilidade explícita
+  por canal e projeção mínima; a escolha de acesso público ao catálogo/vagas continua pendente.
+  Reservar, remarcar, cancelar e consultar reservas próprias exigem identidade externa validada.
+  APIs administrativas e suas sessões não são reutilizadas pelo cliente externo.
+- **2C-FR-02:** Resolver o ator externo e a representação vigente do beneficiário no servidor a cada
+  comando; nunca confiar em titular, dependente, papel, elegibilidade ou vínculo enviados pelo
+  navegador. Usar o cadastro único de Associados, sem copiar seus dados para Agendamentos.
+- **2C-FR-03:** Aplicar a mesma fonte de disponibilidade e as mesmas restrições transacionais da
+  agenda administrativa. A seleção visual é provisória; confirmação exige revalidação e
+  idempotência. Intervalos são [início, fim), persistidos em UTC e apresentados em America/Bahia.
+- **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
+  históricas; preservar trilha, autor e origem. Remarcação/cancelamento usam versão e regras
+  aprovadas; negação ou conflito não altera a reserva anterior.
+- **2C-FR-05:** Não gerar comparecimento, conclusão, falta, avaliação, pagamento, penalidade,
+  lista de espera, atribuição automática ou mensagem real por inferência. Essas capacidades têm
+  cortes e políticas próprios.
+- **2C-FR-06:** Preservar compatibilidade dos consumidores e dados existentes durante a transição
+  do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
+  migração/convivência e rollback sem perda de histórico.
+
+**Decisões de produto pendentes para fechar 2C:**
+
+- Mecanismo de identidade externa e autorização de titular para agir por cada dependente;
+  criação/revogação do vínculo e visibilidade do histórico.
+- Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
+  “qualquer profissional disponível” versus profissional específico.
+- Antecedência, horizonte futuro, remarcação/cancelamento pelo usuário e tratamento de reservas
+  afetadas por indisponibilidade posterior. Não inferir prazos nem penalidades do mercado.
+- Situação atribuída à reserva externa após confirmação e necessidade de aprovação humana,
+  se alguma; conteúdo e canal de mensagens transacionais.
+- Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
+- Se catálogo e vagas podem ser consultados antes de autenticar. A decisão não altera a
+  exigência de identidade para confirmar ou consultar reservas próprias.
+
+**Fora deste recorte:** turmas/capacidade, salas/equipamentos, lista de espera, múltiplos serviços
+na mesma reserva, assistente por IA, avaliações e integração Cal.com. Permanecem possibilidades
+de pesquisa ou incrementos separados; não se tornam requisitos por aparecerem em produtos de mercado.
+
 ### Edge Cases
 
 - Catálogo vazio, filtro sem resultado, falha de carregamento e sessão expirada.
