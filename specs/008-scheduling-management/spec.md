@@ -68,6 +68,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   próprias reservas, inclusive quando a reserva foi criada pelo titular.
 - Q: Ao concluir uma reserva no app/site, ela é confirmada imediatamente ou aguarda a equipe? →
   A: Cada serviço define se a confirmação é imediata ou se exige aprovação da equipe.
+- Complemento do usuário: confirmação imediata é o padrão; a equipe pode desligá-la por serviço
+  para exigir aprovação. A mudança de configuração vale para novos envios.
 
 ## User Scenarios & Testing
 
@@ -194,8 +196,9 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
    combinação autorizada quando houver, sem mostrar uma grade vazia como confirmação de ausência
    definitiva. A prévia de vaga não a retém.
 4. Ao enviar a reserva, o servidor revalida identidade, representação, elegibilidade, oferta,
-   disponibilidade e conflitos por profissional e beneficiário. Serviço com confirmação imediata
-   gera reserva confirmada; serviço com aprovação gera reserva identificada como aguardando
+   disponibilidade e conflitos por profissional e beneficiário. Serviço usa confirmação imediata
+   por padrão; se a equipe a desativar nesse serviço, novos envios geram reserva identificada
+   como aguardando
    aprovação, sem comunicar confirmação ao usuário. Em ambos os fluxos, a transição é auditada,
    um envio repetido não duplica reserva e um conflito conserva as escolhas para buscar alternativa.
    A decisão da equipe exige autorização e revalidação antes de confirmar.
@@ -229,8 +232,9 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   único de Associados, sem copiar seus dados para Agendamentos.
 - **2C-FR-03:** Aplicar a mesma fonte de disponibilidade e as mesmas restrições transacionais da
   agenda administrativa. A seleção visual é provisória; envio e aprovação exigem revalidação e
-  idempotência. A regra configurada no serviço determina confirmação imediata ou estado
-  aguardando aprovação, exibido sem ambiguidade nos canais. A equipe autorizada aprova ou recusa
+  idempotência. A confirmação imediata vem ativada por padrão em cada serviço; a equipe pode
+  desativá-la para exigir aprovação dos novos envios. A situação resultante é exibida sem
+  ambiguidade nos canais. A equipe autorizada aprova ou recusa
   com auditoria; uma solicitação pendente nunca é apresentada como confirmada. A política de
   ocupação da vaga durante a espera permanece pendente. Intervalos são [início, fim), persistidos
   em UTC e apresentados em America/Bahia.
