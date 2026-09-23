@@ -70,6 +70,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   A: Cada serviço define se a confirmação é imediata ou se exige aprovação da equipe.
 - Complemento do usuário: confirmação imediata é o padrão; a equipe pode desligá-la por serviço
   para exigir aprovação. A mudança de configuração vale para novos envios.
+- Q: Enquanto a equipe não decide, a solicitação pendente deve ocupar a vaga? →
+  A: Sim. Ela ocupa a vaga até aprovação ou recusa da equipe, sem expiração automática.
 
 ## User Scenarios & Testing
 
@@ -180,7 +182,8 @@ contrato externo e gerar tarefas executáveis.
 de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
-Pode solicitar remarcação ou cancelamento quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha no painel.
+Pode solicitar remarcação ou cancelamento quando a política aprovada permitir. A equipe vê a mesma
+reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
 
@@ -204,8 +207,10 @@ Pode solicitar remarcação ou cancelamento quando a política aprovada permitir
    A decisão da equipe exige autorização e revalidação antes de confirmar.
 5. Reserva criada no app/site aparece no painel com mesmo identificador, horário, beneficiário e
    situação, inclusive quando aguarda aprovação. A equipe pode aprovar ou recusar uma solicitação
-   pendente com decisão auditada e situação atualizada para o usuário. Reserva criada no painel
-   ocupa a vaga vista no app/site. A origem é distinguível no histórico sem duplicar registros.
+   pendente com decisão auditada e situação atualizada para o usuário. Enquanto aguarda, a
+   solicitação ocupa o horário do profissional e do beneficiário em todos os canais; a recusa libera
+   a vaga, e a aprovação mantém a mesma ocupação sem duplicá-la. Não há expiração automática.
+   Reserva criada no painel ocupa a vaga vista no app/site. A origem é distinguível no histórico.
 6. Titular com vínculo vigente e o próprio dependente veem as reservas futuras e históricas do
    dependente, mesmo quando criadas pelo outro, com situação textual, dados mínimos da oferta e
    ações permitidas. Quando a política liberar remarcação/cancelamento no canal, ambos podem agir
@@ -235,9 +240,10 @@ Pode solicitar remarcação ou cancelamento quando a política aprovada permitir
   idempotência. A confirmação imediata vem ativada por padrão em cada serviço; a equipe pode
   desativá-la para exigir aprovação dos novos envios. A situação resultante é exibida sem
   ambiguidade nos canais. A equipe autorizada aprova ou recusa com auditoria; uma solicitação
-  pendente nunca é apresentada como confirmada. A política de
-  ocupação da vaga durante a espera permanece pendente. Intervalos são [início, fim), persistidos
-  em UTC e apresentados em America/Bahia.
+  pendente nunca é apresentada como confirmada. Enquanto aguarda, ela bloqueia vaga e conflito do
+  beneficiário; somente aprovação ou recusa da equipe encerra a espera, sem expiração automática.
+  Recusa libera a ocupação; aprovação preserva a mesma reserva e ocupação. Intervalos são
+  [início, fim), persistidos em UTC e apresentados em America/Bahia.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
   históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
@@ -260,7 +266,9 @@ Pode solicitar remarcação ou cancelamento quando a política aprovada permitir
   exatamente uma reserva confirmada ocupa o profissional; quando todas tentam reservar o mesmo
   beneficiário em profissionais livres distintos, exatamente uma reserva sobreposta persiste.
   Vinte repetições idênticas do envio resultam em um único registro/evento. Em serviço com
-  aprovação, nenhuma solicitação é exibida como confirmada antes da decisão da equipe.
+  aprovação, nenhuma solicitação é exibida como confirmada antes da decisão da equipe; uma
+  pendência impede outra reserva conflitante por profissional ou beneficiário até a decisão.
+  Aprovar não duplica ocupação; recusar libera a vaga uma única vez.
 - **2C-SC-03:** A matriz de titular sem vínculo vigente, dependente tentando reservar para titular
   ou outro dependente, sessão revogada, reserva de terceiro e oferta fora do canal retorna zero
   detalhes privados ou mutações aceitas. O titular perde acesso às reservas do dependente ao
@@ -279,9 +287,10 @@ Pode solicitar remarcação ou cancelamento quando a política aprovada permitir
   “qualquer profissional disponível” versus profissional específico.
 - Antecedência, horizonte futuro, remarcação/cancelamento pelo usuário e tratamento de reservas
   afetadas por indisponibilidade posterior. Não inferir prazos nem penalidades do mercado.
-- Política de ocupação/expiração da vaga enquanto a solicitação aguarda aprovação; prazos e
-  responsabilidade pela decisão. Conteúdo e canal de mensagens transacionais. A necessidade de
-  aprovação é configurada por serviço, conforme decisão de 23/09/2026.
+- Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
+  de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
+  automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
+  23/09/2026.
 - Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
 
 **Fora deste recorte:** turmas/capacidade, salas/equipamentos, lista de espera, múltiplos serviços
