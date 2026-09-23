@@ -98,14 +98,117 @@ titular/dependentes distintos podem coincidir. Bloqueio mantém reserva/vaga e m
 some/nega; só read não altera. Exportação não herda teto visual.
 
 Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior nunca conclui
-tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação: speckit-tasks, organizado
-por história, com dependências e critérios independentes.
+tarefa nova. O incremento T025–T039 já possui tarefas geradas e continua sem execução. O desenho 2C abaixo é
+apenas documental; requer decisões de produto, contrato externo e tarefas próprias antes de código.
 
 ## Complexity Tracking
 
 Núcleo comum necessário para aplicações repetidas em oito funções; adaptadores mantêm as regras dos
 domínios. Sem microserviço, linguagem nova ou nova fonte de verdade. Estado operacional serve
 somente à transferência atual; não é fila/histórico obrigatório.
+
+## Continuação do plano — incremento 2C app/site (23/09/2026)
+
+**Estado:** planejamento preliminar da parte de Agendamentos na primeira experiência externa,
+conforme [US3/2C na spec](spec.md) e [pesquisa atual](research.md). Este texto não altera o
+recorte ativo T025–T039, não conclui T022 e não autoriza implementação ou publicação.
+A interface completa do app/site terá especificação própria no programa 002. Uma vez
+resolvidas as decisões de produto, reconciliar os dois documentos antes de gerar tarefas.
+
+### Dependências e ordem
+
+1. Concluir ou incorporar no mesmo incremento as garantias de consulta/alteração,
+   conflito por beneficiário e sinalização de bloqueio descritas em AC/BEN/BLQ. A
+   exportação DX01 tem entrega própria e não é pré-requisito técnico para a reserva externa.
+   CAL06 é revisão da interface administrativa, sem alterar o núcleo de vagas.
+2. Fechar identidade externa e representação de dependentes com o domínio Associados.
+   Não usar conta administrativa como conta do app/site nem expor a seleção administrativa
+   de beneficiários como API pública.
+3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
+   migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
+4. Definir políticas externas de visibilidade, antecedência, confirmação, remarcação e
+   cancelamento. Regras sem decisão permanecem bloqueadoras do contrato externo, sem default
+   copiado de fornecedores.
+5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
+   executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
+
+### Arquitetura candidata e fronteiras
+
+- O módulo scheduling continua proprietário da oferta, disponibilidade, reservas e histórico no
+  PostgreSQL. Painel e canais externos chamam os mesmos serviços de domínio; a API externa tem
+  contrato versionado e projeções próprias, sem compartilhar endpoints/sessão administrativos.
+  Nenhum SDK, iframe ou banco de fornecedor é fonte de verdade.
+- O domínio Associados resolve a pessoa atendida e o direito vigente do ator externo de agir por
+  ela. A fronteira recebe identificadores mínimos e resultado autorizado; documentos, finanças,
+  papéis e dados de titular não são copiados para Agendamentos.
+- Separar ator, beneficiário e origem do comando. Antes de escolher migration, conferir se
+  created_by e eventos atuais exigem FK de usuário administrativo; uma identidade externa não
+  pode ser gravada falsamente como colaborador nem como beneficiário autor. Planejar adaptação
+  aditiva de autoria/auditoria com compatibilidade para eventos antigos.
+- Visibilidade por canal deve ser explícita e aplicada nas leituras e comandos. O catálogo atual
+  não deve passar a ser público inteiro por reutilização acidental. Definir contrato de projeção
+  mínima e cache apenas depois de decidir o que pode ser consultado sem autenticação; respostas
+  privadas não recebem cache compartilhado.
+- Continuar com datas UTC, intervalos [início, fim) e apresentação em America/Bahia. A consulta
+  de vagas usa as regras existentes e as políticas externas aprovadas; a confirmação revalida
+  tudo na transação. A constraint de profissional e a proteção por beneficiário garantem conflitos
+  sob concorrência. Uma prévia ou calendário externo não reserva a vaga.
+- Criação, remarcação e cancelamento mantêm idempotência, versão, histórico e auditoria; falha
+  de confirmação não altera a reserva anterior. Nenhum status de comparecimento ou avaliação é
+  inferido do horário.
+
+### Contratos a detalhar depois das decisões
+
+Preparar contrato externo versionado para: oferta visível por canal; consulta de vagas por
+procedimento/unidade/profissional e beneficiário quando necessário; confirmação; próximas e
+históricas próprias; detalhe; remarcação; cancelamento. Definir autenticação, autorização,
+campos mínimos, paginação/limites de consulta, fuso, códigos de conflito e sessão revogada.
+Não fixar caminhos, payloads ou estado inicial antes de decidir identidade e políticas.
+Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md) e criar
+contrato externo responsável sem substituir consumidores do painel.
+
+### Experiência e acessibilidade
+
+O planejamento de navegação externa cobre descoberta da oferta, identificação do beneficiário,
+seleção de vaga, revisão/confirmacão e “Minhas reservas”, com recuperação de conflito sem
+perder escolhas. O painel mantém Lista/Dia/Semana/Mês e ações existentes. A pesquisa identifica
+padrões, mas não define aparência: ler o guia canônico docs/caab-design.md da pasta principal
+e a spec da interface app/site antes de desenhar telas. O guia local estava inacessível nesta
+revisão remota; nenhuma conformidade visual foi presumida. Validar teclado, foco, mensagens de
+estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
+
+### Validação planejada
+
+- Contratos: oferta correta por canal; dados privados/rascunhos ausentes; anônimo e identidade
+  revogada negados conforme política; ator sem vínculo não enumera nem lê reserva de terceiro.
+- Integração em PostgreSQL descartável: painel versus app/site disputam mesma vaga; mesmo
+  beneficiário em unidades/profissionais distintos não sobrepõe; titular e dependente distintos
+  podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico.
+- Jornada com identidades sintéticas: reservar, recarregar painel e canal externo, consultar
+  próprio histórico, remarcar, cancelar, revogar vínculo/sessão e revalidar bloqueio. Testar
+  horário com navegador em outro fuso e mudança de oferta entre prévia e confirmação.
+- Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
+  pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
+  recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
+- Gates do workflow e homologação dos consumidores externos só depois do contrato e ambiente
+  autorizados. Usar dados sintéticos; não ativar localhost, seed real ou serviço pausado
+  por este plano.
+
+### Transição e rollback
+
+Planejar compatibilidade de leitura dos consumidores e migração verificável de reservas/contas
+que precisem sobreviver ao corte. Não fazer escrita dupla cega entre legado e CAAB. Definir
+responsável, janela de corte, deduplicação, reconciliação e retorno antes de publicar o canal.
+Rollback do cliente/API preserva reservas, autores e histórico; não remover migrations ou
+dados para desfazer uma interface. A ativação em produção depende de evidências e autorização
+do fluxo de entrega.
+
+### Decisões ainda bloqueadoras
+
+Identidade externa, representação e revogação de dependentes; catálogo público ou autenticado;
+profissional opcional; política por canal para antecedência/remarcação/cancelamento; estado inicial
+e eventual confirmação humana; mensagens reais; contas e reservas do legado. Até resolvê-las,
+o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
 ## Histórico anterior — referência, não sequência executável atual
 
