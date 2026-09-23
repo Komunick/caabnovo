@@ -121,9 +121,11 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    conflito por beneficiário e sinalização de bloqueio descritas em AC/BEN/BLQ. A
    exportação DX01 tem entrega própria e não é pré-requisito técnico para a reserva externa.
    CAL06 é revisão da interface administrativa, sem alterar o núcleo de vagas.
-2. Fechar identidade externa e representação de dependentes com o domínio Associados.
-   Não usar conta administrativa como conta do app/site nem expor a seleção administrativa
-   de beneficiários como API pública.
+2. Vincular cada identidade externa ao cadastro individual em Associados e aplicar a decisão de
+   23/09: titular reserva para si e seus dependentes; dependente reserva somente para si.
+   Fechar visibilidade do histórico e revogação de acesso antes do contrato. Não usar conta
+   administrativa como conta do app/site nem expor a seleção administrativa de beneficiários
+   como API pública.
 3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
    migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
 4. Definir políticas externas de visibilidade, antecedência, confirmação, remarcação e
@@ -184,8 +186,10 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 - Integração em PostgreSQL descartável: painel versus app/site disputam mesma vaga; mesmo
   beneficiário em unidades/profissionais distintos não sobrepõe; titular e dependente distintos
   podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico.
-- Jornada com identidades sintéticas: reservar, recarregar painel e canal externo, consultar
-  próprio histórico, remarcar, cancelar, revogar vínculo/sessão e revalidar bloqueio. Testar
+- Jornada com identidades sintéticas: titular reserva para si e dependente; dependente reserva
+  para si e é negado ao tentar reservar para titular ou outro dependente. Recarregar painel e canal
+  externo, consultar histórico autorizado, remarcar, cancelar, revogar vínculo/sessão e revalidar
+  bloqueio. Testar
   horário com navegador em outro fuso e mudança de oferta entre prévia e confirmação.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
@@ -205,7 +209,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Identidade externa, representação e revogação de dependentes; catálogo público ou autenticado;
+Mecanismo de identidade externa, gestão do vínculo e visibilidade do histórico de dependentes;
+catálogo público ou autenticado;
 profissional opcional; política por canal para antecedência/remarcação/cancelamento; estado inicial
 e eventual confirmação humana; mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
