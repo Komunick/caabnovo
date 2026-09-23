@@ -128,9 +128,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    como API pública.
 3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
    migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
-4. Definir políticas externas de visibilidade, antecedência, confirmação, remarcação e
-   cancelamento. Regras sem decisão permanecem bloqueadoras do contrato externo, sem default
-   copiado de fornecedores.
+4. Aplicar a decisão de 23/09: serviços publicados para o canal ficam visíveis antes do login;
+   vagas exigem autenticação. Definir políticas externas de antecedência, confirmação,
+   remarcação e cancelamento. Regras sem decisão permanecem bloqueadoras do contrato externo,
+   sem default copiado de fornecedores.
 5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
    executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
@@ -147,10 +148,11 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   created_by e eventos atuais exigem FK de usuário administrativo; uma identidade externa não
   pode ser gravada falsamente como colaborador nem como beneficiário autor. Planejar adaptação
   aditiva de autoria/auditoria com compatibilidade para eventos antigos.
-- Visibilidade por canal deve ser explícita e aplicada nas leituras e comandos. O catálogo atual
-  não deve passar a ser público inteiro por reutilização acidental. Definir contrato de projeção
-  mínima e cache apenas depois de decidir o que pode ser consultado sem autenticação; respostas
-  privadas não recebem cache compartilhado.
+- Visibilidade por canal deve ser explícita e aplicada nas leituras e comandos. Antes do login,
+  expor somente serviços publicados para o canal, com projeção mínima; nunca o catálogo
+  administrativo inteiro, dados privados ou horários disponíveis. Consultas de vagas exigem
+  identidade externa validada. Delimitar cache por tipo de resposta; respostas privadas não
+  recebem cache compartilhado.
 - Continuar com datas UTC, intervalos [início, fim) e apresentação em America/Bahia. A consulta
   de vagas usa as regras existentes e as políticas externas aprovadas; a confirmação revalida
   tudo na transação. A constraint de profissional e a proteção por beneficiário garantem conflitos
@@ -171,8 +173,9 @@ contrato externo responsável sem substituir consumidores do painel.
 
 ### Experiência e acessibilidade
 
-O planejamento de navegação externa cobre descoberta da oferta, identificação do beneficiário,
-seleção de vaga, revisão/confirmação e “Minhas reservas”, com recuperação de conflito sem
+O planejamento de navegação externa cobre descoberta de serviços antes do login e, depois de
+autenticar, identificação do beneficiário, seleção de vaga, revisão/confirmação e “Minhas reservas”,
+com recuperação de conflito sem
 perder escolhas. O painel mantém Lista/Dia/Semana/Mês e ações existentes. A pesquisa identifica
 padrões, mas não define aparência: ler o guia canônico docs/caab-design.md da pasta principal
 e a spec da interface app/site antes de desenhar telas. O guia local estava inacessível nesta
@@ -181,8 +184,9 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
 
-- Contratos: oferta correta por canal; dados privados/rascunhos ausentes; anônimo e identidade
-  revogada negados conforme política; ator sem vínculo não enumera nem lê reserva de terceiro.
+- Contratos: visitante sem login consulta apenas serviços publicados para o canal, sem dados
+  privados/rascunhos; consulta anônima de vagas é negada. Identidade revogada não consulta vagas
+  ou reservas; ator sem vínculo não enumera nem lê reserva de terceiro.
 - Integração em PostgreSQL descartável: painel versus app/site disputam mesma vaga; mesmo
   beneficiário em unidades/profissionais distintos não sobrepõe; titular e dependente distintos
   podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico.
@@ -210,7 +214,6 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa, gestão do vínculo e visibilidade do histórico de dependentes;
-catálogo público ou autenticado;
 profissional opcional; política por canal para antecedência/remarcação/cancelamento; estado inicial
 e eventual confirmação humana; mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
