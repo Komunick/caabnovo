@@ -218,6 +218,20 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
   migração/convivência e rollback sem perda de histórico.
 
+**Critérios mensuráveis de 2C:**
+
+- **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
+  identificador, beneficiário, horário e situação após recarga; remarcar/cancelar preserva a
+  trilha e altera a ocupação apenas uma vez.
+- **2C-SC-02:** Em 20 confirmações simultâneas da mesma vaga por painel e canal externo,
+  exatamente uma reserva ativa ocupa o profissional; quando todas tentam reservar o mesmo
+  beneficiário em profissionais livres distintos, exatamente uma reserva sobreposta persiste.
+  Vinte repetições idênticas do envio resultam em um único registro/evento.
+- **2C-SC-03:** A matriz de usuário sem vínculo, vínculo revogado, sessão revogada, reserva de
+  terceiro e oferta fora do canal retorna zero detalhes privados ou mutações aceitas.
+- **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
+  identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e autorização de titular para agir por cada dependente;
