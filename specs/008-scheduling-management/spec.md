@@ -61,6 +61,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Na primeira versão do app/site, quem poderá confirmar uma reserva para um dependente? →
   A: O titular pode reservar para si e seus dependentes; cada dependente pode reservar somente
   para si mesmo.
+- Q: Antes de entrar na conta, uma pessoa pode consultar serviços e horários disponíveis? →
+  A: Os serviços podem ser consultados sem login; horários disponíveis exigem autenticação.
 
 ## User Scenarios & Testing
 
@@ -167,20 +169,21 @@ implantação ou implementação. A interface completa do app/site terá a espec
 prevista no programa 002. As decisões em aberto abaixo devem ser resolvidas antes de fechar o
 contrato externo e gerar tarefas executáveis.
 
-**Jornada de valor:** uma pessoa com identidade externa válida encontra um procedimento oferecido
-no canal, identifica o beneficiário que está autorizada a representar, consulta vagas, confirma
+**Jornada de valor:** uma pessoa descobre os serviços publicados no canal antes do login. Depois
+de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas, confirma
 uma reserva e a reencontra em suas próximas reservas. Pode solicitar remarcação ou cancelamento
 quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
 
-1. Uma oferta publicada para o canal mostra unidade, procedimento, duração e informações essenciais;
-   ofertas não publicadas para o canal não aparecem nem são reserváveis pela API externa.
+1. Antes do login, uma oferta publicada para o canal mostra unidade, procedimento, duração e
+   informações essenciais, sem dados privados ou horários disponíveis. Ofertas não publicadas para
+   o canal não aparecem nem são reserváveis pela API externa.
 2. O titular autenticado pode selecionar a si ou um dependente com vínculo vigente; o dependente
    autenticado só pode selecionar a si mesmo. A reserva fica vinculada ao identificador individual
    do beneficiário, enquanto autor e origem são registrados separadamente. Tentar confirmar uma
    reserva para pessoa fora dessa regra, inclusive por URL/API, é negado.
-3. Com oferta e beneficiário válidos, a consulta apresenta datas/horários efetivamente calculados
+3. Depois do login, com oferta e beneficiário válidos, a consulta apresenta datas/horários efetivamente calculados
    pela mesma regra de disponibilidade usada no painel. Sem vaga, oferece próxima data ou outra
    combinação autorizada quando houver, sem mostrar uma grade vazia como confirmação de ausência
    definitiva. A prévia de vaga não a retém.
@@ -204,10 +207,11 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
 
 **Requisitos específicos propostos para 2C:**
 
-- **2C-FR-01:** Expor catálogo e vagas por contrato externo versionado, com visibilidade explícita
-  por canal e projeção mínima; a escolha de acesso público ao catálogo/vagas continua pendente.
-  Reservar, remarcar, cancelar e consultar reservas próprias exigem identidade externa validada.
-  APIs administrativas e suas sessões não são reutilizadas pelo cliente externo.
+- **2C-FR-01:** Expor catálogo de serviços publicados para o canal antes do login, com projeção
+  mínima e sem dados privados ou horários disponíveis. Consultar vagas exige identidade externa
+  validada, assim como reservar, remarcar, cancelar e consultar reservas próprias. Aplicar
+  visibilidade explícita por canal; APIs administrativas e suas sessões não são reutilizadas
+  pelo cliente externo.
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
   confirmar para si e dependentes com vínculo vigente; dependente só pode confirmar para si.
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
@@ -236,7 +240,8 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
   Vinte repetições idênticas do envio resultam em um único registro/evento.
 - **2C-SC-03:** A matriz de titular sem vínculo vigente, dependente tentando reservar para titular
   ou outro dependente, sessão revogada, reserva de terceiro e oferta fora do canal retorna zero
-  detalhes privados ou mutações aceitas.
+  detalhes privados ou mutações aceitas. Visitante sem login vê apenas serviços publicados para
+  o canal; a consulta anônima de horários disponíveis é negada.
 - **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
   identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
 
@@ -252,8 +257,6 @@ quando a política aprovada permitir. A equipe vê a mesma reserva e sua trilha 
 - Situação atribuída à reserva externa após confirmação e necessidade de aprovação humana,
   se alguma; conteúdo e canal de mensagens transacionais.
 - Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
-- Se catálogo e vagas podem ser consultados antes de autenticar. A decisão não altera a
-  exigência de identidade para confirmar ou consultar reservas próprias.
 
 **Fora deste recorte:** turmas/capacidade, salas/equipamentos, lista de espera, múltiplos serviços
 na mesma reserva, assistente por IA, avaliações e integração Cal.com. Permanecem possibilidades
