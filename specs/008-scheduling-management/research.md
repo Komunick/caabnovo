@@ -1,4 +1,83 @@
-# Pesquisa vigente — 21/09/2026
+# Pesquisa de mercado — Agendamentos (revisão integral de 23/09/2026)
+
+**Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra, integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23/09/2026. Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real, teste de usabilidade ou validação de preços. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das práticas de mercado.
+
+## Pergunta e método
+
+Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
+
+## Referências selecionadas
+
+| Produto | Evidência observada nos guias oficiais | Melhor uso como referência para a CAAB | Limite |
+| --- | --- | --- | --- |
+| [Fresha](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1) | A equipe cria pela grade ou encontra a próxima vaga; cliente, serviço, profissional e horário são revistos antes de salvar. Há [atribuição de profissional disponível](https://www.fresha.com/help-center/knowledge-base/calendar/102178-set-up-new-appointment-assignment), [bloqueios](https://www.fresha.com/help-center/knowledge-base/calendar/18-set-up-and-manage-blocked-time), [lista de espera](https://www.fresha.com/help-center/knowledge-base/calendar/259-set-up-and-manage-your-waitlist) e [otimização das vagas](https://www.fresha.com/help-center/knowledge-base/calendar/496-optimize-online-schedule-availability). | Rotina do painel, reserva rápida e busca de alternativas quando o horário desejado não existe. | Foco comercial em beleza e bem-estar; pagamentos, prioridade por valor e preenchimento artificial de agenda não são regras da CAAB. |
+| [Jane](https://jane.app/guide/booking-an-appointment-online-for-patients) | Paciente encontra atendimento por tipo ou profissional e escolhe horário; [familiares vinculados podem reservar para perfis individuais](https://jane.app/guide/how-do-family-members-book-appointments-online); [recursos limitados entram no cálculo](https://jane.app/guide/resource-booking). | Beneficiário explícito, jornadas de associado/dependente e recurso físico opcional. | Regras clínicas, faturamento e prontuário não devem ser importados por analogia. |
+| [Mindbody](https://www.mindbodyonline.com/en-gb/business/scheduling) | Reúne compromissos individuais e aulas, capacidade e lista de espera, com disponibilidade refletida nos canais. Sua [atualização de interface de 2026](https://www.mindbodyonline.com/business/education/blog/mindbody-ui-ux-todays-modern-workflows) destaca ações diretamente na agenda e reserva de familiares. | Separar agendamento individual de turma/vaga coletiva e reduzir passos na operação. | Turmas, penalidades e pagamento dependem de política específica da CAAB; não são parte automática do recorte atual. |
+| [Square Appointments](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Configura intervalo das vagas, antecedência, janela futura, aprovação automática ou manual, profissional indiferente e comunicação; o [fluxo público](https://squareup.com/help/us/en/article/5355-set-up-online-booking-with-square-appointments) permite escolher unidade, serviço e profissional. | Tornar regras de oferta explícitas por canal e evitar decisões escondidas no código. | Opções comerciais disponíveis no produto não equivalem a decisões institucionais aprovadas. |
+| [SimplyBook.me](https://help.simplybook.me/wiki/Custom_Features) | Trata locais, classes, recursos, múltiplas reservas e lista de espera como capacidades separadas. | Evoluir por tipos de oferta, ativando só a complexidade necessária. | Quantidade de recursos não é, por si, boa experiência; configuração extensa aumenta o custo operacional. |
+| [Cal.com](https://cal.com/teams) | Referência para agendas de equipe, disponibilidade, roteamento e fluxos. A documentação do [antigo plano Platform/Atoms](https://cal.com/docs/platform/atoms/booker) informa que ele está em manutenção para clientes existentes e fechado a novos clientes. | Ideias de apresentação e integração; avaliar produto/contrato atual somente se surgir necessidade concreta. | Não há evidência de que substituir o núcleo CAAB por Cal.com resolva beneficiários, elegibilidade e governança próprias. A condição anterior de não integrar por conveniência permanece. |
+
+## O que converge entre as referências
+
+1. **Dois modos de uso compartilham a mesma agenda:** a equipe opera o dia, cadastra oferta e resolve exceções; a pessoa encontra um serviço, um horário e acompanha suas reservas no app/site. A documentação de [Mindbody](https://www.mindbodyonline.com/en-gb/business/scheduling) descreve atualização da oferta em diferentes canais; para a CAAB, a mesma regra de disponibilidade deve alimentar todos os canais autorizados.
+2. **A jornada começa pela necessidade e oferece caminhos alternativos:** buscar serviço/procedimento ou profissional, filtrar unidade, mostrar dias e horários reais, oferecer próxima data ou outros profissionais quando não houver vaga. [Fresha](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1) e [Jane](https://jane.app/guide/booking-an-appointment-online-for-patients) documentam esses caminhos.
+3. **Disponibilidade é calculada, não apenas uma grade visual:** duração do procedimento, funcionamento da unidade, jornada, pausas, bloqueios e, quando cabível, recursos/capacidade interferem na oferta. Antecedência e horizonte futuro são políticas configuradas em [Square](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings); [Jane](https://jane.app/guide/resource-booking) mostra o efeito de recursos limitados.
+4. **A pessoa atendida deve ser inequívoca:** uma conta pode reservar para familiares autorizados, mas cada compromisso pertence ao beneficiário individual. [Jane](https://jane.app/guide/how-do-family-members-book-appointments-online) oferece um exemplo concreto. Na CAAB, a autorização de representar dependente e a elegibilidade precisam vir dos contratos próprios de Associados.
+5. **Após a reserva, ainda há operação:** detalhes, remarcação, cancelamento, chegada/falta e histórico. [Jane](https://jane.app/guide/patient-arrivals-no-shows) distingue chegada e falta, enquanto [Fresha](https://www.fresha.com/help-center/knowledge-base/personal-account/35-respond-to-your-personal-reviews) vincula avaliação a atendimento concluído. Decorrer do horário não comprova atendimento.
+6. **Lista de espera e automação são incrementos com política:** Fresha permite operação manual ou aviso automático, com opções diferentes de prioridade; [Mindbody](https://www.mindbodyonline.com/business/education/product-waitlist-improvements) diferencia inclusão automática de primeira pessoa a confirmar. A CAAB deve decidir ordem, prazo de resposta, elegibilidade e prevenção de disputa antes de implementar.
+7. **Atendimento por IA é tendência de 2026, não pré-requisito:** [Fresha](https://www.fresha.com/blog/fresha-ai-concierge-launch) e [Mindbody](https://www.mindbodyonline.com/business/ai-concierge) anunciam assistentes que consultam dados vivos e acionam reservas/remarcações. Para a CAAB, só faria sentido após identidade, permissões, regras e ações auditáveis estarem consolidadas.
+
+## Direção recomendada para a CAAB — inferência da comparação
+
+### Experiência de quem reserva no app/site
+
+1. Apresentar serviços e procedimentos com duração, unidade e instruções essenciais; permitir descobrir por serviço ou por profissional quando houver preferência.
+2. Antes da confirmação, identificar quem será atendido (titular ou dependente autorizado). Mostrar apenas opções que possam ser reservadas por esse perfil; explicar indisponibilidade sem expor dados internos.
+3. Mostrar datas com vagas e horários legíveis, com próxima data e alternativas de unidade/profissional quando não houver vaga. A seleção é provisória até a confirmação no servidor.
+4. Revisar beneficiário, procedimento, unidade, profissional, data, hora e regras aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
+5. Em “Minhas reservas”, separar próximas e históricas, mostrar situação textual e permitir remarcação/cancelamento somente conforme política aprovada. Oferecer “agendar novamente” como atalho apenas se a oferta ainda for válida.
+
+### Experiência da equipe no painel
+
+1. Manter Agenda como entrada operacional, com Lista/Dia/Semana/Mês, data e filtros persistentes. Mostrar ações de criar e abrir detalhes sem perder o contexto. A versão atual já possui esse fundamento; rever CAL06.
+2. Separar configuração de unidades, serviços/procedimentos, profissionais/habilitações e horários da rotina de reservas. Explicar por que uma combinação não produz vagas.
+3. Acrescentar, em incremento próprio, exceções de agenda e tratamento de reservas futuras afetadas. Evitar cancelamento implícito por mudança de configuração.
+4. Exibir alertas operacionais, como beneficiário bloqueado após reserva, com decisão humana registrada. Consulta e alteração permanecem permissões distintas.
+5. Distinguir situação da reserva, comparecimento e avaliação; só marcar presença/falta por ação autorizada, nunca por relógio.
+
+### Núcleo de disponibilidade e integridade
+
+Uma única regra de servidor deve compor oferta ativa, habilitação, expediente, pausa, exceções, duração, políticas de canal, beneficiário e capacidade/recurso quando aplicáveis. Ela deve alimentar consulta de vagas e validação final para painel e futuros app/site. Registrar a reserva de forma transacional, com idempotência, revalidação de elegibilidade e proteção de conflitos do profissional e do beneficiário. O [PostgreSQL documenta restrições de exclusão sobre intervalos](https://www.postgresql.org/docs/current/rangetypes.html), mecanismo adequado para impedir sobreposição mesmo sob concorrência; a escolha exata deve respeitar o esquema existente e dados prévios. Horários persistidos em UTC são apresentados no fuso da unidade; calendário visual não é garantia de vaga.
+
+Essas são recomendações de desenho, não declaração de que cada parte já existe no código.
+
+## Ordem sugerida de estudo e evolução
+
+| Sequência | Resultado a detalhar | Situação frente à spec vigente |
+| --- | --- | --- |
+| 1 | Fechar concessões consultar/alterar, conflito por beneficiário, aviso de bloqueio, exportação e revisão CAL06. | Lacunas já registradas em spec/plan/tasks; confirmar estado do Git antes de executar. |
+| 2 | Especificar primeira jornada app/site, identidade do titular/dependente, contrato de vagas e mutações, e transição do legado. | Etapa posterior priorizada no roadmap; decisões de produto e contrato ainda necessários. |
+| 3 | Detalhar indisponibilidades, agenda extra, antecedência, horizonte futuro, presença/falta e avaliações. | Funcionalidades do legado ou operação a confirmar uma a uma; sem implementação automática. |
+| 4 | Avaliar turmas/capacidade, recursos físicos, lista de espera, atribuição automática, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
+
+## Decisões que a pesquisa não pode tomar pela CAAB
+
+- Quais serviços aparecem no app/site e se o usuário pode escolher profissional, unidade ou “qualquer disponível”?
+- Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
+- Qual antecedência, horizonte futuro e regra de remarcação/cancelamento valem por tipo de serviço e canal?
+- O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
+- Há atendimento coletivo com capacidade ou apenas compromissos individuais nesta etapa?
+- Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
+- Haverá lista de espera? Em caso afirmativo, qual ordem, prazo de aceitação, canal de aviso e critério de elegibilidade?
+- Quais comunicações transacionais realmente serão enviadas e por qual integração homologada?
+
+## Verificações necessárias antes de transformar a pesquisa em escopo
+
+Validar protótipo com operadores e usuários reais da CAAB, incluindo titular que agenda para dependente; testar tarefas em celular, teclado e leitor de tela; medir tempo até achar vaga, conflitos na confirmação, abandono, remarcações e trabalho manual da equipe. A [WCAG 2.2](https://www.w3.org/WAI/WCAG22/quickref/) exige foco visível e mensagens de estado acessíveis; o [exemplo de seletor de data da W3C](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/) alerta que componentes de calendário precisam de testes reais com tecnologias assistivas. Produtos consultados são referência, não evidência de conformidade da implementação CAAB.
+
+---
+
+# Pesquisa anterior — 21/09/2026
 
 **Decisão:** Exigir acesso concedido, impedir sobreposição da mesma pessoa, sinalizar reservas
 mantidas após bloqueio e exportar a agenda/oferta.
