@@ -98,8 +98,15 @@ dos estados deve ser conciliado nos contratos. Origem pode estar ocupada por ter
 não podem ser alterados pela resolução da troca. Manter no máximo uma proposta ativa por reserva;
 substituir destino atomicamente sem reocupar origem e conservar proposta/destino anteriores se
 falhar. Revalidar prazo sobre início original registrado. Usar versão para impedir decisão sobre
-proposta retirada/substituída. Após recusa/desistência, a continuidade para escolher nova vaga é
-pendência explícita de produto; não inventar reinício de contador/prioridade ou nova identidade.
+proposta retirada/substituída. Após recusa/desistência, o usuário aceitou continuar no mesmo
+agendamento: estado sem horário confirmado referencia tentativas anteriores e não ocupa vaga.
+Nova tentativa preserva identidade, beneficiário, contador e início original para prioridade.
+Permitir retomada mesmo após início original, sem reaplicar antecedência de remarcação sobre
+esse instante nem antecedência de nova reserva. Revalidar destino futuro, horizonte, elegibilidade,
+autorização e disponibilidade; retê-lo segundo aceitação vigente. O contador não é zerado e
+recusas/tentativas não confirmadas não o incrementam. Eventual isenção da alternativa confirmada
+após recusa está em esclarecimento. Versão do registro e unicidade de proposta ativa coordenam
+retomadas concorrentes. Falha mantém estado sem horário e não restaura origem.
 
 Decisão B da rodada 3: a proposta não expira quando chega o início original. A transição de
 aprovação dessa proposta pode ocorrer depois; exige destino estritamente futuro no relógio do
