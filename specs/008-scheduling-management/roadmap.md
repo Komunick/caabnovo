@@ -41,13 +41,15 @@ critérios nesta spec, mantendo o básico funcionando.
 | --- | --- | --- |
 | 2A Horários completos | Indisponibilidades, agenda extra, antecedência mínima e limite de dias futuros. | Vagas respeitam todas as regras; alterar regra não perde reservas existentes. |
 | 2B Operação e estados | Aguardando/confirmado, conclusão, falta, histórico e operações legadas aceitas; grade diária se validada. | Cada transição é explícita e auditada; falta não cria punição presumida. |
-| 2C App/site | Serviços publicados visíveis antes do login; vagas e reservas após autenticação. Confirmação imediata por padrão, desativável por serviço para aprovação; escolha de profissional desativável pelo estabelecimento. Sem profissionais cadastrados, horários e capacidade por serviço; histórico e ações autorizadas. | Painel e canais usam a mesma disponibilidade e respeitam capacidade e conflitos por beneficiário; situação pendente ou confirmada é explícita e reservas alheias permanecem protegidas. |
+| 2C App/site | Serviços publicados visíveis antes do login; vagas e reservas após autenticação. Confirmação imediata por padrão, desativável por serviço para aprovação; escolha de profissional desativável pelo estabelecimento. Sem profissionais cadastrados, horários e capacidade por serviço. Novas reservas sem antecedência mínima por padrão, configurável por serviço; histórico e ações autorizadas. | Painel e canais usam a mesma disponibilidade e respeitam capacidade e conflitos por beneficiário; situação pendente ou confirmada é explícita e reservas alheias permanecem protegidas. |
 | 2D Avaliações | Leitura/gestão das avaliações do atendimento conforme funções comprovadas e regras acordadas. | Relação com reserva preservada; nenhuma alteração da opinião pelo administrador por pressuposto. |
 | 2E Comunicações e fechamento | Lembretes/notificações legados necessários, limites de uso aceitos, preservação/migração de dados e revisão da cobertura. | Entrega rastreável, sem duplicação de mensagens; matriz de equivalência e migração verificadas. |
 
 O mínimo de estados e comandos necessário à aprovação por serviço integra o corte 2C caso ainda não
 tenha sido entregue em 2B. A solicitação pendente ocupa a vaga até a equipe aprovar ou recusar,
-sem expiração automática; sua fila de análise deve ser visível no painel.
+sem expiração automática; sua fila de análise deve ser visível no painel. A antecedência de novas
+reservas necessária a 2C também integra esse corte: sem mínimo por padrão, configurável por serviço,
+independente do prazo de remarcação. Horizonte futuro ainda exige decisão.
 
 A proposta anterior de executar 2A–2E em ordem foi substituída: app/site é o próximo
 passo após a etapa 1. Os demais incrementos serão priorizados depois; dependências
