@@ -2,6 +2,31 @@
 
 **Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra, integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23/09/2026. Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real, teste de usabilidade ou validação de preços. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das práticas de mercado.
 
+
+## Complemento — remarcação e prioridade (24/09/2026)
+
+O usuário autorizou remarcação/cancelamento no app/site para reservas futuras confirmadas e
+explicitou que a remarcação deve seguir a aceitação configurada no serviço. Sugeriu avaliar
+prioridade para incentivar a troca de horário. A prioridade ainda não foi aprovada como regra.
+
+Fontes oficiais conferidas em 24/09: a
+[Jane](https://jane.app/guide/jane-s-mobile-app-for-clients-managing-appointments) oferece remarcação
+nas reservas do usuário, sujeita à antecedência da clínica. A documentação do
+[SimplyBook.me](https://help.simplybook.me/index.php?mobileaction=toggle_view_mobile&title=Client_Rescheduling_custom_feature)
+informa que seu recurso de remarcação pelo cliente é incompatível com o recurso de aprovação de
+reservas. Isso evidencia uma limitação daquele produto; não comprova que priorizar remarcações
+reduza cancelamentos na CAAB.
+
+**Recomendação para discussão, não regra aprovada:** priorizar remarcações na análise da equipe,
+com ordenação por antiguidade dentro do grupo e visibilidade de pedidos antigos. Preservar a
+reserva atual até aceitar a troca, reter o destino conforme a política de pendências já escolhida
+e limitar a uma troca pendente por reserva são medidas propostas para a jornada. A precedência
+na análise não toma vagas já ocupadas/retidas nem dispensa a aprovação exigida pelo serviço.
+Na confirmação imediata, não há fila de aprovação a priorizar. Como origem e destino ficam
+ocupados durante uma troca manual, acompanhar o tempo de análise é especialmente relevante.
+Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e duração das
+retenções; não prometer redução antes de observar dados da CAAB.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
