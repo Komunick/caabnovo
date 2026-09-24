@@ -47,7 +47,10 @@ critérios nesta spec, mantendo o básico funcionando.
 
 O mínimo de estados e comandos necessário à aprovação por serviço integra o corte 2C caso ainda não
 tenha sido entregue em 2B. A solicitação pendente ocupa a vaga até a equipe aprovar ou recusar,
-sem expiração automática; sua fila de análise deve ser visível no painel. A antecedência de novas
+sem expiração automática; sua fila de análise deve ser visível no painel. Na remarcação, o envio
+bem-sucedido libera a vaga original e ocupa somente a nova, confirmada ou pendente conforme serviço.
+Recusa/desistência não restaura a antiga; preservar histórico e informar essa consequência antes
+do envio. Retomada após recusa/desistência ainda será definida. A antecedência de novas
 reservas necessária a 2C também integra esse corte: sem mínimo por padrão, configurável por serviço,
 independente do prazo de remarcação. Horizonte futuro definido em 24/09: janela móvel de 90 dias
 por padrão, editável/desativável por serviço. Sua configuração em 2C preserva reservas anteriores.
