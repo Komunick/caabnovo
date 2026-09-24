@@ -119,5 +119,15 @@ para impedir reativação ou retenção órfã. No início exato ou depois, nega
 Essa regra não cria expiração automática. A desistência apenas da troca segue a regra acima e
 mantém a reserva original futura, sem aplicar antecedência mínima de remarcação.
 
-O limite total de trocas foi solicitado, mas sua quantidade, abrangência e critério de contagem
-aguardam complemento do usuário. A unicidade de proposta pendente não define esse limite total.
+Limite definido em 24/09: duas remarcações confirmadas por reserva. Representar a quantidade de
+mudanças efetivadas com integridade transacional e trilha de eventos; a forma física será
+conciliada com o schema existente. Pedido pendente, recusa, retirada ou substituição ainda não
+confirmada não incrementa. Incrementar uma única vez junto da troca efetiva; decisões concorrentes
+não podem ultrapassar dois. Cancelamento não apaga ou reduz a contagem do registro antigo; novo
+agendamento tem novo identificador e começa em zero. Reconciliar reservas legadas com eventos
+confiáveis, sem zerar histórico desconhecido por conveniência.
+
+Eventos são vinculados ao identificador individual do beneficiário; autor pode ser titular,
+dependente ou operador. Uma visão consolidada por pessoa pode projetar essa trilha sem duplicar
+cadastros ou converter autoria em titularidade do atendimento. Compras/atividades de outros
+domínios seguem contrato e autorização próprios no programa 002.
