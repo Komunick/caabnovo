@@ -267,6 +267,11 @@ cenários concretos e tarefas antes da implementação.
       plano de transição/migração do legado em
       specs/008-scheduling-management/contracts/channels.md, coordenado com a spec própria da
       primeira interface do usuário no app/site (UI01/UI02 do programa 002).
+      Revisão de 24/09/2026: refletir nos contratos/tarefas de 2C a liberação da origem no envio
+      bem-sucedido da remarcação, retenção apenas do destino, falha transacional preservando
+      origem e recusa/desistência sem restauração automática. Preservar histórico, prioridade
+      pelo início original e contagem de trocas confirmadas. Antes de fechar o desenho, definir
+      a retomada após recusa/desistência quando o registro fica sem horário confirmado.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
