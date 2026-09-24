@@ -178,7 +178,8 @@ Escolhas do usuário após cinco perguntas em lote, não padrões atribuídos a 
 
 - Equipe vinculada ao estabelecimento como responsável principal; colaboradores com permissão
   atuam como backup. Alerta de análise após 24 horas corridas, editável/desativável por serviço,
-  sem expiração automática; limiar de proximidade do atendimento ainda a detalhar.
+  sem expiração automática. Em resposta posterior, usuário definiu urgência quando faltarem
+  24 horas para o atendimento, configurável por serviço e independente da idade da análise.
 - Confirmação, recusa, cancelamento e necessidade de remarcar: aviso interno app/site, e-mail e
   WhatsApp, todos ativos por padrão, com seleção pessoal de meios no app. Fornecedores/entrega
   ainda a detalhar; não confundir aviso interno com push nem com campanhas de Mensagens.
@@ -188,6 +189,15 @@ Escolhas do usuário após cinco perguntas em lote, não padrões atribuídos a 
   quando aplicável, data/horário e revisão/envio. Há serviços exclusivos para titulares;
   elegibilidade depende da pessoa atendida e é revalidada no servidor. Descoberta pública antes
   do login continua possível, com indicação da restrição de público.
+
+## Informações de continuidade — acessos e reservas (24/09/2026)
+
+O usuário informou que titulares e dependentes já possuem acessos individuais no app/site atual.
+Isso orienta verificar e integrar o mecanismo existente e mapear identidades ao cadastro de
+Associados, sem presumir credenciais compatíveis ou contas migradas. Sobre reservas futuras em
+uso no legado, respondeu que ainda é necessário conferir. Inventário deve resolver essa lacuna
+antes do corte; não inferir agenda vazia ou permitir perda de histórico. São informações do
+usuário, não verificações em produção nem práticas atribuídas às fontes de mercado.
 
 ## Pergunta e método
 
@@ -250,7 +260,7 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 ## Decisões que a pesquisa não pode tomar pela CAAB
 
 - Publicação conjunta app/site definida em 24/09, sem seleção de canal. Escolha de profissional específico ou qualquer disponível aprovada, condicionada à equipe e configuração do estabelecimento; sem profissionais, horários/capacidade por serviço. Serviços exclusivos para titular dependem do beneficiário selecionado primeiro.
-- Titular reserva para si/dependentes vigentes e dependente só para si; acesso familiar foi definido. Identidade externa e mecanismo de gestão/revogação do vínculo ainda requerem detalhamento.
+- Titular reserva para si/dependentes vigentes e dependente só para si; acesso familiar foi definido. Acessos individuais existentes foram confirmados pelo usuário; mecanismo, integração e gestão/revogação do vínculo ainda requerem verificação.
 - Horizonte futuro definido: janela móvel de 90 dias por padrão, editável/desativável por serviço. A antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável. Cancelamento é permitido até antes do início, sem antecedência mínima.
 - Indisponibilidade do estabelecimento resolvida em 2C-FR-20: mesmo registro aguardando nova data, recuperação isenta e aviso, sem reofertar período inviável.
 - Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem profissionais já foi autorizada.
