@@ -154,9 +154,10 @@ equipe/organizador, distinta da troca voluntária solicitada pelo associado.
 **Síntese:** há diferentes fluxos: remarcação direta pela equipe, cancelamento com convite para
 escolher outro horário e cancelamento explícito. As fontes não sustentam que manter o mesmo
 agendamento sem horário seja padrão universal, nem que exista uma regra geral de duas trocas.
-Preservar o mesmo ID e isentar o associado neste caso são propostas de produto CAAB.
+Preservar o mesmo ID e isentar o associado neste caso são decisões específicas de produto CAAB,
+aceitas pelo usuário após esta comparação em 24/09/2026.
 
-**Recomendação para discussão, ainda não aceita:** continuar pela opção A apresentada, com
+**Decisão aceita pelo usuário em 24/09/2026:** continuar pela opção A apresentada, com
 estado “Aguardando nova data — alteração pelo estabelecimento”, preservando registro/histórico.
 O horário inviável deixa de ser confirmado e de ocupar a agenda; o período/recurso realmente
 indisponível deve continuar bloqueado para não ser oferecido novamente. Avisar o associado,
@@ -165,10 +166,10 @@ Não aplicar o prazo de 24 horas do horário inviabilizado à recuperação. Nov
 respeitar disponibilidade, autorização e aceitação do serviço. Não impor outro horário ao
 associado sem acordo. Mecanismo de notificações continua dependendo de decisão própria.
 
-Esta recomendação não altera os requisitos vigentes nem autoriza cancelamento automático em
-massa. Tratamento de indisponibilidade posterior continua pendente na spec até resposta do
-usuário; não inferir isenção genérica para toda edição administrativa ou devolução de trocas
-voluntárias já confirmadas.
+A decisão foi incorporada em 2C-FR-20/2C-SC-19 e no planejamento. Não autoriza cancelamento
+automático em massa nem isenção genérica para toda edição administrativa. Recuperação isenta
+funciona mesmo com duas trocas voluntárias já confirmadas, preservando-as; não devolve utilizações.
+Após confirmar a recuperação, outra mudança voluntária volta ao limite e ao prazo usuais.
 
 ## Pergunta e método
 
