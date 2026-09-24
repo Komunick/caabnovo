@@ -185,7 +185,7 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   Se a transação falhar, rollback conserva origem; não confundir falha técnica com recusa posterior.
   No fluxo manual, registro em remarcação pendente deixa de ter horário confirmado; origem
   histórica não participa dos conflitos nem aparece como reserva ativa nos canais.
-  Aprovar mantém destino e incrementa contagem uma vez; recusar/retirar libera destino e deixa
+  Aprovar mantém destino e converte a utilização reservada em confirmada uma vez; recusar/retirar libera destino e deixa
   registro sem horário confirmado, sem retorno automático à origem, inclusive se estiver livre.
   Manter no máximo uma proposta ativa por reserva, sem expiração automática. Substituir destino
   troca sua retenção atomicamente e conserva o anterior em caso de falha; não reocupa origem.
@@ -198,7 +198,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   dentro do horizonte e disponível, com autorização/elegibilidade/aceitação revalidadas.
   Não reaplicar antecedência de nova reserva. Estado sem horário ocupa zero vagas; envio válido
   retém apenas destino. Versão/idempotência/limite de uma proposta ativa impedem duplicação.
-  Definir a eventual isenção da alternativa confirmada após recusa antes de fechar contagem.
+  Vincular alternativas à mesma troca em andamento e utilização reservada (2C-FR-11);
+  confirmação converte-a em confirmada uma vez, sem nova cobrança. Permitir cancelar registro
+  sem horário mesmo após início original; encerrar ciclo e reserva de utilização sem restaurar
+  origem ou alterar o histórico de trocas confirmadas.
 - Decisão B da rodada 3: aprovação de proposta recebida em tempo pode ocorrer após o início
   original. Separar validação de solicitar nova troca da validação de decidir proposta existente;
   a segunda exige destino futuro no relógio real do servidor, além de versão, acesso,
@@ -246,13 +249,18 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   desistência da troca têm eventos distintos. Desistência não restaura a consulta original;
   impedir aprovação de proposta retirada ou substituída usando versão e estado da proposta.
 
-- Limitar a duas remarcações confirmadas por reserva. Revalidar a contagem no pedido e na
-  confirmação, incrementando-a na mesma transação da troca efetiva e do evento. Recusa,
-  desistência, substituição de proposta e retry não incrementam. Ao atingir duas, bloquear nova
-  troca; cancelamento continua disponível até antes do início e um novo agendamento começa com
-  outra identidade e contagem zero. Preservar histórico dos dois registros; não cancelar nem
-  criar outra reserva automaticamente. Conciliar eventos anteriores antes de definir contagem
-  de reservas legadas; não presumir zero quando faltarem evidências.
+- Limite por troca lógica: separar contador confirmado e ciclo em andamento. Primeiro pedido
+  válido reserva uma utilização, com invariantes confirmed_count + active_cycle_count <= 2 e
+  active_cycle_count em 0/1. Falha antes de commit não reserva utilização. Revalidar sob lock
+  da reserva; usar identificador estável do ciclo e IDs/versionamento das tentativas. Recusa,
+  retirada, substituição e retomada preservam o ciclo; só o destino atual ocupa agenda, e o
+  estado aguardando escolha ocupa zero vagas. Aprovar qualquer tentativa converte utilização
+  reservada em confirmada e fecha ciclo atomicamente, sem segunda cobrança. Nova solicitação
+  após confirmação abre novo ciclo e reserva próxima utilização. Não usar quantidade de pedidos
+  ou eventos como contador. Duas confirmadas bloqueiam terceiro ciclo. Cancelamento definitivo
+  encerra ciclo sem consolidar utilização; não restitui confirmadas nem apaga histórico.
+  Novo agendamento tem outra identidade/contador zero. Projeções mostram confirmadas/em andamento
+  separadas. Conciliar eventos legados antes de definir contagem, sem presumir zero desconhecido.
 - Projetar eventos da agenda para o histórico individual do beneficiário, preservando autor,
   origem e registro de referência. A integração transversal é responsabilidade do programa 002;
   compras dependem do domínio responsável e da política de acesso própria. Não conceder acesso
@@ -306,6 +314,12 @@ revisão remota; nenhuma conformidade visual foi presumida. Validar teclado, foc
 estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
+
+- Contagem por troca (2C-SC-10): verificar sequência (confirmadas, em andamento) 0/0 → 0/1;
+  substituições/recusas/retomadas mantêm 0/1; aprovação resulta em 1/0; próxima troca em 1/1;
+  segunda aprovação em 2/0; terceiro ciclo negado. Retry e corrida não cobram duas vezes nem
+  deixam ciclo órfão. Cancelamento sem horário, inclusive após início original, encerra o ciclo
+  sem incrementar confirmadas. Projetar contagem corretamente na experiência do usuário.
 
 - Retomada (2C-SC-17): recusa e desistência, antes/depois do horário original; identidade e
   contador preservados, sem aplicação das 24 horas, com destino futuro/horizonte/aceitação e
@@ -393,8 +407,7 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; eventual isenção da alternativa
-confirmada após recusa na contagem de trocas;
+Mecanismo de identidade externa e gestão/revogação do vínculo;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
