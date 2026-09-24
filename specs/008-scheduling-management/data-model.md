@@ -67,16 +67,21 @@ Migration0028 validada no CI descartável; sem aplicação local.
 ## Extensão proposta para 2C — 23/09/2026
 
 Publicação de serviço definida em 24/09: separar estado ativo do estado de publicação externa e
-registrar destinos, autor, instante e versão da publicação. Novo serviço salvo permanece não
+registrar autor, instante e versão de uma única publicação compartilhada por app e site, sem
+lista de destinos configuráveis ou estados/versões publicados independentes por canal.
+Novo serviço salvo permanece não
 publicado; Publicar persiste dados e publicação atomicamente, inclusive na primeira gravação.
 Salvar/publicar serviço previamente salvo reutiliza seu ID. Guardas de catálogo/vagas/comandos
-externos exigem publicação e destino autorizado além de oferta ativa. Falha não produz publicação
+externos de app e site exigem o mesmo estado de publicação, além de oferta ativa e autorização
+para a operação. Falha não produz publicação
 parcial; preservar integridade/idempotência e histórico. Na edição de serviço publicado,
 Salvar alterações persiste uma revisão de rascunho independente da revisão publicada; Publicar
 alterações salva e torna vigente a revisão editada atomicamente, mantendo o ID do serviço.
 Registrar versões, autoria e instantes do rascunho e da publicação para controle concorrente e
 idempotência. Reabrir edição recupera o rascunho; projeções e comandos externos consultam somente
-a configuração publicada. Erro não substitui nem remove a publicação anterior. Ocupações,
+a mesma configuração publicada no app e no site. Publicar e Publicar alterações tornam a revisão
+vigente para ambos no mesmo commit; projeções/caches de ambos devem refletir essa revisão.
+Erro não substitui nem remove a publicação anterior. Ocupações,
 bloqueios e elegibilidade continuam sendo avaliados em seu estado operacional atual, sem serem
 congelados na revisão. Publicação preserva snapshots/histórico das reservas existentes e as
 guardas contra alterações que invalidem reservas futuras. Este desenho é proposto, sem esquema
