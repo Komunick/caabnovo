@@ -9,7 +9,9 @@ O usuário autorizou remarcação/cancelamento no app/site para reservas futuras
 explicitou que a remarcação deve seguir a aceitação configurada no serviço. Definiu prioridade
 para remarcações pelo horário atual da reserva mais próximo, antes dos novos pedidos. A data
 pretendida não define urgência; a data de envio só desempata. Também definiu antecedência mínima
-de 24 horas para solicitar remarcação, editável e desativável. São decisões do produto CAAB.
+de 24 horas para solicitar remarcação, editável e desativável. Para cancelamento de reserva
+confirmada, escolheu permitir até antes do início, sem antecedência mínima. São decisões do
+produto CAAB.
 
 Fontes oficiais conferidas em 24/09: a
 [Jane](https://jane.app/guide/jane-s-mobile-app-for-clients-managing-appointments) oferece remarcação
@@ -93,7 +95,7 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 
 - Quais serviços aparecem no app/site e se o usuário pode escolher profissional, unidade ou “qualquer disponível”?
 - Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
-- Qual antecedência de novas reservas, horizonte futuro e prazo de cancelamento valem por serviço e canal? A remarcação já tem antecedência padrão de 24 horas, editável/desativável (decisão de 24/09).
+- Qual antecedência de novas reservas e horizonte futuro valem por serviço e canal? A remarcação tem antecedência padrão de 24 horas, editável/desativável; cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09).
 - O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
 - Há atendimento coletivo com capacidade ou apenas compromissos individuais nesta etapa?
 - Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
