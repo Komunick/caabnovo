@@ -6,8 +6,10 @@
 ## Complemento — remarcação e prioridade (24/09/2026)
 
 O usuário autorizou remarcação/cancelamento no app/site para reservas futuras confirmadas e
-explicitou que a remarcação deve seguir a aceitação configurada no serviço. Sugeriu avaliar
-prioridade para incentivar a troca de horário. A prioridade ainda não foi aprovada como regra.
+explicitou que a remarcação deve seguir a aceitação configurada no serviço. Definiu prioridade
+para remarcações pelo horário atual da reserva mais próximo, antes dos novos pedidos. A data
+pretendida não define urgência; a data de envio só desempata. Também definiu antecedência mínima
+de 24 horas para solicitar remarcação, editável e desativável. São decisões do produto CAAB.
 
 Fontes oficiais conferidas em 24/09: a
 [Jane](https://jane.app/guide/jane-s-mobile-app-for-clients-managing-appointments) oferece remarcação
@@ -17,16 +19,17 @@ informa que seu recurso de remarcação pelo cliente é incompatível com o recu
 reservas. Isso evidencia uma limitação daquele produto; não comprova que priorizar remarcações
 reduza cancelamentos na CAAB.
 
-**Recomendação para discussão, não regra aprovada:** priorizar remarcações na análise da equipe,
-com ordenação por antiguidade dentro do grupo e visibilidade de pedidos antigos. A spec preserva
-a reserva atual até aceitar a troca e retém o destino conforme a política de pendências já
-escolhida. Recomenda-se também limitar a uma troca pendente por reserva; esse limite ainda
-precisa de decisão de produto. A precedência
-na análise não toma vagas já ocupadas/retidas nem dispensa a aprovação exigida pelo serviço.
-Na confirmação imediata, não há fila de aprovação a priorizar. Como origem e destino ficam
-ocupados durante uma troca manual, acompanhar o tempo de análise é especialmente relevante.
-Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e duração das
-retenções; não prometer redução antes de observar dados da CAAB.
+**Decisão vigente e implicações:** a prioridade considera o início atual da reserva: quem precisa
+adiar uma consulta de amanhã precede quem quer alterar uma consulta do próximo mês, mesmo com
+pedido mais recente. Isso substitui a recomendação inicial de usar antiguidade como critério
+principal. A spec preserva a reserva atual até aceitar a troca e retém o destino conforme a
+política escolhida. A precedência na análise não toma vagas já ocupadas/retidas nem dispensa a
+aprovação exigida pelo serviço. Na confirmação imediata, não há fila de análise a priorizar.
+
+**Recomendação ainda pendente:** limitar a uma troca pendente por reserva. Como origem e destino
+ficam ocupados durante a análise, acompanhar seu tempo e a idade dos demais pedidos continua
+relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
+duração das retenções; não prometer redução antes de observar dados da CAAB.
 
 ## Pergunta e método
 
@@ -90,7 +93,7 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 
 - Quais serviços aparecem no app/site e se o usuário pode escolher profissional, unidade ou “qualquer disponível”?
 - Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
-- Qual antecedência, horizonte futuro e regra de remarcação/cancelamento valem por tipo de serviço e canal?
+- Qual antecedência de novas reservas, horizonte futuro e prazo de cancelamento valem por serviço e canal? A remarcação já tem antecedência padrão de 24 horas, editável/desativável (decisão de 24/09).
 - O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
 - Há atendimento coletivo com capacidade ou apenas compromissos individuais nesta etapa?
 - Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
