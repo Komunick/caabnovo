@@ -102,6 +102,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Sem profissionais cadastrados, o estabelecimento deve continuar recebendo agendamentos? →
   A: Sim, usando horários e quantidade de vagas definidos para o serviço. Alguns estabelecimentos
   não precisam diferenciar seus profissionais; exigir esse cadastro criaria atrito desnecessário.
+- Q: Qual antecedência mínima deve valer para novos agendamentos? → A: Sem antecedência mínima
+  por padrão; o estabelecimento pode configurar o prazo por serviço. O prazo de remarcação é separado.
 
 ## User Scenarios & Testing
 
@@ -215,7 +217,8 @@ aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em p
 Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir. Remarcação
 exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
 serviço. Cancelamento é permitido até antes do início, sem antecedência mínima. A remarcação segue
-a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
+a aceitação do serviço. Novos agendamentos não exigem antecedência mínima por padrão; o
+estabelecimento pode configurá-la por serviço. A equipe vê a mesma reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
 
@@ -386,6 +389,16 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   capacidade não cancela nem converte reservas existentes; recusar alterações que invalidem
   ocupações futuras até resolução explícita, preservando seu modo e histórico.
 
+- **2C-FR-15:** Novas reservas no app/site não exigem antecedência mínima por padrão. Permitir ao
+  estabelecimento definir, alterar e desativar esse prazo por serviço. Mesmo sem prazo mínimo,
+  aceitar somente início futuro; exatamente no início ou depois, negar nova reserva. Com prazo
+  configurado, comparar instantes no servidor: início a exatamente esse prazo é elegível, abaixo
+  dele não. Consulta de vagas e comando aplicam a mesma regra, revalidada ao receber o envio e
+  antes de persistir. A configuração vale para novos pedidos e não cancela reservas existentes
+  nem expira pendências recebidas em tempo. Aplica-se aos modos por profissional e por capacidade,
+  com confirmação imediata ou aprovação. É independente do prazo de remarcação de 2C-FR-08;
+  não aplicar automaticamente a antecedência de nova reserva ao destino de uma troca.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -457,6 +470,14 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   histórico funcionam sem profissional fictício; alterações de cadastro não migram reservas
   existentes silenciosamente.
 
+- **2C-SC-14:** Sem antecedência configurada, uma vaga futura próxima pode gerar nova reserva,
+  observadas as demais regras; início igual ou anterior ao instante validado no servidor é
+  recusado. Com prazo de teste de 2 horas, exatamente 2 horas é elegível e 1h59min59s não.
+  Alterar/desativar o prazo modifica novas consultas/envios, sem mudar reservas ou pendências
+  anteriores; prévia obtida antes da mudança é revalidada. Cobrir ambos os modos de ocupação,
+  confirmação imediata/aprovação e navegador em outro fuso. Alterar esse prazo não muda as
+  24 horas padrão para solicitar remarcação em relação ao horário original.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -466,8 +487,9 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   entre profissional específico e qualquer disponível é permitida e desativável pelo
   estabelecimento (rodada 3 de 24/09). Sem profissionais cadastrados, reservas usam horários e
   capacidade do serviço, conforme decisão da mesma rodada.
-- Antecedência para nova reserva, horizonte futuro e tratamento de reservas afetadas por
-  indisponibilidade posterior. Remarcação tem antecedência padrão de 24 horas, editável/desativável;
+- Horizonte futuro e tratamento de reservas afetadas por indisponibilidade posterior. Nova
+  reserva não tem antecedência mínima por padrão, configurável por serviço (rodada 3 de 24/09).
+  Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
 - Chegada do horário original durante a análise. Desistência e substituição da troca foram
