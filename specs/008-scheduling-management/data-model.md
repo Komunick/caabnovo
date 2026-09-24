@@ -90,8 +90,12 @@ A reserva original permanece confirmada até a aprovação; o destino fica retid
 Aprovar aplica a troca no mesmo identificador e libera o horário anterior em transação; recusar
 libera apenas o destino. A proposta não representa outro atendimento independente. O desenho de
 ocupação deve proteger origem e destino contra outras reservas e tratar a sobreposição interna
-da própria troca sem dispensar conflitos de terceiros. Definir pedidos paralelos e desistência
-apenas da troca antes de concluir o contrato e a migration.
+da própria troca sem dispensar conflitos de terceiros. Permitir no máximo uma proposta pendente
+por reserva, garantida também sob concorrência. O ator autorizado pode retirar a proposta e
+liberar somente o destino, mantendo a consulta original, ou substituí-la após revalidar prazo e
+aceitação. Preservar as propostas anteriores na auditoria; substituir a retenção em transação,
+sem acumulá-la e sem perder a proposta anterior em caso de falha. Decisões usam versão da proposta
+para impedir aprovação de solicitação retirada ou substituída.
 
 A prioridade decidida em 24/09 é: remarcações primeiro, pelo início atual da reserva crescente;
 empates por instante do pedido e identificador estável. O destino não participa desse primeiro
@@ -112,4 +116,8 @@ servidor anteceder seu início atual, sem antecedência mínima e sem aprovaçã
 cancelamento explícito da original encerra também sua proposta de troca pendente e libera as
 ocupações de origem e destino em uma transação auditada. Coordenar versão/locks com aprovação
 para impedir reativação ou retenção órfã. No início exato ou depois, negar esse comando externo.
-Essa regra não cria expiração automática nem define desistência isolada de uma solicitação.
+Essa regra não cria expiração automática. A desistência apenas da troca segue a regra acima e
+mantém a reserva original futura, sem aplicar antecedência mínima de remarcação.
+
+O limite total de trocas foi solicitado, mas sua quantidade, abrangência e critério de contagem
+aguardam complemento do usuário. A unicidade de proposta pendente não define esse limite total.
