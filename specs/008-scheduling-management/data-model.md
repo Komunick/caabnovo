@@ -104,7 +104,15 @@ transacional por capacidade para considerar ambas as situações ocupantes; recu
 ocupam. Conferir conflitos preexistentes antes de ativar a restrição, sem alterar dados por
 inferência. Decisões de aprovação/recusa exigem permissão de alteração, controle de versão,
 revalidação e evento auditado. A fila administrativa precisa expor a idade da pendência para que a
-equipe resolva solicitações sem prazo automático.
+equipe resolva solicitações sem expiração automática.
+
+Responsabilidade (2C-FR-21): referência ao estabelecimento e seu vínculo de equipe, em conjunto
+com permissões administrativas existentes. Registrar ator e atuação principal/backup na decisão;
+colaborador autorizado pode apoiar sem ganhar novas permissões. Revalidar vínculo/permissão e
+versão na decisão; não exigir dois aprovadores. Política de alerta por serviço (2C-FR-22):
+24 horas corridas por padrão, duração configurável ou desativação explícita, instante de entrada
+em análise e política aplicável. Idade/atraso são derivados, sem novos estados terminais ou
+liberação automática de ocupação. Limiar de urgência por proximidade ainda será definido.
 
 Revisão aceita de 24/09/2026: remarcação externa segue a aceitação do serviço e libera origem
 no envio bem-sucedido. Guardar origem/versão como snapshot histórico da proposta, sem ocupação.
@@ -215,6 +223,21 @@ referência de prioridade; recuperação não exige origem futura nem prazo de 2
 de nova reserva. Destino segue guardas normais de disponibilidade, futuro, horizonte, acesso e
 aceitação. Cancelamento sem horário encerra processo sem restituir contagens anteriores.
 Modelagem proposta, sem esquema físico/migration aplicados.
+
+Público-alvo da oferta (2C-FR-25): distinguir titulares/dependentes de exclusivo para titulares
+na revisão publicada do serviço, preservando rascunho separado. Perfil vem do beneficiário em
+Associados; papel do autor não substitui elegibilidade de quem será atendido. Referenciar regra
+aplicada para auditoria e revalidar perfil/vínculo/oferta em vagas/comandos/aprovação; não duplicar
+cadastro. Manter compatibilidade sem inventar restrições para ofertas legadas.
+
+Comunicações (2C-FR-23/24): preferências pessoais independentes para aviso interno app/site,
+e-mail e WhatsApp, inicialmente habilitadas, editáveis pelo próprio usuário no app. Modelar
+intenção e tentativa/resultado de entrega por evento, destinatário e canal, com unicidade para
+retry. Resolver pessoa atendida e titular vigente do dependente, independentemente de quem
+agendou; revalidar destinatário/vínculo/permissão/preferência antes de envio/reenvio. Guardar
+autoria da reserva separada dos destinatários. Ausência de contato e falha de provedor não são
+entrega; não alteram a reserva. Preferências não removem histórico. Provedor/template/operação
+de entrega permanecem dependências propostas, sem schema ou migration aplicados.
 
 Eventos são vinculados ao identificador individual do beneficiário; autor pode ser titular,
 dependente ou operador. Uma visão consolidada por pessoa pode projetar essa trilha sem duplicar
