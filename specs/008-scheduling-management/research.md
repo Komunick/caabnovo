@@ -126,8 +126,10 @@ ambas; a revisão agora aceita libera origem no envio e mantém somente destino.
 **Decisão aceita:** alternativa 2. Liberar origem e reter destino atomicamente no envio;
 informar antes da confirmação que a vaga antiga não é garantida em caso de recusa/desistência.
 O registro mantém identidade, histórico, prioridade pelo início original e contagem apenas de
-remarcações confirmadas. Após recusa/desistência, fica sem horário confirmado; a forma de retomar
-escolha de vaga ainda precisa de definição. Essa regra é decisão da CAAB, não consenso de mercado.
+remarcações confirmadas. Após recusa/desistência, fica sem horário confirmado; o usuário aceitou
+continuar escolhendo vaga no mesmo registro, inclusive após o horário original, preservando
+histórico e contador. Recusa não conta; esclarecer se a alternativa confirmada após ela também
+fica isenta. Essa regra é decisão da CAAB, não consenso de mercado.
 A confirmação imediata já pode efetivar a troca em uma transação e liberar a origem, sem fila
 duradoura; o tradeoff acima afeta especialmente serviços com aprovação manual.
 
