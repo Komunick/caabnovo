@@ -104,6 +104,15 @@ critério. A proposta referencia a versão e o início da reserva a que se aplic
 alterada concorrentemente, revalidar a proposta antes de qualquer decisão, sem aprovar dados
 obsoletos. Novos pedidos são ordenados por instante de envio após as remarcações.
 
+Decisão adicional da rodada 3 de 24/09: antecedência mínima de nova reserva externa desativada
+por padrão, configurável por serviço. Planejar um campo de duração independente do de remarcação,
+com ausência/zero representando sem antecedência e valor positivo representando o prazo exigido;
+normalizar a representação no contrato, recusando valores negativos. Comparar início e instante
+real do servidor, mantendo início estritamente futuro mesmo sem prazo. Configuração e comando
+compartilham o protocolo de locks/revalidação para não aceitar regra obsoleta nem início passado.
+A alteração alcança novos pedidos; não expira pendências nem cancela reservas existentes. Não
+usar esse campo para mudar a antecedência relativa ao horário original de uma remarcação.
+
 Adicionar à política do serviço uma antecedência mínima opcional de remarcação, com valor inicial
 equivalente a 24 horas (1.440 minutos) e estado explícito de desativação. A representação final
 será conciliada com o contrato; valor negativo não é válido. Comparar instantes no servidor no
