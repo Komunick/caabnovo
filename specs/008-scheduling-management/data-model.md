@@ -112,7 +112,19 @@ colaborador autorizado pode apoiar sem ganhar novas permissões. Revalidar vínc
 versão na decisão; não exigir dois aprovadores. Política de alerta por serviço (2C-FR-22):
 24 horas corridas por padrão, duração configurável ou desativação explícita, instante de entrada
 em análise e política aplicável. Idade/atraso são derivados, sem novos estados terminais ou
-liberação automática de ocupação. Limiar de urgência por proximidade ainda será definido.
+liberação automática de ocupação. Modelar antecedência independente de urgência por serviço,
+padrão de 24 horas corridas e configurável. Derivar pelo início solicitado e relógio do servidor;
+na remarcação usar destino atual. Não reutilizar início original da prioridade nem instante de
+entrada em análise para esse cálculo. Atraso desativado não desliga urgência; no início/passado
+sem decisão, sinalização e pendência permanecem, sem autorização retroativa.
+
+Acessos existentes (informação do usuário de 24/09): titulares e dependentes têm identidades
+individuais no app/site atual. Mapear referência estável de identidade externa ao member.id
+correspondente, preservando autoria e beneficiário distintos. Provedor, sessão e compatibilidade
+de credenciais não foram verificados; não presumir migração, copiar credenciais ou criar conta
+administrativa. Vínculos familiares continuam no domínio de Associados, revalidados em cada ação.
+Reservas futuras legadas ainda por inventariar; ausência de evidência não equivale a quantidade
+zero. Preservar IDs de origem/correspondências e rastreabilidade em eventual migração planejada.
 
 Revisão aceita de 24/09/2026: remarcação externa segue a aceitação do serviço e libera origem
 no envio bem-sucedido. Guardar origem/versão como snapshot histórico da proposta, sem ocupação.
