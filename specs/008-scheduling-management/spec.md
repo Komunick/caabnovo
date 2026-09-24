@@ -146,6 +146,15 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   (opção B), pois atendem às mesmas pessoas. Publicar e Publicar alterações disponibilizam a
   mesma versão no app e no site, sem seleção ou configuração de publicação por canal.
 
+### Session 2026-09-24 — indisponibilidade do estabelecimento
+
+- Q: Quando o estabelecimento não puder realizar atendimento confirmado, manter o registro para
+  nova escolha ou cancelar e exigir nova reserva? → A: Após comparar práticas de mercado, o
+  usuário aceitou manter o mesmo agendamento em “Aguardando nova data — alteração pelo
+  estabelecimento”, avisar o associado e permitir remarcar ou cancelar. Recuperação não consome
+  suas duas trocas nem é impedida pelas 24 horas do atendimento inviabilizado. Preservar histórico,
+  retirar a confirmação/ocupação antiga e manter bloqueada a indisponibilidade real.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -256,7 +265,7 @@ de autenticar, identifica o beneficiário que está autorizada a representar, co
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
 Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir. Remarcação
-exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
+voluntária exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
 serviço. Cancelamento é permitido até antes do início, sem antecedência mínima. A remarcação segue
 a aceitação do serviço. Novos agendamentos não exigem antecedência mínima por padrão; o
 estabelecimento pode configurá-la por serviço. O horizonte futuro é uma janela móvel de 90 dias
@@ -339,6 +348,12 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
     de aprovação e retenções de remarcação disputam a mesma capacidade no painel e app/site.
     Esgotamento não aceita uma reserva extra; cancelamento ou recusa libera apenas sua ocupação.
 
+13. Se o estabelecimento não puder atender uma reserva confirmada, registrar a ocorrência mantém
+    o agendamento aguardando nova data, sem ocupar vaga nem consumir troca do associado, inclusive
+    quando já houver duas trocas confirmadas. Avisar o associado e permitir nova escolha ou
+    cancelamento. O horário inviável deixa de ser confirmado e a indisponibilidade continua
+    bloqueada; histórico e identidade são preservados. Recuperação segue 2C-FR-20.
+
 **Requisitos específicos propostos para 2C:**
 
 - **2C-FR-01:** Expor o mesmo catálogo de serviços publicados no app e no site antes do login, com projeção
@@ -386,7 +401,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   em ordem crescente. Essa referência é preservada mesmo após liberar a origem. A data pretendida não interfere nessa prioridade. Em empate, usar a data
   de envio e um identificador estável; novos pedidos seguem depois, por ordem de envio. A
   prioridade organiza análise, sem tomar vagas ocupadas ou dispensar a aceitação do serviço.
-- **2C-FR-08:** Para remarcação no app/site, exigir antecedência mínima editável por serviço,
+- **2C-FR-08:** Para remarcação voluntária de reserva confirmada no app/site, exigir antecedência mínima editável por serviço,
   inicialmente 24 horas corridas antes do início atual da reserva, com opção de desativar.
   Verificar o prazo ao receber o pedido: exatamente 24 horas atende ao padrão; menos de 24 não
   atende. Guardar o início original como referência também para substituições da proposta.
@@ -414,7 +429,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   pertencem à mesma troca em andamento (2C-FR-11). Decisão sobre versão
   retirada/substituída é recusada. A retomada após recusa/desistência segue 2C-FR-18.
 
-- **2C-FR-11:** Limitar cada agendamento a duas trocas, distinguindo confirmadas de uma troca
+- **2C-FR-11:** Limitar cada agendamento a duas trocas voluntárias, distinguindo confirmadas de uma troca
   em andamento. Ao registrar o primeiro pedido de remarcação, reservar uma utilização do limite
   para essa troca; no máximo uma troca em andamento por agendamento. Só confirmar consolida a
   utilização, sem cobrar novamente: converter uma utilização reservada em uma confirmada.
@@ -429,6 +444,8 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   utilizações já confirmadas. Novo agendamento tem outra identidade/contador zero, sem garantia
   de vaga. Falha técnica antes de registrar pedido não reserva utilização. Todas as transições
   são idempotentes e o total de confirmadas mais utilização reservada nunca ultrapassa dois.
+  Recuperação por indisponibilidade do estabelecimento segue a isenção de 2C-FR-20: não reserva
+  nem consolida utilização; não confundir esse processo com uma terceira troca voluntária.
 - **2C-FR-12:** Alimentar o histórico individual por beneficiário com reserva, confirmação,
   remarcação, cancelamento e demais transições efetivamente registradas, incluindo ator, data,
   origem e alterações autorizadas. Titular que age por dependente é autor; o atendimento pertence
@@ -533,6 +550,31 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Publicar alterações — “Salva e disponibiliza as alterações aos associados.” Associar cada
   descrição ao respectivo botão também para tecnologias assistivas.
 
+- **2C-FR-20:** Quando o estabelecimento não puder realizar um atendimento confirmado, a equipe
+  autorizada deve poder registrar explicitamente a indisponibilidade e colocar o mesmo agendamento
+  em “Aguardando nova data — alteração pelo estabelecimento”. Preservar identificador, beneficiário,
+  autoria, horário anterior e histórico. O horário inviabilizado deixa de estar confirmado e sua
+  ocupação é removida; manter o bloqueio do período/recurso realmente indisponível para não
+  oferecê-lo novamente. A transição deve ser atômica, versionada, idempotente e auditada, sem
+  afetar reservas de terceiros, duplicar eventos ou inferir comparecimento/falta/cancelamento.
+  Avisar o associado e oferecer escolher nova data ou cancelar. Sem escolha, o registro não
+  ocupa vaga. Não impor novo horário sem acordo. A recuperação mantém o mesmo registro mesmo
+  após o início original e não exige as 24 horas do horário inviabilizado nem antecedência de
+  nova reserva. Exigir destino futuro, horizonte, elegibilidade, autorização, disponibilidade
+  e aceitação vigente do serviço. Na fila de aprovação, usar a prioridade de remarcação com
+  referência ao início inviabilizado, conforme 2C-FR-07.
+  A recuperação por iniciativa do estabelecimento não reserva utilização nem incrementa o
+  contador de trocas voluntárias: deve ser possível mesmo com duas já confirmadas. Recusas,
+  alternativas e retomadas da mesma recuperação continuam isentas; só o destino atual pode
+  ficar retido e a confirmação encerra a recuperação. Preservar trocas voluntárias anteriores,
+  sem zerar ou devolver utilizações. Uma mudança voluntária posterior à recuperação confirmada
+  volta às regras de prazo/limite usuais. Cancelar o registro sem horário encerra a recuperação
+  preservando histórico, inclusive após o horário inviabilizado. Não conceder ao cliente poder
+  de declarar unilateralmente a causa do estabelecimento para contornar o limite.
+  Canal/provedor das notificações será detalhado separadamente; este requisito exige o aviso,
+  sem escolher uma integração. A regra é para resolução explícita de atendimento confirmado;
+  alterações genéricas de agenda não cancelam nem movem reservas em massa automaticamente.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -585,7 +627,8 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   andamento. Mudar destino, receber recusa e escolher alternativas mantém zero mais uma.
   Confirmar qualquer alternativa dessa troca produz uma confirmada e zero em andamento, sem
   cobrança adicional. Pedir nova mudança depois da confirmação produz uma mais uma; confirmá-la
-  produz duas mais zero. Rejeitar uma terceira troca. Repetições/concorrência não duplicam ciclo,
+  produz duas mais zero. Rejeitar uma terceira troca voluntária; a recuperação isenta de
+  2C-FR-20 permanece disponível e preserva essas duas utilizações. Repetições/concorrência não duplicam ciclo,
   utilização ou incremento. Cancelar durante a análise/retomada encerra a utilização reservada
   sem aumentar confirmadas, sem apagar histórico nem restaurar origem. Novo agendamento só
   recebe contador zero em outro registro; tentativas dentro da mesma troca nunca zeram contador.
@@ -659,6 +702,20 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   explicativa visível abaixo de cada botão no cadastro e na edição, conforme 2C-FR-19, inclusive
   em telas estreitas, e associação acessível sem depender de passar o cursor.
 
+- **2C-SC-19:** Indisponibilidade registrada pela equipe retira a confirmação/ocupação antiga,
+  mantém bloqueado o recurso/período inviável e mostra “Aguardando nova data — alteração pelo
+  estabelecimento” no painel, app e site, com mesmo ID e histórico. Cobrir profissional e
+  capacidade por serviço, motivo/ator auditados, falta de permissão, retry e concorrência.
+  Recuperar com zero, uma ou duas trocas voluntárias já confirmadas mantém o contador inalterado,
+  inclusive após recusa/substituição/retomada e confirmação imediata ou manual. Permitir recuperação
+  dentro das 24 horas e após início original; manter destino futuro, horizonte, autorização,
+  elegibilidade e conflitos. Confirmar que período bloqueado não volta a ser oferecido.
+  Sem nova escolha, ocupar zero vagas; escolha válida retém só destino. Cancelamento encerra
+  recuperação sem restaurar origem. Após confirmação, pedido voluntário volta ao limite usual.
+  Registrar o aviso devido sem duplicação em retry, preservando dados privados; verificar sua
+  entrega quando o mecanismo de comunicação estiver definido. Nenhuma outra reserva é alterada
+  por inferência ou por uma aprovação concorrente desatualizada.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -671,12 +728,6 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   entre profissional específico e qualquer disponível é permitida e desativável pelo
   estabelecimento (rodada 3 de 24/09). Sem profissionais cadastrados, reservas usam horários e
   capacidade do serviço, conforme decisão da mesma rodada.
-- Tratamento de reservas afetadas por indisponibilidade posterior. Horizonte futuro definido:
-  janela móvel de 90 dias por padrão, editável/desativável por serviço. Nova reserva não tem
-  antecedência mínima por padrão, configurável por serviço (rodada 3 de 24/09).
-  Remarcação tem antecedência padrão de 24 horas, editável/desativável;
-  cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
-  Não inferir penalidades.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
