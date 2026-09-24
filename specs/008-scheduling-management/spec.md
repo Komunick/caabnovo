@@ -87,6 +87,12 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   o horário solicitado? → A: Sim. Pode desistir mantendo a consulta original ou substituir o
   horário solicitado; apenas uma troca pendente por reserva, com substituição sujeita ao prazo
   de remarcação.
+- Q: Qual limite de trocas será aplicado e quais eventos contam? → A: Duas remarcações
+  confirmadas por reserva. Pedidos recusados e desistências não consomem o limite; depois das
+  duas, é necessário cancelar a reserva e fazer um novo agendamento para escolher outro horário.
+- Complemento do usuário: cada associado deve ter histórico próprio de agendamentos,
+  cancelamentos, compras e demais atividades. A visão individual integrada está detalhada no
+  [programa 002](../002-integrated-modules/spec.md#histórico-individual-integrado--24092026).
 
 ## User Scenarios & Testing
 
@@ -321,6 +327,19 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   a anterior se a operação falhar. Desistência/substituição exige controle de versão; uma decisão
   da equipe sobre proposta já retirada ou substituída não pode ser aplicada.
 
+- **2C-FR-11:** Limitar cada reserva a duas remarcações efetivamente confirmadas. Pedido
+  aguardando aprovação, recusado, retirado ou substituído antes da confirmação não consome o
+  limite. Incrementar somente quando a mudança de horário se concretiza, junto da alteração
+  e do evento; repetição não conta novamente. Ao atingir duas, negar nova solicitação de troca
+  e informar as opções de cancelar e fazer novo agendamento, sem cancelamento automático.
+  Novo agendamento recebe outro identificador e contador inicial zero; o anterior permanece
+  no histórico individual. Não garantir vaga no novo agendamento.
+- **2C-FR-12:** Alimentar o histórico individual por beneficiário com reserva, confirmação,
+  remarcação, cancelamento e demais transições efetivamente registradas, incluindo ator, data,
+  origem e alterações autorizadas. Titular que age por dependente é autor; o atendimento pertence
+  ao histórico do dependente. A consulta integrada de atividades segue o programa 002 e as
+  permissões de cada domínio; a autorização familiar de agenda não libera dados de compras.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -366,6 +385,16 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   órfãs. Destino indisponível ou prazo insuficiente conserva a proposta anterior. Aprovação
   de proposta retirada/substituída é recusada como desatualizada. Repetições não duplicam efeitos.
 
+- **2C-SC-10:** Uma reserva aceita duas remarcações confirmadas e rejeita a terceira solicitação.
+  Pedidos recusados/retirados/substituídos antes de confirmar não alteram a contagem; confirmação
+  repetida não duplica incremento. Duas alterações concorrentes quando resta uma troca não
+  podem ultrapassar o limite. Cancelar e agendar novamente mantém ambos os registros no histórico
+  da pessoa e inicia contagem zero apenas no novo registro.
+- **2C-SC-11:** Reserva do dependente criada pelo titular aparece no histórico do dependente,
+  com titular identificado como autor. Consultas não misturam atendimentos de pessoas distintas
+  nem expõem atividades de outros domínios sem autorização. Cancelar ou criar nova reserva
+  não remove os eventos anteriores.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -380,8 +409,8 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
 - Chegada do horário original durante a análise. Desistência e substituição da troca foram
   autorizadas em 24/09, com no máximo uma proposta pendente por reserva; prioridade usa o
   horário atual mais próximo.
-- Limite total de trocas solicitado em 24/09: quantidade, abrangência (por reserva ou por
-  pessoa/período) e critério de contagem ainda não definidos. Não aplicar limite arbitrário.
+- Limite de duas remarcações confirmadas por reserva definido em 24/09; ainda especificar
+  eventual tratamento administrativo excepcional, sem presumir autorização para excedê-lo.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
