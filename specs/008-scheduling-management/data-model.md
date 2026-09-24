@@ -104,8 +104,9 @@ Nova tentativa preserva identidade, beneficiário, contador e início original p
 Permitir retomada mesmo após início original, sem reaplicar antecedência de remarcação sobre
 esse instante nem antecedência de nova reserva. Revalidar destino futuro, horizonte, elegibilidade,
 autorização e disponibilidade; retê-lo segundo aceitação vigente. O contador não é zerado e
-recusas/tentativas não confirmadas não o incrementam. Eventual isenção da alternativa confirmada
-após recusa está em esclarecimento. Versão do registro e unicidade de proposta ativa coordenam
+recusas/tentativas não confirmadas não o incrementam nem criam nova utilização: referenciam
+um mesmo ciclo de troca com uma utilização reservada. Confirmação da alternativa converte essa
+utilização em confirmada uma vez. Versão do registro e unicidade de proposta ativa coordenam
 retomadas concorrentes. Falha mantém estado sem horário e não restaura origem.
 
 Decisão B da rodada 3: a proposta não expira quando chega o início original. A transição de
@@ -159,13 +160,23 @@ Essa regra não cria expiração automática. A desistência apenas da troca seg
 usa o início original registrado como fronteira, sem aplicar antecedência mínima de remarcação;
 libera destino e mantém histórico sem horário confirmado, sem restaurar origem.
 
-Limite definido em 24/09: duas remarcações confirmadas por reserva. Representar a quantidade de
-mudanças efetivadas com integridade transacional e trilha de eventos; a forma física será
-conciliada com o schema existente. Pedido pendente, recusa, retirada ou substituição ainda não
-confirmada não incrementa. Incrementar uma única vez junto da troca efetiva; decisões concorrentes
-não podem ultrapassar dois. Cancelamento não apaga ou reduz a contagem do registro antigo; novo
-agendamento tem novo identificador e começa em zero. Reconciliar reservas legadas com eventos
-confiáveis, sem zerar histórico desconhecido por conveniência.
+Contagem esclarecida em 24/09: duas trocas por agendamento, com utilização reservada no primeiro
+pedido e consolidação somente na confirmação. Modelar ciclo de troca com identificador estável,
+reserva de utilização e referência às tentativas. Ter no máximo um ciclo ativo, em análise de
+proposta ou aguardando nova escolha após recusa/desistência, e no máximo uma proposta pendente.
+A reserva da utilização não é retenção de horário: aguardando escolha ocupa zero vagas, mas
+conserva a mesma troca em andamento. Original permanece apenas como snapshot histórico.
+
+Invariante: confirmadas + ciclos ativos <= 2. Abrir ciclo e liberar origem/reter destino ocorrem
+na mesma transação. Substituir, recusar ou retomar não cria outro ciclo nem incrementa contador.
+Aprovar fecha ciclo e incrementa confirmadas exatamente uma vez, transferindo a utilização já
+reservada; não somar pedido e confirmação como duas trocas. Uma solicitação posterior a uma
+confirmação cria outro ciclo. Cancelar definitivamente fecha ciclo sem contar confirmação;
+trocas confirmadas anteriores permanecem. Cancelamento do registro sem horário é possível mesmo
+após início original, sem reativar origem ou alterar atendimento confirmado retroativamente.
+Usar versão, idempotência, locks e integridade de ciclo/proposta para concorrência e retry.
+Reconciliar legado com evidência; não inferir contador pelo total de eventos/pedidos nem zerar
+histórico desconhecido. Expor contagem de confirmadas e em andamento separadamente.
 
 Eventos são vinculados ao identificador individual do beneficiário; autor pode ser titular,
 dependente ou operador. Uma visão consolidada por pessoa pode projetar essa trilha sem duplicar
