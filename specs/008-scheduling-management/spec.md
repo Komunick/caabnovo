@@ -73,6 +73,12 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Enquanto a equipe não decide, a solicitação pendente deve ocupar a vaga? →
   A: Sim. Ela ocupa a vaga até aprovação ou recusa da equipe, sem expiração automática.
 
+### Session 2026-09-24
+
+- Q: No app/site, titular e dependente poderão remarcar e cancelar reservas futuras confirmadas
+  que estão autorizados a gerir? → A: Sim. A remarcação seguirá o processo de aceitação escolhido
+  para o serviço: imediato ou sujeito à aprovação da equipe.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -182,7 +188,8 @@ contrato externo e gerar tarefas executáveis.
 de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
-Pode solicitar remarcação ou cancelamento quando a política aprovada permitir. A equipe vê a mesma
+Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir, respeitando
+os prazos ainda a definir. A remarcação segue a regra de aceitação do serviço. A equipe vê a mesma
 reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
@@ -213,10 +220,13 @@ reserva e sua trilha no painel.
    Reserva criada no painel ocupa a vaga vista no app/site. A origem é distinguível no histórico.
 6. Titular com vínculo vigente e o próprio dependente veem as reservas futuras e históricas do
    dependente, mesmo quando criadas pelo outro, com situação textual, dados mínimos da oferta e
-   ações permitidas. Quando a política liberar remarcação/cancelamento no canal, ambos podem agir
-   sob as mesmas verificações de autorização. Remarcação preserva identificador/histórico e, se
-   recusada, mantém a vaga anterior; cancelamento preserva o registro e libera a vaga apenas após
-   confirmação válida, sem motivo obrigatório.
+   ações permitidas. Ambos podem remarcar e cancelar reservas futuras confirmadas sob as mesmas
+   verificações de autorização e os prazos definidos. A remarcação segue a aceitação configurada
+   no serviço: imediata ou aguardando aprovação. Enquanto a troca aguarda, a reserva original
+   permanece confirmada e o horário proposto fica retido conforme a regra das pendências.
+   Aprovação troca os horários atomicamente; recusa libera apenas a retenção proposta e mantém a
+   reserva original. Identificador/histórico são preservados. Cancelamento preserva o registro e
+   libera a vaga após comando válido, sem motivo obrigatório.
 7. Sessão expirada, representação revogada, bloqueio de beneficiário, alteração de oferta ou
    conflito entre prévia e confirmação recebem resposta clara e sem dados de terceiros. Ações
    privadas não vazam por cache, histórico do navegador ou API de outro canal.
@@ -247,9 +257,12 @@ reserva e sua trilha no painel.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
   históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
-  criadas pelo titular. Quando remarcação/cancelamento externo estiverem liberados, titular com
-  vínculo vigente e dependente podem agir nessas reservas, com versão e regras aprovadas;
-  negação ou conflito não altera a reserva anterior.
+  criadas pelo titular. Titular com vínculo vigente e dependente podem remarcar e cancelar as
+  reservas futuras confirmadas que estão autorizados a gerir, com versão e prazos a definir.
+  Remarcação segue a aceitação configurada por serviço: imediata ou com aprovação. No fluxo
+  manual, preservar a reserva original até aceitar a troca e reter o horário proposto sem
+  expiração automática; recusa libera somente a proposta. Aprovação efetiva a troca em uma
+  transação, mantendo identificador e histórico. Negação ou conflito conserva a reserva original.
 - **2C-FR-05:** Não gerar comparecimento, conclusão, falta, avaliação, pagamento, penalidade,
   lista de espera, atribuição automática ou mensagem real por inferência. Essas capacidades têm
   cortes e políticas próprios.
@@ -278,6 +291,12 @@ reserva e sua trilha no painel.
 - **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
   identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
 
+- **2C-SC-05:** Para serviço com confirmação imediata, remarcar troca a ocupação uma única vez;
+  para serviço com aprovação, a reserva original permanece confirmada até decisão. Aprovar
+  aplica a troca e libera o horário anterior; recusar mantém a reserva original e libera o
+  horário proposto. Repetição, decisão concorrente e perda de autorização não geram duplicatas
+  nem perda da reserva original.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -285,8 +304,12 @@ reserva e sua trilha no painel.
   de dependentes foram decididas em 23/09/2026.
 - Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
   “qualquer profissional disponível” versus profissional específico.
-- Antecedência, horizonte futuro, remarcação/cancelamento pelo usuário e tratamento de reservas
-  afetadas por indisponibilidade posterior. Não inferir prazos nem penalidades do mercado.
+- Antecedência, horizonte futuro, prazos de remarcação/cancelamento e tratamento de reservas
+  afetadas por indisponibilidade posterior. Remarcação e cancelamento de reservas confirmadas
+  pelo usuário foram autorizados em 24/09/2026; não inferir prazos nem penalidades do mercado.
+- Prioridade para remarcações, sugerida pelo usuário em 24/09: decidir se afeta somente a fila de
+  análise. A proposta de dar prioridade de análise ainda não é regra aprovada. Definir também
+  desistência da troca pendente, pedidos paralelos e chegada do horário original durante a análise.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
