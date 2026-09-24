@@ -181,14 +181,14 @@ Essa regra não cria expiração automática. A desistência apenas da troca seg
 usa o início original registrado como fronteira, sem aplicar antecedência mínima de remarcação;
 libera destino e mantém histórico sem horário confirmado, sem restaurar origem.
 
-Contagem esclarecida em 24/09: duas trocas por agendamento, com utilização reservada no primeiro
+Contagem esclarecida em 24/09: duas trocas voluntárias por agendamento, com utilização reservada no primeiro
 pedido e consolidação somente na confirmação. Modelar ciclo de troca com identificador estável,
 reserva de utilização e referência às tentativas. Ter no máximo um ciclo ativo, em análise de
 proposta ou aguardando nova escolha após recusa/desistência, e no máximo uma proposta pendente.
 A reserva da utilização não é retenção de horário: aguardando escolha ocupa zero vagas, mas
 conserva a mesma troca em andamento. Original permanece apenas como snapshot histórico.
 
-Invariante: confirmadas + ciclos ativos <= 2. Abrir ciclo e liberar origem/reter destino ocorrem
+Invariante: confirmadas voluntárias + ciclos debitáveis ativos <= 2. Abrir ciclo e liberar origem/reter destino ocorrem
 na mesma transação. Substituir, recusar ou retomar não cria outro ciclo nem incrementa contador.
 Aprovar fecha ciclo e incrementa confirmadas exatamente uma vez, transferindo a utilização já
 reservada; não somar pedido e confirmação como duas trocas. Uma solicitação posterior a uma
@@ -198,6 +198,23 @@ após início original, sem reativar origem ou alterar atendimento confirmado re
 Usar versão, idempotência, locks e integridade de ciclo/proposta para concorrência e retry.
 Reconciliar legado com evidência; não inferir contador pelo total de eventos/pedidos nem zerar
 histórico desconhecido. Expor contagem de confirmadas e em andamento separadamente.
+
+Recuperação por indisponibilidade do estabelecimento (2C-FR-20): distinguir causa do processo
+ativo (troca voluntária debitável ou recuperação isenta), vinculando a segunda a ocorrência
+registrada por operador autorizado, horário/recurso afetados, versão e histórico. Não aceitar
+causa isenta declarada pelo cliente. Partir de atendimento confirmado; criar processo isento,
+retirar confirmação/ocupação e registrar/manter bloqueio real do recurso/período na mesma
+transação. Não duplicar reserva, apagar histórico ou zerar confirmadas voluntárias. Estado
+“Aguardando nova data — alteração pelo estabelecimento” ocupa zero vagas e referencia a
+ocorrência e o aviso devido, com entrega rastreável quando comunicação estiver definida.
+Ter no máximo um processo ativo e uma proposta pendente por agendamento. Recuperação isenta
+não reserva utilização e sua confirmação não incrementa confirmadas, mesmo se já forem duas.
+Tentativas/recusas/retomadas mantêm causa isenta até confirmação/cancelamento. Nova mudança
+voluntária após confirmação volta ao limite e às políticas usuais. Guardar início afetado como
+referência de prioridade; recuperação não exige origem futura nem prazo de 24 horas ou prazo
+de nova reserva. Destino segue guardas normais de disponibilidade, futuro, horizonte, acesso e
+aceitação. Cancelamento sem horário encerra processo sem restituir contagens anteriores.
+Modelagem proposta, sem esquema físico/migration aplicados.
 
 Eventos são vinculados ao identificador individual do beneficiário; autor pode ser titular,
 dependente ou operador. Uma visão consolidada por pessoa pode projetar essa trilha sem duplicar
