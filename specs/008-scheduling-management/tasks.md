@@ -301,7 +301,11 @@ cenários concretos e tarefas antes da implementação.
       usuário e mapear à pessoa em Associados, sem criar login paralelo ou presumir migração de
       credenciais. Checkpoint de 24/09: contrato lógico v1 em contracts/channels.md, estruturas
       propostas em data-model.md e matriz V01–V12 em quickstart.md produzidos; fechar vínculo HTTP,
-      schemas executáveis, integração de acesso e UI01/UI02 antes de concluir esta tarefa. Validar revogação e continuidade com identidades sintéticas.
+      schemas executáveis, integração de acesso e UI01/UI02 antes de concluir esta tarefa.
+      Cancelamento de pedido novo em análise autorizado em 24/09 (2C-FR-09/2C-SC-08): antes do
+      início solicitado, sem aprovação da equipe, com liberação imediata, saída da fila/alertas,
+      histórico/contador preservados e aviso sem duplicação. Validar versão, corrida com aprovação/
+      recusa, acesso familiar, ambos os modos de agenda e replay autorizado após início. Validar revogação e continuidade com identidades sintéticas.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
