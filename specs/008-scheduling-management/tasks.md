@@ -291,11 +291,15 @@ cenários concretos e tarefas antes da implementação.
       Publicação conjunta em app/site, sem seleção/configuração por canal: contratos usam estado
       e revisão únicos; validar atualização das projeções/caches dos dois e isolamento do rascunho.
       Incorporar 2C-FR-21–25/2C-SC-20–24: equipe vinculada principal e colaboradores autorizados
-      como backup; alerta após 24 horas corridas configurável/desativável sem expiração; fechar
-      limiar de urgência. Jornada começa no beneficiário e filtra público-alvo publicado,
+      como backup; alerta após 24 horas corridas configurável/desativável sem expiração;
+      urgência independente quando faltarem 24 horas para o atendimento, configurável por
+      serviço, calculada pelo destino solicitado sem mudar a prioridade baseada na origem. Jornada começa no beneficiário e filtra público-alvo publicado,
       incluindo exclusividade de titular revalidada em todos os comandos. Avisos para dependente
       e titular vigente independentemente de autoria, com preferências pessoais por canal.
       Coordenar contratos de comunicação com T023, mantendo provedores/entrega como dependência.
+      Verificar os acessos individuais existentes de titulares/dependentes informados pelo
+      usuário e mapear à pessoa em Associados, sem criar login paralelo ou presumir migração de
+      credenciais. Validar revogação e continuidade com identidades sintéticas.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
@@ -308,7 +312,9 @@ cenários concretos e tarefas antes da implementação.
       Detalhar provedores, textos e entrega sem tratar decisão funcional como integração pronta.
 - [ ] T024 [US3] Criar matriz de equivalência validada com o legado em
       specs/008-scheduling-management/legacy-parity.md; manter sugestões novas separadas em
-      roadmap.md.
+      roadmap.md. Conferir existência de reservas futuras em uso, ainda desconhecida conforme
+      resposta C de 24/09; registrar fonte/data/versão, contagens, situações e correspondências.
+      Não presumir agenda vazia nem liberar corte sem inventário e reconciliação verificáveis.
 
 ## Dependencies & Execution Order
 
