@@ -28,9 +28,11 @@ principal. A spec preserva a reserva atual até aceitar a troca e retém o desti
 política escolhida. A precedência na análise não toma vagas já ocupadas/retidas nem dispensa a
 aprovação exigida pelo serviço. Na confirmação imediata, não há fila de análise a priorizar.
 
-**Recomendação ainda pendente:** limitar a uma troca pendente por reserva. Como origem e destino
-ficam ocupados durante a análise, acompanhar seu tempo e a idade dos demais pedidos continua
-relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
+**Decisão adicional de 24/09:** no máximo uma troca pendente por reserva, permitindo desistência
+que mantém a consulta original ou substituição sujeita ao prazo de remarcação. O usuário também
+solicitou limite total de trocas, cuja quantidade, abrangência e contagem ainda aguardam definição.
+Como origem e destino ficam ocupados durante a análise, acompanhar seu tempo e a idade dos demais
+pedidos continua relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
 duração das retenções; não prometer redução antes de observar dados da CAAB.
 
 ## Pergunta e método
