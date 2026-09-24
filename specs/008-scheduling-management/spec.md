@@ -135,7 +135,13 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Serviço novo deve aparecer automaticamente no app/site ou depender de publicação? →
   A: Oferecer dois botões, “Publicar” e “Salvar”, no próprio formulário, para dar controle sem
   etapa extra. Salvar guarda o novo serviço sem publicar; Publicar salva e disponibiliza em uma
-  única ação, após validação. Comportamento de edição de serviço já publicado será esclarecido.
+  única ação, após validação.
+- Q: Ao editar um serviço já publicado, Salvar deve guardar um rascunho ou atualizar a versão
+  pública imediatamente? → A: Guardar rascunho (opção A), com os rótulos “Salvar alterações”
+  e “Publicar alterações”. Salvar alterações preserva a versão publicada; Publicar alterações
+  salva e disponibiliza a edição numa única ação, após validação.
+- Complemento do usuário: cada botão deve ter uma descrição curta logo abaixo explicando a
+  diferença entre salvar rascunho e publicar; aplicar no cadastro e na edição publicada.
 
 ## User Scenarios & Testing
 
@@ -259,7 +265,9 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
    informações essenciais, sem dados privados ou horários disponíveis. Ofertas não publicadas para
    o canal não aparecem nem são reserváveis pela API externa. No cadastro, Salvar guarda o
    novo serviço sem publicá-lo; Publicar salva e publica em uma ação. Publicação inválida não
-   expõe oferta e preserva os dados preenchidos para correção.
+   expõe oferta e preserva os dados preenchidos para correção. Ao editar serviço publicado,
+   Salvar alterações guarda rascunho e mantém a versão pública; Publicar alterações salva e
+   substitui a versão publicada numa ação. Falha conserva a versão pública anterior.
 2. O titular autenticado pode selecionar a si ou um dependente com vínculo vigente; o dependente
    autenticado só pode selecionar a si mesmo. A reserva fica vinculada ao identificador individual
    do beneficiário, enquanto autor e origem são registrados separadamente. Tentar enviar uma
@@ -500,8 +508,22 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Não exigir profissionais no modo por capacidade. Agenda válida sem vagas livres não é erro de
   publicação. Falha conserva os valores preenchidos e informa correções necessárias, sem publicar
   dados parciais ou comunicar sucesso falso. Repetição não duplica serviço/eventos e versão impede
-  sobrescrever edição concorrente. Salvar não publica por inferência de serviço ativo. Esta regra
-  define cadastro; o efeito de Salvar ao editar um serviço já publicado ainda requer decisão.
+  sobrescrever edição concorrente. Salvar não publica por inferência de serviço ativo.
+  Ao editar serviço já publicado, usar os rótulos “Salvar alterações” e “Publicar alterações”.
+  Salvar alterações persiste rascunho separado, sem alterar nem retirar a versão publicada.
+  Publicar alterações valida, salva e substitui atomicamente a versão publicada, sem exigir
+  salvar antes. Catálogo, consulta de vagas e comandos externos usam a configuração publicada,
+  nunca alterações somente salvas. Rascunho não modifica políticas, duração ou oferta vigentes.
+  A disponibilidade continua considerando ocupações, bloqueios e elegibilidade atuais; o rascunho
+  não congela esses controles operacionais. Publicação inválida ou concorrente preserva a versão
+  pública anterior e os valores editados para correção. Publicar não altera retroativamente
+  reservas/histórico e deve respeitar as guardas existentes para alterações que afetem reservas
+  futuras. Registrar autoria e versão; repetição não publica nem emite eventos em duplicidade.
+  Exibir descrição curta e persistente imediatamente abaixo de cada botão, sem depender de
+  tooltip: Salvar — “Guarda o serviço sem publicar.”; Publicar — “Salva e disponibiliza o serviço
+  aos associados.”; Salvar alterações — “Guarda um rascunho sem mudar a versão publicada.”;
+  Publicar alterações — “Salva e disponibiliza as alterações aos associados.” Associar cada
+  descrição ao respectivo botão também para tecnologias assistivas.
 
 **Critérios mensuráveis de 2C:**
 
@@ -618,16 +640,23 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   e o disponibiliza nos canais configurados, sem etapa prévia de salvar. Configuração inválida
   mantém campos e informa erro, sem publicação parcial. Validar ambos os modos de agenda,
   capacidade/profissional, falta de permissão, retry, versão desatualizada e agenda sem vagas
-  livres. Estado ativo sem publicação não torna serviço reservável pelo app/site.
+  livres. Estado ativo sem publicação não torna serviço reservável pelo app/site. Em serviço
+  publicado, Salvar alterações mantém o rascunho após reabrir a edição e preserva os valores
+  públicos em catálogo/vagas/comandos. Publicar alterações torna a edição vigente numa ação,
+  mantendo o mesmo serviço. Cobrir publicação sem salvamento prévio, conflito de versão, retry
+  e erro de validação que mantém a versão anterior; preservar reservas/histórico e controles
+  atuais de ocupação/bloqueio/elegibilidade mesmo com rascunho pendente. Conferir descrição
+  explicativa visível abaixo de cada botão no cadastro e na edição, conforme 2C-FR-19, inclusive
+  em telas estreitas, e associação acessível sem depender de passar o cursor.
 
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
   vínculo e revogação de acesso quando ele cessa. As regras de reserva e de acesso ao histórico
   de dependentes foram decididas em 23/09/2026.
-- Canais de destino e informações por canal; edição de serviço já publicado (Salvar altera a
-  versão pública ou guarda alterações até Publicar). Cadastro com ações Salvar/Publicar foi
-  definido; ordem das etapas externas ainda será detalhada. A escolha
+- Canais de destino e informações por canal; ordem das etapas externas ainda será detalhada.
+  Cadastro usa Salvar/Publicar; edição publicada usa Salvar alterações (rascunho) e Publicar
+  alterações (salvar e disponibilizar), conforme decisão de 24/09. A escolha
   entre profissional específico e qualquer disponível é permitida e desativável pelo
   estabelecimento (rodada 3 de 24/09). Sem profissionais cadastrados, reservas usam horários e
   capacidade do serviço, conforme decisão da mesma rodada.
