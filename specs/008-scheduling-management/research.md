@@ -84,6 +84,49 @@ Desativação e configuração por serviço são decisões da CAAB; não foram c
 capacidades idênticas em todos os fornecedores. Aceite registrado na spec em 24/09/2026,
 2C-FR-16, sem implementação nesta etapa.
 
+## Complemento — vaga original e destino na remarcação (24/09/2026)
+
+O usuário aceitou manter proposta pendente após o início original, aprovável pela equipe somente
+para destino ainda futuro (2C-FR-17). Pediu em seguida pesquisar a ocupação da vaga original para
+mudar a política de trocas. Essa segunda decisão permanece aberta.
+
+Fontes oficiais consultadas em 24/09/2026; fluxos distintos não devem ser apresentados como uma
+regra universal de mercado ou evidência de domínio comercial. Não houve teste em contas reais.
+
+| Produto/fluxo | Comportamento documentado | O que não comprova |
+| --- | --- | --- |
+| [Zanda — remarcação pelo cliente](https://zandahealth.com/support/client-portal/reschedule-appointments-on-client-portal/) | Cliente escolhe novo horário e confirma; então o compromisso é movido no portal/calendário, preservando registro da alteração. | O fluxo não documenta uma fila de aprovação manual com duas vagas retidas. |
+| [Calendly — solicitação pelo organizador](https://calendly.com/help/how-to-reschedule-a-meeting) | A opção Share new times to meet cancela a reunião atual e envia convite para escolher novo horário; Reschedule meeting now troca diretamente. | É ação do organizador, não prova de política equivalente quando um associado pede aprovação ao estabelecimento. |
+| [Tebra — solicitação pelo paciente](https://helpme.tebra.com/Platform/Practice_Settings/Scheduling_Widget/Configure_Patient_Appointment_Management) | Após enviar a remarcação, o original vai para Finished com status Rescheduled; o novo pedido fica pendente de confirmação da clínica. | Encerramento funcional da reserva original é explícito; a documentação não detalha a retenção exclusiva de cada vaga contra concorrência. |
+| [Tebra — análise do pedido](https://helpme.tebra.com/Platform/Dashboard/Confirm_Tentative_Appointments) | A equipe revisa conflitos e confirma ou recusa o pedido provisório. | Não permite afirmar que a vaga pretendida tem garantia exclusiva enquanto aguarda. |
+| [SimplyBook.me — Client Rescheduling](https://help.simplybook.me/index.php?title=Client_Rescheduling_custom_feature) | Remarcação pelo cliente é incompatível com Approve Bookings. | Não serve de referência para manter simultaneamente origem e destino na nossa aprovação manual. |
+
+**Conclusão da amostra:** há troca imediata, solicitação que encerra o original e produtos que
+nem combinam autosserviço de remarcação com aprovação manual. Não há base para afirmar que o
+padrão universal seja travar as duas vagas até a equipe decidir. Na spec CAAB vigente, isso
+ocorre: origem continua confirmada e destino fica retido enquanto a troca aguarda aprovação.
+
+**Alternativas de produto para a revisão solicitada:**
+
+1. Preservar origem até aprovação, retendo também destino: protege o compromisso original em
+   caso de recusa/desistência, mas ocupa capacidade nos dois intervalos. Sem prazo de análise,
+   essa ocupação pode persistir até decisão explícita.
+2. Liberar origem ao enviar a troca e reter apenas destino como pendente: evita ocupar dois
+   horários e sinaliza que o associado abriu mão do anterior. Exige informar antes do envio que
+   recusa/desistência não restaura automaticamente a vaga antiga; ela pode ter sido ocupada.
+   Falha técnica antes de concluir o pedido preserva a origem; liberação/retenção devem ser
+   atômicas. Manter histórico, prioridade pelo horário original e contador de trocas confirmadas.
+3. Preservar origem e não reter destino até decisão: protege o compromisso atual, mas a vaga
+   pretendida pode ser tomada; exige revalidar/oferecer outra opção. Altera a decisão anterior
+   de que pendências ocupam vaga, portanto não adotar por inferência.
+
+**Recomendação para discussão:** se o objetivo da mudança for liberar para outros associados um
+horário ao qual a pessoa não pretende mais comparecer, a alternativa 2 é adequada, mediante
+aceite claro da perda de garantia da origem. Se a pessoa só aceita trocar caso a alternativa
+seja aprovada, preservar origem continua coerente. Nenhuma dessas mudanças foi aceita ainda.
+A confirmação imediata já pode efetivar a troca em uma transação e liberar a origem, sem fila
+duradoura; o tradeoff acima afeta especialmente serviços com aprovação manual.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
