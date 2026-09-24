@@ -178,6 +178,12 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   A: Ainda precisamos conferir (opção C). Não presumir ausência nem existência de reservas;
   preservar histórico e realizar inventário antes de definir a transição.
 
+### Session 2026-09-24 — cancelamento de pedido novo em análise
+
+- Q: Quando um novo agendamento depende de aprovação, o associado pode desistir enquanto
+  espera? → A: Sim (opção A), antes do horário solicitado, sem aprovação da equipe, liberando
+  imediatamente a vaga e preservando histórico. Aplicar a autorização vigente do beneficiário.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -288,7 +294,8 @@ de autenticar, identifica primeiro o beneficiário que está autorizada a repres
 serviço/unidade elegível, profissional quando aplicável, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
-Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir. Remarcação
+Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir, além de
+cancelar pedidos novos em análise antes do início solicitado, sem aprovação da equipe. Remarcação
 voluntária exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
 serviço. Cancelamento é permitido até antes do início, sem antecedência mínima. A remarcação segue
 a aceitação do serviço. Novos agendamentos não exigem antecedência mínima por padrão; o
@@ -449,10 +456,14 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   continua em análise quando a antecedência cruza o limite; não expira automaticamente nem é
   recusado apenas pela demora da equipe. Alterar a configuração vale para novos pedidos.
 
-- **2C-FR-09:** Permitir ao ator autorizado cancelar reserva futura confirmada no app/site,
-  sem antecedência mínima e sem aprovação da equipe, desde que o comando seja validado antes
-  do início atual. Exatamente no início ou depois, negar cancelamento de reserva confirmada
-  pelo autosserviço. Preservar histórico, autorização e idempotência, sem motivo obrigatório.
+- **2C-FR-09:** Permitir ao ator autorizado cancelar reserva futura confirmada ou pedido novo
+  ainda aguardando aprovação no app/site, sem antecedência mínima e sem aprovação da equipe.
+  Validar antes do início confirmado ou solicitado, respectivamente, pelo relógio do servidor.
+  Exatamente no início ou depois, negar esse cancelamento pelo autosserviço. Preservar histórico,
+  autorização e idempotência, sem motivo obrigatório. Pedido novo cancelado passa a Cancelado,
+  sai da fila de aprovação/alertas e libera sua ocupação imediatamente no commit; não consome
+  utilização de remarcação. Registrar evento de cancelamento e aviso conforme 2C-FR-23/24.
+  Aprovação/recusa concorrente exige versão vigente e não pode reativar pedido já cancelado.
   Quando existir troca pendente, a origem já foi liberada: encerrar a solicitação libera apenas
   destino e não restaura origem. Manter a fronteira vigente para essa ação externa baseada no
   início original registrado; aprovação tardia pela equipe segue 2C-FR-17. Versão impede decisão
@@ -708,10 +719,15 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   remarcação até antes do início atual, respeitadas as demais regras. Passar pelo limite durante
   análise não invalida pedido recebido em tempo; fuso do navegador não muda a decisão.
 
-- **2C-SC-08:** Cancelar um segundo antes do início é permitido; exatamente no início e depois
-  é negado pelo app/site. Repetir o cancelamento não duplica eventos. Em disputa entre cancelar
-  e aprovar uma troca, a verificação de versão impede decisão obsoleta; cancelamento concluído
-  não deixa retenção órfã nem permite que uma aprovação posterior reative a reserva.
+- **2C-SC-08:** Para reserva confirmada e pedido novo em análise, cancelar um segundo antes
+  do início confirmado/solicitado é permitido; exatamente no início e depois é negado pelo
+  app/site. Pedido novo cancelado sai da fila/alertas, libera sua ocupação uma vez e mantém ID,
+  beneficiário, histórico e contador voluntário inalterado. Validar titular por si/dependente
+  vigente e dependente por si, negando terceiros/vínculo revogado; cobrir modo profissional e
+  capacidade. Repetir cancelamento não duplica eventos/avisos nem libera vaga de terceiro.
+  Replay autorizado de cancelamento já concluído retorna o resultado original, mesmo após
+  o início, sem nova mutação. Em disputa com aprovar/recusar pedido novo ou aprovar uma troca,
+  versão impede decisão obsoleta; não deixar retenção órfã nem reativar reserva cancelada.
 
 - **2C-SC-09:** Desistir da troca libera destino e mantém histórico sem horário confirmado;
   origem não é restaurada automaticamente, esteja livre ou ocupada por terceiro. Substituições
@@ -851,10 +867,6 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 Proposta documental sem endpoint/integração comprovados; dependências abaixo permanecem abertas.
 
 **Decisões e dependências pendentes para fechar 2C:**
-
-- Cancelamento pelo associado de pedido novo ainda aguardando aprovação manual: pergunta
-  apresentada na revisão dos contratos, resposta pendente. As regras já decididas de cancelar
-  reserva confirmada e encerrar troca/recuperação não definem automaticamente esse caso.
 
 - Verificar o mecanismo dos acessos individuais já existentes de titulares e dependentes,
   informados pelo usuário, e mapear cada identidade ao cadastro de Associados; detalhar gestão
