@@ -164,8 +164,18 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   duração, agenda e profissional/capacidade conforme modo. Ausência de vagas livres não impede
   publicar agenda configurada. Não criar serviço duplicado quando publicar um já salvo nem
   tornar a oferta pública por alterações diretas de ativo. Invalidar projeções/cache público
-  apenas após commit válido. Edição de oferta publicada depende da decisão Salvar versus
-  Publicar; não escolher silenciosamente rascunho versionado ou atualização pública imediata.
+  apenas após commit válido. Na edição publicada, Salvar alterações persiste revisão de rascunho
+  separada; Publicar alterações valida e persiste/publica a revisão num único comando atômico,
+  sem salvamento prévio obrigatório. Manter o mesmo ID do serviço e controlar as versões do
+  rascunho e da publicação para impedir perda de edição ou publicação concorrente desatualizada.
+  Reabrir a edição recupera o rascunho; catálogo, vagas e reservas externas leem a revisão
+  publicada. O rascunho não altera as políticas em vigor. Consultar ocupações, bloqueios e
+  elegibilidade atuais independentemente da revisão, sem congelar a disponibilidade operacional.
+  Falha mantém publicação anterior e valores editados. A publicação respeita as guardas de
+  alterações que afetem reservas futuras e preserva snapshots e histórico existentes.
+  Exibir abaixo de cada botão a descrição curta definida em 2C-FR-19, sempre visível e associada
+  ao controle para leitores de tela, tanto no cadastro quanto na edição publicada. Revisar
+  disposição responsiva conforme guia de design quando disponível; não depender de tooltip.
 - Visibilidade por canal deve ser explícita e aplicada nas leituras e comandos. Antes do login,
   expor somente serviços publicados para o canal, com projeção mínima; nunca o catálogo
   administrativo inteiro, dados privados ou horários disponíveis. Consultas de vagas exigem
@@ -328,7 +338,13 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 - Publicação (2C-SC-18): Salvar novo serviço mantém invisibilidade externa; Publicar salva e
   publica numa ação. Validar oferta incompleta, permissão de consulta sem alteração, modo sem
   profissionais, agenda válida esgotada, repetição, concorrência e falhas sem perda de campos,
-  publicação parcial ou duplicação. Ativo sem publicado continua privado.
+  publicação parcial ou duplicação. Ativo sem publicado continua privado. Em serviço publicado,
+  verificar persistência/reabertura do rascunho com Salvar alterações e isolamento dos valores
+  públicos em catálogo/vagas/comandos; Publicar alterações sem salvar previamente substitui a
+  revisão vigente atomicamente. Cobrir erro/concorrência preservando publicação anterior,
+  idempotência sem duplicação, reservas existentes e disponibilidade operacional atual enquanto
+  houver rascunho. Conferir rótulos distintos entre cadastro e edição publicada e descrições
+  persistentes logo abaixo de cada botão, legíveis em telas estreitas e acessíveis.
 
 - Contagem por troca (2C-SC-10): verificar sequência (confirmadas, em andamento) 0/0 → 0/1;
   substituições/recusas/retomadas mantêm 0/1; aprovação resulta em 1/0; próxima troca em 1/1;
@@ -422,8 +438,7 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; efeito de Salvar nas edições
-já publicadas e definição dos canais de destino;
+Mecanismo de identidade externa e gestão/revogação do vínculo; definição dos canais de destino;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
