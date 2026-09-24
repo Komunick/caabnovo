@@ -277,8 +277,13 @@ cenários concretos e tarefas antes da implementação.
       consolida a mesma utilização uma vez; outra mudança após aprovação inicia novo ciclo.
       Validar confirmadas + ciclo ativo <= 2, retry, concorrência e cancelamento sem horário.
       Incluir Salvar/Publicar no cadastro: salvar sem exposição e publicar com persistência
-      atômica numa ação, permissão, validação e retry. Fechar edição de serviço já publicado
-      e canais de destino antes de detalhar os contratos de publicação.
+      atômica numa ação, permissão, validação e retry. Incluir Salvar alterações como rascunho
+      separado e Publicar alterações como gravação/publicação atômica da edição, sem salvar
+      antes. Validar isolamento dos valores públicos, reabertura, concorrência, preservação da
+      publicação anterior em falha e guardas de reservas existentes/disponibilidade operacional.
+      Incluir descrições curtas e sempre visíveis abaixo de cada botão, no cadastro e na edição,
+      com associação acessível e revisão responsiva conforme 2C-FR-19.
+      Fechar canais de destino antes de concluir os contratos de publicação.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
