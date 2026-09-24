@@ -66,6 +66,15 @@ Migration0028 validada no CI descartável; sem aplicação local.
 
 ## Extensão proposta para 2C — 23/09/2026
 
+Publicação de serviço definida em 24/09: separar estado ativo do estado de publicação externa e
+registrar destinos, autor, instante e versão da publicação. Novo serviço salvo permanece não
+publicado; Publicar persiste dados e publicação atomicamente, inclusive na primeira gravação.
+Salvar/publicar serviço previamente salvo reutiliza seu ID. Guardas de catálogo/vagas/comandos
+externos exigem publicação e destino autorizado além de oferta ativa. Falha não produz publicação
+parcial; preservar integridade/idempotência e histórico. A forma de guardar alterações de serviço
+já publicado (rascunho separado ou atualização da versão pública) depende da próxima decisão;
+não transformar essa pendência em esquema ou migration presumidos.
+
 Esta seção planeja a reserva externa e não descreve migration aplicada. O serviço terá política de
 confirmação imediata ativada por padrão, desativável pela equipe para novos envios. A alteração da
 política não muda a situação das reservas existentes.
