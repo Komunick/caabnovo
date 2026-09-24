@@ -94,6 +94,12 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   cancelamentos, compras e demais atividades. A visão individual integrada está detalhada no
   [programa 002](../002-integrated-modules/spec.md#histórico-individual-integrado--24092026).
 
+### Session 2026-09-24 — rodada 3
+
+- Q: Ao agendar, a pessoa poderá escolher um profissional específico ou qualquer habilitado? →
+  A: Sim, quando houver profissionais cadastrados. O estabelecimento pode desativar a escolha
+  mesmo com profissionais cadastrados; sem profissionais, o controle de escolha não aparece.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -263,6 +269,13 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
     remarcação e a aceitação do serviço. O novo destino substitui o anterior sem acumular
     retenções; falha na substituição conserva a proposta anterior e a reserva original.
 
+11. Com profissionais habilitados e escolha liberada pelo estabelecimento, a pessoa pode
+    selecionar um nome ou “Qualquer profissional disponível”. Se o estabelecimento desativar a
+    escolha, o sistema define um profissional habilitado disponível e o informa antes de
+    concluir. Sem profissionais cadastrados/habilitados, o controle não aparece; a possibilidade
+    de agendar nesse caso ainda será definida. Profissional inativo ou sem habilitação para a
+    oferta não aparece como opção disponível.
+
 **Requisitos específicos propostos para 2C:**
 
 - **2C-FR-01:** Expor catálogo de serviços publicados para o canal antes do login, com projeção
@@ -295,8 +308,9 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   expiração automática; recusa libera somente a proposta. Aprovação efetiva a troca em uma
   transação, mantendo identificador e histórico. Negação ou conflito conserva a reserva original.
 - **2C-FR-05:** Não gerar comparecimento, conclusão, falta, avaliação, pagamento, penalidade,
-  lista de espera, atribuição automática ou mensagem real por inferência. Essas capacidades têm
-  cortes e políticas próprios.
+  lista de espera ou mensagem real por inferência. Atribuição de profissional fica restrita ao
+  fluxo aprovado em 2C-FR-13; distribuição avançada de carga e demais capacidades têm cortes e
+  políticas próprios.
 - **2C-FR-06:** Preservar compatibilidade dos consumidores e dados existentes durante a transição
   do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
   migração/convivência e rollback sem perda de histórico.
@@ -339,6 +353,15 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   origem e alterações autorizadas. Titular que age por dependente é autor; o atendimento pertence
   ao histórico do dependente. A consulta integrada de atividades segue o programa 002 e as
   permissões de cada domínio; a autorização familiar de agenda não libera dados de compras.
+
+- **2C-FR-13:** Permitir ao estabelecimento/unidade desativar a escolha de profissional no
+  app/site. A escolha está disponível quando habilitada e existem profissionais ativos aptos à
+  oferta; oferecer nome específico ou “Qualquer profissional disponível”. Sem profissionais
+  aptos ou com a escolha desativada, ocultar esse controle. Quando há profissionais aptos mas
+  a escolha está desativada, ou quando o usuário prefere qualquer disponível, o servidor define
+  um profissional livre e habilitado, apresentado antes de concluir. Revalidar configuração e
+  disponibilidade no comando; não aceitar imposição de profissional pelo cliente quando a
+  escolha está desativada, nem substituir silenciosamente o responsável apresentado.
 
 **Critérios mensuráveis de 2C:**
 
@@ -395,13 +418,21 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   nem expõem atividades de outros domínios sem autorização. Cancelar ou criar nova reserva
   não remove os eventos anteriores.
 
+- **2C-SC-12:** Estabelecimento com escolha habilitada e profissionais aptos oferece as duas
+  modalidades. Desativar a escolha oculta o controle mesmo com profissionais cadastrados e
+  impede contorno por API. Sem profissionais aptos, o controle não aparece. O responsável
+  atribuído é habilitado, está disponível e é informado antes de concluir; desativação ou
+  conflito após a prévia exige revalidação sem atribuição silenciosa a outra pessoa.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
   vínculo e revogação de acesso quando ele cessa. As regras de reserva e de acesso ao histórico
   de dependentes foram decididas em 23/09/2026.
-- Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
-  “qualquer profissional disponível” versus profissional específico.
+- Serviços, unidades e informações disponíveis em cada canal; ordem das etapas. A escolha
+  entre profissional específico e qualquer disponível é permitida e desativável pelo
+  estabelecimento (rodada 3 de 24/09). Ainda definir se é possível agendar sem profissionais
+  cadastrados e, nesse caso, qual agenda/capacidade controla as vagas.
 - Antecedência para nova reserva, horizonte futuro e tratamento de reservas afetadas por
   indisponibilidade posterior. Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
