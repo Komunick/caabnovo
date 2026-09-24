@@ -272,8 +272,10 @@ cenários concretos e tarefas antes da implementação.
       origem e recusa/desistência sem restauração automática. Preservar histórico, prioridade
       pelo início original e contagem. Retomada após recusa/desistência usa o mesmo registro
       sem horário confirmado, mesmo após início original, sem reaplicar suas 24 horas; validar
-      destino futuro/horizonte e demais guardas. Esclarecer eventual isenção da alternativa
-      confirmada após recusa antes de concluir a regra de contagem.
+      destino futuro/horizonte e demais guardas. Contar por ciclo de troca: primeiro pedido
+      reserva uma utilização, alternativas/recusas/retomadas preservam o ciclo e aprovação
+      consolida a mesma utilização uma vez; outra mudança após aprovação inicia novo ciclo.
+      Validar confirmadas + ciclo ativo <= 2, retry, concorrência e cancelamento sem horário.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
