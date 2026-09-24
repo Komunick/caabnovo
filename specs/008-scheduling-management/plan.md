@@ -182,7 +182,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   recusar libera somente a retenção do destino. Não criar dois atendimentos independentes.
   Modelar ocupação da proposta junto à original e tratar eventual sobreposição entre ambas
   dentro da mesma troca, preservando exclusão contra qualquer outra reserva. A decisão vigente
-  dispensa expiração automática; limites de pedidos paralelos e desistência ainda serão definidos.
+  dispensa expiração automática. Aplicar a decisão de 24/09: no máximo uma proposta pendente por
+  reserva, com desistência ou substituição pelo ator autorizado enquanto a original for futura.
+  Desistência libera somente o destino, sem prazo mínimo; substituição revalida antecedência e
+  aceitação do serviço. Trocar retenções em transação e conservar a proposta anterior se falhar.
 - Ordenar a fila por classe (remarcação antes de novo pedido) e, nas remarcações, pelo início
   atual da reserva crescente. Desempatar por envio e identificador estável; para novos pedidos,
   usar envio e identificador. Não usar o horário proposto nem a antiguidade do pedido como
@@ -201,7 +204,8 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   autorizar e cancelar em transação. Se houver troca pendente, encerrá-la e liberar também a
   retenção do destino. Uma aprovação concorrente precisa detectar mudança de versão/situação;
   não reativar reserva cancelada nem deixar retenção órfã. Cancelamento do atendimento e
-  desistência apenas da troca são ações distintas; esta última ainda requer decisão de produto.
+  desistência apenas da troca são ações distintas. Desistir da troca mantém a consulta original;
+  impedir aprovação de proposta retirada ou substituída usando versão e estado da proposta.
 
 ### Contratos a detalhar depois das decisões
 
@@ -249,7 +253,10 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   Cobrir aprovação versus cancelamento/edição concorrente, perda de vínculo e conflitos com
   outras reservas; falha preserva a origem. Cancelamento da original encerra a troca e libera
   origem/destino atomicamente, sem permitir reativação por decisão atrasada. Registrar como pendência de produto o tratamento de
-  desistência, pedidos paralelos e horário original alcançado antes da decisão.
+  horário original alcançado antes da decisão. Cobrir desistência que preserva a consulta,
+  substituição atômica do destino e operações simultâneas que não podem criar duas propostas
+  pendentes. Falha por prazo/conflito mantém a proposta anterior; decisão sobre versão retirada
+  ou substituída é recusada.
 - Fila/prazo: provar que remarcação para amanhã precede outra para o próximo mês mesmo enviada
   depois, e que ambas precedem novos pedidos; verificar desempates e paginação estáveis.
   Cobrir limite exato de 24 horas, instante imediatamente anterior, prazo editado, desativado,
@@ -278,8 +285,8 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência de novas reservas; desistência e pedidos
-paralelos de troca pendente; responsabilidade e prazo interno de análise da fila de aprovação;
+por canal para antecedência de novas reservas; limite total de trocas (quantidade, abrangência
+e contagem ainda a definir); responsabilidade e prazo interno de análise da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
