@@ -51,8 +51,9 @@ sem expiração automática; sua fila de análise deve ser visível no painel. N
 bem-sucedido libera a vaga original e ocupa somente a nova, confirmada ou pendente conforme serviço.
 Recusa/desistência não restaura a antiga; preservar histórico e informar essa consequência antes
 do envio. Retomada após recusa/desistência continua no mesmo agendamento, mesmo após horário
-original, preservando histórico e contagem; eventual isenção da alternativa confirmada após
-recusa ainda será esclarecida. A antecedência de novas
+original, preservando histórico e contagem. Primeiro pedido reserva uma das duas trocas;
+alternativas pendentes/recusadas continuam a mesma troca e confirmação consolida essa utilização
+uma vez. Só uma nova mudança após confirmação inicia outra troca. A antecedência de novas
 reservas necessária a 2C também integra esse corte: sem mínimo por padrão, configurável por serviço,
 independente do prazo de remarcação. Horizonte futuro definido em 24/09: janela móvel de 90 dias
 por padrão, editável/desativável por serviço. Sua configuração em 2C preserva reservas anteriores.
