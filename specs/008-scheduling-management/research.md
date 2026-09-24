@@ -21,21 +21,23 @@ informa que seu recurso de remarcação pelo cliente é incompatível com o recu
 reservas. Isso evidencia uma limitação daquele produto; não comprova que priorizar remarcações
 reduza cancelamentos na CAAB.
 
-**Decisão vigente e implicações:** a prioridade considera o início atual da reserva: quem precisa
+**Decisão vigente e implicações:** a prioridade considera o início original capturado ao enviar a troca: quem precisa
 adiar uma consulta de amanhã precede quem quer alterar uma consulta do próximo mês, mesmo com
 pedido mais recente. Isso substitui a recomendação inicial de usar antiguidade como critério
-principal. A spec preserva a reserva atual até aceitar a troca e retém o destino conforme a
-política escolhida. A precedência na análise não toma vagas já ocupadas/retidas nem dispensa a
+principal. Revisão posterior aceita em 24/09: o envio bem-sucedido libera origem e ocupa somente
+novo destino, confirmado ou pendente conforme serviço. A regra anterior de manter origem até
+aprovação foi substituída. A precedência na análise não toma vagas já ocupadas/retidas nem dispensa a
 aprovação exigida pelo serviço. Na confirmação imediata, não há fila de análise a priorizar.
 
 **Decisão adicional de 24/09:** no máximo uma troca pendente por reserva, permitindo desistência
-que mantém a consulta original ou substituição sujeita ao prazo de remarcação. O usuário também
+ou substituição sujeita ao prazo de remarcação. A garantia anterior de manter a consulta original
+na desistência foi substituída: origem é liberada no envio e não é restaurada automaticamente. O usuário também
 definiu o limite de duas remarcações confirmadas por reserva, sem contar recusa ou desistência.
 Depois desse limite, a pessoa pode cancelar e fazer novo agendamento, preservando o histórico.
 Confirmou também a visão de histórico individual integrado por associado/dependente, incluindo
 compras quando o domínio responsável estiver integrado; esse desenho transversal pertence ao
 programa 002.
-Como origem e destino ficam ocupados durante a análise, acompanhar seu tempo e a idade dos demais
+Como somente destino fica ocupado durante a análise após a revisão aceita, acompanhar seu tempo e a idade dos demais
 pedidos continua relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
 duração das retenções; não prometer redução antes de observar dados da CAAB.
 
@@ -88,7 +90,8 @@ capacidades idênticas em todos os fornecedores. Aceite registrado na spec em 24
 
 O usuário aceitou manter proposta pendente após o início original, aprovável pela equipe somente
 para destino ainda futuro (2C-FR-17). Pediu em seguida pesquisar a ocupação da vaga original para
-mudar a política de trocas. Essa segunda decisão permanece aberta.
+mudar a política de trocas. Após a pesquisa, aceitou liberar a vaga original no envio e manter
+somente a nova retida, ciente de que recusa/desistência não garante recuperar a antiga.
 
 Fontes oficiais consultadas em 24/09/2026; fluxos distintos não devem ser apresentados como uma
 regra universal de mercado ou evidência de domínio comercial. Não houve teste em contas reais.
@@ -103,10 +106,10 @@ regra universal de mercado ou evidência de domínio comercial. Não houve teste
 
 **Conclusão da amostra:** há troca imediata, solicitação que encerra o original e produtos que
 nem combinam autosserviço de remarcação com aprovação manual. Não há base para afirmar que o
-padrão universal seja travar as duas vagas até a equipe decidir. Na spec CAAB vigente, isso
-ocorre: origem continua confirmada e destino fica retido enquanto a troca aguarda aprovação.
+padrão universal seja travar as duas vagas até a equipe decidir. A spec CAAB anterior mantinha
+ambas; a revisão agora aceita libera origem no envio e mantém somente destino.
 
-**Alternativas de produto para a revisão solicitada:**
+**Alternativas pesquisadas — alternativa 2 aceita pelo usuário:**
 
 1. Preservar origem até aprovação, retendo também destino: protege o compromisso original em
    caso de recusa/desistência, mas ocupa capacidade nos dois intervalos. Sem prazo de análise,
@@ -120,10 +123,11 @@ ocorre: origem continua confirmada e destino fica retido enquanto a troca aguard
    pretendida pode ser tomada; exige revalidar/oferecer outra opção. Altera a decisão anterior
    de que pendências ocupam vaga, portanto não adotar por inferência.
 
-**Recomendação para discussão:** se o objetivo da mudança for liberar para outros associados um
-horário ao qual a pessoa não pretende mais comparecer, a alternativa 2 é adequada, mediante
-aceite claro da perda de garantia da origem. Se a pessoa só aceita trocar caso a alternativa
-seja aprovada, preservar origem continua coerente. Nenhuma dessas mudanças foi aceita ainda.
+**Decisão aceita:** alternativa 2. Liberar origem e reter destino atomicamente no envio;
+informar antes da confirmação que a vaga antiga não é garantida em caso de recusa/desistência.
+O registro mantém identidade, histórico, prioridade pelo início original e contagem apenas de
+remarcações confirmadas. Após recusa/desistência, fica sem horário confirmado; a forma de retomar
+escolha de vaga ainda precisa de definição. Essa regra é decisão da CAAB, não consenso de mercado.
 A confirmação imediata já pode efetivar a troca em uma transação e liberar a origem, sem fila
 duradoura; o tradeoff acima afeta especialmente serviços com aprovação manual.
 
