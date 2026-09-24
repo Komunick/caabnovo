@@ -137,6 +137,39 @@ Essa regra é decisão da CAAB, não consenso de mercado.
 A confirmação imediata já pode efetivar a troca em uma transação e liberar a origem, sem fila
 duradoura; o tradeoff acima afeta especialmente serviços com aprovação manual.
 
+## Complemento — indisponibilidade causada pelo estabelecimento (24/09/2026)
+
+**Pergunta:** como tratar atendimento confirmado que o estabelecimento não poderá realizar?
+Consulta documental oficial em 24/09/2026, sem teste em contas reais. Trata-se da iniciativa da
+equipe/organizador, distinta da troca voluntária solicitada pelo associado.
+
+| Referência | Fluxo documentado | Limite da evidência |
+| --- | --- | --- |
+| [Calendly — remarcação pelo organizador](https://calendly.com/help/how-to-reschedule-a-meeting) | Pode escolher diretamente novo horário; em planos pagos, pode cancelar o encontro atual e enviar convite para o participante escolher outro, com lembrete de retomada. Guia atualizado em 20/08/2026. | Não comprova manutenção do mesmo ID nem estado interno equivalente a “aguardando nova data” do CAAB. |
+| [Fresha — gestão de atendimentos](https://www.fresha.com/help-center/academy/run-your-business/schedule-appointments/lessons/100253) | Equipe altera data, hora ou profissional no atendimento existente; cancelamento também é ação disponível. | Não documenta nessa jornada aceite obrigatório do cliente antes de efetivar a mudança, nem isenção de um limite de duas trocas. |
+| [Fresha — avisos de alteração](https://www.fresha.com/help-center/knowledge-base/calendar/130-send-appointment-updates) | Há mensagens automáticas para remarcação e cancelamento, conforme configuração. | Aviso enviado não comprova concordância do cliente com novo horário. |
+| [Jane — cancelamento pela equipe](https://jane.app/guide/cancel-or-delete-an-appointment-from-the-schedule) | Cancelamento permite registrar motivo e enviar notificação; registros cancelados podem continuar visíveis na agenda. | Não demonstra que toda interrupção da clínica gera uma pendência automática de remarcação. |
+| [Square — gestão e notificações](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Documenta notificações de mudança/cancelamento e escolha de aviso ao cancelar; mantém consulta de histórico. | Não estabelece fluxo universal de continuidade no mesmo ID após indisponibilidade do estabelecimento. |
+
+**Síntese:** há diferentes fluxos: remarcação direta pela equipe, cancelamento com convite para
+escolher outro horário e cancelamento explícito. As fontes não sustentam que manter o mesmo
+agendamento sem horário seja padrão universal, nem que exista uma regra geral de duas trocas.
+Preservar o mesmo ID e isentar o associado neste caso são propostas de produto CAAB.
+
+**Recomendação para discussão, ainda não aceita:** continuar pela opção A apresentada, com
+estado “Aguardando nova data — alteração pelo estabelecimento”, preservando registro/histórico.
+O horário inviável deixa de ser confirmado e de ocupar a agenda; o período/recurso realmente
+indisponível deve continuar bloqueado para não ser oferecido novamente. Avisar o associado,
+permitir escolher nova data ou cancelar e não consumir seu limite de trocas por essa interrupção.
+Não aplicar o prazo de 24 horas do horário inviabilizado à recuperação. Nova escolha deve
+respeitar disponibilidade, autorização e aceitação do serviço. Não impor outro horário ao
+associado sem acordo. Mecanismo de notificações continua dependendo de decisão própria.
+
+Esta recomendação não altera os requisitos vigentes nem autoriza cancelamento automático em
+massa. Tratamento de indisponibilidade posterior continua pendente na spec até resposta do
+usuário; não inferir isenção genérica para toda edição administrativa ou devolução de trocas
+voluntárias já confirmadas.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
