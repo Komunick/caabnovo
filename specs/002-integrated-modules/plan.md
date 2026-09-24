@@ -465,3 +465,24 @@ Executar adequações e seus testes em retomada de implementação. Preservar da
 a revisão atual altera somente documentação.
 
 </details>
+
+## Planejamento do histórico individual — 24/09/2026
+
+Aplicar HIN-FR-01–HIN-FR-05 da spec do programa. O cadastro individual de Associados fornece a
+identidade da pessoa; cada domínio permanece proprietário de seus registros e eventos. A visão
+consolidada consultará projeções mínimas autorizadas, ordenadas por ocorrência com desempate
+estável e paginação, sem carregar toda a trilha nem expor o log técnico bruto ao usuário.
+
+Começar pelo contrato de eventos de Agendamentos: beneficiário, autor, origem, registro,
+transição e instante. Identificar separadamente o titular que fez a reserva do dependente
+atendido. Conciliar a projeção com o histórico cadastral da spec 005 e preservar registros
+cancelados e novas reservas como entradas distintas. Compras precisam de definição do domínio
+responsável, fonte real, vínculo com a pessoa e política de acesso; não fabricar eventos ou
+presumir acesso familiar a dados financeiros.
+
+Validar isolamento entre pessoas e domínios, revogação de vínculo/permissão, ordem/paginação,
+repetição sem duplicata e preservação após cancelamento e novo agendamento. Ler o guia canônico
+de design antes de desenhar a apresentação da linha do tempo; ele segue inacessível no ambiente
+local desta sessão. Isto é planejamento, sem código, schema novo ou integração comercial
+executados. O contrato transversal e os consumidores ainda precisam de detalhamento antes
+de gerar tarefas executáveis.
