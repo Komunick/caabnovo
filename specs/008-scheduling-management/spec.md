@@ -121,6 +121,10 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   restaura automaticamente a antiga nem garante sua disponibilidade. Preservar histórico e
   prioridade pelo horário original. Esta decisão substitui a manutenção da ocupação original
   até aprovação e a garantia de recuperá-la ao desistir.
+- Q: Após recusa ou desistência, como escolher outro horário? → A: Continuar no mesmo
+  agendamento, mantendo histórico e trocas já usadas, inclusive se o horário original passou.
+  O usuário reforçou que a recusa não deve consumir o limite; esclarecer se a alternativa
+  posteriormente confirmada também será isenta antes de alterar essa parte da contagem.
 
 ## User Scenarios & Testing
 
@@ -381,7 +385,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   aceitação vigente do serviço. No máximo uma proposta pendente por reserva; substituir retenção
   atomicamente, preservando proposta/destino anteriores se falhar e sem reocupar origem.
   Recusa/desistência/substituição não consomem limite de trocas confirmadas. Decisão sobre versão
-  retirada/substituída é recusada. A retomada após recusa/desistência exige definição própria.
+  retirada/substituída é recusada. A retomada após recusa/desistência segue 2C-FR-18.
 
 - **2C-FR-11:** Limitar cada reserva a duas remarcações efetivamente confirmadas. Pedido
   aguardando aprovação, recusado, retirado ou substituído antes da confirmação não consome o
@@ -449,6 +453,18 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   pelo relógio. Preservar origem e decisão tardia no histórico; recusa não recria vaga passada.
   Se o destino também chegou/passou, negar aprovação desse destino e manter a pendência para
   resolução explícita da equipe, sem confirmar retroativamente ou expirar automaticamente.
+
+- **2C-FR-18:** Após recusa ou desistência de proposta que deixou o registro sem horário
+  confirmado, permitir ao ator autorizado escolher nova vaga no mesmo agendamento. Preservar
+  identificador, beneficiário, histórico, contador já usado e início original como referência
+  de prioridade; registrar nova tentativa vinculada à anterior. Essa retomada é permitida mesmo
+  após o início original e não reaplica sua antecedência de 24 horas. Exigir destino futuro,
+  horizonte vigente, elegibilidade, autorização, disponibilidade e aceitação do serviço.
+  Não aplicar prazo mínimo de nova reserva a essa continuação. Não restaurar origem, zerar
+  contador ou duplicar reserva. O estado sem horário não ocupa vagas; nova tentativa válida
+  retém somente destino e respeita uma única proposta ativa. Falha conserva o estado anterior.
+  Recusas e tentativas não confirmadas não consomem o limite; eventual isenção adicional da
+  alternativa confirmada após recusa está em esclarecimento e não deve ser presumida.
 
 **Critérios mensuráveis de 2C:**
 
@@ -545,7 +561,15 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   da contagem de trocas. Destino exatamente no instante da decisão ou passado é recusado sem
   confirmação retroativa. O relógio não gera falta/comparecimento/conclusão; histórico preserva
   o horário original e a decisão. Cancelamento/recusa concorrentes não podem ser sobrescritos,
-  e a exceção não permite iniciar nova troca de reserva passada.
+  e a exceção não permite iniciar troca de reserva passada que permanece confirmada; retomada
+  de registro sem horário após recusa/desistência é autorizada separadamente em 2C-FR-18.
+
+- **2C-SC-17:** Recusar/retirar proposta libera destino sem restaurar origem. Retomar antes
+  ou depois do horário original mantém o mesmo identificador, histórico, beneficiário e contador
+  anterior, sem veto pelas 24 horas da origem. Pedido válido retém somente novo destino;
+  repetição ou envios concorrentes não criam duas propostas. Conflito ou falha conserva registro
+  sem horário. Ordem de análise mantém referência original. Origem ocupada por terceiro não é
+  alterada. Recusas sucessivas e tentativas não confirmadas mantêm contador inalterado.
 
 **Decisões de produto pendentes para fechar 2C:**
 
@@ -562,11 +586,9 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
-- Retomada após recusa/desistência de troca, quando origem e destino estão livres de ocupação
-  desse registro: definir se escolher outra vaga continua a mesma reserva ou exige novo
-  agendamento, e qual prazo/prioridade usar. Não restaurar origem automaticamente. A política
-  de liberar origem e reter somente destino já foi aceita; início original não expira a
-  proposta ainda pendente (2C-FR-17).
+- Contagem da alternativa confirmada após recusa: esclarecer se continua consumindo uma troca
+  ou também é isenta. Recusa/tentativa não confirmada já não consome; retomada no mesmo registro,
+  mesmo após horário original, foi aceita (2C-FR-18).
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
