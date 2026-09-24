@@ -207,6 +207,18 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   desistência apenas da troca são ações distintas. Desistir da troca mantém a consulta original;
   impedir aprovação de proposta retirada ou substituída usando versão e estado da proposta.
 
+- Limitar a duas remarcações confirmadas por reserva. Revalidar a contagem no pedido e na
+  confirmação, incrementando-a na mesma transação da troca efetiva e do evento. Recusa,
+  desistência, substituição de proposta e retry não incrementam. Ao atingir duas, bloquear nova
+  troca; cancelamento continua disponível até antes do início e um novo agendamento começa com
+  outra identidade e contagem zero. Preservar histórico dos dois registros; não cancelar nem
+  criar outra reserva automaticamente. Conciliar eventos anteriores antes de definir contagem
+  de reservas legadas; não presumir zero quando faltarem evidências.
+- Projetar eventos da agenda para o histórico individual do beneficiário, preservando autor,
+  origem e registro de referência. A integração transversal é responsabilidade do programa 002;
+  compras dependem do domínio responsável e da política de acesso própria. Não conceder acesso
+  financeiro por herdar a representação familiar de agenda.
+
 ### Contratos a detalhar depois das decisões
 
 Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
@@ -266,6 +278,10 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   no instante de início ou depois. Comprovar ausência de antecedência mínima e de aprovação da
   equipe, repetição idempotente e encerramento de troca vinculada; revalidar versão e horário
   diante de aprovação concorrente.
+- Limite/histórico: duas remarcações confirmadas permitidas, terceira negada; pendência,
+  recusa/desistência e substituição de proposta não consomem limite. Validar retry e confirmação
+  concorrente na última troca disponível. Cancelar e agendar de novo preserva a linha do tempo
+  individual e reinicia contagem só no novo registro. Titular como autor não muda o beneficiário.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -285,8 +301,8 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência de novas reservas; limite total de trocas (quantidade, abrangência
-e contagem ainda a definir); responsabilidade e prazo interno de análise da fila de aprovação;
+por canal para antecedência de novas reservas; eventual exceção administrativa ao limite de duas
+remarcações confirmadas; responsabilidade e prazo interno de análise da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
