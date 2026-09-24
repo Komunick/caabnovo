@@ -155,6 +155,19 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   suas duas trocas nem é impedida pelas 24 horas do atendimento inviabilizado. Preservar histórico,
   retirar a confirmação/ocupação antiga e manter bloqueada a indisponibilidade real.
 
+### Session 2026-09-24 — equipe, alertas, comunicação e elegibilidade
+
+- Q: Quem aprova ou recusa pedidos? → A: A equipe vinculada ao estabelecimento é responsável
+  principal; colaboradores com permissão atuam apenas como backup.
+- Q: Quando destacar pedidos que demoram para ser analisados? → A: Após 24 horas corridas,
+  com prazo editável e desativável por serviço; alertar sem expiração automática (opção A).
+- Q: Por quais meios comunicar os eventos do agendamento? → A: Dentro do app/site, e-mail
+  e WhatsApp (opção C), todos ativos por padrão; o usuário seleciona no app como será comunicado.
+- Q: Quem recebe avisos do atendimento de dependente? → A: O dependente e o titular com vínculo
+  vigente, independentemente de quem agendou (opção B).
+- Q: Qual a ordem para reservar? → A: Beneficiário, serviço/unidade, profissional quando
+  aplicável, data/horário, revisão/envio (opção B), pois há serviços exclusivos para titulares.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -261,7 +274,8 @@ prevista no programa 002. As decisões em aberto abaixo devem ser resolvidas ant
 contrato externo e gerar tarefas executáveis.
 
 **Jornada de valor:** uma pessoa descobre os serviços publicados no app e no site antes do login. Depois
-de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
+de autenticar, identifica primeiro o beneficiário que está autorizada a representar, escolhe
+serviço/unidade elegível, profissional quando aplicável, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
 Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir. Remarcação
@@ -354,6 +368,15 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
     cancelamento. O horário inviável deixa de ser confirmado e a indisponibilidade continua
     bloqueada; histórico e identidade são preservados. Recuperação segue 2C-FR-20.
 
+14. Na reserva autenticada, selecionar beneficiário antes do serviço permite mostrar somente
+    ofertas reserváveis por essa pessoa. Serviço exclusivo de titular não pode ser reservado
+    para dependente, mesmo quando o titular é quem opera. Vagas e envio revalidam a regra.
+15. Pedidos manuais ficam sob responsabilidade da equipe vinculada, com colaboradores autorizados
+    como backup; após 24 horas corridas recebem alerta configurável, sem expirar ou liberar vaga.
+16. Avisos de confirmação, recusa, cancelamento e necessidade de remarcar usam app/site, e-mail
+    e WhatsApp por padrão, segundo preferências individuais editáveis no app. Atendimento de
+    dependente avisa dependente e titular vigente, seja quem for o autor da reserva.
+
 **Requisitos específicos propostos para 2C:**
 
 - **2C-FR-01:** Expor o mesmo catálogo de serviços publicados no app e no site antes do login, com projeção
@@ -364,12 +387,14 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
   solicitar para si e dependentes com vínculo vigente; dependente só pode solicitar para si.
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
-  único de Associados, sem copiar seus dados para Agendamentos.
+  único de Associados, sem copiar seus dados para Agendamentos. A elegibilidade da oferta usa
+  o beneficiário selecionado antes do serviço, conforme 2C-FR-25.
 - **2C-FR-03:** Aplicar a mesma fonte de disponibilidade e as mesmas restrições transacionais da
   agenda administrativa. A seleção visual é provisória; envio e aprovação exigem revalidação e
   idempotência. A confirmação imediata vem ativada por padrão em cada serviço; a equipe pode
   desativá-la para exigir aprovação dos novos envios. A situação resultante é exibida sem
-  ambiguidade nos canais. A equipe autorizada aprova ou recusa com auditoria; uma solicitação
+  ambiguidade nos canais. A equipe vinculada aprova ou recusa com auditoria, com colaboradores
+  autorizados como backup (2C-FR-21); uma solicitação
   pendente nunca é apresentada como confirmada. Enquanto aguarda, ela bloqueia vaga e conflito do
   beneficiário. A espera por aprovação não tem expiração automática; para a troca vinculada a uma
   reserva, o encerramento explícito da troca libera somente o destino (2C-FR-09/10).
@@ -571,9 +596,60 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   volta às regras de prazo/limite usuais. Cancelar o registro sem horário encerra a recuperação
   preservando histórico, inclusive após o horário inviabilizado. Não conceder ao cliente poder
   de declarar unilateralmente a causa do estabelecimento para contornar o limite.
-  Canal/provedor das notificações será detalhado separadamente; este requisito exige o aviso,
-  sem escolher uma integração. A regra é para resolução explícita de atendimento confirmado;
+  Canais, preferências e destinatários seguem 2C-FR-23/24; provedores e entrega serão detalhados
+  separadamente, sem presumir integração implementada. A regra é para resolução explícita de atendimento confirmado;
   alterações genéricas de agenda não cancelam nem movem reservas em massa automaticamente.
+
+- **2C-FR-21:** A equipe vinculada ao estabelecimento é responsável principal por analisar,
+  aprovar e recusar pedidos desse estabelecimento. Colaboradores com permissão de alteração
+  em Agendamentos podem atuar como backup. Identificar responsabilidade principal e atuação
+  de apoio na fila/auditoria, preservando autor da decisão. Vínculo com equipe não concede
+  permissão por si só; revalidar acesso e vínculo quando aplicável no servidor. Não instituir
+  aprovações duplas, repasse obrigatório ou tomada de responsabilidade automática após prazo.
+  Apoio não concede acesso a outros módulos nem amplia permissões existentes.
+
+- **2C-FR-22:** Destacar pedido ainda aguardando análise após 24 horas corridas por padrão,
+  com prazo editável e desativável por serviço. Medir a idade pelo instante registrado de entrada
+  em análise, usando relógio do servidor. Atingir o prazo produz alerta operacional, sem aprovar,
+  recusar, cancelar, expirar ou liberar a vaga automaticamente. Mostrar idade da pendência
+  mesmo com alerta desativado. Sinalizar proximidade do atendimento independentemente desse
+  prazo; o limiar objetivo de proximidade permanece a detalhar. Alertas não mudam a ordenação
+  de remarcações já definida em 2C-FR-07 nem transferem automaticamente responsabilidade ao backup.
+
+- **2C-FR-23:** Comunicar confirmação, recusa, cancelamento e necessidade de remarcar por
+  aviso dentro do app/site, e-mail e WhatsApp, com os três meios ativos por padrão. Permitir
+  que cada destinatário selecione no app quais meios deseja receber; aplicar as preferências
+  individuais aos envios, inclusive quando o titular recebe aviso de dependente. Preferência
+  de comunicação não oculta o estado/histórico real da reserva nem muda a publicação conjunta
+  em app/site. Registrar aviso devido, destinatário, canal e resultado de entrega, evitando
+  duplicação por repetição do mesmo evento. Revalidar autorização e preferência antes do envio.
+  Canal sem contato válido ou indisponível não pode ser marcado como entregue; falha de envio
+  não desfaz agendamento nem simula sucesso. Provedores, textos e operação de entrega/reenvio
+  ainda serão detalhados; o desenho deve distinguir evento ocorrido, aviso devido e entrega.
+
+- **2C-FR-24:** Para atendimento de dependente, os destinatários dos avisos são o próprio
+  dependente e o titular com vínculo vigente, independentemente do autor da reserva. Para
+  atendimento do titular, avisar o próprio titular. Resolver destinatários pelo beneficiário
+  e vínculo atual, sem usar apenas quem agendou; aplicar as preferências de cada destinatário
+  e deduplicar a mesma pessoa/canal/evento. Revalidar vínculo e autorização na entrega, inclusive
+  em reenvio, para impedir novos avisos ao titular após encerramento do vínculo. Comunicar apenas
+  os dados de agenda autorizados, sem herdar acesso a compras ou outros domínios.
+
+- **2C-FR-25:** Na jornada autenticada de reserva, identificar primeiro o beneficiário;
+  depois selecionar serviço/unidade, profissional quando aplicável, data/horário e revisão/envio.
+  Dependente permanece restrito a si; titular pode escolher a si ou dependente autorizado.
+  A oferta deve declarar se atende titulares e dependentes ou é exclusiva para titulares.
+  Considerar o perfil do beneficiário atendido, não o perfil do autor: um titular não pode
+  reservar serviço exclusivo de titular para dependente. Filtrar serviços reserváveis conforme
+  beneficiário e revalidar elegibilidade no servidor ao consultar vagas, enviar, aprovar ou
+  remarcar, inclusive na recuperação isenta. Trocar beneficiário revalida as escolhas seguintes
+  e solicita nova seleção quando incompatíveis; não conservar serviço/horário indevido.
+  A descoberta pública de serviços antes do login permanece, com a restrição de público
+  informada, sem expor vagas ou dados pessoais. Iniciar reserva a partir dessa descoberta
+  passa pela identificação do beneficiário antes de validar a oferta. Público-alvo faz parte
+  da configuração publicada; rascunho não modifica elegibilidade vigente nem cancela reservas
+  existentes automaticamente. Preservar regras atuais na transição; não inferir restrições
+  novas para serviços legados sem evidência.
 
 **Critérios mensuráveis de 2C:**
 
@@ -716,22 +792,47 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   entrega quando o mecanismo de comunicação estiver definido. Nenhuma outra reserva é alterada
   por inferência ou por uma aprovação concorrente desatualizada.
 
+- **2C-SC-20:** Equipe vinculada e autorizada analisa seus pedidos; colaborador autorizado
+  pode decidir como backup, com papel operacional/autor auditados. Vínculo sem permissão,
+  usuário somente de consulta e permissão revogada não permitem mutação. Decisões concorrentes
+  da equipe/backup produzem uma única transição, sem aprovação dupla obrigatória.
+
+- **2C-SC-21:** No padrão de 24 horas, pedido em análise a 23h59min59s não recebe o alerta de
+  atraso; a 24h recebe. Cobrir prazo editado/desativado, relógio do servidor e pedido decidido.
+  Alerta nunca muda status/ocupação/contador nem transfere responsabilidade. Idade permanece
+  disponível com alerta desligado; urgência por proximidade terá casos de fronteira quando
+  o limiar for definido. Ordem da fila continua conforme 2C-FR-07.
+
+- **2C-SC-22:** Preferências iniciais habilitam app/site, e-mail e WhatsApp. Alteração pelo
+  destinatário no app é persistida e aplicada aos avisos seguintes; os demais meios não são
+  alterados por inferência. Testar os quatro eventos de 2C-FR-23, preferências distintas entre
+  titular/dependente, ausência de contato, indisponibilidade e retry sem duplicação.
+  Falha não muda o agendamento nem consta como entrega; histórico permanece acessível.
+  Evidência de entrega real dependerá da integração definida, sem confundir testes simulados.
+
+- **2C-SC-23:** Reserva do dependente criada por ele ou pelo titular resolve os mesmos
+  destinatários autorizados: dependente e titular vigente, respeitando preferências individuais.
+  Encerrar vínculo antes do envio/reenvio impede novo aviso ao antigo titular; depender apenas
+  do autor da reserva falha no aceite. Deduplicar pessoa/canal/evento e negar leitura por link
+  após revogação, sem expor dados de outro domínio.
+
+- **2C-SC-24:** A jornada começa pelo beneficiário e filtra o serviço exclusivo de titular
+  para o perfil atendido. Titular por si pode reservá-lo; dependente por si e titular pelo
+  dependente são negados, inclusive por chamada direta, remarcação, aprovação e recuperação.
+  Trocar beneficiário invalida escolhas incompatíveis. Cadastro público informa a restrição
+  sem mostrar vagas; rascunho de público-alvo não altera a oferta publicada. Cobrir serviço
+  acessível a ambos, escolha de profissional opcional e ambos os modos de agenda.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
   vínculo e revogação de acesso quando ele cessa. As regras de reserva e de acesso ao histórico
   de dependentes foram decididas em 23/09/2026.
-- Ordem das etapas externas ainda será detalhada. Publicação é conjunta para app e site,
-  sem seleção de canal, conforme decisão de 24/09; essa escolha não permanece pendente.
-  Cadastro usa Salvar/Publicar; edição publicada usa Salvar alterações (rascunho) e Publicar
-  alterações (salvar e disponibilizar), conforme decisão de 24/09. A escolha
-  entre profissional específico e qualquer disponível é permitida e desativável pelo
-  estabelecimento (rodada 3 de 24/09). Sem profissionais cadastrados, reservas usam horários e
-  capacidade do serviço, conforme decisão da mesma rodada.
-- Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
-  de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
-  automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
-  23/09/2026.
+- Limiar objetivo para destacar proximidade do atendimento, separado do alerta de atraso de
+  análise. Responsabilidade principal/backup e prazo de 24 horas configurável foram definidos.
+- Provedores, textos e operação de entrega/reenvio das mensagens transacionais. Canais,
+  preferências iniciais/editáveis e destinatários foram definidos em 2C-FR-23/24; não reabrir
+  essas escolhas ao detalhar a integração.
 - Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
 
 **Fora deste recorte:** turmas coletivas, salas/equipamentos, lista de espera, múltiplos serviços
