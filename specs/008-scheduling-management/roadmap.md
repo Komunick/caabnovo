@@ -41,7 +41,7 @@ critérios nesta spec, mantendo o básico funcionando.
 | --- | --- | --- |
 | 2A Horários completos | Indisponibilidades, agenda extra, antecedência mínima e limite de dias futuros. | Vagas respeitam todas as regras; alterar regra não perde reservas existentes. |
 | 2B Operação e estados | Aguardando/confirmado, conclusão, falta, histórico e operações legadas aceitas; grade diária se validada. | Cada transição é explícita e auditada; falta não cria punição presumida. |
-| 2C App/site | Serviços publicados visíveis antes do login; vagas e reservas após autenticação. Confirmação imediata por padrão, desativável por serviço para aprovação; histórico e ações autorizadas. | Painel e canais usam a mesma disponibilidade; situação pendente ou confirmada é explícita e reservas alheias permanecem protegidas. |
+| 2C App/site | Serviços publicados visíveis antes do login; vagas e reservas após autenticação. Confirmação imediata por padrão, desativável por serviço para aprovação; escolha de profissional desativável pelo estabelecimento. Sem profissionais cadastrados, horários e capacidade por serviço; histórico e ações autorizadas. | Painel e canais usam a mesma disponibilidade e respeitam capacidade e conflitos por beneficiário; situação pendente ou confirmada é explícita e reservas alheias permanecem protegidas. |
 | 2D Avaliações | Leitura/gestão das avaliações do atendimento conforme funções comprovadas e regras acordadas. | Relação com reserva preservada; nenhuma alteração da opinião pelo administrador por pressuposto. |
 | 2E Comunicações e fechamento | Lembretes/notificações legados necessários, limites de uso aceitos, preservação/migração de dados e revisão da cobertura. | Entrega rastreável, sem duplicação de mensagens; matriz de equivalência e migração verificadas. |
 
@@ -64,9 +64,11 @@ Gaps precisam ser classificados: comprovado / ainda não verificado / deliberada
 ## Etapa 3 — sugestões novas, sem autorização de implementação
 
 Controle de salas, macas e equipamentos, preparação/limpeza separada,
-distribuição automática, fila, turmas/vagas coletivas e recorrências não comprovadas,
+distribuição avançada de carga, fila, turmas coletivas e recorrências não comprovadas,
 calendário automático de feriados e novas ações de avaliações.
-Cada item exige seleção, benefício claro, pesquisa e critérios antes de virar tarefa.
+A atribuição simples de profissional e capacidade por serviço sem equipe cadastrada já integram
+o planejamento de 2C, conforme decisões de 24/09/2026. Os demais itens exigem seleção,
+benefício claro, pesquisa e critérios antes de virar tarefa.
 Restaurantes continuam apenas possibilidade futura. Cal.com somente se nenhuma outra
 possibilidade existir; nenhuma integração planejada.
 
