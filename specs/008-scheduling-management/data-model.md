@@ -91,5 +91,18 @@ Aprovar aplica a troca no mesmo identificador e libera o horário anterior em tr
 libera apenas o destino. A proposta não representa outro atendimento independente. O desenho de
 ocupação deve proteger origem e destino contra outras reservas e tratar a sobreposição interna
 da própria troca sem dispensar conflitos de terceiros. Definir pedidos paralelos, desistência e
-concorrência com cancelamento antes de concluir o contrato e a migration. Prioridade na análise
-permanece proposta de produto, sem campo ou ordenação final aprovados.
+concorrência com cancelamento antes de concluir o contrato e a migration.
+
+A prioridade decidida em 24/09 é: remarcações primeiro, pelo início atual da reserva crescente;
+empates por instante do pedido e identificador estável. O destino não participa desse primeiro
+critério. A proposta referencia a versão e o início da reserva a que se aplica; se a origem for
+alterada concorrentemente, revalidar a proposta antes de qualquer decisão, sem aprovar dados
+obsoletos. Novos pedidos são ordenados por instante de envio após as remarcações.
+
+Adicionar à política do serviço uma antecedência mínima opcional de remarcação, com valor inicial
+equivalente a 24 horas (1.440 minutos) e estado explícito de desativação. A representação final
+será conciliada com o contrato; valor negativo não é válido. Comparar instantes no servidor no
+envio do pedido, usando o início atual da reserva. Registrar o prazo aplicado para auditoria;
+exatamente no limite é permitido. Pedido recebido em tempo não expira por atravessar esse limite
+durante análise, nem por posterior alteração da configuração. Não confundir o limite de envio
+com a chegada do próprio horário de atendimento, cujo tratamento ainda requer decisão.
