@@ -270,8 +270,10 @@ cenários concretos e tarefas antes da implementação.
       Revisão de 24/09/2026: refletir nos contratos/tarefas de 2C a liberação da origem no envio
       bem-sucedido da remarcação, retenção apenas do destino, falha transacional preservando
       origem e recusa/desistência sem restauração automática. Preservar histórico, prioridade
-      pelo início original e contagem de trocas confirmadas. Antes de fechar o desenho, definir
-      a retomada após recusa/desistência quando o registro fica sem horário confirmado.
+      pelo início original e contagem. Retomada após recusa/desistência usa o mesmo registro
+      sem horário confirmado, mesmo após início original, sem reaplicar suas 24 horas; validar
+      destino futuro/horizonte e demais guardas. Esclarecer eventual isenção da alternativa
+      confirmada após recusa antes de concluir a regra de contagem.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
