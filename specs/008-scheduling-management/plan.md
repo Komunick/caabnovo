@@ -219,10 +219,22 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   compras dependem do domínio responsável e da política de acesso própria. Não conceder acesso
   financeiro por herdar a representação familiar de agenda.
 
+- Escolha de profissional: configuração do estabelecimento/unidade controla a oferta de nome
+  específico ou qualquer disponível. Projetar o controle somente quando a escolha estiver
+  habilitada e houver profissionais ativos habilitados para o procedimento. Escolha desativada
+  com equipe cadastrada e opção “qualquer” usam atribuição pelo servidor entre profissionais
+  livres e aptos; mostrar o responsável antes de concluir. Revalidar configuração, vínculo e
+  disponibilidade, sem confiar no identificador fornecido pelo cliente nem trocar o responsável
+  exibido silenciosamente. Algoritmo avançado de distribuição de carga não integra esse recorte.
+  Sem profissionais, ocultar o controle; agendamento nesse cenário ainda depende de decisão,
+  pois o modelo existente exige assignment/professional. Não criar profissional fictício nem
+  tornar a referência opcional sem definir agenda e capacidade substitutas.
+
 ### Contratos a detalhar depois das decisões
 
 Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
-por serviço; consulta de vagas por procedimento/unidade/profissional e beneficiário quando
+por serviço e permissão de escolha de profissional por estabelecimento; consulta de vagas por
+procedimento/unidade/profissional e beneficiário quando
 necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
 permissão e auditoria. Definir autenticação, autorização, campos mínimos, paginação/limites de
@@ -282,6 +294,12 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   recusa/desistência e substituição de proposta não consomem limite. Validar retry e confirmação
   concorrente na última troca disponível. Cancelar e agendar de novo preserva a linha do tempo
   individual e reinicia contagem só no novo registro. Titular como autor não muda o beneficiário.
+- Seleção de profissional: matriz de escolha habilitada/desativada e equipe apta ausente/presente;
+  nome específico versus qualquer disponível; responsável identificado antes de concluir;
+  profissional inativo/sem vínculo não elegível; alteração de configuração e concorrência entre
+  prévia e envio. Provar que a API não aceita escolha forçada quando desativada e não troca
+  silenciosamente o profissional apresentado. O cenário sem profissionais aguarda política de
+  agendamento antes de ganhar teste de reserva.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -300,7 +318,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
+Mecanismo de identidade externa e gestão/revogação do vínculo; reserva sem profissional cadastrado
+e sua fonte de disponibilidade; política
 por canal para antecedência de novas reservas; responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
