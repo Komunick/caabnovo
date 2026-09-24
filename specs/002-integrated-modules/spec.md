@@ -443,3 +443,40 @@ T097 permanecem pendentes. Quality funcional
 (formatação/lint/tipos/unitários/contratos/integração/build) e segurança passaram; suíte completa de
 navegador ainda em andamento. Cópias históricas locais estão sendo retiradas após backup verificado;
 mapa operacional fora do PR.
+
+## Histórico individual integrado — 24/09/2026
+
+**Pedido do usuário:** cada associado deve ter histórico próprio de atividades, incluindo
+agendamentos, cancelamentos, compras e outras ações efetivamente registradas. Este é requisito
+de evolução documental do programa; não há declaração de que a visão unificada ou o módulo de
+compras estejam implementados. Os históricos de cadastro (spec 005) e de agenda (spec 008)
+continuam pertencendo aos respectivos domínios.
+
+- **HIN-FR-01:** Apresentar histórico por pessoa identificada no cadastro único de Associados.
+  Cada dependente possui seu próprio histórico; o vínculo familiar não funde atividades em
+  uma única pessoa.
+- **HIN-FR-02:** Identificar atividade, situação/transição, data/hora, registro de origem e ator.
+  Reserva feita por um titular para um dependente pertence ao histórico do dependente, com
+  titular indicado como autor. Distinguir ações realizadas por alguém dos atendimentos ou
+  compras atribuídos a essa pessoa.
+- **HIN-FR-03:** Integrar agendamento, confirmação, remarcação, cancelamento e demais eventos
+  reais da agenda; incorporar compras quando o domínio responsável e seus contratos estiverem
+  definidos. Não inferir compra por consulta de benefício, pagamento por agendamento, presença
+  pelo decurso do horário ou atividade inexistente.
+- **HIN-FR-04:** Preservar os eventos e registros anteriores após cancelamento ou novo
+  agendamento. O novo registro não apaga nem reescreve a história da pessoa. A visão reúne
+  projeções autorizadas dos domínios e não substitui suas fontes de verdade.
+- **HIN-FR-05:** Filtrar atividades e detalhes conforme ator, pessoa consultada, canal e
+  permissões do domínio. A regra familiar de agenda está na spec 008; acesso a compras ou
+  informações financeiras de dependentes exige política própria, sem herança automática.
+  No painel, acesso a Associados não concede por si acesso a todos os demais domínios.
+
+**Aceite:** uma reserva do dependente criada pelo titular aparece na pessoa correta com autoria
+distinta; duas remarcações, cancelamento e novo agendamento permanecem rastreáveis, com
+identificadores próprios. Conta sem acesso ao domínio não vê seus detalhes privados na visão
+consolidada. Compras ausentes da fonte não aparecem como realizadas.
+
+**Dependências para detalhamento:** contrato dos eventos/projeções por domínio, identidade externa,
+canais/telas de consulta e autorização para atividades além da agenda; domínio responsável por
+compras e respectivos dados. O escopo documental atual não autoriza implementar comércio,
+pagamentos ou integrações externas.
