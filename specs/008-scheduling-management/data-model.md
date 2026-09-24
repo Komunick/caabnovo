@@ -221,8 +221,13 @@ exatamente no limite é permitido. Pedido recebido em tempo não expira por atra
 durante análise, nem por posterior alteração da configuração. Não confundir o limite de envio
 com a chegada do próprio horário de atendimento: a proposta permanece pendente (2C-FR-17).
 
-Cancelamento pelo app/site: permitido para reserva confirmada enquanto o instante validado no
-servidor anteceder seu início atual, sem antecedência mínima e sem aprovação da equipe. O
+Cancelamento pelo app/site: permitido para reserva confirmada e pedido novo em pending_approval
+antes do início confirmado/solicitado, respectivamente, pelo relógio do servidor, sem antecedência
+mínima nem aprovação da equipe. Pedido novo transita pending_approval → cancelled, libera sua
+ocupação, encerra proposta de análise e sai da fila/alertas; mantém ID/histórico e não altera
+contador voluntário. Evento e intenção de aviso participam do commit; versão/locks impedem
+aprovação ou recusa concorrente de reativá-lo. Replay autorizado preserva o resultado original,
+mesmo após início, sem executar nova transição. O
 encerramento de troca pendente libera somente destino, pois origem foi liberada no envio.
 Para essa ação externa, manter a fronteira baseada no início original registrado. Coordenar versão/locks com aprovação
 para impedir reativação ou retenção órfã. No início exato ou depois, negar esse comando externo.
