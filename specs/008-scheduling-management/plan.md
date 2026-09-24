@@ -191,6 +191,14 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   troca sua retenção atomicamente e conserva o anterior em caso de falha; não reocupa origem.
   Prazo de substituição e limite para desistência usam início original registrado, preservando
   as fronteiras já decididas. Avisar antes do envio/retirada que o horário antigo não é garantido.
+- Retomada aceita após recusa/desistência: novo comando/tentativa no mesmo registro sem horário
+  confirmado; conservar identidade, contador, histórico e snapshot original para prioridade.
+  Distinguir de remarcação de compromisso confirmado: não exigir origem futura nem reaplicar
+  as 24 horas nessa continuação, mesmo após o início original. Destino precisa ser futuro,
+  dentro do horizonte e disponível, com autorização/elegibilidade/aceitação revalidadas.
+  Não reaplicar antecedência de nova reserva. Estado sem horário ocupa zero vagas; envio válido
+  retém apenas destino. Versão/idempotência/limite de uma proposta ativa impedem duplicação.
+  Definir a eventual isenção da alternativa confirmada após recusa antes de fechar contagem.
 - Decisão B da rodada 3: aprovação de proposta recebida em tempo pode ocorrer após o início
   original. Separar validação de solicitar nova troca da validação de decidir proposta existente;
   a segunda exige destino futuro no relógio real do servidor, além de versão, acesso,
@@ -299,6 +307,11 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
 
+- Retomada (2C-SC-17): recusa e desistência, antes/depois do horário original; identidade e
+  contador preservados, sem aplicação das 24 horas, com destino futuro/horizonte/aceitação e
+  todas as guardas. Falha e conflito conservam estado sem horário; corrida/retry não duplica
+  proposta. Recusas sucessivas não consomem limite; origem ocupada por terceiro é intocada.
+
 - Aprovação tardia (2C-SC-16): início original alcançado/passado com proposta válida mantém
   análise; destino futuro pode ser aprovado, destino atual/passado não. Contagem/histórico
   exatamente uma vez, sem inferir comparecimento/falta ou permitir novo pedido fora do prazo.
@@ -380,8 +393,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; retomada de escolha de vaga após
-recusa/desistência que deixa a reserva sem horário confirmado;
+Mecanismo de identidade externa e gestão/revogação do vínculo; eventual isenção da alternativa
+confirmada após recusa na contagem de trocas;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
