@@ -188,6 +188,14 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   reserva, com desistência ou substituição pelo ator autorizado enquanto a original for futura.
   Desistência libera somente o destino, sem prazo mínimo; substituição revalida antecedência e
   aceitação do serviço. Trocar retenções em transação e conservar a proposta anterior se falhar.
+- Decisão B da rodada 3: aprovação de proposta recebida em tempo pode ocorrer após o início
+  original. Separar validação de solicitar nova troca da validação de decidir proposta existente;
+  a segunda exige destino futuro no relógio real do servidor, além de versão, acesso,
+  elegibilidade, disponibilidade e contagem. Não reaplicar a exigência de origem futura a essa
+  decisão; preservar eventos anteriores e registrar a aprovação tardia. Se o destino também
+  passou, não aprovar retroativamente e não expirar automaticamente; manter para decisão
+  explícita. Passagem do tempo não registra atendimento/falta. Revisão da ocupação origem/destino
+  solicitada pelo usuário está em pesquisa; nenhuma alternativa substitui ainda o desenho vigente.
 - Ordenar a fila por classe (remarcação antes de novo pedido) e, nas remarcações, pelo início
   atual da reserva crescente. Desempatar por envio e identificador estável; para novos pedidos,
   usar envio e identificador. Não usar o horário proposto nem a antiguidade do pedido como
@@ -288,6 +296,11 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
 
+- Aprovação tardia (2C-SC-16): início original alcançado/passado com proposta válida mantém
+  análise; destino futuro pode ser aprovado, destino atual/passado não. Contagem/histórico
+  exatamente uma vez, sem inferir comparecimento/falta ou permitir novo pedido fora do prazo.
+  Decisão concorrente/cancelamento continua protegida por versão e transação.
+
 - Horizonte (2C-SC-15): limite de 90 dias inclusivo e um segundo além, avanço diário, edição
   para 30 dias, desativação, mudança entre prévia e envio e preservação de reservas/propostas
   anteriores. Conferir novo pedido/destino de remarcação, fusos, duração completa no expediente,
@@ -366,7 +379,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo;
+Mecanismo de identidade externa e gestão/revogação do vínculo; revisão solicitada da ocupação
+original/proposta durante remarcação;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
