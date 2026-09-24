@@ -83,6 +83,10 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   Antecedência mínima para solicitar remarcação: 24 horas por padrão, editável e desativável.
 - Q: O cancelamento também deve exigir antecedência mínima? → A: Não. No app/site, pode cancelar
   uma reserva futura confirmada até antes do início, sem antecedência mínima.
+- Q: Enquanto uma remarcação aguarda aprovação, o usuário pode desistir da troca ou substituir
+  o horário solicitado? → A: Sim. Pode desistir mantendo a consulta original ou substituir o
+  horário solicitado; apenas uma troca pendente por reserva, com substituição sujeita ao prazo
+  de remarcação.
 
 ## User Scenarios & Testing
 
@@ -248,6 +252,11 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
    Ambas aparecem antes de novos pedidos. O horário pretendido não define a prioridade; em
    empate de horário atual, ordenar pelo pedido mais antigo e usar desempate estável.
 
+10. Enquanto a reserva original é futura, desistir da troca libera somente o destino retido e
+    mantém a consulta original confirmada. Substituir o horário solicitado respeita o prazo de
+    remarcação e a aceitação do serviço. O novo destino substitui o anterior sem acumular
+    retenções; falha na substituição conserva a proposta anterior e a reserva original.
+
 **Requisitos específicos propostos para 2C:**
 
 - **2C-FR-01:** Expor catálogo de serviços publicados para o canal antes do login, com projeção
@@ -304,6 +313,14 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   pendente vinculada, cancelar a original encerra essa proposta e libera ambas as ocupações
   na mesma transação; uma aprovação atrasada não pode reativar a reserva cancelada.
 
+- **2C-FR-10:** Permitir ao ator autorizado desistir apenas da troca pendente, mantendo a
+  reserva original futura, sem exigir as 24 horas destinadas a solicitar nova remarcação.
+  Preservar histórico e liberar somente o destino. Permitir substituir o horário solicitado
+  conforme antecedência e aceitação vigentes do serviço. Manter no máximo uma troca pendente
+  por reserva; revalidar o novo destino e substituir sua retenção atomicamente, preservando
+  a anterior se a operação falhar. Desistência/substituição exige controle de versão; uma decisão
+  da equipe sobre proposta já retirada ou substituída não pode ser aplicada.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -344,6 +361,11 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   e aprovar uma troca, a verificação de versão impede decisão obsoleta; cancelamento concluído
   não deixa retenção órfã nem permite que uma aprovação posterior reative a reserva.
 
+- **2C-SC-09:** Desistir da troca mantém reserva, horário e ocupação originais e libera somente
+  o destino. Substituições concorrentes nunca deixam mais de uma proposta ativa nem retenções
+  órfãs. Destino indisponível ou prazo insuficiente conserva a proposta anterior. Aprovação
+  de proposta retirada/substituída é recusada como desatualizada. Repetições não duplicam efeitos.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -355,8 +377,11 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   indisponibilidade posterior. Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
-- Desistência da troca pendente, pedidos paralelos e chegada do horário original durante a análise.
-  A prioridade de análise das remarcações pelo horário atual mais próximo foi decidida em 24/09.
+- Chegada do horário original durante a análise. Desistência e substituição da troca foram
+  autorizadas em 24/09, com no máximo uma proposta pendente por reserva; prioridade usa o
+  horário atual mais próximo.
+- Limite total de trocas solicitado em 24/09: quantidade, abrangência (por reserva ou por
+  pessoa/período) e critério de contagem ainda não definidos. Não aplicar limite arbitrário.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
