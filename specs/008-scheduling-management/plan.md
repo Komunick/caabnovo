@@ -156,6 +156,16 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   created_by e eventos atuais exigem FK de usuário administrativo; uma identidade externa não
   pode ser gravada falsamente como colaborador nem como beneficiário autor. Planejar adaptação
   aditiva de autoria/auditoria com compatibilidade para eventos antigos.
+- Cadastro com Salvar/Publicar (2C-FR-19): distinguir persistência administrativa de publicação
+  externa. Salvar serviço novo persiste sem publicação; Publicar valida, salva e publica no
+  mesmo comando/transação, sem navegação intermediária obrigatória. Usar permissão existente
+  de alteração, controle de versão e idempotência, mantendo valores no formulário em erro.
+  Modelar estado de publicação independente de ativo e revalidar canais de destino, oferta,
+  duração, agenda e profissional/capacidade conforme modo. Ausência de vagas livres não impede
+  publicar agenda configurada. Não criar serviço duplicado quando publicar um já salvo nem
+  tornar a oferta pública por alterações diretas de ativo. Invalidar projeções/cache público
+  apenas após commit válido. Edição de oferta publicada depende da decisão Salvar versus
+  Publicar; não escolher silenciosamente rascunho versionado ou atualização pública imediata.
 - Visibilidade por canal deve ser explícita e aplicada nas leituras e comandos. Antes do login,
   expor somente serviços publicados para o canal, com projeção mínima; nunca o catálogo
   administrativo inteiro, dados privados ou horários disponíveis. Consultas de vagas exigem
@@ -315,6 +325,11 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
 
+- Publicação (2C-SC-18): Salvar novo serviço mantém invisibilidade externa; Publicar salva e
+  publica numa ação. Validar oferta incompleta, permissão de consulta sem alteração, modo sem
+  profissionais, agenda válida esgotada, repetição, concorrência e falhas sem perda de campos,
+  publicação parcial ou duplicação. Ativo sem publicado continua privado.
+
 - Contagem por troca (2C-SC-10): verificar sequência (confirmadas, em andamento) 0/0 → 0/1;
   substituições/recusas/retomadas mantêm 0/1; aprovação resulta em 1/0; próxima troca em 1/1;
   segunda aprovação em 2/0; terceiro ciclo negado. Retry e corrida não cobram duas vezes nem
@@ -407,7 +422,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo;
+Mecanismo de identidade externa e gestão/revogação do vínculo; efeito de Salvar nas edições
+já publicadas e definição dos canais de destino;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
