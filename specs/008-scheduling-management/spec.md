@@ -89,7 +89,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   de remarcação. A garantia de manter a consulta original foi substituída pela revisão posterior
   de 24/09 abaixo; os demais pontos permanecem.
 - Q: Qual limite de trocas será aplicado e quais eventos contam? → A: Duas remarcações
-  confirmadas por reserva. Pedidos recusados e desistências não consomem o limite; depois das
+  confirmadas por reserva. Esclarecimento posterior: pedido reserva uma utilização em andamento;
+  confirmação a consolida uma vez. Pedidos recusados e desistências não consomem outra; depois das
   duas, é necessário cancelar a reserva e fazer um novo agendamento para escolher outro horário.
 - Complemento do usuário: cada associado deve ter histórico próprio de agendamentos,
   cancelamentos, compras e demais atividades. A visão individual integrada está detalhada no
@@ -123,8 +124,11 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   até aprovação e a garantia de recuperá-la ao desistir.
 - Q: Após recusa ou desistência, como escolher outro horário? → A: Continuar no mesmo
   agendamento, mantendo histórico e trocas já usadas, inclusive se o horário original passou.
-  O usuário reforçou que a recusa não deve consumir o limite; esclarecer se a alternativa
-  posteriormente confirmada também será isenta antes de alterar essa parte da contagem.
+  O usuário reforçou que a recusa não deve consumir outra troca.
+- Q: Como contar um pedido de troca, suas alternativas pendentes e a retomada após recusa? →
+  A: O primeiro pedido ocupa uma das duas trocas; alterar o destino ainda não aprovado ou
+  retomar após recusa continua a mesma troca, sem consumir outra. Só a confirmação consolida
+  essa utilização. O limite evita sucessivas mudanças de horários confirmados sem usar o serviço.
 
 ## User Scenarios & Testing
 
@@ -384,16 +388,25 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Permitir substituir destino conforme antecedência calculada sobre a origem registrada e
   aceitação vigente do serviço. No máximo uma proposta pendente por reserva; substituir retenção
   atomicamente, preservando proposta/destino anteriores se falhar e sem reocupar origem.
-  Recusa/desistência/substituição não consomem limite de trocas confirmadas. Decisão sobre versão
+  Recusa/desistência/substituição não consomem outra utilização nem aumentam as confirmadas;
+  pertencem à mesma troca em andamento (2C-FR-11). Decisão sobre versão
   retirada/substituída é recusada. A retomada após recusa/desistência segue 2C-FR-18.
 
-- **2C-FR-11:** Limitar cada reserva a duas remarcações efetivamente confirmadas. Pedido
-  aguardando aprovação, recusado, retirado ou substituído antes da confirmação não consome o
-  limite. Incrementar somente quando a mudança de horário se concretiza, junto da alteração
-  e do evento; repetição não conta novamente. Ao atingir duas, negar nova solicitação de troca
-  e informar as opções de cancelar e fazer novo agendamento, sem cancelamento automático.
-  Novo agendamento recebe outro identificador e contador inicial zero; o anterior permanece
-  no histórico individual. Não garantir vaga no novo agendamento.
+- **2C-FR-11:** Limitar cada agendamento a duas trocas, distinguindo confirmadas de uma troca
+  em andamento. Ao registrar o primeiro pedido de remarcação, reservar uma utilização do limite
+  para essa troca; no máximo uma troca em andamento por agendamento. Só confirmar consolida a
+  utilização, sem cobrar novamente: converter uma utilização reservada em uma confirmada.
+  Alterar o destino antes da aprovação, sofrer recusa e escolher alternativa ou retirar a
+  proposta para escolher outra são tentativas da mesma troca, sem nova cobrança ou reinício do
+  contador. Recusa libera a vaga pretendida, mas mantém essa troca aguardando nova escolha ou
+  cancelamento; não há horário confirmado. Ao confirmar a alternativa, a troca inteira conta
+  uma única vez. Nova mudança depois dessa confirmação inicia outra troca e usa a próxima
+  utilização. Exibir separadamente confirmadas e em andamento; não chamar pendência de troca
+  confirmada. Duas confirmadas impedem iniciar uma terceira. Cancelar o agendamento encerra a
+  troca não confirmada sem aumentar a contagem, preservando tentativas/histórico e sem restituir
+  utilizações já confirmadas. Novo agendamento tem outra identidade/contador zero, sem garantia
+  de vaga. Falha técnica antes de registrar pedido não reserva utilização. Todas as transições
+  são idempotentes e o total de confirmadas mais utilização reservada nunca ultrapassa dois.
 - **2C-FR-12:** Alimentar o histórico individual por beneficiário com reserva, confirmação,
   remarcação, cancelamento e demais transições efetivamente registradas, incluindo ator, data,
   origem e alterações autorizadas. Titular que age por dependente é autor; o atendimento pertence
@@ -463,8 +476,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Não aplicar prazo mínimo de nova reserva a essa continuação. Não restaurar origem, zerar
   contador ou duplicar reserva. O estado sem horário não ocupa vagas; nova tentativa válida
   retém somente destino e respeita uma única proposta ativa. Falha conserva o estado anterior.
-  Recusas e tentativas não confirmadas não consomem o limite; eventual isenção adicional da
-  alternativa confirmada após recusa está em esclarecimento e não deve ser presumida.
+  Recusas e novas tentativas continuam a mesma troca em andamento, com a utilização já reservada,
+  sem consumir outra; a confirmação consolida uma única utilização conforme 2C-FR-11. Se preferir
+  cancelar o agendamento sem horário confirmado, permitir encerramento explícito mesmo após o
+  horário original, sem restaurar origem nem inferir falta. Isso não autoriza cancelar
+  retroativamente um atendimento que permanece confirmado.
 
 **Critérios mensuráveis de 2C:**
 
@@ -514,11 +530,14 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   insuficiente conserva proposta/destino anteriores; origem continua liberada. Aprovação de
   proposta retirada/substituída é recusada como desatualizada. Repetições não duplicam efeitos.
 
-- **2C-SC-10:** Uma reserva aceita duas remarcações confirmadas e rejeita a terceira solicitação.
-  Pedidos recusados/retirados/substituídos antes de confirmar não alteram a contagem; confirmação
-  repetida não duplica incremento. Duas alterações concorrentes quando resta uma troca não
-  podem ultrapassar o limite. Cancelar e agendar novamente mantém ambos os registros no histórico
-  da pessoa e inicia contagem zero apenas no novo registro.
+- **2C-SC-10:** Partindo de zero confirmadas, enviar troca produz zero confirmadas e uma em
+  andamento. Mudar destino, receber recusa e escolher alternativas mantém zero mais uma.
+  Confirmar qualquer alternativa dessa troca produz uma confirmada e zero em andamento, sem
+  cobrança adicional. Pedir nova mudança depois da confirmação produz uma mais uma; confirmá-la
+  produz duas mais zero. Rejeitar uma terceira troca. Repetições/concorrência não duplicam ciclo,
+  utilização ou incremento. Cancelar durante a análise/retomada encerra a utilização reservada
+  sem aumentar confirmadas, sem apagar histórico nem restaurar origem. Novo agendamento só
+  recebe contador zero em outro registro; tentativas dentro da mesma troca nunca zeram contador.
 - **2C-SC-11:** Reserva do dependente criada pelo titular aparece no histórico do dependente,
   com titular identificado como autor. Consultas não misturam atendimentos de pessoas distintas
   nem expõem atividades de outros domínios sem autorização. Cancelar ou criar nova reserva
@@ -569,7 +588,9 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   anterior, sem veto pelas 24 horas da origem. Pedido válido retém somente novo destino;
   repetição ou envios concorrentes não criam duas propostas. Conflito ou falha conserva registro
   sem horário. Ordem de análise mantém referência original. Origem ocupada por terceiro não é
-  alterada. Recusas sucessivas e tentativas não confirmadas mantêm contador inalterado.
+  alterada. Recusas sucessivas e tentativas não confirmadas preservam confirmadas e a mesma
+  utilização reservada. Confirmar alternativa consolida essa utilização uma vez. Cancelar
+  registro sem horário depois do início original encerra a troca sem incrementar confirmadas.
 
 **Decisões de produto pendentes para fechar 2C:**
 
@@ -586,9 +607,6 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
-- Contagem da alternativa confirmada após recusa: esclarecer se continua consumindo uma troca
-  ou também é isenta. Recusa/tentativa não confirmada já não consome; retomada no mesmo registro,
-  mesmo após horário original, foi aceita (2C-FR-18).
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
