@@ -86,7 +86,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Enquanto uma remarcação aguarda aprovação, o usuário pode desistir da troca ou substituir
   o horário solicitado? → A: Sim. Pode desistir mantendo a consulta original ou substituir o
   horário solicitado; apenas uma troca pendente por reserva, com substituição sujeita ao prazo
-  de remarcação.
+  de remarcação. A garantia de manter a consulta original foi substituída pela revisão posterior
+  de 24/09 abaixo; os demais pontos permanecem.
 - Q: Qual limite de trocas será aplicado e quais eventos contam? → A: Duas remarcações
   confirmadas por reserva. Pedidos recusados e desistências não consomem o limite; depois das
   duas, é necessário cancelar a reserva e fazer um novo agendamento para escolher outro horário.
@@ -111,7 +112,15 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   A: Manter a troca pendente; a equipe pode aprová-la depois, desde que o destino ainda seja
   futuro. Preservar histórico e não presumir comparecimento ou falta.
 - Pedido adicional: pesquisar a ocupação da vaga original durante a remarcação para revisar a
-  política de troca. A pesquisa não equivale ao aceite de liberar ou manter as duas vagas.
+  política de troca. Pesquisa registrada no research.
+
+### Session 2026-09-24 — revisão da ocupação na remarcação
+
+- Q: Liberar a vaga original ao enviar a remarcação, mantendo somente a nova vaga retida? →
+  A: Sim. A nova segue confirmação imediata ou aprovação do serviço. Recusa ou desistência não
+  restaura automaticamente a antiga nem garante sua disponibilidade. Preservar histórico e
+  prioridade pelo horário original. Esta decisão substitui a manutenção da ocupação original
+  até aprovação e a garantia de recuperá-la ao desistir.
 
 ## User Scenarios & Testing
 
@@ -262,13 +271,14 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
    ações permitidas. Ambos podem remarcar e cancelar reservas futuras confirmadas sob as mesmas
    verificações de autorização. Pedir remarcação exige antecedência mínima de 24 horas em relação
    ao início atual da reserva, salvo configuração editada ou desativada no serviço. A remarcação segue a aceitação configurada
-   no serviço: imediata ou aguardando aprovação. Enquanto a troca aguarda, a reserva original
-   permanece confirmada e o horário proposto fica retido conforme a regra das pendências.
-   Aprovação troca os horários atomicamente; recusa libera apenas a retenção proposta e mantém a
-   reserva original. Identificador/histórico são preservados. Cancelamento é permitido até antes
-   do início, sem antecedência mínima ou aprovação da equipe; preserva o registro e libera a
-   vaga após comando válido, sem motivo obrigatório. Cancelar a reserva original também encerra
-   sua troca pendente e libera o horário proposto, sem possibilidade de aprovação posterior.
+   no serviço: imediata ou aguardando aprovação. Antes do envio, informar que a vaga original
+   será liberada e não está garantida em caso de recusa/desistência. Ao aceitar o pedido, liberar
+   origem e ocupar destino em uma transação; a nova fica confirmada ou pendente. A origem deixa
+   de representar compromisso confirmado. Aprovar mantém somente a ocupação do destino; recusar
+   libera o destino e deixa o registro sem horário confirmado, preservando identidade/histórico.
+   Falha ao registrar o pedido conserva a reserva anterior. Cancelamento de reserva confirmada
+   segue até antes do início, sem antecedência mínima ou aprovação. Encerrar troca pendente
+   libera somente destino, sem recuperar origem e sem permitir aprovação posterior.
 7. Sessão expirada, representação revogada, bloqueio de beneficiário, alteração de oferta ou
    conflito entre prévia e confirmação recebem resposta clara e sem dados de terceiros. Ações
    privadas não vazam por cache, histórico do navegador ou API de outro canal.
@@ -281,10 +291,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
    Ambas aparecem antes de novos pedidos. O horário pretendido não define a prioridade; em
    empate de horário atual, ordenar pelo pedido mais antigo e usar desempate estável.
 
-10. Enquanto a reserva original é futura, desistir da troca libera somente o destino retido e
-    mantém a consulta original confirmada. Substituir o horário solicitado respeita o prazo de
-    remarcação e a aceitação do serviço. O novo destino substitui o anterior sem acumular
-    retenções; falha na substituição conserva a proposta anterior e a reserva original.
+10. Enquanto o horário original registrado ainda é futuro, desistir da troca libera o destino
+    retido, preserva histórico e não restaura a consulta antiga. Substituir o horário solicitado
+    respeita o prazo calculado sobre a origem registrada e a aceitação do serviço. O novo destino
+    substitui o anterior sem acumular retenções; falha conserva a proposta e o destino anteriores,
+    sem reocupar a origem já liberada.
 
 11. Com profissionais habilitados e escolha liberada pelo estabelecimento, a pessoa pode
     selecionar um nome ou “Qualquer profissional disponível”. Se o estabelecimento desativar a
@@ -316,7 +327,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   ambiguidade nos canais. A equipe autorizada aprova ou recusa com auditoria; uma solicitação
   pendente nunca é apresentada como confirmada. Enquanto aguarda, ela bloqueia vaga e conflito do
   beneficiário. A espera por aprovação não tem expiração automática; para a troca vinculada a uma
-  reserva confirmada, o cancelamento explícito da original também encerra a proposta (2C-FR-09).
+  reserva, o encerramento explícito da troca libera somente o destino (2C-FR-09/10).
   Recusa libera a ocupação; aprovação preserva a mesma reserva e ocupação. Intervalos são
   [início, fim), persistidos em UTC e apresentados em America/Bahia.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
@@ -326,10 +337,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   reservas futuras confirmadas que estão autorizados a gerir, com controle de versão. O prazo
   de remarcação está em 2C-FR-08; cancelamento até antes do início está em 2C-FR-09. A aprovação
   pela equipe de proposta recebida em tempo pode ocorrer após o início original (2C-FR-17).
-  Remarcação segue a aceitação configurada por serviço: imediata ou com aprovação. No fluxo
-  manual, preservar a reserva original até aceitar a troca e reter o horário proposto sem
-  expiração automática; recusa libera somente a proposta. Aprovação efetiva a troca em uma
-  transação, mantendo identificador e histórico. Negação ou conflito conserva a reserva original.
+  Remarcação segue a aceitação configurada por serviço: imediata ou com aprovação. Ao registrar
+  o pedido com sucesso, liberar a origem e ocupar apenas o destino, em transação única. No fluxo
+  manual, o destino aguarda aprovação sem expiração automática e o registro não possui horário
+  confirmado; a origem permanece como referência histórica, sem ocupação. Aprovar confirma o
+  destino mantendo identificador/histórico. Recusar ou desistir libera o destino sem restaurar
+  origem. Falha técnica/validação antes de registrar o pedido conserva integralmente a reserva
+  anterior. Antes do envio, informar perda da garantia da vaga antiga e situação da nova.
 - **2C-FR-05:** Não gerar comparecimento, conclusão, falta, avaliação, pagamento, penalidade,
   lista de espera ou mensagem real por inferência. Atribuição de profissional fica restrita ao
   fluxo aprovado em 2C-FR-13; distribuição avançada de carga e demais capacidades têm cortes e
@@ -338,31 +352,36 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
   migração/convivência e rollback sem perda de histórico.
 
-- **2C-FR-07:** Priorizar remarcações na fila de aprovação, ordenando pelo início atual da reserva
-  em ordem crescente. A data pretendida não interfere nessa prioridade. Em empate, usar a data
+- **2C-FR-07:** Priorizar remarcações na fila de aprovação, ordenando pelo início original registrado ao solicitar a troca
+  em ordem crescente. Essa referência é preservada mesmo após liberar a origem. A data pretendida não interfere nessa prioridade. Em empate, usar a data
   de envio e um identificador estável; novos pedidos seguem depois, por ordem de envio. A
   prioridade organiza análise, sem tomar vagas ocupadas ou dispensar a aceitação do serviço.
 - **2C-FR-08:** Para remarcação no app/site, exigir antecedência mínima editável por serviço,
   inicialmente 24 horas corridas antes do início atual da reserva, com opção de desativar.
   Verificar o prazo ao receber o pedido: exatamente 24 horas atende ao padrão; menos de 24 não
-  atende. O prazo não é calculado sobre o horário pretendido. Pedido recebido dentro do prazo
+  atende. Guardar o início original como referência também para substituições da proposta.
+  O prazo não é calculado sobre o horário pretendido. Pedido recebido dentro do prazo
   continua em análise quando a antecedência cruza o limite; não expira automaticamente nem é
   recusado apenas pela demora da equipe. Alterar a configuração vale para novos pedidos.
 
 - **2C-FR-09:** Permitir ao ator autorizado cancelar reserva futura confirmada no app/site,
   sem antecedência mínima e sem aprovação da equipe, desde que o comando seja validado antes
-  do início atual. Exatamente no início ou depois, negar o cancelamento pelo autosserviço.
-  Preservar histórico, autorização e idempotência, sem motivo obrigatório. Se existir troca
-  pendente vinculada, cancelar a original encerra essa proposta e libera ambas as ocupações
-  na mesma transação; uma aprovação atrasada não pode reativar a reserva cancelada.
+  do início atual. Exatamente no início ou depois, negar cancelamento de reserva confirmada
+  pelo autosserviço. Preservar histórico, autorização e idempotência, sem motivo obrigatório.
+  Quando existir troca pendente, a origem já foi liberada: encerrar a solicitação libera apenas
+  destino e não restaura origem. Manter a fronteira vigente para essa ação externa baseada no
+  início original registrado; aprovação tardia pela equipe segue 2C-FR-17. Versão impede decisão
+  atrasada de reativar proposta encerrada ou tocar ocupação adquirida por terceiro.
 
-- **2C-FR-10:** Permitir ao ator autorizado desistir apenas da troca pendente, mantendo a
-  reserva original futura, sem exigir as 24 horas destinadas a solicitar nova remarcação.
-  Preservar histórico e liberar somente o destino. Permitir substituir o horário solicitado
-  conforme antecedência e aceitação vigentes do serviço. Manter no máximo uma troca pendente
-  por reserva; revalidar o novo destino e substituir sua retenção atomicamente, preservando
-  a anterior se a operação falhar. Desistência/substituição exige controle de versão; uma decisão
-  da equipe sobre proposta já retirada ou substituída não pode ser aplicada.
+- **2C-FR-10:** Permitir ao ator autorizado desistir da troca pendente enquanto o início
+  original registrado ainda for futuro, sem exigir as 24 horas de nova remarcação. Liberar
+  destino e preservar o registro/histórico sem horário confirmado; não restaurar origem
+  automaticamente, mesmo se ainda livre. Informar essa consequência antes de retirar o pedido.
+  Permitir substituir destino conforme antecedência calculada sobre a origem registrada e
+  aceitação vigente do serviço. No máximo uma proposta pendente por reserva; substituir retenção
+  atomicamente, preservando proposta/destino anteriores se falhar e sem reocupar origem.
+  Recusa/desistência/substituição não consomem limite de trocas confirmadas. Decisão sobre versão
+  retirada/substituída é recusada. A retomada após recusa/desistência exige definição própria.
 
 - **2C-FR-11:** Limitar cada reserva a duas remarcações efetivamente confirmadas. Pedido
   aguardando aprovação, recusado, retirado ou substituído antes da confirmação não consome o
@@ -391,8 +410,9 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Exigir capacidade inteira positiva e horários configurados para oferecer vagas; não inventar
   expediente, capacidade ilimitada ou profissional fictício. Respeitar duração completa e
   funcionamento da unidade. Confirmadas, pendentes e destinos retidos de remarcação ocupam
-  capacidade, protegida contra concorrência; a própria troca não deve ser contada em duplicidade
-  no trecho em que origem e destino se sobrepõem na mesma capacidade. Permanecem os conflitos
+  capacidade, protegida contra concorrência. Ao enviar troca, remover a ocupação original e
+  registrar somente destino atomicamente, inclusive quando intervalos se sobrepõem; não dispensar
+  conflitos de terceiros nem manter origem como bloqueio oculto. Permanecem os conflitos
   do beneficiário e todas as regras de aceitação, prazo, limite de trocas e histórico. Ofertas
   por profissional continuam usando habilitação e disponibilidade individual; escolha desativada
   com equipe cadastrada não elimina essa atribuição. Cadastrar/desativar profissionais ou mudar
@@ -451,11 +471,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 - **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
   identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
 
-- **2C-SC-05:** Para serviço com confirmação imediata, remarcar troca a ocupação uma única vez;
-  para serviço com aprovação, a reserva original permanece confirmada até decisão. Aprovar
-  aplica a troca e libera o horário anterior; recusar mantém a reserva original e libera o
-  horário proposto. Repetição, decisão concorrente e perda de autorização não geram duplicatas
-  nem perda da reserva original.
+- **2C-SC-05:** Ao enviar remarcação válida, somente destino permanece ocupado: confirmado
+  no fluxo imediato ou pendente no manual. Outra pessoa pode reservar a origem liberada antes
+  da decisão da equipe. Aprovar mantém destino sem dupla ocupação; recusar/retirar libera destino
+  e não toca a nova reserva de terceiro na origem. Identificador/histórico são preservados.
+  Falha antes de concluir o envio mantém a reserva original. Repetição e decisões concorrentes
+  não duplicam liberação, ocupação ou contagem. Revisão e resultado informam a perda de garantia
+  da origem e distinguem pendência de confirmação.
 
 - **2C-SC-06:** Em massa com pedidos enviados fora de ordem, a fila mostra remarcações primeiro,
   pelo horário atual mais próximo. Trocar a data pretendida não muda a prioridade. Empates são
@@ -470,10 +492,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   e aprovar uma troca, a verificação de versão impede decisão obsoleta; cancelamento concluído
   não deixa retenção órfã nem permite que uma aprovação posterior reative a reserva.
 
-- **2C-SC-09:** Desistir da troca mantém reserva, horário e ocupação originais e libera somente
-  o destino. Substituições concorrentes nunca deixam mais de uma proposta ativa nem retenções
-  órfãs. Destino indisponível ou prazo insuficiente conserva a proposta anterior. Aprovação
-  de proposta retirada/substituída é recusada como desatualizada. Repetições não duplicam efeitos.
+- **2C-SC-09:** Desistir da troca libera destino e mantém histórico sem horário confirmado;
+  origem não é restaurada automaticamente, esteja livre ou ocupada por terceiro. Substituições
+  concorrentes nunca deixam mais de uma proposta/ocupação ativa. Destino indisponível ou prazo
+  insuficiente conserva proposta/destino anteriores; origem continua liberada. Aprovação de
+  proposta retirada/substituída é recusada como desatualizada. Repetições não duplicam efeitos.
 
 - **2C-SC-10:** Uma reserva aceita duas remarcações confirmadas e rejeita a terceira solicitação.
   Pedidos recusados/retirados/substituídos antes de confirmar não alteram a contagem; confirmação
@@ -496,7 +519,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   confirmação imediata e aprovação manual. Capacidade 1 admite apenas uma. Sobreposição parcial
   respeita o limite durante toda a duração; intervalos adjacentes não conflitam. Aprovar não
   consome outra vaga; recusa/cancelamento libera somente a ocupação correspondente. Remarcar,
-  retirar e substituir proposta preservam origem/destino sem retenção órfã. O mesmo beneficiário
+  retirar e substituir proposta mantêm somente destino enquanto pendente, sem retenção órfã. O mesmo beneficiário
   continua impedido de reservar intervalos sobrepostos em qualquer modo/unidade. Leituras e
   histórico funcionam sem profissional fictício; alterações de cadastro não migram reservas
   existentes silenciosamente.
@@ -539,10 +562,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
-- Revisão solicitada pelo usuário da ocupação da origem/destino enquanto a troca aguarda
-  aprovação: comparar as alternativas da pesquisa antes de mudar 2C-FR-04 e regras dependentes.
-  Por enquanto, preservar a regra documentada de manter origem e reter destino. A chegada do
-  início original não expira a proposta (2C-FR-17, decisão B da rodada 3).
+- Retomada após recusa/desistência de troca, quando origem e destino estão livres de ocupação
+  desse registro: definir se escolher outra vaga continua a mesma reserva ou exige novo
+  agendamento, e qual prazo/prioridade usar. Não restaurar origem automaticamente. A política
+  de liberar origem e reter somente destino já foi aceita; início original não expira a
+  proposta ainda pendente (2C-FR-17).
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
