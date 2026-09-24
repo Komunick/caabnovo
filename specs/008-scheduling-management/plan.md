@@ -200,6 +200,14 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   humana e não expira automaticamente. A equipe precisa de fila com identificação e idade das
   pendências para evitar vagas presas por falta de análise. Nenhum status de comparecimento ou
   avaliação é inferido do horário.
+- Responsabilidade e alerta (2C-FR-21/22): vincular equipe ao estabelecimento como responsável
+  principal, preservando consulta/alteração existentes; colaborador com alteração pode atuar
+  como backup. Registrar ator e natureza principal/apoio da decisão, sem concessão automática
+  por vínculo, aprovação dupla ou escalonamento automático. Concorrência entre ambos passa pelo
+  mesmo comando versionado. Prazo de alerta por serviço: 24 horas corridas, editável/desativável;
+  guardar entrada em análise e política aplicável, calcular idade no servidor e derivar atraso
+  sem expirar pedido/liberar vaga. Exibir idade com alerta desligado e não mudar a prioridade
+  de remarcações. Limiar de proximidade do atendimento permanece explícito para detalhamento.
 
 - Remarcação externa voluntária: registrar origem imutável (horário, modo/recurso e versão) para histórico,
   prioridade e cálculo do prazo; validar destino e liberar origem/ocupar destino na mesma
@@ -298,9 +306,27 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   aceitação e prioridade pelo início afetado. Não reaplicar as 24 horas da origem ou antecedência
   de nova reserva, inclusive após início original. Após confirmar, nova mudança voluntária volta
   ao limite/prazo usuais. Registrar aviso devido de forma durável e idempotente junto à decisão;
-  canal/provedor e entrega serão detalhados com comunicações. Cliente não pode forjar a causa
+  canais/preferências/destinatários seguem 2C-FR-23/24; provedores e entrega serão detalhados. Cliente não pode forjar a causa
   isenta. Falha/concorrência não produz bloqueio parcial, retenção órfã nem alteração de terceiros.
   Não substituir guardas atuais de edição de agenda por movimentação automática em massa.
+- Comunicação transacional (2C-FR-23/24): planejar avisos internos app/site, e-mail e WhatsApp
+  para confirmação, recusa, cancelamento e necessidade de remarcar. Preferências por pessoa,
+  todos os meios habilitados inicialmente, editáveis no app; aviso interno não equivale a push
+  móvel nem oculta histórico quando desativado. Resolver destinatários pela pessoa atendida:
+  titular recebe os próprios; dependente e titular vigente recebem os do dependente, qualquer
+  que seja o autor. Aplicar preferências de cada destinatário, revalidar vínculo/acesso antes
+  do envio/reenvio e deduplicar por evento/pessoa/canal. Persistir intenção de entrega junto ao
+  evento de domínio e executar envio separadamente, com resultado rastreável; indisponibilidade
+  ou falta de contato não desfaz reserva nem simula entrega. Definir provedores/templates e
+  operação de reenvio na integração, sem misturar campanhas de Mensagens ou pressupor entrega.
+- Jornada e público-alvo (2C-FR-25): após autenticação, resolver beneficiário antes de serviço/
+  unidade, profissional quando aplicável e vaga. Configuração publicada distingue serviço para
+  titulares/dependentes de exclusivo para titulares. Reutilizar perfil/vínculo de Associados;
+  aplicar ao beneficiário, nunca só ao usuário que opera. Filtrar oferta e revalidar no domínio
+  em vagas, envio, aprovação e remarcação/recuperação; mudanças de beneficiário invalidam escolhas
+  incompatíveis. Descoberta pública continua com indicação de público-alvo; ao iniciar reserva,
+  validar o beneficiário antes da oferta pré-selecionada. Preservar reservas existentes e regras
+  legadas na transição; rascunho não altera elegibilidade publicada.
 - Projetar eventos da agenda para o histórico individual do beneficiário, preservando autor,
   origem e registro de referência. A integração transversal é responsabilidade do programa 002;
   compras dependem do domínio responsável e da política de acesso própria. Não conceder acesso
@@ -334,7 +360,8 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
 Preparar contrato externo versionado para: oferta com publicação conjunta para app/site e política de confirmação
 por serviço, antecedência mínima de novas reservas, horizonte futuro e permissão de escolha de profissional por estabelecimento; consulta de vagas por
 procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
-necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
+necessário; público-alvo por beneficiário, preferências pessoais de comunicação e destinatários;
+envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
 permissão e auditoria, incluindo indisponibilidade do estabelecimento e recuperação isenta no
 mesmo agendamento. Definir autenticação, autorização, campos mínimos, paginação/limites de
@@ -346,7 +373,8 @@ contrato externo responsável sem substituir consumidores do painel.
 ### Experiência e acessibilidade
 
 O planejamento de navegação externa cobre descoberta de serviços antes do login e, depois de
-autenticar, identificação do beneficiário, seleção de vaga, revisão/envio e “Minhas reservas”,
+autenticar, identificação do beneficiário, serviço/unidade elegível, profissional quando
+aplicável, data/horário, revisão/envio e “Minhas reservas”,
 com situação explícita de confirmação ou espera de aprovação e recuperação de conflito sem
 perder escolhas. O painel mantém Lista/Dia/Semana/Mês e ações existentes. A pesquisa identifica
 padrões, mas não define aparência: ler o guia canônico docs/caab-design.md da pasta principal
@@ -355,6 +383,17 @@ revisão remota; nenhuma conformidade visual foi presumida. Validar teclado, foc
 estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
+
+- Equipe/backup e alerta (2C-SC-20/21): acesso de consulta/alteração, vínculo e revogação,
+  concorrência, autor auditado, 23h59min59s/24h, configuração/desativação, idade e ausência de
+  transições automáticas. Definir fronteiras da urgência quando seu limiar for estabelecido.
+- Avisos (2C-SC-22/23): três meios inicialmente ativos, alterações individuais persistidas,
+  eventos cobertos, destinatários independentes de autoria, vínculo encerrado antes de envio/
+  retry, ausência de contato, falha, deduplicação e reserva preservada. Separar testes simulados
+  de evidência real de entrega com o provedor escolhido.
+- Elegibilidade e jornada (2C-SC-24): beneficiário primeiro, titular por si autorizado e titular
+  por dependente/dependente por si negados no serviço exclusivo, incluindo APIs, aprovação e
+  recuperação; mudança de beneficiário, oferta para ambos e rascunho sem efeito público.
 
 - Recuperação pelo estabelecimento (2C-SC-19): testar zero/uma/duas trocas voluntárias já usadas,
   aviso devido uma vez, autenticação/causa autorizada, ambos os modos de agenda, liberação da
@@ -469,10 +508,10 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo;
-responsabilidade e prazo interno de análise
-da fila de aprovação;
-mensagens reais; contas e reservas do legado. Até resolvê-las,
+Mecanismo de identidade externa e gestão/revogação do vínculo; limiar de urgência por proximidade;
+provedores, textos e operação de entrega/reenvio de mensagens; contas e reservas do legado.
+Equipe principal/backup, alerta de 24 horas configurável, canais/preferências/destinatários e
+ordem da jornada foram definidos em 24/09/2026. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
 ## Histórico anterior — referência, não sequência executável atual
