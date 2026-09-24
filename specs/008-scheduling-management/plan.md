@@ -1,11 +1,22 @@
-# Implementation Plan: Agendamentos: acesso, integridade por pessoa e exportação
+# Implementation Plan: Agendamentos
 
-**Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21 **Spec**:
-[spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
+**Entrega documental ativa**: `codex/scheduling-market-research-20260923` | **Data**: 24/09/2026.
+**Spec**: [spec.md](spec.md). **Estado de 2C**: decisões funcionais incorporadas; contrato lógico,
+modelo e roteiro de validação propostos. Integrações e evidências operacionais ainda pendentes.
+Ver [continuação 2C](#continuação-do-plano--incremento-2c-appsite-23092026),
+[contrato](contracts/channels.md) e [checkpoint](evidence/plan-2026-09-24.md).
+
+O recorte administrativo de 21/09 abaixo pertence à entrega histórica
+`docs/project-clarify-20260921`; seu desenho não comprova prontidão do novo recorte externo.
 
 ## Summary
 
-Exigir acesso concedido, impedir sobreposição da mesma pessoa, sinalizar reservas mantidas após
+O incremento ativo 2C integra a jornada autenticada do associado à mesma agenda do painel,
+com beneficiário primeiro, publicação conjunta, confirmação imediata/manual, ciclos de troca,
+recuperação isenta e avisos por preferências pessoais. O contrato v1 é lógico: vínculo HTTP,
+identidade real, entrega por provedor e transição dos dados precisam das verificações descritas.
+
+Resumo administrativo de 21/09: exigir acesso concedido, impedir sobreposição da mesma pessoa, sinalizar reservas mantidas após
 bloqueio e exportar a agenda/oferta.
 
 US1 configuração/reserva, US2 operação, US4 exportação. US3 expansões/app/site não entra neste
@@ -109,11 +120,33 @@ somente à transferência atual; não é fila/histórico obrigatório.
 
 ## Continuação do plano — incremento 2C app/site (23/09/2026)
 
-**Estado:** planejamento preliminar da parte de Agendamentos na primeira experiência externa,
-conforme [US3/2C na spec](spec.md) e [pesquisa atual](research.md). Este texto não altera o
-recorte ativo T025–T039, não conclui T022 e não autoriza implementação ou publicação.
-A interface completa do app/site terá especificação própria no programa 002. Uma vez
-resolvidas as decisões de produto, reconciliar os dois documentos antes de gerar tarefas.
+**Estado em 24/09:** regras funcionais consolidadas em [US3/2C](spec.md),
+[contrato lógico v1](contracts/channels.md), [modelo](data-model.md) e
+[roteiro de validação](quickstart.md). Não conclui T022/T023/T024, não altera entregas
+administrativas anteriores nem autoriza implementação/publicação. A interface completa do
+app/site terá especificação própria no programa 002; reconciliar esse contrato com UI01/UI02
+antes de gerar sua sequência executável.
+
+### Contexto técnico e verificação de princípios de 2C
+
+Reutilizar TypeScript/Next/PostgreSQL, contratos Zod, monólito modular e worker da stack.
+Nenhuma dependência nova foi instalada. A versão consultada do package.json mantém Node 24,
+pnpm 11.25.0 e suites unit/contract/integration/E2E/a11y; versões não provam ambiente executado.
+API externa deve ser versionada. O contrato lógico v1 fixa operações/dados/invariantes; rotas
+concretas serão vinculadas ao mecanismo de identidade validado, sem reutilizar sessão de painel.
+
+| Princípio | Aplicação no desenho 2C | Evidência ou limite |
+| --- | --- | --- |
+| Simplicidade e monólito | Um domínio de agenda e PostgreSQL como fonte de verdade; infraestrutura de jobs existente. | Sem serviço/SDK de fornecedor ou framework genérico novo. |
+| Contratos e integridade | Contrato v1, processo/proposta separados, contagem voluntária e ocupação única transacional. | Migrations e testes concorrentes ainda futuros. |
+| Menor privilégio | Identidade → pessoa resolvida no servidor, vínculos revalidados, equipe/backup sob permissão. | Adaptador dos acessos existentes ainda não comprovado. |
+| Auditoria | Ator, evento, versão, correlação e snapshots mínimos; sem justificativa humana obrigatória. | Recuperação isenta usa classificação de causa, não texto obrigatório. |
+| Integrações | Intenção durável, jobs idempotentes e resultado de entrega distinto do evento de reserva. | Fornecedores/contatos/retries e entrega real não homologados. |
+| Acessibilidade | Jornada e textos funcionais definidos; validação por teclado/390 px/temas prevista. | Guia visual indisponível impede alegar conformidade/desenhar layout novo. |
+
+Revisão documental segundo constituição 2.1.0: desenho preserva esses princípios; nenhum gate de
+execução foi declarado aprovado. O setup local do speckit-plan falha antes de iniciar; esta é
+continuação manual dos artefatos na branch existente, sem conclusão automatizada da fase.
 
 ### Dependências e ordem
 
@@ -142,8 +175,9 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    Para solicitar remarcação, exigir 24 horas de antecedência por padrão, editável/desativável
    por serviço. Cancelamento externo é permitido até antes do início, sem antecedência mínima
    e sem aprovação da equipe.
-5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
-   executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
+5. Contrato/modelo/quickstart consolidados nesta etapa documental; conferir compatibilidade com
+   o acesso externo e UI01/UI02, detalhar integrações restantes, então gerar tarefas executáveis
+   e executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
 ### Arquitetura candidata e fronteiras
 
@@ -363,9 +397,9 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   reserva; mudanças que invalidem ocupação futura exigem resolução explícita antes de efetivar.
   Cadastro posterior de equipe não converte nem cancela reservas existentes.
 
-### Contratos a detalhar depois das decisões
+### Contrato lógico produzido e vinculações restantes
 
-Preparar contrato externo versionado para: oferta com publicação conjunta para app/site e política de confirmação
+O [contrato lógico v1](contracts/channels.md) documenta: oferta com publicação conjunta para app/site e política de confirmação
 por serviço, antecedência mínima de novas reservas, horizonte futuro e permissão de escolha de profissional por estabelecimento; consulta de vagas por
 procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
 necessário; público-alvo por beneficiário, preferências pessoais de comunicação e destinatários;
@@ -373,10 +407,11 @@ envio com situação confirmada ou aguardando aprovação; próximas e históric
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
 permissão e auditoria, incluindo indisponibilidade do estabelecimento e recuperação isenta no
 mesmo agendamento. Definir autenticação, autorização, campos mínimos, paginação/limites de
-consulta, fuso, códigos de conflito e sessão revogada. Não fixar caminhos ou payloads antes de
-decidir identidade e demais políticas.
-Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md) e criar
-contrato externo responsável sem substituir consumidores do painel.
+consulta, fuso, códigos de conflito e sessão revogada. Operações e dados lógicos estão definidos;
+fechar schemas executáveis e caminhos HTTP após verificar identidade/transporte, sem simular
+compatibilidade já implementada.
+Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md); sua extensão 2C
+referencia o contrato externo sem substituir consumidores históricos do painel.
 
 ### Experiência e acessibilidade
 
@@ -534,13 +569,19 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
+Revisão do contrato identificou decisão ainda ausente: permitir ou não ao associado cancelar
+pedido novo enquanto aguarda aprovação manual. Pergunta enviada ao usuário; não aplicar por
+inferência a regra de reserva confirmada ou de troca. Demais transições permanecem definidas.
+
 Verificação e integração dos acessos individuais já existentes, mapeamento de pessoas e
 revogação de vínculo; provedores, textos e operação de entrega/reenvio de mensagens;
 inventário de contas/histórico e existência de reservas futuras do legado ainda por conferir.
 Equipe principal/backup, alerta de 24 horas configurável, canais/preferências/destinatários e
 ordem da jornada e urgência a 24 horas do atendimento configurável foram definidos em 24/09/2026.
-Até resolver as dependências restantes,
-o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
+O contrato lógico e o roteiro podem ser revisados com adaptadores sintéticos identificados;
+ativação externa permanece bloqueada por essas dependências. Este plano não serve como ordem de
+implementação. A continuidade é registrar evidências de integração/inventário, fechar vínculo
+HTTP e compatibilidade com UI01/UI02, gerar tarefas e analisar o conjunto antes de executar.
 
 ## Histórico anterior — referência, não sequência executável atual
 
