@@ -516,3 +516,18 @@ registrado” em consulta autorizada. Não inventar motivos retroativos nem muda
 Checkpoint: decisão documental, LC03 pendente; implementação somente após clarify/analyze deste
 recorte. Documentação de dependentes P01 incluída por autorização de22/09; implementação fora do
 incremento.
+
+## Histórico individual integrado — requisito de 24/09/2026
+
+O usuário confirmou a necessidade de histórico próprio por associado e por dependente, reunindo
+agendamentos, cancelamentos, compras e outras atividades reais. A especificação canônica desta
+integração é HIN-FR-01–HIN-FR-05 no
+[programa 002](../002-integrated-modules/spec.md#histórico-individual-integrado--24092026).
+FR-007/FR-012 continuam descrevendo o histórico cadastral/documental desta função; a visão
+consolidada entre domínios é evolução planejada, sem declaração de implementação.
+
+Usar o identificador individual da pessoa e distinguir beneficiário de autor. Uma reserva feita
+pelo titular para o dependente integra o histórico do dependente com autoria do titular.
+Aplicar as permissões de cada domínio na consulta; vínculo familiar de agenda não concede
+automaticamente acesso a compras ou dados financeiros. Registros cancelados e novas reservas
+continuam individualmente rastreáveis.
