@@ -131,3 +131,15 @@ Eventos são vinculados ao identificador individual do beneficiário; autor pode
 dependente ou operador. Uma visão consolidada por pessoa pode projetar essa trilha sem duplicar
 cadastros ou converter autoria em titularidade do atendimento. Compras/atividades de outros
 domínios seguem contrato e autorização próprios no programa 002.
+
+Decisão da rodada 3 de 24/09: o estabelecimento/unidade controla a escolha de profissional pelo
+usuário. Acrescentar política própria da unidade à projeção externa; considerar também existência
+de profissionais ativos habilitados para a oferta. A opção qualquer disponível e a escolha
+desativada com equipe existente resolvem um assignment elegível no servidor, informado antes de
+concluir e revalidado no comando. Isso não altera a identidade dos profissionais nem elimina
+proteção contra sobreposição.
+
+Sem profissionais cadastrados, o seletor é omitido. Ainda não foi decidido se haverá reserva
+nesse cenário: o modelo atual exige assignment/professional e não pode ser transformado em
+agenda de capacidade por serviço sem definir suas regras. Nenhuma migration ou profissional
+fictício é criado por esta decisão documental.
