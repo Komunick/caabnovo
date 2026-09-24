@@ -54,6 +54,11 @@ Essa atribuição limitada ao fluxo aprovado passou a integrar 2C; algoritmos av
 distribuição, turmas coletivas e outros recursos continuam dependentes de escopo próprio. A
 capacidade simultânea por serviço para reservas individuais sem profissionais integra 2C.
 
+Decisão seguinte da rodada 3: novas reservas não exigem antecedência mínima por padrão, e o
+estabelecimento pode configurá-la por serviço. Isso permite reservar vagas futuras próximas,
+respeitando disponibilidade e aceitação; não muda as 24 horas padrão para solicitar remarcação.
+A regra é uma escolha do usuário, não uma conclusão comparativa dos fornecedores.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
@@ -116,7 +121,7 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 
 - Quais serviços/unidades aparecem em cada canal? A escolha de profissional específico ou qualquer disponível foi aprovada, condicionada à equipe cadastrada e à configuração do estabelecimento. Reserva sem profissionais foi autorizada, com horários e capacidade por serviço.
 - Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
-- Qual antecedência de novas reservas e horizonte futuro valem por serviço e canal? A remarcação tem antecedência padrão de 24 horas, editável/desativável; cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09).
+- Qual horizonte futuro de reservas deve valer? A antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável. Cancelamento é permitido até antes do início, sem antecedência mínima.
 - O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
 - Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem profissionais já foi autorizada.
 - Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
