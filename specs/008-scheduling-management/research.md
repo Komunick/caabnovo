@@ -199,6 +199,25 @@ uso no legado, respondeu que ainda é necessário conferir. Inventário deve res
 antes do corte; não inferir agenda vazia ou permitir perda de histórico. São informações do
 usuário, não verificações em produção nem práticas atribuídas às fontes de mercado.
 
+## Planejamento técnico de integração — 24/09/2026
+
+Leitura remota na branch ativa; referências locais são artefatos do repositório, sem teste em
+produção. Estes achados distinguem desenho funcional e integração disponível.
+
+| Decisão de desenho | Evidência / razão | Alternativa descartada ou limite |
+| --- | --- | --- |
+| Resolver identidade autenticada para pessoa no servidor | [005 FR-010](../005-members-management/spec.md) e [contrato de Associados](../005-members-management/contracts/members.md) separam conta administrativa, pessoa e acesso externo. | Não criar login por módulo ou aceitar titularidade/ownerId enviados pelo cliente; acessos individuais informados ainda exigem adaptação verificada. |
+| Reutilizar infraestrutura de jobs | [Contrato de jobs](../001-project-foundation/contracts/jobs.md) define ao menos uma vez, mutação causal/enqueue transacionais, payload mínimo, idempotência e reenvio auditado. | Não criar outra fila; sucesso do job não comprova entrega externa exatamente uma vez. |
+| Preferências transacionais por pessoa/canal precisam de extensão | [Schema atual de Mensagens](../../packages/contracts/src/messaging.ts) possui bloqueio geral e channelConfigured=false; [009](../009-messaging/spec.md) registra protótipo sem envio real. | Não tratar programação de campanha como entrega nem mapear bloqueio geral para três preferências sem inventário de finalidade. |
+| Avaliar reuso do transporte de e-mail existente | [account-mail.ts](../../apps/web/modules/auth/account-mail.ts) usa SMTP/Nodemailer para confirmação de e-mail e recuperação de senha. | Não comprova SMTP configurado/homologado para agenda; não copiar credenciais ou expandir envios nesta etapa. |
+| Consolidar contrato lógico antes do vínculo de transporte | [channels.md](contracts/channels.md) fixa operações, permissões, estados, ocupação, publicação e avisos; [quickstart](quickstart.md) descreve cenários. | Caminhos HTTP, schemas executáveis e provedores dependem de evidência; não declarar fase automatizada do Spec Kit concluída. |
+
+Contagem/capacidade, idempotência e relógio do servidor continuam no núcleo PostgreSQL. Provedor
+não é fonte de verdade da agenda. Mensagem transacional referencia evento da reserva; campanhas
+preservam seu domínio. Não reativar programações antigas bloqueadas ao conectar um novo canal.
+Preferências novas inicialmente ativas seguem a decisão do usuário, sem apagar supressões
+preexistentes ou comprovar validação de contato. Mapeamento dessas informações entra na transição.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
