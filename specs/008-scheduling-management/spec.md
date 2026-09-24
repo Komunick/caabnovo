@@ -409,8 +409,6 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
 - Chegada do horário original durante a análise. Desistência e substituição da troca foram
   autorizadas em 24/09, com no máximo uma proposta pendente por reserva; prioridade usa o
   horário atual mais próximo.
-- Limite de duas remarcações confirmadas por reserva definido em 24/09; ainda especificar
-  eventual tratamento administrativo excepcional, sem presumir autorização para excedê-lo.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
