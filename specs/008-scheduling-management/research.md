@@ -61,8 +61,9 @@ A regra é uma escolha do usuário, não uma conclusão comparativa dos forneced
 
 ## Complemento — horizonte de agendamento futuro (24/09/2026)
 
-Consulta motivada pela dúvida do usuário durante o clarify; ainda não há escolha aceita para o
-horizonte da CAAB. Fontes oficiais consultadas nesta data:
+Consulta motivada pela dúvida do usuário durante o clarify. Após a comparação, o usuário
+aceitou a opção A: janela móvel de 90 dias, editável e desativável por serviço.
+Fontes oficiais consultadas nesta data:
 
 | Referência | Evidência sobre horizonte futuro | Limite da evidência |
 | --- | --- | --- |
@@ -75,13 +76,13 @@ horizonte da CAAB. Fontes oficiais consultadas nesta data:
 padrão universal, nem levantamento de participação ou adoção. Cerca de três meses tem apoio
 concreto como padrão da Jane e como sugestão da Fresha.
 
-**Recomendação para decisão, ainda pendente:** 90 dias corridos como janela móvel no app/site,
+**Decisão aceita pelo usuário:** 90 dias corridos como janela móvel no app/site,
 editável e desativável por serviço. A cada dia, avança o limite futuro; só disponibilizar horários
 realmente configurados e livres. O valor oferece planejamento sem abrir, por padrão, uma agenda
 indefinida. Essa justificativa é inferência de produto para a CAAB, não resultado medido.
-Desativação e configuração por serviço são propostas da CAAB; não foram comprovadas como
-capacidades idênticas em todos os fornecedores. Não transformar a dúvida do usuário em aceite
-nem alterar requisitos de horizonte antes da resposta.
+Desativação e configuração por serviço são decisões da CAAB; não foram comprovadas como
+capacidades idênticas em todos os fornecedores. Aceite registrado na spec em 24/09/2026,
+2C-FR-16, sem implementação nesta etapa.
 
 ## Pergunta e método
 
@@ -145,7 +146,7 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 
 - Quais serviços/unidades aparecem em cada canal? A escolha de profissional específico ou qualquer disponível foi aprovada, condicionada à equipe cadastrada e à configuração do estabelecimento. Reserva sem profissionais foi autorizada, com horários e capacidade por serviço.
 - Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
-- Qual horizonte futuro de reservas deve valer? A antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável. Cancelamento é permitido até antes do início, sem antecedência mínima.
+- Horizonte futuro definido: janela móvel de 90 dias por padrão, editável/desativável por serviço. A antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável. Cancelamento é permitido até antes do início, sem antecedência mínima.
 - O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
 - Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem profissionais já foi autorizada.
 - Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
