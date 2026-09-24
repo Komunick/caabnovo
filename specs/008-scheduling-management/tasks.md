@@ -290,12 +290,22 @@ cenários concretos e tarefas antes da implementação.
       com associação acessível e revisão responsiva conforme 2C-FR-19.
       Publicação conjunta em app/site, sem seleção/configuração por canal: contratos usam estado
       e revisão únicos; validar atualização das projeções/caches dos dois e isolamento do rascunho.
+      Incorporar 2C-FR-21–25/2C-SC-20–24: equipe vinculada principal e colaboradores autorizados
+      como backup; alerta após 24 horas corridas configurável/desativável sem expiração; fechar
+      limiar de urgência. Jornada começa no beneficiário e filtra público-alvo publicado,
+      incluindo exclusividade de titular revalidada em todos os comandos. Avisos para dependente
+      e titular vigente independentemente de autoria, com preferências pessoais por canal.
+      Coordenar contratos de comunicação com T023, mantendo provedores/entrega como dependência.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
 - [ ] T023 [US3] Detalhar 2D avaliações e 2E comunicações/limites em
       specs/008-scheduling-management/spec.md e contracts/, após validar ações, provedores e
-      políticas.
+      políticas. Canais de agendamentos definidos em 24/09: app/site, e-mail e WhatsApp, todos
+      ativos por padrão e selecionáveis individualmente no app. Aplicar 2C-FR-23/24: quatro eventos,
+      destinatários pelo beneficiário/vínculo vigente, preferências por pessoa, deduplicação,
+      resultado rastreável, falha sem desfazer reserva e revalidação antes de envio/reenvio.
+      Detalhar provedores, textos e entrega sem tratar decisão funcional como integração pronta.
 - [ ] T024 [US3] Criar matriz de equivalência validada com o legado em
       specs/008-scheduling-management/legacy-parity.md; manter sugestões novas separadas em
       roadmap.md.
