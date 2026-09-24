@@ -201,13 +201,14 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   pendências para evitar vagas presas por falta de análise. Nenhum status de comparecimento ou
   avaliação é inferido do horário.
 
-- Remarcação externa: registrar origem imutável (horário, modo/recurso e versão) para histórico,
+- Remarcação externa voluntária: registrar origem imutável (horário, modo/recurso e versão) para histórico,
   prioridade e cálculo do prazo; validar destino e liberar origem/ocupar destino na mesma
   transação. Pedido aceito deixa somente destino ocupado, confirmado ou pendente conforme serviço.
   Se a transação falhar, rollback conserva origem; não confundir falha técnica com recusa posterior.
   No fluxo manual, registro em remarcação pendente deixa de ter horário confirmado; origem
   histórica não participa dos conflitos nem aparece como reserva ativa nos canais.
-  Aprovar mantém destino e converte a utilização reservada em confirmada uma vez; recusar/retirar libera destino e deixa
+  Aprovar mantém destino e, no ciclo voluntário, converte a utilização reservada em confirmada
+  uma vez; recuperação isenta de 2C-FR-20 não incrementa o contador. Recusar/retirar libera destino e deixa
   registro sem horário confirmado, sem retorno automático à origem, inclusive se estiver livre.
   Manter no máximo uma proposta ativa por reserva, sem expiração automática. Substituir destino
   troca sua retenção atomicamente e conserva o anterior em caso de falha; não reocupa origem.
@@ -271,18 +272,35 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   desistência da troca têm eventos distintos. Desistência não restaura a consulta original;
   impedir aprovação de proposta retirada ou substituída usando versão e estado da proposta.
 
-- Limite por troca lógica: separar contador confirmado e ciclo em andamento. Primeiro pedido
+- Limite por troca voluntária lógica: separar contador confirmado e ciclo debitável em andamento. Primeiro pedido
   válido reserva uma utilização, com invariantes confirmed_count + active_cycle_count <= 2 e
-  active_cycle_count em 0/1. Falha antes de commit não reserva utilização. Revalidar sob lock
+  active_cycle_count em 0/1 conta somente ciclos debitáveis; recuperação do estabelecimento é
+  identificada separadamente e não entra no limite, mantendo no máximo um processo ativo por reserva. Falha antes de commit não reserva utilização. Revalidar sob lock
   da reserva; usar identificador estável do ciclo e IDs/versionamento das tentativas. Recusa,
   retirada, substituição e retomada preservam o ciclo; só o destino atual ocupa agenda, e o
   estado aguardando escolha ocupa zero vagas. Aprovar qualquer tentativa converte utilização
   reservada em confirmada e fecha ciclo atomicamente, sem segunda cobrança. Nova solicitação
   após confirmação abre novo ciclo e reserva próxima utilização. Não usar quantidade de pedidos
-  ou eventos como contador. Duas confirmadas bloqueiam terceiro ciclo. Cancelamento definitivo
+  ou eventos como contador. Duas confirmadas bloqueiam terceiro ciclo voluntário, sem bloquear
+  recuperação isenta por indisponibilidade do estabelecimento. Cancelamento definitivo
   encerra ciclo sem consolidar utilização; não restitui confirmadas nem apaga histórico.
   Novo agendamento tem outra identidade/contador zero. Projeções mostram confirmadas/em andamento
   separadas. Conciliar eventos legados antes de definir contagem, sem presumir zero desconhecido.
+- Indisponibilidade do estabelecimento (2C-FR-20): comando explícito da equipe autorizada para
+  atendimento confirmado, com ator/causa e snapshot do horário afetado. Na mesma transação,
+  registrar a indisponibilidade efetiva do recurso/período, remover a ocupação da reserva e
+  iniciar recuperação isenta no mesmo ID, exibindo “Aguardando nova data — alteração pelo
+  estabelecimento”. Não liberar o período para novas reservas por remover essa ocupação.
+  Manter histórico e contador voluntário; ciclo isento não reserva nem consolida utilização,
+  mesmo com duas trocas confirmadas. Alternativas/recusas/retomadas herdam a causa isenta até
+  confirmar ou cancelar. Só uma proposta/destino pode ocupar vaga; sem escolha ocupa zero.
+  Reutilizar guardas de destino futuro, horizonte, autorização, elegibilidade, disponibilidade,
+  aceitação e prioridade pelo início afetado. Não reaplicar as 24 horas da origem ou antecedência
+  de nova reserva, inclusive após início original. Após confirmar, nova mudança voluntária volta
+  ao limite/prazo usuais. Registrar aviso devido de forma durável e idempotente junto à decisão;
+  canal/provedor e entrega serão detalhados com comunicações. Cliente não pode forjar a causa
+  isenta. Falha/concorrência não produz bloqueio parcial, retenção órfã nem alteração de terceiros.
+  Não substituir guardas atuais de edição de agenda por movimentação automática em massa.
 - Projetar eventos da agenda para o histórico individual do beneficiário, preservando autor,
   origem e registro de referência. A integração transversal é responsabilidade do programa 002;
   compras dependem do domínio responsável e da política de acesso própria. Não conceder acesso
@@ -318,7 +336,8 @@ por serviço, antecedência mínima de novas reservas, horizonte futuro e permis
 procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
 necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
-permissão e auditoria. Definir autenticação, autorização, campos mínimos, paginação/limites de
+permissão e auditoria, incluindo indisponibilidade do estabelecimento e recuperação isenta no
+mesmo agendamento. Definir autenticação, autorização, campos mínimos, paginação/limites de
 consulta, fuso, códigos de conflito e sessão revogada. Não fixar caminhos ou payloads antes de
 decidir identidade e demais políticas.
 Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md) e criar
@@ -337,6 +356,14 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
 
+- Recuperação pelo estabelecimento (2C-SC-19): testar zero/uma/duas trocas voluntárias já usadas,
+  aviso devido uma vez, autenticação/causa autorizada, ambos os modos de agenda, liberação da
+  ocupação sem reofertar indisponibilidade, continuidade do mesmo ID e histórico, recuperação
+  dentro das 24 horas/após início original, confirmação imediata/manual, alternativas recusadas,
+  cancelamento, retry e concorrência. Contador voluntário permanece igual; após recuperação
+  confirmada, volta a reger mudanças voluntárias. Entrega real do aviso depende da definição de
+  comunicação e terá evidência própria.
+
 - Publicação (2C-SC-18): Salvar novo serviço mantém invisibilidade externa; Publicar salva e
   publica numa ação para app e site, sem escolha de canal. Validar oferta incompleta, permissão de consulta sem alteração, modo sem
   profissionais, agenda válida esgotada, repetição, concorrência e falhas sem perda de campos,
@@ -350,7 +377,7 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   a mesma revisão publicada em ambos, atualização das projeções/caches dos dois e isolamento
   do rascunho nos dois; falha mantém a publicação anterior compartilhada.
 
-- Contagem por troca (2C-SC-10): verificar sequência (confirmadas, em andamento) 0/0 → 0/1;
+- Contagem por troca voluntária (2C-SC-10): verificar sequência (confirmadas, em andamento) 0/0 → 0/1;
   substituições/recusas/retomadas mantêm 0/1; aprovação resulta em 1/0; próxima troca em 1/1;
   segunda aprovação em 2/0; terceiro ciclo negado. Retry e corrida não cobram duas vezes nem
   deixam ciclo órfão. Cancelamento sem horário, inclusive após início original, encerra o ciclo
