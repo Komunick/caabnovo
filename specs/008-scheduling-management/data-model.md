@@ -98,6 +98,15 @@ aceitação. Preservar as propostas anteriores na auditoria; substituir a reten�
 sem acumulá-la e sem perder a proposta anterior em caso de falha. Decisões usam versão da proposta
 para impedir aprovação de solicitação retirada ou substituída.
 
+Decisão B da rodada 3: a proposta não expira quando chega o início original. A transição de
+aprovação dessa proposta pode ocorrer depois; exige destino estritamente futuro no relógio do
+servidor e todas as demais guardas, sem reutilizar a guarda de origem futura da criação de
+proposta. Preservar início original e versão em eventos; incrementar a contagem só ao efetivar.
+Não inferir presença, conclusão ou falta. Destino já iniciado não é aprovável retroativamente,
+mas não dispara expiração; a equipe precisa resolver a pendência explicitamente. Cancelamentos
+ou decisões concorrentes continuam impedindo reativação. O usuário pediu revisar ocupação de
+origem/destino à luz do mercado; o desenho de duas retenções não foi substituído por essa pesquisa.
+
 A prioridade decidida em 24/09 é: remarcações primeiro, pelo início atual da reserva crescente;
 empates por instante do pedido e identificador estável. O destino não participa desse primeiro
 critério. A proposta referencia a versão e o início da reserva a que se aplica; se a origem for
