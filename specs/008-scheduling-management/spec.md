@@ -99,6 +99,9 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Ao agendar, a pessoa poderá escolher um profissional específico ou qualquer habilitado? →
   A: Sim, quando houver profissionais cadastrados. O estabelecimento pode desativar a escolha
   mesmo com profissionais cadastrados; sem profissionais, o controle de escolha não aparece.
+- Q: Sem profissionais cadastrados, o estabelecimento deve continuar recebendo agendamentos? →
+  A: Sim, usando horários e quantidade de vagas definidos para o serviço. Alguns estabelecimentos
+  não precisam diferenciar seus profissionais; exigir esse cadastro criaria atrito desnecessário.
 
 ## User Scenarios & Testing
 
@@ -229,7 +232,8 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
    confirmação de ausência
    definitiva. A prévia de vaga não a retém.
 4. Ao enviar a reserva, o servidor revalida identidade, representação, elegibilidade, oferta,
-   disponibilidade e conflitos por profissional e beneficiário. O serviço usa confirmação imediata
+   disponibilidade e conflitos do beneficiário, além do profissional ou da capacidade do serviço,
+   conforme o modo da oferta. O serviço usa confirmação imediata
    por padrão; se a equipe a desativar nesse serviço, novos envios geram reserva identificada
    como aguardando aprovação, sem comunicar confirmação ao usuário. Em ambos os fluxos, a transição é auditada,
    um envio repetido não duplica reserva e um conflito conserva as escolhas para buscar alternativa.
@@ -237,7 +241,8 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
 5. Reserva criada no app/site aparece no painel com mesmo identificador, horário, beneficiário e
    situação, inclusive quando aguarda aprovação. A equipe pode aprovar ou recusar uma solicitação
    pendente com decisão auditada e situação atualizada para o usuário. Enquanto aguarda, a
-   solicitação ocupa o horário do profissional e do beneficiário em todos os canais; a recusa libera
+   solicitação ocupa o horário do beneficiário e do profissional ou uma vaga da capacidade do serviço,
+   conforme o modo da oferta, em todos os canais; a recusa libera
    a vaga, e a aprovação mantém a mesma ocupação sem duplicá-la. Não há expiração automática.
    Reserva criada no painel ocupa a vaga vista no app/site. A origem é distinguível no histórico.
 6. Titular com vínculo vigente e o próprio dependente veem as reservas futuras e históricas do
@@ -272,9 +277,14 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
 11. Com profissionais habilitados e escolha liberada pelo estabelecimento, a pessoa pode
     selecionar um nome ou “Qualquer profissional disponível”. Se o estabelecimento desativar a
     escolha, o sistema define um profissional habilitado disponível e o informa antes de
-    concluir. Sem profissionais cadastrados/habilitados, o controle não aparece; a possibilidade
-    de agendar nesse caso ainda será definida. Profissional inativo ou sem habilitação para a
-    oferta não aparece como opção disponível.
+    concluir. Sem profissionais cadastrados, o controle não aparece e a reserva usa horários e
+    capacidade definidos para o serviço. Profissional inativo ou sem habilitação para a oferta
+    não aparece como opção disponível. Falta de profissional livre numa oferta por profissional
+    não a converte automaticamente em oferta por capacidade.
+12. Em estabelecimento sem profissionais cadastrados, configurar horários e capacidade positiva
+    do serviço permite reservas individuais até esse limite simultâneo. Confirmadas, pendentes
+    de aprovação e retenções de remarcação disputam a mesma capacidade no painel e app/site.
+    Esgotamento não aceita uma reserva extra; cancelamento ou recusa libera apenas sua ocupação.
 
 **Requisitos específicos propostos para 2C:**
 
@@ -363,6 +373,19 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   disponibilidade no comando; não aceitar imposição de profissional pelo cliente quando a
   escolha está desativada, nem substituir silenciosamente o responsável apresentado.
 
+- **2C-FR-14:** Permitir agendamentos sem cadastrar ou individualizar profissionais, usando
+  horários e capacidade de atendimento simultâneo definidos para o serviço naquela unidade.
+  Exigir capacidade inteira positiva e horários configurados para oferecer vagas; não inventar
+  expediente, capacidade ilimitada ou profissional fictício. Respeitar duração completa e
+  funcionamento da unidade. Confirmadas, pendentes e destinos retidos de remarcação ocupam
+  capacidade, protegida contra concorrência; a própria troca não deve ser contada em duplicidade
+  no trecho em que origem e destino se sobrepõem na mesma capacidade. Permanecem os conflitos
+  do beneficiário e todas as regras de aceitação, prazo, limite de trocas e histórico. Ofertas
+  por profissional continuam usando habilitação e disponibilidade individual; escolha desativada
+  com equipe cadastrada não elimina essa atribuição. Cadastrar/desativar profissionais ou mudar
+  capacidade não cancela nem converte reservas existentes; recusar alterações que invalidem
+  ocupações futuras até resolução explícita, preservando seu modo e histórico.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -424,6 +447,16 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   atribuído é habilitado, está disponível e é informado antes de concluir; desativação ou
   conflito após a prévia exige revalidação sem atribuição silenciosa a outra pessoa.
 
+- **2C-SC-13:** Com capacidade 3 e 20 envios concorrentes de beneficiários distintos para o mesmo
+  intervalo livre, persistem exatamente 3 ocupações, inclusive misturando painel, app/site,
+  confirmação imediata e aprovação manual. Capacidade 1 admite apenas uma. Sobreposição parcial
+  respeita o limite durante toda a duração; intervalos adjacentes não conflitam. Aprovar não
+  consome outra vaga; recusa/cancelamento libera somente a ocupação correspondente. Remarcar,
+  retirar e substituir proposta preservam origem/destino sem retenção órfã. O mesmo beneficiário
+  continua impedido de reservar intervalos sobrepostos em qualquer modo/unidade. Leituras e
+  histórico funcionam sem profissional fictício; alterações de cadastro não migram reservas
+  existentes silenciosamente.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -431,8 +464,8 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   de dependentes foram decididas em 23/09/2026.
 - Serviços, unidades e informações disponíveis em cada canal; ordem das etapas. A escolha
   entre profissional específico e qualquer disponível é permitida e desativável pelo
-  estabelecimento (rodada 3 de 24/09). Ainda definir se é possível agendar sem profissionais
-  cadastrados e, nesse caso, qual agenda/capacidade controla as vagas.
+  estabelecimento (rodada 3 de 24/09). Sem profissionais cadastrados, reservas usam horários e
+  capacidade do serviço, conforme decisão da mesma rodada.
 - Antecedência para nova reserva, horizonte futuro e tratamento de reservas afetadas por
   indisponibilidade posterior. Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
@@ -446,7 +479,7 @@ a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
   23/09/2026.
 - Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
 
-**Fora deste recorte:** turmas/capacidade, salas/equipamentos, lista de espera, múltiplos serviços
+**Fora deste recorte:** turmas coletivas, salas/equipamentos, lista de espera, múltiplos serviços
 na mesma reserva, assistente por IA, avaliações e integração Cal.com. Permanecem possibilidades
 de pesquisa ou incrementos separados; não se tornam requisitos por aparecerem em produtos de mercado.
 
@@ -567,7 +600,8 @@ Hipóteses de recorte para revisão, sem fingir que todas vieram do usuário:
   impedimentos explicitamente documentados.
 - Cadastros do legado não serão importados automaticamente na primeira entrega.
 - Funções ausentes do legado permanecem sugestões: salas, equipamentos, preparação, filas,
-  turmas/recorrência não comprovadas e distribuição automática.
+  turmas/recorrência não comprovadas e distribuição avançada de carga. As decisões de 2C autorizam
+  atribuição de profissional no fluxo definido e capacidade por serviço sem profissionais.
 - Cal.com somente referência; integrar apenas se nenhuma outra possibilidade existir.
 
 ## Revisão de UI/UX e inclusão — 16/09/2026
