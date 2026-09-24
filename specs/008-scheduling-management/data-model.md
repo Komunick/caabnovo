@@ -66,6 +66,35 @@ Migration0028 validada no CI descartável; sem aplicação local.
 
 ## Extensão proposta para 2C — 23/09/2026
 
+### Estruturas lógicas propostas — consolidação de 24/09
+
+Não são tabelas criadas nem schemas executáveis. Conciliar nomes e migrations com o banco vigente
+antes de implementar; contrato de operações/estados em [channels.md](contracts/channels.md).
+
+| Estrutura | Campos/relações essenciais | Invariantes |
+| --- | --- | --- |
+| Revisão da oferta | serviceId, draftVersion, publishedVersion, dados/público-alvo/políticas, autor/data | Uma revisão publicada para app/site; rascunho não muda regras públicas; operação de publicação versionada. |
+| Política temporal | mínimo de nova reserva, horizonte, antecedência de troca, atraso de análise, antecedência de urgência | Regras independentes; padrões 0/90 dias/24h/24h/24h conforme spec, desativação somente onde definida. |
+| Processo da reserva | ID, bookingId, kind voluntário ou recuperação isenta, active, originalStart, confirmedVoluntaryCount, reservedVoluntaryUse | Uma atividade por reserva; soma debitável <= 2; causa isenta somente por comando da equipe. |
+| Proposta | ID, bookingId, processId nulo no pedido inicial, version, destino, situação, enteredReviewAt, snapshots aplicáveis | Uma proposta ativa; só destino ocupa; substituição atômica; proposta antiga não aprova. |
+| Ocorrência do estabelecimento | ID, bookingId, operador, instante, recurso/período afetado, referência do bloqueio | Retirar reserva sem reofertar recurso indisponível; sem movimentar reservas alheias. |
+| Referência de identidade | identificador externo verificável → member.id | Responsabilidade do acesso externo/Associados; sem cadastro/login paralelo no módulo. |
+| Preferência de aviso | pessoa, finalidade de agendamento, app/site, e-mail, WhatsApp, version | Edição pessoal; padrão dos três ativo; inventariar supressões antigas antes de converter. |
+| Intenção/entrega | evento/reserva/version, destinatário, canal, chave estável, correlação, tentativas/resultados seguros | Evento+pessoa+canal único; revalidar vínculo/preferência no envio; não confundir enviado com entregue. |
+
+O estado da reserva não deve acumular informação que pertence à proposta ou à entrega de aviso.
+Valores propostos: scheduled, pending_approval, awaiting_new_time, rejected e cancelled, com
+causa do processo separada. Mapa de transições e ocupação no contrato; nenhum estado infere
+comparecimento/falta. Uma reserva aguardando nova data continua consultável no mesmo ID mesmo sem
+intervalo ocupado. Snapshots originais não participam das constraints de ocupação.
+
+A intenção de aviso e a mutação causal compartilham transação; a chamada ao provedor acontece
+fora dela. Reutilizar jobs/worker existentes, payload com IDs e referências mínimas. Tratar
+resultado desconhecido sem duplicação cega, manter correlação do provedor quando existir e não
+reativar execuções antigas de campanhas bloqueadas por instalar um canal. Quantidade/backoff/
+timeout de tentativas dependem do adaptador concreto e devem ser definidos antes de ativar.
+
+
 Publicação de serviço definida em 24/09: separar estado ativo do estado de publicação externa e
 registrar autor, instante e versão de uma única publicação compartilhada por app e site, sem
 lista de destinos configuráveis ou estados/versões publicados independentes por canal.
