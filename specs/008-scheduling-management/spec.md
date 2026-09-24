@@ -104,6 +104,9 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   não precisam diferenciar seus profissionais; exigir esse cadastro criaria atrito desnecessário.
 - Q: Qual antecedência mínima deve valer para novos agendamentos? → A: Sem antecedência mínima
   por padrão; o estabelecimento pode configurar o prazo por serviço. O prazo de remarcação é separado.
+- Q: Até quanto tempo no futuro o associado poderá agendar? → A: Janela móvel de 90 dias por
+  padrão, editável e desativável por serviço. O usuário aceitou a opção A após consultar as
+  referências de mercado; a janela avança com o tempo e respeita os horários configurados.
 
 ## User Scenarios & Testing
 
@@ -218,7 +221,8 @@ Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a ge
 exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
 serviço. Cancelamento é permitido até antes do início, sem antecedência mínima. A remarcação segue
 a aceitação do serviço. Novos agendamentos não exigem antecedência mínima por padrão; o
-estabelecimento pode configurá-la por serviço. A equipe vê a mesma reserva e sua trilha no painel.
+estabelecimento pode configurá-la por serviço. O horizonte futuro é uma janela móvel de 90 dias
+por padrão, editável e desativável por serviço. A equipe vê a mesma reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
 
@@ -399,6 +403,17 @@ estabelecimento pode configurá-la por serviço. A equipe vê a mesma reserva e 
   com confirmação imediata ou aprovação. É independente do prazo de remarcação de 2C-FR-08;
   não aplicar automaticamente a antecedência de nova reserva ao destino de uma troca.
 
+- **2C-FR-16:** No app/site, oferecer agendamento dentro de uma janela móvel de 90 dias corridos
+  por padrão, editável e desativável pelo estabelecimento por serviço. Calcular o limite a partir
+  do instante atual do servidor, sem depender de reabertura manual da agenda. O início no limite
+  exato é permitido; além dele, recusado. Usar o mesmo limite na consulta e no envio, inclusive
+  na escolha de destino de remarcação, sem alterar sua antecedência em relação ao horário
+  original. A janela apenas restringe vagas realmente configuradas e disponíveis; não cria
+  horários ou capacidade. Vale para ambos os modos de ocupação e aceitação. Mudanças afetam
+  novos pedidos, preservando reservas e propostas já aceitas para análise; não cancelar,
+  antecipar ou expirar registros existentes por redução do horizonte. Desativar remove somente
+  o limite máximo, preservando início futuro, antecedência mínima e demais verificações.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -478,6 +493,14 @@ estabelecimento pode configurá-la por serviço. A equipe vê a mesma reserva e 
   confirmação imediata/aprovação e navegador em outro fuso. Alterar esse prazo não muda as
   24 horas padrão para solicitar remarcação em relação ao horário original.
 
+- **2C-SC-15:** Com relógio controlado e vagas configuradas, início a exatamente 90 dias é
+  elegível; a 90 dias e um segundo é negado. Avançar o relógio um dia avança a janela um dia.
+  Editar para 30 dias altera a fronteira de novos pedidos; desativar permite uma vaga além de
+  90 dias, se configurada e válida. Reduzir o horizonte preserva reservas/propostas anteriores.
+  Conferir revalidação após mudança entre prévia e envio, origem da remarcação independente do
+  destino, fuso do navegador e ambos os modos de ocupação/aceitação. Desativação não cria vagas
+  em dias sem expediente nem permite início passado.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -487,8 +510,9 @@ estabelecimento pode configurá-la por serviço. A equipe vê a mesma reserva e 
   entre profissional específico e qualquer disponível é permitida e desativável pelo
   estabelecimento (rodada 3 de 24/09). Sem profissionais cadastrados, reservas usam horários e
   capacidade do serviço, conforme decisão da mesma rodada.
-- Horizonte futuro e tratamento de reservas afetadas por indisponibilidade posterior. Nova
-  reserva não tem antecedência mínima por padrão, configurável por serviço (rodada 3 de 24/09).
+- Tratamento de reservas afetadas por indisponibilidade posterior. Horizonte futuro definido:
+  janela móvel de 90 dias por padrão, editável/desativável por serviço. Nova reserva não tem
+  antecedência mínima por padrão, configurável por serviço (rodada 3 de 24/09).
   Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
