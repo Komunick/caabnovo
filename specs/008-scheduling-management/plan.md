@@ -129,7 +129,7 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    nem expor a seleção administrativa de beneficiários como API pública.
 3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
    migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
-4. Aplicar as decisões de 23/09: serviços publicados para o canal ficam visíveis antes do login;
+4. Aplicar as decisões de 23/09: serviços publicados ficam visíveis no app e no site antes do login;
    vagas exigem autenticação. Confirmação imediata é o padrão por serviço e pode ser desativada
    pela equipe para exigir aprovação de novos envios. Solicitação pendente ocupa a vaga até
    aprovação ou recusa da equipe, sem expiração automática. Em 24/09 foi autorizado remarcar e
@@ -160,11 +160,13 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   externa. Salvar serviço novo persiste sem publicação; Publicar valida, salva e publica no
   mesmo comando/transação, sem navegação intermediária obrigatória. Usar permissão existente
   de alteração, controle de versão e idempotência, mantendo valores no formulário em erro.
-  Modelar estado de publicação independente de ativo e revalidar canais de destino, oferta,
+  Modelar estado único de publicação externa, independente de ativo, compartilhado por app e
+  site, sem seleção de destino no formulário nem configurações distintas por canal. Revalidar oferta,
   duração, agenda e profissional/capacidade conforme modo. Ausência de vagas livres não impede
   publicar agenda configurada. Não criar serviço duplicado quando publicar um já salvo nem
   tornar a oferta pública por alterações diretas de ativo. Invalidar projeções/cache público
-  apenas após commit válido. Na edição publicada, Salvar alterações persiste revisão de rascunho
+  de app e site após commit válido, com a mesma revisão publicada como fonte para ambos. Não
+  manter versões vigentes independentes por canal. Na edição publicada, Salvar alterações persiste revisão de rascunho
   separada; Publicar alterações valida e persiste/publica a revisão num único comando atômico,
   sem salvamento prévio obrigatório. Manter o mesmo ID do serviço e controlar as versões do
   rascunho e da publicação para impedir perda de edição ou publicação concorrente desatualizada.
@@ -176,8 +178,8 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   Exibir abaixo de cada botão a descrição curta definida em 2C-FR-19, sempre visível e associada
   ao controle para leitores de tela, tanto no cadastro quanto na edição publicada. Revisar
   disposição responsiva conforme guia de design quando disponível; não depender de tooltip.
-- Visibilidade por canal deve ser explícita e aplicada nas leituras e comandos. Antes do login,
-  expor somente serviços publicados para o canal, com projeção mínima; nunca o catálogo
+- Visibilidade externa deve usar o mesmo estado de publicação nas leituras e comandos de app e
+  site. Antes do login, expor o mesmo catálogo publicado, com projeção mínima; nunca o catálogo
   administrativo inteiro, dados privados ou horários disponíveis. Consultas de vagas exigem
   identidade externa validada. Delimitar cache por tipo de resposta; respostas privadas não
   recebem cache compartilhado.
@@ -311,7 +313,7 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
 
 ### Contratos a detalhar depois das decisões
 
-Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
+Preparar contrato externo versionado para: oferta com publicação conjunta para app/site e política de confirmação
 por serviço, antecedência mínima de novas reservas, horizonte futuro e permissão de escolha de profissional por estabelecimento; consulta de vagas por
 procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
 necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
@@ -336,7 +338,7 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 ### Validação planejada
 
 - Publicação (2C-SC-18): Salvar novo serviço mantém invisibilidade externa; Publicar salva e
-  publica numa ação. Validar oferta incompleta, permissão de consulta sem alteração, modo sem
+  publica numa ação para app e site, sem escolha de canal. Validar oferta incompleta, permissão de consulta sem alteração, modo sem
   profissionais, agenda válida esgotada, repetição, concorrência e falhas sem perda de campos,
   publicação parcial ou duplicação. Ativo sem publicado continua privado. Em serviço publicado,
   verificar persistência/reabertura do rascunho com Salvar alterações e isolamento dos valores
@@ -344,7 +346,9 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   revisão vigente atomicamente. Cobrir erro/concorrência preservando publicação anterior,
   idempotência sem duplicação, reservas existentes e disponibilidade operacional atual enquanto
   houver rascunho. Conferir rótulos distintos entre cadastro e edição publicada e descrições
-  persistentes logo abaixo de cada botão, legíveis em telas estreitas e acessíveis.
+  persistentes logo abaixo de cada botão, legíveis em telas estreitas e acessíveis. Verificar
+  a mesma revisão publicada em ambos, atualização das projeções/caches dos dois e isolamento
+  do rascunho nos dois; falha mantém a publicação anterior compartilhada.
 
 - Contagem por troca (2C-SC-10): verificar sequência (confirmadas, em andamento) 0/0 → 0/1;
   substituições/recusas/retomadas mantêm 0/1; aprovação resulta em 1/0; próxima troca em 1/1;
@@ -373,7 +377,7 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   confirmação/aprovação e preservação de pendências/reservas existentes. Verificar que a
   configuração de novas reservas não altera o prazo separado de remarcação.
 
-- Contratos: visitante sem login consulta apenas serviços publicados para o canal, sem dados
+- Contratos: visitante sem login consulta o mesmo catálogo publicado no app e no site, sem dados
   privados/rascunhos; consulta anônima de vagas é negada. Identidade revogada não consulta vagas
   ou reservas; ator sem vínculo não enumera nem lê reserva de terceiro.
 - Integração em PostgreSQL descartável: painel versus app/site disputam mesma vaga; mesmo
@@ -438,7 +442,7 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; definição dos canais de destino;
+Mecanismo de identidade externa e gestão/revogação do vínculo;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
