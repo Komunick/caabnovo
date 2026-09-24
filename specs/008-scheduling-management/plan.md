@@ -134,7 +134,9 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    pela equipe para exigir aprovação de novos envios. Solicitação pendente ocupa a vaga até
    aprovação ou recusa da equipe, sem expiração automática. Em 24/09 foi autorizado remarcar e
    cancelar reservas futuras confirmadas no app/site; a remarcação segue a aceitação do serviço.
-   Definir os prazos dessas ações e a proposta de prioridade antes do contrato externo.
+   Remarcações vêm primeiro na fila, pelo início atual mais próximo; novos pedidos vêm depois.
+   Para solicitar remarcação, exigir 24 horas de antecedência por padrão, editável/desativável
+   por serviço. O prazo de cancelamento ainda será definido antes do contrato externo.
 5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
    executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
@@ -180,9 +182,18 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   Modelar ocupação da proposta junto à original e tratar eventual sobreposição entre ambas
   dentro da mesma troca, preservando exclusão contra qualquer outra reserva. A decisão vigente
   dispensa expiração automática; limites de pedidos paralelos e desistência ainda serão definidos.
-- Prioridade de análise de remarcações é proposta pendente de decisão. Não conceder preferência
-  sobre vaga já ocupada ou retida, nem dispensar aceitação do serviço. Se aprovada, definir
-  desempate e acompanhamento de solicitações antigas para evitar espera indefinida de novos pedidos.
+- Ordenar a fila por classe (remarcação antes de novo pedido) e, nas remarcações, pelo início
+  atual da reserva crescente. Desempatar por envio e identificador estável; para novos pedidos,
+  usar envio e identificador. Não usar o horário proposto nem a antiguidade do pedido como
+  primeiro critério entre remarcações. Projetar essa ordem na consulta/paginação do servidor,
+  mantendo visibilidade da idade dos demais pedidos; não tomar vagas ocupadas nem dispensar
+  a aceitação do serviço.
+- Modelar antecedência mínima de remarcação por serviço com padrão de 24 horas e desativação
+  explícita. Ao receber um pedido externo, comparar o relógio do servidor ao início atual da
+  reserva; exatamente no limite é permitido. Revalidar sob o mesmo protocolo transacional da
+  reserva/configuração, sem confiar em horário do cliente. Guardar a política aplicada para
+  auditoria; cruzar o limite durante análise não invalida pedido aceito dentro do prazo. Mudar
+  a configuração afeta novos envios e não cria expiração automática.
 
 ### Contratos a detalhar depois das decisões
 
@@ -230,6 +241,11 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   Cobrir aprovação versus cancelamento/edição concorrente, perda de vínculo e conflitos com
   outras reservas; falha preserva a origem. Registrar como pendência de produto o tratamento de
   desistência, pedidos paralelos e horário original alcançado antes da decisão.
+- Fila/prazo: provar que remarcação para amanhã precede outra para o próximo mês mesmo enviada
+  depois, e que ambas precedem novos pedidos; verificar desempates e paginação estáveis.
+  Cobrir limite exato de 24 horas, instante imediatamente anterior, prazo editado, desativado,
+  navegador em outro fuso e pedido que cruza o limite durante análise. A idade do pedido e o
+  horário pretendido não podem inverter o critério principal de prioridade.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -249,7 +265,7 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência e prazos de remarcação/cancelamento; prioridade, desistência e pedidos
+por canal para antecedência de novas reservas e prazo de cancelamento; desistência e pedidos
 paralelos de troca pendente; responsabilidade e prazo interno de análise da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
