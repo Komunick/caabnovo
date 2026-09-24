@@ -84,7 +84,7 @@ do login não dispensa essa validação nem autoriza titular a reservar serviço
 | resumeWithoutTime | bookingId, novo destino, expectedVersion | Mesmo registro/ciclo após recusa/desistência ou recuperação do estabelecimento; não reaplica prazo da origem/nova reserva. Valida destino futuro, horizonte, acesso, elegibilidade e aceitação. |
 | approveProposal | bookingId, proposalId/version, expectedVersion | Equipe autorizada, destino ainda futuro e guardas atuais. Confirma o destino já retido, sem duplicar ocupação; conta uma vez apenas no ciclo voluntário. |
 | rejectProposal | bookingId, proposalId/version, expectedVersion | Equipe autorizada; libera destino. Pedido novo termina rejeitado; troca/recuperação permanece no mesmo registro sem horário confirmado. |
-| cancelBooking | bookingId, expectedVersion | Confirmada: antes do início, sem antecedência mínima. Sem horário confirmado: fronteiras de 2C-FR-09/18/20; libera somente retenção própria, encerra processo e preserva histórico/contagens anteriores. |
+| cancelBooking | bookingId, expectedVersion | Confirmada ou pedido novo aguardando aprovação: antes do início confirmado/solicitado, sem antecedência mínima nem aprovação da equipe. Pedido novo vai a cancelled, libera vaga e sai da fila/alertas; não conta troca. Registro sem horário após troca/recuperação: guardas de 2C-FR-09/18/20; liberar só retenção própria e preservar histórico. |
 | registerProviderUnavailability | bookingId, expectedVersion, referência do recurso/período indisponível | Equipe autorizada; reserva confirmada. Retira confirmação/ocupação, registra/mantém bloqueio efetivo e inicia recuperação isenta no mesmo ID, com aviso devido. Não altera outras reservas por inferência. |
 
 Não exigir justificativa humana livre nesses comandos. “Causa do estabelecimento” é classificação
@@ -93,14 +93,18 @@ Uma proposta inicial não pertence a ciclo de troca; sua referência de processo
 não reserva utilização voluntária. Reservas sem horário devem continuar encontráveis por situação,
 mesmo após o início original; não desaparecer por um filtro exclusivo de próximos intervalos.
 Recusa de uma proposta nova pode ser terminal; isso não se confunde com recusa de troca que conserva
-o ciclo para outra tentativa. Nenhum processo expira apenas por passagem do tempo.
+o ciclo para outra tentativa. Nenhum processo expira apenas por passagem do tempo. Cancelamento voluntário de pedido novo é
+comando explícito do ator autorizado; encerra proposta/fila/alertas, preserva ID/histórico e gera
+aviso de cancelamento conforme preferências/destinatários. Não consome utilização de troca.
+Cancelamento versus aprovação/recusa exige versão vigente; resultado obsoleto não reabre pedido.
+Replay autorizado de cancelamento concluído, inclusive após início, não executa nova liberação.
 Solicitações existentes não mudam de estado quando o serviço altera sua política de aceitação.
 
 ## 6. Estado e ocupação (valores lógicos propostos)
 
 | Estado | Ocupação | Saídas principais |
 | --- | --- | --- |
-| pending_approval, pedido novo | Só intervalo solicitado | Aprovar → scheduled; recusar → rejected. Cancelamento externo de pedido novo pendente não está definido pelas guardas de cancelamento de reserva confirmada/troca. |
+| pending_approval, pedido novo | Só intervalo solicitado | Aprovar → scheduled; recusar → rejected; cancelar pelo ator autorizado antes do início solicitado → cancelled, sem aprovação da equipe e com liberação imediata. |
 | scheduled | Só intervalo confirmado | Cancelar → cancelled; troca válida → pending_approval ou scheduled; indisponibilidade → awaiting_new_time. |
 | pending_approval, troca/recuperação | Só destino, nunca origem histórica | Aprovar → scheduled; recusar/retirar → awaiting_new_time; substituir mantém estado; cancelar conforme guarda → cancelled. |
 | awaiting_new_time | Zero vagas | Retomar → pending_approval ou scheduled; cancelar → cancelled. |
