@@ -30,7 +30,11 @@ aprovação exigida pelo serviço. Na confirmação imediata, não há fila de a
 
 **Decisão adicional de 24/09:** no máximo uma troca pendente por reserva, permitindo desistência
 que mantém a consulta original ou substituição sujeita ao prazo de remarcação. O usuário também
-solicitou limite total de trocas, cuja quantidade, abrangência e contagem ainda aguardam definição.
+definiu o limite de duas remarcações confirmadas por reserva, sem contar recusa ou desistência.
+Depois desse limite, a pessoa pode cancelar e fazer novo agendamento, preservando o histórico.
+Confirmou também a visão de histórico individual integrado por associado/dependente, incluindo
+compras quando o domínio responsável estiver integrado; esse desenho transversal pertence ao
+programa 002.
 Como origem e destino ficam ocupados durante a análise, acompanhar seu tempo e a idade dos demais
 pedidos continua relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
 duração das retenções; não prometer redução antes de observar dados da CAAB.
