@@ -128,8 +128,12 @@ informar antes da confirmação que a vaga antiga não é garantida em caso de r
 O registro mantém identidade, histórico, prioridade pelo início original e contagem apenas de
 remarcações confirmadas. Após recusa/desistência, fica sem horário confirmado; o usuário aceitou
 continuar escolhendo vaga no mesmo registro, inclusive após o horário original, preservando
-histórico e contador. Recusa não conta; esclarecer se a alternativa confirmada após ela também
-fica isenta. Essa regra é decisão da CAAB, não consenso de mercado.
+histórico e contador. Esclarecimento posterior: o primeiro pedido reserva uma das duas trocas;
+alternativas antes da aprovação e retomadas após recusa pertencem à mesma troca, sem cobrança
+adicional. Confirmar consolida essa utilização uma vez; mudar de novo após confirmar inicia a
+próxima troca. Distinguir utilização em andamento de confirmada. A finalidade declarada é impedir
+sucessivas mudanças de horários confirmados sem efetivo uso, sem punir tentativas recusadas.
+Essa regra é decisão da CAAB, não consenso de mercado.
 A confirmação imediata já pode efetivar a troca em uma transação e liberar a origem, sem fila
 duradoura; o tradeoff acima afeta especialmente serviços com aprovação manual.
 
