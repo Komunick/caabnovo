@@ -83,3 +83,13 @@ ocupam. Conferir conflitos preexistentes antes de ativar a restrição, sem alte
 inferência. Decisões de aprovação/recusa exigem permissão de alteração, controle de versão,
 revalidação e evento auditado. A fila administrativa precisa expor a idade da pendência para que a
 equipe resolva solicitações sem prazo automático.
+
+Decisão de 24/09/2026: remarcação externa também segue a aceitação do serviço. No fluxo manual,
+modelar uma proposta de troca vinculada à reserva, com versão de origem e horário pretendido.
+A reserva original permanece confirmada até a aprovação; o destino fica retido como pendência.
+Aprovar aplica a troca no mesmo identificador e libera o horário anterior em transação; recusar
+libera apenas o destino. A proposta não representa outro atendimento independente. O desenho de
+ocupação deve proteger origem e destino contra outras reservas e tratar a sobreposição interna
+da própria troca sem dispensar conflitos de terceiros. Definir pedidos paralelos, desistência e
+concorrência com cancelamento antes de concluir o contrato e a migration. Prioridade na análise
+permanece proposta de produto, sem campo ou ordenação final aprovados.
