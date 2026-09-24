@@ -136,7 +136,8 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    cancelar reservas futuras confirmadas no app/site; a remarcação segue a aceitação do serviço.
    Remarcações vêm primeiro na fila, pelo início atual mais próximo; novos pedidos vêm depois.
    Para solicitar remarcação, exigir 24 horas de antecedência por padrão, editável/desativável
-   por serviço. O prazo de cancelamento ainda será definido antes do contrato externo.
+   por serviço. Cancelamento externo é permitido até antes do início, sem antecedência mínima
+   e sem aprovação da equipe.
 5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
    executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
@@ -195,6 +196,13 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   auditoria; cruzar o limite durante análise não invalida pedido aceito dentro do prazo. Mudar
   a configuração afeta novos envios e não cria expiração automática.
 
+- Cancelamento externo de reserva confirmada verifica no servidor que o início atual ainda é
+  futuro, sem aplicar o prazo de remarcação nem aguardar aprovação da equipe. Validar a versão,
+  autorizar e cancelar em transação. Se houver troca pendente, encerrá-la e liberar também a
+  retenção do destino. Uma aprovação concorrente precisa detectar mudança de versão/situação;
+  não reativar reserva cancelada nem deixar retenção órfã. Cancelamento do atendimento e
+  desistência apenas da troca são ações distintas; esta última ainda requer decisão de produto.
+
 ### Contratos a detalhar depois das decisões
 
 Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
@@ -239,13 +247,18 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 - Troca com aprovação: reserva original permanece confirmada, destino fica retido; aprovar
   preserva o identificador e move a ocupação uma vez; recusar mantém a origem e libera o destino.
   Cobrir aprovação versus cancelamento/edição concorrente, perda de vínculo e conflitos com
-  outras reservas; falha preserva a origem. Registrar como pendência de produto o tratamento de
+  outras reservas; falha preserva a origem. Cancelamento da original encerra a troca e libera
+  origem/destino atomicamente, sem permitir reativação por decisão atrasada. Registrar como pendência de produto o tratamento de
   desistência, pedidos paralelos e horário original alcançado antes da decisão.
 - Fila/prazo: provar que remarcação para amanhã precede outra para o próximo mês mesmo enviada
   depois, e que ambas precedem novos pedidos; verificar desempates e paginação estáveis.
   Cobrir limite exato de 24 horas, instante imediatamente anterior, prazo editado, desativado,
   navegador em outro fuso e pedido que cruza o limite durante análise. A idade do pedido e o
   horário pretendido não podem inverter o critério principal de prioridade.
+- Cancelamento: com relógio controlado, permitir comando um segundo antes do início e negar
+  no instante de início ou depois. Comprovar ausência de antecedência mínima e de aprovação da
+  equipe, repetição idempotente e encerramento de troca vinculada; revalidar versão e horário
+  diante de aprovação concorrente.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -265,7 +278,7 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência de novas reservas e prazo de cancelamento; desistência e pedidos
+por canal para antecedência de novas reservas; desistência e pedidos
 paralelos de troca pendente; responsabilidade e prazo interno de análise da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
