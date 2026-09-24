@@ -76,9 +76,10 @@ criar segunda reserva, e recusa registra uma situação terminal e libera a ocup
 automática. Os nomes finais dos novos estados e comandos devem ser conciliados com os contratos
 existentes antes da migration.
 
-Pendências e reservas confirmadas ocupam o intervalo do profissional e do beneficiário, inclusive
-em disputas entre painel e app/site. A migration aditiva deve estender as restrições de exclusão e
-o protocolo transacional para considerar ambas as situações ocupantes; recusa e cancelamento não
+Pendências e reservas confirmadas ocupam o intervalo do beneficiário e do profissional quando
+atribuído; sem profissional, ocupam a capacidade do serviço na unidade. Isso inclui disputas entre
+painel e app/site. A migration aditiva deve estender as restrições de exclusão e o protocolo
+transacional por capacidade para considerar ambas as situações ocupantes; recusa e cancelamento não
 ocupam. Conferir conflitos preexistentes antes de ativar a restrição, sem alterar dados por
 inferência. Decisões de aprovação/recusa exigem permissão de alteração, controle de versão,
 revalidação e evento auditado. A fila administrativa precisa expor a idade da pendência para que a
@@ -139,7 +140,27 @@ desativada com equipe existente resolvem um assignment elegível no servidor, in
 concluir e revalidado no comando. Isso não altera a identidade dos profissionais nem elimina
 proteção contra sobreposição.
 
-Sem profissionais cadastrados, o seletor é omitido. Ainda não foi decidido se haverá reserva
-nesse cenário: o modelo atual exige assignment/professional e não pode ser transformado em
-agenda de capacidade por serviço sem definir suas regras. Nenhuma migration ou profissional
-fictício é criado por esta decisão documental.
+Decisão seguinte da rodada 3: sem profissionais cadastrados, permitir reserva usando horários
+próprios e quantidade de vagas do serviço na unidade. O seletor é omitido. O modelo inicial
+exige assignment/professional; planejar extensão aditiva, não tratar a mudança como já aplicada.
+
+- A oferta distingue ocupação por profissional ou por capacidade do serviço. No primeiro modo,
+  assignment válido é obrigatório; no segundo, referência à oferta/unidade é obrigatória e não
+  há profissional fictício. Preservar modo e referências nas reservas e propostas de troca.
+- Modelar expediente do serviço e capacidade simultânea inteira positiva, sem valor ilimitado
+  implícito. Considerar a duração completa, [início,fim) e funcionamento da unidade. Ausência de
+  configuração não produz vagas; ausência temporária de profissional apto não muda o modo.
+- Contar ocupações confirmadas, aguardando aprovação e retenções de destino durante todo o
+  intervalo. Na mesma capacidade, a união origem/destino de uma única reserva/proposta consome
+  uma vaga no trecho sobreposto; não dispensar ocupações de terceiros. Locks transacionais da
+  oferta/capacidade e recontagem devem coordenar comandos e mudanças de configuração; a
+  exclusão por profissional existente não basta para garantir capacidade maior que um.
+- Aprovar conserva a ocupação, recusar/retirar libera destino, substituir troca a retenção
+  atomicamente e cancelar original encerra ambas. Preservar exclusão global por beneficiário,
+  idempotência, versões e auditoria. Nenhuma decisão tardia pode recriar ocupação cancelada.
+- Adicionar profissionais não converte reservas sem responsável; desativar equipe não elimina
+  vínculos históricos. Recusar mudança de horários/capacidade que invalide ocupações futuras
+  até resolução explícita. Planejar projeções e consumidores com profissional ausente quando
+  esse for o modo registrado, sem exigir que app/site ou calendário inventem nomes.
+
+Esta decisão estende o planejamento de 2C; nenhuma migration foi criada ou aplicada nesta etapa.
