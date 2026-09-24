@@ -2,7 +2,7 @@
 
 **Entrega documental ativa**: `codex/scheduling-market-research-20260923` | **Data**: 24/09/2026.
 **Spec**: [spec.md](spec.md). **Estado de 2C**: decisões funcionais incorporadas; contrato lógico,
-modelo e roteiro de validação propostos. Integrações e evidências operacionais ainda pendentes.
+modelo, roteiro de validação e tarefas T040–T077 propostos. Integrações e evidências operacionais ainda pendentes.
 Ver [continuação 2C](#continuação-do-plano--incremento-2c-appsite-23092026),
 [contrato](contracts/channels.md) e [checkpoint](evidence/plan-2026-09-24.md).
 
@@ -62,7 +62,7 @@ requisitos indefinidos. Sem consulta a contas/dados de produção.
 - Preservar projeção mínima de beneficiário autorizada pela agenda; reports.bookings passa a exigir
   scheduling:read. Não conceder members:read por efeito colateral.
 - Pré-diagnóstico SQL lista pares scheduled com mesmo member_id e ranges sobrepostos, inclusive
-  datas passadas. Migração 0028 adiciona EXCLUDE USING gist(member_id WITH =,
+  datas passadas. Migration aditiva com número livre a conferir (0028 já usada no ciclo de vida) adiciona EXCLUDE USING gist(member_id WITH =,
   tstzrange(starts_at,ends_at,'[)') WITH &&) WHERE(status='scheduled'); preservar constraint
   profissional. Se houver conflitos, parar sem alterar dados e pedir decisão sobre casos concretos.
 - Criar/remarcar revalida disponibilidade e ambos conflitos na transação; mapear constraint/SQLSTATE
@@ -110,7 +110,7 @@ some/nega; só read não altera. Exportação não herda teto visual.
 
 Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior nunca conclui
 tarefa nova. O incremento T025–T039 já possui tarefas geradas e continua sem execução. O desenho 2C abaixo é
-apenas documental; requer decisões de produto, contrato externo e tarefas próprias antes de código.
+apenas documental; T040–T077 detalham verificações e implementação futura, com gates factuais antes de código.
 
 ## Complexity Tracking
 
@@ -125,7 +125,7 @@ somente à transferência atual; não é fila/histórico obrigatório.
 [roteiro de validação](quickstart.md). Não conclui T022/T023/T024, não altera entregas
 administrativas anteriores nem autoriza implementação/publicação. A interface completa do
 app/site terá especificação própria no programa 002; reconciliar esse contrato com UI01/UI02
-antes de gerar sua sequência executável.
+antes de executar tarefas de consumidor. A lista 2C T040–T077 foi gerada com essas dependências explícitas; nenhuma tarefa foi executada.
 
 ### Contexto técnico e verificação de princípios de 2C
 
@@ -176,8 +176,8 @@ continuação manual dos artefatos na branch existente, sem conclusão automatiz
    por serviço. Cancelamento externo é permitido até antes do início, sem antecedência mínima
    e sem aprovação da equipe.
 5. Contrato/modelo/quickstart consolidados nesta etapa documental; conferir compatibilidade com
-   o acesso externo e UI01/UI02, detalhar integrações restantes, então gerar tarefas executáveis
-   e executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
+   o acesso externo e UI01/UI02 e detalhar integrações restantes nas tarefas T040–T050;
+   T051–T077 organizam implementação/validação futuras. Analisar o conjunto antes de executar. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
 ### Arquitetura candidata e fronteiras
 
@@ -417,6 +417,33 @@ compatibilidade já implementada.
 Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md); sua extensão 2C
 referencia o contrato externo sem substituir consumidores históricos do painel.
 
+
+### Destinos de implementação de 2C — tarefas de 24/09
+
+Destinos abaixo são planejamento, sem criação de código. Manter os serviços existentes quando
+a responsabilidade já estiver em booking/catalog/hours/availability; novos arquivos separam
+fronteiras concretas de acesso, processo, fila e entrega, sem framework genérico.
+
+| Destino | Responsabilidade e condição |
+| --- | --- |
+| `packages/contracts/src/scheduling-channels.ts` e `scheduling-channels.test.ts` | Novos: schemas v1 e testes após vínculo HTTP/identidade verificado. |
+| `packages/db/migrations/`, `packages/db/src/schema.ts` | Extensão aditiva conforme T045; nome SQL exato somente após conferir sequência. 0028 já é citado no ciclo de vida e não pode ser reutilizado. |
+| `apps/web/modules/scheduling/channel-access.ts` | Novo: adapter da identidade existente, representação e negação por padrão. |
+| `apps/web/modules/scheduling/channel-query-service.ts` | Novo: projeções pública/privada, elegibilidade e histórico, sem copiar cadastro. |
+| `apps/web/modules/scheduling/reschedule-service.ts` | Novo: processos/propostas/ciclos, sob protocolo transacional único. |
+| `apps/web/modules/scheduling/approval-service.ts` e `approval-queue-service.ts` | Novos: decisões versionadas, responsabilidade, ordenação e alertas. |
+| `apps/web/modules/scheduling/provider-recovery-service.ts` | Novo: indisponibilidade operacional/recuperação isenta; integra hours/reschedule sem alterar terceiros. |
+| `apps/web/modules/scheduling/notification-service.ts` | Novo: preferências, evento/intenção e avisos internos; transporte fora da transação. |
+| `apps/worker/src/jobs/scheduling-notifications.ts` | Novo: handler de avisos integrado a `apps/worker/src/main.ts`, com jobs existentes; depende de T044. |
+| `apps/web/modules/scheduling/http/channel-routes.ts` | Novo: adaptador HTTP; caminhos de rotas concretos fechados em T041 antes de T070. |
+| `apps/web/modules/scheduling/ui/` | Extensões dos componentes administrativos identificados em T043; guia é gate. |
+| Clientes app/site | Caminhos pertencem à spec própria de 002 UI01/UI02; T043/T072 registram correspondência, sem duplicar implementação. |
+
+Testes novos de contratos, políticas, integração e worker estão nomeados em T046–T073 de
+[tasks.md](tasks.md). Aplicação continua modular, com PostgreSQL como única fonte; não ativar
+adapters sintéticos no ambiente real. Evidências futuras:
+`evidence/channels-validation.md` e `evidence/channels-ui-validation.md`.
+
 ### Experiência e acessibilidade
 
 O planejamento de navegação externa cobre descoberta de serviços antes do login e, depois de
@@ -586,7 +613,8 @@ ordem da jornada e urgência a 24 horas do atendimento configurável foram defin
 O contrato lógico e o roteiro podem ser revisados com adaptadores sintéticos identificados;
 ativação externa permanece bloqueada por essas dependências. Este plano não serve como ordem de
 implementação. A continuidade é registrar evidências de integração/inventário, fechar vínculo
-HTTP e compatibilidade com UI01/UI02, gerar tarefas e analisar o conjunto antes de executar.
+HTTP e compatibilidade com UI01/UI02 conforme T040–T050, analisar a lista T040–T077 e resolver
+seus gates antes de executar.
 
 ## Histórico anterior — referência, não sequência executável atual
 
