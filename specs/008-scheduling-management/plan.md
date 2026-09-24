@@ -203,6 +203,15 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   cruzar o limite durante a análise não cria expiração. A regra vale nos dois modos de ocupação
   e de aceitação. Não reutilizar esse campo como prazo de remarcação ou impor esse prazo ao
   destino de uma troca sem decisão própria.
+- Horizonte futuro externo (2C-FR-16): adicionar política por serviço com padrão de 90 dias
+  corridos, editável e desativável. Usar instante do servidor + duração em dias de 24 horas;
+  comparar início da reserva/destino de troca com limite inclusivo. Recalcular nas consultas
+  e comandos, sem job diário para abrir vagas. O horizonte não gera expediente ou capacidade.
+  Revalidar configuração sob lock entre prévia e envio; alterações valem para novos pedidos,
+  sem invalidar reservas ou propostas anteriormente recebidas. Campos de antecedência mínima,
+  horizonte e prazo de remarcação são independentes; combinar somente regras aplicáveis.
+  Horizonte desativado não significa consulta ilimitada: paginar intervalos de disponibilidade
+  e manter limites técnicos de cada endpoint, sem impor outro teto comercial oculto.
 - Modelar antecedência mínima de remarcação por serviço com padrão de 24 horas e desativação
   explícita. Ao receber um pedido externo, comparar o relógio do servidor ao início atual da
   reserva; exatamente no limite é permitido. Revalidar sob o mesmo protocolo transacional da
@@ -256,7 +265,7 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
 ### Contratos a detalhar depois das decisões
 
 Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
-por serviço, antecedência mínima de novas reservas e permissão de escolha de profissional por estabelecimento; consulta de vagas por
+por serviço, antecedência mínima de novas reservas, horizonte futuro e permissão de escolha de profissional por estabelecimento; consulta de vagas por
 procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
 necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
@@ -278,6 +287,11 @@ revisão remota; nenhuma conformidade visual foi presumida. Validar teclado, foc
 estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
+
+- Horizonte (2C-SC-15): limite de 90 dias inclusivo e um segundo além, avanço diário, edição
+  para 30 dias, desativação, mudança entre prévia e envio e preservação de reservas/propostas
+  anteriores. Conferir novo pedido/destino de remarcação, fusos, duração completa no expediente,
+  ambos os modos de ocupação/aceitação e consulta por intervalos quando não houver teto comercial.
 
 - Novas reservas (2C-SC-14): padrão sem prazo, início futuro versus início atual/passado,
   limite configurado exato e imediatamente abaixo, mudança/desativação entre prévia e envio,
@@ -352,7 +366,7 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; horizonte futuro de reservas;
+Mecanismo de identidade externa e gestão/revogação do vínculo;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
