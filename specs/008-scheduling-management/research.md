@@ -39,6 +39,18 @@ Como origem e destino ficam ocupados durante a análise, acompanhar seu tempo e 
 pedidos continua relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
 duração das retenções; não prometer redução antes de observar dados da CAAB.
 
+## Escolha de profissional — decisão da rodada 3 de 24/09/2026
+
+O usuário escolheu oferecer profissional específico ou qualquer disponível, condicionado à
+existência de profissionais cadastrados. O estabelecimento pode desativar a escolha mesmo com
+equipe cadastrada. Nesse caso, o servidor resolve um responsável apto/disponível e o informa
+antes de concluir a reserva. O controle não aparece sem profissionais. A possibilidade de
+reservar sem profissional ainda precisa de decisão sobre fonte da agenda e capacidade;
+o modelo inicial exige vínculo a um profissional.
+
+Essa atribuição limitada ao fluxo aprovado passou a integrar 2C; algoritmos avançados de
+distribuição, capacidade coletiva e outros recursos continuam dependentes de escopo próprio.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
@@ -68,7 +80,7 @@ Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta
 
 ### Experiência de quem reserva no app/site
 
-1. Apresentar serviços e procedimentos com duração, unidade e instruções essenciais; permitir descobrir por serviço ou por profissional quando houver preferência.
+1. Apresentar serviços e procedimentos com duração, unidade e instruções essenciais; permitir escolher profissional específico ou qualquer disponível quando houver equipe apta e o estabelecimento habilitar a escolha.
 2. Antes da confirmação, identificar quem será atendido (titular ou dependente autorizado). Mostrar apenas opções que possam ser reservadas por esse perfil; explicar indisponibilidade sem expor dados internos.
 3. Mostrar datas com vagas e horários legíveis, com próxima data e alternativas de unidade/profissional quando não houver vaga. A seleção é provisória até a confirmação no servidor.
 4. Revisar beneficiário, procedimento, unidade, profissional, data, hora e regras aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
@@ -95,11 +107,11 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 | 1 | Fechar concessões consultar/alterar, conflito por beneficiário, aviso de bloqueio, exportação e revisão CAL06. | Lacunas já registradas em spec/plan/tasks; confirmar estado do Git antes de executar. |
 | 2 | Especificar primeira jornada app/site, identidade do titular/dependente, contrato de vagas e mutações, e transição do legado. | Etapa posterior priorizada no roadmap; decisões de produto e contrato ainda necessários. |
 | 3 | Detalhar indisponibilidades, agenda extra, antecedência, horizonte futuro, presença/falta e avaliações. | Funcionalidades do legado ou operação a confirmar uma a uma; sem implementação automática. |
-| 4 | Avaliar turmas/capacidade, recursos físicos, lista de espera, atribuição automática, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
+| 4 | Avaliar turmas/capacidade, recursos físicos, lista de espera, distribuição avançada de profissionais, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
 
 ## Decisões que a pesquisa não pode tomar pela CAAB
 
-- Quais serviços aparecem no app/site e se o usuário pode escolher profissional, unidade ou “qualquer disponível”?
+- Quais serviços/unidades aparecem em cada canal? A escolha de profissional específico ou qualquer disponível foi aprovada, condicionada à equipe cadastrada e à configuração do estabelecimento. Falta decidir reserva sem profissionais.
 - Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
 - Qual antecedência de novas reservas e horizonte futuro valem por serviço e canal? A remarcação tem antecedência padrão de 24 horas, editável/desativável; cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09).
 - O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
