@@ -281,13 +281,13 @@ Scenarios**:
 3. A avaliação permanece associada ao atendimento e ao autor conforme contrato específico; gestão
    não implica reescrever automaticamente a opinião recebida.
 
-### Detalhamento 2C — primeira reserva no app/site (rascunho de 23/09/2026)
+### Detalhamento 2C — reserva e gestão no app/site (consolidado em 24/09/2026)
 
 **Estado:** continuação documental de US3 baseada na [pesquisa de mercado de 23/09](research.md).
 Descreve resultados e invariantes para a primeira experiência externa; não aprova integração,
 implantação ou implementação. A interface completa do app/site terá a especificação própria já
-prevista no programa 002. As decisões em aberto abaixo devem ser resolvidas antes de fechar o
-contrato externo e gerar tarefas executáveis.
+prevista no programa 002. As dependências factuais abaixo condicionam a integração e a execução;
+[tasks.md](tasks.md) detalha T040–T077 sem presumir esses gates resolvidos ou autorizar código.
 
 **Jornada de valor:** uma pessoa descobre os serviços publicados no app e no site antes do login. Depois
 de autenticar, identifica primeiro o beneficiário que está autorizada a representar, escolhe
@@ -864,7 +864,8 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 **Contrato e planejamento de 2C:** [contrato lógico v1](contracts/channels.md),
 [modelo](data-model.md) e [roteiro de validação](quickstart.md), consolidados em 24/09.
-Proposta documental sem endpoint/integração comprovados; dependências abaixo permanecem abertas.
+Proposta documental sem endpoint/integração comprovados; T040–T077 detalham preparação,
+implementação e validação futuras, mantendo abertas as dependências abaixo.
 
 **Decisões e dependências pendentes para fechar 2C:**
 
