@@ -132,8 +132,9 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
 4. Aplicar as decisões de 23/09: serviços publicados para o canal ficam visíveis antes do login;
    vagas exigem autenticação. Confirmação imediata é o padrão por serviço e pode ser desativada
    pela equipe para exigir aprovação de novos envios. Solicitação pendente ocupa a vaga até
-   aprovação ou recusa da equipe, sem expiração automática. Definir antecedência, remarcação e
-   cancelamento antes do contrato externo.
+   aprovação ou recusa da equipe, sem expiração automática. Em 24/09 foi autorizado remarcar e
+   cancelar reservas futuras confirmadas no app/site; a remarcação segue a aceitação do serviço.
+   Definir os prazos dessas ações e a proposta de prioridade antes do contrato externo.
 5. Após essas decisões: atualizar spec/contrato/modelo/quickstart, produzir tarefas e
    executar análise cruzada. Código, CI e ativação dos canais pertencem a uma etapa posterior.
 
@@ -171,6 +172,17 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   humana e não expira automaticamente. A equipe precisa de fila com identificação e idade das
   pendências para evitar vagas presas por falta de análise. Nenhum status de comparecimento ou
   avaliação é inferido do horário.
+
+- Remarcação externa com aprovação precisa de uma solicitação vinculada à reserva original,
+  com horário pretendido e versão de origem. Manter o compromisso atual confirmado e reter o
+  destino enquanto a equipe analisa. Aprovar troca horários e libera a origem atomicamente;
+  recusar libera somente a retenção do destino. Não criar dois atendimentos independentes.
+  Modelar ocupação da proposta junto à original e tratar eventual sobreposição entre ambas
+  dentro da mesma troca, preservando exclusão contra qualquer outra reserva. A decisão vigente
+  dispensa expiração automática; limites de pedidos paralelos e desistência ainda serão definidos.
+- Prioridade de análise de remarcações é proposta pendente de decisão. Não conceder preferência
+  sobre vaga já ocupada ou retida, nem dispensar aceitação do serviço. Se aprovada, definir
+  desempate e acompanhamento de solicitações antigas para evitar espera indefinida de novos pedidos.
 
 ### Contratos a detalhar depois das decisões
 
@@ -210,9 +222,14 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 - Jornada com identidades sintéticas: titular reserva para si e dependente; dependente reserva
   para si e é negado ao tentar reservar para titular ou outro dependente. Ambos consultam a
   reserva do dependente criada pelo titular; após cessar o vínculo, só o dependente a consulta.
-  Quando remarcação/cancelamento forem liberados, cobrir essas ações por ambos com vínculo
-  vigente e negar o titular após revogação. Recarregar painel e canal externo, revogar sessão,
+  Cobrir remarcação/cancelamento de reservas futuras confirmadas por ambos com vínculo vigente
+  e negar o titular após revogação. Validar remarcação imediata e com aprovação conforme serviço. Recarregar painel e canal externo, revogar sessão,
   revalidar bloqueio, testar fuso diferente e mudança de oferta entre prévia e confirmação.
+- Troca com aprovação: reserva original permanece confirmada, destino fica retido; aprovar
+  preserva o identificador e move a ocupação uma vez; recusar mantém a origem e libera o destino.
+  Cobrir aprovação versus cancelamento/edição concorrente, perda de vínculo e conflitos com
+  outras reservas; falha preserva a origem. Registrar como pendência de produto o tratamento de
+  desistência, pedidos paralelos e horário original alcançado antes da decisão.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -232,8 +249,9 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência/remarcação/cancelamento; responsabilidade e prazo interno de análise
-da fila de aprovação; mensagens reais; contas e reservas do legado. Até resolvê-las,
+por canal para antecedência e prazos de remarcação/cancelamento; prioridade, desistência e pedidos
+paralelos de troca pendente; responsabilidade e prazo interno de análise da fila de aprovação;
+mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
 ## Histórico anterior — referência, não sequência executável atual
