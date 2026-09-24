@@ -170,7 +170,8 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   liberar a ocupação; ao aprovar, preservar a mesma reserva e intervalo, sem nova ocupação. Uma
   prévia ou calendário externo não reserva a vaga.
 - Criação, remarcação e cancelamento mantêm idempotência, versão, histórico e auditoria; falha
-  de confirmação não altera a reserva anterior. Modelar confirmação imediata como padrão do
+  antes de persistir o pedido não altera a reserva anterior; recusa posterior segue a política
+  de liberação da origem já aplicada ao envio. Modelar confirmação imediata como padrão do
   serviço, com opção administrativa de exigir aprovação para novos envios. Distinguir estado
   aguardando aprovação de reserva confirmada; aprovação/recusa pela equipe requer permissão de
   alteração, revalidação, concorrência segura e auditoria. A pendência ocupa a vaga até decisão
@@ -178,26 +179,28 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   pendências para evitar vagas presas por falta de análise. Nenhum status de comparecimento ou
   avaliação é inferido do horário.
 
-- Remarcação externa com aprovação precisa de uma solicitação vinculada à reserva original,
-  com horário pretendido e versão de origem. Manter o compromisso atual confirmado e reter o
-  destino enquanto a equipe analisa. Aprovar troca horários e libera a origem atomicamente;
-  recusar libera somente a retenção do destino. Não criar dois atendimentos independentes.
-  Modelar ocupação da proposta junto à original e tratar eventual sobreposição entre ambas
-  dentro da mesma troca, preservando exclusão contra qualquer outra reserva. A decisão vigente
-  dispensa expiração automática. Aplicar a decisão de 24/09: no máximo uma proposta pendente por
-  reserva, com desistência ou substituição pelo ator autorizado enquanto a original for futura.
-  Desistência libera somente o destino, sem prazo mínimo; substituição revalida antecedência e
-  aceitação do serviço. Trocar retenções em transação e conservar a proposta anterior se falhar.
+- Remarcação externa: registrar origem imutável (horário, modo/recurso e versão) para histórico,
+  prioridade e cálculo do prazo; validar destino e liberar origem/ocupar destino na mesma
+  transação. Pedido aceito deixa somente destino ocupado, confirmado ou pendente conforme serviço.
+  Se a transação falhar, rollback conserva origem; não confundir falha técnica com recusa posterior.
+  No fluxo manual, registro em remarcação pendente deixa de ter horário confirmado; origem
+  histórica não participa dos conflitos nem aparece como reserva ativa nos canais.
+  Aprovar mantém destino e incrementa contagem uma vez; recusar/retirar libera destino e deixa
+  registro sem horário confirmado, sem retorno automático à origem, inclusive se estiver livre.
+  Manter no máximo uma proposta ativa por reserva, sem expiração automática. Substituir destino
+  troca sua retenção atomicamente e conserva o anterior em caso de falha; não reocupa origem.
+  Prazo de substituição e limite para desistência usam início original registrado, preservando
+  as fronteiras já decididas. Avisar antes do envio/retirada que o horário antigo não é garantido.
 - Decisão B da rodada 3: aprovação de proposta recebida em tempo pode ocorrer após o início
   original. Separar validação de solicitar nova troca da validação de decidir proposta existente;
   a segunda exige destino futuro no relógio real do servidor, além de versão, acesso,
   elegibilidade, disponibilidade e contagem. Não reaplicar a exigência de origem futura a essa
   decisão; preservar eventos anteriores e registrar a aprovação tardia. Se o destino também
   passou, não aprovar retroativamente e não expirar automaticamente; manter para decisão
-  explícita. Passagem do tempo não registra atendimento/falta. Revisão da ocupação origem/destino
-  solicitada pelo usuário está em pesquisa; nenhuma alternativa substitui ainda o desenho vigente.
+  explícita. Passagem do tempo não registra atendimento/falta. A origem já está liberada desde
+  o envio bem-sucedido; conservar sua referência histórica para a decisão tardia.
 - Ordenar a fila por classe (remarcação antes de novo pedido) e, nas remarcações, pelo início
-  atual da reserva crescente. Desempatar por envio e identificador estável; para novos pedidos,
+  original capturado antes de liberar a origem, em ordem crescente. Desempatar por envio e identificador estável; para novos pedidos,
   usar envio e identificador. Não usar o horário proposto nem a antiguidade do pedido como
   primeiro critério entre remarcações. Projetar essa ordem na consulta/paginação do servidor,
   mantendo visibilidade da idade dos demais pedidos; não tomar vagas ocupadas nem dispensar
@@ -229,10 +232,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
 
 - Cancelamento externo de reserva confirmada verifica no servidor que o início atual ainda é
   futuro, sem aplicar o prazo de remarcação nem aguardar aprovação da equipe. Validar a versão,
-  autorizar e cancelar em transação. Se houver troca pendente, encerrá-la e liberar também a
-  retenção do destino. Uma aprovação concorrente precisa detectar mudança de versão/situação;
+  autorizar e cancelar em transação. Encerrar troca pendente libera apenas destino, pois origem
+  já está livre; para a ação externa, manter a fronteira baseada no início original registrado. Uma aprovação concorrente precisa detectar mudança de versão/situação;
   não reativar reserva cancelada nem deixar retenção órfã. Cancelamento do atendimento e
-  desistência apenas da troca são ações distintas. Desistir da troca mantém a consulta original;
+  desistência da troca têm eventos distintos. Desistência não restaura a consulta original;
   impedir aprovação de proposta retirada ou substituída usando versão e estado da proposta.
 
 - Limitar a duas remarcações confirmadas por reserva. Revalidar a contagem no pedido e na
@@ -263,10 +266,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   funcionamento da unidade e duração do procedimento. Serializar alterações da capacidade,
   horários e ocupações da mesma oferta, recontando intervalos sobrepostos na transação antes de
   aceitar. Restrições de exclusão por profissional não resolvem capacidade maior que um.
-  Reservas confirmadas, pendentes e destinos retidos usam o mesmo controle. Consolidar a união
-  dos intervalos da própria reserva/proposta para não duplicar consumo em sobreposição interna
-  da mesma capacidade, sem excluir terceiros. Aprovação conserva ocupação; recusa/retirada libera
-  somente o destino e cancelamento original libera ambas. Preservar modo e referências em cada
+  Reservas confirmadas, pendentes e destinos retidos usam o mesmo controle. No envio da troca,
+  retirar origem e incluir somente destino atomicamente, inclusive em sobreposição parcial;
+  terceiros continuam protegidos. Aprovação conserva destino; recusa/retirada libera destino.
+  A referência histórica da origem não ocupa capacidade nem conflito do beneficiário. Preservar modo e referências em cada
   reserva; mudanças que invalidem ocupação futura exigem resolução explícita antes de efetivar.
   Cadastro posterior de equipe não converte nem cancela reservas existentes.
 
@@ -328,15 +331,13 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   Cobrir remarcação/cancelamento de reservas futuras confirmadas por ambos com vínculo vigente
   e negar o titular após revogação. Validar remarcação imediata e com aprovação conforme serviço. Recarregar painel e canal externo, revogar sessão,
   revalidar bloqueio, testar fuso diferente e mudança de oferta entre prévia e confirmação.
-- Troca com aprovação: reserva original permanece confirmada, destino fica retido; aprovar
-  preserva o identificador e move a ocupação uma vez; recusar mantém a origem e libera o destino.
-  Cobrir aprovação versus cancelamento/edição concorrente, perda de vínculo e conflitos com
-  outras reservas; falha preserva a origem. Cancelamento da original encerra a troca e libera
-  origem/destino atomicamente, sem permitir reativação por decisão atrasada. Registrar como pendência de produto o tratamento de
-  horário original alcançado antes da decisão. Cobrir desistência que preserva a consulta,
-  substituição atômica do destino e operações simultâneas que não podem criar duas propostas
-  pendentes. Falha por prazo/conflito mantém a proposta anterior; decisão sobre versão retirada
-  ou substituída é recusada.
+- Troca com aprovação: envio libera origem e retém só destino; um terceiro pode reservar origem
+  antes da análise. Aprovar mantém destino; recusar/desistir libera destino sem restaurar origem
+  ou tocar reserva de terceiro. Falha antes de persistir pedido preserva origem; falha posterior
+  ao substituir preserva destino anterior, sem reocupar origem. Cobrir sobreposição parcial,
+  profissional/capacidade, conflito de beneficiário, retry, versões e falta de autorização.
+  Provar aviso antes do envio e projeções sem compromisso confirmado na origem. Aprovação tardia
+  segue 2C-SC-16, sem pendência de decisão sobre o simples decurso do horário original.
 - Fila/prazo: provar que remarcação para amanhã precede outra para o próximo mês mesmo enviada
   depois, e que ambas precedem novos pedidos; verificar desempates e paginação estáveis.
   Cobrir limite exato de 24 horas, instante imediatamente anterior, prazo editado, desativado,
@@ -379,8 +380,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; revisão solicitada da ocupação
-original/proposta durante remarcação;
+Mecanismo de identidade externa e gestão/revogação do vínculo; retomada de escolha de vaga após
+recusa/desistência que deixa a reserva sem horário confirmado;
 responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
