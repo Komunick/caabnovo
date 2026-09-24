@@ -168,6 +168,16 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Qual a ordem para reservar? → A: Beneficiário, serviço/unidade, profissional quando
   aplicável, data/horário, revisão/envio (opção B), pois há serviços exclusivos para titulares.
 
+### Session 2026-09-24 — urgência, acessos existentes e reservas legadas
+
+- Q: Com quanto tempo de antecedência um pedido sem aprovação deve aparecer como urgente? →
+  A: Quando faltarem 24 horas para o atendimento, com prazo configurável por serviço (opção A).
+- Q: Titulares e dependentes já possuem acessos individuais no app/site atual? → A: Sim,
+  ambos possuem acesso próprio (opção A). Informação do usuário; integração ainda a verificar.
+- Q: Existem agendamentos futuros em uso no sistema antigo que precisam continuar válidos? →
+  A: Ainda precisamos conferir (opção C). Não presumir ausência nem existência de reservas;
+  preservar histórico e realizar inventário antes de definir a transição.
+
 ## User Scenarios & Testing
 
 ### Incremento autorizado — calendário administrativo, 18/09/2026
@@ -383,7 +393,10 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   mínima e sem dados privados ou horários disponíveis. Consultar vagas exige identidade externa
   validada, assim como reservar, remarcar, cancelar e consultar reservas próprias. Aplicar
   estado único de publicação externa nos dois canais; APIs administrativas e suas sessões não são reutilizadas
-  pelo cliente externo.
+  pelo cliente externo. O usuário informou que titulares e dependentes já possuem acessos
+  individuais no app/site atual. Planejar a ligação dessas identidades ao cadastro individual
+  de Associados e verificar o mecanismo existente antes de definir a integração; não presumir
+  contas compartilhadas, recriação de acessos ou compatibilidade de credenciais já comprovada.
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
   solicitar para si e dependentes com vínculo vigente; dependente só pode solicitar para si.
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
@@ -420,7 +433,9 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   políticas próprios.
 - **2C-FR-06:** Preservar compatibilidade dos consumidores e dados existentes durante a transição
   do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
-  migração/convivência e rollback sem perda de histórico.
+  migração/convivência e rollback sem perda de histórico. A existência de reservas futuras
+  em uso no legado está por conferir, conforme resposta do usuário de 24/09; não tratar o
+  desconhecido como agenda vazia nem executar importação/corte com base nessa hipótese.
 
 - **2C-FR-07:** Priorizar remarcações na fila de aprovação, ordenando pelo início original registrado ao solicitar a troca
   em ordem crescente. Essa referência é preservada mesmo após liberar a origem. A data pretendida não interfere nessa prioridade. Em empate, usar a data
@@ -612,8 +627,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   com prazo editável e desativável por serviço. Medir a idade pelo instante registrado de entrada
   em análise, usando relógio do servidor. Atingir o prazo produz alerta operacional, sem aprovar,
   recusar, cancelar, expirar ou liberar a vaga automaticamente. Mostrar idade da pendência
-  mesmo com alerta desativado. Sinalizar proximidade do atendimento independentemente desse
-  prazo; o limiar objetivo de proximidade permanece a detalhar. Alertas não mudam a ordenação
+  mesmo com alerta desativado. Sinalizar urgência de pedido ainda sem aprovação quando faltar
+  no máximo 24 horas corridas para o início do atendimento solicitado, com antecedência
+  configurável por serviço, independente do prazo de atraso de análise. Na remarcação, usar
+  o destino solicitado atual para urgência; a prioridade da fila continua baseada na origem.
+  Pedido recém-recebido pode ser urgente mesmo sem atraso de análise. Desativar o alerta de
+  atraso não desativa a urgência por proximidade. Cruzar o início sem decisão não apaga o alerta
+  nem causa transição automática; não autoriza confirmação retroativa. Alertas não mudam a ordenação
   de remarcações já definida em 2C-FR-07 nem transferem automaticamente responsabilidade ao backup.
 
 - **2C-FR-23:** Comunicar confirmação, recusa, cancelamento e necessidade de remarcar por
@@ -800,8 +820,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 - **2C-SC-21:** No padrão de 24 horas, pedido em análise a 23h59min59s não recebe o alerta de
   atraso; a 24h recebe. Cobrir prazo editado/desativado, relógio do servidor e pedido decidido.
   Alerta nunca muda status/ocupação/contador nem transfere responsabilidade. Idade permanece
-  disponível com alerta desligado; urgência por proximidade terá casos de fronteira quando
-  o limiar for definido. Ordem da fila continua conforme 2C-FR-07.
+  disponível com alerta desligado. Urgência: faltando 24h00min01s não sinaliza; exatamente
+  24h ou menos sinaliza no padrão, mesmo para pedido recém-criado. Cobrir antecedência configurada,
+  alteração do destino da remarcação, relógio do servidor e atraso desativado com urgência ativa.
+  Pedido decidido deixa os alertas de análise; cruzar o início sem decisão preserva pendência
+  e sinalização, sem confirmação retroativa. Ordem da fila continua conforme 2C-FR-07.
 
 - **2C-SC-22:** Preferências iniciais habilitam app/site, e-mail e WhatsApp. Alteração pelo
   destinatário no app é persistida e aplicada aos avisos seguintes; os demais meios não são
@@ -825,15 +848,15 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 **Decisões de produto pendentes para fechar 2C:**
 
-- Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
-  vínculo e revogação de acesso quando ele cessa. As regras de reserva e de acesso ao histórico
-  de dependentes foram decididas em 23/09/2026.
-- Limiar objetivo para destacar proximidade do atendimento, separado do alerta de atraso de
-  análise. Responsabilidade principal/backup e prazo de 24 horas configurável foram definidos.
+- Verificar o mecanismo dos acessos individuais já existentes de titulares e dependentes,
+  informados pelo usuário, e mapear cada identidade ao cadastro de Associados; detalhar gestão
+  e revogação do vínculo. Regras familiares de reserva/histórico permanecem definidas.
 - Provedores, textos e operação de entrega/reenvio das mensagens transacionais. Canais,
   preferências iniciais/editáveis e destinatários foram definidos em 2C-FR-23/24; não reabrir
   essas escolhas ao detalhar a integração.
-- Fonte de contas/reservas do legado, coexistência, corte e tratamento de duplicatas/histórico.
+- Inventariar contas/reservas do legado: reservas futuras em uso ainda por conferir (resposta C).
+  Definir fonte, correspondências, coexistência, corte e tratamento de duplicatas/histórico com
+  evidência, sem presumir agenda vazia. Urgência de 24 horas configurável está resolvida em 2C-FR-22.
 
 **Fora deste recorte:** turmas coletivas, salas/equipamentos, lista de espera, múltiplos serviços
 na mesma reserva, assistente por IA, avaliações e integração Cal.com. Permanecem possibilidades
