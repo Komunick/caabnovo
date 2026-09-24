@@ -275,7 +275,12 @@ cenários concretos e tarefas antes da implementação.
       destino futuro/horizonte e demais guardas. Contar por ciclo de troca: primeiro pedido
       reserva uma utilização, alternativas/recusas/retomadas preservam o ciclo e aprovação
       consolida a mesma utilização uma vez; outra mudança após aprovação inicia novo ciclo.
-      Validar confirmadas + ciclo ativo <= 2, retry, concorrência e cancelamento sem horário.
+      Validar confirmadas voluntárias + ciclo debitável ativo <= 2, retry, concorrência e
+      cancelamento sem horário. Incluir 2C-FR-20/2C-SC-19: indisponibilidade registrada pela equipe,
+      recuperação isenta no mesmo ID mesmo com duas trocas usadas, sem prazo de origem, bloqueio
+      efetivo do recurso/período preservado, aviso devido e histórico. Alternativas/recusas da
+      recuperação não debitam utilização; após confirmar, novas trocas voluntárias seguem limite.
+      Validar causa autorizada, zero vagas sem escolha, um destino por vez e ambos os modos de agenda.
       Incluir Salvar/Publicar no cadastro: salvar sem exposição e publicar com persistência
       atômica numa ação, permissão, validação e retry. Incluir Salvar alterações como rascunho
       separado e Publicar alterações como gravação/publicação atômica da edição, sem salvar
