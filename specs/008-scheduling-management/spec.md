@@ -107,6 +107,11 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Até quanto tempo no futuro o associado poderá agendar? → A: Janela móvel de 90 dias por
   padrão, editável e desativável por serviço. O usuário aceitou a opção A após consultar as
   referências de mercado; a janela avança com o tempo e respeita os horários configurados.
+- Q: Se chegar o horário original e a equipe ainda não tiver aprovado a remarcação, o que acontece? →
+  A: Manter a troca pendente; a equipe pode aprová-la depois, desde que o destino ainda seja
+  futuro. Preservar histórico e não presumir comparecimento ou falta.
+- Pedido adicional: pesquisar a ocupação da vaga original durante a remarcação para revisar a
+  política de troca. A pesquisa não equivale ao aceite de liberar ou manter as duas vagas.
 
 ## User Scenarios & Testing
 
@@ -319,7 +324,8 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
   criadas pelo titular. Titular com vínculo vigente e dependente podem remarcar e cancelar as
   reservas futuras confirmadas que estão autorizados a gerir, com controle de versão. O prazo
-  de remarcação está em 2C-FR-08; cancelamento até antes do início está em 2C-FR-09.
+  de remarcação está em 2C-FR-08; cancelamento até antes do início está em 2C-FR-09. A aprovação
+  pela equipe de proposta recebida em tempo pode ocorrer após o início original (2C-FR-17).
   Remarcação segue a aceitação configurada por serviço: imediata ou com aprovação. No fluxo
   manual, preservar a reserva original até aceitar a troca e reter o horário proposto sem
   expiração automática; recusa libera somente a proposta. Aprovação efetiva a troca em uma
@@ -414,6 +420,16 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   antecipar ou expirar registros existentes por redução do horizonte. Desativar remove somente
   o limite máximo, preservando início futuro, antecedência mínima e demais verificações.
 
+- **2C-FR-17:** Uma proposta de remarcação recebida dentro do prazo permanece pendente mesmo
+  quando chega ou passa o início original. A equipe autorizada pode aprovar essa mesma proposta
+  depois, desde que o novo início seja estritamente futuro no instante da decisão e as demais
+  validações de autorização, elegibilidade, disponibilidade, versão e limite de trocas passem.
+  A exceção permite concluir análise já iniciada, sem liberar novas solicitações fora do prazo
+  nem cancelamento externo de reserva passada. Não inferir comparecimento, conclusão ou falta
+  pelo relógio. Preservar origem e decisão tardia no histórico; recusa não recria vaga passada.
+  Se o destino também chegou/passou, negar aprovação desse destino e manter a pendência para
+  resolução explícita da equipe, sem confirmar retroativamente ou expirar automaticamente.
+
 **Critérios mensuráveis de 2C:**
 
 - **2C-SC-01:** Na massa sintética, uma reserva criada em cada canal aparece no outro com mesmo
@@ -501,6 +517,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   destino, fuso do navegador e ambos os modos de ocupação/aceitação. Desativação não cria vagas
   em dias sem expediente nem permite início passado.
 
+- **2C-SC-16:** Com proposta recebida em tempo, avançar o relógio até/depois do início original
+  mantém a pendência e permite aprovação única para destino ainda futuro, com incremento único
+  da contagem de trocas. Destino exatamente no instante da decisão ou passado é recusado sem
+  confirmação retroativa. O relógio não gera falta/comparecimento/conclusão; histórico preserva
+  o horário original e a decisão. Cancelamento/recusa concorrentes não podem ser sobrescritos,
+  e a exceção não permite iniciar nova troca de reserva passada.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -516,9 +539,10 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Remarcação tem antecedência padrão de 24 horas, editável/desativável;
   cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
   Não inferir penalidades.
-- Chegada do horário original durante a análise. Desistência e substituição da troca foram
-  autorizadas em 24/09, com no máximo uma proposta pendente por reserva; prioridade usa o
-  horário atual mais próximo.
+- Revisão solicitada pelo usuário da ocupação da origem/destino enquanto a troca aguarda
+  aprovação: comparar as alternativas da pesquisa antes de mudar 2C-FR-04 e regras dependentes.
+  Por enquanto, preservar a regra documentada de manter origem e reter destino. A chegada do
+  início original não expira a proposta (2C-FR-17, decisão B da rodada 3).
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
