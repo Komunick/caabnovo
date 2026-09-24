@@ -85,18 +85,21 @@ inferência. Decisões de aprovação/recusa exigem permissão de alteração, c
 revalidação e evento auditado. A fila administrativa precisa expor a idade da pendência para que a
 equipe resolva solicitações sem prazo automático.
 
-Decisão de 24/09/2026: remarcação externa também segue a aceitação do serviço. No fluxo manual,
-modelar uma proposta de troca vinculada à reserva, com versão de origem e horário pretendido.
-A reserva original permanece confirmada até a aprovação; o destino fica retido como pendência.
-Aprovar aplica a troca no mesmo identificador e libera o horário anterior em transação; recusar
-libera apenas o destino. A proposta não representa outro atendimento independente. O desenho de
-ocupação deve proteger origem e destino contra outras reservas e tratar a sobreposição interna
-da própria troca sem dispensar conflitos de terceiros. Permitir no máximo uma proposta pendente
-por reserva, garantida também sob concorrência. O ator autorizado pode retirar a proposta e
-liberar somente o destino, mantendo a consulta original, ou substituí-la após revalidar prazo e
-aceitação. Preservar as propostas anteriores na auditoria; substituir a retenção em transação,
-sem acumulá-la e sem perder a proposta anterior em caso de falha. Decisões usam versão da proposta
-para impedir aprovação de solicitação retirada ou substituída.
+Revisão aceita de 24/09/2026: remarcação externa segue a aceitação do serviço e libera origem
+no envio bem-sucedido. Guardar origem/versão como snapshot histórico da proposta, sem ocupação.
+A transação valida destino, retira ocupação original e registra somente destino: confirmado no
+fluxo imediato ou retido no manual. Falha na transação preserva origem. No fluxo manual, representar
+explicitamente remarcação pendente sem horário confirmado; não conservar status confirmed na
+origem nem projetá-la como compromisso ativo. A proposta não é segundo atendimento independente.
+
+Aprovar confirma destino no mesmo identificador; recusar/desistir libera destino e deixa registro
+sem horário confirmado, com histórico preservado, sem recuperar origem automaticamente. Nome final
+dos estados deve ser conciliado nos contratos. Origem pode estar ocupada por terceiro, cujos dados
+não podem ser alterados pela resolução da troca. Manter no máximo uma proposta ativa por reserva;
+substituir destino atomicamente sem reocupar origem e conservar proposta/destino anteriores se
+falhar. Revalidar prazo sobre início original registrado. Usar versão para impedir decisão sobre
+proposta retirada/substituída. Após recusa/desistência, a continuidade para escolher nova vaga é
+pendência explícita de produto; não inventar reinício de contador/prioridade ou nova identidade.
 
 Decisão B da rodada 3: a proposta não expira quando chega o início original. A transição de
 aprovação dessa proposta pode ocorrer depois; exige destino estritamente futuro no relógio do
@@ -104,10 +107,10 @@ servidor e todas as demais guardas, sem reutilizar a guarda de origem futura da 
 proposta. Preservar início original e versão em eventos; incrementar a contagem só ao efetivar.
 Não inferir presença, conclusão ou falta. Destino já iniciado não é aprovável retroativamente,
 mas não dispara expiração; a equipe precisa resolver a pendência explicitamente. Cancelamentos
-ou decisões concorrentes continuam impedindo reativação. O usuário pediu revisar ocupação de
-origem/destino à luz do mercado; o desenho de duas retenções não foi substituído por essa pesquisa.
+ou decisões concorrentes continuam impedindo reativação. A revisão aceita libera origem no envio
+bem-sucedido, mantendo apenas destino retido. A passagem do início original não altera isso.
 
-A prioridade decidida em 24/09 é: remarcações primeiro, pelo início atual da reserva crescente;
+A prioridade decidida em 24/09 é: remarcações primeiro, pelo início original capturado no envio da troca, crescente;
 empates por instante do pedido e identificador estável. O destino não participa desse primeiro
 critério. A proposta referencia a versão e o início da reserva a que se aplica; se a origem for
 alterada concorrentemente, revalidar a proposta antes de qualquer decisão, sem aprovar dados
@@ -138,15 +141,16 @@ será conciliada com o contrato; valor negativo não é válido. Comparar instan
 envio do pedido, usando o início atual da reserva. Registrar o prazo aplicado para auditoria;
 exatamente no limite é permitido. Pedido recebido em tempo não expira por atravessar esse limite
 durante análise, nem por posterior alteração da configuração. Não confundir o limite de envio
-com a chegada do próprio horário de atendimento, cujo tratamento ainda requer decisão.
+com a chegada do próprio horário de atendimento: a proposta permanece pendente (2C-FR-17).
 
 Cancelamento pelo app/site: permitido para reserva confirmada enquanto o instante validado no
 servidor anteceder seu início atual, sem antecedência mínima e sem aprovação da equipe. O
-cancelamento explícito da original encerra também sua proposta de troca pendente e libera as
-ocupações de origem e destino em uma transação auditada. Coordenar versão/locks com aprovação
+encerramento de troca pendente libera somente destino, pois origem foi liberada no envio.
+Para essa ação externa, manter a fronteira baseada no início original registrado. Coordenar versão/locks com aprovação
 para impedir reativação ou retenção órfã. No início exato ou depois, negar esse comando externo.
 Essa regra não cria expiração automática. A desistência apenas da troca segue a regra acima e
-mantém a reserva original futura, sem aplicar antecedência mínima de remarcação.
+usa o início original registrado como fronteira, sem aplicar antecedência mínima de remarcação;
+libera destino e mantém histórico sem horário confirmado, sem restaurar origem.
 
 Limite definido em 24/09: duas remarcações confirmadas por reserva. Representar a quantidade de
 mudanças efetivadas com integridade transacional e trilha de eventos; a forma física será
@@ -179,12 +183,13 @@ exige assignment/professional; planejar extensão aditiva, não tratar a mudanç
   implícito. Considerar a duração completa, [início,fim) e funcionamento da unidade. Ausência de
   configuração não produz vagas; ausência temporária de profissional apto não muda o modo.
 - Contar ocupações confirmadas, aguardando aprovação e retenções de destino durante todo o
-  intervalo. Na mesma capacidade, a união origem/destino de uma única reserva/proposta consome
-  uma vaga no trecho sobreposto; não dispensar ocupações de terceiros. Locks transacionais da
+  intervalo. Troca remove origem e inclui somente destino em transação, mesmo com sobreposição
+  parcial; após commit, apenas destino conta. Origem histórica não bloqueia profissional,
+  beneficiário ou capacidade, e pode ser reservada por terceiro. Locks transacionais da
   oferta/capacidade e recontagem devem coordenar comandos e mudanças de configuração; a
   exclusão por profissional existente não basta para garantir capacidade maior que um.
 - Aprovar conserva a ocupação, recusar/retirar libera destino, substituir troca a retenção
-  atomicamente e cancelar original encerra ambas. Preservar exclusão global por beneficiário,
+  atomicamente e encerrar troca libera só destino, sem recuperar origem. Preservar exclusão global por beneficiário,
   idempotência, versões e auditoria. Nenhuma decisão tardia pode recriar ocupação cancelada.
 - Adicionar profissionais não converte reservas sem responsável; desativar equipe não elimina
   vínculos históricos. Recusar mudança de horários/capacidade que invalide ocupações futuras
