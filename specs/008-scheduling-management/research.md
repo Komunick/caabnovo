@@ -59,6 +59,30 @@ estabelecimento pode configurá-la por serviço. Isso permite reservar vagas fut
 respeitando disponibilidade e aceitação; não muda as 24 horas padrão para solicitar remarcação.
 A regra é uma escolha do usuário, não uma conclusão comparativa dos fornecedores.
 
+## Complemento — horizonte de agendamento futuro (24/09/2026)
+
+Consulta motivada pela dúvida do usuário durante o clarify; ainda não há escolha aceita para o
+horizonte da CAAB. Fontes oficiais consultadas nesta data:
+
+| Referência | Evidência sobre horizonte futuro | Limite da evidência |
+| --- | --- | --- |
+| [Jane — Online Rolling Availability](https://jane.app/guide/online-rolling-availability) | Padrão de 3 meses, com janela que avança diariamente e ajuste por profissional. | Meses de calendário não equivalem sempre a 90 dias; não comprova uso predominante no mercado. |
+| [Square — configurações](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Limite configurável entre 7 e 365 dias. | O guia consultado não informa o valor inicial. Documentação da região dos EUA. |
+| [Fresha — políticas e intervalos](https://www.fresha.com/blog/how-to-reduce-calendar-gaps) | Artigo sugere considerar 90 dias de antecedência máxima. | Recomendação editorial, não confirmação de configuração de fábrica; artigo atualizado em 11/06/2024. |
+| [Timely — políticas de horários](https://help.gettimely.com/hc/en-gb/articles/33525113423639-How-to-set-your-policies-for-online-booking-times) | Permite configurar até quando o cliente agenda; apresenta três semanas como exemplo. | Exemplo não é padrão do produto; guia atualizado em 05/02/2026. |
+
+**Síntese:** a amostra mostra janela futura configurável; não sustenta um único número como
+padrão universal, nem levantamento de participação ou adoção. Cerca de três meses tem apoio
+concreto como padrão da Jane e como sugestão da Fresha.
+
+**Recomendação para decisão, ainda pendente:** 90 dias corridos como janela móvel no app/site,
+editável e desativável por serviço. A cada dia, avança o limite futuro; só disponibilizar horários
+realmente configurados e livres. O valor oferece planejamento sem abrir, por padrão, uma agenda
+indefinida. Essa justificativa é inferência de produto para a CAAB, não resultado medido.
+Desativação e configuração por serviço são propostas da CAAB; não foram comprovadas como
+capacidades idênticas em todos os fornecedores. Não transformar a dúvida do usuário em aceite
+nem alterar requisitos de horizonte antes da resposta.
+
 ## Pergunta e método
 
 Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
