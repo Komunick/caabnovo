@@ -44,12 +44,15 @@ duração das retenções; não prometer redução antes de observar dados da CA
 O usuário escolheu oferecer profissional específico ou qualquer disponível, condicionado à
 existência de profissionais cadastrados. O estabelecimento pode desativar a escolha mesmo com
 equipe cadastrada. Nesse caso, o servidor resolve um responsável apto/disponível e o informa
-antes de concluir a reserva. O controle não aparece sem profissionais. A possibilidade de
-reservar sem profissional ainda precisa de decisão sobre fonte da agenda e capacidade;
-o modelo inicial exige vínculo a um profissional.
+antes de concluir a reserva. O controle não aparece sem profissionais. Na resposta seguinte,
+o usuário autorizou reservas sem cadastro de profissionais, pelos horários e quantidade de vagas
+configurados para o serviço: individualizar equipe não deve ser obrigatório para estabelecimentos
+que não precisam disso. O modelo inicial exige vínculo profissional e precisa da extensão de 2C;
+a decisão não comprova implementação.
 
 Essa atribuição limitada ao fluxo aprovado passou a integrar 2C; algoritmos avançados de
-distribuição, capacidade coletiva e outros recursos continuam dependentes de escopo próprio.
+distribuição, turmas coletivas e outros recursos continuam dependentes de escopo próprio. A
+capacidade simultânea por serviço para reservas individuais sem profissionais integra 2C.
 
 ## Pergunta e método
 
@@ -83,7 +86,7 @@ Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta
 1. Apresentar serviços e procedimentos com duração, unidade e instruções essenciais; permitir escolher profissional específico ou qualquer disponível quando houver equipe apta e o estabelecimento habilitar a escolha.
 2. Antes da confirmação, identificar quem será atendido (titular ou dependente autorizado). Mostrar apenas opções que possam ser reservadas por esse perfil; explicar indisponibilidade sem expor dados internos.
 3. Mostrar datas com vagas e horários legíveis, com próxima data e alternativas de unidade/profissional quando não houver vaga. A seleção é provisória até a confirmação no servidor.
-4. Revisar beneficiário, procedimento, unidade, profissional, data, hora e regras aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
+4. Revisar beneficiário, procedimento, unidade, profissional quando aplicável, data, hora e regras aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
 5. Em “Minhas reservas”, separar próximas e históricas, mostrar situação textual e permitir remarcação/cancelamento somente conforme política aprovada. Oferecer “agendar novamente” como atalho apenas se a oferta ainda for válida.
 
 ### Experiência da equipe no painel
@@ -107,15 +110,15 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 | 1 | Fechar concessões consultar/alterar, conflito por beneficiário, aviso de bloqueio, exportação e revisão CAL06. | Lacunas já registradas em spec/plan/tasks; confirmar estado do Git antes de executar. |
 | 2 | Especificar primeira jornada app/site, identidade do titular/dependente, contrato de vagas e mutações, e transição do legado. | Etapa posterior priorizada no roadmap; decisões de produto e contrato ainda necessários. |
 | 3 | Detalhar indisponibilidades, agenda extra, antecedência, horizonte futuro, presença/falta e avaliações. | Funcionalidades do legado ou operação a confirmar uma a uma; sem implementação automática. |
-| 4 | Avaliar turmas/capacidade, recursos físicos, lista de espera, distribuição avançada de profissionais, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
+| 4 | Avaliar turmas coletivas, recursos físicos, lista de espera, distribuição avançada de profissionais, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
 
 ## Decisões que a pesquisa não pode tomar pela CAAB
 
-- Quais serviços/unidades aparecem em cada canal? A escolha de profissional específico ou qualquer disponível foi aprovada, condicionada à equipe cadastrada e à configuração do estabelecimento. Falta decidir reserva sem profissionais.
+- Quais serviços/unidades aparecem em cada canal? A escolha de profissional específico ou qualquer disponível foi aprovada, condicionada à equipe cadastrada e à configuração do estabelecimento. Reserva sem profissionais foi autorizada, com horários e capacidade por serviço.
 - Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
 - Qual antecedência de novas reservas e horizonte futuro valem por serviço e canal? A remarcação tem antecedência padrão de 24 horas, editável/desativável; cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09).
 - O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
-- Há atendimento coletivo com capacidade ou apenas compromissos individuais nesta etapa?
+- Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem profissionais já foi autorizada.
 - Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
 - Haverá lista de espera? Em caso afirmativo, qual ordem, prazo de aceitação, canal de aviso e critério de elegibilidade?
 - Quais comunicações transacionais realmente serão enviadas e por qual integração homologada?
