@@ -283,7 +283,8 @@ cenários concretos e tarefas antes da implementação.
       publicação anterior em falha e guardas de reservas existentes/disponibilidade operacional.
       Incluir descrições curtas e sempre visíveis abaixo de cada botão, no cadastro e na edição,
       com associação acessível e revisão responsiva conforme 2C-FR-19.
-      Fechar canais de destino antes de concluir os contratos de publicação.
+      Publicação conjunta em app/site, sem seleção/configuração por canal: contratos usam estado
+      e revisão únicos; validar atualização das projeções/caches dos dois e isolamento do rascunho.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
