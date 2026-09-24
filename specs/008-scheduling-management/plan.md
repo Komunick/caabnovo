@@ -314,8 +314,12 @@ continuação manual dos artefatos na branch existente, sem conclusão automatiz
   auditoria; cruzar o limite durante análise não invalida pedido aceito dentro do prazo. Mudar
   a configuração afeta novos envios e não cria expiração automática.
 
-- Cancelamento externo de reserva confirmada verifica no servidor que o início atual ainda é
-  futuro, sem aplicar o prazo de remarcação nem aguardar aprovação da equipe. Validar a versão,
+- Cancelamento externo de reserva confirmada ou pedido novo aguardando aprovação verifica no
+  servidor que o início confirmado/solicitado ainda é futuro, sem aplicar prazo de remarcação
+  nem aguardar aprovação da equipe. Pedido novo vai a cancelled, libera ocupação e sai da fila/
+  alertas no mesmo commit; preservar ID/histórico e intenção de aviso sem alterar contador de
+  trocas. Coordenar com aprovar/recusar e revalidar acesso/vínculo, inclusive em replay.
+  Replay de cancelamento concluído não é novo cancelamento após início. Validar a versão,
   autorizar e cancelar em transação. Encerrar troca pendente libera apenas destino, pois origem
   já está livre; para a ação externa, manter a fronteira baseada no início original registrado. Uma aprovação concorrente precisa detectar mudança de versão/situação;
   não reativar reserva cancelada nem deixar retenção órfã. Cancelamento do atendimento e
@@ -516,10 +520,12 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   Cobrir limite exato de 24 horas, instante imediatamente anterior, prazo editado, desativado,
   navegador em outro fuso e pedido que cruza o limite durante análise. A idade do pedido e o
   horário pretendido não podem inverter o critério principal de prioridade.
-- Cancelamento: com relógio controlado, permitir comando um segundo antes do início e negar
-  no instante de início ou depois. Comprovar ausência de antecedência mínima e de aprovação da
-  equipe, repetição idempotente e encerramento de troca vinculada; revalidar versão e horário
-  diante de aprovação concorrente.
+- Cancelamento (2C-SC-08): para confirmado e pedido novo em análise, permitir um segundo antes
+  do início e negar exatamente no início/depois, sem antecedência mínima ou aprovação da equipe.
+  Conferir liberação única, saída da fila/alertas, histórico/avisos/contador, acesso familiar e
+  ambos os modos de agenda. Repetição após início retorna resultado já concluído sem nova mutação;
+  corrida com aprovação/recusa não reativa pedido cancelado nem libera vaga adquirida por terceiro.
+  Encerramento de troca vinculada mantém suas fronteiras específicas.
 - Limite/histórico: duas remarcações confirmadas permitidas, terceira negada; pendência,
   recusa/desistência e substituição de proposta não consomem limite. Validar retry e confirmação
   concorrente na última troca disponível. Cancelar e agendar de novo preserva a linha do tempo
@@ -569,9 +575,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Revisão do contrato identificou decisão ainda ausente: permitir ou não ao associado cancelar
-pedido novo enquanto aguarda aprovação manual. Pergunta enviada ao usuário; não aplicar por
-inferência a regra de reserva confirmada ou de troca. Demais transições permanecem definidas.
+Cancelamento de pedido novo em análise foi autorizado pelo usuário: antes do início solicitado,
+sem aprovação da equipe, com liberação imediata e histórico preservado (2C-FR-09/2C-SC-08).
 
 Verificação e integração dos acessos individuais já existentes, mapeamento de pessoas e
 revogação de vínculo; provedores, textos e operação de entrega/reenvio de mensagens;
