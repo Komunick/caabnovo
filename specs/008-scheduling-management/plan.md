@@ -301,8 +301,8 @@ do fluxo de entrega.
 ### Decisões ainda bloqueadoras
 
 Mecanismo de identidade externa e gestão/revogação do vínculo; profissional opcional; política
-por canal para antecedência de novas reservas; eventual exceção administrativa ao limite de duas
-remarcações confirmadas; responsabilidade e prazo interno de análise da fila de aprovação;
+por canal para antecedência de novas reservas; responsabilidade e prazo interno de análise
+da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
