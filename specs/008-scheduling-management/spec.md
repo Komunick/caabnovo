@@ -801,7 +801,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 - **2C-SC-19:** Indisponibilidade registrada pela equipe retira a confirmação/ocupação antiga,
   mantém bloqueado o recurso/período inviável e mostra “Aguardando nova data — alteração pelo
   estabelecimento” no painel, app e site, com mesmo ID e histórico. Cobrir profissional e
-  capacidade por serviço, motivo/ator auditados, falta de permissão, retry e concorrência.
+  capacidade por serviço, causa operacional/ator auditados, falta de permissão, retry e concorrência.
   Recuperar com zero, uma ou duas trocas voluntárias já confirmadas mantém o contador inalterado,
   inclusive após recusa/substituição/retomada e confirmação imediata ou manual. Permitir recuperação
   dentro das 24 horas e após início original; manter destino futuro, horizonte, autorização,
@@ -846,7 +846,15 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   sem mostrar vagas; rascunho de público-alvo não altera a oferta publicada. Cobrir serviço
   acessível a ambos, escolha de profissional opcional e ambos os modos de agenda.
 
-**Decisões de produto pendentes para fechar 2C:**
+**Contrato e planejamento de 2C:** [contrato lógico v1](contracts/channels.md),
+[modelo](data-model.md) e [roteiro de validação](quickstart.md), consolidados em 24/09.
+Proposta documental sem endpoint/integração comprovados; dependências abaixo permanecem abertas.
+
+**Decisões e dependências pendentes para fechar 2C:**
+
+- Cancelamento pelo associado de pedido novo ainda aguardando aprovação manual: pergunta
+  apresentada na revisão dos contratos, resposta pendente. As regras já decididas de cancelar
+  reserva confirmada e encerrar troca/recuperação não definem automaticamente esse caso.
 
 - Verificar o mecanismo dos acessos individuais já existentes de titulares e dependentes,
   informados pelo usuário, e mapear cada identidade ao cadastro de Associados; detalhar gestão
@@ -870,8 +878,9 @@ de pesquisa ou incrementos separados; não se tornam requisitos por aparecerem e
 - Um atendimento termina exatamente quando outro começa: não há sobreposição.
 - Conflito do beneficiário usa a pessoa atendida, nunca a conta do operador nem o titular do grupo
   familiar. Homônimos com cadastros distintos não são reunidos por nome.
-- Reserva cancelada não ocupa a agenda do beneficiário. Remarcação desconsidera a própria reserva e,
-  se recusada, conserva integralmente seu horário anterior.
+- Reserva cancelada não ocupa a agenda do beneficiário. Na operação administrativa inicial,
+  falha transacional de remarcação conserva integralmente o horário anterior. No recorte 2C,
+  recusa de proposta já registrada libera destino e não restaura origem, conforme 2C-FR-04/10/18.
 - Bloqueio administrativo ou mudança de dependência durante confirmação/remarcação.
 - Alteração de duração, expediente ou desativação com reservas futuras existentes.
 - Horário que atravessa meia-noite: fora do recorte inicial; explicar no cadastro.
