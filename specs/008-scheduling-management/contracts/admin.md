@@ -1,5 +1,16 @@
 # Contratos — painel de Agendamentos
 
+## Escopo administrativo existente e extensão proposta 2C
+
+O conteúdo abaixo registra o contrato administrativo inicial e suas adequações históricas.
+As novas decisões de 24/09 sobre confirmação manual, equipe vinculada/backup, publicação e
+recuperação estão propostas em [channels.md](channels.md), sem afirmar implementação destas rotas.
+A evolução do painel deve chamar o mesmo domínio/guardas e preservar compatibilidade dos
+consumidores administrativos. “Sem escopo por unidade” abaixo descreve a etapa inicial, não
+elimina a responsabilidade por estabelecimento definida para 2C. Nenhuma permissão é concedida
+apenas por cadastro de profissional ou vínculo com equipe.
+
+
 Base: /api/v1/scheduling. Autorização alvo de todas as rotas (Q8 de 21/09): sessão
 administrativa ativa e acesso concedido a Agendamentos, revalidado no servidor.
 Sessão sozinha não basta; ausência/revogação da concessão retorna 403. Q9 exige
