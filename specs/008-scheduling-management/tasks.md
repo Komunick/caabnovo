@@ -1,8 +1,355 @@
-# Tasks: Agendamentos: acesso, integridade por pessoa e exportação — incremento de 21/09/2026
+# Tasks: Agendamentos externos — incremento 2C
+
+**Data:** 24/09/2026. **Branch documental:** `codex/scheduling-market-research-20260923`.
+**Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md),
+[contrato externo](contracts/channels.md), [contrato administrativo](contracts/admin.md),
+[pesquisa](research.md) e [validação](quickstart.md).
+**Lista deste incremento:** T040–T077, todas pendentes. Nenhuma implementação iniciada.
+Geração documental orientada por speckit-tasks; setup local indisponível, sem execução integral do workflow.
+
+## Escopo, rastreabilidade e condição de execução
+
+As 38 tarefas detalham **US3 (P2), somente recorte 2C**. Não criam histórias novas nem incluem
+avaliações, turmas, pagamentos, lista de espera, portal de parceiros ou outras expansões de US3.
+Planejamento autorizado não constitui autorização de implementação, envio, migração real ou corte.
+Testes são exigidos pelos critérios 2C-SC e pela constituição para agenda, autorização e UI.
+
+T022 continua como coordenação do contrato/acesso/interface: T041/T043/T046/T047/T049/T070/T073
+produzem suas evidências, sem marcá-la concluída antecipadamente.
+A parcela transacional de T023 é detalhada por T044/T050/T067–T069; avaliações e demais expansões
+continuam fora deste recorte. T024 depende de T042/T077; massa sintética não comprova inventário real.
+Não executar novamente tarefas históricas concluídas nem contar coordenação e execução duas vezes.
+
+**Gates factuais:** mecanismo das contas existentes, reservas legadas, guia visual e provedores de
+avisos ainda precisam de evidência. Cada gate tem tarefa e resultado de saída abaixo. Sem evidência,
+registrar impedimento; não substituir identidade real por login novo nem simulação por homologação.
+Tarefas de consumidores externos dependem da spec própria prevista em 002 UI01/UI02.
+
+Caminhos marcados **novo** são destinos propostos, não arquivos existentes. Migrações são a exceção:
+T045 deve conferir o próximo número livre e registrar o caminho SQL exato antes de T048; não fixar
+0028, já citado na entrega do ciclo de vida. Confirmar a base integrada e dependências administrativas
+em T040, sem copiar alterações antigas automaticamente.
+
+## Phase 1 — Setup e fechamento das dependências
+
+**Saída:** fontes e contratos verificáveis, sem decisão de negócio reaberta por falta de acesso.
+
+- [ ] T040 Conferir branch/worktree, versões integradas e estado de AC/BEN/BLQ/LC/CAL em
+      `specs/008-scheduling-management/evidence/tasks-2026-09-24.md`; resolver a correspondência
+      de T027–T034 com os pré-requisitos reais e registrar dependências ainda abertas. Exportação
+      T035–T038 é independente de 2C; não repetir código já integrado nem usar CI antigo como
+      prova de autorização, capacidade ou pendências novas.
+- [ ] T041 Verificar identidade/sessão e correspondência individual dos acessos app/site em
+      `specs/008-scheduling-management/contracts/channels.md`, coordenando
+      `specs/005-members-management/contracts/members.md`; fechar transporte, caminhos HTTP
+      versionados, revogação, proteção de origem/CSRF aplicável e limites. Registrar evidência
+      sintética de continuidade, sem copiar credenciais ou reutilizar sessão administrativa.
+      Se a fonte não estiver acessível, manter o gate aberto e solicitar somente o acesso faltante.
+- [ ] T042 Inventariar fonte/data/versão, contas, reservas futuras/histórico, status e contadores
+      verificáveis em `specs/008-scheduling-management/legacy-parity.md` (novo); especificar
+      correspondências, duplicatas, coexistência, único escritor, corte e retorno em
+      `specs/008-scheduling-management/plan.md`. Desconhecido não significa zero; não importar,
+      alterar dados reais ou escolher estratégia sem evidência e autorização de execução.
+- [ ] T043 Localizar e ler `docs/caab-design.md`; vincular a spec própria de 002 UI01/UI02 aos
+      critérios de agenda em `specs/008-scheduling-management/plan.md`. Registrar caminhos reais
+      dos consumidores e responsabilidades antes de planejar layout ou editar UI; não criar uma
+      segunda interface de associado dentro do painel para contornar essa dependência.
+
+## Phase 2 — Foundational
+
+**Dependências:** Setup concluído, pré-requisitos administrativos de T040 comprovados.
+**Saída:** contratos e persistência que protegem ambos os modos, autoria e eventos.
+
+- [ ] T044 Fechar provedor por canal, textos dos quatro eventos e política finita de tentativas,
+      backoff, timeout, resultado incerto, redrive autorizado e retenção operacional em
+      `specs/008-scheduling-management/contracts/channels.md`, conforme
+      `specs/001-project-foundation/contracts/jobs.md`. Inventariar preferências/supressões
+      antigas e contatos válidos; não contratar, enviar ou ativar campanhas nesta tarefa.
+      Documentar dependência externa quando não houver evidência; não aceitar defaults implícitos.
+- [ ] T045 Detalhar modelo físico e protocolo único de locks em
+      `specs/008-scheduling-management/data-model.md`: revisão publicada/rascunho, políticas,
+      ocupação, processo/proposta, autoria externa, equipe, bloqueio e intenção de aviso.
+      Definir constraints por modo, exclusão global por beneficiário incluindo pendências,
+      unicidade de processo/proposta e contagem <= 2; confirmar sequência em
+      `packages/db/migrations/` e registrar nomes SQL exatos em plan/tasks antes de T048.
+      Provar estratégia aditiva sem reescrever 0020/0028 ou zerar contadores desconhecidos.
+- [ ] T046 [P] Escrever testes de contratos em
+      `packages/contracts/src/scheduling-channels.test.ts` (novo): projeções mínimas, enums,
+      datas/fuso, paginação, corpo limitado, versões, erros, idempotência e negação de
+      papel/causa/contador impostos pelo cliente. Cobrir nulidade de profissional/horário conforme
+      modo/estado e compatibilidade dos consumidores administrativos. Executar antes da implementação.
+- [ ] T047 Implementar schemas v1 em `packages/contracts/src/scheduling-channels.ts` (novo),
+      exportar em `packages/contracts/src/index.ts` e conciliar
+      `packages/contracts/src/scheduling.ts` com T041/T045/T046. Distinguir reserva, processo,
+      proposta e entrega; histórico/autor não se confundem com beneficiário.
+- [ ] T048 Criar as migrations aditivas cujos nomes foram registrados em T045, dentro de
+      `packages/db/migrations/`, e alinhar `packages/db/src/schema.ts` quando aplicável.
+      Validar upgrade, constraints, autoria e compatibilidade em banco descartável; diagnosticar
+      conflitos existentes e parar sem alterar reservas para fazer a migration passar.
+      Não aplicar ao banco de uso nem registrar aprovação por simples geração de SQL.
+- [ ] T049 Implementar fronteira externa em
+      `apps/web/modules/scheduling/channel-access.ts` (novo), com resolução do adaptador
+      verificado em T041 e vínculos de `packages/db/src/repositories/members.ts`.
+      Criar `apps/web/tests/integration/scheduling-channel-access.test.ts` (novo) antes das
+      guardas: titular por si/dependente vigente, dependente por si, sessão/vínculo revogado
+      durante lock/replay, terceiro e acesso administrativo separado; negar por padrão.
+- [ ] T050 Implementar persistência transacional de eventos/intenção em
+      `apps/web/modules/scheduling/notification-service.ts` (novo), usando jobs da fundação;
+      preparar `apps/web/tests/integration/scheduling-notifications.test.ts` (novo).
+      Evento e intenção sobrevivem juntos; falha/retry não duplica, payload contém IDs mínimos,
+      chamada externa fica fora da transação. Não criar infraestrutura paralela de filas.
+
+## Phase 3 — US3 (P2): reserva e gestão externas, recorte 2C
+
+**Objetivo:** associado encontra a oferta, reserva para beneficiário autorizado, acompanha,
+remarca/cancela e recebe os avisos devidos; a equipe opera a mesma agenda no painel.
+**Aceite independente:** fixtures sintéticas de titular/dependente, equipe/backup, ambos os
+modos de agenda e aceitação; executar V01–V12, com PostgreSQL real descartável para concorrência.
+Simulação valida o domínio, mas não conclui identidade/provedor/cliente real.
+
+### Oferta publicada e disponibilidade
+
+- [ ] T051 [P] [US3] Escrever
+      `apps/web/tests/integration/scheduling-publication.test.ts` (novo) para Salvar/Publicar e
+      suas variantes de edição: mesmo ID, rascunho isolado, publicação conjunta, conflito/retry,
+      configuração inválida e agenda válida esgotada; reservas existentes e bloqueios continuam
+      protegidos. Referências: 2C-FR-01/19/25; 2C-SC-03/18/24.
+- [ ] T052 [US3] Implementar salvar/publicar revisão em
+      `apps/web/modules/scheduling/catalog-service.ts`, com versões e transação; usar a mesma
+      revisão externa em app/site e invalidar projeções após commit. Ativo não implica publicado,
+      rascunho não afeta vagas/comandos e erro conserva a publicação anterior. Atender T051.
+- [ ] T053 [US3] Implementar catálogo público mínimo, beneficiários autorizados e ofertas
+      elegíveis em `apps/web/modules/scheduling/channel-query-service.ts` (novo), usando
+      `apps/web/modules/scheduling/beneficiary-service.ts`. Sem vagas anônimas ou cache privado
+      compartilhado; público exclusivo é avaliado pela pessoa atendida. Referências:
+      2C-FR-01/02/25; 2C-SC-03/24.
+- [ ] T054 [P] [US3] Escrever `apps/web/modules/scheduling/channel-policy.test.ts` (novo) para
+      profissional específico/qualquer/controle desativado, modo capacidade, inexistência de
+      expediente, prazos independentes e horizonte; 0/2h/24h/90dias, fronteiras exatas e fuso.
+      Testar políticas alteradas entre prévia e envio sem invalidar pendências anteriores.
+      Referências: 2C-FR-08/13–16; 2C-SC-07/12–15.
+- [ ] T055 [US3] Adequar `apps/web/modules/scheduling/availability-service.ts`,
+      `apps/web/modules/scheduling/availability.ts` e
+      `apps/web/modules/scheduling/hours-service.ts` aos dois modos e à revisão publicada.
+      Revalidar após lock com relógio do servidor; contar toda duração [início,fim), pendências
+      e beneficiário global; não usar fallback de profissional indisponível para capacidade.
+      Profissional atribuído é apresentado antes do envio e nunca substituído silenciosamente.
+
+### Reserva, remarcação e recuperação
+
+- [ ] T056 [P] [US3] Escrever `apps/web/tests/integration/scheduling-channel-booking.test.ts`
+      (novo): criação imediata/manual, autorização/público-alvo, 20 disputas por profissional,
+      capacidade 1 e 3, beneficiário global, adjacência, falha e 20 retries; uma única ocupação
+      por vencedor. Referências: 2C-FR-02/03/14/25; 2C-SC-01/02/03/13/24.
+- [ ] T057 [US3] Adequar `apps/web/modules/scheduling/booking-service.ts` para criação pelos
+      canais e painel sobre a mesma ocupação, com estados explícitos, política por serviço,
+      autoria externa, idempotência/auditoria e intenção de aviso. Pendência ocupa vaga sem
+      confirmar nem expirar; passagem do tempo não gera presença/falta. Atender T056.
+- [ ] T058 [P] [US3] Escrever `apps/web/tests/integration/scheduling-channel-reschedule.test.ts`
+      (novo): liberar origem/reter só destino, terceiro ocupando origem, rollback inicial,
+      substituir/retirar/recusar/retomar, 0+1 → 1+0 → 1+1 → 2+0 e terceira troca negada.
+      Cobrir aprovação após início original com destino futuro, destino passado negado e ambas
+      as modalidades. Referências: 2C-FR-04/08/10/11/17/18; 2C-SC-05/07/09/10/16/17.
+- [ ] T059 [US3] Implementar ciclo/propostas em
+      `apps/web/modules/scheduling/reschedule-service.ts` (novo), usando a transação/locks
+      comuns de T045. Envio válido libera origem e retém só destino; substituir conserva destino
+      anterior em falha; retirar/recusar não restaura origem. Retomada mantém ID/ciclo mesmo
+      após origem, sem prazo de nova reserva/24h da origem. Contar apenas ciclo confirmado,
+      mantendo utilização reservada e confirmadas + reservada <= 2. Atender T058.
+- [ ] T060 [US3] Implementar aprovação/recusa versionadas em
+      `apps/web/modules/scheduling/approval-service.ts` (novo), com equipe/backup autorizados,
+      destino futuro, elegibilidade e proposta vigente. Aprovar mantém ocupação e consolida
+      uso voluntário uma vez; recusa inicial termina pedido, recusa de troca mantém mesmo
+      registro aguardando escolha. Não reaplicar horizonte reduzido a proposta recebida antes.
+      Cobrir concorrência em T056/T058, inclusive cancelamento e revogação.
+- [ ] T061 [US3] Implementar cancelamento em
+      `apps/web/modules/scheduling/booking-service.ts` e ampliar
+      `apps/web/tests/integration/scheduling-channel-booking.test.ts`: confirmado/pedido novo
+      pendente antes do início, sem prazo mínimo/equipe; exatamente no início é negado.
+      Pedido cancelado sai da fila/alertas, libera só sua vaga, preserva ID/histórico/contador e
+      avisa. Troca pendente e registro sem horário seguem suas guardas específicas; replay
+      autorizado após início retorna resultado original e disputa com decisão não reativa.
+      Referências: 2C-FR-09/10/18/20; 2C-SC-08/09/17/19.
+- [ ] T062 [P] [US3] Escrever `apps/web/tests/integration/scheduling-provider-recovery.test.ts`
+      (novo) com 0/1/2 trocas usadas, ambos os modos, origem passada, causa forjada, falta de
+      permissão, falha/concorrência e alternativas recusadas; comprovar bloqueio efetivo,
+      preservação de terceiros e zero cobrança. Referências: 2C-FR-20; 2C-SC-19.
+- [ ] T063 [US3] Implementar ocorrência e recuperação em
+      `apps/web/modules/scheduling/provider-recovery-service.ts` (novo), coordenada com
+      `apps/web/modules/scheduling/hours-service.ts` e `reschedule-service.ts`.
+      Registrar indisponibilidade efetiva e retirar confirmação/ocupação atomicamente;
+      recuperação isenta no mesmo ID, sem impor hora/alterar terceiros, aviso devido e contador
+      preservado. Nova troca voluntária após confirmar volta às regras usuais. Atender T062.
+
+### Operação, histórico e comunicação
+
+- [ ] T064 [P] [US3] Escrever `apps/web/modules/scheduling/approval-queue.test.ts` (novo):
+      remarcações antes de pedidos novos, origem mais próxima, desempate envio/ID; urgência
+      pelo destino e atraso pela entrada em análise, 24h e limites adjacentes, configuração,
+      desativação de atraso, fim dos alertas após decisão e nenhuma transição automática.
+      Referências: 2C-FR-07/21/22; 2C-SC-06/20/21.
+- [ ] T065 [US3] Implementar fila paginada em
+      `apps/web/modules/scheduling/approval-queue-service.ts` (novo) e estender
+      `apps/web/modules/scheduling/access.ts` para vínculo operacional de equipe sob permissões
+      existentes, sem concessão implícita. Aplicar a mesma ordenação no servidor/paginação;
+      registrar atuação principal/backup, idade e alertas independentes. Ampliar
+      `apps/web/tests/integration/scheduling-channel-access.test.ts` para disputas/revogação.
+- [ ] T066 [US3] Implementar listagem/detalhe/histórico autorizados em
+      `apps/web/modules/scheduling/channel-query-service.ts` e projeção para histórico individual
+      em `apps/web/modules/scheduling/booking-service.ts`. Não ocultar registros aguardando
+      nova data quando origem passou; conservar autor e beneficiário distintos, LC/bloqueios
+      atuais e histórico append-only. Testar em
+      `apps/web/tests/integration/scheduling-channel-access.test.ts`; integrar à fronteira
+      existente de 002 sem criar histórico/contas de compras. Referências: FR-04/12; SC-01/03/11.
+- [ ] T067 [P] [US3] Ampliar `apps/web/tests/integration/scheduling-notifications.test.ts`:
+      quatro eventos/três meios, titular/dependente independentemente do autor, preferências
+      distintas, vínculo revogado antes de envio/retry, ausência de contato, falha/resultado
+      incerto e deduplicação. Sem confirmação falsa de pendência ou reversão da reserva.
+      Referências: 2C-FR-23/24; 2C-SC-22/23.
+- [ ] T068 [US3] Implementar preferências pessoais e avisos internos em
+      `apps/web/modules/scheduling/notification-service.ts` e schemas de T047; aplicar padrão
+      dos três meios somente conforme conciliação de T044, sem apagar supressões antigas.
+      Resolver destinatários pelo beneficiário/vínculo atual, permitir edição pessoal
+      versionada no app e preservar consulta de estado/histórico com avisos desligados.
+- [ ] T069 [US3] Implementar handler em
+      `apps/worker/src/jobs/scheduling-notifications.ts` (novo), integrado ao bootstrap
+      `apps/worker/src/main.ts`, registro permitido em `apps/worker/src/queues.ts` e jobs existentes.
+      Validar envelope versionado/IDs e revalidar pessoa/vínculo/preferências/contato
+      imediatamente antes de cada envio/reenvio; usar correlação e reconciliação para resultado
+      incerto, tentativas finitas e redrive auditado de T044. Validar falhas sintéticas em
+      `apps/worker/src/jobs/scheduling-notifications.test.ts` (novo); prova real de entrega só em
+      ambiente/contatos autorizados. Não ativar campanhas bloqueadas ou prometer exactly-once.
+
+### Contratos HTTP e integração das experiências
+
+- [ ] T070 [US3] Vincular todas as operações de `contracts/channels.md` em
+      `apps/web/modules/scheduling/http/channel-routes.ts` (novo) e rotas versionadas cujo
+      caminho exato foi fechado por T041. Criar
+      `apps/web/modules/scheduling/http/channel-routes.test.ts` (novo) antes da vinculação:
+      autorização, entrada inválida, versão/replay, limite de corpo/página, não cachear privado,
+      isolamento entre público/associado/equipe e compatibilidade administrativa.
+- [ ] T071 [US3] Integrar gestão de políticas/equipe, fila/decisão/recuperação e publicação em
+      `apps/web/modules/scheduling/ui/`, preservando componentes e navegação existentes.
+      Rótulos Salvar/Publicar e Salvar alterações/Publicar alterações, cada descrição sempre
+      visível abaixo do botão e acessível; erro preserva edição e estado real. Caminhos de
+      componentes concretos devem constar do mapeamento de T043 antes de editar. Cobrir
+      `apps/web/tests/e2e/scheduling.spec.ts` com teclado/390px/temas e guia CAAB.
+- [ ] T072 [US3] Especificar o encaixe verificável dos consumidores de 002 UI01/UI02 em
+      `specs/008-scheduling-management/contracts/channels.md`: beneficiário primeiro,
+      profissionais condicionais, revisão, aviso da liberação da origem, situação manual,
+      contagem confirmada/em andamento, recuperar/cancelar, preferências e histórico.
+      Conservar caminhos/IDs da spec própria definida em T043 e seus testes; não duplicar
+      tarefas de construção da interface externa dentro de 008.
+- [ ] T073 [US3] Validar consumo por app/site/painel e revisão única em
+      `apps/web/tests/integration/scheduling-channel-contract.test.ts` (novo), com clientes
+      sintéticos identificados; registrar compatibilidade da interface real de UI02 em
+      `specs/008-scheduling-management/evidence/channels-validation.md` (novo).
+      Exigir mesma reserva/estado/histórico e revisão publicada após recarga em ambos os canais;
+      cliente sintético sozinho não conclui a integração real. Referências: SC-01/03/04/18/24.
+
+## Phase 4 — Polish e saída
+
+- [ ] T074 Executar matriz concorrente completa V01–V12 de
+      `specs/008-scheduling-management/quickstart.md` no PostgreSQL descartável, incluindo
+      20 envios/retries, capacidade 1/3, recurso/beneficiário global, clocks após lock, vínculos/
+      políticas concorrentes, rollback e versões. Registrar commit, casos e resultados em
+      `specs/008-scheduling-management/evidence/channels-validation.md`; zero testes encontrados
+      ou suite histórica não é aprovação.
+- [ ] T075 [P] Validar jornada real de UI01/UI02 e painel por teclado, 390px, temas, foco,
+      mensagens e contraste conforme WCAG 2.2 AA e `docs/caab-design.md`; registrar capturas,
+      negações, perda de sessão, conflitos e decisões por ambos os canais em
+      `specs/008-scheduling-management/evidence/channels-ui-validation.md` (novo). Exige clientes
+      implementados na spec responsável, não só contratos/simulações.
+- [ ] T076 Executar gates da stack e revisão específica de autorização, privacidade, agenda,
+      jobs, migrations e auditoria; verificar p95 <= 2s das telas comuns com massa/ambiente/
+      amostra documentados, sem aplicar alvo a entrega de provedor. Registrar resultados e
+      limitações em `specs/008-scheduling-management/evidence/channels-validation.md`.
+      Rodar formatação documental explícita dos arquivos alterados, lint/types/testes/build/
+      segurança aplicáveis; não repetir CI só por documentação ou reativar localhost.
+- [ ] T077 Ensaiar upgrade/retorno compatíveis com dados sintéticos e concluir reconciliação
+      de integração/inventário em `specs/008-scheduling-management/legacy-parity.md`,
+      `specs/008-scheduling-management/plan.md` e
+      `specs/008-scheduling-management/evidence/channels-validation.md`.
+      Registrar pré-condições, único escritor, IDs/contadores preservados, sinais de falha e
+      rollback sem perda; prova real de acesso/entrega e revisão humana específica são gates.
+      Preparar resultado revisável; ativação/corte, PR e merge dependem de autorização própria.
+
+## Dependências e ordem
+
+T040–T043 → T044–T050 → US3/T051–T073 → T074–T077.
+Na fundação: T041 → T046 → T047; T045 → T048; T047/T048 → T049/T050.
+Testes de cada grupo antecedem seu código. Dentro de US3, oferta → vagas → criação →
+troca/decisão/cancelamento → recuperação → fila/histórico/avisos → HTTP/integração.
+T068 → T069; T044 bloqueia adaptador/entrega; T041 bloqueia acesso real;
+T043/UI01 bloqueiam UI e UI02 bloqueia homologação dos consumidores.
+T042 bloqueia conclusão da transição/corte; não autoriza banco real.
+AC/BEN/BLQ são dependências técnicas a conciliar em T040, não novas entregas duplicadas.
+
+T048 e T070 só iniciam quando T045/T041 tiverem registrado os caminhos concretos faltantes.
+Essa condição é explícita: a lista está gerada, mas ainda não está toda liberada para execução.
+
+## Paralelismo seguro
+
+[P] indica trabalho em arquivo próprio após os pré-requisitos comuns, não autorização para
+iniciar agentes. T046 pode ser preparado junto de T044/T045, após Setup, pois muda arquivo distinto.
+Em US3, os testes T051/T054/T056/T058/T062/T064 podem ser preparados em paralelo com contratos/
+modelo estáveis; implementações que compartilham booking-service, access, contratos ou migrations
+seguem em sequência. T067 depende da base de testes criada em T050, mas não dos demais testes de
+US3. T075 pode executar junto de T074 com ambientes e relatórios separados; T076 reúne as evidências. Não editar o mesmo arquivo simultaneamente.
+
+## Estratégia incremental
+
+Primeiro marco: publicação e primeira reserva imediata/manual com identidade, autoria, ocupação
+e avisos devidos comprovados em ambiente sintético. É validação interna, não lançamento parcial.
+Segundo: ciclo completo de troca/cancelamento/recuperação e operação da equipe.
+Terceiro: consumidores reais, comunicação e transição homologados.
+MVP externo conserva todo o recorte 2C aceito; não omitir remarcação, cancelamento, histórico ou
+canais acordados para antecipar publicação. Não executar implementação sem sua autorização.
+
+## Cobertura dos requisitos de 2C
+
+Todas as referências FR/SC desta tabela usam o prefixo 2C. T074–T077 consolidam as evidências;
+cobertura documental não significa teste aprovado.
+
+| Requisitos | Tarefas principais | Critérios |
+| --- | --- | --- |
+| FR-01/02 | T041/T047/T049/T053/T070/T073 | SC-01/03 |
+| FR-03 | T045/T048/T056/T057/T060 | SC-01/02 |
+| FR-04 | T058/T059/T061/T066 | SC-05/08/11 |
+| FR-05 | T046/T057/T060/T074 | SC-16 |
+| FR-06 | T042/T077 | Inventário/compatibilidade e retorno; sem SC numérico exclusivo |
+| FR-07 | T064/T065 | SC-06 |
+| FR-08 | T054/T055/T058/T059 | SC-07 |
+| FR-09 | T061 | SC-08 |
+| FR-10 | T058/T059 | SC-09 |
+| FR-11 | T045/T048/T058/T059/T060 | SC-10 |
+| FR-12 | T066/T073 | SC-11 |
+| FR-13 | T054/T055/T071/T072 | SC-12 |
+| FR-14 | T045/T048/T054–T057/T074 | SC-13 |
+| FR-15/16 | T054/T055/T060 | SC-14/15 |
+| FR-17 | T058/T060 | SC-16 |
+| FR-18 | T058/T059/T061 | SC-17 |
+| FR-19 | T051/T052/T071/T073 | SC-18 |
+| FR-20 | T061/T062/T063/T067 | SC-19 |
+| FR-21 | T049/T060/T064/T065 | SC-20 |
+| FR-22 | T064/T065/T071 | SC-21 |
+| FR-23/24 | T044/T050/T067–T069/T072 | SC-22/23 |
+| FR-25 | T047/T049/T053/T055/T060/T072 | SC-24 |
+| Acessibilidade/UX | T043/T071–T073/T075 | SC-04 |
+
+## Listas administrativas e históricas preservadas
+
+Os itens abaixo conservam estado/evidências e pendências próprias; não são o plano ativo de 2C.
+T025–T039 exigem conciliação por T040, especialmente acesso/conflitos e numeração SQL.
+
+<details>
+<summary>Recortes anteriores: preservar IDs, estados e evidências</summary>
+
+### Lista administrativa de 21/09/2026 — acesso, integridade por pessoa e exportação
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/exports.md), [quickstart](quickstart.md). **Branch da entrega:**
-`docs/project-clarify-20260921`. Nenhuma tarefa nova executada. **Lista ativa:** T025–T039; testes
+`docs/project-clarify-20260921`. Nenhuma tarefa nova executada. **Lista administrativa desta seção:** T025–T039; testes
 foram pedidos nas specs e nos gates do projeto. Caminhos novos são destinos planejados; conferir
 referências contra o inventário de artefatos deste incremento antes de editar. Nenhum arquivo de
 código foi criado agora.
@@ -50,7 +397,7 @@ remarcação falha preserva original.
       antigos em `apps/web/tests/integration/scheduling.test.ts`; se detectar pares sobrepostos,
       parar sem cancelar/alterar reserva e emitir relatório seguro para decisão explícita.
 - [ ] T030 [US1] Criar exclusão GiST por member_id+intervalo [) scheduled em
-      `packages/db/migrations/0028_scheduling_beneficiary_overlap.sql` (nova), preservando
+      `packages/db/migrations/` (nova; registrar nome/numeração livres após inventário, sem usar 0028 já aplicado ao ciclo de vida), preservando
       constraint profissional; provar que falha integralmente com conflitos existentes e não usar
       NOT VALID.
 - [ ] T031 [US1] Adequar `apps/web/modules/scheduling/booking-service.ts`,
@@ -106,7 +453,7 @@ calendário; dados de beneficiário ficam na projeção autorizada.
 Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes antecedem
 código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura de 001 (concessões,
 schemas, writers, rotas e UI) precede adaptadores/exportações dos demais specs. Migração 0025
-precede0026;0027 antes de transferências;0028 depende do diagnóstico de conflitos e não altera dados
+precede0026;0027 antes de transferências; a migration de conflito do beneficiário depende do diagnóstico de conflitos e não altera dados
 automaticamente. Regressões004/006 e regras008 podem avançar após catálogo/migrações mesmo antes do
 núcleo de exportação. Aceite transversal002 depende das evidências das funções. Spec009 exige gate
 M016. Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
@@ -403,3 +750,5 @@ interface em `account-member-lifecycle`, `members` e `scheduling`, conforme a fu
 recuperação e decisão da reserva mantêm histórico/ocupação. Detalhes no
 [relatório da entrega](../001-project-foundation/evidence/plan-2026-09-21-validation.md). Somente os
 itens LC acima foram concluídos; exportação própria e pendências anteriores permanecem.
+
+</details>
