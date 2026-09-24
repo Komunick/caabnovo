@@ -113,6 +113,16 @@ compartilham o protocolo de locks/revalidação para não aceitar regra obsoleta
 A alteração alcança novos pedidos; não expira pendências nem cancela reservas existentes. Não
 usar esse campo para mudar a antecedência relativa ao horário original de uma remarcação.
 
+Horizonte futuro aceito na rodada 3: campo de dias positivos por serviço com padrão 90 e
+estado de desativação explícito (não representar zero como janela vazia acidental). A janela
+usa dias corridos de 24 horas a partir do instante do servidor, com limite inclusivo para o
+início. É calculada na leitura/comando, sem materializar infinitas vagas ou depender de worker.
+Consulta e envio de nova reserva/destino de troca aplicam a política vigente sob revalidação;
+reservas e propostas recebidas antes da mudança conservam sua validade quanto ao horizonte.
+Preservar versão/configuração necessária à auditoria, sem migrar datas ou expirar reservas por
+redução da janela. O limite é independente dos campos de antecedência mínima e remarcação.
+Nenhuma migration foi aplicada por esta decisão documental.
+
 Adicionar à política do serviço uma antecedência mínima opcional de remarcação, com valor inicial
 equivalente a 24 horas (1.440 minutos) e estado explícito de desativação. A representação final
 será conciliada com o contrato; valor negativo não é válido. Comparar instantes no servidor no
