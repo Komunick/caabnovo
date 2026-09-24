@@ -121,14 +121,18 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
    conflito por beneficiário e sinalização de bloqueio descritas em AC/BEN/BLQ. A
    exportação DX01 tem entrega própria e não é pré-requisito técnico para a reserva externa.
    CAL06 é revisão da interface administrativa, sem alterar o núcleo de vagas.
-2. Vincular cada identidade externa ao cadastro individual em Associados e aplicar as decisões de
+2. O usuário confirmou em 24/09 que titulares e dependentes já possuem acessos individuais no
+   app/site atual. Verificar esse mecanismo e mapear identidades existentes ao cadastro individual
+   em Associados, preservando continuidade e separação do painel; aplicar as decisões de
    23/09: titular reserva para si e seus dependentes; dependente reserva somente para si. O titular
    consulta e, quando permitido, gerencia reservas do dependente enquanto o vínculo estiver vigente;
    o dependente acessa todas as próprias reservas, inclusive as feitas pelo titular. Revogar o
    acesso do titular quando o vínculo cessar. Não usar conta administrativa como conta do app/site
    nem expor a seleção administrativa de beneficiários como API pública.
 3. Inventariar reservas, contas e identificadores do legado antes de definir coexistência,
-   migração ou corte. Sem correspondência confiável, não criar contas ou reservas duplicadas.
+   migração ou corte. Reservas futuras em uso ainda não foram confirmadas nem descartadas pelo
+   usuário (resposta C); inventário é necessário antes de selecionar estratégia. Sem correspondência
+   confiável, não criar contas ou reservas duplicadas.
 4. Aplicar as decisões de 23/09: serviços publicados ficam visíveis no app e no site antes do login;
    vagas exigem autenticação. Confirmação imediata é o padrão por serviço e pode ser desativada
    pela equipe para exigir aprovação de novos envios. Solicitação pendente ocupa a vaga até
@@ -207,7 +211,11 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   mesmo comando versionado. Prazo de alerta por serviço: 24 horas corridas, editável/desativável;
   guardar entrada em análise e política aplicável, calcular idade no servidor e derivar atraso
   sem expirar pedido/liberar vaga. Exibir idade com alerta desligado e não mudar a prioridade
-  de remarcações. Limiar de proximidade do atendimento permanece explícito para detalhamento.
+  de remarcações. Modelar antecedência de urgência independente, padrão 24 horas corridas,
+  configurável por serviço: início solicitado - instante do servidor <= antecedência. Na troca,
+  usar destino atual, mantendo origem só para prioridade já definida. Desativar alerta de atraso
+  não desativa urgência; pedido novo pode ser urgente. Após início sem decisão, manter sinalização
+  e pendência sem confirmar retroativamente. Decisão concluída retira os alertas de análise.
 
 - Remarcação externa voluntária: registrar origem imutável (horário, modo/recurso e versão) para histórico,
   prioridade e cálculo do prazo; validar destino e liberar origem/ocupar destino na mesma
@@ -386,7 +394,9 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 - Equipe/backup e alerta (2C-SC-20/21): acesso de consulta/alteração, vínculo e revogação,
   concorrência, autor auditado, 23h59min59s/24h, configuração/desativação, idade e ausência de
-  transições automáticas. Definir fronteiras da urgência quando seu limiar for estabelecido.
+  transições automáticas. Urgência a 24h00min01s/24h/menos de 24h, prazo configurado, pedido
+  recém-recebido, destino alterado, atraso desativado e passagem do início sem decisão; preservar
+  ordenação pela origem e não aprovar retroativamente.
 - Avisos (2C-SC-22/23): três meios inicialmente ativos, alterações individuais persistidas,
   eventos cobertos, destinatários independentes de autoria, vínculo encerrado antes de envio/
   retry, ausência de contato, falha, deduplicação e reserva preservada. Separar testes simulados
@@ -499,6 +509,22 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Transição e rollback
 
+Fatos informados em 24/09/2026: titulares e dependentes já têm acessos individuais no sistema
+atual; reservas futuras em uso ainda precisam ser conferidas. Isso não comprova provedor,
+compatibilidade de sessão/credencial, integridade de vínculos ou volume de reservas. Inspecionar
+contrato/mecanismo de acesso e amostra autorizada/inventário, sem extrair segredos nem criar login
+paralelo por módulo. Mapear identificador da conta à pessoa de Associados por correspondência
+verificável; ambiguidades ficam para reconciliação, sem ligar pessoas apenas por nomes iguais.
+Planejar testes com identidades sintéticas de titular/dependente, revogação, continuidade de
+histórico e acesso às reservas próprias. A conta individual não concede acesso administrativo.
+
+O inventário deve registrar fonte/versão/data, quantidade e situações das reservas futuras,
+identificadores de beneficiário/unidade/serviço/profissional, histórico e correspondências de
+contas. Acesso aos dados reais e execução da transição dependem do fluxo autorizado. Se houver
+reservas futuras, conciliá-las antes de ativar escrita no novo fluxo; se a ausência for comprovada,
+registrar essa evidência e preservar o histórico necessário. Resultado desconhecido mantém o
+corte pendente, sem presumir importação concluída ou agenda vazia.
+
 Planejar compatibilidade de leitura dos consumidores e migração verificável de reservas/contas
 que precisem sobreviver ao corte. Não fazer escrita dupla cega entre legado e CAAB. Definir
 responsável, janela de corte, deduplicação, reconciliação e retorno antes de publicar o canal.
@@ -508,10 +534,12 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; limiar de urgência por proximidade;
-provedores, textos e operação de entrega/reenvio de mensagens; contas e reservas do legado.
+Verificação e integração dos acessos individuais já existentes, mapeamento de pessoas e
+revogação de vínculo; provedores, textos e operação de entrega/reenvio de mensagens;
+inventário de contas/histórico e existência de reservas futuras do legado ainda por conferir.
 Equipe principal/backup, alerta de 24 horas configurável, canais/preferências/destinatários e
-ordem da jornada foram definidos em 24/09/2026. Até resolvê-las,
+ordem da jornada e urgência a 24 horas do atendimento configurável foram definidos em 24/09/2026.
+Até resolver as dependências restantes,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
 
 ## Histórico anterior — referência, não sequência executável atual
