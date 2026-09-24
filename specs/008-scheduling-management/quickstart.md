@@ -1,3 +1,76 @@
+# Validação planejada — Agendamentos externos 2C (24/09/2026)
+
+**Estado:** roteiro para implementação futura, não evidência de testes executados.
+Referências: [spec](spec.md), [contrato lógico v1](contracts/channels.md), [modelo](data-model.md).
+Os roteiros administrativos anteriores permanecem abaixo e não comprovam o novo recorte.
+
+## Pré-requisitos de 2C
+
+- Suite de contratos/domínio e adaptadores sintéticos de identidade/entrega implementados antes
+  de executar os cenários. Os testes atuais podem cobrir apenas a agenda administrativa.
+- Ambiente CI/descartável conforme [stack](../../docs/STACK.md) e
+  [workflow](../../docs/DELIVERY-WORKFLOW.md); nunca dados reais ou banco do preview.
+- Node/pnpm e dependências do lockfile. Guia de design acessível antes de desenhar/revisar UI.
+- Fixtures: titular T1 com dependente D1, outro titular T2, dependente D2 sem vínculo com T1,
+  equipe do estabelecimento E1, colaborador autorizado de backup e conta somente consulta.
+  Ofertas: serviço para ambos e exclusivo de titular; modo profissional e capacidade 2;
+  confirmação imediata/manual; revisão publicada e rascunho divergentes. Relógio controlável.
+- Identidades/contatos/provedores sintéticos devem estar identificados como tal; nenhum envio real.
+
+## Execução futura
+
+Conferir seletores de testes após implementá-los; zero testes encontrados ou suite apenas antiga
+não atende ao recorte. Comandos existem no package.json consultado, mas não foram executados:
+
+```powershell
+corepack pnpm test:unit scheduling
+corepack pnpm test:contract scheduling
+corepack pnpm test:integration scheduling
+corepack pnpm test:e2e scheduling --project=chromium
+corepack pnpm test:a11y --project=chromium
+```
+
+Execução de integração/browser e demais gates no ambiente autorizado/CI. Este guia não inicia
+serviço local nem instala dependências. Rodar format/lint/typecheck/build/security conforme workflow
+quando houver código; não criar repetição de CI por mudança exclusivamente documental.
+Para documentos, o comando próprio é format:docs:check; format:check geral não cobre specs/docs.
+
+## Matriz de jornadas e resultados esperados
+
+| Caso | Ações com dados sintéticos | Resultado verificável | Referência |
+| --- | --- | --- | --- |
+| V01 Identidade e público | Visitante consulta oferta/tenta vagas; T1 escolhe D1 antes do serviço; D1 tenta T1; titular por dependente tenta serviço exclusivo. | Só catálogo público; representações indevidas negadas; perfil do atendido determina elegibilidade; API direta também nega. | FR-01/02/04/25; SC-03/24 |
+| V02 Publicação | Salvar novo, publicar direto; salvar edição e publicar alterações; repetir/comando concorrente/inválido. | Mesmo ID; rascunho invisível; revisão pública única app/site; falha preserva publicada; descrições acessíveis abaixo dos botões. | FR-19; SC-18 |
+| V03 Vagas e capacidade | 20 envios diferentes por painel/app/site para vaga única e capacidade 2; mesmo beneficiário entre unidades; adjacência. | Uma ou duas ocupações conforme recurso; conflito global da mesma pessoa; adjacências aceitas; nenhuma dupla confirmação. | FR-03/14; SC-01/02/13 |
+| V04 Equipe e confirmação | Criar imediato/manual; equipe vinculada e backup disputam decisão; usuário só consulta e permissão revogada tentam agir. | Pendência ocupa; um único efeito de aprovação/recusa; autoria/apoio auditados; nenhuma permissão herdada do vínculo. | FR-03/21; SC-20 |
+| V05 Troca voluntária | Pedir, substituir, recusar, retomar e confirmar; terceiro ocupa origem liberada; falhar transação inicial; usar duas trocas. | Só destino retido; falha inicial preserva origem; recusa não a restaura; uma utilização por ciclo; terceiro ciclo negado. | FR-07/08/10/11/18; SC-05/07/09/10/17 |
+| V06 Limites temporais | Prazo de troca 24h/exatamente/menos; horizonte 90 dias/início no limite/acima; políticas alteradas; destino já iniciado. | Guardas independentes; redução não reescreve reservas existentes; aprovação nunca retroativa; sem expiração automática. | FR-08/15/16/17; SC-07/14/15/16 |
+| V07 Cancelamento | Cancelar confirmado antes/exatamente no início; cancelar sem horário após recusa/indisponibilidade e após origem; corrida com aprovação. | Aplicar guarda da situação; liberar só ocupação própria; preservar histórico; decisão atrasada não reabre registro. | FR-09/18/20; SC-08/17/19 |
+| V08 Recuperação isenta | Equipe registra indisponibilidade com 0/1/2 trocas usadas; nova escolha, recusa, retomada/confirmação/cancelamento. | Mesmo ID, bloqueio real mantido, zero vagas sem escolha, uso voluntário inalterado; cliente não forja isenção; terceiros preservados. | FR-20; SC-19 |
+| V09 Profissional e jornada | Seleção habilitada/desabilitada, qualquer disponível, nenhum profissional cadastrado, profissional sem vaga e troca de beneficiário. | Sem campo desnecessário; profissional informado antes de concluir e sem troca silenciosa; fallback indevido negado. | FR-13/14/25; SC-12/13/24 |
+| V10 Fila e alertas | Origem amanhã vs mês seguinte; destinos invertidos; empate; idade 23h59min59s/24h; início em 24h00min01s/24h; atraso desligado. | Prioridade usa origem; urgência usa destino e independe da idade; atraso/urgência não liberam vaga, mudam ordem ou transferem responsabilidade. | FR-07/22; SC-06/21 |
+| V11 Avisos e histórico | Quatro eventos; três canais ativos; preferências distintas, vínculo encerrado entre evento/envio, sem contato, retry e resultado externo incerto. | Destinatários atuais, sem duplicação cega; reserva não é revertida por envio; sem confirmação falsa; histórico por beneficiário com autor separado. | FR-12/23/24; SC-11/22/23 |
+| V12 Acesso e UX | Sessão/vínculo revogados entre leitura/comando/replay; ações por teclado, 390 px, temas, falha/conflito e retorno ao fluxo. | Zero exposição privada/ação indevida; campos preservados; estado textual e foco coerentes; evidência pelo guia/WCAG. | FR-01/02/04/05; SC-03/04 |
+
+“FR/SC” na matriz refere-se ao prefixo 2C da spec. Além das jornadas, conferir rollback/idempotência
+com isolamento real no PostgreSQL; mock de repositório não comprova ausência de corrida.
+Revisar limites configurados também após espera por lock e com fusos de navegador diferentes.
+
+## Homologação externa e transição
+
+| Dependência | Evidência necessária antes de ativar |
+| --- | --- |
+| Contas existentes | Mecanismo, mapeamento verificável identidade→pessoa, revogação, separação do painel e teste de continuidade autorizado. |
+| Mensagens | Provedor/contatos/templates, política finita de tentativas/reenvio, recibos seguros, preferências/supressões conciliadas; falha não altera reserva. |
+| Legado | Fonte/data/versão, reservas futuras e histórico inventariados, IDs reconciliados, janela de corte e retorno sem perda. |
+| Contrato HTTP/UI | Caminhos versionados e schemas executáveis vinculados ao contrato lógico, compatibilidade com UI01/UI02 e guia visual. |
+
+Resultado desconhecido sobre reservas futuras mantém corte pendente. Não usar massa sintética
+como prova de inventário ou entrega real. Guardar commit, ambiente, casos, resultados e limitações
+em evidence/ da entrega; nenhuma tarefa é concluída apenas por este roteiro.
+
+---
+
 # Validação do incremento — Agendamentos: acesso, integridade por pessoa e exportação
 
 ## Estado e pré-requisitos
