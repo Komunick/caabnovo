@@ -18,9 +18,10 @@ reservas. Isso evidencia uma limitação daquele produto; não comprova que prio
 reduza cancelamentos na CAAB.
 
 **Recomendação para discussão, não regra aprovada:** priorizar remarcações na análise da equipe,
-com ordenação por antiguidade dentro do grupo e visibilidade de pedidos antigos. Preservar a
-reserva atual até aceitar a troca, reter o destino conforme a política de pendências já escolhida
-e limitar a uma troca pendente por reserva são medidas propostas para a jornada. A precedência
+com ordenação por antiguidade dentro do grupo e visibilidade de pedidos antigos. A spec preserva
+a reserva atual até aceitar a troca e retém o destino conforme a política de pendências já
+escolhida. Recomenda-se também limitar a uma troca pendente por reserva; esse limite ainda
+precisa de decisão de produto. A precedência
 na análise não toma vagas já ocupadas/retidas nem dispensa a aprovação exigida pelo serviço.
 Na confirmação imediata, não há fila de aprovação a priorizar. Como origem e destino ficam
 ocupados durante uma troca manual, acompanhar o tempo de análise é especialmente relevante.
