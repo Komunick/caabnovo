@@ -71,9 +71,16 @@ registrar destinos, autor, instante e versão da publicação. Novo serviço sal
 publicado; Publicar persiste dados e publicação atomicamente, inclusive na primeira gravação.
 Salvar/publicar serviço previamente salvo reutiliza seu ID. Guardas de catálogo/vagas/comandos
 externos exigem publicação e destino autorizado além de oferta ativa. Falha não produz publicação
-parcial; preservar integridade/idempotência e histórico. A forma de guardar alterações de serviço
-já publicado (rascunho separado ou atualização da versão pública) depende da próxima decisão;
-não transformar essa pendência em esquema ou migration presumidos.
+parcial; preservar integridade/idempotência e histórico. Na edição de serviço publicado,
+Salvar alterações persiste uma revisão de rascunho independente da revisão publicada; Publicar
+alterações salva e torna vigente a revisão editada atomicamente, mantendo o ID do serviço.
+Registrar versões, autoria e instantes do rascunho e da publicação para controle concorrente e
+idempotência. Reabrir edição recupera o rascunho; projeções e comandos externos consultam somente
+a configuração publicada. Erro não substitui nem remove a publicação anterior. Ocupações,
+bloqueios e elegibilidade continuam sendo avaliados em seu estado operacional atual, sem serem
+congelados na revisão. Publicação preserva snapshots/histórico das reservas existentes e as
+guardas contra alterações que invalidem reservas futuras. Este desenho é proposto, sem esquema
+físico ou migration aplicados.
 
 Esta seção planeja a reserva externa e não descreve migration aplicada. O serviço terá política de
 confirmação imediata ativada por padrão, desativável pela equipe para novos envios. A alteração da
