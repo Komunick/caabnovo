@@ -81,6 +81,8 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: Como priorizar remarcações na fila de aprovação? → A: Remarcações primeiro, ordenadas pela
   proximidade do horário atual da reserva, e não pela antiguidade do pedido ou pelo novo horário.
   Antecedência mínima para solicitar remarcação: 24 horas por padrão, editável e desativável.
+- Q: O cancelamento também deve exigir antecedência mínima? → A: Não. No app/site, pode cancelar
+  uma reserva futura confirmada até antes do início, sem antecedência mínima.
 
 ## User Scenarios & Testing
 
@@ -193,8 +195,8 @@ uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fi
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
 Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir. Remarcação
 exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
-serviço; o prazo de cancelamento ainda será definido. A remarcação segue a aceitação do serviço. A equipe vê a mesma
-reserva e sua trilha no painel.
+serviço. Cancelamento é permitido até antes do início, sem antecedência mínima. A remarcação segue
+a aceitação do serviço. A equipe vê a mesma reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
 
@@ -230,8 +232,10 @@ reserva e sua trilha no painel.
    no serviço: imediata ou aguardando aprovação. Enquanto a troca aguarda, a reserva original
    permanece confirmada e o horário proposto fica retido conforme a regra das pendências.
    Aprovação troca os horários atomicamente; recusa libera apenas a retenção proposta e mantém a
-   reserva original. Identificador/histórico são preservados. Cancelamento preserva o registro e
-   libera a vaga após comando válido, sem motivo obrigatório.
+   reserva original. Identificador/histórico são preservados. Cancelamento é permitido até antes
+   do início, sem antecedência mínima ou aprovação da equipe; preserva o registro e libera a
+   vaga após comando válido, sem motivo obrigatório. Cancelar a reserva original também encerra
+   sua troca pendente e libera o horário proposto, sem possibilidade de aprovação posterior.
 7. Sessão expirada, representação revogada, bloqueio de beneficiário, alteração de oferta ou
    conflito entre prévia e confirmação recebem resposta clara e sem dados de terceiros. Ações
    privadas não vazam por cache, histórico do navegador ou API de outro canal.
@@ -261,7 +265,8 @@ reserva e sua trilha no painel.
   desativá-la para exigir aprovação dos novos envios. A situação resultante é exibida sem
   ambiguidade nos canais. A equipe autorizada aprova ou recusa com auditoria; uma solicitação
   pendente nunca é apresentada como confirmada. Enquanto aguarda, ela bloqueia vaga e conflito do
-  beneficiário; somente aprovação ou recusa da equipe encerra a espera, sem expiração automática.
+  beneficiário. A espera por aprovação não tem expiração automática; para a troca vinculada a uma
+  reserva confirmada, o cancelamento explícito da original também encerra a proposta (2C-FR-09).
   Recusa libera a ocupação; aprovação preserva a mesma reserva e ocupação. Intervalos são
   [início, fim), persistidos em UTC e apresentados em America/Bahia.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
@@ -269,7 +274,7 @@ reserva e sua trilha no painel.
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
   criadas pelo titular. Titular com vínculo vigente e dependente podem remarcar e cancelar as
   reservas futuras confirmadas que estão autorizados a gerir, com controle de versão. O prazo
-  de remarcação está em 2C-FR-08; o prazo de cancelamento ainda será definido.
+  de remarcação está em 2C-FR-08; cancelamento até antes do início está em 2C-FR-09.
   Remarcação segue a aceitação configurada por serviço: imediata ou com aprovação. No fluxo
   manual, preservar a reserva original até aceitar a troca e reter o horário proposto sem
   expiração automática; recusa libera somente a proposta. Aprovação efetiva a troca em uma
@@ -291,6 +296,13 @@ reserva e sua trilha no painel.
   atende. O prazo não é calculado sobre o horário pretendido. Pedido recebido dentro do prazo
   continua em análise quando a antecedência cruza o limite; não expira automaticamente nem é
   recusado apenas pela demora da equipe. Alterar a configuração vale para novos pedidos.
+
+- **2C-FR-09:** Permitir ao ator autorizado cancelar reserva futura confirmada no app/site,
+  sem antecedência mínima e sem aprovação da equipe, desde que o comando seja validado antes
+  do início atual. Exatamente no início ou depois, negar o cancelamento pelo autosserviço.
+  Preservar histórico, autorização e idempotência, sem motivo obrigatório. Se existir troca
+  pendente vinculada, cancelar a original encerra essa proposta e libera ambas as ocupações
+  na mesma transação; uma aprovação atrasada não pode reativar a reserva cancelada.
 
 **Critérios mensuráveis de 2C:**
 
@@ -327,6 +339,11 @@ reserva e sua trilha no painel.
   remarcação até antes do início atual, respeitadas as demais regras. Passar pelo limite durante
   análise não invalida pedido recebido em tempo; fuso do navegador não muda a decisão.
 
+- **2C-SC-08:** Cancelar um segundo antes do início é permitido; exatamente no início e depois
+  é negado pelo app/site. Repetir o cancelamento não duplica eventos. Em disputa entre cancelar
+  e aprovar uma troca, a verificação de versão impede decisão obsoleta; cancelamento concluído
+  não deixa retenção órfã nem permite que uma aprovação posterior reative a reserva.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -334,9 +351,10 @@ reserva e sua trilha no painel.
   de dependentes foram decididas em 23/09/2026.
 - Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
   “qualquer profissional disponível” versus profissional específico.
-- Antecedência para nova reserva, horizonte futuro, prazo de cancelamento e tratamento de reservas
-  afetadas por indisponibilidade posterior. A remarcação tem antecedência padrão de 24 horas,
-  editável/desativável, conforme decisão de 24/09/2026; não inferir prazo de cancelamento ou penalidade.
+- Antecedência para nova reserva, horizonte futuro e tratamento de reservas afetadas por
+  indisponibilidade posterior. Remarcação tem antecedência padrão de 24 horas, editável/desativável;
+  cancelamento é permitido até antes do início, sem antecedência mínima (decisões de 24/09/2026).
+  Não inferir penalidades.
 - Desistência da troca pendente, pedidos paralelos e chegada do horário original durante a análise.
   A prioridade de análise das remarcações pelo horário atual mais próximo foi decidida em 24/09.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
