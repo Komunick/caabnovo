@@ -163,8 +163,10 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   recebem cache compartilhado.
 - Continuar com datas UTC, intervalos [início, fim) e apresentação em America/Bahia. A consulta
   de vagas usa as regras existentes e as políticas externas aprovadas; envio e aprovação revalidam
-  tudo na transação. Restringir sobreposições por profissional e beneficiário para situações
-  confirmada e aguardando aprovação, incluindo disputas entre painel e canal externo. Ao recusar,
+  tudo na transação. Restringir sobreposições do beneficiário em ambos os modos e do profissional
+  quando atribuído; no modo sem profissional, proteger a capacidade simultânea do serviço na
+  unidade. Incluir confirmadas, aguardando aprovação e retenções de troca, inclusive disputas
+  entre painel e canal externo. Ao recusar,
   liberar a ocupação; ao aprovar, preservar a mesma reserva e intervalo, sem nova ocupação. Uma
   prévia ou calendário externo não reserva a vaga.
 - Criação, remarcação e cancelamento mantêm idempotência, versão, histórico e auditoria; falha
@@ -226,15 +228,27 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   livres e aptos; mostrar o responsável antes de concluir. Revalidar configuração, vínculo e
   disponibilidade, sem confiar no identificador fornecido pelo cliente nem trocar o responsável
   exibido silenciosamente. Algoritmo avançado de distribuição de carga não integra esse recorte.
-  Sem profissionais, ocultar o controle; agendamento nesse cenário ainda depende de decisão,
-  pois o modelo existente exige assignment/professional. Não criar profissional fictício nem
-  tornar a referência opcional sem definir agenda e capacidade substitutas.
+  Sem profissionais cadastrados, ocultar o controle e oferecer reserva pelos horários e capacidade
+  configurados para o serviço na unidade (2C-FR-14). Diferenciar explicitamente os modos de
+  ocupação; falta de vaga/profissional apto não autoriza fallback para capacidade. A migration
+  aditiva deve preservar assignments existentes e permitir vínculo direto à oferta no modo sem
+  profissional, com invariantes por modo, sem profissional fictício.
+- Agenda por capacidade: exigir inteiro positivo e horários definidos no painel; intersectar
+  funcionamento da unidade e duração do procedimento. Serializar alterações da capacidade,
+  horários e ocupações da mesma oferta, recontando intervalos sobrepostos na transação antes de
+  aceitar. Restrições de exclusão por profissional não resolvem capacidade maior que um.
+  Reservas confirmadas, pendentes e destinos retidos usam o mesmo controle. Consolidar a união
+  dos intervalos da própria reserva/proposta para não duplicar consumo em sobreposição interna
+  da mesma capacidade, sem excluir terceiros. Aprovação conserva ocupação; recusa/retirada libera
+  somente o destino e cancelamento original libera ambas. Preservar modo e referências em cada
+  reserva; mudanças que invalidem ocupação futura exigem resolução explícita antes de efetivar.
+  Cadastro posterior de equipe não converte nem cancela reservas existentes.
 
 ### Contratos a detalhar depois das decisões
 
 Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
 por serviço e permissão de escolha de profissional por estabelecimento; consulta de vagas por
-procedimento/unidade/profissional e beneficiário quando
+procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
 necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
 permissão e auditoria. Definir autenticação, autorização, campos mínimos, paginação/limites de
@@ -298,8 +312,13 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   nome específico versus qualquer disponível; responsável identificado antes de concluir;
   profissional inativo/sem vínculo não elegível; alteração de configuração e concorrência entre
   prévia e envio. Provar que a API não aceita escolha forçada quando desativada e não troca
-  silenciosamente o profissional apresentado. O cenário sem profissionais aguarda política de
-  agendamento antes de ganhar teste de reserva.
+  silenciosamente o profissional apresentado.
+- Capacidade por serviço sem profissionais (2C-SC-13): concorrência com capacidade 1 e 3,
+  sobreposição parcial, duração, limites do expediente, confirmação/aprovação, remarcação,
+  substituição e liberação. Provar ausência de sobrelotação, dupla contagem da mesma troca e
+  retenções órfãs; proteger beneficiário entre modos. Conferir criação sem equipe, leitura em
+  lista/calendário/detalhe/histórico e exportação sem nome fictício, além de preservação das
+  reservas existentes ao mudar cadastro/configuração.
 - Interface: estados vazio/carregamento/erro, recuperação, teclado, 390 px, temas e revisão
   pelo guia CAAB; evidências por versão e canal. Medir tempo para encontrar vaga, conflito
   recuperável e trabalho manual, sem inventar metas antes de medir a linha de base.
@@ -318,8 +337,7 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; reserva sem profissional cadastrado
-e sua fonte de disponibilidade; política
+Mecanismo de identidade externa e gestão/revogação do vínculo; política
 por canal para antecedência de novas reservas; responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
