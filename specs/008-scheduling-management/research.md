@@ -164,12 +164,30 @@ indisponível deve continuar bloqueado para não ser oferecido novamente. Avisar
 permitir escolher nova data ou cancelar e não consumir seu limite de trocas por essa interrupção.
 Não aplicar o prazo de 24 horas do horário inviabilizado à recuperação. Nova escolha deve
 respeitar disponibilidade, autorização e aceitação do serviço. Não impor outro horário ao
-associado sem acordo. Mecanismo de notificações continua dependendo de decisão própria.
+associado sem acordo. Canais e destinatários foram definidos em 2C-FR-23/24; provedores e operação de entrega continuam
+pendentes de detalhamento.
 
 A decisão foi incorporada em 2C-FR-20/2C-SC-19 e no planejamento. Não autoriza cancelamento
 automático em massa nem isenção genérica para toda edição administrativa. Recuperação isenta
 funciona mesmo com duas trocas voluntárias já confirmadas, preservando-as; não devolve utilizações.
 Após confirmar a recuperação, outra mudança voluntária volta ao limite e ao prazo usuais.
+
+## Decisões CAAB — equipe, comunicação e jornada (24/09/2026)
+
+Escolhas do usuário após cinco perguntas em lote, não padrões atribuídos a fornecedores:
+
+- Equipe vinculada ao estabelecimento como responsável principal; colaboradores com permissão
+  atuam como backup. Alerta de análise após 24 horas corridas, editável/desativável por serviço,
+  sem expiração automática; limiar de proximidade do atendimento ainda a detalhar.
+- Confirmação, recusa, cancelamento e necessidade de remarcar: aviso interno app/site, e-mail e
+  WhatsApp, todos ativos por padrão, com seleção pessoal de meios no app. Fornecedores/entrega
+  ainda a detalhar; não confundir aviso interno com push nem com campanhas de Mensagens.
+- Atendimento de dependente avisa dependente e titular vigente independentemente de autoria,
+  respeitando preferências e autorização atuais de cada destinatário.
+- Na reserva autenticada, beneficiário vem primeiro, seguido de serviço/unidade, profissional
+  quando aplicável, data/horário e revisão/envio. Há serviços exclusivos para titulares;
+  elegibilidade depende da pessoa atendida e é revalidada no servidor. Descoberta pública antes
+  do login continua possível, com indicação da restrição de público.
 
 ## Pergunta e método
 
@@ -200,8 +218,8 @@ Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta
 
 ### Experiência de quem reserva no app/site
 
-1. Apresentar serviços e procedimentos com duração, unidade e instruções essenciais; permitir escolher profissional específico ou qualquer disponível quando houver equipe apta e o estabelecimento habilitar a escolha.
-2. Antes da confirmação, identificar quem será atendido (titular ou dependente autorizado). Mostrar apenas opções que possam ser reservadas por esse perfil; explicar indisponibilidade sem expor dados internos.
+1. Permitir descoberta pública de serviços com duração, unidade, instruções e público-alvo; para reservar, após autenticação, identificar primeiro quem será atendido (decisão CAAB de 24/09).
+2. Selecionar serviço/unidade elegível para o beneficiário, incluindo restrição de serviços exclusivos para titular; depois permitir profissional específico ou qualquer disponível quando houver equipe apta e escolha habilitada. Autor titular não torna o dependente elegível por representação.
 3. Mostrar datas com vagas e horários legíveis, com próxima data e alternativas de unidade/profissional quando não houver vaga. A seleção é provisória até a confirmação no servidor.
 4. Revisar beneficiário, procedimento, unidade, profissional quando aplicável, data, hora e regras aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
 5. Em “Minhas reservas”, separar próximas e históricas, mostrar situação textual e permitir remarcação/cancelamento somente conforme política aprovada. Oferecer “agendar novamente” como atalho apenas se a oferta ainda for válida.
@@ -231,14 +249,14 @@ Essas são recomendações de desenho, não declaração de que cada parte já e
 
 ## Decisões que a pesquisa não pode tomar pela CAAB
 
-- Quais serviços/unidades aparecem em cada canal? A escolha de profissional específico ou qualquer disponível foi aprovada, condicionada à equipe cadastrada e à configuração do estabelecimento. Reserva sem profissionais foi autorizada, com horários e capacidade por serviço.
-- Quem pode reservar e administrar compromissos de cada dependente, e como revogar esse vínculo?
+- Publicação conjunta app/site definida em 24/09, sem seleção de canal. Escolha de profissional específico ou qualquer disponível aprovada, condicionada à equipe e configuração do estabelecimento; sem profissionais, horários/capacidade por serviço. Serviços exclusivos para titular dependem do beneficiário selecionado primeiro.
+- Titular reserva para si/dependentes vigentes e dependente só para si; acesso familiar foi definido. Identidade externa e mecanismo de gestão/revogação do vínculo ainda requerem detalhamento.
 - Horizonte futuro definido: janela móvel de 90 dias por padrão, editável/desativável por serviço. A antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável. Cancelamento é permitido até antes do início, sem antecedência mínima.
-- O que acontece com uma reserva quando profissional/unidade fica indisponível depois da confirmação?
+- Indisponibilidade do estabelecimento resolvida em 2C-FR-20: mesmo registro aguardando nova data, recuperação isenta e aviso, sem reofertar período inviável.
 - Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem profissionais já foi autorizada.
 - Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
 - Haverá lista de espera? Em caso afirmativo, qual ordem, prazo de aceitação, canal de aviso e critério de elegibilidade?
-- Quais comunicações transacionais realmente serão enviadas e por qual integração homologada?
+- Eventos, meios e destinatários transacionais foram definidos em 2C-FR-23/24; qual integração será homologada e como operar entrega/reenvio continuam dependências.
 
 ## Verificações necessárias antes de transformar a pesquisa em escopo
 
