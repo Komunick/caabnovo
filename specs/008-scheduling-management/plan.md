@@ -194,6 +194,15 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
   primeiro critério entre remarcações. Projetar essa ordem na consulta/paginação do servidor,
   mantendo visibilidade da idade dos demais pedidos; não tomar vagas ocupadas nem dispensar
   a aceitação do serviço.
+- Modelar antecedência mínima para novas reservas externas separada da remarcação, desativada
+  por padrão e configurável por serviço (2C-FR-15). Usar duração não negativa e instantes do
+  servidor; início deve continuar estritamente futuro mesmo com prazo zero/desativado.
+  Consulta de vagas e comando partilham o cálculo; revalidar configuração sob lock e tempo
+  antes de persistir, inclusive depois de espera. Com valor positivo, igualdade ao limite é
+  aceita. Mudanças valem para novos pedidos, preservando reservas e pendências anteriores;
+  cruzar o limite durante a análise não cria expiração. A regra vale nos dois modos de ocupação
+  e de aceitação. Não reutilizar esse campo como prazo de remarcação ou impor esse prazo ao
+  destino de uma troca sem decisão própria.
 - Modelar antecedência mínima de remarcação por serviço com padrão de 24 horas e desativação
   explícita. Ao receber um pedido externo, comparar o relógio do servidor ao início atual da
   reserva; exatamente no limite é permitido. Revalidar sob o mesmo protocolo transacional da
@@ -247,7 +256,7 @@ resolvidas as decisões de produto, reconciliar os dois documentos antes de gera
 ### Contratos a detalhar depois das decisões
 
 Preparar contrato externo versionado para: oferta visível por canal e política de confirmação
-por serviço e permissão de escolha de profissional por estabelecimento; consulta de vagas por
+por serviço, antecedência mínima de novas reservas e permissão de escolha de profissional por estabelecimento; consulta de vagas por
 procedimento/unidade, modo de ocupação, profissional quando aplicável e beneficiário quando
 necessário; envio com situação confirmada ou aguardando aprovação; próximas e históricas próprias;
 detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprovação/recusa com
@@ -269,6 +278,12 @@ revisão remota; nenhuma conformidade visual foi presumida. Validar teclado, foc
 estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
 
 ### Validação planejada
+
+- Novas reservas (2C-SC-14): padrão sem prazo, início futuro versus início atual/passado,
+  limite configurado exato e imediatamente abaixo, mudança/desativação entre prévia e envio,
+  relógio do servidor/fusos e tempo decorrido esperando locks. Cobrir profissional/capacidade,
+  confirmação/aprovação e preservação de pendências/reservas existentes. Verificar que a
+  configuração de novas reservas não altera o prazo separado de remarcação.
 
 - Contratos: visitante sem login consulta apenas serviços publicados para o canal, sem dados
   privados/rascunhos; consulta anônima de vagas é negada. Identidade revogada não consulta vagas
@@ -337,8 +352,8 @@ do fluxo de entrega.
 
 ### Decisões ainda bloqueadoras
 
-Mecanismo de identidade externa e gestão/revogação do vínculo; política
-por canal para antecedência de novas reservas; responsabilidade e prazo interno de análise
+Mecanismo de identidade externa e gestão/revogação do vínculo; horizonte futuro de reservas;
+responsabilidade e prazo interno de análise
 da fila de aprovação;
 mensagens reais; contas e reservas do legado. Até resolvê-las,
 o plano pode orientar contratos e protótipos, mas não serve como ordem de implementação.
