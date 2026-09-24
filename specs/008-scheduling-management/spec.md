@@ -78,6 +78,9 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
 - Q: No app/site, titular e dependente poderão remarcar e cancelar reservas futuras confirmadas
   que estão autorizados a gerir? → A: Sim. A remarcação seguirá o processo de aceitação escolhido
   para o serviço: imediato ou sujeito à aprovação da equipe.
+- Q: Como priorizar remarcações na fila de aprovação? → A: Remarcações primeiro, ordenadas pela
+  proximidade do horário atual da reserva, e não pela antiguidade do pedido ou pelo novo horário.
+  Antecedência mínima para solicitar remarcação: 24 horas por padrão, editável e desativável.
 
 ## User Scenarios & Testing
 
@@ -188,8 +191,9 @@ contrato externo e gerar tarefas executáveis.
 de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
-Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir, respeitando
-os prazos ainda a definir. A remarcação segue a regra de aceitação do serviço. A equipe vê a mesma
+Pode remarcar ou cancelar reservas futuras confirmadas que está autorizada a gerir. Remarcação
+exige, por padrão, ao menos 24 horas até o horário atual, com prazo editável ou desativável por
+serviço; o prazo de cancelamento ainda será definido. A remarcação segue a aceitação do serviço. A equipe vê a mesma
 reserva e sua trilha no painel.
 
 **Cenários de aceite do recorte 2C:**
@@ -221,7 +225,8 @@ reserva e sua trilha no painel.
 6. Titular com vínculo vigente e o próprio dependente veem as reservas futuras e históricas do
    dependente, mesmo quando criadas pelo outro, com situação textual, dados mínimos da oferta e
    ações permitidas. Ambos podem remarcar e cancelar reservas futuras confirmadas sob as mesmas
-   verificações de autorização e os prazos definidos. A remarcação segue a aceitação configurada
+   verificações de autorização. Pedir remarcação exige antecedência mínima de 24 horas em relação
+   ao início atual da reserva, salvo configuração editada ou desativada no serviço. A remarcação segue a aceitação configurada
    no serviço: imediata ou aguardando aprovação. Enquanto a troca aguarda, a reserva original
    permanece confirmada e o horário proposto fica retido conforme a regra das pendências.
    Aprovação troca os horários atomicamente; recusa libera apenas a retenção proposta e mantém a
@@ -233,6 +238,11 @@ reserva e sua trilha no painel.
 8. A jornada de descoberta, escolha, confirmação e consulta funciona por teclado e em tela móvel,
    com foco visível, status além da cor e mensagens anunciáveis, conforme WCAG 2.2 AA e o guia de
    design CAAB vigente. A revisão do guia local e a validação visual são gates antes do código.
+
+9. Na fila de aprovação, uma troca de consulta marcada para amanhã aparece antes de uma troca
+   de consulta marcada para o próximo mês, mesmo quando o segundo pedido foi enviado primeiro.
+   Ambas aparecem antes de novos pedidos. O horário pretendido não define a prioridade; em
+   empate de horário atual, ordenar pelo pedido mais antigo e usar desempate estável.
 
 **Requisitos específicos propostos para 2C:**
 
@@ -258,7 +268,8 @@ reserva e sua trilha no painel.
   históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
   criadas pelo titular. Titular com vínculo vigente e dependente podem remarcar e cancelar as
-  reservas futuras confirmadas que estão autorizados a gerir, com versão e prazos a definir.
+  reservas futuras confirmadas que estão autorizados a gerir, com controle de versão. O prazo
+  de remarcação está em 2C-FR-08; o prazo de cancelamento ainda será definido.
   Remarcação segue a aceitação configurada por serviço: imediata ou com aprovação. No fluxo
   manual, preservar a reserva original até aceitar a troca e reter o horário proposto sem
   expiração automática; recusa libera somente a proposta. Aprovação efetiva a troca em uma
@@ -269,6 +280,17 @@ reserva e sua trilha no painel.
 - **2C-FR-06:** Preservar compatibilidade dos consumidores e dados existentes durante a transição
   do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
   migração/convivência e rollback sem perda de histórico.
+
+- **2C-FR-07:** Priorizar remarcações na fila de aprovação, ordenando pelo início atual da reserva
+  em ordem crescente. A data pretendida não interfere nessa prioridade. Em empate, usar a data
+  de envio e um identificador estável; novos pedidos seguem depois, por ordem de envio. A
+  prioridade organiza análise, sem tomar vagas ocupadas ou dispensar a aceitação do serviço.
+- **2C-FR-08:** Para remarcação no app/site, exigir antecedência mínima editável por serviço,
+  inicialmente 24 horas corridas antes do início atual da reserva, com opção de desativar.
+  Verificar o prazo ao receber o pedido: exatamente 24 horas atende ao padrão; menos de 24 não
+  atende. O prazo não é calculado sobre o horário pretendido. Pedido recebido dentro do prazo
+  continua em análise quando a antecedência cruza o limite; não expira automaticamente nem é
+  recusado apenas pela demora da equipe. Alterar a configuração vale para novos pedidos.
 
 **Critérios mensuráveis de 2C:**
 
@@ -297,6 +319,14 @@ reserva e sua trilha no painel.
   horário proposto. Repetição, decisão concorrente e perda de autorização não geram duplicatas
   nem perda da reserva original.
 
+- **2C-SC-06:** Em massa com pedidos enviados fora de ordem, a fila mostra remarcações primeiro,
+  pelo horário atual mais próximo. Trocar a data pretendida não muda a prioridade. Empates são
+  estáveis por envio/identificador; pedidos novos não ultrapassam remarcações.
+- **2C-SC-07:** Com limite de 24 horas, pedido a exatamente 24 horas é aceito e a 23h59min59s é
+  recusado; mudar o limite altera a fronteira para novos pedidos. Desativá-lo permite solicitar
+  remarcação até antes do início atual, respeitadas as demais regras. Passar pelo limite durante
+  análise não invalida pedido recebido em tempo; fuso do navegador não muda a decisão.
+
 **Decisões de produto pendentes para fechar 2C:**
 
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
@@ -304,12 +334,11 @@ reserva e sua trilha no painel.
   de dependentes foram decididas em 23/09/2026.
 - Serviços, unidades e informações disponíveis em cada canal; ordem de escolha e opção
   “qualquer profissional disponível” versus profissional específico.
-- Antecedência, horizonte futuro, prazos de remarcação/cancelamento e tratamento de reservas
-  afetadas por indisponibilidade posterior. Remarcação e cancelamento de reservas confirmadas
-  pelo usuário foram autorizados em 24/09/2026; não inferir prazos nem penalidades do mercado.
-- Prioridade para remarcações, sugerida pelo usuário em 24/09: decidir se afeta somente a fila de
-  análise. A proposta de dar prioridade de análise ainda não é regra aprovada. Definir também
-  desistência da troca pendente, pedidos paralelos e chegada do horário original durante a análise.
+- Antecedência para nova reserva, horizonte futuro, prazo de cancelamento e tratamento de reservas
+  afetadas por indisponibilidade posterior. A remarcação tem antecedência padrão de 24 horas,
+  editável/desativável, conforme decisão de 24/09/2026; não inferir prazo de cancelamento ou penalidade.
+- Desistência da troca pendente, pedidos paralelos e chegada do horário original durante a análise.
+  A prioridade de análise das remarcações pelo horário atual mais próximo foi decidida em 24/09.
 - Prazo interno de análise e responsabilidade da equipe pela fila de pendências; conteúdo e canal
   de mensagens transacionais. A pendência ocupa a vaga até decisão da equipe, sem expiração
   automática, e a necessidade de aprovação é configurada por serviço, conforme decisões de
