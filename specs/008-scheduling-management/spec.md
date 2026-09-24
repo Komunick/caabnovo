@@ -142,6 +142,9 @@ transição técnica ainda pendentes, sem conceder acesso automaticamente.
   salva e disponibiliza a edição numa única ação, após validação.
 - Complemento do usuário: cada botão deve ter uma descrição curta logo abaixo explicando a
   diferença entre salvar rascunho e publicar; aplicar no cadastro e na edição publicada.
+- Q: Publicação deve permitir escolher app/site ou valer sempre nos dois? → A: Sempre nos dois
+  (opção B), pois atendem às mesmas pessoas. Publicar e Publicar alterações disponibilizam a
+  mesma versão no app e no site, sem seleção ou configuração de publicação por canal.
 
 ## User Scenarios & Testing
 
@@ -248,7 +251,7 @@ implantação ou implementação. A interface completa do app/site terá a espec
 prevista no programa 002. As decisões em aberto abaixo devem ser resolvidas antes de fechar o
 contrato externo e gerar tarefas executáveis.
 
-**Jornada de valor:** uma pessoa descobre os serviços publicados no canal antes do login. Depois
+**Jornada de valor:** uma pessoa descobre os serviços publicados no app e no site antes do login. Depois
 de autenticar, identifica o beneficiário que está autorizada a representar, consulta vagas e envia
 uma reserva. Conforme a regra do serviço, ela é confirmada imediatamente ou fica aguardando
 aprovação da equipe; em ambos os casos, a pessoa acompanha sua situação em próximas reservas.
@@ -261,13 +264,15 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 **Cenários de aceite do recorte 2C:**
 
-1. Antes do login, uma oferta publicada para o canal mostra unidade, procedimento, duração e
-   informações essenciais, sem dados privados ou horários disponíveis. Ofertas não publicadas para
-   o canal não aparecem nem são reserváveis pela API externa. No cadastro, Salvar guarda o
+1. Antes do login, uma oferta publicada mostra unidade, procedimento, duração e informações
+   essenciais no app e no site, sem dados privados ou horários disponíveis. Ofertas não publicadas
+   não aparecem em nenhum dos dois nem são reserváveis pela API externa. No cadastro, Salvar guarda o
    novo serviço sem publicá-lo; Publicar salva e publica em uma ação. Publicação inválida não
    expõe oferta e preserva os dados preenchidos para correção. Ao editar serviço publicado,
    Salvar alterações guarda rascunho e mantém a versão pública; Publicar alterações salva e
-   substitui a versão publicada numa ação. Falha conserva a versão pública anterior.
+   substitui a versão publicada numa ação, válida para app e site conjuntamente. Não há seleção
+   de canal no formulário nem estados de publicação independentes. Falha conserva a versão
+   pública anterior nos dois.
 2. O titular autenticado pode selecionar a si ou um dependente com vínculo vigente; o dependente
    autenticado só pode selecionar a si mesmo. A reserva fica vinculada ao identificador individual
    do beneficiário, enquanto autor e origem são registrados separadamente. Tentar enviar uma
@@ -336,10 +341,10 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 **Requisitos específicos propostos para 2C:**
 
-- **2C-FR-01:** Expor catálogo de serviços publicados para o canal antes do login, com projeção
+- **2C-FR-01:** Expor o mesmo catálogo de serviços publicados no app e no site antes do login, com projeção
   mínima e sem dados privados ou horários disponíveis. Consultar vagas exige identidade externa
   validada, assim como reservar, remarcar, cancelar e consultar reservas próprias. Aplicar
-  visibilidade explícita por canal; APIs administrativas e suas sessões não são reutilizadas
+  estado único de publicação externa nos dois canais; APIs administrativas e suas sessões não são reutilizadas
   pelo cliente externo.
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
   solicitar para si e dependentes com vínculo vigente; dependente só pode solicitar para si.
@@ -501,8 +506,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 - **2C-FR-19:** No formulário de cadastro de serviço, oferecer as ações “Salvar” e “Publicar”.
   Salvar persiste o novo serviço para gestão interna sem disponibilizá-lo no app/site. Publicar
-  salva os dados e publica nos canais de destino configurados numa única ação, sem exigir salvar
-  primeiro nem passar por uma segunda tela de publicação. Publicar exige permissão administrativa
+  salva os dados e publica conjuntamente no app e no site numa única ação, sem exigir salvar
+  primeiro nem passar por uma segunda tela de publicação. Não oferecer seleção de canal nem
+  configuração de versões/estados publicados separados: app e site usam a mesma publicação.
+  Publicar alterações segue a mesma regra. Isso preserva as exigências de autenticação e
+  autorização para vagas, reservas e dados privados. Publicar exige permissão administrativa
   de alteração e validação no servidor da oferta ativa, dados necessários, duração e configuração
   de agenda do modo adotado: habilitação/horários profissionais ou horários/capacidade por serviço.
   Não exigir profissionais no modo por capacidade. Agenda válida sem vagas livres não é erro de
@@ -538,10 +546,10 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   pendência impede outra reserva conflitante por profissional ou beneficiário até a decisão.
   Aprovar não duplica ocupação; recusar libera a vaga uma única vez.
 - **2C-SC-03:** A matriz de titular sem vínculo vigente, dependente tentando reservar para titular
-  ou outro dependente, sessão revogada, reserva de terceiro e oferta fora do canal retorna zero
+  ou outro dependente, sessão revogada, reserva de terceiro e oferta não publicada retorna zero
   detalhes privados ou mutações aceitas. O titular perde acesso às reservas do dependente ao
   cessar o vínculo; o dependente mantém acesso às próprias reservas criadas pelo titular.
-  Visitante sem login vê apenas serviços publicados para o canal; a consulta anônima de horários
+  Visitante sem login vê o mesmo catálogo publicado no app e no site; a consulta anônima de horários
   disponíveis é negada.
 - **2C-SC-04:** A jornada completa é executável por teclado e em 390 px, com estados e conflitos
   identificáveis sem depender apenas de cor; evidências incluem revisão pelo guia CAAB e WCAG 2.2 AA.
@@ -637,7 +645,7 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 - **2C-SC-18:** Cadastrar com Salvar mantém serviço acessível à gestão e ausente do catálogo e
   dos comandos externos. Publicar diretamente com configuração válida persiste um único serviço
-  e o disponibiliza nos canais configurados, sem etapa prévia de salvar. Configuração inválida
+  e o disponibiliza no app e no site, sem etapa prévia de salvar ou seleção de canal. Configuração inválida
   mantém campos e informa erro, sem publicação parcial. Validar ambos os modos de agenda,
   capacidade/profissional, falta de permissão, retry, versão desatualizada e agenda sem vagas
   livres. Estado ativo sem publicação não torna serviço reservável pelo app/site. Em serviço
@@ -645,7 +653,9 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   públicos em catálogo/vagas/comandos. Publicar alterações torna a edição vigente numa ação,
   mantendo o mesmo serviço. Cobrir publicação sem salvamento prévio, conflito de versão, retry
   e erro de validação que mantém a versão anterior; preservar reservas/histórico e controles
-  atuais de ocupação/bloqueio/elegibilidade mesmo com rascunho pendente. Conferir descrição
+  atuais de ocupação/bloqueio/elegibilidade mesmo com rascunho pendente. Conferir
+  publicação única e mesma versão vigente nos dois canais, incluindo atualização das projeções
+  e caches de ambos após publicação. Salvar alterações não muda nenhum dos dois. Conferir descrição
   explicativa visível abaixo de cada botão no cadastro e na edição, conforme 2C-FR-19, inclusive
   em telas estreitas, e associação acessível sem depender de passar o cursor.
 
@@ -654,7 +664,8 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 - Mecanismo de identidade externa e ligação de cada conta ao cadastro individual; gestão do
   vínculo e revogação de acesso quando ele cessa. As regras de reserva e de acesso ao histórico
   de dependentes foram decididas em 23/09/2026.
-- Canais de destino e informações por canal; ordem das etapas externas ainda será detalhada.
+- Ordem das etapas externas ainda será detalhada. Publicação é conjunta para app e site,
+  sem seleção de canal, conforme decisão de 24/09; essa escolha não permanece pendente.
   Cadastro usa Salvar/Publicar; edição publicada usa Salvar alterações (rascunho) e Publicar
   alterações (salvar e disponibilizar), conforme decisão de 24/09. A escolha
   entre profissional específico e qualquer disponível é permitida e desativável pelo
