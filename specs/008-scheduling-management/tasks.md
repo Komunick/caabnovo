@@ -299,7 +299,9 @@ cenários concretos e tarefas antes da implementação.
       Coordenar contratos de comunicação com T023, mantendo provedores/entrega como dependência.
       Verificar os acessos individuais existentes de titulares/dependentes informados pelo
       usuário e mapear à pessoa em Associados, sem criar login paralelo ou presumir migração de
-      credenciais. Validar revogação e continuidade com identidades sintéticas.
+      credenciais. Checkpoint de 24/09: contrato lógico v1 em contracts/channels.md, estruturas
+      propostas em data-model.md e matriz V01–V12 em quickstart.md produzidos; fechar vínculo HTTP,
+      schemas executáveis, integração de acesso e UI01/UI02 antes de concluir esta tarefa. Validar revogação e continuidade com identidades sintéticas.
 - [ ] T021 [US3] Após a primeira interface app/site, detalhar 2A horários completos e 2B
       estados/operação a partir do inventário em specs/008-scheduling-management/spec.md e
       contracts/; reconciliar políticas antigas com decisões atuais.
@@ -310,6 +312,8 @@ cenários concretos e tarefas antes da implementação.
       destinatários pelo beneficiário/vínculo vigente, preferências por pessoa, deduplicação,
       resultado rastreável, falha sem desfazer reserva e revalidação antes de envio/reenvio.
       Detalhar provedores, textos e entrega sem tratar decisão funcional como integração pronta.
+      Reutilizar jobs/worker da fundação; resolver entrega incerta e retry/reenvio auditado sem
+      fila paralela, reativação de campanhas antigas ou conversão não verificada de supressões.
 - [ ] T024 [US3] Criar matriz de equivalência validada com o legado em
       specs/008-scheduling-management/legacy-parity.md; manter sugestões novas separadas em
       roadmap.md. Conferir existência de reservas futuras em uso, ainda desconhecida conforme
