@@ -30,6 +30,18 @@ T045 deve conferir o próximo número livre e registrar o caminho SQL exato ante
 0028, já citado na entrega do ciclo de vida. Confirmar a base integrada e dependências administrativas
 em T040, sem copiar alterações antigas automaticamente.
 
+## Checkpoint de pesquisa — 25/09/2026
+
+Avanço parcial de T041/T042/T044, sem marcar tarefas concluídas: código do legado e fluxo
+individual de login localizados; diferenças de status/autoria/vínculo em
+[legacy-parity.md](legacy-parity.md). Testes de T046/T049 devem negar token intermediário e
+IDs de ator impostados; T042/T045/T077 devem preservar estados legados ambíguos, contagem
+desconhecida e fuso verificado. Não mapear reject ou EDITED automaticamente.
+SMTP/worker são referências reutilizáveis; cliente Evolution conversacional não prova
+transporte transacional pronto. T044/T069 devem fechar provedor em uso, correlação/recibos,
+timeout incerto e reenvio seguro conforme [pesquisa](research.md).
+Guia visual, versão publicada, inventário real e homologação ainda pendentes.
+
 ## Phase 1 — Setup e fechamento das dependências
 
 **Saída:** fontes e contratos verificáveis, sem decisão de negócio reaberta por falta de acesso.
@@ -46,7 +58,7 @@ em T040, sem copiar alterações antigas automaticamente.
       sintética de continuidade, sem copiar credenciais ou reutilizar sessão administrativa.
       Se a fonte não estiver acessível, manter o gate aberto e solicitar somente o acesso faltante.
 - [ ] T042 Inventariar fonte/data/versão, contas, reservas futuras/histórico, status e contadores
-      verificáveis em `specs/008-scheduling-management/legacy-parity.md` (novo); especificar
+      verificáveis em `specs/008-scheduling-management/legacy-parity.md`; especificar
       correspondências, duplicatas, coexistência, único escritor, corte e retorno em
       `specs/008-scheduling-management/plan.md`. Desconhecido não significa zero; não importar,
       alterar dados reais ou escolher estratégia sem evidência e autorização de execução.
