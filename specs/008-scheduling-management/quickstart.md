@@ -56,6 +56,23 @@ Para documentos, o comando próprio é format:docs:check; format:check geral nã
 com isolamento real no PostgreSQL; mock de repositório não comprova ausência de corrida.
 Revisar limites configurados também após espera por lock e com fusos de navegador diferentes.
 
+## Complemento de continuidade — inspeção de 25/09/2026
+
+Acrescentar aos cenários V01/V12: negar token intermediário de login como sessão de agenda,
+token inválido/expirado, identidade do corpo diferente da autenticada, vínculo revogado
+durante lock/replay e mesma OAB sem vínculo reconciliado. Não criar conta para ID sem
+correspondência. Sessão validada por assinatura não comprova elegibilidade/vínculo atual.
+
+Em V11, testar timeout após possível aceitação pelo provedor, correlação e reconciliação
+antes de nova tentativa; registro de conversa ou boolean do transporte não prova entrega.
+Distinguir teste sintético de validação autorizada com remetente/provedor reais.
+
+No ensaio de transição, cobrir reject ambíguo, finished/not_appear históricos, EDITED sem
+prova de troca, contador desconhecido, conflito/exception e data/hora legadas com fuso
+comprovado. Não inventar causa, zerar contador ou deslocar horário. Comparar totais e IDs,
+mantendo casos não reconciliados identificados. Fontes/limites em
+[legacy-parity.md](legacy-parity.md); nenhum caso foi executado nesta inspeção.
+
 ## Homologação externa e transição
 
 | Dependência | Evidência necessária antes de ativar |
