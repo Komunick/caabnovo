@@ -1,7 +1,203 @@
-# Pesquisa de mercado — Agendamentos (revisão integral de 23/09/2026)
+# Pesquisa de mercado — Agendamentos (revisão integral e atualização de 25/09/2026)
 
-**Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra, integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23/09/2026. Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real, teste de usabilidade ou validação de preços. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das práticas de mercado.
+**Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra, integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23–25/09/2026. Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real ou teste de usabilidade. Preços públicos pesquisados em 25/09 são referências datadas, sem cotação contratual. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das práticas de mercado.
 
+
+## Reformulação orientada pelo mercado — 25/09/2026
+
+**Diretriz do usuário:** redesenhar o sistema antigo com práticas e soluções atuais. Preservar
+pessoas, vínculos, reservas e histórico; a tecnologia e os fornecedores antigos não são requisitos.
+A inspeção do legado informa a transição. Conhecer o fornecedor antigo não bloqueia a comparação
+ou recomendação de um novo. Esta seção atualiza a orientação anterior de integrar necessariamente
+o login existente e de começar pelo transporte SMTP/Evolution encontrado.
+
+**Método:** documentação primária dos produtos, critérios do CAAB e preços públicos. “Melhor”
+significa adequação ao caso de uso, com custos e limitações explícitos; não é ranking de adoção,
+teste comparativo de entregabilidade ou garantia de desempenho. Recomendações abaixo são propostas
+técnicas, não decisões já aprovadas sobre fornecedor, passkeys ou recuperação de conta.
+Pesquisa/especificação orientadas pelo speckit-plan; consolidação por CODEX em 25/09/2026.
+
+### Práticas atuais aplicáveis
+
+| Função | Prática documentada e proposta para CAAB | Referências |
+| --- | --- | --- |
+| Acesso | Oferecer acesso sem senha e recuperação compreensível; avaliar passkey opcional com alternativa por código de e-mail verificado. Adoção gradual, compatibilidade e recuperação importam tanto quanto o primeiro login. | [FIDO](https://fidoalliance.org/passkeys/), [Better Auth passkey](https://better-auth.com/docs/plugins/passkey), [OTP](https://better-auth.com/docs/plugins/email-otp) |
+| Identidade e família | Separar conta autenticada de pessoa atendida e autorização atual. Fornecedor de login não decide quem representa um dependente. Preservar identidade estável na troca de provedor. | Aplicação arquitetural dos FR-01/02/24 do CAAB; não é alegação de comportamento familiar idêntico dos fornecedores. |
+| Avisos internos | Caixa persistente e preferências pessoais por canal; vínculo ao registro autorizado, leitura própria e histórico independente do prazo de retenção do provedor. | [Knock — preferências](https://docs.knock.app/preferences/overview), [Novu — workflows](https://docs.novu.co/platform/concepts/workflows) |
+| E-mail | API transacional, domínio autenticado, templates versionados, eventos de entrega/falha, supressões e prevenção de duplicatas. Aceitação pelo provedor difere de recebimento pelo servidor e de leitura. | [Resend — webhooks](https://resend.com/docs/webhooks/verify-webhooks-requests), [SES — eventos](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-sns-contents.html) |
+| WhatsApp | API oficial, templates aprovados quando necessários, identificação de cada envio e recibos. A reserva no app/site não abre uma conversa de atendimento no WhatsApp. | [Política WhatsApp](https://whatsappbusiness.com/policy/), [Twilio — API](https://www.twilio.com/docs/whatsapp/api) |
+
+Na proposta de acesso, código por e-mail não tem a mesma resistência a phishing de passkey.
+Não impor passkey ou novo MFA obrigatório; recuperação, primeiro acesso e alcance de e-mail/telefone
+precisam ser definidos na spec transversal do app/site. Não acrescentar SMS, push móvel, campanhas,
+lembretes ou escolha automática de canal ao escopo aprovado de Agendamentos.
+
+### Acesso: opções e recomendação
+
+| Opção | Adequação e capacidades documentadas | Limite e custo relevante |
+| --- | --- | --- |
+| **Better Auth — primeira candidata para operação própria** | TypeScript, licença MIT, plugins de passkey/OTP, sessões revogáveis e documentação Expo. Integração com o domínio sob controle do CAAB. | Biblioteca exige operação, atualização e recuperação de conta próprias. Documentação atual não prova compatibilidade da versão instalada nem integração direta com o app legado. Custo de infraestrutura/e-mail/equipe permanece. |
+| **Clerk — principal alternativa gerenciada** | Componentes de acesso/conta e operação gerenciada, passkeys e integração com apps. | Passkeys em produção requerem plano pago; cadastro inicial usa outro método. Configuração nativa adicional; regras familiares continuam no CAAB. Pro anunciado a US$20/mês com cobrança anual, 50 mil MRU inclusos: MRU não equivale a MAU. |
+| **Auth0 — alternativa para exigência empresarial** | Passkeys/passwordless e opções de federação/integração empresarial. | Avaliar se as exigências justificam custo/complexidade. Free até 25 mil MAU; Essentials desde US$35/mês para 500 MAU, com recursos diferentes. Faixas não são ofertas equivalentes. |
+| **Supabase Auth — alternativa se a plataforma fizer sentido** | OTP, links de acesso e outros métodos; pode operar como serviço de identidade. | Passkeys estão documentadas como experimentais. Adotar outra plataforma só para autenticação exige benefício demonstrável; não tratar o recurso experimental como equivalente maduro. |
+
+Fontes: [Better Auth — projeto/licença](https://github.com/better-auth/better-auth),
+[sessões](https://better-auth.com/docs/concepts/session-management),
+[Expo](https://better-auth.com/docs/integrations/expo),
+[Clerk — métodos](https://clerk.com/docs/guides/configure/auth-strategies/sign-up-sign-in-options)
+e [preços](https://clerk.com/pricing), [Auth0 — preços](https://auth0.com/pricing),
+[Supabase Auth](https://supabase.com/docs/guides/auth) e
+[passkeys](https://supabase.com/docs/guides/auth/passkeys).
+
+**Razão da recomendação:** Better Auth combina com a arquitetura TypeScript/PostgreSQL do CAAB e
+controle de identidade, desde que a equipe assuma sua operação. Clerk deve ser comparado quando
+reduzir manutenção de acesso compensar custo/serviço externo. A escolha não decorre apenas de
+Better Auth aparecer no painel existente. Fazer prova sintética web/iOS/Android, recuperação,
+revogação e associação individual antes de fechar T041. Compartilhar biblioteca não autoriza
+compartilhar sessão ou permissão entre associado e administração.
+
+Detalhes a verificar se Better Auth for escolhido: OTP pode criar conta automaticamente; configurar
+provisionamento controlado, sem transformar qualquer e-mail em associado. Cache de sessão pode
+postergar percepção de revogação; operações privadas precisam da validação vigente. Um novo login
+pode exigir novo cadastro de credencial ou sessão, preservando a mesma pessoa/histórico. Essa
+estratégia precisa ser desenhada, sem prometer compatibilidade automática com os tokens antigos.
+
+### E-mail transacional: opções e recomendação
+
+| Opção | Vantagens verificadas | Limitações para CAAB |
+| --- | --- | --- |
+| **Resend — candidata prioritária** | API com idempotência por 24 horas, webhooks assinados, templates e supressões. | Guardar deduplicação/histórico próprios além de 24 horas; retenção pública de 30 dias não substitui auditoria CAAB. |
+| **Postmark — alternativa de operação transacional** | Separação transacional/campanhas, templates e eventos; histórico padrão de 45 dias. | Não oferece idempotency keys. Webhooks sem assinatura: seguir proteção HTTPS, Basic Auth e allowlist documentadas. |
+| **Amazon SES — alternativa de escala e controle** | API/SMTP, templates, supressões e eventos SNS/EventBridge; cobrança por uso. | Mais configuração de IAM, acesso de produção e observabilidade. Não foi localizada garantia de idempotência em SendEmail v2. |
+| **SendGrid — alternativa de ecossistema** | Templates versionados, supressões e webhook com assinatura/OAuth. | Não foi localizada garantia de idempotência no Mail Send. Histórico ampliado depende de adicional. |
+
+Fontes: Resend [idempotência](https://resend.com/changelog/idempotency-keys),
+[templates](https://resend.com/docs/dashboard/templates/introduction),
+[supressões](https://www.resend.com/changelog/suppression-list-support);
+Postmark [idempotência](https://postmarkapp.com/support/article/what-is-an-idempotency-key),
+[webhooks](https://postmarkapp.com/developer/webhooks/webhooks-overview),
+[retenção](https://postmarkapp.com/support/article/how-does-the-retention-add-on-work);
+SES [SendEmail](https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html),
+[assinatura SNS](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message-verify-message-signature.html);
+SendGrid [segurança de eventos](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/getting-started-event-webhook-security-features)
+e [Mail Send](https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send).
+
+**Recomendação:** comparar Resend e Postmark com domínio e destinatários representativos em ensaio
+futuro autorizado; API, diagnósticos e prevenção de duplicatas favorecem começar por Resend.
+Não há evidência nesta pesquisa para chamar qualquer um de “melhor entregabilidade”.
+SES ganha interesse com escala/equipe AWS; preço de envio isolado não mede custo operacional total.
+
+### Avisos no app/site: solução própria, Novu ou Knock
+
+**Recomendação para o recorte atual:** caixa de avisos e preferências no CAAB, com intenções
+duráveis, worker e infraestrutura de jobs já existentes; adaptadores para fornecedores de envio.
+A motivação é o escopo de quatro eventos, as permissões familiares e o domínio já integrado.
+Não é recomendação de construir servidor de e-mail ou transporte próprio de WhatsApp.
+
+[Novu](https://novu.co/pricing/) oferece workflows, Inbox e preferências: gratuito com 10 mil
+execuções/mês e Pro desde US$30 por 30 mil. Retenção de atividade de 24 horas no gratuito e sete
+dias no Pro; conferir diferenças Cloud/comunidade/Enterprise antes de presumir equivalência
+gratuita no self-hosting.
+
+[Knock](https://knock.app/pricing) oferece feed, preferências e workflows: gratuito até 10 mil
+mensagens; Starter US$250 por 50 mil. Destinatário/canal contam separadamente, provedores externos
+são cobrados à parte. [Idempotência](https://docs.knock.app/api-reference/overview) no disparo de
+workflow tem janela de 24 horas.
+
+**Quando reconsiderar:** vários módulos precisarem de editor de fluxos por operadores, composição
+de canais ou recursos que evitem manutenção relevante. Comparar trabalho economizado e custos de
+execuções/mensagens/retentivas, sem equiparar unidades de cobrança diferentes. A capacidade de
+fallback de uma plataforma não muda a decisão CAAB de três canais inicialmente ativos.
+
+A [integração transacional do pg-boss](https://github.com/timgit/pg-boss/blob/master/docs/api/jobs.md)
+pode apoiar intenção/job com o banco; a versão instalada e seu uso precisam de verificação.
+Garantia de fila não produz envio externo exatamente uma vez. Revalidar vínculo/preferência e
+reconciliar timeout incerto antes de repetir; não criar outra infraestrutura de filas por padrão.
+
+### WhatsApp: opções e recomendação
+
+| Opção | Vantagem e responsabilidade | Referência de custo |
+| --- | --- | --- |
+| **Meta Cloud API direta — primeira candidata com operação própria** | API oficial; maior controle, integração/webhooks/templates e acompanhamento da conta ficam com CAAB. | Tarifas Meta por destino/categoria/vigência; sem BSP contratado nessa modalidade. |
+| **360dialog — principal alternativa com apoio especializado** | API oficial e apoio específico de WhatsApp; coexistência com Business App documentada e sujeita à elegibilidade. | Regular anunciado em €49/número/mês, mais tarifas Meta. |
+| **Twilio — alternativa para integração e outros canais** | SDKs, sandbox, identificador de mensagem e callbacks; ecossistema de comunicação. | US$0,005 por mensagem enviada ou recebida, além de Meta; suporte com prazo pode ter custo separado. |
+| **Zenvia — alternativa de contratação e atendimento local** | APIs/webhooks e oferta no Brasil. | Solicitar cotação de API transacional; pacote Customer Cloud não equivale automaticamente a essa contratação. |
+
+Fontes: [Meta — Cloud API oficial](https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api?action=share&creator=22794852),
+[360dialog — preços](https://360dialog.com/pricing) e
+[coexistência](https://docs.360dialog.com/docs/resources/phone-numbers/coexistence),
+[Twilio — preços](https://www.twilio.com/en-us/whatsapp/pricing) e
+[migração](https://www.twilio.com/docs/whatsapp/migrate-numbers-and-senders),
+[Zenvia — API](https://zenvia.github.io/) e [preços](https://zenvia.com/precos/).
+
+Manter número e conta empresarial sob controle institucional, com portabilidade e responsabilidades
+contratuais verificadas. Não prometer coexistência ou transferência integral de conversas para
+todo provedor. A documentação de migração consultada da Twilio exige remover a conta do aplicativo
+nesse fluxo; conferir a modalidade pretendida antes de selecionar.
+
+A [Evolution](https://github.com/evolution-foundation/evolution-api) suporta conexão por
+Baileys/WhatsApp Web e por Cloud API oficial. O nome do software não prova a modalidade.
+Recomenda-se transporte oficial; acrescentar Evolution somente se resolver uma necessidade
+concreta, com manutenção justificada. Código antigo não concede preferência na seleção.
+
+**Templates e permissão:** fora da janela de atendimento de 24 horas aberta por mensagem do
+destinatário, usar template aprovado. Os quatro eventos da agenda são candidatos a utilidade,
+sem promoção, sujeitos à classificação da plataforma. Preferência CAAB ativa por padrão continua
+valendo; ela não é prova de permissão prévia para receber WhatsApp. Guardar elegibilidade de envio
+separadamente e respeitar saída. Não inferir permissão do dependente pela do titular nem exigir,
+por esta pesquisa, novo checkbox exclusivo. Fontes: [política](https://whatsappbusiness.com/policy/)
+e [guia oficial de 2026](https://whatsappbusiness.com/wp-content/uploads/2026/04/Best-Practices-for-Marketing-Messages-on-WhatsApp-.pdf).
+Conteúdo mínimo com ligação ao agendamento autenticado, sem dados clínicos/financeiros.
+
+**Vigência tarifária:** fornecedores anunciam mudanças em serviço/utilidade para 01/10/2026
+([360dialog](https://360dialog.com/blog/whatsapp-service-message-charging-october-2026/),
+[Zenvia](https://support.zenvia.com/kb/category/perguntas-frequentes-zcc?kbCategoryId=120814)).
+A página direta de preços Meta não pôde ser confirmada nesta rodada. Não consolidar tarifa Meta
+nem gratuidade permanente no orçamento; revalidar tabela oficial vigente na contratação.
+
+### Referências de custo e cenários, sem volume real presumido
+
+Preços públicos em USD/EUR em 25/09/2026, sem impostos, câmbio, infraestrutura, suporte adicional
+ou contratação. [Resend](https://resend.com/pricing): Pro US$20/mês por 50 mil e-mails e
+US$0,90/mil excedentes; gratuito 3 mil/mês, limitado a 100/dia.
+[Postmark](https://postmarkapp.com/pricing): Basic US$15 por 10 mil e US$1,80/mil excedentes;
+Pro US$16,50 nessa faixa e US$1,30/mil excedentes.
+[SES](https://aws.amazon.com/ses/pricing/): envio à-la-carte US$0,10/mil; Essentials US$0,16/mil,
+com funcionalidades distintas e aplicabilidade por conta/região.
+[SendGrid](https://www.twilio.com/en-us/products/email-api/pricing): Essentials desde US$19,95;
+não fixar franquia a esse preço sem validar o seletor/contratação.
+
+**Hipótese de cálculo, não previsão:** dois eventos notificáveis por agendamento e média de
+1,5 destinatário/evento (50% próprios, 50% de dependentes com titular elegível), todos os três
+canais elegíveis/ativos. Assim, cada canal recebe 3N avisos e o total é 9N. Isso não cria evento
+novo: é apenas uma média hipotética entre confirmações, recusas, cancelamentos e necessidade
+de remarcar. Códigos de login, respostas WhatsApp e demais módulos ficam fora desta conta.
+
+| Agendamentos/mês hipotéticos | Envios por canal | Total dos três canais | Resend Pro + excedente | SES Essentials, só envio |
+| --- | --- | --- | --- | --- |
+| 1.000 | 3.000 | 9.000 | US$20 | US$0,48 |
+| 10.000 | 30.000 | 90.000 | US$20 | US$4,80 |
+| 50.000 | 150.000 | 450.000 | US$110 | US$24,00 |
+
+Resend calculado pela franquia Pro e excedente público, não pela melhor proposta comercial para
+cada faixa. SES exclui dados/eventos/armazenamento/equipe; não é comparação de custo total.
+WhatsApp = tarifas Meta aplicáveis + custo BSP + suporte + respostas recebidas quando cobradas.
+Usuários ativos para autenticação não podem ser inferidos do número de agendamentos.
+Volume real, necessidade de manter Business App no número e responsabilidade operacional
+definem a escolha final; não bloqueiam a recomendação documental.
+
+### Resultado para spec e plan
+
+- T041: selecionar arquitetura atual de identidade e desenhar continuidade para a mesma pessoa;
+  migração controlada de credencial/sessão é alternativa, sem duplicar associados.
+- T044: comparar/selecionar provedores pelos critérios acima e fechar templates, elegibilidade,
+  custos e operação. Fornecedor antigo entra apenas no plano de transição.
+- Caixa/histórico e preferências permanecem no domínio CAAB; fornecedor registra transporte.
+  Guardar eventos duráveis próprios, validar callbacks e aceitar chegada duplicada/fora de ordem.
+- T042 mantém inventário e reconciliação como gate de corte. Pesquisa documental está consolidada;
+  seleção comercial, provas de integração, inventário e homologação permanecem pendentes.
+- Nenhum comportamento de agenda aprovado, limite de trocas ou destinatário foi substituído por
+  uma convenção do fornecedor. Nenhum teste real, contratação ou envio foi realizado.
 
 ## Complemento — remarcação e prioridade (24/09/2026)
 
@@ -194,8 +390,8 @@ Escolhas do usuário após cinco perguntas em lote, não padrões atribuídos a 
 ## Informações de continuidade — acessos e reservas (24/09/2026)
 
 O usuário informou que titulares e dependentes já possuem acessos individuais no app/site atual.
-Isso orienta verificar e integrar o mecanismo existente e mapear identidades ao cadastro de
-Associados, sem presumir credenciais compatíveis ou contas migradas. Sobre reservas futuras em
+Isso orienta mapear as identidades ao cadastro de Associados e avaliar a transição para a solução
+selecionada na reformulação, sem presumir credenciais compatíveis ou contas migradas. Sobre reservas futuras em
 uso no legado, respondeu que ainda é necessário conferir. Inventário deve resolver essa lacuna
 antes do corte; não inferir agenda vazia ou permitir perda de histórico. São informações do
 usuário, não verificações em produção nem práticas atribuídas às fontes de mercado.
@@ -275,8 +471,8 @@ na árvore inspecionada (b6a705fa9362606f14835e6c2d5559fba909ec0b, sem truncamen
 Árvore do router: 2e959ce48a9e0089d9a2d0f3a0105dc3547e3ee6, sem truncamento.
 A versão em uso e o número/remetente autorizados não foram comprovados.
 
-**Decisão de planejamento:** reutilizar jobs/worker e avaliar extração do transporte SMTP
-preservando autenticação existente. Evolution é candidato encontrado, não provedor escolhido
+**Hipótese anterior de planejamento, revisada pela pesquisa de mercado de 25/09 acima:**
+reutilizar jobs/worker e avaliar extração do transporte SMTP. O transporte existente não é obrigatório; Evolution é candidato encontrado, não provedor escolhido
 ou homologado. Se adotado, o adaptador deverá manter ID/correlação, resultado aceito/entregue/
 incerto, idempotência de intenção, tentativas finitas e reconciliação antes de repetir timeout.
 Não enviar mensagens nesta etapa nem copiar banco/roteamento por IA para o domínio da agenda.
@@ -288,7 +484,8 @@ registro de conversa prova de entrega; retry cego; ativar campanhas antes bloque
 
 ### Dependências factuais e resultado da rodada
 
-- Confirmar revisão/repositório do app/site em uso e reconciliar IDs/vínculos antes de T041.
+- Confirmar revisão/repositório em uso e reconciliar IDs/vínculos para a transição de T041;
+  seleção da solução nova pode avançar com a pesquisa acima.
 - Confirmar serviço/número WhatsApp e remetente/serviço de e-mail autorizados para avisos;
   mapear caixa de avisos e preferências existentes. Perguntas factuais encaminhadas ao usuário.
 - Inventário de reservas futuras/histórico ainda não recebido; T042 não concluída.
