@@ -73,11 +73,30 @@ comprovado. Não inventar causa, zerar contador ou deslocar horário. Comparar t
 mantendo casos não reconciliados identificados. Fontes/limites em
 [legacy-parity.md](legacy-parity.md); nenhum caso foi executado nesta inspeção.
 
+## Provas futuras das soluções atuais — 25/09
+
+A pesquisa recomenda candidatos; não comprova integração ou escolha comercial. Usar fixtures
+sintéticas para comparar a solução selecionada e registrar versões/limites:
+
+- Acesso web/iOS/Android, primeiro acesso, recuperação, revogação e retorno do app; passkey/OTP
+  somente se aprovados na jornada transversal. Biblioteca administrativa não prova acesso externo.
+- Mesma pessoa, reservas e histórico após novo provedor/credencial; nenhum cadastro duplicado
+  nem vinculação automática por e-mail/OAB. Tokens legados são negados por padrão; eventual ponte
+  exige prova própria e nunca aceita token intermediário como sessão completa.
+- WhatsApp com preferência ligada mas permissão/contato ausentes não é enviado; opt-out e
+  encerramento de vínculo são reavaliados antes de retry. Preferências não viram prova de permissão.
+- Callback válido/inválido, duplicado, fora de ordem e sem correlação; timeout após possível
+  aceite não produz reenvio cego. Expiração da chave de idempotência externa não duplica intenção.
+- Quatro famílias de templates, link autenticado e classificação aplicável; ausência de template
+  ou canal disponível não reverte agendamento. Entrega não equivale a leitura.
+- Comparar custos com volumes informados; cenários de research.md são hipóteses. Ensaio real de
+  entrega, criação de contas, contratação e corte continuam dependendo de autorização própria.
+
 ## Homologação externa e transição
 
 | Dependência | Evidência necessária antes de ativar |
 | --- | --- |
-| Contas existentes | Mecanismo, mapeamento verificável identidade→pessoa, revogação, separação do painel e teste de continuidade autorizado. |
+| Identidade da reformulação | Solução selecionada, mapeamento verificável identidade→pessoa, recuperação/revogação, separação do painel e transição autorizada das contas existentes. |
 | Mensagens | Provedor/contatos/templates, política finita de tentativas/reenvio, recibos seguros, preferências/supressões conciliadas; falha não altera reserva. |
 | Legado | Fonte/data/versão, reservas futuras e histórico inventariados, IDs reconciliados, janela de corte e retorno sem perda. |
 | Contrato HTTP/UI | Caminhos versionados e schemas executáveis vinculados ao contrato lógico, compatibilidade com UI01/UI02 e guia visual. |
