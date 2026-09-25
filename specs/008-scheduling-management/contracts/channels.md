@@ -10,7 +10,8 @@ O contrato administrativo existente permanece em [admin.md](admin.md).
 App e site consomem a mesma oferta publicada e o mesmo domínio de disponibilidade/reservas.
 Operações lógicas abaixo pertencem à versão v1; o vínculo com transporte/rotas deve usar prefixo
 explícito de versão ao ser implementado. Caminhos HTTP externos e forma de autenticação serão
-fechados após verificar os acessos existentes; não reutilizar endpoints/sessões administrativos
+fechados para a solução selecionada na reformulação, com transição dos acessos existentes;
+não reutilizar endpoints/sessões administrativos
 como autorização do associado. Este documento fixa dados, permissões, transições e erros do domínio.
 
 Acesso externo resolve identidade autenticada → pessoa de Associados no servidor. O usuário
@@ -19,11 +20,22 @@ com Better Auth administrativo. Seguir [005 FR-010](../../005-members-management
 [contrato de Associados](../../005-members-management/contracts/members.md).
 Sem correspondência confiável, negar operação privada, sem criar pessoa/conta ou vincular por nome.
 
-### 1.1. Continuidade do legado — evidência de 25/09
+### 1.1. Solução atual e continuidade — 25/09
+
+A [pesquisa atual](../research.md#reformulação-orientada-pelo-mercado--25092026) compara
+Better Auth, Clerk, Auth0 e Supabase; a seleção não precisa manter o mecanismo antigo.
+Resolver identidade autenticada estável (emissor/origem e identificador da conta) para member.id,
+com unicidade e correspondência verificáveis. E-mail, CPF, OAB ou nome enviados pelo cliente
+não bastam para vincular contas. Reenrolar credencial/sessão pode integrar a transição controlada,
+sem duplicar pessoa, reservas ou histórico. Passkey/OTP e recuperação são propostas a fechar
+com UI01/UI02, sem novo MFA obrigatório.
+
+### 1.2. Continuidade do legado — evidência de 25/09
 
 [Matriz de equivalência](../legacy-parity.md): o código localizado separa token intermediário
 de login e JWT de sessão, com ID individual em User. A fronteira externa de agenda só recebe
-identidade cuja sessão foi validada; rejeitar token intermediário e não aceitar identidade do
+identidade cuja sessão foi validada pela solução selecionada. Token legado só pode ser aceito
+por ponte explicitamente planejada e comprovada; rejeitar token intermediário e não aceitar identidade do
 corpo/header como prova. Revalidar pessoa/vínculo no domínio atual, inclusive em replay.
 O vínculo legado aparece por responsavel e por mesma OAB em caminhos diferentes; não inferir
 equivalência sem reconciliação. Correspondência origem/User.id → member.id é explícita,
@@ -208,11 +220,30 @@ não como prova de envio da agenda configurado. Escopo não inclui contratar/con
 reutilizar credenciais sem validação, campanhas, SMS ou push móvel.
 
 Inspeção de 25/09: SMTP de contas e jobs são referências reutilizáveis; cliente Evolution
-encontrado no router conversacional retorna boolean e não comprova entrega. Provedor efetivo
-ainda depende de confirmação. Adaptador de agenda precisa persistir correlação/resultado,
+encontrado no router conversacional retorna boolean e não comprova entrega. A seleção do novo provedor segue a pesquisa de mercado;
+o provedor antigo precisa ser identificado para a transição, sem impor sua reutilização. Adaptador de agenda precisa persistir correlação/resultado,
 distinguir timeout incerto e reconciliar antes de retry, mantendo destinatário/vínculo/preferência
 atuais. Não usar persistência de conversa ou campanha bloqueada como comprovante de envio.
 Fontes e blobs em [research.md](../research.md#inspeção-das-integrações-existentes--25092026).
+
+### 10.1. Condições de transporte da reformulação
+
+Recomendações comparadas em research.md: Resend/Postmark para e-mail; Meta Cloud API/360dialog
+para WhatsApp, com alternativas conforme custo/operação. Provedor selecionado não é prova de
+configuração ou entrega. Preferência ativa por padrão é distinta da elegibilidade: validar
+contato, permissão para mensagens e supressões/opt-out, sem inferir consentimento do dependente
+pela conta do titular. Não exigir checkbox específico por inferência desta pesquisa.
+
+WhatsApp fora da janela de atendimento requer template aprovado; agendamento no app/site não
+abre essa janela. Versionar as quatro famílias de mensagens, sujeitas à aprovação/classificação
+da plataforma. Guardar referência/evidência mínima da elegibilidade sem dados sensíveis extras.
+Não adicionar promoção, canal ou evento ao contrato por capacidade do fornecedor.
+
+Validar autenticidade dos callbacks conforme mecanismo do provedor; deduplicar eventos, associar
+ao envio correto e suportar chegada fora de ordem, sem reduzir “entregue” para “enviado” por evento
+atrasado. Registrar retorno sem correlação para análise, sem modificar reservas. Status observado
+e histórico durável CAAB independem da retenção dos logs do fornecedor. Limite de idempotência
+externa não limita a proteção interna. Textos ligam ao agendamento sob autenticação/autorização.
 
 ## 11. Falhas recuperáveis
 
@@ -231,8 +262,9 @@ compatibilidade das APIs existentes, sem acoplar erro de provedor ao commit de a
 
 ## 12. Dependências para vincular e homologar o contrato
 
-1. Inspecionar mecanismo dos acessos individuais e correspondência a Associados, revogação e
-   transporte; fechar caminhos/versionamento HTTP e schemas executáveis com evidência.
+1. Selecionar solução de acesso atual e planejar continuidade das contas individuais para
+   Associados; provar revogação, recuperação e transporte. Inspecionar legado para a transição;
+   fechar caminhos/versionamento HTTP e schemas executáveis com evidência.
 2. Representar equipe vinculada/backup sem ampliar permissões; coordenar novos estados/constraints
    com contratos e migrations existentes.
 3. Definir provedores, textos, tentativas finitas/backoff/timeouts e operação de entrega/reenvio;
