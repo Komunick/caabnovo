@@ -128,15 +128,43 @@ app/site terá especificação própria no programa 002; reconciliar esse contra
 antes de executar tarefas de consumidor. A lista 2C T040–T077 foi gerada com essas dependências explícitas; nenhuma tarefa foi executada.
 
 
+### Direção da reformulação e recomendação atual — 25/09/2026
+
+Aplicar a [comparação de mercado](research.md#reformulação-orientada-pelo-mercado--25092026).
+O usuário pediu reformulação com práticas atuais: continuidade de dados e acesso individual
+não exige manter implementação ou fornecedor do legado. Inspeção antiga orienta migração,
+sem bloquear pesquisa/seleção de solução nova.
+
+| Função | Recomendação para avaliar primeiro | Alternativa e critério |
+| --- | --- | --- |
+| Identidade externa | Better Auth, com operação própria e prova web/iOS/Android. | Clerk para reduzir operação; Auth0 para exigências empresariais; Supabase se houver razão para adotar a plataforma. |
+| Experiência de acesso | Avaliar passkey opcional e código de e-mail/recuperação. | Proposta transversal para UI01/UI02, sem novo MFA obrigatório ou aprovação implícita do fluxo. |
+| Avisos internos | Caixa, preferências e histórico CAAB; worker/jobs existentes. | Novu/Knock se economia operacional em vários módulos justificar nova plataforma. |
+| E-mail | Resend, comparado com Postmark em ensaio futuro autorizado. | SES com capacidade operacional AWS e escala; SendGrid se ecossistema/contrato justificar. |
+| WhatsApp | API oficial Meta direta com operação própria. | 360dialog com apoio especializado; Twilio por integração/multicanal; Zenvia mediante cotação adequada. |
+
+Não foi feita escolha comercial definitiva. Número/WABA e identidades devem ter continuidade
+e portabilidade planejadas. Controle de acesso familiar permanece no CAAB, independente do
+provedor. Seleção deve avaliar recuperação, revogação, compatibilidade nativa, diagnóstico de
+entrega, duplicatas, retenção, suporte e custo total; preços/fontes/limites estão na pesquisa.
+
+T041 fecha solução nova e transição, não um adaptador legado obrigatório. Inventário e eventual
+ponte temporária são decisões separadas; recadastrar credencial não pode criar outro associado.
+T044 fecha provedor por requisitos atuais, sem preferência automática por SMTP/Evolution antigo.
+Preservar três preferências inicialmente ativas; elegibilidade do WhatsApp exige permissão e
+contato válidos independentemente do valor inicial. Tratar callbacks repetidos/fora de ordem e
+retorno incerto, com registro durável CAAB. Nenhum novo canal/evento decorre da capacidade do fornecedor.
+
 ### Evidência de integração localizada em 25/09/2026
 
 Código do legado identificado em `Komunick/caab-caapp`: acesso individual por código/token
 intermediário e JWT de sessão; família consultada por critérios diferentes; estados/logs não
 permitem conversão automática uniforme. Ver [matriz de equivalência](legacy-parity.md) e
 [pesquisa de integração](research.md#inspeção-das-integrações-existentes--25092026).
-T041 deve provar validação/revogação e mapeamento origem/User.id → member.id, incluindo
-token intermediário recusado, ator confiável e vínculo reconciliado; não inferir autorização
-pela mesma OAB. A revisão publicada permanece não verificada.
+T041 deve provar validação/revogação da solução selecionada e mapeamento para member.id,
+conservando origem/User.id na transição. Não aceitar token intermediário antigo como sessão;
+aceitar qualquer token legado exige ponte explícita e verificada. Ator e vínculo vêm do servidor,
+sem inferir autorização pela mesma OAB. A revisão publicada permanece não verificada.
 
 T042 deve preservar status/autor/origem e registrar ambiguidades: reject também representa
 cancelamento; EDITED não prova troca confirmada; finished/not_appear são histórico, sem novas
@@ -147,8 +175,9 @@ casos sem correspondência permanecem para resolução explícita. Nenhum invent
 Comunicação: jobs/worker existentes são reutilizáveis; SMTP de contas é candidato à extração
 compatível. `mafaltti/caab-whatsapp-router` contém cliente Evolution conversacional, sem
 recibo de entrega/ID de saída e sem diferenciação de timeout incerto. Não atende sozinho aos
-avisos transacionais. T044/T069 dependem de serviço efetivamente usado, identidade do remetente,
-correlação/recibos e política segura de tentativas, além das preferências de FR-23/24.
+avisos transacionais. T044/T069 selecionam a solução pelos requisitos atuais; sua ativação depende
+de conta/remetente autorizados, correlação/recibos e política segura de tentativas, além de FR-23/24.
+Identificar o serviço antigo é necessário para transição, não para recomendar a solução nova.
 Isso não seleciona Evolution como provedor nem autoriza contratar/ativar canais.
 
 Testes adicionais de contrato/transição estão em legacy-parity.md e quickstart.md.
@@ -166,7 +195,7 @@ concretas serão vinculadas ao mecanismo de identidade validado, sem reutilizar 
 | --- | --- | --- |
 | Simplicidade e monólito | Um domínio de agenda e PostgreSQL como fonte de verdade; infraestrutura de jobs existente. | Sem serviço/SDK de fornecedor ou framework genérico novo. |
 | Contratos e integridade | Contrato v1, processo/proposta separados, contagem voluntária e ocupação única transacional. | Migrations e testes concorrentes ainda futuros. |
-| Menor privilégio | Identidade → pessoa resolvida no servidor, vínculos revalidados, equipe/backup sob permissão. | Adaptador dos acessos existentes ainda não comprovado. |
+| Menor privilégio | Identidade → pessoa resolvida no servidor, vínculos revalidados, equipe/backup sob permissão. | Solução externa selecionada e transição ainda não comprovadas. |
 | Auditoria | Ator, evento, versão, correlação e snapshots mínimos; sem justificativa humana obrigatória. | Recuperação isenta usa classificação de causa, não texto obrigatório. |
 | Integrações | Intenção durável, jobs idempotentes e resultado de entrega distinto do evento de reserva. | Fornecedores/contatos/retries e entrega real não homologados. |
 | Acessibilidade | Jornada e textos funcionais definidos; validação por teclado/390 px/temas prevista. | Guia visual indisponível impede alegar conformidade/desenhar layout novo. |
@@ -182,8 +211,8 @@ continuação manual dos artefatos na branch existente, sem conclusão automatiz
    exportação DX01 tem entrega própria e não é pré-requisito técnico para a reserva externa.
    CAL06 é revisão da interface administrativa, sem alterar o núcleo de vagas.
 2. O usuário confirmou em 24/09 que titulares e dependentes já possuem acessos individuais no
-   app/site atual. Verificar esse mecanismo e mapear identidades existentes ao cadastro individual
-   em Associados, preservando continuidade e separação do painel; aplicar as decisões de
+   app/site atual. Selecionar o mecanismo da reformulação e mapear identidades ao cadastro individual
+   em Associados, com transição verificável e separação do painel; aplicar as decisões de
    23/09: titular reserva para si e seus dependentes; dependente reserva somente para si. O titular
    consulta e, quando permitido, gerencia reservas do dependente enquanto o vínculo estiver vigente;
    o dependente acessa todas as próprias reservas, inclusive as feitas pelo titular. Revogar o
