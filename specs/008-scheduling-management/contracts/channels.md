@@ -19,6 +19,22 @@ com Better Auth administrativo. Seguir [005 FR-010](../../005-members-management
 [contrato de Associados](../../005-members-management/contracts/members.md).
 Sem correspondência confiável, negar operação privada, sem criar pessoa/conta ou vincular por nome.
 
+### 1.1. Continuidade do legado — evidência de 25/09
+
+[Matriz de equivalência](../legacy-parity.md): o código localizado separa token intermediário
+de login e JWT de sessão, com ID individual em User. A fronteira externa de agenda só recebe
+identidade cuja sessão foi validada; rejeitar token intermediário e não aceitar identidade do
+corpo/header como prova. Revalidar pessoa/vínculo no domínio atual, inclusive em replay.
+O vínculo legado aparece por responsavel e por mesma OAB em caminhos diferentes; não inferir
+equivalência sem reconciliação. Correspondência origem/User.id → member.id é explícita,
+sem vincular por nome nem importar credenciais. Mecanismo/revisão publicada e revogação ainda
+precisam de validação; caminhos HTTP continuam condicionados a T041.
+
+Histórico importado precisa conservar status/autor/origem verificáveis. reject e CANCELED
+não distinguem sozinhos recusa/cancelamento; EDITED não prova uso de troca voluntária.
+Não inventar causa/contador nem converter finished/not_appear em scheduled. Essa fronteira de
+leitura histórica será conciliada com T045 sem expandir ações operacionais do recorte.
+
 ## 2. Contexto e envelopes
 
 - Contexto confiável: identidade/ator resolvidos, pessoa, tipo de acesso, origem app/site/painel,
@@ -190,6 +206,13 @@ Preferências por canal ainda precisam ser implementadas: o protótipo de Mensag
 bloqueio geral e channelConfigured=false. SMTP de autenticação existe como candidato técnico,
 não como prova de envio da agenda configurado. Escopo não inclui contratar/configurar provedor,
 reutilizar credenciais sem validação, campanhas, SMS ou push móvel.
+
+Inspeção de 25/09: SMTP de contas e jobs são referências reutilizáveis; cliente Evolution
+encontrado no router conversacional retorna boolean e não comprova entrega. Provedor efetivo
+ainda depende de confirmação. Adaptador de agenda precisa persistir correlação/resultado,
+distinguir timeout incerto e reconciliar antes de retry, mantendo destinatário/vínculo/preferência
+atuais. Não usar persistência de conversa ou campanha bloqueada como comprovante de envio.
+Fontes e blobs em [research.md](../research.md#inspeção-das-integrações-existentes--25092026).
 
 ## 11. Falhas recuperáveis
 
