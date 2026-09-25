@@ -1,6 +1,6 @@
 # Implementation Plan: Agendamentos
 
-**Entrega documental ativa**: `codex/scheduling-market-research-20260923` | **Data**: 24/09/2026.
+**Entrega documental ativa**: `codex/scheduling-market-research-20260923` | **Data**: 25/09/2026.
 **Spec**: [spec.md](spec.md). **Estado de 2C**: decisões funcionais incorporadas; contrato lógico,
 modelo, roteiro de validação e tarefas T040–T077 propostos. Integrações e evidências operacionais ainda pendentes.
 Ver [continuação 2C](#continuação-do-plano--incremento-2c-appsite-23092026),
@@ -126,6 +126,33 @@ somente à transferência atual; não é fila/histórico obrigatório.
 administrativas anteriores nem autoriza implementação/publicação. A interface completa do
 app/site terá especificação própria no programa 002; reconciliar esse contrato com UI01/UI02
 antes de executar tarefas de consumidor. A lista 2C T040–T077 foi gerada com essas dependências explícitas; nenhuma tarefa foi executada.
+
+
+### Evidência de integração localizada em 25/09/2026
+
+Código do legado identificado em `Komunick/caab-caapp`: acesso individual por código/token
+intermediário e JWT de sessão; família consultada por critérios diferentes; estados/logs não
+permitem conversão automática uniforme. Ver [matriz de equivalência](legacy-parity.md) e
+[pesquisa de integração](research.md#inspeção-das-integrações-existentes--25092026).
+T041 deve provar validação/revogação e mapeamento origem/User.id → member.id, incluindo
+token intermediário recusado, ator confiável e vínculo reconciliado; não inferir autorização
+pela mesma OAB. A revisão publicada permanece não verificada.
+
+T042 deve preservar status/autor/origem e registrar ambiguidades: reject também representa
+cancelamento; EDITED não prova troca confirmada; finished/not_appear são histórico, sem novas
+ações de comparecimento em 2C. Não zerar contador desconhecido nem converter horário sem fuso
+comprovado. T045 fecha a representação histórica de origem antes de migration; conflitos e
+casos sem correspondência permanecem para resolução explícita. Nenhum inventário real executado.
+
+Comunicação: jobs/worker existentes são reutilizáveis; SMTP de contas é candidato à extração
+compatível. `mafaltti/caab-whatsapp-router` contém cliente Evolution conversacional, sem
+recibo de entrega/ID de saída e sem diferenciação de timeout incerto. Não atende sozinho aos
+avisos transacionais. T044/T069 dependem de serviço efetivamente usado, identidade do remetente,
+correlação/recibos e política segura de tentativas, além das preferências de FR-23/24.
+Isso não seleciona Evolution como provedor nem autoriza contratar/ativar canais.
+
+Testes adicionais de contrato/transição estão em legacy-parity.md e quickstart.md.
+T041/T042/T043/T044 permanecem abertas; houve inspeção de código, não homologação.
 
 ### Contexto técnico e verificação de princípios de 2C
 
