@@ -20,9 +20,10 @@ A parcela transacional de T023 é detalhada por T044/T050/T067–T069; avaliaç�
 continuam fora deste recorte. T024 depende de T042/T077; massa sintética não comprova inventário real.
 Não executar novamente tarefas históricas concluídas nem contar coordenação e execução duas vezes.
 
-**Gates factuais:** mecanismo das contas existentes, reservas legadas, guia visual e provedores de
-avisos ainda precisam de evidência. Cada gate tem tarefa e resultado de saída abaixo. Sem evidência,
-registrar impedimento; não substituir identidade real por login novo nem simulação por homologação.
+**Gates factuais:** transição das contas existentes, reservas legadas, guia visual e homologação dos
+provedores selecionados ainda precisam de evidência. Cada gate tem tarefa e saída abaixo. Seleção
+atual de tecnologia pode avançar; preservar identidade/histórico não exige o login antigo. Sem
+evidência, registrar impedimento de ativação/corte; não apresentar simulação como homologação.
 Tarefas de consumidores externos dependem da spec própria prevista em 002 UI01/UI02.
 
 Caminhos marcados **novo** são destinos propostos, não arquivos existentes. Migrações são a exceção:
@@ -32,13 +33,18 @@ em T040, sem copiar alterações antigas automaticamente.
 
 ## Checkpoint de pesquisa — 25/09/2026
 
+Diretriz posterior do usuário incorporada: reformular com práticas e opções atuais, mantendo dados
+individuais e histórico. Comparativo e recomendações em [research.md](research.md#reformulação-orientada-pelo-mercado--25092026).
+T041/T044 incluem seleção moderna; tecnologia do legado não é critério obrigatório. Pesquisa
+não conclui homologação, contratação ou tarefas de implementação.
+
 Avanço parcial de T041/T042/T044, sem marcar tarefas concluídas: código do legado e fluxo
 individual de login localizados; diferenças de status/autoria/vínculo em
 [legacy-parity.md](legacy-parity.md). Testes de T046/T049 devem negar token intermediário e
 IDs de ator impostados; T042/T045/T077 devem preservar estados legados ambíguos, contagem
 desconhecida e fuso verificado. Não mapear reject ou EDITED automaticamente.
 SMTP/worker são referências reutilizáveis; cliente Evolution conversacional não prova
-transporte transacional pronto. T044/T069 devem fechar provedor em uso, correlação/recibos,
+transporte transacional pronto. T044/T069 devem selecionar provedor adequado, correlação/recibos,
 timeout incerto e reenvio seguro conforme [pesquisa](research.md).
 Guia visual, versão publicada, inventário real e homologação ainda pendentes.
 
@@ -51,12 +57,14 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
       de T027–T034 com os pré-requisitos reais e registrar dependências ainda abertas. Exportação
       T035–T038 é independente de 2C; não repetir código já integrado nem usar CI antigo como
       prova de autorização, capacidade ou pendências novas.
-- [ ] T041 Verificar identidade/sessão e correspondência individual dos acessos app/site em
+- [ ] T041 Selecionar solução atual de identidade/sessão e planejar transição das contas app/site em
       `specs/008-scheduling-management/contracts/channels.md`, coordenando
-      `specs/005-members-management/contracts/members.md`; fechar transporte, caminhos HTTP
-      versionados, revogação, proteção de origem/CSRF aplicável e limites. Registrar evidência
-      sintética de continuidade, sem copiar credenciais ou reutilizar sessão administrativa.
-      Se a fonte não estiver acessível, manter o gate aberto e solicitar somente o acesso faltante.
+      `specs/005-members-management/contracts/members.md` e UI01/UI02. Comparar Better Auth/Clerk
+      pela pesquisa e justificar escolha; avaliar passkey opcional, primeiro acesso e recuperação
+      sem instituir MFA obrigatório. Fechar transporte, caminhos HTTP versionados, revogação,
+      proteção de origem/CSRF e limites; provar continuidade identidade→pessoa e web/iOS/Android.
+      Nova credencial/sessão não cria novo associado. Não copiar credenciais ou reutilizar sessão
+      administrativa. Fonte inacessível mantém gate de transição aberto, sem impedir comparação.
 - [ ] T042 Inventariar fonte/data/versão, contas, reservas futuras/histórico, status e contadores
       verificáveis em `specs/008-scheduling-management/legacy-parity.md`; especificar
       correspondências, duplicatas, coexistência, único escritor, corte e retorno em
@@ -72,11 +80,15 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
 **Dependências:** Setup concluído, pré-requisitos administrativos de T040 comprovados.
 **Saída:** contratos e persistência que protegem ambos os modos, autoria e eventos.
 
-- [ ] T044 Fechar provedor por canal, textos dos quatro eventos e política finita de tentativas,
+- [ ] T044 Selecionar provedores atuais por canal com justificativa de custo total, suporte,
+      portabilidade e compatibilidade conforme pesquisa; não obrigar SMTP/Evolution do legado.
+      Fechar textos/templates dos quatro eventos e política finita de tentativas,
       backoff, timeout, resultado incerto, redrive autorizado e retenção operacional em
       `specs/008-scheduling-management/contracts/channels.md`, conforme
       `specs/001-project-foundation/contracts/jobs.md`. Inventariar preferências/supressões
-      antigas e contatos válidos; não contratar, enviar ou ativar campanhas nesta tarefa.
+      antigas, contatos válidos e permissão/opt-out do WhatsApp, separados da preferência inicial
+      ativa. Definir autenticação/deduplicação dos callbacks e eventos fora de ordem; considerar
+      vigência das tarifas. Não contratar, enviar ou ativar campanhas nesta tarefa.
       Documentar dependência externa quando não houver evidência; não aceitar defaults implícitos.
 - [ ] T045 Detalhar modelo físico e protocolo único de locks em
       `specs/008-scheduling-management/data-model.md`: revisão publicada/rascunho, políticas,
