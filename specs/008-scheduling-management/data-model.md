@@ -66,6 +66,21 @@ Migration0028 validada no CI descartável; sem aplicação local.
 
 ## Extensão proposta para 2C — 23/09/2026
 
+### Independência dos provedores e transição — 25/09
+
+Conforme a diretriz de reformulação e a pesquisa, manter o ID de pessoa em Associados estável
+mesmo ao substituir autenticação ou transporte. T041/T045 devem conciliar com o domínio de
+identidade uma correspondência única entre emissor/origem, ID da conta e member.id; origem
+legada é evidência de migração, não exige aceitar token antigo. Não criar outra tabela de pessoas
+nem fundir identidades por nome/OAB/e-mail sem vínculo comprovado.
+
+Preferência de canal (três inicialmente ativas) é distinta de elegibilidade do transporte.
+Representar evidência mínima de permissão, origem/data e supressão/opt-out para WhatsApp no
+domínio responsável por comunicação; não inferir isso do valor inicial da preferência.
+Intenção/tentativa conserva provedor, correlação/ID externo, template/versão e resultados
+observados. Recibos autenticados podem ser repetidos ou chegar fora de ordem; preservar histórico
+e projeção coerente sem alterar a reserva. Modelo lógico proposto, sem migration aplicada.
+
 ### Estruturas lógicas propostas — consolidação de 24/09
 
 Não são tabelas criadas nem schemas executáveis. Conciliar nomes e migrations com o banco vigente
