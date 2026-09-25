@@ -8,7 +8,8 @@
 O usuário autorizou remarcação/cancelamento no app/site para reservas futuras confirmadas e
 explicitou que a remarcação deve seguir a aceitação configurada no serviço. Definiu prioridade
 para remarcações pelo horário atual da reserva mais próximo, antes dos novos pedidos. A data
-pretendida não define urgência; a data de envio só desempata. Também definiu antecedência mínima
+pretendida não define a prioridade da fila; a data de envio só desempata. A urgência por
+proximidade do destino é um indicador separado, definido posteriormente em 2C-FR-22. Também definiu antecedência mínima
 de 24 horas para solicitar remarcação, editável e desativável. Para cancelamento de reserva
 confirmada, escolheu permitir até antes do início, sem antecedência mínima. São decisões do
 produto CAAB.
@@ -217,6 +218,83 @@ não é fonte de verdade da agenda. Mensagem transacional referencia evento da r
 preservam seu domínio. Não reativar programações antigas bloqueadas ao conectar um novo canal.
 Preferências novas inicialmente ativas seguem a decisão do usuário, sem apagar supressões
 preexistentes ou comprovar validação de contato. Mapeamento dessas informações entra na transição.
+
+
+## Inspeção das integrações existentes — 25/09/2026
+
+Continuação-CODEX-mafaltti. Perfil GitHub autenticado: mafaltti (Danilo-Komunick), consultado
+em 25/09/2026. Inspeção somente leitura de código remoto; sem contato com provedores,
+dados reais, segredos ou ambientes publicados. [Matriz do legado](legacy-parity.md) registra
+fontes/blobs, identidade, estados, autoria e inventário ainda necessário.
+
+### Identidade e legado
+
+**Evidência:** em `Komunick/caab-caapp`, User tem ID individual e tipos titular/dependente.
+Login usa busca de titular por OAB/não titular por CPF, código de verificação, token
+intermediário e JWT de sessão; middlewares separam os dois tokens. A rota validateSession
+inspecionada apenas devolve o ID extraído. Vínculos são consultados por responsavel em um
+caminho e pela mesma OAB em outro; equivalência/vigência não foram comprovadas.
+
+**Decisão de planejamento:** conservar correspondência explícita origem/User.id → member.id,
+com validação confiável de sessão e reconsulta dos vínculos/elegibilidade no domínio novo.
+Distinguir token intermediário de sessão de agenda; não confiar em ator/papel fornecido no
+corpo/header. Não concluir revogação ou compatibilidade pelo simples reconhecimento do JWT.
+
+**Racional:** reaproveitar identidade individual requer comprovar representação atual. A fonte
+de código deixou de estar desconhecida, mas T041 ainda depende da versão efetivamente em uso,
+mapeamento reconciliado e teste autorizado. Repositório acessível não comprova deployment.
+
+**Alternativas descartadas:** vincular por nome/OAB; aceitar token somente decodificado;
+tratar sessão administrativa como externa; importar credenciais ou criar login paralelo.
+
+**Transição:** o mesmo status legado reject e ação CANCELED aparecem em recusa administrativa
+e cancelamento pelo associado. EDITED não comprova remarcação confirmada; finished/not_appear
+devem preservar significado histórico, sem virar novos estados operacionais de 2C por inferência.
+Cancelamento pode aplicar punição no código antigo, comportamento que não substitui a decisão
+de permitir cancelamento antes do início sem criar penalidade automática. Datas são DATEONLY
+mais strings de horário; confirmar fuso real antes de converter. Detalhes/aceites em
+[legacy-parity.md](legacy-parity.md); inventário de reservas futuras permanece desconhecido.
+
+### Comunicação já existente e limites de reutilização
+
+| Fonte inspecionada | Blob SHA | Evidência e limite |
+| --- | --- | --- |
+| caabnovo: apps/web/modules/auth/account-mail.ts | 05f9d9ddee3793deeb116195578b62cfafb13b81 | SMTP/Nodemailer de conta; não prova remetente/provedor autorizado para avisos da agenda. |
+| caabnovo: apps/worker/src/queues.ts | 4fb73ae728afea0457fe7a272d138ae726603427 | pg-boss com políticas finitas; não há fila própria de avisos da agenda nesse registro. |
+| caabnovo: apps/worker/src/job-runtime.ts | 7fa2eeb8a863ea961dc9629b434162aa241bd1aa | Execução/progresso/correlação rastreados; infraestrutura reutilizável. |
+| caabnovo: packages/contracts/src/messaging.ts | 7c68da5b850aa830abad83c11ffb26d4c5a5a7fa | channelConfigured=false; preferência de bloqueio geral não corresponde a três escolhas pessoais por canal. |
+| caabnovo: packages/db/src/repositories/messaging.ts | c77de7eacbbd74d88193cd66f7d294b035d7641d | Preparação termina bloqueada sem canal; não reativar campanhas antigas ao integrar transporte. |
+| caab-whatsapp-router: src/lib/evolution/client.ts | 711329b6a8282b607766d8cd7ed952c60239066e | Cliente Evolution sendText, timeout 5s e retorno boolean; sem recibo/ID de entrega. |
+| caab-whatsapp-router: src/lib/routing/routeMessage.ts | 60ba59a18a04088cefdf49a049b1d928052ddf35 | Responde conversas; persistência de saída não depende de confirmação do resultado boolean. |
+| caab-whatsapp-router: src/lib/db/messageRepo.ts | 6547ba61e6f7cf1dd3398cdcbf0111aa0a94496d | Saída com message_id=null; deduplicação de entrada não prova idempotência de envio. |
+| caab-whatsapp-router: src/app/api/webhook/evolution/route.ts | 1c8cb493a64c473faed981b98baa8af25d631078 | Webhook conversacional; não é endpoint de entrega transacional para Agendamentos. |
+
+Repos: `Komunick/caabnovo` na branch documental e `mafaltti/caab-whatsapp-router` em main.
+O repositório de nome semelhante `mafaltti/caab-whatsapp-routing` contém somente README/.gitignore
+na árvore inspecionada (b6a705fa9362606f14835e6c2d5559fba909ec0b, sem truncamento).
+Árvore do router: 2e959ce48a9e0089d9a2d0f3a0105dc3547e3ee6, sem truncamento.
+A versão em uso e o número/remetente autorizados não foram comprovados.
+
+**Decisão de planejamento:** reutilizar jobs/worker e avaliar extração do transporte SMTP
+preservando autenticação existente. Evolution é candidato encontrado, não provedor escolhido
+ou homologado. Se adotado, o adaptador deverá manter ID/correlação, resultado aceito/entregue/
+incerto, idempotência de intenção, tentativas finitas e reconciliação antes de repetir timeout.
+Não enviar mensagens nesta etapa nem copiar banco/roteamento por IA para o domínio da agenda.
+
+**Racional:** o cliente conversacional boolean não satisfaz 2C-FR-23/24. Mensagens prepara
+campanhas e sua preferência geral não pode sobrescrever decisões pessoais por canal.
+**Alternativas descartadas:** chamar o router diretamente como transporte pronto; considerar
+registro de conversa prova de entrega; retry cego; ativar campanhas antes bloqueadas.
+
+### Dependências factuais e resultado da rodada
+
+- Confirmar revisão/repositório do app/site em uso e reconciliar IDs/vínculos antes de T041.
+- Confirmar serviço/número WhatsApp e remetente/serviço de e-mail autorizados para avisos;
+  mapear caixa de avisos e preferências existentes. Perguntas factuais encaminhadas ao usuário.
+- Inventário de reservas futuras/histórico ainda não recebido; T042 não concluída.
+- Guia visual remoto não localizado e executor local indisponível; arquivo/localização solicitado.
+- Documentação avança com as evidências acima; tarefas técnicas, testes e ativação continuam
+  pendentes. A revisão não modifica as regras de negócio já aceitas.
 
 ## Pergunta e método
 
