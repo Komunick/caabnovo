@@ -1,5 +1,15 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Diretriz da reformulação — 25/09/2026
+
+O usuário reafirmou que o projeto reformula o sistema antigo e solicitou pesquisar práticas
+atuais e melhores opções para cada função. Preservar pessoas, vínculos, reservas e histórico;
+isso não obriga manter tecnologia, fornecedor ou mecanismo de login do legado.
+A [pesquisa atualizada](research.md#reformulação-orientada-pelo-mercado--25092026) compara
+identidade, avisos internos, e-mail e WhatsApp. Recomendações de fornecedores e passkeys
+permanecem propostas de planejamento; não são aprovação de contratação, implementação ou
+nova regra de acesso. Decisões de agenda já aceitas continuam vigentes.
+
 ## Checkpoint da entrega ativa — 21/09/2026
 
 Incremento de ciclo de vida implementado e validado no CI35644236348 (57d6b56), com dados
@@ -402,8 +412,10 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   estado único de publicação externa nos dois canais; APIs administrativas e suas sessões não são reutilizadas
   pelo cliente externo. O usuário informou que titulares e dependentes já possuem acessos
   individuais no app/site atual. Planejar a ligação dessas identidades ao cadastro individual
-  de Associados e verificar o mecanismo existente antes de definir a integração; não presumir
-  contas compartilhadas, recriação de acessos ou compatibilidade de credenciais já comprovada.
+  de Associados e avaliar a transição para a solução selecionada na reformulação. Não presumir
+  contas compartilhadas ou compatibilidade automática de credenciais. Novo mecanismo pode exigir
+  nova sessão/cadastro de credencial, com continuidade da mesma pessoa e histórico, conforme plano
+  de migração; não duplicar associados nem obrigar a manter tecnologia antiga.
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
   solicitar para si e dependentes com vínculo vigente; dependente só pode solicitar para si.
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
@@ -869,9 +881,10 @@ implementação e validação futuras, mantendo abertas as dependências abaixo.
 
 **Decisões e dependências pendentes para fechar 2C:**
 
-- Verificar o mecanismo dos acessos individuais já existentes de titulares e dependentes,
-  informados pelo usuário, e mapear cada identidade ao cadastro de Associados; detalhar gestão
-  e revogação do vínculo. Regras familiares de reserva/histórico permanecem definidas.
+- Selecionar a solução atual de acesso e desenhar a transição das contas individuais existentes,
+  mapeando cada identidade ao cadastro de Associados; detalhar recuperação, revogação e vínculo.
+  Inventário do legado condiciona o corte, não impede recomendar solução nova. Regras familiares
+  de reserva/histórico permanecem definidas.
 - Provedores, textos e operação de entrega/reenvio das mensagens transacionais. Canais,
   preferências iniciais/editáveis e destinatários foram definidos em 2C-FR-23/24; não reabrir
   essas escolhas ao detalhar a integração.
