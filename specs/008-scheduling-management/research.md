@@ -8,6 +8,8 @@
 **Estado vigente:** login geral do app/site, sem autenticação própria de Agendamentos; histórico
 antigo de recusa/cancelamento/edição opcional e de baixa prioridade; edição pendente permite data/horário/profissional mantendo pessoa/serviço e, como ação adicional,
 transferir atendimento a dependente compatível/disponível; **WAHA escolhido para WhatsApp**.
+O e-mail usará o serviço já definido para o sistema; WAHA foi escolhido e ainda será instalado.
+Pedido inicial em análise pode receber destino futuro mesmo após passar o horário anterior.
 A pesquisa de 25/09 permanece como comparação histórica. Better Auth/Clerk e seleção
 Meta/360dialog não são decisões a tomar dentro deste módulo. Continuidade de reservas futuras
 e permissões familiares permanece distinta da importação opcional de logs antigos.
@@ -23,7 +25,8 @@ e reconciliar resposta incerta. Os controles de entrega continuam necessários c
 
 As regras de templates, janela e tarifação pesquisadas para Cloud API não devem ser copiadas
 automaticamente para a interface WAHA. Textos dos quatro eventos serão versionados pelo CAAB.
-Configuração/edição/motor, operação e custos da instância ainda precisam de verificação;
+Instalação ainda futura, conforme resposta do usuário. Configuração/edição/motor, operação e
+custos da instância precisam ser planejados e verificados posteriormente;
 não houve instalação, chamada à conta, envio ou homologação.
 
 ## Reformulação orientada pelo mercado — 25/09/2026
