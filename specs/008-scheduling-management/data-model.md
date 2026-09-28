@@ -77,10 +77,14 @@ Transferência pode mudar beneficiário para dependente compatível, com autoriz
 Preservar bookingId, serviço, política/estado pendente e contagem/ciclo; controlar expectedVersion.
 Registrar anterior/novo beneficiário em evento auditável, sem expor dados pessoais além do acesso
 de cada leitor. Revalidar/atualizar conflitos de ambos os beneficiários e ocupação em transação;
-falha conserva a anterior. Não executar a transferência em registro já confirmado. Intenções de
+falha conserva a anterior. Pedido inicial pode escolher destino futuro válido após passar o
+horário anterior; manter enteredReviewAt original e atualizar urgência do destino. Troca
+voluntária mantém prazo da origem e ciclos; retomada/recuperação seguem suas exceções. Não
+executar a transferência em registro já confirmado. Intenções de
 aviso conservam o beneficiário do evento; reavaliar destinatários/acesso em envios e eventos novos.
 
-WAHA escolhido: intenção/tentativa referencia instância/sessão/messageId e estados observados,
+WAHA escolhido e ainda não instalado: planejar intenção/tentativa por instância/sessão/messageId
+e estados observados; e-mail integra o serviço já definido para o sistema,
 sem segredo no histórico. Deduplicar recibos e suportar ordem invertida; aceite, entrega e leitura
 são distintos. Detalhes de motor/versão e validação de callback permanecem em T044.
 
@@ -157,10 +161,11 @@ Esta seção planeja a reserva externa e não descreve migration aplicada. O ser
 confirmação imediata ativada por padrão, desativável pela equipe para novos envios. A alteração da
 política não muda a situação das reservas existentes.
 
-Um envio externo pode criar reserva confirmada ou aguardando aprovação. A pendência conserva o mesmo
-identificador, beneficiário e intervalo até a decisão da equipe; aprovação altera sua situação sem
-criar segunda reserva, e recusa registra uma situação terminal e libera a ocupação. Não há expiração
-automática. Os nomes finais dos novos estados e comandos devem ser conciliados com os contratos
+Um envio externo pode criar reserva confirmada ou aguardando aprovação. A pendência mantém ID,
+mas permite edição versionada de data/horário/profissional e transferência autorizada a dependente,
+conforme decisão de 28/09. Aprovar confirma a versão atual sem criar outra reserva. Recusa de pedido
+inicial é terminal; recusa de troca/recuperação mantém o registro aguardando nova escolha e libera
+destino. Nenhuma recusa restaura automaticamente a origem. Não há expiração automática. Os nomes finais dos novos estados e comandos devem ser conciliados com os contratos
 existentes antes da migration.
 
 Pendências e reservas confirmadas ocupam o intervalo do beneficiário e do profissional quando
