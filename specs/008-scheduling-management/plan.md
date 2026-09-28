@@ -161,8 +161,8 @@ sem bloquear pesquisa/seleção de solução nova.
 | Identidade externa | Sessão geral do app/site, conforme decisão de 28/09. | Nenhum login/fornecedor específico para Agendamentos. |
 | Experiência de acesso | Entrar na agenda com a sessão geral já válida. | Primeiro acesso/recuperação pertencem a UI01/UI02; agenda só integra o contrato. |
 | Avisos internos | Caixa, preferências e histórico CAAB; worker/jobs existentes. | Novu/Knock se economia operacional em vários módulos justificar nova plataforma. |
-| E-mail | Resend, comparado com Postmark em ensaio futuro autorizado. | SES com capacidade operacional AWS e escala; SendGrid se ecossistema/contrato justificar. |
-| WhatsApp | WAHA, escolhido pelo usuário em 28/09. | Validar instância, motor, versão, sessão e recibos; não reabrir seleção. |
+| E-mail | Serviço já definido para o sistema, por decisão de 28/09. | Integrar seu contrato/remetente; não selecionar fornecedor exclusivo da agenda. |
+| WhatsApp | WAHA escolhido, ainda não instalado (28/09). | Planejar preparação, versão/motor, sessão e recibos; instalação/homologação ainda futuras. |
 
 WhatsApp foi definido como WAHA; a comparação anterior de fornecedores fica como pesquisa histórica.
 Número e identidades devem ter continuidade
@@ -171,14 +171,19 @@ provedor. Seleção deve avaliar recuperação, revogação, compatibilidade nat
 entrega, duplicatas, retenção, suporte e custo total; preços/fontes/limites estão na pesquisa.
 
 T041 integra o login geral, sem criar cadastro ou seleção de provedor por módulo. T044 detalha
-WAHA para WhatsApp e fecha as demais dependências de comunicação. Manter intenções e recibos
+WAHA para WhatsApp (a instalar) e o serviço de e-mail do sistema. Registrar plano de instalação,
+responsável, versão/motor, guarda de segredos, callbacks e validação em ambiente autorizado;
+não instalar, parear número nem enviar mensagens neste trabalho documental. Manter intenções e recibos
 duráveis, preferências e permissão/opt-out, sem associar automaticamente regras de templates e
 preços da Cloud API ao transporte WAHA. Detalhes em contracts/channels.md.
 
 Edição pendente: serviço responsável pelo pedido recebe versão e alterações permitidas,
 incluindo beneficiaryId de dependente autorizado. Validar pessoa anterior/nova, serviço e vaga;
 manter ID, estado pendente e ciclos/contador. Troca de ocupação é atômica; não debitar remarcação
-confirmada ao editar. Preservar posição/prioridade e entrada original em análise; recalcular
+confirmada ao editar. Pedido inicial pode escolher destino futuro válido mesmo após o horário
+solicitado anterior; validar políticas de nova reserva no destino. Edição de troca voluntária
+usa prazo original de FR-08/10 e retomada/recuperação seguem FR-18/20, qualquer que seja a rota.
+Preservar posição/prioridade e entrada original em análise; recalcular
 urgência pelo destino vigente. Aprovação exige a versão atual. Projeções de histórico e avisos
 não expõem dados de antigo beneficiário a pessoa sem acesso; intenção obsoleta é reavaliada.
 Transferência após confirmação não foi autorizada.
@@ -204,7 +209,7 @@ casos sem correspondência permanecem para resolução explícita. Nenhum invent
 Comunicação: jobs/worker existentes são reutilizáveis; SMTP de contas é candidato à extração
 compatível. `mafaltti/caab-whatsapp-router` contém cliente Evolution conversacional, sem
 recibo de entrega/ID de saída e sem diferenciação de timeout incerto. Não atende sozinho aos
-avisos transacionais. T044/T069 selecionam a solução pelos requisitos atuais; sua ativação depende
+avisos transacionais. T044/T069 integram e-mail do sistema e WAHA escolhido; sua ativação depende
 de conta/remetente autorizados, correlação/recibos e política segura de tentativas, além de FR-23/24.
 Identificar o serviço antigo é necessário para transição, não para recomendar a solução nova.
 Isso não seleciona Evolution como provedor nem autoriza contratar/ativar canais.
@@ -240,7 +245,7 @@ continuação manual dos artefatos na branch existente, sem conclusão automatiz
    exportação DX01 tem entrega própria e não é pré-requisito técnico para a reserva externa.
    CAL06 é revisão da interface administrativa, sem alterar o núcleo de vagas.
 2. O usuário confirmou em 24/09 que titulares e dependentes já possuem acessos individuais no
-   app/site atual. Selecionar o mecanismo da reformulação e mapear identidades ao cadastro individual
+   app/site atual. Integrar o login geral e mapear identidades ao cadastro individual
    em Associados, com transição verificável e separação do painel; aplicar as decisões de
    23/09: titular reserva para si e seus dependentes; dependente reserva somente para si. O titular
    consulta e, quando permitido, gerencia reservas do dependente enquanto o vínculo estiver vigente;
@@ -609,7 +614,8 @@ estado, tela móvel e WCAG 2.2 AA em protótipo e na entrega.
   ou reservas; ator sem vínculo não enumera nem lê reserva de terceiro.
 - Integração em PostgreSQL descartável: painel versus app/site disputam mesma vaga; mesmo
   beneficiário em unidades/profissionais distintos não sobrepõe; titular e dependente distintos
-  podem coincidir; retry não duplica; remarcação recusada conserva vaga/histórico. Serviço novo
+  podem coincidir; retry não duplica; recusa de remarcação libera destino e mantém histórico,
+  sem restaurar origem. Falha antes de registrar a troca conserva a ocupação anterior. Serviço novo
   confirma imediatamente; ao desativar a opção, novos envios ficam pendentes sem alterar reservas
   já confirmadas. Pendência impede reservas conflitantes por profissional ou beneficiário no
   painel e no app/site; aprovação não duplica ocupação, recusa a libera uma vez. Não há expiração
@@ -692,7 +698,8 @@ Cancelamento de pedido novo em análise foi autorizado pelo usuário: antes do i
 sem aprovação da equipe, com liberação imediata e histórico preservado (2C-FR-09/2C-SC-08).
 
 Verificação e integração dos acessos individuais já existentes, mapeamento de pessoas e
-revogação de vínculo; configuração WAHA, e-mail, textos e operação de entrega/reenvio;
+revogação de vínculo; instalação futura/configuração WAHA, integração ao e-mail do sistema,
+textos e operação de entrega/reenvio;
 existência de reservas futuras do legado ainda por conferir. Histórico antigo detalhado é opcional.
 Equipe principal/backup, alerta de 24 horas configurável, canais/preferências/destinatários e
 ordem da jornada e urgência a 24 horas do atendimento configurável foram definidos em 24/09/2026.
