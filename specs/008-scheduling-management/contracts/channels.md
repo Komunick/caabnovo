@@ -109,7 +109,7 @@ do login não dispensa essa validação nem autoriza titular a reservar serviço
 | Comando | Entrada de negócio | Pré-condição e resultado |
 | --- | --- | --- |
 | createBooking | beneficiaryId, oferta/opção de horário | Acesso, público-alvo, oferta publicada, elegibilidade, futuro, horizonte, antecedência de nova reserva, expediente e conflitos. Confirmação imediata padrão ou pending_approval conforme serviço; ambos ocupam vaga. |
-| editPendingBooking | bookingId, expectedVersion, data/horário/profissional conforme opções habilitadas; beneficiaryId apenas na transferência a dependente | Ator autorizado sobre pedido e novo beneficiário, pedido ainda pendente, serviço compatível e vaga disponível sem conflito para a nova pessoa. Mantém serviço, ID, política de aceite, pendência e ciclo/contador. Atualiza pessoa/versão/ocupação atomicamente; falha conserva tudo. Não transfere reserva já confirmada. |
+| editPendingBooking | bookingId, expectedVersion, data/horário/profissional conforme opções habilitadas; beneficiaryId apenas na transferência a dependente | Ator autorizado, pedido pendente, serviço compatível, destino futuro e vaga sem conflito. Pedido inicial pode ser editado mesmo após o horário anterior, respeitando políticas de nova reserva no destino. Troca voluntária segue FR-08/10, retomada/recuperação FR-18/20. Mantém serviço, ID, política de aceite, pendência e ciclo/contador. Atualiza versão/ocupação atomicamente; falha conserva tudo. Não transfere reserva já confirmada. |
 | requestReschedule | bookingId, opção de destino, expectedVersion | Reserva confirmada futura, prazo de remarcação e menos de duas utilizações voluntárias consolidadas. Validar tudo antes de liberar origem e ocupar só destino na mesma transação; falha mantém origem. Abre ciclo debitável. |
 | replacePendingProposal | bookingId, proposalId/version, novo destino, expectedVersion | Uma proposta ativa; regras de prazo aplicáveis ao processo. Troca de retenção atômica, conserva proposta anterior em falha e não cobra nova utilização. |
 | withdrawProposal | bookingId, proposalId/version, expectedVersion | Fronteiras de 2C-FR-10/18/20; libera destino, não restaura origem; ciclo permanece aguardando escolha. |
@@ -128,6 +128,14 @@ de cada evento; receber pedido transferido não revela histórico privado do ant
 Recalcular destinatários de eventos seguintes e revalidar intenções antigas antes de envio,
 sem atribuir evento passado à pessoa errada. Pendência inicial não vira ciclo debitável por edição;
 ciclo voluntário já aberto mantém contagem, consolidada uma vez apenas ao confirmar.
+
+Decisão de 28/09: pedido inicial em análise pode escolher nova data mesmo após passar o horário
+anterior, sem prazo de 24h relativo à origem. Destino deve ser estritamente futuro, disponível,
+elegível e dentro do horizonte/antecedência de nova reserva configurados. Manter entrada original
+em análise e prioridade; atualizar urgência pelo destino vigente. Não aprovar retroativamente.
+Guardas são compartilhadas por operação/processo: a rota de edição não dispensa FR-08/10 numa
+troca voluntária nem remove as exceções aprovadas de FR-18/20. Após edição inicial, cancelamento
+segue o início solicitado vigente conforme FR-09, sem alteração de contador.
 
 Não exigir justificativa humana livre nesses comandos. “Causa do estabelecimento” é classificação
 auditável da operação autorizada, sem reintroduzir motivo obrigatório.
@@ -229,12 +237,13 @@ Em timeout após envio possível, reconciliar pelo identificador do provedor ant
 não prometer entrega exatamente uma vez fora do controle transacional do domínio.
 
 Preferências por canal ainda precisam ser implementadas: o protótipo de Mensagens só contém
-bloqueio geral e channelConfigured=false. SMTP de autenticação existe como candidato técnico,
-não como prova de envio da agenda configurado. Escopo não inclui contratar/configurar provedor,
+bloqueio geral e channelConfigured=false. E-mail usará o serviço já definido para o sistema,
+conforme decisão de 28/09; identificar seu contrato/remetente não é seleção de outro fornecedor
+nem prova de envio da agenda já configurado. Escopo não inclui contratar/configurar provedor,
 reutilizar credenciais sem validação, campanhas, SMS ou push móvel.
 
 Inspeção de 25/09: SMTP de contas e jobs são referências reutilizáveis; cliente Evolution
-encontrado no router conversacional retorna boolean e não comprova entrega. A seleção do novo provedor segue a pesquisa de mercado;
+encontrado no router conversacional retorna boolean e não comprova entrega. WAHA e e-mail do sistema foram definidos em 28/09;
 o provedor antigo precisa ser identificado para a transição, sem impor sua reutilização. Adaptador de agenda precisa persistir correlação/resultado,
 distinguir timeout incerto e reconciliar antes de retry, mantendo destinatário/vínculo/preferência
 atuais. Não usar persistência de conversa ou campanha bloqueada como comprovante de envio.
@@ -242,9 +251,10 @@ Fontes e blobs em [research.md](../research.md#inspeção-das-integrações-exis
 
 ### 10.1. WhatsApp via WAHA — decisão de 28/09
 
-WAHA é o transporte escolhido. Evolução do código antigo e comparações com Meta/360dialog não
-são seleção pendente. Verificar versão, motor, instância e sessão reais antes de implementar o
-adaptador; a escolha não comprova instalação/homologação.
+WAHA é o transporte escolhido e ainda será instalado, conforme resposta de 28/09. Evolução do
+código antigo e comparações com Meta/360dialog não são seleção pendente. Planejar preparação e
+registrar versão/motor, ambiente e validação futura; instância/sessão reais dependem de instalação
+posterior autorizada. Não declarar instalação ou homologação concluídas.
 
 Contrato proposto a conferir no OpenAPI da versão usada: envio por POST /api/sendText, captura
 do ID de mensagem e correlação por instância/sessão/messageId. Receber message.ack: SERVER
@@ -288,7 +298,7 @@ compatibilidade das APIs existentes, sem acoplar erro de provedor ao commit de a
    fechar caminhos/versionamento HTTP e schemas executáveis, sem login próprio do módulo.
 2. Representar equipe vinculada/backup sem ampliar permissões; coordenar novos estados/constraints
    com contratos e migrations existentes.
-3. Configurar/validar WAHA para WhatsApp e definir e-mail, textos, tentativas e operação de entrega;
+3. Planejar instalação/validação WAHA e integrar e-mail do sistema; fechar textos/tentativas/entrega;
    validar preferências e confirmação de envio. Inventariar finalidade de preferências/supressões
    antigas antes de qualquer conversão; padrão ativo não apaga registros existentes nem comprova
    contato validado. Não reativar campanhas antigas bloqueadas ao disponibilizar um canal.
