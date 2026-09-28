@@ -1,6 +1,6 @@
 # Implementation Plan: Agendamentos
 
-**Entrega documental ativa**: `codex/scheduling-market-research-20260923` | **Data**: 25/09/2026.
+**Entrega documental ativa**: `codex/scheduling-market-research-20260923` | **Data**: 28/09/2026.
 **Spec**: [spec.md](spec.md). **Estado de 2C**: decisões funcionais incorporadas; contrato lógico,
 modelo, roteiro de validação e tarefas T040–T077 propostos. Integrações e evidências operacionais ainda pendentes.
 Ver [continuação 2C](#continuação-do-plano--incremento-2c-appsite-23092026),
@@ -34,8 +34,8 @@ O recorte administrativo de 21/09 abaixo pertence à entrega histórica
 
 O incremento ativo 2C integra a jornada autenticada do associado à mesma agenda do painel,
 com beneficiário primeiro, publicação conjunta, confirmação imediata/manual, ciclos de troca,
-recuperação isenta e avisos por preferências pessoais. O contrato v1 é lógico: vínculo HTTP,
-identidade real, entrega por provedor e transição dos dados precisam das verificações descritas.
+recuperação isenta e avisos por preferências pessoais. O contrato v1 define operações e caminhos
+HTTP propostos; identidade real, entrega por provedor e transição dos dados precisam das verificações descritas.
 
 Resumo administrativo de 21/09: exigir acesso concedido, impedir sobreposição da mesma pessoa, sinalizar reservas mantidas após
 bloqueio e exportar a agenda/oferta.
@@ -222,8 +222,8 @@ T041/T042/T043/T044 permanecem abertas; houve inspeção de código, não homolo
 Reutilizar TypeScript/Next/PostgreSQL, contratos Zod, monólito modular e worker da stack.
 Nenhuma dependência nova foi instalada. A versão consultada do package.json mantém Node 24,
 pnpm 11.25.0 e suites unit/contract/integration/E2E/a11y; versões não provam ambiente executado.
-API externa deve ser versionada. O contrato lógico v1 fixa operações/dados/invariantes; rotas
-concretas serão vinculadas ao mecanismo de identidade validado, sem reutilizar sessão de painel.
+API externa deve ser versionada. O contrato v1 fixa operações/dados/invariantes e rotas propostas
+na seção 1.3; vinculá-las ao mecanismo de identidade validado, sem reutilizar sessão de painel.
 
 | Princípio | Aplicação no desenho 2C | Evidência ou limite |
 | --- | --- | --- |
@@ -502,8 +502,8 @@ detalhe; remarcação; cancelamento. Planejar comandos administrativos de aprova
 permissão e auditoria, incluindo indisponibilidade do estabelecimento e recuperação isenta no
 mesmo agendamento. Definir autenticação, autorização, campos mínimos, paginação/limites de
 consulta, fuso, códigos de conflito e sessão revogada. Operações e dados lógicos estão definidos;
-fechar schemas executáveis e caminhos HTTP após verificar identidade/transporte, sem simular
-compatibilidade já implementada.
+implementar schemas e vincular os caminhos HTTP da seção 1.3 após verificar identidade/transporte,
+sem simular compatibilidade já implementada.
 Manter o contrato administrativo em [contracts/admin.md](contracts/admin.md); sua extensão 2C
 referencia o contrato externo sem substituir consumidores históricos do painel.
 
@@ -525,7 +525,7 @@ fronteiras concretas de acesso, processo, fila e entrega, sem framework genéric
 | `apps/web/modules/scheduling/provider-recovery-service.ts` | Novo: indisponibilidade operacional/recuperação isenta; integra hours/reschedule sem alterar terceiros. |
 | `apps/web/modules/scheduling/notification-service.ts` | Novo: preferências, evento/intenção e avisos internos; transporte fora da transação. |
 | `apps/worker/src/jobs/scheduling-notifications.ts` | Novo: handler de avisos integrado a `apps/worker/src/main.ts`, com jobs existentes; depende de T044. |
-| `apps/web/modules/scheduling/http/channel-routes.ts` | Novo: adaptador HTTP; caminhos de rotas concretos fechados em T041 antes de T070. |
+| `apps/web/modules/scheduling/http/channel-routes.ts` | Novo: adaptador HTTP conforme channels §1.3; T041 verifica sessão e colisões antes de T070. |
 | `apps/web/modules/scheduling/ui/` | Extensões dos componentes administrativos identificados em T043; guia é gate. |
 | Clientes app/site | Caminhos pertencem à spec própria de 002 UI01/UI02; T043/T072 registram correspondência, sem duplicar implementação. |
 
@@ -705,9 +705,23 @@ Equipe principal/backup, alerta de 24 horas configurável, canais/preferências/
 ordem da jornada e urgência a 24 horas do atendimento configurável foram definidos em 24/09/2026.
 O contrato lógico e o roteiro podem ser revisados com adaptadores sintéticos identificados;
 ativação externa permanece bloqueada por essas dependências. Este plano não serve como ordem de
-implementação. A continuidade é registrar evidências de integração/inventário, fechar vínculo
-HTTP e compatibilidade com UI01/UI02 conforme T040–T050, analisar a lista T040–T077 e resolver
-seus gates antes de executar.
+implementação. A continuidade depende da autorização solicitada ao usuário para iniciar T040–T077;
+conferir ambiente/base, provar integração/inventário e compatibilidade com UI01/UI02 conforme
+T040–T050, respeitando os gates antes de cada etapa.
+
+### Entrada no implement — revisão de 28/09
+
+[Checklist de requisitos](checklists/channels.md) e
+[checkpoint para autorização](evidence/pre-implement-2026-09-28.md) acompanham o recorte.
+Política técnica de tentativas/callbacks/retenção operacional: contracts/channels.md §10.2.
+Os números são decisões de desenho e precisam de prova no adaptador, sem alterar histórico
+de negócio. A lista permanece com 38 tarefas pendentes; nenhuma execução autorizada por este plano.
+
+O executor local falhou antes de iniciar comandos; não foi possível conferir worktree, sincronização,
+guia de design local nem rodar scripts/gates do Spec Kit. Os documentos foram continuados na
+branch remota existente. T040 precisa restaurar essa verificação e T043 localizar o guia antes
+de trabalho visual. Os marcadores da checklist são do revisor; a futura etapa implement precisa
+ler seu estado e obter autorização explícita se houver itens abertos.
 
 ## Histórico anterior — referência, não sequência executável atual
 
