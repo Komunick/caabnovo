@@ -6,8 +6,9 @@ Os roteiros administrativos anteriores permanecem abaixo e não comprovam o novo
 
 ## Decisões aplicadas ao roteiro — 28/09
 
-Login geral do app/site, WAHA para WhatsApp, edição/transferência a dependente antes da aprovação
-e histórico antigo opcional, conforme spec. Esses pontos prevalecem sobre comparações de 25/09.
+Login geral do app/site, WAHA escolhido mas ainda não instalado, e-mail do sistema já definido,
+edição/transferência a dependente antes da aprovação e histórico antigo opcional, conforme spec.
+Pedido inicial pode escolher nova data futura mesmo após passar o horário anterior. Esses pontos prevalecem sobre comparações de 25/09.
 
 ## Pré-requisitos de 2C
 
@@ -86,6 +87,10 @@ Usar fixtures sintéticas e registrar versões/limites:
 
 - Abrir a agenda com sessão geral válida sem segundo login; sessão expirada segue o acesso
   geral. Revogação e identidade→pessoa revalidadas em comandos, sem permissão administrativa.
+- Pedido inicial pendente: testar edição antes, exatamente no início e após o horário solicitado;
+  permitir novo destino futuro válido, negar atual/passado/indisponível e conservar versão/ocupação
+  em falha. Manter idade da análise. Chamar edição genérica em troca voluntária continua sujeito
+  às 24h configuradas sobre a origem; retomada/recuperação seguem suas exceções.
 - Editar data/horário/profissional permitido de pedido pendente mantendo pessoa/serviço;
   transferência é a ação adicional autorizada. Transferir pedido a dependente elegível: mesmo ID, serviço e pendência; não consumir
   troca confirmada. Negar serviço exclusivo, dependente de outro titular, vínculo encerrado,
@@ -100,8 +105,9 @@ Usar fixtures sintéticas e registrar versões/limites:
 - WAHA: enviar por adaptador sintético, persistir ID/sessão, processar message.ack e desconexão;
   distinguir SERVER/DEVICE/READ e retorno incerto. Quatro textos versionados com link autenticado;
   indisponibilidade não reverte agendamento. Não exigir API de templates Meta no WAHA.
-- Comparar custos com volumes informados; cenários de research.md são hipóteses. Ensaio real de
-  entrega, criação de contas, contratação e corte continuam dependendo de autorização própria.
+- E-mail: validar adaptação ao serviço já definido, remetente e recibos, sem criar fornecedor
+  exclusivo da agenda. WAHA: instalação ainda futura, sem supor instância disponível. Ensaio real,
+  instalação/pareamento, criação de contas e corte dependem de autorização própria.
 
 ## Homologação externa e transição
 
