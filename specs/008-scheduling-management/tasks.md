@@ -25,8 +25,9 @@ Geração documental orientada por speckit-tasks; setup local indisponível, sem
   autorização, elegibilidade e disponibilidade antes de persistir; falha mantém o pedido anterior.
   Pedido já confirmado segue as regras existentes de remarcação, sem autorização implícita para
   transferência após aprovação.
-- **WhatsApp:** WAHA foi escolhido pelo usuário. Configuração e comprovação de entrega seguem
-  como trabalho técnico, sem reabrir comparação de fornecedores por este módulo.
+- **Comunicação:** e-mail do sistema já definido; WAHA escolhido, ainda não instalado.
+  Planejar preparação e comprovação de entrega; nenhuma seleção de novo fornecedor ou
+  instalação está autorizada nesta etapa documental.
 
 ## Escopo, rastreabilidade e condição de execução
 
@@ -56,7 +57,8 @@ em T040, sem copiar alterações antigas automaticamente.
 
 Diretriz posterior do usuário incorporada: reformular com práticas e opções atuais, mantendo dados
 individuais e histórico. Comparativo e recomendações em [research.md](research.md#reformulação-orientada-pelo-mercado--25092026).
-T041/T044 incluem seleção moderna; tecnologia do legado não é critério obrigatório. Pesquisa
+Registro histórico superado pelas decisões de 28/09: T041 integra login geral; T044 integra
+WAHA escolhido e e-mail do sistema. Não há seleção de fornecedor própria do módulo. Pesquisa
 não conclui homologação, contratação ou tarefas de implementação.
 
 Avanço parcial de T041/T042/T044, sem marcar tarefas concluídas: código do legado e fluxo
@@ -65,7 +67,7 @@ individual de login localizados; diferenças de status/autoria/vínculo em
 IDs de ator impostados; T042/T045/T077 devem preservar estados legados ambíguos, contagem
 desconhecida e fuso verificado. Não mapear reject ou EDITED automaticamente.
 SMTP/worker são referências reutilizáveis; cliente Evolution conversacional não prova
-transporte transacional pronto. T044/T069 devem selecionar provedor adequado, correlação/recibos,
+transporte transacional pronto. T044/T069 devem integrar os serviços definidos e fechar correlação/recibos,
 timeout incerto e reenvio seguro conforme [pesquisa](research.md).
 Guia visual, versão publicada, inventário real e homologação ainda pendentes.
 
@@ -103,9 +105,10 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
 **Dependências:** Setup concluído, pré-requisitos administrativos de T040 comprovados.
 **Saída:** contratos e persistência que protegem ambos os modos, autoria e eventos.
 
-- [ ] T044 Detalhar WhatsApp via WAHA, já escolhido: versão/motor, sessão, sendText,
-      messageId, message.ack, estado da conexão e reconciliação de timeout. Fechar e-mail e
-      demais dependências de comunicação, sem reabrir seleção do WhatsApp ou exigir Evolution.
+- [ ] T044 Detalhar WhatsApp via WAHA, escolhido e ainda não instalado: plano de preparação,
+      responsável/ambiente, versão/motor, sessão, sendText, messageId, message.ack, conexão e
+      reconciliação de timeout. Integrar o serviço de e-mail já definido no sistema, verificando
+      seu contrato/remetente; não escolher fornecedor novo para agenda nem exigir Evolution.
       Fechar textos/templates dos quatro eventos e política finita de tentativas,
       backoff, timeout, resultado incerto, redrive autorizado e retenção operacional em
       `specs/008-scheduling-management/contracts/channels.md`, conforme
@@ -190,14 +193,19 @@ Simulação valida o domínio, mas não conclui identidade/provedor/cliente real
       capacidade 1 e 3, beneficiário global, adjacência, falha e 20 retries; uma única ocupação
       por vencedor. Cobrir edição pendente/transferência a dependente compatível, vínculo
       revogado, serviço exclusivo, conflito de destino, falha e aprovação concorrente, sem
-      nova contagem ou vazamento de histórico. Referências: 2C-FR-02/03/14/25; 2C-SC-01/02/03/13/24.
+      nova contagem ou vazamento de histórico. Pedido inicial antes/exatamente/depois do horário
+      anterior pode editar para futuro válido; negar destino passado e preservar idade da análise.
+      Edição de troca voluntária continua sob FR-08/10; retomada/recuperação sob FR-18/20. Referências: 2C-FR-02/03/14/25; 2C-SC-01/02/03/13/24.
 - [ ] T057 [US3] Adequar `apps/web/modules/scheduling/booking-service.ts` para criação pelos
       canais e painel sobre a mesma ocupação, com estados explícitos, política por serviço,
       autoria externa, idempotência/auditoria e intenção de aviso. Pendência ocupa vaga sem
       confirmar nem expirar; passagem do tempo não gera presença/falta. Permitir editar data,
       horário e profissional habilitado antes do aceite mantendo pessoa/serviço; permitir transferência a dependente autorizado/elegível, sem mudar serviço por inferência;
       revalidar disponibilidade e trocar versão/ocupação atomicamente. Manter ID, política,
-      pendência e contador; falha conserva anterior. Proteger histórico/avisos na mudança de pessoa.
+      pendência e contador; falha conserva anterior. Pedido inicial pode editar destino mesmo
+      após horário anterior, validando futuro/políticas. Centralizar guardas por tipo de processo
+      com T059, sem rota genérica dispensar prazo de remarcação. Não reiniciar idade de análise.
+      Proteger histórico/avisos na mudança de pessoa.
       Atender T056; pedido confirmado não usa esse fluxo.
 - [ ] T058 [P] [US3] Escrever `apps/web/tests/integration/scheduling-channel-reschedule.test.ts`
       (novo): liberar origem/reter só destino, terceiro ocupando origem, rollback inicial,
@@ -294,6 +302,9 @@ Simulação valida o domínio, mas não conclui identidade/provedor/cliente real
       `specs/008-scheduling-management/contracts/channels.md`: beneficiário primeiro,
       profissionais condicionais, revisão, aviso da liberação da origem, situação manual,
       contagem confirmada/em andamento, recuperar/cancelar, preferências e histórico.
+      Incluir editar data/horário/profissional e transferir para dependente antes do aceite,
+      serviço preservado, conflito recuperável, versão obsoleta e pedido inicial cujo horário
+      passou escolhendo nova data. Mostrar apenas ações autorizadas; manter login geral.
       Conservar caminhos/IDs da spec própria definida em T043 e seus testes; não duplicar
       tarefas de construção da interface externa dentro de 008.
 - [ ] T073 [US3] Validar consumo por app/site/painel e revisão única em
@@ -301,6 +312,7 @@ Simulação valida o domínio, mas não conclui identidade/provedor/cliente real
       sintéticos identificados; registrar compatibilidade da interface real de UI02 em
       `specs/008-scheduling-management/evidence/channels-validation.md` (novo).
       Exigir mesma reserva/estado/histórico e revisão publicada após recarga em ambos os canais;
+      edição/transferência e acesso após a mudança de beneficiário devem coincidir entre app/site;
       cliente sintético sozinho não conclui a integração real. Referências: SC-01/03/04/18/24.
 
 ## Phase 4 — Polish e saída
