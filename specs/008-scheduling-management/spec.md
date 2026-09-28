@@ -1,6 +1,30 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Decisões vigentes — 28/09/2026
+
+- **Login geral:** Agendamentos utiliza a conta/sessão geral do app/site. Não cria login,
+  credencial, recuperação ou escolha de fornecedor de identidade próprios do módulo. Usuário já
+  conectado entra na agenda sem nova autenticação específica; permissões familiares são
+  revalidadas no servidor. Evolução do login pertence à experiência transversal do app/site.
+- **Histórico antigo:** importar registros antigos de recusa/cancelamento/edição é opcional e
+  de baixa prioridade, conforme esclarecimento do usuário. Sua classificação detalhada ou
+  reconstrução do número de trocas não bloqueia esta especificação. Se importados, preservar
+  a informação disponível sem inventar distinções/contadores. Isso não autoriza apagar a origem
+  e não altera o histórico individual exigido para os novos registros.
+- **Edição antes do aceite:** edição comum altera data, horário e profissional quando a escolha
+  estiver habilitada, mantendo pessoa e serviço. Como ação adicional, permitir transferir o atendimento
+  a dependente quando o serviço for compatível e disponível para ele. Titular só representa
+  dependentes com vínculo vigente; dependente continua operando somente para si. Revalidar
+  autorização, elegibilidade e disponibilidade antes de persistir; falha mantém o pedido anterior.
+  Pedido já confirmado segue as regras existentes de remarcação, sem autorização implícita para
+  transferência após aprovação.
+- **WhatsApp:** WAHA foi escolhido pelo usuário. Configuração e comprovação de entrega seguem
+  como trabalho técnico, sem reabrir comparação de fornecedores por este módulo.
+
 ## Diretriz da reformulação — 25/09/2026
+
+Registro anterior: recomendações de login específico e seleção de WhatsApp foram superadas
+pelas decisões de 28/09 acima; demais comparações continuam como referência.
 
 O usuário reafirmou que o projeto reformula o sistema antigo e solicitou pesquisar práticas
 atuais e melhores opções para cada função. Preservar pessoas, vínculos, reservas e histórico;
@@ -406,16 +430,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
 
 **Requisitos específicos propostos para 2C:**
 
-- **2C-FR-01:** Expor o mesmo catálogo de serviços publicados no app e no site antes do login, com projeção
-  mínima e sem dados privados ou horários disponíveis. Consultar vagas exige identidade externa
-  validada, assim como reservar, remarcar, cancelar e consultar reservas próprias. Aplicar
-  estado único de publicação externa nos dois canais; APIs administrativas e suas sessões não são reutilizadas
-  pelo cliente externo. O usuário informou que titulares e dependentes já possuem acessos
-  individuais no app/site atual. Planejar a ligação dessas identidades ao cadastro individual
-  de Associados e avaliar a transição para a solução selecionada na reformulação. Não presumir
-  contas compartilhadas ou compatibilidade automática de credenciais. Novo mecanismo pode exigir
-  nova sessão/cadastro de credencial, com continuidade da mesma pessoa e histórico, conforme plano
-  de migração; não duplicar associados nem obrigar a manter tecnologia antiga.
+- **2C-FR-01:** Expor o mesmo catálogo publicado no app/site antes do login, sem dados privados
+  nem horários disponíveis. Vagas, reservas, remarcação, cancelamento e histórico privado usam
+  a autenticação geral do app/site, resolvida no servidor para a pessoa em Associados. Não criar
+  login separado para Agendamentos nem pedir nova autenticação específica a quem já está conectado.
+  Sessão expirada segue o fluxo geral. Manter publicação única e permissões familiares vigentes;
+  sessão externa não concede acesso ao painel. Migração de login pertence ao projeto transversal.
+
 - **2C-FR-02:** Resolver ator externo e beneficiário no servidor a cada comando. Titular pode
   solicitar para si e dependentes com vínculo vigente; dependente só pode solicitar para si.
   Nunca confiar em papel, elegibilidade ou vínculo enviados pelo navegador. Usar o cadastro
@@ -432,6 +453,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   reserva, o encerramento explícito da troca libera somente o destino (2C-FR-09/10).
   Recusa libera a ocupação; aprovação preserva a mesma reserva e ocupação. Intervalos são
   [início, fim), persistidos em UTC e apresentados em America/Bahia.
+  Antes do aceite, editar data, horário e profissional conforme as opções habilitadas, mantendo
+  pessoa e serviço na edição comum. Também permitir transferir o atendimento a dependente
+  elegível sob FR-02/25. Manter ID, autoria, política de aceite do pedido e estado pendente;
+  revalidar vaga/conflito da nova pessoa e substituir a versão/ocupação atomicamente. Falha mantém
+  a versão anterior; aprovação concorrente exige a versão vigente. Editar pendência não é troca
+  confirmada, não reinicia contadores/ciclos nem cria nova reserva. Serviço exclusivo de titular
+  não pode ser transferido a dependente; nenhuma edição força confirmação ou oculta histórico.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
   históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
@@ -450,11 +478,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   lista de espera ou mensagem real por inferência. Atribuição de profissional fica restrita ao
   fluxo aprovado em 2C-FR-13; distribuição avançada de carga e demais capacidades têm cortes e
   políticas próprios.
-- **2C-FR-06:** Preservar compatibilidade dos consumidores e dados existentes durante a transição
-  do legado. A ativação externa requer inventário de contas e reservas a preservar, plano de
-  migração/convivência e rollback sem perda de histórico. A existência de reservas futuras
-  em uso no legado está por conferir, conforme resposta do usuário de 24/09; não tratar o
-  desconhecido como agenda vazia nem executar importação/corte com base nessa hipótese.
+- **2C-FR-06:** Preservar consumidores e dados operacionais definidos para continuidade na
+  transição. Importação do histórico antigo de recusa/cancelamento/edições é opcional e de baixa
+  prioridade; sua reconstrução detalhada não é pré-requisito para Agendamentos. Se importado,
+  conservar informação disponível e indicar ambiguidade sem fabricar causa/contador; não deduzir
+  trocas confirmadas pelo total de edições. História nova continua auditável por pessoa.
+  Conferir separadamente reservas futuras que precisem sobreviver ao corte: existência ainda
+  desconhecida não equivale a agenda vazia. Não apagar fontes nem executar importação implicitamente.
 
 - **2C-FR-07:** Priorizar remarcações na fila de aprovação, ordenando pelo início original registrado ao solicitar a troca
   em ordem crescente. Essa referência é preservada mesmo após liberar a origem. A data pretendida não interfere nessa prioridade. Em empate, usar a data
@@ -873,6 +903,12 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   Trocar beneficiário invalida escolhas incompatíveis. Cadastro público informa a restrição
   sem mostrar vagas; rascunho de público-alvo não altera a oferta publicada. Cobrir serviço
   acessível a ambos, escolha de profissional opcional e ambos os modos de agenda.
+  Em pedido pendente, editar data/horário/profissional mantém pessoa/serviço e pendência,
+  revalidando políticas e sem reiniciar análise. Como ação adicional, titular transfere a dependente vigente com serviço/vaga compatíveis:
+  conservar ID e pendência, sem contar remarcação confirmada. Serviço exclusivo, vínculo encerrado,
+  conflito do dependente, versão obsoleta e tentativa de dependente operar por terceiro são negados
+  sem alterar o pedido anterior. Aprovação da versão antiga não confirma outra pessoa. Após
+  confirmação não há transferência por este fluxo. Histórico/avisos respeitam a pessoa autorizada.
 
 **Contrato e planejamento de 2C:** [contrato lógico v1](contracts/channels.md),
 [modelo](data-model.md) e [roteiro de validação](quickstart.md), consolidados em 24/09.
@@ -881,16 +917,12 @@ implementação e validação futuras, mantendo abertas as dependências abaixo.
 
 **Decisões e dependências pendentes para fechar 2C:**
 
-- Selecionar a solução atual de acesso e desenhar a transição das contas individuais existentes,
-  mapeando cada identidade ao cadastro de Associados; detalhar recuperação, revogação e vínculo.
-  Inventário do legado condiciona o corte, não impede recomendar solução nova. Regras familiares
-  de reserva/histórico permanecem definidas.
-- Provedores, textos e operação de entrega/reenvio das mensagens transacionais. Canais,
-  preferências iniciais/editáveis e destinatários foram definidos em 2C-FR-23/24; não reabrir
-  essas escolhas ao detalhar a integração.
-- Inventariar contas/reservas do legado: reservas futuras em uso ainda por conferir (resposta C).
-  Definir fonte, correspondências, coexistência, corte e tratamento de duplicatas/histórico com
-  evidência, sem presumir agenda vazia. Urgência de 24 horas configurável está resolvida em 2C-FR-22.
+- Integrar a sessão geral do app/site à identidade de Associados e às permissões do módulo;
+  não selecionar outro login nem redefinir recuperação de conta em Agendamentos.
+- WhatsApp via WAHA: verificar configuração, versão/motor e operação de entrega/reenvio.
+  E-mail ainda depende de escolha/configuração. Canais, preferências e destinatários permanecem.
+- Conferir reservas futuras necessárias ao corte. Importação dos registros históricos antigos
+  referidos pelo usuário é opcional, sem gate de reconstrução detalhada de causas/edições.
 
 **Fora deste recorte:** turmas coletivas, salas/equipamentos, lista de espera, múltiplos serviços
 na mesma reserva, assistente por IA, avaliações e integração Cal.com. Permanecem possibilidades
