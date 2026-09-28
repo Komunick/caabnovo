@@ -1,6 +1,6 @@
 # Contrato lógico v1 — Agendamentos no app/site (2C)
 
-Data: 24/09/2026. Estado: **proposta documental para implementação**, derivada de
+Data: 28/09/2026. Estado: **proposta documental para implementação**, derivada de
 [spec.md](../spec.md), [plan.md](../plan.md) e [data-model.md](../data-model.md).
 Nenhuma operação abaixo comprova endpoint, migration, envio ou cliente externo implementados.
 O contrato administrativo existente permanece em [admin.md](admin.md).
@@ -8,11 +8,9 @@ O contrato administrativo existente permanece em [admin.md](admin.md).
 ## 1. Fronteira e versão
 
 App e site consomem a mesma oferta publicada e o mesmo domínio de disponibilidade/reservas.
-Operações lógicas abaixo pertencem à versão v1; o vínculo com transporte/rotas deve usar prefixo
-explícito de versão ao ser implementado. Caminhos HTTP externos e forma de autenticação serão
-fechados para a solução selecionada na reformulação, com transição dos acessos existentes;
-não reutilizar endpoints/sessões administrativos
-como autorização do associado. Este documento fixa dados, permissões, transições e erros do domínio.
+Operações abaixo pertencem à versão v1; os caminhos HTTP propostos estão na seção 1.3.
+A integração da sessão geral e a transição dos acessos existentes exigem prova em T041;
+não reutilizar endpoints/sessões administrativos como autorização do associado. Este documento fixa dados, permissões, transições e erros do domínio.
 
 Acesso externo resolve identidade autenticada → pessoa de Associados no servidor. O usuário
 informou que titulares e dependentes já têm contas individuais; isso não comprova compatibilidade
@@ -43,12 +41,51 @@ corpo/header como prova. Revalidar pessoa/vínculo no domínio atual, inclusive 
 O vínculo legado aparece por responsavel e por mesma OAB em caminhos diferentes; não inferir
 equivalência sem reconciliação. Correspondência origem/User.id → member.id é explícita,
 sem vincular por nome nem importar credenciais. Mecanismo/revisão publicada e revogação ainda
-precisam de validação; caminhos HTTP continuam condicionados a T041.
+precisam de validação em T041; os caminhos propostos estão na seção 1.3.
 
 Histórico importado precisa conservar status/autor/origem verificáveis. reject e CANCELED
 não distinguem sozinhos recusa/cancelamento; EDITED não prova uso de troca voluntária.
 Não inventar causa/contador nem converter finished/not_appear em scheduled. Essa fronteira de
 leitura histórica será conciliada com T045 sem expandir ações operacionais do recorte.
+
+### 1.3. Vinculação HTTP v1 proposta — 28/09
+
+Os caminhos abaixo fixam o desenho para T041/T070; não comprovam endpoints existentes.
+O contrato administrativo usa `/api/v1/scheduling`. Seus guards permanecem administrativos.
+A sessão geral do app/site entra somente na fronteira de associado, cujo segmento `member`
+abrange titular e dependente e não concede papel por si só. T041 verifica sessão, origem/CSRF,
+revogação e eventual conflito com rotas existentes antes de criar adaptadores.
+
+| Método e caminho propostos | Operação e fronteira |
+| --- | --- |
+| GET `/api/v1/public/scheduling/offers` | listPublishedOffers; catálogo público sem vagas/PII. |
+| GET `/api/v1/member/scheduling/beneficiaries` | listEligibleBeneficiaries; sessão geral. |
+| GET `/api/v1/member/scheduling/offers` | listEligibleOffers; beneficiário autorizado. |
+| GET `/api/v1/member/scheduling/availability` | getAvailability; beneficiário autorizado. |
+| GET / POST `/api/v1/member/scheduling/bookings` | listBookings / createBooking. |
+| GET `/api/v1/member/scheduling/bookings/{bookingId}` | getBooking. |
+| GET `/api/v1/member/scheduling/bookings/{bookingId}/history` | listBookingHistory. |
+| PATCH `/api/v1/member/scheduling/bookings/{bookingId}/pending` | editPendingBooking, incluindo transferência elegível. |
+| POST `/api/v1/member/scheduling/bookings/{bookingId}/reschedules` | requestReschedule. |
+| PATCH / DELETE `/api/v1/member/scheduling/bookings/{bookingId}/proposals/{proposalId}` | replacePendingProposal / withdrawProposal. |
+| POST `/api/v1/member/scheduling/bookings/{bookingId}/resume` | resumeWithoutTime. |
+| POST `/api/v1/member/scheduling/bookings/{bookingId}/cancel` | cancelBooking. |
+| GET / PUT `/api/v1/member/scheduling/communication-preferences` | getCommunicationPreferences / saveCommunicationPreferences. |
+| GET `/api/v1/scheduling/approval-queue` | listApprovalQueue; consulta administrativa. |
+| POST `/api/v1/scheduling/bookings/{bookingId}/proposals/{proposalId}/approve` | approveProposal; equipe autorizada. |
+| POST `/api/v1/scheduling/bookings/{bookingId}/proposals/{proposalId}/reject` | rejectProposal; equipe autorizada. |
+| POST `/api/v1/scheduling/bookings/{bookingId}/provider-unavailability` | registerProviderUnavailability; equipe autorizada. |
+| POST `/api/v1/integrations/waha/events` | Recibos técnicos autenticados; sem sessão de associado ou permissão para alterar reservas. |
+
+Corpo e query seguem as entradas lógicas das seções 4/5; o cliente não envia contexto confiável.
+Toda mutação de negócio exige Idempotency-Key e, quando existente, expectedVersion. DELETE de
+proposta carrega expectedVersion por `If-Match` com a versão vigente; proposalId é obrigatório
+no caminho, sem depender de corpo DELETE. Schemas executáveis e serialização exata dos demais
+campos serão implementados em T047/T070, preservando esses contratos.
+
+Publicação de oferta continua na fronteira administrativa da seção 9 e do contrato admin.
+Callbacks seguem validação própria da seção 10.2, sem Idempotency-Key arbitrária do cliente.
+Nenhuma dessas rotas cria login adicional, ponte automática de token legado ou interface nova.
 
 ## 2. Contexto e envelopes
 
@@ -277,6 +314,41 @@ Fontes oficiais consultadas em 28/09:
 [eventos](https://waha.devlike.pro/docs/how-to/events/) e
 [motores](https://waha.devlike.pro/docs/how-to/engines/).
 
+### 10.2. Limites operacionais propostos — 28/09
+
+Decisões técnicas deste plano, sujeitas à prova do adaptador em T044/T069; não são uma regra
+universal do mercado nem configuração já aplicada. Reutilizar o worker/fila PostgreSQL existente.
+
+| Parâmetro | Desenho explícito |
+| --- | --- |
+| Orçamento de envio por intenção | No máximo 5 tentativas automáticas: uma inicial e até 4 novas tentativas seguras. O contador persistido não reinicia por reentrega do job. |
+| Espera de retry | Configuração já usada pelo worker: retryLimit 4, retryDelay 30 s, retryBackoff true, retryDelayMax 900 s. Respeitar Retry-After quando comprovado pelo adaptador; reagendar sem antecipar o limite. |
+| Chamada externa | Timeout de 10 s por chamada; após possível aceite, timeout é resultado incerto. |
+| Execução da fila | expireInSeconds 900, heartbeatSeconds 60; perda de heartbeat/claim após envio possível também exige reconciliação antes de novo envio. |
+| Retenção operacional | Revisar explicitamente as definições existentes: retentionSeconds 1.209.600, deleteAfterSeconds 604.800 e dead-letter caab-dead-letter, retryLimit 0/deleteAfterSeconds 0. Aplicam-se aos registros técnicos da fila, sem apagar eventos, intenções, histórico ou dados de negócio. |
+| Reconciliação incerta | Até 3 consultas sem envio, após 1, 5 e 15 minutos do resultado incerto, quando houver correlação e consulta suportada. Sem suporte/identificador suficiente, ou após esgotamento, revisão operacional; não reenviar automaticamente. |
+| Reenvio manual | Permissão do processamento existente, auditoria e revalidação de acesso/preferência/contato; resultado incerto precisa ser esclarecido antes de autorizar novo efeito externo. Sem motivo escrito obrigatório. |
+
+Só repetir envio quando o adaptador comprovar ausência de aceite/efeito. Um 5xx ou queda de
+conexão isoladamente não oferece essa prova. Contato inválido é falha definitiva; preferência
+desligada ou acesso revogado suprime o envio. Ao esgotar tentativas seguras, registrar falha e
+encaminhar ao tratamento operacional/dead-letter existente. Não desfazer o agendamento.
+Distinguir retry do job, nova chamada de envio, consulta de reconciliação e repetição do webhook:
+reentrega de qualquer um não reinicia orçamento nem gera novo evento de negócio.
+
+Para callbacks WAHA, planejar HMAC SHA-512 sobre o corpo bruto, conferido antes de processamento,
+com segredo fora de logs e comparação segura. A documentação define X-Webhook-Hmac e
+X-Webhook-Hmac-Algorithm; não presumir assinatura dos headers de timestamp/requestId.
+Deduplicar por instância/sessão/mensagem e evento normalizado; tolerar chegada fora de ordem.
+Assinar somente os eventos necessários, message.ack e session.status, validando suporte do motor
+selecionado. Fonte: [eventos WAHA](https://waha.devlike.pro/docs/how-to/events/), consultada em 28/09/2026.
+
+Os valores da fila foram conferidos em
+[queues.ts](../../../apps/worker/src/queues.ts), blob
+`4fb73ae728afea0457fe7a272d138ae726603427`. T044 verifica compatibilidade com a versão instalada,
+o serviço de e-mail e o motor WAHA antes de aplicar a configuração; divergência exige atualização
+deste contrato e dos testes. Não ativar limpeza de dados de negócio por analogia com a fila.
+
 ## 11. Falhas recuperáveis
 
 | Código lógico proposto | Efeito e recuperação |
@@ -295,10 +367,10 @@ compatibilidade das APIs existentes, sem acoplar erro de provedor ao commit de a
 ## 12. Dependências para vincular e homologar o contrato
 
 1. Integrar autenticação geral do app/site, identidade de Associados e revogação de acesso;
-   fechar caminhos/versionamento HTTP e schemas executáveis, sem login próprio do módulo.
+   validar a vinculação HTTP da seção 1.3 e implementar schemas, sem login próprio do módulo.
 2. Representar equipe vinculada/backup sem ampliar permissões; coordenar novos estados/constraints
    com contratos e migrations existentes.
-3. Planejar instalação/validação WAHA e integrar e-mail do sistema; fechar textos/tentativas/entrega;
+3. Planejar instalação/validação WAHA e integrar e-mail do sistema; versionar textos e validar a política da seção 10.2/recibos;
    validar preferências e confirmação de envio. Inventariar finalidade de preferências/supressões
    antigas antes de qualquer conversão; padrão ativo não apaga registros existentes nem comprova
    contato validado. Não reativar campanhas antigas bloqueadas ao disponibilizar um canal.
