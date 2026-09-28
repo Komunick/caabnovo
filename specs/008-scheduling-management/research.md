@@ -3,7 +3,33 @@
 **Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra, integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23–25/09/2026. Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real ou teste de usabilidade. Preços públicos pesquisados em 25/09 são referências datadas, sem cotação contratual. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das práticas de mercado.
 
 
+## Decisões posteriores do usuário — 28/09/2026
+
+**Estado vigente:** login geral do app/site, sem autenticação própria de Agendamentos; histórico
+antigo de recusa/cancelamento/edição opcional e de baixa prioridade; edição pendente permite data/horário/profissional mantendo pessoa/serviço e, como ação adicional,
+transferir atendimento a dependente compatível/disponível; **WAHA escolhido para WhatsApp**.
+A pesquisa de 25/09 permanece como comparação histórica. Better Auth/Clerk e seleção
+Meta/360dialog não são decisões a tomar dentro deste módulo. Continuidade de reservas futuras
+e permissões familiares permanece distinta da importação opcional de logs antigos.
+
+### WAHA — verificação documental da escolha
+
+O [envio](https://waha.devlike.pro/docs/how-to/send-messages/) documenta sendText e identificação
+de mensagem. A matriz de [motores](https://waha.devlike.pro/docs/how-to/engines/) exige conferir
+recursos da versão/motor usados; seleção do produto não demonstra instância operacional.
+Os [eventos](https://waha.devlike.pro/docs/how-to/events/) incluem message.ack: SERVER indica
+servidor, DEVICE dispositivo e READ leitura observada. Persistir ID/sessão, deduplicar recibos
+e reconciliar resposta incerta. Os controles de entrega continuam necessários com WAHA.
+
+As regras de templates, janela e tarifação pesquisadas para Cloud API não devem ser copiadas
+automaticamente para a interface WAHA. Textos dos quatro eventos serão versionados pelo CAAB.
+Configuração/edição/motor, operação e custos da instância ainda precisam de verificação;
+não houve instalação, chamada à conta, envio ou homologação.
+
 ## Reformulação orientada pelo mercado — 25/09/2026
+
+**Comparação anterior, parcialmente superada em 28/09:** recomendações de fornecedor de
+autenticação e WhatsApp abaixo não são pendências vigentes de Agendamentos.
 
 **Diretriz do usuário:** redesenhar o sistema antigo com práticas e soluções atuais. Preservar
 pessoas, vínculos, reservas e histórico; a tecnologia e os fornecedores antigos não são requisitos.
