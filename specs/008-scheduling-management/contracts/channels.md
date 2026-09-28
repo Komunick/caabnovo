@@ -20,15 +20,18 @@ com Better Auth administrativo. Seguir [005 FR-010](../../005-members-management
 [contrato de Associados](../../005-members-management/contracts/members.md).
 Sem correspondência confiável, negar operação privada, sem criar pessoa/conta ou vincular por nome.
 
-### 1.1. Solução atual e continuidade — 25/09
+### 1.1. Login geral do app/site — decisão de 28/09
 
-A [pesquisa atual](../research.md#reformulação-orientada-pelo-mercado--25092026) compara
-Better Auth, Clerk, Auth0 e Supabase; a seleção não precisa manter o mecanismo antigo.
-Resolver identidade autenticada estável (emissor/origem e identificador da conta) para member.id,
-com unicidade e correspondência verificáveis. E-mail, CPF, OAB ou nome enviados pelo cliente
-não bastam para vincular contas. Reenrolar credencial/sessão pode integrar a transição controlada,
-sem duplicar pessoa, reservas ou histórico. Passkey/OTP e recuperação são propostas a fechar
-com UI01/UI02, sem novo MFA obrigatório.
+Agendamentos consome a sessão geral do app/site. Não cria segundo login, credencial,
+recuperação ou seleção de fornecedor. Ator já autenticado acessa a agenda sem autenticação
+específica do módulo; sessão expirada usa o fluxo geral. Resolver identidade→member.id no
+servidor e revalidar autorização familiar; sessão externa não concede acesso administrativo.
+T041 vincula esse contrato à autenticação transversal de UI01/UI02/Associados.
+
+Importação de históricos antigos de edição/recusa/cancelamento é opcional e de baixa prioridade.
+Os cuidados da seção seguinte só condicionam a importação efetivamente escolhida; classificação
+detalhada/contador antigo não são gate da spec. Continuidade das reservas futuras é verificada
+separadamente. Não apagar registros da origem nem inventar fatos.
 
 ### 1.2. Continuidade do legado — evidência de 25/09
 
@@ -106,6 +109,7 @@ do login não dispensa essa validação nem autoriza titular a reservar serviço
 | Comando | Entrada de negócio | Pré-condição e resultado |
 | --- | --- | --- |
 | createBooking | beneficiaryId, oferta/opção de horário | Acesso, público-alvo, oferta publicada, elegibilidade, futuro, horizonte, antecedência de nova reserva, expediente e conflitos. Confirmação imediata padrão ou pending_approval conforme serviço; ambos ocupam vaga. |
+| editPendingBooking | bookingId, expectedVersion, data/horário/profissional conforme opções habilitadas; beneficiaryId apenas na transferência a dependente | Ator autorizado sobre pedido e novo beneficiário, pedido ainda pendente, serviço compatível e vaga disponível sem conflito para a nova pessoa. Mantém serviço, ID, política de aceite, pendência e ciclo/contador. Atualiza pessoa/versão/ocupação atomicamente; falha conserva tudo. Não transfere reserva já confirmada. |
 | requestReschedule | bookingId, opção de destino, expectedVersion | Reserva confirmada futura, prazo de remarcação e menos de duas utilizações voluntárias consolidadas. Validar tudo antes de liberar origem e ocupar só destino na mesma transação; falha mantém origem. Abre ciclo debitável. |
 | replacePendingProposal | bookingId, proposalId/version, novo destino, expectedVersion | Uma proposta ativa; regras de prazo aplicáveis ao processo. Troca de retenção atômica, conserva proposta anterior em falha e não cobra nova utilização. |
 | withdrawProposal | bookingId, proposalId/version, expectedVersion | Fronteiras de 2C-FR-10/18/20; libera destino, não restaura origem; ciclo permanece aguardando escolha. |
@@ -114,6 +118,16 @@ do login não dispensa essa validação nem autoriza titular a reservar serviço
 | rejectProposal | bookingId, proposalId/version, expectedVersion | Equipe autorizada; libera destino. Pedido novo termina rejeitado; troca/recuperação permanece no mesmo registro sem horário confirmado. |
 | cancelBooking | bookingId, expectedVersion | Confirmada ou pedido novo aguardando aprovação: antes do início confirmado/solicitado, sem antecedência mínima nem aprovação da equipe. Pedido novo vai a cancelled, libera vaga e sai da fila/alertas; não conta troca. Registro sem horário após troca/recuperação: guardas de 2C-FR-09/18/20; liberar só retenção própria e preservar histórico. |
 | registerProviderUnavailability | bookingId, expectedVersion, referência do recurso/período indisponível | Equipe autorizada; reserva confirmada. Retira confirmação/ocupação, registra/mantém bloqueio efetivo e inicia recuperação isenta no mesmo ID, com aviso devido. Não altera outras reservas por inferência. |
+
+Edição antes do aceite inclui transferência a dependente autorizado, conforme decisão de 28/09.
+Dependente não pode representar outra pessoa. Serviço exclusivo de titular não é transferível.
+Conflitos e elegibilidade usam o novo beneficiário; trocar pessoa não contorna capacidade, prazo
+ou contador. Aprovação/recusa contra versão anterior conflita; não aprovar silenciosamente
+pedido alterado. Histórico conserva autor e mudança, com projeção por acesso ao beneficiário
+de cada evento; receber pedido transferido não revela histórico privado do antigo atendido.
+Recalcular destinatários de eventos seguintes e revalidar intenções antigas antes de envio,
+sem atribuir evento passado à pessoa errada. Pendência inicial não vira ciclo debitável por edição;
+ciclo voluntário já aberto mantém contagem, consolidada uma vez apenas ao confirmar.
 
 Não exigir justificativa humana livre nesses comandos. “Causa do estabelecimento” é classificação
 auditável da operação autorizada, sem reintroduzir motivo obrigatório.
@@ -132,7 +146,7 @@ Solicitações existentes não mudam de estado quando o serviço altera sua pol�
 
 | Estado | Ocupação | Saídas principais |
 | --- | --- | --- |
-| pending_approval, pedido novo | Só intervalo solicitado | Aprovar → scheduled; recusar → rejected; cancelar pelo ator autorizado antes do início solicitado → cancelled, sem aprovação da equipe e com liberação imediata. |
+| pending_approval, pedido novo | Só intervalo solicitado | Editar/transferir a dependente elegível → mesma pendência versionada; aprovar → scheduled; recusar → rejected; cancelar pelo ator autorizado antes do início solicitado → cancelled, sem aprovação da equipe e com liberação imediata. |
 | scheduled | Só intervalo confirmado | Cancelar → cancelled; troca válida → pending_approval ou scheduled; indisponibilidade → awaiting_new_time. |
 | pending_approval, troca/recuperação | Só destino, nunca origem histórica | Aprovar → scheduled; recusar/retirar → awaiting_new_time; substituir mantém estado; cancelar conforme guarda → cancelled. |
 | awaiting_new_time | Zero vagas | Retomar → pending_approval ou scheduled; cancelar → cancelled. |
@@ -226,24 +240,32 @@ distinguir timeout incerto e reconciliar antes de retry, mantendo destinatário/
 atuais. Não usar persistência de conversa ou campanha bloqueada como comprovante de envio.
 Fontes e blobs em [research.md](../research.md#inspeção-das-integrações-existentes--25092026).
 
-### 10.1. Condições de transporte da reformulação
+### 10.1. WhatsApp via WAHA — decisão de 28/09
 
-Recomendações comparadas em research.md: Resend/Postmark para e-mail; Meta Cloud API/360dialog
-para WhatsApp, com alternativas conforme custo/operação. Provedor selecionado não é prova de
-configuração ou entrega. Preferência ativa por padrão é distinta da elegibilidade: validar
-contato, permissão para mensagens e supressões/opt-out, sem inferir consentimento do dependente
-pela conta do titular. Não exigir checkbox específico por inferência desta pesquisa.
+WAHA é o transporte escolhido. Evolução do código antigo e comparações com Meta/360dialog não
+são seleção pendente. Verificar versão, motor, instância e sessão reais antes de implementar o
+adaptador; a escolha não comprova instalação/homologação.
 
-WhatsApp fora da janela de atendimento requer template aprovado; agendamento no app/site não
-abre essa janela. Versionar as quatro famílias de mensagens, sujeitas à aprovação/classificação
-da plataforma. Guardar referência/evidência mínima da elegibilidade sem dados sensíveis extras.
-Não adicionar promoção, canal ou evento ao contrato por capacidade do fornecedor.
+Contrato proposto a conferir no OpenAPI da versão usada: envio por POST /api/sendText, captura
+do ID de mensagem e correlação por instância/sessão/messageId. Receber message.ack: SERVER
+representa chegada ao servidor, DEVICE ao dispositivo, READ leitura quando observada; retorno
+HTTP não prova entrega. Estado ausente permanece desconhecido. Não pressupor idempotência nativa
+nem reenviar cegamente após timeout. Reconciliar pelos recursos disponíveis na versão/motor,
+com tentativas finitas e observabilidade.
 
-Validar autenticidade dos callbacks conforme mecanismo do provedor; deduplicar eventos, associar
-ao envio correto e suportar chegada fora de ordem, sem reduzir “entregue” para “enviado” por evento
-atrasado. Registrar retorno sem correlação para análise, sem modificar reservas. Status observado
-e histórico durável CAAB independem da retenção dos logs do fornecedor. Limite de idempotência
-externa não limita a proteção interna. Textos ligam ao agendamento sob autenticação/autorização.
+Validar origem/autenticidade dos callbacks pelo mecanismo configurado, deduplicar eventos e
+tolerar chegada fora de ordem sem retroceder entrega já comprovada. Sessão desconectada deve
+ficar identificada como indisponibilidade de comunicação; reserva permanece válida. Textos dos
+quatro eventos são versionados no CAAB, com link autenticado e dados mínimos.
+
+Preferência inicial ligada é distinta de contato/permissão de comunicação; preservar opt-out.
+Regras de templates aprovados, janela e tarifas específicas da Cloud API descritas na pesquisa
+comparativa não viram requisitos técnicos do WAHA por analogia. Não confundir as duas interfaces.
+
+Fontes oficiais consultadas em 28/09:
+[envio](https://waha.devlike.pro/docs/how-to/send-messages/),
+[eventos](https://waha.devlike.pro/docs/how-to/events/) e
+[motores](https://waha.devlike.pro/docs/how-to/engines/).
 
 ## 11. Falhas recuperáveis
 
@@ -262,17 +284,16 @@ compatibilidade das APIs existentes, sem acoplar erro de provedor ao commit de a
 
 ## 12. Dependências para vincular e homologar o contrato
 
-1. Selecionar solução de acesso atual e planejar continuidade das contas individuais para
-   Associados; provar revogação, recuperação e transporte. Inspecionar legado para a transição;
-   fechar caminhos/versionamento HTTP e schemas executáveis com evidência.
+1. Integrar autenticação geral do app/site, identidade de Associados e revogação de acesso;
+   fechar caminhos/versionamento HTTP e schemas executáveis, sem login próprio do módulo.
 2. Representar equipe vinculada/backup sem ampliar permissões; coordenar novos estados/constraints
    com contratos e migrations existentes.
-3. Definir provedores, textos, tentativas finitas/backoff/timeouts e operação de entrega/reenvio;
+3. Configurar/validar WAHA para WhatsApp e definir e-mail, textos, tentativas e operação de entrega;
    validar preferências e confirmação de envio. Inventariar finalidade de preferências/supressões
    antigas antes de qualquer conversão; padrão ativo não apaga registros existentes nem comprova
    contato validado. Não reativar campanhas antigas bloqueadas ao disponibilizar um canal.
-4. Inventariar reservas futuras/histórico e contas legadas. Existência de reservas futuras ainda
-   desconhecida; isso bloqueia corte, não autoriza esvaziar agenda ou dispensar reconciliação.
+4. Conferir reservas futuras necessárias ao corte e identidade geral. Histórico antigo detalhado
+   é importação opcional; não bloqueia a função nova. Não presumir agenda vazia ou apagar fontes.
 5. Implementar e validar com fixtures sintéticas conforme [quickstart](../quickstart.md);
    guia de design precisa estar disponível antes do desenho visual.
 
