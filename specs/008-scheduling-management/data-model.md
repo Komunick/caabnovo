@@ -66,10 +66,32 @@ Migration0028 validada no CI descartável; sem aplicação local.
 
 ## Extensão proposta para 2C — 23/09/2026
 
+### Ajuste de identidade, transferência e WAHA — 28/09
+
+Identidade pertence ao login geral do app/site; Agendamentos guarda referência à pessoa/ator,
+sem cadastro, sessão ou credencial exclusivos do módulo. As correspondências abaixo ficam
+no domínio transversal responsável.
+
+Edição comum de pedido pendente muda data/horário/profissional permitido, sem trocar pessoa/serviço.
+Transferência pode mudar beneficiário para dependente compatível, com autorização vigente.
+Preservar bookingId, serviço, política/estado pendente e contagem/ciclo; controlar expectedVersion.
+Registrar anterior/novo beneficiário em evento auditável, sem expor dados pessoais além do acesso
+de cada leitor. Revalidar/atualizar conflitos de ambos os beneficiários e ocupação em transação;
+falha conserva a anterior. Não executar a transferência em registro já confirmado. Intenções de
+aviso conservam o beneficiário do evento; reavaliar destinatários/acesso em envios e eventos novos.
+
+WAHA escolhido: intenção/tentativa referencia instância/sessão/messageId e estados observados,
+sem segredo no histórico. Deduplicar recibos e suportar ordem invertida; aceite, entrega e leitura
+são distintos. Detalhes de motor/versão e validação de callback permanecem em T044.
+
+Logs/estados históricos antigos são importação opcional. Não reconstruir contador nem causa
+como pré-requisito da modelagem nova. Se incluídos, indicar informação desconhecida; não apagar
+a origem ou atribuir zero por suposição. Nenhuma migration foi aplicada.
+
 ### Independência dos provedores e transição — 25/09
 
 Conforme a diretriz de reformulação e a pesquisa, manter o ID de pessoa em Associados estável
-mesmo ao substituir autenticação ou transporte. T041/T045 devem conciliar com o domínio de
+mesmo ao evoluir o login geral ou transporte. T041/T045 devem conciliar com o domínio de
 identidade uma correspondência única entre emissor/origem, ID da conta e member.id; origem
 legada é evidência de migração, não exige aceitar token antigo. Não criar outra tabela de pessoas
 nem fundir identidades por nome/OAB/e-mail sem vínculo comprovado.
