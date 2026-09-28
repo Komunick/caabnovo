@@ -9,6 +9,27 @@ Ver [continuação 2C](#continuação-do-plano--incremento-2c-appsite-23092026),
 O recorte administrativo de 21/09 abaixo pertence à entrega histórica
 `docs/project-clarify-20260921`; seu desenho não comprova prontidão do novo recorte externo.
 
+## Decisões vigentes — 28/09/2026
+
+- **Login geral:** Agendamentos utiliza a conta/sessão geral do app/site. Não cria login,
+  credencial, recuperação ou escolha de fornecedor de identidade próprios do módulo. Usuário já
+  conectado entra na agenda sem nova autenticação específica; permissões familiares são
+  revalidadas no servidor. Evolução do login pertence à experiência transversal do app/site.
+- **Histórico antigo:** importar registros antigos de recusa/cancelamento/edição é opcional e
+  de baixa prioridade, conforme esclarecimento do usuário. Sua classificação detalhada ou
+  reconstrução do número de trocas não bloqueia esta especificação. Se importados, preservar
+  a informação disponível sem inventar distinções/contadores. Isso não autoriza apagar a origem
+  e não altera o histórico individual exigido para os novos registros.
+- **Edição antes do aceite:** edição comum altera data, horário e profissional quando a escolha
+  estiver habilitada, mantendo pessoa e serviço. Como ação adicional, permitir transferir o atendimento
+  a dependente quando o serviço for compatível e disponível para ele. Titular só representa
+  dependentes com vínculo vigente; dependente continua operando somente para si. Revalidar
+  autorização, elegibilidade e disponibilidade antes de persistir; falha mantém o pedido anterior.
+  Pedido já confirmado segue as regras existentes de remarcação, sem autorização implícita para
+  transferência após aprovação.
+- **WhatsApp:** WAHA foi escolhido pelo usuário. Configuração e comprovação de entrega seguem
+  como trabalho técnico, sem reabrir comparação de fornecedores por este módulo.
+
 ## Summary
 
 O incremento ativo 2C integra a jornada autenticada do associado à mesma agenda do painel,
@@ -137,23 +158,30 @@ sem bloquear pesquisa/seleção de solução nova.
 
 | Função | Recomendação para avaliar primeiro | Alternativa e critério |
 | --- | --- | --- |
-| Identidade externa | Better Auth, com operação própria e prova web/iOS/Android. | Clerk para reduzir operação; Auth0 para exigências empresariais; Supabase se houver razão para adotar a plataforma. |
-| Experiência de acesso | Avaliar passkey opcional e código de e-mail/recuperação. | Proposta transversal para UI01/UI02, sem novo MFA obrigatório ou aprovação implícita do fluxo. |
+| Identidade externa | Sessão geral do app/site, conforme decisão de 28/09. | Nenhum login/fornecedor específico para Agendamentos. |
+| Experiência de acesso | Entrar na agenda com a sessão geral já válida. | Primeiro acesso/recuperação pertencem a UI01/UI02; agenda só integra o contrato. |
 | Avisos internos | Caixa, preferências e histórico CAAB; worker/jobs existentes. | Novu/Knock se economia operacional em vários módulos justificar nova plataforma. |
 | E-mail | Resend, comparado com Postmark em ensaio futuro autorizado. | SES com capacidade operacional AWS e escala; SendGrid se ecossistema/contrato justificar. |
-| WhatsApp | API oficial Meta direta com operação própria. | 360dialog com apoio especializado; Twilio por integração/multicanal; Zenvia mediante cotação adequada. |
+| WhatsApp | WAHA, escolhido pelo usuário em 28/09. | Validar instância, motor, versão, sessão e recibos; não reabrir seleção. |
 
-Não foi feita escolha comercial definitiva. Número/WABA e identidades devem ter continuidade
+WhatsApp foi definido como WAHA; a comparação anterior de fornecedores fica como pesquisa histórica.
+Número e identidades devem ter continuidade
 e portabilidade planejadas. Controle de acesso familiar permanece no CAAB, independente do
 provedor. Seleção deve avaliar recuperação, revogação, compatibilidade nativa, diagnóstico de
 entrega, duplicatas, retenção, suporte e custo total; preços/fontes/limites estão na pesquisa.
 
-T041 fecha solução nova e transição, não um adaptador legado obrigatório. Inventário e eventual
-ponte temporária são decisões separadas; recadastrar credencial não pode criar outro associado.
-T044 fecha provedor por requisitos atuais, sem preferência automática por SMTP/Evolution antigo.
-Preservar três preferências inicialmente ativas; elegibilidade do WhatsApp exige permissão e
-contato válidos independentemente do valor inicial. Tratar callbacks repetidos/fora de ordem e
-retorno incerto, com registro durável CAAB. Nenhum novo canal/evento decorre da capacidade do fornecedor.
+T041 integra o login geral, sem criar cadastro ou seleção de provedor por módulo. T044 detalha
+WAHA para WhatsApp e fecha as demais dependências de comunicação. Manter intenções e recibos
+duráveis, preferências e permissão/opt-out, sem associar automaticamente regras de templates e
+preços da Cloud API ao transporte WAHA. Detalhes em contracts/channels.md.
+
+Edição pendente: serviço responsável pelo pedido recebe versão e alterações permitidas,
+incluindo beneficiaryId de dependente autorizado. Validar pessoa anterior/nova, serviço e vaga;
+manter ID, estado pendente e ciclos/contador. Troca de ocupação é atômica; não debitar remarcação
+confirmada ao editar. Preservar posição/prioridade e entrada original em análise; recalcular
+urgência pelo destino vigente. Aprovação exige a versão atual. Projeções de histórico e avisos
+não expõem dados de antigo beneficiário a pessoa sem acesso; intenção obsoleta é reavaliada.
+Transferência após confirmação não foi autorizada.
 
 ### Evidência de integração localizada em 25/09/2026
 
@@ -166,10 +194,11 @@ conservando origem/User.id na transição. Não aceitar token intermediário ant
 aceitar qualquer token legado exige ponte explícita e verificada. Ator e vínculo vêm do servidor,
 sem inferir autorização pela mesma OAB. A revisão publicada permanece não verificada.
 
-T042 deve preservar status/autor/origem e registrar ambiguidades: reject também representa
+Se a importação opcional desses registros antigos for escolhida, T042 preserva informação
+verificável e registra ambiguidades, sem exigir reconstrução detalhada como gate: reject também representa
 cancelamento; EDITED não prova troca confirmada; finished/not_appear são histórico, sem novas
 ações de comparecimento em 2C. Não zerar contador desconhecido nem converter horário sem fuso
-comprovado. T045 fecha a representação histórica de origem antes de migration; conflitos e
+comprovado. T045 fecha a representação histórica apenas se essa importação entrar na entrega; conflitos e
 casos sem correspondência permanecem para resolução explícita. Nenhum inventário real executado.
 
 Comunicação: jobs/worker existentes são reutilizáveis; SMTP de contas é candidato à extração
@@ -643,10 +672,11 @@ Planejar testes com identidades sintéticas de titular/dependente, revogação, 
 histórico e acesso às reservas próprias. A conta individual não concede acesso administrativo.
 
 O inventário deve registrar fonte/versão/data, quantidade e situações das reservas futuras,
-identificadores de beneficiário/unidade/serviço/profissional, histórico e correspondências de
+identificadores de beneficiário/unidade/serviço/profissional e correspondências de
 contas. Acesso aos dados reais e execução da transição dependem do fluxo autorizado. Se houver
 reservas futuras, conciliá-las antes de ativar escrita no novo fluxo; se a ausência for comprovada,
-registrar essa evidência e preservar o histórico necessário. Resultado desconhecido mantém o
+registrar essa evidência. Importação de logs/estados históricos antigos é opcional e não bloqueia
+as funções novas; não apagar a origem. Resultado desconhecido mantém o
 corte pendente, sem presumir importação concluída ou agenda vazia.
 
 Planejar compatibilidade de leitura dos consumidores e migração verificável de reservas/contas
@@ -662,8 +692,8 @@ Cancelamento de pedido novo em análise foi autorizado pelo usuário: antes do i
 sem aprovação da equipe, com liberação imediata e histórico preservado (2C-FR-09/2C-SC-08).
 
 Verificação e integração dos acessos individuais já existentes, mapeamento de pessoas e
-revogação de vínculo; provedores, textos e operação de entrega/reenvio de mensagens;
-inventário de contas/histórico e existência de reservas futuras do legado ainda por conferir.
+revogação de vínculo; configuração WAHA, e-mail, textos e operação de entrega/reenvio;
+existência de reservas futuras do legado ainda por conferir. Histórico antigo detalhado é opcional.
 Equipe principal/backup, alerta de 24 horas configurável, canais/preferências/destinatários e
 ordem da jornada e urgência a 24 horas do atendimento configurável foram definidos em 24/09/2026.
 O contrato lógico e o roteiro podem ser revisados com adaptadores sintéticos identificados;
