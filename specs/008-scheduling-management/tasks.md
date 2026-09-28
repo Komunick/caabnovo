@@ -1,11 +1,13 @@
 # Tasks: Agendamentos externos — incremento 2C
 
-**Data:** 24/09/2026. **Branch documental:** `codex/scheduling-market-research-20260923`.
+**Data:** 28/09/2026. **Branch documental:** `codex/scheduling-market-research-20260923`.
 **Entrada:** [spec](spec.md), [plan](plan.md), [modelo](data-model.md),
 [contrato externo](contracts/channels.md), [contrato administrativo](contracts/admin.md),
 [pesquisa](research.md) e [validação](quickstart.md).
 **Lista deste incremento:** T040–T077, todas pendentes. Nenhuma implementação iniciada.
 Geração documental orientada por speckit-tasks; setup local indisponível, sem execução integral do workflow.
+Revisão para autorização: [checkpoint de 28/09](evidence/pre-implement-2026-09-28.md) e
+[checklist de requisitos](checklists/channels.md).
 
 ## Decisões vigentes — 28/09/2026
 
@@ -82,8 +84,8 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
       prova de autorização, capacidade ou pendências novas.
 - [ ] T041 Integrar a sessão geral do app/site ao módulo em
       `specs/008-scheduling-management/contracts/channels.md`, coordenando
-      `specs/005-members-management/contracts/members.md` e UI01/UI02. Fechar transporte,
-      caminhos HTTP versionados, revogação, proteção de origem/CSRF e limites; provar
+      `specs/005-members-management/contracts/members.md` e UI01/UI02. Validar transporte e
+      caminhos HTTP de channels §1.3, colisões com APIs existentes, revogação, origem/CSRF e limites; provar
       identidade→pessoa e acesso sem segundo login em web/app. Não criar autenticação,
       recuperação, credenciais ou seleção de fornecedor próprias de Agendamentos.
 
@@ -109,8 +111,8 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
       responsável/ambiente, versão/motor, sessão, sendText, messageId, message.ack, conexão e
       reconciliação de timeout. Integrar o serviço de e-mail já definido no sistema, verificando
       seu contrato/remetente; não escolher fornecedor novo para agenda nem exigir Evolution.
-      Fechar textos/templates dos quatro eventos e política finita de tentativas,
-      backoff, timeout, resultado incerto, redrive autorizado e retenção operacional em
+      Fechar textos/templates dos quatro eventos e validar a política explícita da seção 10.2
+      (orçamento persistido, backoff, timeout, reconciliação, heartbeat, dead-letter e retenção) em
       `specs/008-scheduling-management/contracts/channels.md`, conforme
       `specs/001-project-foundation/contracts/jobs.md`. Inventariar preferências/supressões
       antigas, contatos válidos e permissão/opt-out do WhatsApp, separados da preferência inicial
@@ -282,13 +284,16 @@ Simulação valida o domínio, mas não conclui identidade/provedor/cliente real
       `apps/worker/src/jobs/scheduling-notifications.test.ts` (novo); prova real de entrega só em
       ambiente/contatos autorizados. Para WAHA, persistir instância/sessão/messageId, processar
       message.ack autenticado e duplicado/fora de ordem, e testar desconexão/timeout sem reenvio
-      cego. Não ativar campanhas bloqueadas ou prometer exactly-once.
+      cego. Vincular callback POST /api/v1/integrations/waha/events à validação HMAC de channels
+      §10.2, com segredo fora de logs, corpo bruto e deduplicação; confirmar destino físico em T040.
+      Testar orçamento persistido de 5 envios seguros, reentrega sem zerar contador e consultas
+      de reconciliação sem envio. Não ativar campanhas bloqueadas ou prometer exactly-once.
 
 ### Contratos HTTP e integração das experiências
 
 - [ ] T070 [US3] Vincular todas as operações de `contracts/channels.md` em
-      `apps/web/modules/scheduling/http/channel-routes.ts` (novo) e rotas versionadas cujo
-      caminho exato foi fechado por T041. Criar
+      `apps/web/modules/scheduling/http/channel-routes.ts` (novo) e rotas versionadas de channels
+      §1.3, com sessão e ausência de colisões verificadas por T041. Criar
       `apps/web/modules/scheduling/http/channel-routes.test.ts` (novo) antes da vinculação:
       autorização, entrada inválida, versão/replay, limite de corpo/página, não cachear privado,
       isolamento entre público/associado/equipe e compatibilidade administrativa.
@@ -353,7 +358,8 @@ T043/UI01 bloqueiam UI e UI02 bloqueia homologação dos consumidores.
 T042 bloqueia conclusão da transição/corte; não autoriza banco real.
 AC/BEN/BLQ são dependências técnicas a conciliar em T040, não novas entregas duplicadas.
 
-T048 e T070 só iniciam quando T045/T041 tiverem registrado os caminhos concretos faltantes.
+T048 só inicia após T045 registrar o nome SQL livre. T070 exige a validação de sessão e
+compatibilidade dos caminhos propostos em T041; rotas administrativas não se tornam acesso de associado.
 Essa condição é explícita: a lista está gerada, mas ainda não está toda liberada para execução.
 
 ## Paralelismo seguro
