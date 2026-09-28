@@ -7,6 +7,27 @@
 **Lista deste incremento:** T040–T077, todas pendentes. Nenhuma implementação iniciada.
 Geração documental orientada por speckit-tasks; setup local indisponível, sem execução integral do workflow.
 
+## Decisões vigentes — 28/09/2026
+
+- **Login geral:** Agendamentos utiliza a conta/sessão geral do app/site. Não cria login,
+  credencial, recuperação ou escolha de fornecedor de identidade próprios do módulo. Usuário já
+  conectado entra na agenda sem nova autenticação específica; permissões familiares são
+  revalidadas no servidor. Evolução do login pertence à experiência transversal do app/site.
+- **Histórico antigo:** importar registros antigos de recusa/cancelamento/edição é opcional e
+  de baixa prioridade, conforme esclarecimento do usuário. Sua classificação detalhada ou
+  reconstrução do número de trocas não bloqueia esta especificação. Se importados, preservar
+  a informação disponível sem inventar distinções/contadores. Isso não autoriza apagar a origem
+  e não altera o histórico individual exigido para os novos registros.
+- **Edição antes do aceite:** edição comum altera data, horário e profissional quando a escolha
+  estiver habilitada, mantendo pessoa e serviço. Como ação adicional, permitir transferir o atendimento
+  a dependente quando o serviço for compatível e disponível para ele. Titular só representa
+  dependentes com vínculo vigente; dependente continua operando somente para si. Revalidar
+  autorização, elegibilidade e disponibilidade antes de persistir; falha mantém o pedido anterior.
+  Pedido já confirmado segue as regras existentes de remarcação, sem autorização implícita para
+  transferência após aprovação.
+- **WhatsApp:** WAHA foi escolhido pelo usuário. Configuração e comprovação de entrega seguem
+  como trabalho técnico, sem reabrir comparação de fornecedores por este módulo.
+
 ## Escopo, rastreabilidade e condição de execução
 
 As 38 tarefas detalham **US3 (P2), somente recorte 2C**. Não criam histórias novas nem incluem
@@ -57,19 +78,21 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
       de T027–T034 com os pré-requisitos reais e registrar dependências ainda abertas. Exportação
       T035–T038 é independente de 2C; não repetir código já integrado nem usar CI antigo como
       prova de autorização, capacidade ou pendências novas.
-- [ ] T041 Selecionar solução atual de identidade/sessão e planejar transição das contas app/site em
+- [ ] T041 Integrar a sessão geral do app/site ao módulo em
       `specs/008-scheduling-management/contracts/channels.md`, coordenando
-      `specs/005-members-management/contracts/members.md` e UI01/UI02. Comparar Better Auth/Clerk
-      pela pesquisa e justificar escolha; avaliar passkey opcional, primeiro acesso e recuperação
-      sem instituir MFA obrigatório. Fechar transporte, caminhos HTTP versionados, revogação,
-      proteção de origem/CSRF e limites; provar continuidade identidade→pessoa e web/iOS/Android.
-      Nova credencial/sessão não cria novo associado. Não copiar credenciais ou reutilizar sessão
-      administrativa. Fonte inacessível mantém gate de transição aberto, sem impedir comparação.
-- [ ] T042 Inventariar fonte/data/versão, contas, reservas futuras/histórico, status e contadores
-      verificáveis em `specs/008-scheduling-management/legacy-parity.md`; especificar
-      correspondências, duplicatas, coexistência, único escritor, corte e retorno em
-      `specs/008-scheduling-management/plan.md`. Desconhecido não significa zero; não importar,
-      alterar dados reais ou escolher estratégia sem evidência e autorização de execução.
+      `specs/005-members-management/contracts/members.md` e UI01/UI02. Fechar transporte,
+      caminhos HTTP versionados, revogação, proteção de origem/CSRF e limites; provar
+      identidade→pessoa e acesso sem segundo login em web/app. Não criar autenticação,
+      recuperação, credenciais ou seleção de fornecedor próprias de Agendamentos.
+
+- [ ] T042 Delimitar dados necessários à continuidade e conferir reservas futuras em
+      `specs/008-scheduling-management/legacy-parity.md`; documentar correspondências,
+      único escritor, corte/retorno em `specs/008-scheduling-management/plan.md`.
+      Logs/estados antigos de recusa/cancelamento/edição são importação opcional e de baixa
+      prioridade. Se incluídos, preservar informação disponível sem reconstrução obrigatória
+      de causas/contador; não fabricar dados. Desconhecido não significa zero reservas futuras.
+      Não importar, apagar fontes ou alterar dados reais nesta tarefa.
+
 - [ ] T043 Localizar e ler `docs/caab-design.md`; vincular a spec própria de 002 UI01/UI02 aos
       critérios de agenda em `specs/008-scheduling-management/plan.md`. Registrar caminhos reais
       dos consumidores e responsabilidades antes de planejar layout ou editar UI; não criar uma
@@ -80,15 +103,16 @@ Guia visual, versão publicada, inventário real e homologação ainda pendentes
 **Dependências:** Setup concluído, pré-requisitos administrativos de T040 comprovados.
 **Saída:** contratos e persistência que protegem ambos os modos, autoria e eventos.
 
-- [ ] T044 Selecionar provedores atuais por canal com justificativa de custo total, suporte,
-      portabilidade e compatibilidade conforme pesquisa; não obrigar SMTP/Evolution do legado.
+- [ ] T044 Detalhar WhatsApp via WAHA, já escolhido: versão/motor, sessão, sendText,
+      messageId, message.ack, estado da conexão e reconciliação de timeout. Fechar e-mail e
+      demais dependências de comunicação, sem reabrir seleção do WhatsApp ou exigir Evolution.
       Fechar textos/templates dos quatro eventos e política finita de tentativas,
       backoff, timeout, resultado incerto, redrive autorizado e retenção operacional em
       `specs/008-scheduling-management/contracts/channels.md`, conforme
       `specs/001-project-foundation/contracts/jobs.md`. Inventariar preferências/supressões
       antigas, contatos válidos e permissão/opt-out do WhatsApp, separados da preferência inicial
       ativa. Definir autenticação/deduplicação dos callbacks e eventos fora de ordem; considerar
-      vigência das tarifas. Não contratar, enviar ou ativar campanhas nesta tarefa.
+      configuração aplicável ao WAHA; não impor tarifas/templates de Cloud API por analogia. Não contratar, enviar ou ativar campanhas nesta tarefa.
       Documentar dependência externa quando não houver evidência; não aceitar defaults implícitos.
 - [ ] T045 Detalhar modelo físico e protocolo único de locks em
       `specs/008-scheduling-management/data-model.md`: revisão publicada/rascunho, políticas,
@@ -164,11 +188,17 @@ Simulação valida o domínio, mas não conclui identidade/provedor/cliente real
 - [ ] T056 [P] [US3] Escrever `apps/web/tests/integration/scheduling-channel-booking.test.ts`
       (novo): criação imediata/manual, autorização/público-alvo, 20 disputas por profissional,
       capacidade 1 e 3, beneficiário global, adjacência, falha e 20 retries; uma única ocupação
-      por vencedor. Referências: 2C-FR-02/03/14/25; 2C-SC-01/02/03/13/24.
+      por vencedor. Cobrir edição pendente/transferência a dependente compatível, vínculo
+      revogado, serviço exclusivo, conflito de destino, falha e aprovação concorrente, sem
+      nova contagem ou vazamento de histórico. Referências: 2C-FR-02/03/14/25; 2C-SC-01/02/03/13/24.
 - [ ] T057 [US3] Adequar `apps/web/modules/scheduling/booking-service.ts` para criação pelos
       canais e painel sobre a mesma ocupação, com estados explícitos, política por serviço,
       autoria externa, idempotência/auditoria e intenção de aviso. Pendência ocupa vaga sem
-      confirmar nem expirar; passagem do tempo não gera presença/falta. Atender T056.
+      confirmar nem expirar; passagem do tempo não gera presença/falta. Permitir editar data,
+      horário e profissional habilitado antes do aceite mantendo pessoa/serviço; permitir transferência a dependente autorizado/elegível, sem mudar serviço por inferência;
+      revalidar disponibilidade e trocar versão/ocupação atomicamente. Manter ID, política,
+      pendência e contador; falha conserva anterior. Proteger histórico/avisos na mudança de pessoa.
+      Atender T056; pedido confirmado não usa esse fluxo.
 - [ ] T058 [P] [US3] Escrever `apps/web/tests/integration/scheduling-channel-reschedule.test.ts`
       (novo): liberar origem/reter só destino, terceiro ocupando origem, rollback inicial,
       substituir/retirar/recusar/retomar, 0+1 → 1+0 → 1+1 → 2+0 e terceira troca negada.
@@ -242,7 +272,9 @@ Simulação valida o domínio, mas não conclui identidade/provedor/cliente real
       imediatamente antes de cada envio/reenvio; usar correlação e reconciliação para resultado
       incerto, tentativas finitas e redrive auditado de T044. Validar falhas sintéticas em
       `apps/worker/src/jobs/scheduling-notifications.test.ts` (novo); prova real de entrega só em
-      ambiente/contatos autorizados. Não ativar campanhas bloqueadas ou prometer exactly-once.
+      ambiente/contatos autorizados. Para WAHA, persistir instância/sessão/messageId, processar
+      message.ack autenticado e duplicado/fora de ordem, e testar desconexão/timeout sem reenvio
+      cego. Não ativar campanhas bloqueadas ou prometer exactly-once.
 
 ### Contratos HTTP e integração das experiências
 
