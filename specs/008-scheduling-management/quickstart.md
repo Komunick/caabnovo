@@ -1,4 +1,4 @@
-# Validação planejada — Agendamentos externos 2C (24/09/2026)
+# Validação planejada — Agendamentos externos 2C (28/09/2026)
 
 **Estado:** roteiro para implementação futura, não evidência de testes executados.
 Referências: [spec](spec.md), [contrato lógico v1](contracts/channels.md), [modelo](data-model.md).
@@ -9,6 +9,23 @@ Os roteiros administrativos anteriores permanecem abaixo e não comprovam o novo
 Login geral do app/site, WAHA escolhido mas ainda não instalado, e-mail do sistema já definido,
 edição/transferência a dependente antes da aprovação e histórico antigo opcional, conforme spec.
 Pedido inicial pode escolher nova data futura mesmo após passar o horário anterior. Esses pontos prevalecem sobre comparações de 25/09.
+
+## Complemento de contratos — revisão de 28/09
+
+Em T046/T067/T069/T070, cobrir os caminhos de channels §1.3 e a política técnica da seção 10.2:
+catálogo público sem vaga/dados pessoais, sessão geral para associado e negação nas operações
+administrativas; edição/transferência preserva as guardas de cada tipo de processo.
+
+Usar relógio e adaptadores sintéticos para demonstrar orçamento persistido de cinco envios
+seguros, espera/backoff, reentrega sem reinício, timeout incerto sem novo envio, reconciliação
+limitada e encaminhamento operacional. Cobrir queda após aceite e antes de persistir o resultado.
+Validar HMAC de corpo bruto inválido/ausente, algoritmo não permitido, webhook repetido/fora de ordem,
+sessão desconectada e preferência/vínculo revogados durante retry. Retenção da fila não apaga
+histórico/intenção/evento de negócio. Esses são cenários futuros, não resultados já obtidos.
+
+A [checklist de requisitos](checklists/channels.md) e o
+[checkpoint para autorização](evidence/pre-implement-2026-09-28.md) distinguem revisão documental
+de testes, instalação e homologação. Scripts e formatação local continuam sem execução.
 
 ## Pré-requisitos de 2C
 
