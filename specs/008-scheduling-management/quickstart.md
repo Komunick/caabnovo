@@ -4,6 +4,11 @@
 Referências: [spec](spec.md), [contrato lógico v1](contracts/channels.md), [modelo](data-model.md).
 Os roteiros administrativos anteriores permanecem abaixo e não comprovam o novo recorte.
 
+## Decisões aplicadas ao roteiro — 28/09
+
+Login geral do app/site, WAHA para WhatsApp, edição/transferência a dependente antes da aprovação
+e histórico antigo opcional, conforme spec. Esses pontos prevalecem sobre comparações de 25/09.
+
 ## Pré-requisitos de 2C
 
 - Suite de contratos/domínio e adaptadores sintéticos de identidade/entrega implementados antes
@@ -67,7 +72,8 @@ Em V11, testar timeout após possível aceitação pelo provedor, correlação e
 antes de nova tentativa; registro de conversa ou boolean do transporte não prova entrega.
 Distinguir teste sintético de validação autorizada com remetente/provedor reais.
 
-No ensaio de transição, cobrir reject ambíguo, finished/not_appear históricos, EDITED sem
+Somente se a importação opcional desses históricos entrar na entrega, cobrir reject ambíguo,
+finished/not_appear históricos, EDITED sem
 prova de troca, contador desconhecido, conflito/exception e data/hora legadas com fuso
 comprovado. Não inventar causa, zerar contador ou deslocar horário. Comparar totais e IDs,
 mantendo casos não reconciliados identificados. Fontes/limites em
@@ -75,20 +81,25 @@ mantendo casos não reconciliados identificados. Fontes/limites em
 
 ## Provas futuras das soluções atuais — 25/09
 
-A pesquisa recomenda candidatos; não comprova integração ou escolha comercial. Usar fixtures
-sintéticas para comparar a solução selecionada e registrar versões/limites:
+WhatsApp definido como WAHA e login geral compartilhado; integração ainda não homologada.
+Usar fixtures sintéticas e registrar versões/limites:
 
-- Acesso web/iOS/Android, primeiro acesso, recuperação, revogação e retorno do app; passkey/OTP
-  somente se aprovados na jornada transversal. Biblioteca administrativa não prova acesso externo.
-- Mesma pessoa, reservas e histórico após novo provedor/credencial; nenhum cadastro duplicado
-  nem vinculação automática por e-mail/OAB. Tokens legados são negados por padrão; eventual ponte
-  exige prova própria e nunca aceita token intermediário como sessão completa.
+- Abrir a agenda com sessão geral válida sem segundo login; sessão expirada segue o acesso
+  geral. Revogação e identidade→pessoa revalidadas em comandos, sem permissão administrativa.
+- Editar data/horário/profissional permitido de pedido pendente mantendo pessoa/serviço;
+  transferência é a ação adicional autorizada. Transferir pedido a dependente elegível: mesmo ID, serviço e pendência; não consumir
+  troca confirmada. Negar serviço exclusivo, dependente de outro titular, vínculo encerrado,
+  conflito de horário e versão obsoleta. Corrida com aprovação não confirma pessoa diferente.
+  Falha conserva pedido/ocupação; dependente não pode transferir para terceiro. Não permitir
+  transferência após confirmação. Projeção de histórico/avisos não expõe antigo beneficiário.
+
 - WhatsApp com preferência ligada mas permissão/contato ausentes não é enviado; opt-out e
   encerramento de vínculo são reavaliados antes de retry. Preferências não viram prova de permissão.
 - Callback válido/inválido, duplicado, fora de ordem e sem correlação; timeout após possível
   aceite não produz reenvio cego. Expiração da chave de idempotência externa não duplica intenção.
-- Quatro famílias de templates, link autenticado e classificação aplicável; ausência de template
-  ou canal disponível não reverte agendamento. Entrega não equivale a leitura.
+- WAHA: enviar por adaptador sintético, persistir ID/sessão, processar message.ack e desconexão;
+  distinguir SERVER/DEVICE/READ e retorno incerto. Quatro textos versionados com link autenticado;
+  indisponibilidade não reverte agendamento. Não exigir API de templates Meta no WAHA.
 - Comparar custos com volumes informados; cenários de research.md são hipóteses. Ensaio real de
   entrega, criação de contas, contratação e corte continuam dependendo de autorização própria.
 
@@ -96,9 +107,9 @@ sintéticas para comparar a solução selecionada e registrar versões/limites:
 
 | Dependência | Evidência necessária antes de ativar |
 | --- | --- |
-| Identidade da reformulação | Solução selecionada, mapeamento verificável identidade→pessoa, recuperação/revogação, separação do painel e transição autorizada das contas existentes. |
-| Mensagens | Provedor/contatos/templates, política finita de tentativas/reenvio, recibos seguros, preferências/supressões conciliadas; falha não altera reserva. |
-| Legado | Fonte/data/versão, reservas futuras e histórico inventariados, IDs reconciliados, janela de corte e retorno sem perda. |
+| Identidade geral | Sessão do app/site reutilizada sem segundo login, identidade→pessoa, revogação e separação do painel. |
+| Mensagens | WAHA versão/motor/sessão, e-mail, contatos/textos, tentativas finitas, recibos seguros e preferências/supressões; falha não altera reserva. |
+| Legado | Reservas futuras necessárias ao corte e IDs reconciliados; histórico antigo detalhado apenas se incluído na importação opcional. |
 | Contrato HTTP/UI | Caminhos versionados e schemas executáveis vinculados ao contrato lógico, compatibilidade com UI01/UI02 e guia visual. |
 
 Resultado desconhecido sobre reservas futuras mantém corte pendente. Não usar massa sintética
