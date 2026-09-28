@@ -1,5 +1,16 @@
 # Equivalência e transição do legado — Agendamentos 2C
 
+## Escopo ajustado pelo usuário — 28/09/2026
+
+Agendamentos usa o login geral do app/site, sem autenticação exclusiva. WhatsApp será WAHA;
+Evolution aparece abaixo apenas como evidência do código antigo.
+
+A importação dos registros antigos de recusa/cancelamento/edição é opcional e de baixa prioridade.
+Reconstruir suas diferenças e contagens não é gate do módulo. As linhas abaixo sobre esses
+registros são cuidados condicionais, aplicáveis somente se a importação for escolhida.
+Não inventar causa/contador nem apagar fontes. O histórico individual dos novos agendamentos
+continua obrigatório. Conferir reservas futuras necessárias à continuidade permanece separado.
+
 ## Inspeção do legado-CODEX-mafaltti
 
 Data: 25/09/2026. Solicitante: mafaltti, login Danilo-Komunick, fonte perfil autenticado GitHub
