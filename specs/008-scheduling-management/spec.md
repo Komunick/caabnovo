@@ -18,8 +18,9 @@
   autorização, elegibilidade e disponibilidade antes de persistir; falha mantém o pedido anterior.
   Pedido já confirmado segue as regras existentes de remarcação, sem autorização implícita para
   transferência após aprovação.
-- **WhatsApp:** WAHA foi escolhido pelo usuário. Configuração e comprovação de entrega seguem
-  como trabalho técnico, sem reabrir comparação de fornecedores por este módulo.
+- **Comunicação:** usar o serviço de e-mail já definido para o sistema. WAHA está escolhido,
+  mas ainda não instalado; planejar preparação e comprovação de entrega, sem reabrir seleção
+  de fornecedor por Agendamentos ou autorizar instalação nesta etapa.
 
 ## Diretriz da reformulação — 25/09/2026
 
@@ -61,6 +62,18 @@ novas funções. **Confirmação do usuário**: primeira entrega opera pelo pain
 app/site na etapa seguinte.
 
 ## Clarifications
+
+### Session 2026-09-28
+
+- Q: Se um pedido inicial ainda não foi aprovado e o horário solicitado já passou, a pessoa
+  pode editar para escolher outro horário futuro? → A: Sim, pode escolher outra data enquanto
+  aguarda aprovação. O novo destino precisa ser futuro e válido; isso não muda os prazos de
+  uma remarcação de reserva anteriormente confirmada.
+- Q: Qual serviço de e-mail usar para avisos da agenda? → A: O serviço de e-mail já definido
+  para o sistema. Não selecionar nem contratar outro fornecedor para Agendamentos.
+- Q: O WAHA já está instalado? → A: Foi escolhido, mas ainda será instalado. Planejar
+  preparação e homologação; essa informação não autoriza instalação ou ativação nesta etapa.
+
 
 ### Session 2026-09-20
 
@@ -460,6 +473,13 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   a versão anterior; aprovação concorrente exige a versão vigente. Editar pendência não é troca
   confirmada, não reinicia contadores/ciclos nem cria nova reserva. Serviço exclusivo de titular
   não pode ser transferido a dependente; nenhuma edição força confirmação ou oculta histórico.
+  No pedido inicial, editar para outro horário futuro continua permitido mesmo após passar o
+  horário solicitado anterior. Aplicar disponibilidade, elegibilidade, horizonte e antecedência
+  de nova reserva configurada ao novo destino; não aplicar as 24 horas de remarcação de reserva
+  confirmada. Preservar entrada original em análise, prioridade, ID e estado pendente. Se o
+  pedido for uma troca voluntária de reserva anteriormente confirmada, a edição de destino
+  segue FR-08/10; retomada e recuperação seguem FR-18/20. Não usar edição genérica para contornar
+  essas guardas. A passagem do tempo sozinha não permite transferência para um horário passado.
 - **2C-FR-04:** Listar apenas reservas que o ator pode consultar no momento, separando futuras e
   históricas; preservar trilha, autor e origem. O titular consulta as reservas do dependente
   somente com vínculo vigente; o dependente consulta todas as próprias reservas, inclusive as
@@ -909,6 +929,11 @@ por padrão, editável e desativável por serviço. A equipe vê a mesma reserva
   conflito do dependente, versão obsoleta e tentativa de dependente operar por terceiro são negados
   sem alterar o pedido anterior. Aprovação da versão antiga não confirma outra pessoa. Após
   confirmação não há transferência por este fluxo. Histórico/avisos respeitam a pessoa autorizada.
+  Pedido inicial ainda em análise: testar horário anterior futuro, exatamente agora e passado;
+  em todos, pode editar para novo destino válido estritamente futuro. Negar destino atual/passado,
+  indisponível ou fora das políticas; falha conserva versão/ocupação anteriores. Não reiniciar
+  idade da análise nem contar troca confirmada. Em remarcação pendente, chamar edição genérica
+  não dispensa o prazo original; retomada/recuperação conservam suas exceções já aprovadas.
 
 **Contrato e planejamento de 2C:** [contrato lógico v1](contracts/channels.md),
 [modelo](data-model.md) e [roteiro de validação](quickstart.md), consolidados em 24/09.
@@ -919,8 +944,8 @@ implementação e validação futuras, mantendo abertas as dependências abaixo.
 
 - Integrar a sessão geral do app/site à identidade de Associados e às permissões do módulo;
   não selecionar outro login nem redefinir recuperação de conta em Agendamentos.
-- WhatsApp via WAHA: verificar configuração, versão/motor e operação de entrega/reenvio.
-  E-mail ainda depende de escolha/configuração. Canais, preferências e destinatários permanecem.
+- WhatsApp via WAHA, ainda não instalado: planejar instalação e verificar versão/motor e entrega.
+  E-mail usa o serviço já definido para o sistema; conferir seu contrato/configuração. Canais, preferências e destinatários permanecem.
 - Conferir reservas futuras necessárias ao corte. Importação dos registros históricos antigos
   referidos pelo usuário é opcional, sem gate de reconstrução detalhada de causas/edições.
 
