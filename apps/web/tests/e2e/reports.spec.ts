@@ -16,6 +16,17 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
+  // This regression also runs alone, before any other browser test creates members.
+  const syntheticMemberName = `Report columns ${randomUUID()}`;
+  const createdMember = await page.request.post("/api/v1/members", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": randomUUID(),
+      "idempotency-key": randomUUID(),
+    },
+    data: { profile: { name: syntheticMemberName }, justification: "Synthetic report regression" },
+  });
+  expect(createdMember.status()).toBe(201);
   await expect(
     page
       .getByRole("navigation", { name: "Navegação administrativa" })
@@ -68,7 +79,7 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await expect(
     page.getByText("Nenhum registro encontrado. Ajuste os filtros ou escolha outro período."),
   ).toBeVisible();
-  await page.getByLabel("Buscar por nome ou tela").fill("");
+  await page.getByLabel("Buscar por nome ou tela").fill(syntheticMemberName);
   await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
   // Re-selecting Name appends it to query.columns, while the table keeps catalog order.
   await page.getByRole("checkbox", { name: "Nome", exact: true }).uncheck();
