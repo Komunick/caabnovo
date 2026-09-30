@@ -174,3 +174,47 @@ test("reports denies ordinary access and export before data", async ({ page }) =
   await expect(page.getByText("Você não tem permissão para acessar relatórios.")).toBeVisible();
   expect((await page.request.get("/api/v1/reports/exports")).status()).toBe(403);
 });
+
+test("access export explicitly selects production and preserves other environments", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(60000);
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill(syntheticUsers.administrator.email);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.goto("/reports/exportar?dataset=access&environment=");
+  const environment = page.getByRole("combobox", {
+    name: "Ambiente (padrão: produção)",
+    exact: true,
+  });
+  await expect(environment).toHaveValue("production");
+  await expect(environment.locator("option")).toHaveText(["Produção", "Desenvolvimento", "Teste"]);
+  await expect(
+    page.getByRole("combobox", { name: "Canal", exact: true }).locator('option[value=""]'),
+  ).toHaveText("Todos");
+  await expectWcag22AA(page);
+  await page.screenshot({
+    path: testInfo.outputPath("reports-access-environment.png"),
+    fullPage: true,
+  });
+  for (const value of ["production", "development", "test"]) {
+    if (value !== "production") await environment.selectOption(value);
+    const requested = page.waitForRequest(
+      (request) =>
+        request.url().endsWith("/api/v1/exports/download") && request.method() === "POST",
+    );
+    const downloading = page.waitForEvent("download");
+    const button = page.getByRole("button", { name: "Exportar em CSV", exact: true });
+    await expect(button).toBeEnabled();
+    await button.click();
+    const form = new URLSearchParams((await requested).postData()!);
+    expect(JSON.parse(form.get("config")!).filters.environment).toBe(value);
+    const download = await downloading;
+    await download.saveAs(testInfo.outputPath(`access-${value}.csv`));
+    await expect(page.getByRole("status")).toContainText(
+      "Geração e transferência concluídas pelo servidor",
+    );
+  }
+});

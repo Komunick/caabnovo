@@ -48,10 +48,15 @@ export function ExportScreen({
   backLabel?: string;
 }) {
   const key = `export:${catalog.module}:${catalog.dataset}${initial ? `:${signature(initial)}` : ""}`;
-  const [filters, setFilters] = useDraftState<Record<string, string>>(
+  const [draftFilters, setFilters] = useDraftState<Record<string, string>>(
     `${key}:filters`,
     initial?.filters ?? {},
   );
+  const accessReport = catalog.module === "reports" && catalog.dataset === "access";
+  // Normalize old empty drafts as well as the initial selection, for display and submission.
+  const filters = accessReport
+    ? { ...draftFilters, environment: draftFilters.environment || "production" }
+    : draftFilters;
   const [columns, setColumns] = useDraftState(`${key}:columns`, () =>
     initial?.columns?.length
       ? initial.columns
@@ -210,7 +215,10 @@ export function ExportScreen({
                         value={filters[filter.key] ?? (filter.key === "deleted" ? "excluded" : "")}
                         onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
                       >
-                        {filter.key !== "deleted" && <option value="">Todos</option>}
+                        {filter.key !== "deleted" &&
+                          !(accessReport && filter.key === "environment") && (
+                            <option value="">Todos</option>
+                          )}
                         {filter.options?.map((option) => (
                           <option key={option.value} value={option.value}>
                             {option.label}

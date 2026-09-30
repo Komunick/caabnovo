@@ -87,6 +87,19 @@ describe("report export adapter", () => {
     });
   });
 
+  it.each(["production", "development", "test"])(
+    "preserves the selected %s environment in the access SQL",
+    (environment) => {
+      const input = reportExportRequest({
+        dataset: "access",
+        columns: ["date", "name"],
+        filters: { environment },
+      });
+      expect(reportExportQuery("access", input).environment).toBe(environment);
+      expect(reportExportAdapter("access")!.query(input).values).toContain(environment);
+    },
+  );
+
   it.each(reportExports.map((adapter) => [adapter.dataset, adapter] as const))(
     "keeps either missing date bound open for %s",
     (_dataset, adapter) => {

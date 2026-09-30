@@ -16,6 +16,10 @@ código foi criado agora.
 autorizado só para a análise detalhada sem agrupamento — T028, T030 (parte do detalhe), T032–T035.
 Evidências em [caab-24-2026-09-30.md](evidence/caab-24-2026-09-30.md).
 
+**Revisão adicional de ambiente em 30/09/2026:** T032/T034/T035 também cobrem Produção explícita no
+campo Ambiente de Acessos e uso, sem opção Todos incompatível com a consulta, e regressão das três
+seleções. Evidência no mesmo documento da entrega.
+
 **Revisão P2 de 30/09/2026:** T032/T034/T035 incluem limites de data abertos (sem data inicial
 artificial ou data final implícita) e ordem inicial de exportação igual à tabela após
 desmarcar/remarcar colunas. Implementação e regressões no mesmo recorte de CAAB-24; validação e
