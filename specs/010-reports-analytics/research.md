@@ -1,3 +1,34 @@
+# Complemento — 30/09/2026 (CAAB-24, aba Detalhe)
+
+**Escopo autorizado:** só a exportação da análise detalhada sem agrupamento (T028, T030, T032–T035).
+Resumo, Resultados e evolução, detalhe agrupado e downloads legados (T029, T031, T036–T039) seguem
+pendentes, sem alteração.
+
+**Decisões:**
+
+- A aba Detalhe passa a exportar pelo núcleo de download direto de 001 (cursor em lotes de 100 e
+  reautorização a cada lote), sem fila, sem arquivo guardado e sem teto de linhas ou de período.
+- O teto de 50 mil do caminho legado (`queryReport` com `exportAll`, que monta o arquivo inteiro em
+  memória no worker) fica como proteção de memória desse caminho, que a aba Detalhe sem agrupamento
+  deixa de oferecer. Ele continua servindo resumo, apresentação e detalhe agrupado.
+- Excel acima de 1.048.576 linhas continua completo: o gravador de 001 abre novas planilhas
+  ("Dados 2", "Dados 3"…) em vez de cortar.
+- Exportar exige, a cada lote, `reports:read`, `exports:generate` e a permissão da fonte
+  (`scheduling:read` em Agendamentos).
+
+**Fontes oficiais consultadas em 30/09/2026:**
+
+- [Microsoft, Excel specifications and limits](https://support.microsoft.com/en-us/excel/excel-specifications-and-limits):
+  1.048.576 linhas por planilha.
+- [PostgreSQL, DECLARE](https://www.postgresql.org/docs/current/sql-declare.html): cursor para ler
+  poucas linhas por vez de uma consulta grande.
+- [node-postgres, pg-cursor](https://node-postgres.com/apis/cursor) e
+  [consultas parametrizadas](https://node-postgres.com/features/queries): leitura em lotes e valores
+  sempre fora do texto SQL.
+
+**Limites:** sem medição de volume nesta rodada (T038 pendente); a validação usa a massa sintética
+dos testes.
+
 # Pesquisa vigente — 21/09/2026
 
 **Decisão:** Substituir a jornada nova de exportação por filtros/colunas e download direto nas três
