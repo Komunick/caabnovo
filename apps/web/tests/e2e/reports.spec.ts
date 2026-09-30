@@ -70,32 +70,28 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   ).toBeVisible();
   await page.getByLabel("Buscar por nome ou tela").fill("");
   await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Exportar Excel", exact: true })).toBeEnabled();
+  // CAAB-24: the detailed analysis without grouping downloads directly, with the applied selection.
+  await page.getByRole("link", { name: "Exportar dados", exact: true }).click();
+  await expect(page).toHaveURL(/\/reports\/exportar\?dataset=members/);
+  await expect(
+    page.getByRole("heading", { name: "Exportar associados", exact: true }),
+  ).toBeVisible();
   for (const [label, extension, signature] of [
     ["CSV", "csv", ""],
     ["Excel", "xlsx", "PK"],
     ["PDF", "pdf", "%PDF-"],
   ]) {
-    const requested = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/api/v1/reports/exports") &&
-        response.request().method() === "POST",
-    );
-    await page.getByRole("button", { name: `Exportar ${label}`, exact: true }).click();
-    const requestedResponse = await requested;
-    expect(requestedResponse.status()).toBe(202);
-    const { id } = await requestedResponse.json();
-    const downloadLink = page.locator(`a[href="/api/v1/reports/exports/${id}/download"]`);
-    await expect(downloadLink).toBeVisible({ timeout: 60000 });
-    const downloading = page.waitForEvent("download", { timeout: 15000 });
-    await downloadLink.click();
+    const downloading = page.waitForEvent("download", { timeout: 60000 });
+    await page.getByRole("button", { name: `Exportar em ${label}`, exact: true }).click();
     const download = await downloading;
+    expect(download.suggestedFilename()).toMatch(new RegExp(`^reports-.+\\.${extension}$`));
     const path = testInfo.outputPath(`reports-detail.${extension}`);
     await download.saveAs(path);
     const bytes = await readFile(path);
     if (signature) expect(bytes.subarray(0, signature.length).toString()).toBe(signature);
-    else expect(bytes.toString()).toContain("America/Bahia");
+    else expect(bytes.toString()).toContain('"Nome"');
   }
+  await page.getByRole("link", { name: "Voltar aos relatórios", exact: true }).click();
   await page.getByRole("button", { name: "Resultados e evolução", exact: true }).click();
   await page
     .getByLabel("Comentários para a apresentação")

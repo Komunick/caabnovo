@@ -18,7 +18,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableContainer } from "@/components/ui/table";
 import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
-import { reportRequest } from "./client";
+import { reportExportHref, reportRequest } from "./client";
 import styles from "./reports.module.css";
 type Saved = {
   id: string;
@@ -284,7 +284,18 @@ export function ReportsPage({
           </nav>
           <section className="panel" aria-labelledby="report-filters-title">
             <PanelHeading id="report-filters-title" title="Período e filtros">
-              {data?.canExport && (
+              {data?.canExport && query.view === "details" && !query.groupBy ? (
+                // CAAB-24: the complete selection downloads directly, without the 50k cap.
+                dirtyFilters || pending ? (
+                  <Button disabled>
+                    <Download size={18} aria-hidden="true" /> Exportar dados
+                  </Button>
+                ) : (
+                  <Link className={buttonVariants()} href={reportExportHref(query)}>
+                    <Download size={18} aria-hidden="true" /> Exportar dados
+                  </Link>
+                )
+              ) : data?.canExport ? (
                 <>
                   {(
                     ["pdf", "csv", ...(query.view === "details" ? ["xlsx"] : [])] as (
@@ -301,7 +312,7 @@ export function ReportsPage({
                     </Button>
                   ))}
                 </>
-              )}
+              ) : null}
             </PanelHeading>
             <div className={styles.actions}>
               {(["week", "month"] as const).map((preset) => (
