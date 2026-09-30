@@ -213,7 +213,7 @@ test("access export explicitly selects production and preserves other environmen
     expect(JSON.parse(form.get("config")!).filters.environment).toBe(value);
     const download = await downloading;
     await download.saveAs(testInfo.outputPath(`access-${value}.csv`));
-    await expect(page.getByRole("status")).toContainText(
+    await expect(page.locator(".export-form").getByRole("status")).toContainText(
       "Geração e transferência concluídas pelo servidor",
     );
   }
