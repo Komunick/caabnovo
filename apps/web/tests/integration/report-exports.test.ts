@@ -169,6 +169,85 @@ describe("direct export of the detailed analysis", () => {
     expect(readCsv(empty.bytes)).toEqual([["Cadastro", "Nome", "Cidade"]]);
   }, 60000);
 
+  it("exports records before 2000 and future records with either bound omitted", async () => {
+    await admin.query(
+      `INSERT INTO member(name,city,category,created_at) VALUES
+       ('Período aberto antigo','Salvador','Advocacia','1999-06-15T23:59:59-03:00'),
+       ('Período aberto futuro','Salvador','Advocacia','2099-06-15T00:00:00-03:00'),
+       ('Período aberto seguinte','Salvador','Advocacia','2099-06-16T00:00:00-03:00')`,
+    );
+    try {
+      for (const [filters, expected] of [
+        [{ from: "2099-06-15" }, ["Período aberto futuro", "Período aberto seguinte"]],
+        [{ to: "1999-06-15" }, ["Período aberto antigo"]],
+        [{ from: "2099-06-15", to: "2099-06-15" }, ["Período aberto futuro"]],
+        [{}, ["Período aberto antigo", "Período aberto futuro", "Período aberto seguinte"]],
+      ] as const) {
+        const { bytes } = await download(
+          reportExportRequest({
+            dataset: "members",
+            columns: ["name"],
+            filters: { search: "Período aberto", ...filters },
+          }),
+        );
+        expect(
+          readCsv(bytes)
+            .slice(1)
+            .map((row) => row[0]),
+        ).toEqual(expected);
+      }
+    } finally {
+      await admin.query("DELETE FROM member WHERE name LIKE 'Período aberto %'");
+    }
+  }, 60000);
+
+  it("keeps open bounds for contract expirations and access aggregates in PostgreSQL", async () => {
+    const partner = (
+      await admin.query(
+        `WITH category AS (
+         INSERT INTO partner_category(name) VALUES('Categoria período aberto') RETURNING id
+       ) INSERT INTO partner(profile,category_id)
+       SELECT '{"name":"Parceiro período aberto","category":"Categoria período aberto"}'::jsonb,id
+       FROM category RETURNING id`,
+      )
+    ).rows[0].id;
+    await admin.query(
+      `INSERT INTO partner_contract(partner_id,reference,terms,starts_on,ends_on) VALUES
+       ($1,'Antigo','Termos sintéticos','1999-01-01','1999-06-15'),
+       ($1,'Futuro','Termos sintéticos','2099-01-01','2099-06-15')`,
+      [partner],
+    );
+    await admin.query(
+      `INSERT INTO analytics_event(id,source,channel,environment,event,screen,visitor_hash,
+       session_hash,device,origin,occurred_at)
+       SELECT gen_random_uuid(),'open-period','admin','test','page_view','reports','visitor',
+       'session','desktop','direct',at FROM (VALUES
+       ('1999-06-15T23:59:59-03:00'::timestamptz),('2099-06-15T00:00:00-03:00'::timestamptz)) dates(at)`,
+    );
+    for (const dataset of ["contracts", "access"] as const) {
+      const adapter = reportExportAdapter(dataset)!;
+      for (const [filters, dates] of [
+        [{ from: "2099-06-15" }, ["2099-06-15"]],
+        [{ to: "1999-06-15" }, ["1999-06-15"]],
+        [{}, ["1999-06-15", "2099-06-15"]],
+      ] as const) {
+        const query = adapter.query(
+          reportExportRequest({
+            dataset,
+            columns: ["date"],
+            sort: [{ field: "date", direction: "asc" }],
+            filters: {
+              ...filters,
+              ...(dataset === "access" ? { environment: "test", source: "open-period" } : {}),
+            },
+          }),
+        );
+        const result = await data.pool.query(query.text, query.values);
+        expect(result.rows.map((row) => row.date)).toEqual(dates);
+      }
+    }
+  });
+
   it("orders tied dates by a stable identifier", async () => {
     const input = reportExportRequest({
       dataset: "members",

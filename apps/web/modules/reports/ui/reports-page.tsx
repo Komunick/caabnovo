@@ -286,12 +286,15 @@ export function ReportsPage({
             <PanelHeading id="report-filters-title" title="Período e filtros">
               {data?.canExport && query.view === "details" && !query.groupBy ? (
                 // CAAB-24: the complete selection downloads directly, without the 50k cap.
-                dirtyFilters || pending ? (
+                dirtyFilters || pending || !data.table ? (
                   <Button disabled>
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Button>
                 ) : (
-                  <Link className={buttonVariants()} href={reportExportHref(query)}>
+                  <Link
+                    className={buttonVariants()}
+                    href={reportExportHref(query, data.table.columns)}
+                  >
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Link>
                 )

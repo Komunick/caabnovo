@@ -70,6 +70,19 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   ).toBeVisible();
   await page.getByLabel("Buscar por nome ou tela").fill("");
   await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
+  // Re-selecting Name appends it to query.columns, while the table keeps catalog order.
+  await page.getByRole("checkbox", { name: "Nome", exact: true }).uncheck();
+  await page.getByRole("checkbox", { name: "Nome", exact: true }).check();
+  await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
+  const exportLink = page.getByRole("link", { name: "Exportar dados", exact: true });
+  await expect(exportLink).toBeVisible();
+  const displayedColumns = await page
+    .getByRole("table", { name: "Registros do relatório" })
+    .getByRole("columnheader")
+    .allTextContents();
+  expect(displayedColumns[0]).toBe("Nome");
+  const exportUrl = new URL((await exportLink.getAttribute("href"))!, page.url());
+  expect(exportUrl.searchParams.get("columns")?.split(",")[0]).toBe("name");
   // CAAB-24: the detailed analysis without grouping downloads directly, with the applied selection.
   await page.getByRole("link", { name: "Exportar dados", exact: true }).click();
   await expect(page).toHaveURL(/\/reports\/exportar\?dataset=members/);
@@ -89,7 +102,13 @@ test("reports: three views, private saved queries, preserved edits, usage and re
     await download.saveAs(path);
     const bytes = await readFile(path);
     if (signature) expect(bytes.subarray(0, signature.length).toString()).toBe(signature);
-    else expect(bytes.toString()).toContain('"Nome"');
+    else
+      expect(
+        bytes
+          .toString()
+          .replace(/^\uFEFF/, "")
+          .split(/\r?\n/)[0],
+      ).toBe(displayedColumns.map((label) => `"${label}"`).join(","));
   }
   await page.getByRole("link", { name: "Voltar aos relatórios", exact: true }).click();
   await page.getByRole("button", { name: "Resultados e evolução", exact: true }).click();

@@ -16,6 +16,11 @@ código foi criado agora.
 autorizado só para a análise detalhada sem agrupamento — T028, T030 (parte do detalhe), T032–T035.
 Evidências em [caab-24-2026-09-30.md](evidence/caab-24-2026-09-30.md).
 
+**Revisão P2 de 30/09/2026:** T032/T034/T035 incluem limites de data abertos (sem data inicial
+artificial ou data final implícita) e ordem inicial de exportação igual à tabela após
+desmarcar/remarcar colunas. Implementação e regressões no mesmo recorte de CAAB-24; validação e
+limites na evidência acima.
+
 ## Rastreabilidade e escopo
 
 EX01/EX02/DX01–DX03: detalhados em US1/US2/US3, compatibilidade e volume; migração de permissões
@@ -74,20 +79,20 @@ seguem autorização atual U1.
       autorização conforme `specs/010-reports-analytics/contracts/exports.md`.
 - [x] T033 [US2] Implementar `apps/web/modules/reports/export-adapter.ts` (novo) reutilizando as
       consultas/projeções do domínio, IDs/dependências para reautorização por lote e cursor do
-      núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados.
-      _30/09: um adaptador por fonte do catálogo, com `requires: ["reports:read"]` (campo novo e
-      opcional do núcleo, conferido a cada lote)._
+      núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados. _30/09:
+      um adaptador por fonte do catálogo, com `requires: ["reports:read"]` (campo novo e opcional do
+      núcleo, conferido a cada lote)._
 - [x] T034 [US2] Integrar ação/tela em `apps/web/app/(admin)/reports/exportar/page.tsx` (nova) e nas
       listas/abas existentes de `apps/web/modules/reports/ui/`; passar contexto/filtros, preservar
       rascunho e oferecer os três formatos com defaults e reordenação acessível. _30/09: "Exportar
-      dados" na análise detalhada sem agrupamento; agrupado, resumo e apresentação seguem pela
-      fila. `ExportScreen` ganhou valores iniciais, contexto e rascunho separado por origem._
+      dados" na análise detalhada sem agrupamento; agrupado, resumo e apresentação seguem pela fila.
+      `ExportScreen` ganhou valores iniciais, contexto e rascunho separado por origem._
 - [ ] T035 [US2] Validar arquivos reais nos três formatos, ordem/contagem/IDs/filtros e negações em
       `apps/web/tests/integration/reports.test.ts` e `apps/web/tests/e2e/reports.spec.ts`; usar o
       parser independente do núcleo 001 e confirmar erro recuperável sem corte. _Parcial 30/09:
       integração em `apps/web/tests/integration/report-exports.test.ts` (arquivo próprio) aprovada;
-      E2E atualizado para o novo fluxo, sem execução local (localhost desligado); fica para o job
-      de navegador do CI do PR._
+      E2E atualizado para o novo fluxo, sem execução local (localhost desligado); fica para o job de
+      navegador do CI do PR._
 
 ## US3 — Resultados e evolução
 

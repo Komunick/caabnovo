@@ -1,7 +1,6 @@
 import "server-only";
 import {
   reportCatalog,
-  reportDate,
   reportDaySchema,
   type ExportFilter,
   type ExportRequest,
@@ -23,8 +22,6 @@ const textFilters = [
   ["category", "category"],
   ["city", "city"],
 ] as const;
-/** With only one side of the period informed, the other side is open. */
-const EARLIEST_DAY = "2000-01-01";
 const accessFilters: ExportFilter[] = [
   {
     key: "channel",
@@ -60,11 +57,7 @@ function day(input: ExportRequest, key: "from" | "to") {
   return value;
 }
 /** Export filters → the report query the screen would run, minus page and grouping. */
-export function reportExportQuery(
-  dataset: ReportDataset,
-  input: ExportRequest,
-  today = reportDate(),
-): ReportExportQuery {
+export function reportExportQuery(dataset: ReportDataset, input: ExportRequest): ReportExportQuery {
   const from = day(input, "from"),
     to = day(input, "to");
   if (from && to && from > to) throw invalid();
@@ -74,12 +67,12 @@ export function reportExportQuery(
   const environment = text(input, "environment", 20) || "production";
   if (!["all", "admin", "site", "app"].includes(channel)) throw invalid();
   if (!["production", "development", "test"].includes(environment)) throw invalid();
-  // Access counts are always bounded by a period; other sources may export every record.
-  const everything = !from && !to && dataset !== "access";
+  // Missing bounds stay open, including the period used to aggregate access counts.
+  const everything = !from && !to;
   return {
     dataset,
-    from: from || EARLIEST_DAY,
-    to: to || today,
+    from,
+    to,
     dateScope: everything ? "all" : "period",
     search: text(input, "search", 120),
     status: text(input, "status", 80),

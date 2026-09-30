@@ -1,10 +1,10 @@
-import type { ReportQuery } from "@caab/contracts";
+import type { ReportQuery, ReportTable } from "@caab/contracts";
 
 /**
  * Link from the detailed analysis to its direct export (CAAB-24): carries the applied filters,
  * the visible columns in their order and the sort. The export page validates everything again.
  */
-export function reportExportHref(query: ReportQuery): string {
+export function reportExportHref(query: ReportQuery, columns: ReportTable["columns"]): string {
   const params = new URLSearchParams({ dataset: query.dataset });
   const entries: [string, string][] = [
     ["dateScope", query.dateScope],
@@ -21,7 +21,7 @@ export function reportExportHref(query: ReportQuery): string {
           ["source", query.source],
         ] as [string, string][])
       : []),
-    ["columns", query.columns.join(",")],
+    ["columns", Object.keys(columns).join(",")],
     ["sort", query.sort],
     ["direction", query.direction],
   ];

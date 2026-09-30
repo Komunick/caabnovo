@@ -64,29 +64,47 @@ describe("report export adapter", () => {
     const open = reportExportQuery(
       "members",
       reportExportRequest({ dataset: "members", filters: {} }),
-      "2026-09-30",
     );
     expect(open.dateScope).toBe("all");
     const half = reportExportQuery(
       "members",
       reportExportRequest({ dataset: "members", filters: { to: "2025-12-31" } }),
     );
-    expect(half).toMatchObject({ from: "2000-01-01", to: "2025-12-31", dateScope: "period" });
+    expect(half).toMatchObject({ from: "", to: "2025-12-31", dateScope: "period" });
   });
 
-  it("bounds access counts by a period and defaults to production", () => {
+  it("leaves access dates open and defaults to production", () => {
     const access = reportExportQuery(
       "access",
       reportExportRequest({ dataset: "access", filters: {} }),
-      "2026-09-30",
     );
     expect(access).toMatchObject({
-      dateScope: "period",
-      to: "2026-09-30",
+      dateScope: "all",
+      from: "",
+      to: "",
       environment: "production",
       channel: "all",
     });
   });
+
+  it.each(reportExports.map((adapter) => [adapter.dataset, adapter] as const))(
+    "keeps either missing date bound open for %s",
+    (_dataset, adapter) => {
+      const query = (filters: Record<string, string>) =>
+        adapter.query(
+          reportExportRequest({ dataset: adapter.dataset, columns: ["date"], sort: [], filters }),
+        );
+      expect(query({ from: "2099-06-15" }).values.slice(0, 2)).toEqual([
+        new Date("2099-06-15T03:00:00Z"),
+        null,
+      ]);
+      expect(query({ to: "1999-12-31" }).values.slice(0, 2)).toEqual([
+        null,
+        new Date("2000-01-01T03:00:00Z"),
+      ]);
+      expect(query({ from: "", to: "" }).values.slice(0, 2)).toEqual([null, null]);
+    },
+  );
 
   it("rejects unknown or restricted columns, invalid sort, inverted periods and bad sources", () => {
     const canExport = actor(reportExporter);

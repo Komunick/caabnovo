@@ -17,6 +17,7 @@ it("links the detailed analysis to its direct export with filters, columns and o
         direction: "asc",
         page: 7,
       }),
+      { name: "Procedimento", unit: "Unidade", date: "Data" },
     ),
     "http://caab.test",
   );
@@ -27,10 +28,24 @@ it("links the detailed analysis to its direct export with filters, columns and o
     from: "2026-01-01",
     to: "2026-09-30",
     search: "consulta",
-    columns: "unit,name,date",
+    columns: "name,unit,date",
     sort: "unit",
     direction: "asc",
   });
+});
+it("uses displayed columns after unchecking and rechecking Name, including the all-columns default", () => {
+  const displayed = { name: "Nome", city: "Cidade", date: "Cadastro" };
+  for (const columns of [["city", "date", "name"], []]) {
+    const query = reportQuerySchema.parse({
+      view: "details",
+      dataset: "members",
+      from: "2026-09-01",
+      to: "2026-09-30",
+      columns,
+    });
+    const href = new URL(reportExportHref(query, displayed), "http://caab.test");
+    expect(href.searchParams.get("columns")).toBe("name,city,date");
+  }
 });
 it("carries the access filters only for the access dataset", () => {
   const href = new URL(
@@ -44,6 +59,7 @@ it("carries the access filters only for the access dataset", () => {
         environment: "development",
         source: "caab.site",
       }),
+      { name: "Tela", views: "Visualizações" },
     ),
     "http://caab.test",
   );
