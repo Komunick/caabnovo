@@ -126,3 +126,18 @@ precisam ser verificadas na nova execução. T107/T039 não são apagados ou ret
 T110 controla esta consolidação/correção e CI posterior. Separar consulta e alteração em
 Agendamentos (CAAB-28) e Tratar faltas, justificativas e contestações (CAAB-41) retornaram a Em
 Desenvolvimento com comentários acrescidos ao Jira, preservando histórico e QA humano pendente.
+
+## Primeira publicação da correção — ba9a6ea
+
+SHA ba9a6eaa21182acedf48384d425a0e6e4810541a, publicado na mesma branch/PR43. CI37060763020 (PR) e
+37060759070 (push). Security aprovado; formato/lint/tipos,558 unitários e169 contratos passaram.
+Quality falhou:349 integrações passaram,3 falharam e1 volume opcional foi ignorado. As três falhas
+são na criação do ator sintético dos novos testes, erro PostgreSQL42P08 (uuid versus text em$1).
+Nenhuma regressão de produto foi inferida dessa falha de fixture. Os dois novos casos de submissão
+com sessão/prazo vencidos durante espera passaram; os três restantes não executaram o cenário.
+
+Correção subsequente tipa explicitamente$1::uuid/$1::text na fixture e torna a negação de download
+genérico específica por código/status, evitando falso positivo por qualquer erro SQL. Não altera
+aplicação, migrations, regras ou workflow e não dispensa cenários. CI deve executar a ponta
+corrigida; não declarar S01/S02 integralmente validados pelo primeiro run. Browser ainda em
+andamento no momento deste registro. PR42 continua aberto; conciliação com dev não executada.

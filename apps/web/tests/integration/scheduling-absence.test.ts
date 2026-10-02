@@ -36,7 +36,7 @@ import type { WebObjectStorage } from "../../modules/files/object-storage";
 async function evidenceActor(permissions: string[]) {
   const userId = crypto.randomUUID(),
     sessionId = crypto.randomUUID();
-  await admin.query('INSERT INTO "user"(id,name,email) VALUES($1,$1,$2)', [
+  await admin.query('INSERT INTO "user"(id,name,email) VALUES($1::uuid,$1::text,$2)', [
     userId,
     `${userId}@example.test`,
   ]);
@@ -920,7 +920,10 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       ).rejects.toMatchObject({ code: "MEMBER_FILE_NOT_FOUND" });
       await expect(
         createDownloadGrant(pool, evidenceStorage, reader, fileId),
-      ).rejects.toHaveProperty("code");
+      ).rejects.toMatchObject({
+        code: fileId === intent.fileId ? "PERMISSION_DENIED" : "MEMBER_FILE_NOT_FOUND",
+        status: fileId === intent.fileId ? 403 : 404,
+      });
     }
     await expect(
       memberFileStatus(pool, uploader, a.memberId, intent.fileId),
