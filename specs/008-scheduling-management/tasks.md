@@ -1,5 +1,11 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## Estado técnico atual — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+T107/T039 concluídos: CI37034671649/cac5cbb aprovado e18capturas revisadas conforme guia.
+[Evidências, critérios e limites](evidence/publication-2026-10-02.md). QA humano pendente. Registros
+anteriores abaixo preservam a sequência e não reabrem os gates já comprovados.
+
 ## Retomada e adiamento de e-mail — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
 O usuário autorizou conciliar a worktree preservada com dev e concluir/validar sobreposição,
@@ -17,7 +23,7 @@ T097 permanecem adiados. O recorte administrativo segue independentemente.
 
 - [x] T106 Preservar alterações em backup verificado e commit local; conciliar dev na mesma
       worktree, mantendo exportações de Agendamentos e Relatórios e atualizações de dependências.
-- [ ] T107 Revalidar o conjunto conciliado: sobreposição, bloqueios, permissões, aprovação,
+- [x] T107 Revalidar o conjunto conciliado: sobreposição, bloqueios, permissões, aprovação,
       remarcação, recuperação e faltas; incluir regressão de exportação compartilhada, tipos, lint,
       build, testes e evidências da versão atual. Testes usam dados descartáveis.
 - [x] T108 Registrar o adiamento de T089 por ausência do serviço de e-mail, preservar critérios,
@@ -27,7 +33,8 @@ T097 permanecem adiados. O recorte administrativo segue independentemente.
       aviso de cancelamentos sem horário no lado de Agendamentos, executar testes sem serviços e
       registrar hashes, limites e instruções de conciliação em
       [evidência](evidence/reports-compatibility-2026-10-02.md). Regressão de banco ampliada
-      permanece sem execução em T107; não tentar recuperar WSL nem iniciar serviços.
+      executada no CI37034671649/cac5cbb; ver evidência de publicação. Não recuperar WSL nem iniciar
+      serviços.
 
 ## Falta e bloqueio — núcleo implementado, T087–T098
 
@@ -310,7 +317,7 @@ calendário; dados de beneficiário ficam na projeção autorizada.
 
 ## Polish
 
-- [ ] T039 Executar gates/testes da função no CI e registrar resultados/capturas/limites em
+- [x] T039 Executar gates/testes da função no CI e registrar resultados/capturas/limites em
       `specs/008-scheduling-management/evidence/plan-2026-09-21-validation.md` (novo); marcar
       conclusão somente com evidência, preservando tarefas institucionais e históricas. Gates
       locais/capturas concluídos em 28/09; CI da entrega não executado porque manter local continua

@@ -1,5 +1,19 @@
 # Checkpoint vigente — Agendamentos, 02/10/2026
 
+## Gates administrativos concluídos — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+Mesma worktree, branch feature/scheduling-administrative-20261002. Commit técnico validado
+cac5cbb8a4c8f61352d5513f5f3e21748132e88c: CI37034671649 com quality/browser/security aprovados.
+558unitários,169contratos,347integrações (118de Agendamentos),1volume opcional ignorado, build57,
+101E2Es,3focados Relatórios,6a11y. Artefato72capturas;18revisadas e preservadas com manifesto.
+T107/T039 concluídos tecnicamente.
+[Critérios/evidências/limites](evidence/publication-2026-10-02.md). Próximo passo: commit
+documental/push e PR para dev já autorizados; sem merge/serviços locais/WSL. QA humano pendente;
+e-mails/app/site/WAHA adiados. Conciliação com Relatórios não executada.
+
+Os checkpoints abaixo são registros anteriores: os impedimentos técnicos de banco/navegador foram
+superados no CI descartável. Não recuperar WSL nem repetir implementação/histórico2733e01/4e9abac.
+
 ## Publicação autorizada — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
 Branch efetiva: `feature/scheduling-administrative-20261002`, na mesma worktree

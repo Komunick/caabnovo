@@ -116,3 +116,108 @@ America/Bahia, independentes da hora da execução. Preservadas as asserções d
 jornadas; sem alteração da aplicação, migrations ou workflow. Os gates anteriores não comprovam
 estes E2Es corrigidos; exige-se nova execução completa. Artefato11237769464,
 scheduling-synthetic-evidence, baixado localmente.
+
+## Gate técnico concluído — cac5cbb
+
+[CI37034671649](https://github.com/Komunick/caabnovo/actions/runs/37034671649), SHA
+cac5cbb8a4c8f61352d5513f5f3e21748132e88c, push de02/10/2026: **quality, browser e security
+success**. Esta é evidência nova da versão conciliada/corrigida, distinta de727testes/build
+de4e9abac.
+
+| Gate                                         | Resultado da versão cac5cbb                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| Formatação, regras de proteção, lint e tipos | Aprovados                                                                |
+| Unitários                                    | 558 aprovados,69 arquivos                                                |
+| Contratos                                    | 169 aprovados,24 arquivos                                                |
+| Integração PostgreSQL18 descartável          | 347 aprovados,31 arquivos;1 volume opcional de Relatórios ignorado       |
+| Agendamentos dentro das integrações          | 118:37 scheduling,19 workflow,22 absence,27 export,13 absence-query      |
+| Build                                        | Aprovado,57 páginas                                                      |
+| Navegador Chromium completo                  | 101 aprovados,11,1min; oito jornadas de Agendamentos aprovadas sem retry |
+| Relatórios antes da suíte completa           | 3 aprovados                                                              |
+| Acessibilidade final                         | 6 aprovados, além de Axe/contraste/reflow nos cenários de Agendamentos   |
+| Segurança                                    | Auditoria de dependências e Gitleaks aprovados                           |
+
+Comandos executados pelo workflow existente: pnpm format:check, lint, typecheck, test:unit,
+test:contract, test:integration, build, security:scan; test:e2e reports.spec.ts --project=chromium,
+test:e2e --project=chromium e test:a11y --project=chromium. Nenhum workflow alterado. Logs baixados
+em .cache/ci-37034671649-quality.log e -browser.log. Avisos de pg sobre client.query concorrente e
+mensagens de stream encerrado nas navegações não foram ocultados; não impediram asserções de
+banco/download, e não equivalem a prova de entrega de mensagens.
+
+### Critérios comprovados
+
+- Sobreposição:20 requisições concorrentes, exclusões de beneficiário/profissional, unidades
+  distintas, adjacência, capacidade3, replay e rollback; migrations anteriores preservadas, upgrade
+  pré0032 e recusa de legado conflitante sem perda de dados.
+- Bloqueios: comandos reais de bloquear/vincular/desvincular serializados com reserva; remarcação
+  impedida após bloqueio, reserva anterior preservada; sinais de bloqueio/exclusão revisados no
+  painel.
+- Permissões: consulta/escrita distintas, Gestor leitor, revogação enquanto aguarda lock e replay,
+  navegação/busca/URL/API; revisão de faltas independente de write e anexos negados ao leitor comum.
+- Aprovação/remarcação: publicação/rascunho, revalidação de bloqueio superveniente, duração retida,
+  limite/prazo, recusa e recuperação sem restaurar origem, capacidade, histórico e intenção única.
+- Faltas: prazos7/30dias, pedido com texto e comprovante privado limpo, decisão concorrente,
+  preservação durante resposta/análise, cancelamento no período, expiração/finalização automática
+  com autoria de sistema e rollback/idempotência. Não simula julgamento do mérito pela aplicação.
+- Exportações: quatro datasets de Agendamentos, três formatos,100linhas por amostra C1,
+  colunas/ordem, filtros, vazios, privacidade e reautorização entre lotes; regressão de cancelamento
+  sem horário, fora do período e sem autorização da fonte.
+  usersExport/reportExports/schedulingExports preservados.
+- Navegador: publicação/pedido/aprovação/troca/recusa/recuperação/cancelamento,
+  faltas/rascunho/upload/ aceitação/rejeição/revogação, exportações e retry,
+  catálogo/calendário/teclado e estados de erro.
+
+T107 e T039 concluídos tecnicamente por esta execução e revisão visual. QA humano permanece
+pendente: responsável, ambiente e aceite de regras sensíveis ainda não registrados. Não há merge,
+deploy, serviço local ou alteração em banco de uso. Integração de e-mails/app/site/WAHA segue
+adiada.
+
+### Revisão visual pelo guia canônico
+
+Guia consultado: docs/caab-design.md da principal, v1.1; reflow, hierarquia, temas, ações, feedback,
+campos, navegação e rolagem confinada. Artefato scheduling-synthetic-evidence11239956614 contém
+72capturas:18 políticas/fila/recuperação;18 lista/revisão/exportação de faltas;18 exportações de
+reservas/cadastros/horários;18 jornada de catálogo/calendário. As três primeiras matrizes cobrem
+1280/390/320px e claro/escuro, com Axe e overflow assertados na execução.
+
+Revisão visual por IA de18capturas desta execução, preservadas abaixo e identificadas como
+visuallyReviewed no [manifesto SHA-256](publication-2026-10-02.json). Amostra cobre todos os tipos
+de tela afetados, três larguras e ambos os temas. Sem corte de ações ou overflow da página; lista
+tabular conserva rolagem horizontal própria, permitida pelo guia. Textos de política/publicação,
+recuperação sem horário, prazos/restrições, comprovante privado e formatos de download legíveis.
+Nomes longos quebram nas filas/cartões; campos conservam seus controles. Calendário apresenta
+situação antes do nome truncado e permite abrir detalhe. Nenhuma divergência bloqueante na amostra.
+
+Não equivale a inspeção de todas as72imagens, dispositivo físico, leitor de tela real ou QA humano.
+Teclado/foco/rascunho e reflow têm asserções automatizadas;320CSSpx não constitui teste manual de
+zoom em todos os navegadores. Capturas adicionais permanecem no artefato remoto (retenção7dias) e na
+cópia local, com hashes no manifesto; as18revisadas ficam versionadas para revisão durável.
+
+- [absence-export-320-dark.png](publication-2026-10-02/absence-export-320-dark.png).
+- [absence-list-1280-light.png](publication-2026-10-02/absence-list-1280-light.png).
+- [absence-list-320-dark.png](publication-2026-10-02/absence-list-320-dark.png).
+- [absence-review-390-light.png](publication-2026-10-02/absence-review-390-light.png).
+- [administrative-policy-1280-light.png](publication-2026-10-02/administrative-policy-1280-light.png).
+- [administrative-policy-320-dark.png](publication-2026-10-02/administrative-policy-320-dark.png).
+- [administrative-queue-1280-dark.png](publication-2026-10-02/administrative-queue-1280-dark.png).
+- [administrative-queue-320-light.png](publication-2026-10-02/administrative-queue-320-light.png).
+- [administrative-queue-390-light.png](publication-2026-10-02/administrative-queue-390-light.png).
+- [administrative-recovery-1280-dark.png](publication-2026-10-02/administrative-recovery-1280-dark.png).
+- [administrative-recovery-320-dark.png](publication-2026-10-02/administrative-recovery-320-dark.png).
+- [administrative-recovery-390-light.png](publication-2026-10-02/administrative-recovery-390-light.png).
+- [scheduling-calendar-week-desktop-dark.png](publication-2026-10-02/scheduling-calendar-week-desktop-dark.png).
+- [scheduling-deleted-member-kept-mobile.png](publication-2026-10-02/scheduling-deleted-member-kept-mobile.png).
+- [scheduling-export-bookings-1280-light.png](publication-2026-10-02/scheduling-export-bookings-1280-light.png).
+- [scheduling-export-bookings-320-dark.png](publication-2026-10-02/scheduling-export-bookings-320-dark.png).
+- [scheduling-export-catalog-390-light.png](publication-2026-10-02/scheduling-export-catalog-390-light.png).
+- [scheduling-export-hours-320-light.png](publication-2026-10-02/scheduling-export-hours-320-light.png).
+
+### Encaminhamento
+
+A entrega pode seguir para PR autorizado para dev, sem merge. O commit posterior que registra este
+resultado altera somente spec/evidências; não muda aplicação, testes, migrations ou configuração
+validados em cac5cbb. CI desse commit documental e do PR deve ser conferido pelos seus próprios IDs;
+este registro não antecipa seus resultados. Conciliação com Relatórios segue as instruções por
+arquivo em reports-compatibility-2026-10-02.md e exige validação da versão combinada. MODULES/STACK
+permanecem sem delta; programa002 conserva os acréscimos HIN. Não sobrescrever a consolidação
+documental.
