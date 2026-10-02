@@ -80,3 +80,27 @@ conteúdo fora da correção do link, sem ampliar o protótipo.
 PR documental42 permanece aberto na conferência de02/10; nenhum PR funcional aberto antes de sua
 integração humana e da conciliação. Nenhum serviço local foi iniciado. A revisão AC anterior não
 constitui evidência da correção. QA humano e aceite global continuam pendentes.
+
+## Resultado final do recorte técnico
+
+[Segundo CI37034250928](https://github.com/Komunick/caabnovo/actions/runs/37034250928), SHA
+`f8049372b1defbde002301a25df97793776773b9`: security, quality e browser aprovados. Reconfirmados417
+unitários,169 contratos,253 integrações aprovadas/uma ignorada preexistente, três testes prévios de
+Relatórios,98 E2E e seis a11y. Os dois cenários novos passaram novamente na primeira tentativa.
+Tipos, lint, formato, build, auditoria e scan de segredos aprovados. Nenhum serviço local iniciado.
+
+Artefato final `messages-synthetic-screenshots`, ID11240165263; ZIP SHA-256
+`16f8a04af34c01e80fdcdac3d331ac4d4d9795b8818d4a9f907d3932abb3d78a`, conferido após download. Cópia
+preservada na principal em `.cache/ci-access-37034250928`, com as seis imagens em `images/`. CODEX
+inspecionou os três estados para ambos os cargos: sem criação em leitura1280/claro e após
+revogação320/claro; criação disponível em escrita390/escuro, com ícone e consulta preservados. Menu
+recolhido nas imagens móveis finais, sem sobreposição transitória; textos, filtros e ações legíveis
+no recorte. A observação de conteúdo vazio acima permanece fora desta correção. Revisão visual por
+IA e Axe não substituem QA humano ou homologação global de Mensagens.
+
+AC-T002/G01 tecnicamente concluída nesta versão; G02/G03/P01 e aceite global mantêm os limites já
+descritos. A tarefa histórica AC-T002 é atualizada apenas para registrar este resultado posterior.
+PR funcional ainda não aberto: PR42 segue aberto/sem merge na última consulta. Fetch final confirmou
+dev/origin/dev em0/0 na base748539d; arquivos locais da principal e outras instâncias preservados. O
+registro final de evidência fica preservado em commit documental local para compor a conciliação
+após integração humana; o SHA executado pelo CI é f804937, não um commit documental posterior.
