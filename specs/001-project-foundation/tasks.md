@@ -285,15 +285,20 @@ auditável e sem spinner infinito ou afirmação de gravação local.
       `specs/001-project-foundation/evidence/plan-2026-09-21-validation.md` (novo), preservando T089
       pendente.
 
-## Pendências anteriores que continuam prioritárias
+## Checkpoint histórico de pendências — 21/09/2026, anterior à integração
 
 T096 (cadastro público) foi conciliada nesta entrega e validada no CI de 7d4d507: HTTP negado sem
 criação de usuário/credencial/sessão, login/recuperação e provisionamento administrativo cobertos
-pelas suítes de integração. PR #35 ainda sem merge. T097 (preservação de erro/versão dos rascunhos)
-foi executada nesta entrega; resultado atual no checkpoint e nas evidências. T097 atua em
-`apps/web/components/workspace-drafts.tsx` e estados dos editores de Notícias/acessos, com
-`apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas pendências resolvidas por
-plan/tasks nem recriar correções já existentes sem confronto.
+pelas suítes de integração. Naquele checkpoint de 21/09/2026, o PR #35 ainda aguardava merge. T097
+(preservação de erro/versão dos rascunhos) foi executada nesta entrega; resultado atual no
+checkpoint e nas evidências. T097 atua em `apps/web/components/workspace-drafts.tsx` e estados dos
+editores de Notícias/acessos, com `apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas
+pendências resolvidas por plan/tasks nem recriar correções já existentes sem confronto.
+
+**Integração posterior, conferida em 02/10/2026:** o PR #35 foi integrado em dev em 21/09/2026
+(15:41:10 UTC). A menção anterior a merge pendente descreve somente o checkpoint histórico; T096 não
+exige nova implementação ou integração. O estado e os limites de T097 permanecem no checkpoint e nas
+evidências próprios.
 
 ## Dependências e ordem de execução
 
@@ -1023,7 +1028,8 @@ alterar o gate de produção.
       provisionamento administrativo validados no
       [CI de 7d4d507](https://github.com/Komunick/caabnovo/actions/runs/35617770034), incluindo
       auth-session, account-auth-hardening e initial-password. Sem reaplicar infraestrutura
-      retirada. Implementado na branch de entrega; merge em dev pendente no PR #35. Origem:
+      retirada. No checkpoint anterior à integração, estava implementado na branch de entrega. O PR
+      #35 foi integrado em dev em 21/09/2026, conforme conferência de 02/10/2026. Origem:
       US1/FR-001–FR-004, Constituição IV; achado A03.
 - [x] T097 Preservar mensagens de conflito e versão original ao navegar entre abas/módulos em todos
       os formulários; começar por NewsEditor e UserAccessForm, ampliar inventário dos estados de
@@ -1045,8 +1051,9 @@ existentes e evitando duas versões incompatíveis. Nenhuma migration ou altera�
 retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam
 planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes
 unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de
-navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost
-permanece desligado. Evidências:
+navegador/acessibilidade ainda em andamento no checkpoint histórico de 21/09/2026, anterior à
+integração do PR #35 naquele dia. Este registro não descreve checks atuais. Localhost permanece
+desligado. Evidências:
 [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
 
 ## Ampliação autorizada: ciclo de vida — 21/09/2026

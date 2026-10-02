@@ -1,6 +1,24 @@
 # Tasks: Coordenação da entrega após clarify — incremento de 21/09/2026
 
-## Retrato das quatro instâncias — fechamento documental de 02/10/2026
+## Atualização do retrato de Agendamentos — 02/10/2026
+
+Conferência documental por CODEX; solicitante mafaltti. O incremento administrativo de Agendamentos
+está implementado na worktree própria e no PR #43, ainda aberto, com HEAD
+ba9a6eaa21182acedf48384d425a0e6e4810541a na consulta desta revisão. Correções de segurança
+identificadas no fechamento estão em validação pela frente responsável; checks de versões anteriores
+não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
+dev.
+
+A base integrada de referência continua 748539d, com migrations até0030. As migrations0031–0034 e a
+permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
+retratos anteriores de4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+
+**Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
+spec/plan/tasks do programa002 com o SHA efetivamente integrado, migrations e evidências vigentes.
+Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
+concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
+
+## Retrato anterior das quatro instâncias — primeira consolidação de 02/10/2026
 
 Agendamentos, Relatórios, Documentação e Acessos são quatro instâncias independentes; Agendamentos
 tem prioridade máxima. Este é um retrato datado, não uma fila de execução ou autorização de

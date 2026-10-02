@@ -169,7 +169,7 @@ Conferência em 22/09/2026: principal em `dev`, commit `89d2356`, limpa e sincro
 consulta de PRs pela CLI retornou HTTP 401 nesta sessão; metadados e checks remotos não foram
 revalidados por essa consulta.
 
-Todos os caminhos abaixo são relativos à pasta principal `C:/Users/Gabriel/Desktop/caabnovo`.
+Todos os caminhos abaixo são relativos à pasta principal daquela sessão (caminho local omitido).
 Worktrees e commits conferidos por Git nesta sessão.
 
 | Pasta                                         | Branch e commit                                      | Uso na retomada                                                                                     | Assinatura                                                                     |
