@@ -1,5 +1,22 @@
 # Implementation Plan: Relatórios: exportação direta nas três abas
 
+## Execução de 02/10/2026 — CODEX/SOLICITANTE_NAO_VERIFICADO
+
+Entrega `feature/reports-complete-20261002`, base dev748539d. Concluir Exportar detalhe agrupado,
+resumo e evolução sem os limites antigos (CAAB-44) e conferir Exportar análise detalhada sem
+agrupamento (CAAB-43), integrantes de Exportar o conjunto completo de dados em Relatórios (CAAB-24).
+Reutilizar cursor, snapshot, writers e revalidação do motor integrado; nenhum novo
+serviço/migration. Detalhe agrupado usa o mesmo SQL de agrupamento e filtros da tabela, com catálogo
+grupo/quantidade. Resumo/evolução usam projeção tabular de indicadores, inventário, séries, contexto
+e comentários, com fontes explicitamente autorizadas e revalidadas por lote. Datas de comparação
+continuam explícitas, sem teto de duração. A seleção de fontes nunca concede permissões.
+
+Coordenação: Agendamentos4e9abac tem prioridade e controla bookings/migrations0031–0034. Não editar
+seu ambiente. Preservar runtime.ts; a extensão renderFilter/initialFilters da sua tela compartilhada
+será reutilizada sem substituição dos adaptadores. Em reports.ts, manter a projeção bookings
+separada das mudanças de agrupamento, permitindo conciliação com o modelo novo. Documentos
+transversais pertencem à terceira frente. Testes técnicos e QA humano são aceites distintos.
+
 **Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
 

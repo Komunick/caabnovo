@@ -6,7 +6,10 @@ import { ReportsPage } from "./reports-page";
 import { reportRequest } from "./client";
 import { reportQuerySchema } from "@caab/contracts";
 
-vi.mock("./client", () => ({ reportRequest: vi.fn() }));
+vi.mock("./client", async (original) => ({
+  ...(await original<typeof import("./client")>()),
+  reportRequest: vi.fn(),
+}));
 const request = vi.mocked(reportRequest);
 let root: Root, container: HTMLDivElement, value: number, exportStatus: string;
 const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });

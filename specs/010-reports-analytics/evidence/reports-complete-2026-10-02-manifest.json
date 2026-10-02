@@ -1,0 +1,108 @@
+{
+  "base": "748539d28ec7c94af5ff3ca7a37c46c73ae102e4",
+  "branch": "feature/reports-complete-20261002",
+  "date": "2026-10-02",
+  "state": "feature snapshot for authorized commits; CI and combined scheduling model pending; no human QA",
+  "files": [
+    {
+      "path": "apps/web/app/(admin)/reports/exportar/page.tsx",
+      "sha256": "ef9c3d80e2a16f1c3e85be4753dd20c6c9bb39546b68237510533706ac146bcd"
+    },
+    {
+      "path": "apps/web/modules/exports/ui/export-screen.tsx",
+      "sha256": "ff465480b83acf49dca1fb410ed9522d7a4b9b62bb0de0b8de8b6e23a9139092"
+    },
+    {
+      "path": "apps/web/modules/reports/export-adapter.test.ts",
+      "sha256": "05aa9df62f595a9e83e33a84888920754a08f76e0ecf4c2ebf3842ad657b2d30"
+    },
+    {
+      "path": "apps/web/modules/reports/export-adapter.ts",
+      "sha256": "f47ba6391eaaaabd03dc27f857d50e6bc500f421dafa9630eebe7fc32b2a5725"
+    },
+    {
+      "path": "apps/web/modules/reports/overview-export-adapter.test.ts",
+      "sha256": "abb584dc951b9686e312319f943424cae31770cd3f63f67e127ca6dd56ca1d61"
+    },
+    {
+      "path": "apps/web/modules/reports/overview-export-adapter.ts",
+      "sha256": "eb45c267095391d1d1e039c3d3c09dbc603b0bf5c1b4236716be2e437ccf42bc"
+    },
+    {
+      "path": "apps/web/modules/reports/ui/client.test.ts",
+      "sha256": "3f92b3d215d9bb24d9d24357023ff4096689dba29d5e78393d6bfd6a73b70dc4"
+    },
+    {
+      "path": "apps/web/modules/reports/ui/client.ts",
+      "sha256": "277c11cda47679aec6ef1e957d9d9fc822b2ecc6a5c8150c3570629ebb8de07d"
+    },
+    {
+      "path": "apps/web/modules/reports/ui/report-export-screen.tsx",
+      "sha256": "1fe31714145064fed9ab0b3a188974d6eb4cfc8b46d158be760b3ea9a83deb88"
+    },
+    {
+      "path": "apps/web/modules/reports/ui/reports-page.test.tsx",
+      "sha256": "1b5bc18b393d524e7735d23c0cc4b76d5d53fdbb9e2b61b7ebe9bfeea84b0d80"
+    },
+    {
+      "path": "apps/web/modules/reports/ui/reports-page.tsx",
+      "sha256": "1f11d1cc3151b1a443579455d42905e62064315454694c6a6fa6e670e54c2504"
+    },
+    {
+      "path": "apps/web/tests/e2e/reports.spec.ts",
+      "sha256": "839555a38ab055b0bc609a28410a09b7011fbd93874f399bc50e4ec2ea31d548"
+    },
+    {
+      "path": "apps/web/tests/integration/report-exports.test.ts",
+      "sha256": "d6a4a6b820a1b339249b1a673118690ea99916d6c804890fb9b59d877b423ee0"
+    },
+    {
+      "path": "packages/contracts/src/reports.ts",
+      "sha256": "2db6ad67d55e9baf2a56e12628fbc31a5169482028ba01789a4b7e60bd12b07c"
+    },
+    {
+      "path": "packages/contracts/tests/reports.test.ts",
+      "sha256": "423cbbe25b9388b35f9e79877d61c27683a5adf9afb644e306a1fc3fe1a37754"
+    },
+    {
+      "path": "packages/db/src/repositories/report-analytics.ts",
+      "sha256": "c846c4ee8a5673118c6768502c8c5beec8200d9d0928747e3a3e82c8fa9fc291"
+    },
+    {
+      "path": "packages/db/src/repositories/report-overview-export.ts",
+      "sha256": "c976296a2c6cb116c2eec9a4413b164e46990609a2d015b7c385154dc0804d46"
+    },
+    {
+      "path": "packages/db/src/repositories/report-summary.ts",
+      "sha256": "c34d8989ad4b54d6d48f5df0c440025b336a29051c24833cb784d7edd3fa07aa"
+    },
+    {
+      "path": "packages/db/src/repositories/reports.ts",
+      "sha256": "2bb8056115adfebd5de1a0e633f9f652e28d47ddec27ef4b7b3422ca52dcdc76"
+    },
+    {
+      "path": "specs/010-reports-analytics/contracts/exports.md",
+      "sha256": "8298158119891d6f2c83166819ef5279f1d5dde75e428ad25d771ea16616e3b5"
+    },
+    {
+      "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
+      "sha256": "985fc22efb658dd8e3e64d5e5f1b374816e06f490cd5863b3b46809faad630ce"
+    },
+    {
+      "path": "specs/010-reports-analytics/plan.md",
+      "sha256": "86f34dbf5c2d9eacdbf824650656890fd878369e1290255b7d8bb7960c654164"
+    },
+    {
+      "path": "specs/010-reports-analytics/research.md",
+      "sha256": "38d67539b48130e5b751ecdbab0970395cd166d43f57b2635cd68fde3667abce"
+    },
+    {
+      "path": "specs/010-reports-analytics/spec.md",
+      "sha256": "001b399dd3ada9a95633cda0e9f8272d9dafb30109e4eb6b0ee59e51974b5eff"
+    },
+    {
+      "path": "specs/010-reports-analytics/tasks.md",
+      "sha256": "aff9050bd851ea201e6f546836175672001e01c9d2cc917a4bf9b1ca2e65f816"
+    }
+  ]
+}

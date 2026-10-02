@@ -2,9 +2,11 @@ import { Client } from "pg";
 import { Writable } from "node:stream";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import type { ExportRequest } from "@caab/contracts";
+import { reportQuerySchema, type ExportRequest } from "@caab/contracts";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { queryReport } from "@caab/db/repositories/reports";
+import { reportSummary } from "@caab/db/repositories/report-summary";
+import { reportUsage } from "@caab/db/repositories/report-analytics";
 import {
   beginExportOperation,
   updateExportOperation,
@@ -40,7 +42,6 @@ let container: StartedPostgreSqlContainer,
   data: ReturnType<typeof createDatabaseClient>,
   control: ReturnType<typeof createDatabaseClient>,
   actor: RequestActor;
-const members = reportExportAdapter("members")!;
 beforeAll(async () => {
   container = await startPostgres();
   await runMigrations(container.getConnectionUri());
@@ -86,32 +87,243 @@ function operation(format: ExportRequest["format"]): OperationIdentity {
     correlationId: crypto.randomUUID(),
   };
 }
-async function download(input: ExportRequest) {
-  const op = operation(input.format);
+async function download(input: ExportRequest, afterBatch?: (index: number) => Promise<void>) {
+  const members = reportExportAdapter(input.dataset)!;
+  const op = { ...operation(input.format), dataset: input.dataset };
   await beginExportOperation(control.pool, op);
+  const started = performance.now(),
+    cpu = process.cpuUsage(),
+    rssBefore = process.memoryUsage().rss;
+  let firstByteMs: number | undefined,
+    peakRss = rssBefore;
+  const sample = setInterval(() => {
+    peakRss = Math.max(peakRss, process.memoryUsage().rss);
+  }, 10);
   const chunks: Buffer[] = [];
   const sink = new Writable({
     write(chunk, _encoding, callback) {
+      firstByteMs ??= performance.now() - started;
       chunks.push(Buffer.from(chunk));
       callback();
     },
   });
-  const result = await runExport(
-    {
-      columns: input.columns.map((key) => members.columns.find((c) => c.key === key)!),
-      write: { csv: writeCsv, xlsx: writeXlsx, pdf: writePdf }[input.format],
-      batches: (signal) => exportBatches(data.pool, members, input, signal),
-      authorize: (ids, signal) =>
-        authorizeCurrentExport(control.pool, members, actor, input, ids, signal),
-      update: (phase, counts, code) => updateExportOperation(control.pool, op, phase, counts, code),
-      heartbeatMs: 1000,
-    },
-    sink,
-    new AbortController().signal,
-  );
-  return { result, bytes: Buffer.concat(chunks) };
+  try {
+    const result = await runExport(
+      {
+        columns: input.columns.map((key) => members.columns.find((c) => c.key === key)!),
+        write: { csv: writeCsv, xlsx: writeXlsx, pdf: writePdf }[input.format],
+        batches: async function* (signal) {
+          let index = 0;
+          for await (const batch of exportBatches(
+            data.pool,
+            members,
+            input,
+            signal,
+            afterBatch ? 10 : 100,
+          )) {
+            yield batch;
+            await afterBatch?.(++index);
+          }
+        },
+        authorize: (ids, signal) =>
+          authorizeCurrentExport(control.pool, members, actor, input, ids, signal),
+        update: (phase, counts, code) =>
+          updateExportOperation(control.pool, op, phase, counts, code),
+        heartbeatMs: 1000,
+      },
+      sink,
+      new AbortController().signal,
+    );
+    if (process.env.CAAB_EXPORT_PROFILE === "1")
+      console.info(
+        "REPORT_EXPORT_PROFILE",
+        JSON.stringify({
+          dataset: input.dataset,
+          format: input.format,
+          rows: result.rows,
+          bytes: result.bytes,
+          firstByteMs,
+          durationMs: performance.now() - started,
+          rssBefore,
+          peakRss,
+          rssAfter: process.memoryUsage().rss,
+          cpu: process.cpuUsage(cpu),
+          dataConnections: data.pool.totalCount,
+          idleDataConnections: data.pool.idleCount,
+          controlConnections: control.pool.totalCount,
+          idleControlConnections: control.pool.idleCount,
+        }),
+      );
+    return { result, bytes: Buffer.concat(chunks) };
+  } finally {
+    clearInterval(sample);
+  }
 }
 describe("direct export of the detailed analysis", () => {
+  it("exports every group in all formats, preserving filters and numeric totals", async () => {
+    for (const format of ["csv", "xlsx", "pdf"] as const) {
+      const input = reportExportRequest({
+        dataset: "membersGrouped",
+        format,
+        columns: ["count", "group"],
+        sort: [{ field: "group", direction: "asc" }],
+        filters: { from: "2024-01-01", to: "2026-09-30", groupBy: "name" },
+      });
+      const { result, bytes } = await download(input);
+      expect(result.rows).toBe(100);
+      if (format === "pdf") {
+        const text = (await readPdf(bytes)).join(" ");
+        expect(text).toContain("Relatório export 100");
+        expect(text).toContain("Quantidade");
+      } else {
+        const rows = format === "csv" ? readCsv(bytes) : readXlsx(bytes)[1]!;
+        expect(rows[0]).toEqual(["Quantidade", "Grupo"]);
+        expect(rows).toHaveLength(101);
+        expect(rows.slice(1).reduce((total, row) => total + Number(row[0]), 0)).toBe(100);
+      }
+    }
+    const city = await download(
+      reportExportRequest({
+        dataset: "membersGrouped",
+        columns: ["group", "count"],
+        sort: [{ field: "count", direction: "desc" }],
+        filters: { groupBy: "city", category: "Advocacia" },
+      }),
+    );
+    expect(readCsv(city.bytes)).toEqual([
+      ["Grupo", "Quantidade"],
+      ["Salvador", "75"],
+      ["Ilhéus", "25"],
+    ]);
+    const empty = await download(
+      reportExportRequest({
+        dataset: "membersGrouped",
+        columns: ["group", "count"],
+        sort: [],
+        filters: { groupBy: "city", search: "Ninguém sintético" },
+      }),
+    );
+    expect(readCsv(empty.bytes)).toEqual([["Grupo", "Quantidade"]]);
+  }, 60000);
+
+  it("exports summary and evolution with matching totals, series, context and comments in all formats", async () => {
+    const query = {
+      ...reportQuerySchema.parse({ from: "2026-01-01", to: "2026-09-30", environment: "test" }),
+      from: "2024-01-01",
+    };
+    const summary = await reportSummary(control.pool, actor, query);
+    const usage = await reportUsage(control.pool, query);
+    for (const dataset of ["summary", "executive"])
+      for (const format of ["csv", "xlsx", "pdf"] as const) {
+        const { bytes } = await download(
+          reportExportRequest({
+            dataset,
+            format,
+            columns: [
+              "section",
+              "label",
+              "date",
+              "value",
+              "previous",
+              "change",
+              "definition",
+              "notes",
+            ],
+            filters: {
+              from: query.from,
+              to: query.to,
+              environment: "test",
+              include_members: "yes",
+              notes: "Análise sintética",
+            },
+            sort: [],
+          }),
+        );
+        if (format === "pdf") {
+          const text = (await readPdf(bytes)).join(" ");
+          expect(text).toContain("Análise sintética");
+          expect(text).toContain("Associados cadastrados no período");
+        } else {
+          const rows = (format === "csv" ? readCsv(bytes) : readXlsx(bytes)[1]!).slice(1);
+          const metric = rows.find(
+            (row) => row[0] === "Indicadores" && row[1] === summary.metrics[0]!.label,
+          )!;
+          expect(Number(metric[3])).toBe(100);
+          expect(Number(metric[4])).toBe(summary.metrics[0]!.previous);
+          expect(metric[5] == null || metric[5] === "").toBe(true); // zero previous => no infinite change
+          const series = rows.filter((row) => row[0] === "Evolução" && row[1] === "Associados");
+          expect(series.map((row) => [row[2], Number(row[3])])).toEqual(
+            summary.series
+              .filter((point) => point.dataset === "members")
+              .map((point) => [point.date, point.value]),
+          );
+          expect(rows.every((row) => row[7] === "Análise sintética")).toBe(true);
+          expect(Number(rows.find((row) => row[1] === "Visualizações")![3])).toBe(usage.views);
+          expect(rows.some((row) => String(row[1]).includes("Reservas no período"))).toBe(false);
+        }
+      }
+    expect(await reportSummary(control.pool, actor, query)).toMatchObject({
+      metrics: summary.metrics,
+      series: summary.series,
+    });
+    expect(await reportUsage(control.pool, query)).toEqual(usage);
+  }, 60000);
+
+  it("revalidates overview source permissions before any output and allows a clean retry", async () => {
+    const input = reportExportRequest({
+      dataset: "summary",
+      columns: ["label", "value"],
+      sort: [],
+      filters: { from: "2024-01-01", to: "2026-09-30", include_members: "yes" },
+    });
+    try {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        ["reports:read", "exports:generate"],
+      ]);
+      await expect(download(input)).rejects.toThrow();
+    } finally {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        [...reportExporter],
+      ]);
+    }
+    expect((await download(input)).result.rows).toBeGreaterThan(0);
+  });
+
+  it("stops an overview after source revocation between batches and releases its snapshot", async () => {
+    const input = reportExportRequest({
+      dataset: "executive",
+      columns: ["label", "value"],
+      sort: [],
+      filters: { from: "2024-01-01", to: "2026-09-30", include_members: "yes" },
+    });
+    try {
+      await expect(
+        download(input, async (batch) => {
+          if (batch === 1)
+            await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+              actor.userId,
+              ["reports:read", "exports:generate"],
+            ]);
+        }),
+      ).rejects.toThrow();
+      expect(
+        (
+          await admin.query(
+            "SELECT count(*)::int AS total FROM pg_stat_activity WHERE usename='caab_runtime' AND state='idle in transaction'",
+          )
+        ).rows[0].total,
+      ).toBe(0);
+      expect(data.pool.waitingCount).toBe(0);
+    } finally {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        [...reportExporter],
+      ]);
+    }
+    expect((await download(input)).result.rows).toBeGreaterThan(0);
+  });
   it("writes all 100 records in each format, in the requested columns and order", async () => {
     for (const format of ["csv", "xlsx", "pdf"] as const) {
       const input = reportExportRequest({

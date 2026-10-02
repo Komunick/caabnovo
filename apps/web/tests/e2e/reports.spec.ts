@@ -38,7 +38,7 @@ test("reports: three views, private saved queries, preserved edits, usage and re
     .click();
   await expect(page.getByRole("heading", { name: "Resumo gerencial", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Indicadores do período" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Exportar CSV", exact: true })).toBeEnabled();
+  await expect(page.getByRole("link", { name: "Exportar dados", exact: true })).toBeVisible();
   let name = `Consulta relatório ${randomUUID().slice(0, 8)}`;
   await page.getByLabel("Nome da consulta").fill(name);
   await page.getByRole("button", { name: "Salvar consulta", exact: true }).click();
@@ -148,7 +148,7 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await expectThemeContrast(page, ".module-tabs .button");
   await page.setViewportSize({ width: 1440, height: 1000 });
   const filtersPanel = page.getByRole("region", { name: "Período e filtros", exact: true });
-  const exportAction = filtersPanel.getByRole("button", { name: "Exportar CSV", exact: true });
+  const exportAction = filtersPanel.getByRole("link", { name: "Exportar dados", exact: true });
   await expectExportAboveFilters(filtersPanel, exportAction, filtersPanel.locator("form"));
   await page.screenshot({ path: testInfo.outputPath("reports-desktop-light.png"), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -173,6 +173,84 @@ test("reports denies ordinary access and export before data", async ({ page }) =
   await page.goto("/reports");
   await expect(page.getByText("Você não tem permissão para acessar relatórios.")).toBeVisible();
   expect((await page.request.get("/api/v1/reports/exports")).status()).toBe(403);
+});
+
+test("grouped, summary and evolution download directly with preserved selection and recoverable failure", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(180000);
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill(syntheticUsers.administrator.email);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  for (const dataset of ["membersGrouped", "summary", "executive"]) {
+    await page.goto(
+      `/reports/exportar?dataset=${dataset}&groupBy=city&from=2020-01-01&to=2026-10-02&environment=test&notes=Análise%20sintética`,
+    );
+    const from = page.getByLabel(
+      dataset === "membersGrouped" ? "Data do cadastro: a partir de" : "Data inicial da comparação",
+      { exact: true },
+    );
+    await expect(from).toHaveValue("2020-01-01");
+    if (dataset === "membersGrouped")
+      await expect(page.getByLabel("Agrupar por", { exact: true })).toHaveValue("city");
+    else {
+      await expect(page.getByLabel("Ambiente", { exact: true })).toHaveValue("test");
+      await expect(page.getByLabel("Análise da gestão (opcional)")).toHaveValue(
+        "Análise sintética",
+      );
+    }
+    await expectWcag22AA(page);
+    for (const [label, extension, signature] of [
+      ["CSV", "csv", ""],
+      ["Excel", "xlsx", "PK"],
+      ["PDF", "pdf", "%PDF-"],
+    ]) {
+      const button = page.getByRole("button", { name: `Exportar em ${label}`, exact: true });
+      await expect(button).toBeEnabled();
+      const downloading = page.waitForEvent("download");
+      await button.click();
+      const download = await downloading;
+      const path = testInfo.outputPath(`${dataset}.${extension}`);
+      await download.saveAs(path);
+      const bytes = await readFile(path);
+      expect(bytes.length).toBeGreaterThan(0);
+      if (signature) expect(bytes.subarray(0, signature.length).toString()).toBe(signature);
+      await expect(page.locator(".export-form").getByRole("status")).toContainText(
+        "Geração e transferência concluídas pelo servidor",
+      );
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = "dark";
+    });
+    await expectWcag22AA(page);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    await page.screenshot({
+      path: testInfo.outputPath(`${dataset}-mobile-dark.png`),
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = "light";
+    });
+    await page.screenshot({
+      path: testInfo.outputPath(`${dataset}-desktop-light.png`),
+      fullPage: true,
+    });
+    // Invalid period is rejected before download, without discarding the user's selection.
+    await from.fill("2027-01-01");
+    await page.getByRole("button", { name: "Exportar em CSV", exact: true }).click();
+    await expect(from).toHaveValue("2027-01-01");
+    await expect(page.locator(".export-form").getByRole("alert")).toBeVisible();
+    await from.fill("2020-01-01");
+    const retry = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Exportar em CSV", exact: true }).click();
+    await (await retry).saveAs(testInfo.outputPath(`${dataset}-retry.csv`));
+  }
 });
 
 test("access export explicitly selects production and preserves other environments", async ({

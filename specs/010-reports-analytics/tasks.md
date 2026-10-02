@@ -1,5 +1,33 @@
 # Tasks: Relatórios: exportação direta nas três abas — incremento de 21/09/2026
 
+## Estado da entrega de 02/10/2026
+
+Autoria CODEX, solicitante GitHub não verificado (HTTP401). Branch
+`feature/reports-complete-20261002`, base748539d, worktree `.cache/pr-reports-complete-20261002`.
+Código preparado para Exportar detalhe agrupado, resumo e evolução sem os limites antigos (CAAB-44),
+preservando Exportar análise detalhada sem agrupamento (CAAB-43) e Disponibilizar motor
+compartilhado de download direto (CAAB-22).
+[Evidência e bloqueios](evidence/plan-2026-09-21-validation.md).
+
+| Tarefa    | Resultado atual e restante                                                                                                                                                                     |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T027      | Catálogo conferido: nove detalhes, oito agrupados, resumo e evolução; contrato atualizado.                                                                                                     |
+| T029      | Schema de comparação direta separado da consulta visual, sem teto de período; três formatos pelo núcleo. Contratos/unitários aprovados.                                                        |
+| T030      | Agrupamento acrescentado ao SQL completo; colunas e ordenação preservadas. A proteção scheduling:read em resumo já existe na base integrada e foi preservada. Teste PostgreSQL ainda pendente. |
+| T031/T025 | Política U1 já integrada, conferida em código e unitários de legacy-exports; regressão PostgreSQL/worker/download ainda não reexecutada nesta entrega.                                         |
+| T032–T034 | Adaptadores/tela expandidos; testes unitários incluem fontes, agrupamento, períodos, colunas e negações. Extensão de UI compatível com Agendamentos4e9abac.                                    |
+| T035/T036 | Integrações dos três formatos,100 registros, agregados/séries equivalentes e E2E preparados; execução bloqueada. T036 permanece aberta até a prova de equivalência real.                       |
+| T037      | Regressão unitária da coleta passou; integração pendente. A extração do SQL do funil não muda sua regra.                                                                                       |
+| T038      | Telemetria opcional CAAB_EXPORT_PROFILE=1 nos testes reais preparada; recursos/tempo/painel ainda sem medição atual.                                                                           |
+| T039      | Tipos, lint, build, contratos e testes focados aprovados; falha Windows na suíte unitária completa e gates de banco/navegador pendentes. Não declarar prontidão/QA.                            |
+
+Usuário confirmou WSL indisponível e solicitou ticket próprio: Retomar validações de Relatórios
+bloqueadas pelo WSL (CAAB-46), subtarefa de Exportar o conjunto completo de dados em Relatórios
+(CAAB-24). Banco descartável, E2E/a11y e C1 não foram executados nesta frente. Não iniciar serviços,
+reparar WSL ou usar o ambiente de Agendamentos por inferência. Retomada autorizada: commits e push
+para CI; PR para dev somente após gates. Merge e serviços locais continuam proibidos. Os checkpoints
+abaixo preservam o histórico, sem substituir este estado atual.
+
 **Pendências preservadas pela revisão de código — 21/09:** T025 (A02: autorização de Agendamentos em
 resumo/detalhes/worker/download) deve ser executada em conjunto com T030/T031, sem duplicação; T026
 (A13: instrumentação externa) continua dependência futura, não coberta pela regressão da coleta
@@ -37,7 +65,7 @@ já concluídas.
 
 ## Setup
 
-- [ ] T027 Conferir o catálogo real de telas/abas e filtros contra
+- [x] T027 Conferir o catálogo real de telas/abas e filtros contra
       `specs/010-reports-analytics/contracts/exports.md`; mapear campos permitidos/defaults e
       projeções atuais, sem criar fonte ou ampliar permissão.
 
@@ -54,7 +82,7 @@ já concluídas.
 **Objetivo/aceite independente:** Resumo oferece três formatos e período maior que 366 dias com os
 mesmos agregados autorizados da consulta completa.
 
-- [ ] T029 [US1] Permitir xlsx/csv/pdf no resumo e separar limites de tela dos filtros de exportação
+- [x] T029 [US1] Permitir xlsx/csv/pdf no resumo e separar limites de tela dos filtros de exportação
       em `packages/contracts/src/reports.ts` e `packages/contracts/tests/reports.test.ts`; preservar
       métricas e testar intervalo maior que 366 dias sem corte.
 

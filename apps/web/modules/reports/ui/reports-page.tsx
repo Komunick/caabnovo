@@ -31,7 +31,7 @@ type Export = {
   status: string;
   progress: number;
   created_at: string;
-  configuration: { query: ReportQuery; format: string };
+  configuration: { query: ReportQuery; format: string; notes?: string };
   safe_error_code: string | null;
 };
 type Data = {
@@ -231,13 +231,6 @@ export function ReportsPage({
       setMessage("Consulta salva. Ao abrir novamente, os dados serão atualizados.");
     }
   }
-  async function exportFile(format: "pdf" | "csv" | "xlsx") {
-    const result = await mutate<{ id: string }>("/exports", "POST", { query, notes, format });
-    if (result) {
-      setExportPage(1);
-      setMessage("Exportação solicitada. Acompanhe o processamento em Exportações abaixo.");
-    }
-  }
   function switchView(view: ReportQuery["view"]) {
     change({ view });
     setQuery((old) => ({ ...old, view, page: 1 }));
@@ -284,38 +277,19 @@ export function ReportsPage({
           </nav>
           <section className="panel" aria-labelledby="report-filters-title">
             <PanelHeading id="report-filters-title" title="Período e filtros">
-              {data?.canExport && query.view === "details" && !query.groupBy ? (
-                // CAAB-24: the complete selection downloads directly, without the 50k cap.
-                dirtyFilters || pending || !data.table ? (
+              {data?.canExport &&
+                (dirtyFilters || pending || (query.view === "details" && !data.table) ? (
                   <Button disabled>
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Button>
                 ) : (
                   <Link
                     className={buttonVariants()}
-                    href={reportExportHref(query, data.table.columns)}
+                    href={reportExportHref(query, data.table?.columns, notes)}
                   >
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Link>
-                )
-              ) : data?.canExport ? (
-                <>
-                  {(
-                    ["pdf", "csv", ...(query.view === "details" ? ["xlsx"] : [])] as (
-                      "pdf" | "csv" | "xlsx"
-                    )[]
-                  ).map((format) => (
-                    <Button
-                      key={format}
-                      disabled={pending || dirtyFilters}
-                      onClick={() => void exportFile(format)}
-                    >
-                      <Download size={18} aria-hidden="true" />
-                      {`Exportar ${format === "xlsx" ? "Excel" : format.toUpperCase()}`}
-                    </Button>
-                  ))}
-                </>
-              ) : null}
+                ))}
             </PanelHeading>
             <div className={styles.actions}>
               {(["week", "month"] as const).map((preset) => (
@@ -881,8 +855,8 @@ export function ReportsPage({
                         {item.status === "failed" && (
                           <p>
                             {item.safe_error_code === "REPORT_TOO_LARGE"
-                              ? "Refine os filtros: limite de 50 mil linhas por arquivo."
-                              : "Confira suas permissões e solicite novamente. Se persistir, consulte Processamentos."}
+                              ? "Esta geração antiga excedeu seu limite. Solicite novamente pelo download direto."
+                              : "Confira suas permissões e solicite novamente pelo download direto."}
                           </p>
                         )}
                       </div>
@@ -895,12 +869,16 @@ export function ReportsPage({
                         </a>
                       )}
                       {item.status === "failed" && (
-                        <Button
-                          disabled={pending}
-                          onClick={() => void mutate("/exports", "POST", item.configuration)}
+                        <Link
+                          className={buttonVariants()}
+                          href={reportExportHref(
+                            item.configuration.query,
+                            undefined,
+                            item.configuration.notes,
+                          )}
                         >
                           Solicitar novamente
-                        </Button>
+                        </Link>
                       )}
                     </li>
                   ))}

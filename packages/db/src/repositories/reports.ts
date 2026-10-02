@@ -97,7 +97,7 @@ export function reportSql(query: ReportQuery) {
     };
   return { sql: filtered, values };
 }
-/** Filters of a direct export: the screen's filters, without page, grouping or the 366-day window. */
+/** Filters of a direct export: the screen's filters/grouping, without pagination or duration cap. */
 export type ReportExportQuery = Pick<
   ReportQuery,
   | "dataset"
@@ -111,7 +111,7 @@ export type ReportExportQuery = Pick<
   | "channel"
   | "environment"
   | "source"
->;
+> & { groupBy?: string };
 /**
  * Direct export of the detailed analysis (CAAB-24): the complete selection for a cursor, with no
  * row cap. Same reviewed sources and parameterized filters as the screen; columns come out in the
@@ -122,7 +122,10 @@ export function reportExportSql(
   columns: readonly string[],
   sort: readonly { field: string; direction: "asc" | "desc" }[],
 ) {
-  const fields = reportCatalog[query.dataset].columns as Record<string, string>;
+  const sourceFields = reportCatalog[query.dataset].columns as Record<string, string>;
+  if (query.groupBy && (query.dataset === "access" || !Object.hasOwn(sourceFields, query.groupBy)))
+    throw reportError("EXPORT_CONFIGURATION_INVALID", 422);
+  const fields = query.groupBy ? { group: "Grupo", count: "Quantidade" } : sourceFields;
   if (
     !columns.length ||
     columns.some((key) => !Object.hasOwn(fields, key)) ||
@@ -132,7 +135,7 @@ export function reportExportSql(
   const { sql, values } = reportSql({
     ...query,
     view: "details",
-    groupBy: "",
+    groupBy: query.groupBy ?? "",
     columns: [],
     sort: "date",
     direction: "desc",
@@ -141,9 +144,9 @@ export function reportExportSql(
   const order = sort.length
     ? sort.map(
         (entry) =>
-          `${entry.field === "date" ? "at" : `cells->'${entry.field}'`} ${entry.direction === "desc" ? "DESC" : "ASC"}`,
+          `${entry.field === "date" ? "at" : query.groupBy ? (entry.field === "group" ? "cells->>'group'" : "(cells->>'count')::bigint") : `cells->'${entry.field}'`} ${entry.direction === "desc" ? "DESC" : "ASC"}`,
       )
-    : ["at DESC"];
+    : [query.groupBy ? "(cells->>'count')::bigint DESC" : "at DESC"];
   return {
     text: `SELECT id AS "_recordId",${columns.map((key) => `cells->'${key}' AS "${key}"`).join(",")} FROM (${sql}) report ORDER BY ${[...order, "id ASC"].join(",")}`,
     values,
@@ -164,7 +167,7 @@ export async function queryReport(
   );
   const total = Number(count.rows[0]!.total);
   // Memory guard of the legacy queued export, which builds the whole file in the worker. The
-  // detailed analysis without grouping exports through reportExportSql instead (CAAB-24).
+  // detailed analysis (including groups) exports through reportExportSql instead.
   if (exportAll && total > 50000) throw reportError("REPORT_TOO_LARGE", 422);
   const columns: Record<string, string> = query.groupBy
     ? {

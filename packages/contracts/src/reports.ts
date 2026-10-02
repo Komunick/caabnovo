@@ -167,6 +167,25 @@ export const reportQuerySchema = z
       ctx.addIssue({ code: "custom", path: ["groupBy"], message: "Agrupamento inválido" });
   });
 export type ReportQuery = z.infer<typeof reportQuerySchema>;
+/** Direct overview exports require a comparison period, with no duration or row ceiling.
+ * The paged screen and the historical queued-export schema remain separate. */
+export const reportOverviewFiltersSchema = z
+  .object({
+    from: reportDaySchema,
+    to: reportDaySchema,
+    channel: z.enum(["all", "admin", "site", "app"]).default("all"),
+    environment: z.enum(["production", "development", "test"]).default("production"),
+    source: z
+      .string()
+      .regex(/^[a-z0-9.-]{0,80}$/)
+      .default(""),
+    notes: z.string().trim().max(2000).default(""),
+  })
+  .strict()
+  .refine((input) => input.from <= input.to, {
+    path: ["to"],
+    message: "Confira a ordem das datas.",
+  });
 /** JSONB changes object key order; pagination does not change the exported filters. */
 export function sameReportFilters(candidate: ReportQuery, applied: ReportQuery): boolean {
   const left = reportQuerySchema.safeParse({ ...candidate, page: 1 });

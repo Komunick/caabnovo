@@ -1,3 +1,21 @@
+# Decisões de implementação — 02/10/2026
+
+Exportar detalhe agrupado, resumo e evolução sem os limites antigos (CAAB-44) amplia o conjunto de
+adaptadores de Relatórios, preservando cursor, writers, snapshot e revalidação existentes. Não
+acrescenta dependência, fila, serviço nem migration. Comparação do código conciliado de
+Agendamentos4e9abac guiou a separação das alterações em reports.ts e o reaproveitamento de
+initialFilters/renderFilter. Não copiar o modelo novo de reservas isoladamente para uma base sem as
+migrations correspondentes; a conciliação posterior preservará a projeção da frente prioritária.
+
+Resumo/evolução usam UNION de projeções agregadas parametrizadas no cursor, em vez de carregar todos
+os registros de detalhe no processo ou reconstruir outro motor. Inventário, fontes,
+rótulos/definições e SQL do funil são compartilhados com a consulta. Testes de equivalência com
+reportSummary/reportUsage são necessários para evitar divergência de agregados. As fontes são
+filtros com permissão no catálogo existente; isso permite revalidar a seleção sem confiar em
+permissões enviadas pelo cliente ou modificar a autoridade do núcleo. Datas da comparação continuam
+obrigatórias; a duração é ilimitada. Detalhe aceita extremos abertos. Não foi realizada nova
+pesquisa externa nem presumida homologação das escolhas.
+
 # Complemento — 30/09/2026 (CAAB-24, aba Detalhe)
 
 **Escopo autorizado:** só a exportação da análise detalhada sem agrupamento (T028, T030, T032–T035).
@@ -11,8 +29,8 @@ pendentes, sem alteração.
 - O teto de 50 mil do caminho legado (`queryReport` com `exportAll`, que monta o arquivo inteiro em
   memória no worker) fica como proteção de memória desse caminho, que a aba Detalhe sem agrupamento
   deixa de oferecer. Ele continua servindo resumo, apresentação e detalhe agrupado.
-- Excel acima de 1.048.576 linhas continua completo: o gravador de 001 abre novas planilhas
-  ("Dados 2", "Dados 3"…) em vez de cortar.
+- Excel acima de 1.048.576 linhas continua completo: o gravador de 001 abre novas planilhas ("Dados
+  2", "Dados 3"…) em vez de cortar.
 - Exportar exige, a cada lote, `reports:read`, `exports:generate` e a permissão da fonte
   (`scheduling:read` em Agendamentos).
 

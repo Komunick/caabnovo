@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { reportCatalog } from "@caab/contracts";
 import { authorizeExport, authorizedCatalog } from "../exports/catalog";
-import { reportExportAdapter, reportExportQuery, reportExports } from "./export-adapter";
+import { reportExportAdapter, reportExportQuery, reportDetailExports } from "./export-adapter";
 import { reportExportRequest, reportExporter } from "./export-fixtures";
 
 /** Spec 010 T032: report export adapter, without database. */
@@ -15,10 +15,10 @@ const actor = (permissions: readonly string[]) => ({
 
 describe("report export adapter", () => {
   it("registers one adapter per report source under the reports module", () => {
-    expect(reportExports.map((adapter) => adapter.dataset).sort()).toEqual(
+    expect(reportDetailExports.map((adapter) => adapter.dataset).sort()).toEqual(
       Object.keys(reportCatalog).sort(),
     );
-    for (const adapter of reportExports) {
+    for (const adapter of reportDetailExports) {
       expect(adapter.module).toBe("reports");
       expect(adapter.requires).toEqual(["reports:read"]);
     }
@@ -100,7 +100,7 @@ describe("report export adapter", () => {
     },
   );
 
-  it.each(reportExports.map((adapter) => [adapter.dataset, adapter] as const))(
+  it.each(reportDetailExports.map((adapter) => [adapter.dataset, adapter] as const))(
     "keeps either missing date bound open for %s",
     (_dataset, adapter) => {
       const query = (filters: Record<string, string>) =>

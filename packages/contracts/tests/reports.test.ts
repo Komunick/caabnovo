@@ -6,8 +6,21 @@ import {
   reportQuerySchema,
   analyticsEventSchema,
   sameReportFilters,
+  reportOverviewFiltersSchema,
 } from "../src/reports";
 describe("report contracts", () => {
+  it("separates uncapped comparison exports from the paged screen", () => {
+    expect(
+      reportOverviewFiltersSchema.safeParse({ from: "2020-01-01", to: "2026-10-02" }).success,
+    ).toBe(true);
+    for (const input of [
+      { from: "2026-02-30", to: "2026-10-02" },
+      { from: "2026-10-02", to: "2020-01-01" },
+      { from: "", to: "2026-10-02" },
+      { from: "2020-01-01", to: "2026-10-02", source: "';DROP" },
+    ])
+      expect(reportOverviewFiltersSchema.safeParse(input).success).toBe(false);
+  });
   it("compares saved JSONB filters independently of object order and page", () => {
     const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
     const restored = Object.fromEntries(Object.entries(query).reverse()) as typeof query;

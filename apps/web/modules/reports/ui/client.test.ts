@@ -2,6 +2,39 @@ import { afterEach, expect, it, vi } from "vitest";
 import { apiError, reportQuerySchema } from "@caab/contracts";
 import { reportExportHref, reportRequest } from "./client";
 afterEach(() => vi.unstubAllGlobals());
+it("preserves grouped order and overview filters and comments in direct export links", () => {
+  const query = reportQuerySchema.parse({
+    view: "details",
+    from: "2026-01-01",
+    to: "2026-09-30",
+    groupBy: "city",
+    sort: "city",
+    direction: "asc",
+  });
+  const grouped = new URL(
+    reportExportHref(query, { group: "Cidade", count: "Quantidade" }),
+    "http://caab.test",
+  );
+  expect(grouped.searchParams.get("dataset")).toBe("membersGrouped");
+  expect(grouped.searchParams.get("groupBy")).toBe("city");
+  expect(grouped.searchParams.get("sort")).toBe("group");
+  for (const view of ["summary", "executive"] as const) {
+    const href = new URL(
+      reportExportHref(
+        { ...query, view, environment: "test", channel: "site", source: "caab.site" },
+        {},
+        "Análise sintética",
+      ),
+      "http://caab.test",
+    );
+    expect(href.searchParams.get("dataset")).toBe(view);
+    expect(href.searchParams.get("environment")).toBe("test");
+    expect(href.searchParams.get("channel")).toBe("site");
+    expect(href.searchParams.get("source")).toBe("caab.site");
+    expect(href.searchParams.get("notes")).toBe("Análise sintética");
+    expect(href.searchParams.has("columns")).toBe(false);
+  }
+});
 it("links the detailed analysis to its direct export with filters, columns and order", () => {
   const href = new URL(
     reportExportHref(

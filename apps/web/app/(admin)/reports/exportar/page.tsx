@@ -1,11 +1,13 @@
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { loadServerEnv } from "@caab/config";
+import { reportPreset } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
 import { authorizedCatalog } from "@/modules/exports/catalog";
 import { exportCsrf } from "@/modules/exports/http";
 import { reportExportAdapter } from "@/modules/reports/export-adapter";
-import { ExportScreen, type ExportInitial } from "@/modules/exports/ui/export-screen";
+import { type ExportInitial } from "@/modules/exports/ui/export-screen";
+import { ReportExportScreen } from "@/modules/reports/ui/report-export-screen";
 
 type Params = Record<string, string | string[] | undefined>;
 const one = (value: string | string[] | undefined) => (typeof value === "string" ? value : "");
@@ -35,17 +37,32 @@ export default async function ReportExportPage({
   const filterKeys = new Set(catalog.filters.map((filter) => filter.key));
   const columnKeys = new Set(catalog.columns.map((column) => column.key));
   // "Todos os registros" on the screen means no date bounds in the file.
-  const everything = one(params.dateScope) === "all" && adapter.dataset !== "access";
+  const overview = ["summary", "executive"].includes(adapter.dataset);
+  const grouped = adapter.dataset.endsWith("Grouped");
+  const everything = !overview && one(params.dateScope) === "all" && adapter.dataset !== "access";
   const filters = Object.fromEntries(
     [...filterKeys]
       .filter((key) => !(everything && (key === "from" || key === "to")))
-      .map((key) => [key, one(params[key]).slice(0, 120)] as const)
+      .map((key) => [key, one(params[key]).slice(0, key === "notes" ? 2000 : 120)] as const)
       .filter(([, value]) => value !== ""),
   );
+  if (overview) {
+    const preset = reportPreset("month");
+    filters.from ??= preset.from;
+    filters.to ??= preset.to;
+    filters.environment ||= "production";
+    for (const key of filterKeys) if (key.startsWith("include_")) filters[key] ??= "yes";
+  }
   const columns = one(params.columns)
     .split(",")
     .filter((key, index, all) => columnKeys.has(key) && all.indexOf(key) === index);
-  const sort = columnKeys.has(one(params.sort)) ? one(params.sort) : "date";
+  const sort = columnKeys.has(one(params.sort))
+    ? one(params.sort)
+    : overview
+      ? ""
+      : grouped
+        ? "count"
+        : "date";
   const initial: ExportInitial = {
     filters,
     ...(columns.length ? { columns } : {}),
@@ -53,11 +70,17 @@ export default async function ReportExportPage({
     direction: one(params.direction) === "asc" ? "asc" : "desc",
   };
   return (
-    <ExportScreen
+    <ReportExportScreen
       sourcePermission="reports:read"
       backHref="/reports"
       backLabel="Voltar aos relatórios"
-      defaultOrderLabel="Data (mais recente primeiro)"
+      defaultOrderLabel={
+        overview
+          ? "Seção e indicador"
+          : grouped
+            ? "Quantidade (maior primeiro)"
+            : "Data (mais recente primeiro)"
+      }
       context={{ source: "reports" }}
       initial={initial}
       catalog={{

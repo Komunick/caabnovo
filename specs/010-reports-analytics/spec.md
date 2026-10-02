@@ -1,5 +1,17 @@
 # Feature Specification: Relatórios e Análises
 
+## Entrega em validação — 02/10/2026
+
+Exportar o conjunto completo de dados em Relatórios (CAAB-24): o detalhe sem agrupamento integrado
+em748539d é preservado, com aceite humano de Exportar análise detalhada sem agrupamento (CAAB-43)
+ainda não registrado. A nova branch `feature/reports-complete-20261002` implementa Exportar detalhe
+agrupado, resumo e evolução sem os limites antigos (CAAB-44), conforme
+[contrato](contracts/exports.md). As três abas e retentativas de exportações antigas usam download
+direto Excel/CSV/PDF. Limites de consulta visual e worker histórico não se aplicam ao novo caminho.
+Sem migrations, novas permissões, serviços de produto ou reconstrução de Disponibilizar motor
+compartilhado de download direto (CAAB-22). Status de validação e limitações devem ser lidos na
+evidência desta entrega; checkpoints abaixo são históricos.
+
 ## Checkpoint de padronização visual — 22/09/2026
 
 Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,

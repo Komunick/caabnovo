@@ -1,28 +1,55 @@
-import type { ReportQuery, ReportTable } from "@caab/contracts";
+import { reportCatalog, type ReportQuery, type ReportTable } from "@caab/contracts";
 
 /**
  * Link from the detailed analysis to its direct export (CAAB-24): carries the applied filters,
  * the visible columns in their order and the sort. The export page validates everything again.
  */
-export function reportExportHref(query: ReportQuery, columns: ReportTable["columns"]): string {
-  const params = new URLSearchParams({ dataset: query.dataset });
+export function reportExportHref(
+  query: ReportQuery,
+  columns?: ReportTable["columns"],
+  notes = "",
+): string {
+  const overview = query.view !== "details";
+  const selectedColumns =
+    columns ??
+    (query.groupBy
+      ? { group: "Grupo", count: "Quantidade" }
+      : Object.fromEntries(
+          Object.entries(reportCatalog[query.dataset].columns).filter(
+            ([key]) => !query.columns.length || query.columns.includes(key),
+          ),
+        ));
+  const params = new URLSearchParams({
+    dataset: overview ? query.view : query.groupBy ? `${query.dataset}Grouped` : query.dataset,
+  });
   const entries: [string, string][] = [
     ["dateScope", query.dateScope],
+    ["groupBy", query.groupBy],
+    ["notes", notes],
     ["from", query.from],
     ["to", query.to],
     ["search", query.search],
     ["status", query.status],
     ["category", query.category],
     ["city", query.city],
-    ...(query.dataset === "access"
+    ...(query.dataset === "access" || overview
       ? ([
           ["channel", query.channel === "all" ? "" : query.channel],
           ["environment", query.environment],
           ["source", query.source],
         ] as [string, string][])
       : []),
-    ["columns", Object.keys(columns).join(",")],
-    ["sort", query.sort],
+    ["columns", overview ? "" : Object.keys(selectedColumns).join(",")],
+    [
+      "sort",
+      overview
+        ? ""
+        : query.groupBy
+          ? query.sort === query.groupBy
+            ? "group"
+            : "count"
+          : query.sort,
+    ],
     ["direction", query.direction],
   ];
   for (const [key, value] of entries) if (value) params.set(key, value);
@@ -40,7 +67,7 @@ export async function reportRequest<T>(path: string, options: RequestInit = {}):
         "Esta consulta mudou. Suas edições foram preservadas. Copie o que deseja manter; use Cancelar edição e abra novamente a consulta para carregar a versão salva.",
       VALIDATION_FAILED: "Confira o período (até 366 dias), os filtros e as colunas selecionadas.",
       REPORT_TOO_LARGE:
-        "Este arquivo passa de 50 mil linhas. Para baixar tudo, use Exportar dados na análise detalhada sem agrupamento.",
+        "Esta geração antiga excedeu seu limite. Use Exportar dados para baixar o conjunto completo.",
     };
     throw new Error(
       messages[data.code] ??

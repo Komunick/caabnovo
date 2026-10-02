@@ -8,6 +8,7 @@ import {
 } from "@caab/contracts";
 import { reportExportSql, type ReportExportQuery } from "@caab/db/repositories/reports";
 import { ExportError, type ExportAdapter } from "../exports/catalog";
+import { overviewExports } from "./overview-export-adapter";
 
 /**
  * Direct export of the detailed analysis (CAAB-24, spec 010 T033): one adapter per report source,
@@ -83,20 +84,21 @@ export function reportExportQuery(dataset: ReportDataset, input: ExportRequest):
     source,
   };
 }
-function reportAdapter(dataset: ReportDataset): ExportAdapter {
+function reportAdapter(dataset: ReportDataset, grouped = false): ExportAdapter {
   const source = reportCatalog[dataset];
-  const fields = source.columns as Record<string, string>;
+  const sourceFields = source.columns as Record<string, string>;
+  const fields = grouped ? { group: "Grupo", count: "Quantidade" } : sourceFields;
   return {
     module: "reports",
-    dataset,
-    label: source.label,
+    dataset: grouped ? `${dataset}Grouped` : dataset,
+    label: grouped ? `${source.label} por grupo` : source.label,
     permission: source.permission,
     requires: ["reports:read"],
     scope: "module",
     columns: Object.entries(fields).map(([key, label]) => ({
       key,
       label,
-      scalarType: numeric.has(key) ? "number" : key === "date" ? "date" : "text",
+      scalarType: numeric.has(key) || key === "count" ? "number" : key === "date" ? "date" : "text",
       defaultSelected: true,
       sortable: true,
     })),
@@ -104,13 +106,29 @@ function reportAdapter(dataset: ReportDataset): ExportAdapter {
       { key: "from", label: `${source.dateLabel}: a partir de`, type: "date" },
       { key: "to", label: `${source.dateLabel}: até`, type: "date" },
       ...textFilters
-        .filter(([, field]) => Object.hasOwn(fields, field))
-        .map(([key, field]): ExportFilter => ({ key, label: fields[field]!, type: "text" })),
+        .filter(([, field]) => Object.hasOwn(sourceFields, field))
+        .map(([key, field]): ExportFilter => ({ key, label: sourceFields[field]!, type: "text" })),
+      ...(grouped
+        ? [
+            {
+              key: "groupBy",
+              label: "Agrupar por",
+              type: "choice" as const,
+              options: Object.entries(sourceFields).map(([value, label]) => ({ value, label })),
+            },
+          ]
+        : []),
       ...(dataset === "access" ? accessFilters : []),
     ],
     query(input) {
       try {
-        return reportExportSql(reportExportQuery(dataset, input), input.columns, input.sort);
+        const groupBy = grouped ? text(input, "groupBy", 30) : "";
+        if (grouped && !Object.hasOwn(sourceFields, groupBy)) throw invalid();
+        return reportExportSql(
+          { ...reportExportQuery(dataset, input), groupBy },
+          input.columns,
+          input.sort,
+        );
       } catch (error) {
         if (error instanceof ExportError) throw error;
         throw invalid();
@@ -131,7 +149,16 @@ function reportAdapter(dataset: ReportDataset): ExportAdapter {
     },
   };
 }
-export const reportExports = (Object.keys(reportCatalog) as ReportDataset[]).map(reportAdapter);
+export const reportDetailExports = (Object.keys(reportCatalog) as ReportDataset[]).map((dataset) =>
+  reportAdapter(dataset),
+);
+export const reportExports = [
+  ...reportDetailExports,
+  ...(Object.keys(reportCatalog) as ReportDataset[])
+    .filter((dataset) => dataset !== "access")
+    .map((dataset) => reportAdapter(dataset, true)),
+  ...overviewExports,
+];
 export function reportExportAdapter(dataset: string) {
   return reportExports.find((adapter) => adapter.dataset === dataset);
 }
