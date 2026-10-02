@@ -1,5 +1,124 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Revisão de aceite de acessos — 02/10/2026
+
+Escopo: Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir
+criação de contas ao fluxo administrativo (CAAB-18) e Mostrar apenas funções autorizadas na
+navegação (CAAB-20). Base `748539d`; branch `docs/access-review-20261002`.
+[Matriz e evidências](evidence/access-acceptance-2026-10-02.md). As tarefas abertas abaixo são
+encaminhamentos, não autorização para implementar, ligar serviços ou publicar. Não reabrir
+T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
+
+- [x] AC-T001 Conferir implementação integrada, contrato documental, critérios e evidências;
+      preparar matriz AC01–AC14, distinguir histórico/teste atual/QA humano e executar recorte sem
+      serviços. Resultado: 31 unitários e 28 contratos aprovados, com G01–G03/P01 registrados.
+- [ ] AC-T002 Corrigir G01 em `apps/web/modules/messaging/ui/schedules.tsx`: esconder Novo
+      agendamento sem `messages:write`, mantendo consulta; validar Gestor/Colaborador de leitura,
+      escrita concedida, revogação e POST negado. Coordenar Mensagens, ler guia de design e
+      preservar M016/envio real desativado. Não alterar Agendamentos por essa ocorrência.
+- [ ] AC-T003 Complementar G02 em `apps/web/tests/e2e/direct-exports.spec.ts`: atribuir cargo
+      Colaborador real ao destinatário, executar a escrita recebida e confirmar que Gestor permanece
+      negado e Colaborador não concede acessos/cargos por API forjada. Não converter a fixture sem
+      cargo em decisão de migração de contas.
+- [ ] AC-T004 Complementar G03: prova dirigida de expiração da autoridade durante espera por lock,
+      sem persistência/auditoria de sucesso indevidas; verificar separadamente atualização de
+      descoberta por intervalo15s, foco e mudança de rota. Preservar guardas e registrar falhas de
+      rede como limite de atualização visual, não autorização do servidor.
+- [ ] AC-T005 Obter decisão do alcance do cargo base para contas atualmente sem cargo (P01) e
+      atualizar o contrato existente antes de propor transição. Não atribuir cargos por inferência.
+- [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
+      concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
+      limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos
+      testes automatizados. Não iniciar serviços para concluir esta revisão documental.
+
+## Conciliação do recorte DS — 02/10/2026
+
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
+design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
+humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
+retroativa à conta desta sessão.
+
+Os IDs históricos T133–T140 do guia são referidos aqui como **DS-T133–DS-T140**; T139/T140 sem
+prefixo continuam sendo cargo único na base integrada. A evidência original permanece intacta. A
+consolidação de 23/09 conservou UI-BUTTONS e a revisão visual como históricos explicitamente
+subordinados ao guia; não serão removidos nem tratados como padrões concorrentes. Menções abaixo à
+remoção/branch/testes descrevem a entrega original. A frente separada de acessos mantém seus
+contratos, requisitos e evidências; não substituir este arquivo inteiro ao conciliá-la.
+
+## Guia de design — incremento documental de 22/09/2026
+
+Escopo: DS-FR01–DS-FR08 e DS-SC01–DS-SC04 da US4, cenários DS1/DS2. Branch separada por pedido do
+usuário: `docs/design-guide-20260922`. T124–T132 pertencem ao PR37, integrado em `3907248` e já
+incorporado por fast-forward nesta entrega. Não reexecutar suas implementações.
+
+### Auditoria ampliada solicitada — 22/09/2026
+
+- [x] DS-T139 [US4] Auditar visualmente `docs/caab-design.md`, confrontar capturas com sua versão,
+      executar testes aplicáveis de componentes/contratos, medidas e referências; registrar
+      divergências, corrigir lacunas documentais e publicar evidências com limites, sem alterar a
+      aplicação ou abrir PR. Complementa DS-FR02–08; depende de DS-T138.
+- [x] DS-T140 [US4] Inventariar documentos semelhantes, comparar e incorporar informação útil no
+      `docs/caab-design.md`, adotá-lo como guia principal, remover guias redundantes e atualizar
+      links e orientações de trabalho. Registrar procedência e verificar que specs/evidências
+      próprias foram preservadas. Complementa DS-FR01/DS-FR07/DS-FR08; depende de DS-T139.
+
+Fechamento da auditoria/consolidação: guia principal em `docs/caab-design.md`; dois guias
+redundantes removidos, referências atualizadas e evidência preservada. 554 testes
+unitários/contratos e 516 comparações de estilos passaram; 19/21 verificações de comportamento
+passaram, com as duas divergências de validação precoce documentadas. Revisão assistiva de tabela
+continua pendente. 90 links locais/20 âncoras e formatação conferidos. DS-T133–DS-T140 concluídas
+somente no recorte documental; relatório registra alcance e limites. Nenhum PR novo/reaberto ou
+push.
+
+### Preparação e fundamentos
+
+- [x] DS-T133 Consolidar pesquisa oficial e inventário em
+      `specs/001-project-foundation/research.md`, com alternativas, fontes/data e limites de
+      evidência; cobre DS-FR02/DS-FR08.
+
+### US4 / DS1 — referência para telas CAAB
+
+- [x] DS-T134 [US4] Criar `docs/caab-design.md` com identidade, temas, tipografia, medidas, formas,
+      profundidade, ícones e índice/fontes; conferir cascata vigente; cobre DS-FR01/DS-FR02.
+- [x] DS-T135 [US4] Completar `docs/caab-design.md` com composição de lista/formulário/exportação,
+      componentes, estados, rascunhos, permissões, linguagem, responsividade e acessibilidade;
+      incluir matrizes de posição/ordem de campos/botões, localização/formato/aplicação de filtros e
+      máscaras/validação e compactação por região com limites e aceite comparável conforme
+      complemento do usuário, com compactação em seção principal e acesso destacado no início; cobre
+      DS-FR03–06.
+
+Aceite independente: leitor consegue reconstruir a hierarquia das três jornadas e localizar as
+fontes dos valores e controles, distinguindo regras de evidência e pendência.
+
+### US4 / DS2 — manutenção e adaptação
+
+- [x] DS-T136 [US4] Completar manutenção e adaptação em `docs/caab-design.md`; conciliar
+      `docs/UI-BUTTONS.md` e adicionar entrada em `docs/TOOLING.md`; cobre DS-FR01/DS-FR07.
+
+Aceite independente: roteiro separa estrutura reutilizável da marca, caminhos, módulos, permissões e
+decisões institucionais da CAAB, sem criar dependência genérica.
+
+### Verificação e fechamento
+
+- [x] DS-T137 Conferir links/âncoras, tokens/medidas, formatação e diff; registrar matriz de
+      cobertura, análise, evidência visual consultada e limitações em
+      `specs/001-project-foundation/evidence/design-guide-2026-09-22.md`; cobre DS-FR08/DS-SC01–04.
+- [x] DS-T138 Fechar checkpoint DS em `specs/001-project-foundation/spec.md`, `plan.md` e
+      `tasks.md`, conferir sincronização da principal e finalizar entrega documental local; PR
+      adiado por pedido posterior do usuário; cobre DS-FR06–08. Não aprovar nem integrar PRs.
+
+Dependências: DS-T133 → DS-T134 → DS-T135 → DS-T136 → DS-T137 → DS-T138. Execução sequencial porque
+o guia e os artefatos compartilham conteúdo. MVP documental: DS-T133–DS-T135; entrega solicitada
+inclui as seis. Não executar tarefas antigas nem marcar checklist global 13/16 como concluído por
+esta entrega.
+
+Fechamento local inicial (histórico): compactação incorporada, reanálise sem conflitos e validações
+documentais aprovadas. DS-T133–DS-T138 concluídas; 70 referências locais novas/20 âncoras, valores e
+formatação conferidos. PR38, aberto antes da instrução de não abrir PR ainda, foi fechado sem merge.
+Nenhum PR novo/reaberto; complemento mantido local, sem push. Não há implantação ou homologação
+funcional nova.
+
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/collaborator-contact.md). **Branch da entrega:**
 `feature/collaborators-contact-20260921`. Incremento atual: T124–T129 e005 LC03, concluídos conforme

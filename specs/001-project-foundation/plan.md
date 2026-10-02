@@ -1,5 +1,126 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
+## Revisão de aceite de acessos — 02/10/2026
+
+Entrega de revisão: `docs/access-review-20261002`, base `748539d`. Escopo e resultado na
+[matriz de aceite](evidence/access-acceptance-2026-10-02.md): cargos, bloqueio de autocadastro e
+descoberta já integrados. Não executar novamente o plano histórico de construção abaixo.
+
+Revisão realizada por inspeção e testes unitários/contratos sem serviços. Próximos trabalhos
+registrados em AC-T002–AC-T006: corrigir a descoberta de criação em Mensagens, complementar provas
+dos cargos e revalidação temporal, resolver o alcance do cargo base e validar em ambiente
+autorizado. Nenhuma implementação desses incrementos está autorizada por este registro. A correção
+de Mensagens deve preservar consulta e guardas de escrita, sem ativar envio real; ler o guia de
+design antes de alterar UI. Não há mudança funcional planejada para Agendamentos nesta revisão.
+
+Conciliação documental por blocos; preservar DS-T133–DS-T140 e o contrato documental de contas sem
+cargo. Sem serviços, push, PR, integração ou QA humano. Código, migrations e dados intactos.
+
+## Conciliação do recorte DS — 02/10/2026
+
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
+design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
+humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
+retroativa à conta desta sessão.
+
+Os IDs históricos T133–T140 do guia são referidos aqui como **DS-T133–DS-T140**; T139/T140 sem
+prefixo continuam sendo cargo único na base integrada. A evidência original permanece intacta. A
+consolidação de 23/09 conservou UI-BUTTONS e a revisão visual como históricos explicitamente
+subordinados ao guia; não serão removidos nem tratados como padrões concorrentes. Menções abaixo à
+remoção/branch/testes descrevem a entrega original. A frente separada de acessos mantém seus
+contratos, requisitos e evidências; não substituir este arquivo inteiro ao conciliá-la.
+
+## Incremento documental DS — 22/09/2026
+
+**Branch:** `docs/design-guide-20260922`, separada por pedido explícito. **Spec:** DS-FR01–DS-FR08
+em [spec.md](spec.md). **Tarefas:** DS-T133–DS-T140; nenhuma tarefa histórica é reaberta por este
+plano.
+
+### Summary e Technical Context
+
+Criar `docs/caab-design.md` na pasta de documentação: guia em português, oito seções visuais
+inspiradas no formato oficial DESIGN.md, seguidas de compactação e densidade visual em seção
+principal própria, interação/acessibilidade, estado de adoção, manutenção e adaptação. A compactação
+recebe também acesso direto no início e destaque no índice. Sem YAML de tokens duplicado, gerador,
+dependência nova ou promessa de importação automática. Código continua executando tokens e estilos;
+documento registra sua aplicação, precedência e lacunas. Os valores de CSS devem considerar a
+cascata final, não somente a primeira declaração.
+
+### Constitution Check
+
+I: reutilizar componentes e documentação; nenhuma abstração ou biblioteca nova. II–III: nenhum
+serviço, API, dado ou schema alterado. IV–VI: conservar acesso, privacidade e decisões
+institucionais, sem dados reais nas ilustrações ou execução de integrações. VII: Lucide e WCAG 2.2
+AA como critérios, sem atestar conformidade por inspeção estática. Entrega em branch própria; PR
+adiado até nova autorização. Futuro PR para dev; sem merge, aprovação, deploy ou localhost. Gates
+completos do repositório continuam obrigatórios antes de merge; a validação local deste incremento
+usa formatação, links, valores e revisão documental.
+
+### Fases e estrutura
+
+1. Pesquisa oficial em `research.md` e inventário de tokens, CSS final, componentes e imagens
+   sintéticas. Capturas históricas servem como evidência contextual, nunca como aprovação atual.
+2. Guia em `docs/caab-design.md`, com índice, fontes relativas e regras de uso; esquema textual de
+   listagem, formulário e exportação, tabela dos dois temas e estados/critério de revisão.
+3. Conciliar `docs/UI-BUTTONS.md`, mantendo resultados históricos identificados; adicionar ponto de
+   entrada em `docs/TOOLING.md`. Registrar achados em `evidence/design-guide-2026-09-22.md`.
+4. Conferir formatação explícita, destinos/âncoras, medidas e coerência; revisar o diff para
+   garantir alteração exclusivamente documental. Registrar limites e concluir apenas tarefas
+   comprovadas.
+
+Complemento confirmado durante implementação: matrizes de posição/ordem de campos e ações,
+localização/formato/comportamento de filtros e máscaras/validação no guia. Conferir contratos
+`brazilian-contact.ts`, `users.ts`, `members.ts`, `partners.ts` e `oab-lookup.ts`, distinguindo
+validação cadastral de busca parcial. Sem padronizar comportamentos divergentes por mudança de
+código.
+
+Modelo documental: regra (identificador/escopo/status/fonte), referência (arquivo ou URL/data/base)
+e evidência (procedência/limites). Nenhuma entidade de negócio ou contrato externo novo; por isso
+`data-model.md` e `contracts/` existentes não recebem entidades/endpoints artificiais. O contrato de
+leitura é o índice do guia e seus critérios DS. Validação reproduzível em `quickstart.md`.
+
+### Auditoria ampliada solicitada — DS-T139
+
+Comparar capturas sintéticas de listagem/formulário/exportação nos temas e larguras disponíveis,
+verificando diferenças de código entre sua origem e a base. Executar testes existentes de
+componentes, contatos, contratos e rascunhos; complementar com renderização isolada dos componentes
+e CSS reais no navegador, sem iniciar servidor/banco. Medir regras finais, quebras, foco e
+contraste; confrontar achados com as afirmações do guia e corrigir apenas documentação. Registrar
+cenários não cobertos e limitações de capturas históricas; não confundir bancada de componentes com
+E2E completo.
+
+### Consolidação solicitada — DS-T140
+
+Renomear o guia para `docs/caab-design.md` e adotá-lo como referência principal de UI/UX.
+Inventariar Markdown versionado por nome/conteúdo, comparar guias gerais e trechos normativos
+relevantes, incorporar conteúdo útil e remover UI-BUTTONS e a revisão visual de 11/09 após preservar
+sua procedência. Manter specs de função, contratos, arquitetura, governança e evidências
+independentes; substituir cópias de padrões gerais por links. Atualizar ferramentas, fluxo,
+orientação do frontend, template de PR e mapa de Parceiros. Verificar links introduzidos e
+referências aos arquivos removidos.
+
+### Trade-offs e rollback
+
+Um guia central facilita uso independente; detalhes históricos ficam na pesquisa/evidência. Listar
+valores observados facilita revisão, mas exige atualização junto ao CSS. Não copiar cada seletor nem
+promover desvios encontrados a padrão desejado. Para adaptar outro projeto, trocar identidade,
+fontes e regras de domínio e validar seus componentes. Rollback é reverter o commit documental, sem
+alterar aplicação ou banco. A inclusão do guia não conclui pendências funcionais da Fundação.
+
+### Checkpoint DS
+
+Specify/clarify, pesquisa/plano/tarefas, analyze somente leitura e implementação documental
+concluídos no recorte DS. Base `3907248`; guia e referências conferidos, com evidência dos limites.
+Complemento de compactação concluído: densidade por região, medidas existentes, limites de
+legibilidade/alvos e comparação entre telas equivalentes. Reanálise e validação documental passaram;
+DS-T133–DS-T140 concluídas. Auditoria posterior: 554 testes unitários/contratos e 516 comparações de
+estilos aprovados; duas divergências de validação precoce e uma revisão assistiva pendente
+registradas, sem correção funcional. Guia consolidado em `docs/caab-design.md`, dois guias
+redundantes removidos; 90 links locais/20 âncoras e formatação conferidos. PR38 fechado sem merge
+após instrução posterior de não abrir PR ainda; entrega final local, sem novo PR/reabertura e sem
+push deste complemento. Os artefatos e tarefas funcionais históricos abaixo permanecem preservados.
+
 **Branch da entrega**: `feature/access-export-foundation-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: recorte implementado e validado; evidências no checkpoint e
 relatório do incremento.

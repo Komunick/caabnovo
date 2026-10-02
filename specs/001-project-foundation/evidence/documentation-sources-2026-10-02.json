@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-02",
+  "author": "CODEX",
+  "requester": "SOLICITANTE_NAO_VERIFICADO",
+  "base": "748539d",
+  "backup": ".cache/local-backups/docs-roles-20261002-114857",
+  "sources": [
+    {
+      "source_relative_to_main": "AGENTS.md",
+      "sha256": "01627b2e4effe610d595e851c09c8d668a1ca2553a02f891d83636cbb8bac240"
+    },
+    {
+      "source_relative_to_main": "docs/caab-design.md",
+      "sha256": "a9246ec782b784c93d0198ed111e28416d6052973ffff504921118e2e9884c11"
+    },
+    {
+      "source_relative_to_main": "docs/runbooks/local-workspace.md",
+      "sha256": "a95118bfa5db530765e2a58fbca61f313390ecb76f300433b71a73effcb66f34"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/docs/MODULES.md",
+      "sha256": "2a05b76cb95dda10ebfe7e3a4af15a8193c2e8094ca18e2f0cec75e2f2b17415"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/docs/PRD.md",
+      "sha256": "6210d602a41979ccd789388fbc993e6240d57cb684353cc5b3b8901ee9515e6a"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/docs/STACK.md",
+      "sha256": "7928f53f3a9b4b4870a2dd2a2bfeeaaabe471940919af7681c0a0ee4f93bf00b"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/docs/TOOLING.md",
+      "sha256": "c63dd21212e16ffa7ea2ba49a294a20d8d9d3e05d17284321e7e7e3226619add"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/specs/002-integrated-modules/plan.md",
+      "sha256": "e31e46e9b1b48e9079732fd5f5fd5ead6ec24daec12dc3da5549e78f815d328c"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/specs/011-jira-confluence-organization/evidence/coherence-2026-10-02.md",
+      "sha256": "de809ed46b6737600fe4a3466e35f73602095c5bfc72dd47f656322836fa0387"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/specs/011-jira-confluence-organization/evidence/worktree-audit-2026-10-02.md",
+      "sha256": "356ee38c2d79d807a0bcc90f6d6442c2d30b8241bef2d1ab5f59961746c98990"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/specs/011-jira-confluence-organization/evidence/worktree-publication-2026-10-02.md",
+      "sha256": "60882ff41751f09b888fee53053852ddcbfd4bb3850054ea2d2e0beac444f32e"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-jira-confluence-20261001/specs/011-jira-confluence-organization/evidence/application-summary.md",
+      "sha256": "1c41d30b8f22b603c073f79b93c13df97333821989343f145983737e1ac10a70"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/docs/caab-design.md",
+      "sha256": "80533486a06673f7e5f356bca2ff431ff3d20303fcc460f82ca00f0107c68574"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/spec.md",
+      "sha256": "b8e32c7e3ac3b70566c2a902441b8073d909f1f9d1052dd0fb2f2abc7f81af1b"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/plan.md",
+      "sha256": "ca38b2f51bc09aabb15c146bbc552514ed3cc31911fcb5a73259e8ebcb7994be"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/tasks.md",
+      "sha256": "2bace7c59d23b4ec36f406161117b115f299edadc4ca89acb23276a096d190ba"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/research.md",
+      "sha256": "2198844461762f137cb554719f1df550be7763a40c0d1aa8b509a09aa94108fc"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/quickstart.md",
+      "sha256": "264be77b30524b106e83002a2be250dab5b4cfb60a2fc90b7697f18f1f155b24"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/evidence/design-guide-2026-09-22.md",
+      "sha256": "6b1f9b9f27af7bf2669a97f5225d245d2e23861cd2e24b2d97d5308edb599aca"
+    },
+    {
+      "source_relative_to_main": ".cache/pr-design-guide-20260922/specs/001-project-foundation/evidence/caab-design-audit-2026-09-22.json",
+      "sha256": "d70bc1bdfbae7451e17c0197eadeb5ab48f7b59789823b64f52b7d7e82d7ccca"
+    }
+  ],
+  "validation": {
+    "markdown_files": 32,
+    "local_links": 407,
+    "anchors": 20,
+    "missing_links": [],
+    "invalid_anchors": [],
+    "backup_files_verified": 20,
+    "design_source_byte_identical": true,
+    "foundation_preservation": [
+      {
+        "file": "specs/001-project-foundation/spec.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/plan.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/tasks.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/research.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/quickstart.md",
+        "original_body_preserved": true
+      }
+    ],
+    "request_signatures": 21,
+    "request_signatures_preserved": true,
+    "prd_identifiers": 73,
+    "prd_identifiers_lost": [],
+    "changed_files": 34,
+    "functional_changes": []
+  },
+  "publication_validation": {
+    "markdown_files": 34,
+    "local_links": 423,
+    "anchors": 20,
+    "missing_links": [],
+    "invalid_anchors": [],
+    "backup_files_verified": 20,
+    "design_source_byte_identical": true,
+    "foundation_preservation": [
+      {
+        "file": "specs/001-project-foundation/spec.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/plan.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/tasks.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/research.md",
+        "original_body_preserved": true
+      },
+      {
+        "file": "specs/001-project-foundation/quickstart.md",
+        "original_body_preserved": true
+      }
+    ],
+    "request_signatures": 21,
+    "request_signatures_preserved": true,
+    "prd_identifiers": 73,
+    "prd_identifiers_lost": [],
+    "changed_files": 36,
+    "functional_changes": [],
+    "conciliated_access_files_byte_identical": {
+      "specs/001-project-foundation/spec.md": true,
+      "specs/001-project-foundation/plan.md": true,
+      "specs/001-project-foundation/tasks.md": true,
+      "specs/001-project-foundation/contracts/roles.md": true,
+      "specs/001-project-foundation/evidence/access-acceptance-2026-10-02.md": true
+    },
+    "roles_sha256": "74a7089923719d9b683879bf3330b1c922385a7ad286670d7435e3300961f4eb"
+  }
+}

@@ -1,5 +1,54 @@
 # Validação do incremento — Fundação, Colaboradores e infraestrutura de exportação
 
+## Conciliação do recorte DS — 02/10/2026
+
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
+design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
+humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
+retroativa à conta desta sessão.
+
+Os IDs históricos T133–T140 do guia são referidos aqui como **DS-T133–DS-T140**; T139/T140 sem
+prefixo continuam sendo cargo único na base integrada. A evidência original permanece intacta. A
+consolidação de 23/09 conservou UI-BUTTONS e a revisão visual como históricos explicitamente
+subordinados ao guia; não serão removidos nem tratados como padrões concorrentes. Menções abaixo à
+remoção/branch/testes descrevem a entrega original. A frente separada de acessos mantém seus
+contratos, requisitos e evidências; não substituir este arquivo inteiro ao conciliá-la.
+
+## Guia de design — validação documental DS, 22/09/2026
+
+DS-T133–DS-T140: guia, auditoria e consolidação. Os cenários operacionais históricos abaixo não são
+acionados automaticamente por uma revisão documental. Pré-requisitos: checkout da entrega, Node e
+Prettier já disponíveis; nenhum servidor ou banco.
+
+1. Abrir `docs/caab-design.md`; percorrer índice, referências e exemplos de listagem, formulário e
+   exportação. Confirmar nove estados e critérios claro/escuro, desktop/celular, teclado e edição
+   concorrente.
+2. Comparar valores com `apps/web/styles/tokens.css` e as últimas regras relevantes de
+   `apps/web/app/globals.css`; conferir componentes citados e exceções dos módulos.
+3. Conferir cada destino relativo e âncora dos documentos alterados. Fontes externas têm URL e data
+   em `research.md`. Capturas consultadas têm procedência e limites na evidência DS.
+4. Executar `pnpm format:docs:check docs/caab-design.md docs/TOOLING.md` incluindo também todos os
+   demais Markdown alterados, a evidência e o resumo JSON da auditoria. É possível usar diretamente
+   o Prettier já instalado, com `--ignore-path .gitignore --check` e a mesma lista.
+5. Executar `git diff --check`; revisar `git diff --stat` e o conteúdo. Esperado: somente
+   documentos, nenhum arquivo de aplicação, dependência, migration, segredo ou configuração local no
+   PR.
+6. Conferir DS-FR01–08/DS-SC01–04 na matriz da evidência e concluir apenas tarefas comprovadas do
+   recorte DS-T133–DS-T140.
+
+Auditoria de 22/09: testes unitários/contratos existentes foram executados com dois workers; quatro
+arquivos exigiram repetição por restrições/dependências locais. Medidas/interações foram conferidas
+por bancada dos componentes reais sem servidor, em Chromium, nos dois temas. Resultados, limites,
+fontes de capturas e configurações auxiliares constam na evidência DS. Para repetir, usar a base
+identificada, dependências das mesmas versões e banco/servidor desligados; não confundir a bancada
+com E2E autenticado. Conferir também referências aos dois guias removidos: somente menções
+históricas e links imutáveis no relatório são esperados.
+
+Não confundir revisão de imagens históricas, cálculo estático de contraste ou análise documental com
+nova homologação funcional/WCAG. Gates de CI da branch são registrados separadamente; merge continua
+dependendo da revisão e autorização aplicáveis.
+
 **Estado de21/09/2026:** roteiro reproduzível; execuções reais registradas em
 [evidências do incremento](evidence/plan-2026-09-21-validation.md). Localhost permanece desligado;
 comandos de infraestrutura dependem de ordem explícita. Testes usam banco descartável; nunca aplicar

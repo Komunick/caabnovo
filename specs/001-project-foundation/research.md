@@ -1,5 +1,70 @@
 # Pesquisa vigente — 21/09/2026
 
+## Conciliação do recorte DS — 02/10/2026
+
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
+design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
+humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
+retroativa à conta desta sessão.
+
+Os IDs históricos T133–T140 do guia são referidos aqui como **DS-T133–DS-T140**; T139/T140 sem
+prefixo continuam sendo cargo único na base integrada. A evidência original permanece intacta. A
+consolidação de 23/09 conservou UI-BUTTONS e a revisão visual como históricos explicitamente
+subordinados ao guia; não serão removidos nem tratados como padrões concorrentes. Menções abaixo à
+remoção/branch/testes descrevem a entrega original. A frente separada de acessos mantém seus
+contratos, requisitos e evidências; não substituir este arquivo inteiro ao conciliá-la.
+
+## Pesquisa para caab-design.md — 22/09/2026
+
+Complemento posterior: usuário definiu `docs/caab-design.md` como guia principal de UI/UX e
+autorizou consolidação/remoção dos documentos redundantes. Auditoria visual e inventário de 215
+Markdown registrados na evidência DS; medidas finais de tabelas/alertas substituem inferências
+iniciais. Reconferidos os critérios oficiais W3C de contraste, texto a 200% e alvos mínimos em
+22/09/2026.
+
+**Problema:** padrões da CAAB estão distribuídos entre CSS, componentes, módulos, decisões e
+relatórios históricos. Um arquivo genérico não explica as interações confirmadas nem as
+divergências. Pesquisa exclusivamente documental; nenhuma fonte externa recebeu código ou dados do
+projeto.
+
+| Fonte oficial consultada                                                                                   | Aprendizado aplicado                                                                                     | Limite                                                                                 |
+| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [Google Labs: formato DESIGN.md](https://github.com/google-labs-code/design.md/blob/main/docs/spec.md)     | Documento legível; valores e orientação; oito seções visuais em ordem; metadados estruturados opcionais. | Formato em evolução; uso da organização não comprova compatibilidade com importadores. |
+| [Google Labs: filosofia](https://github.com/google-labs-code/design.md/blob/main/PHILOSOPHY.md)            | Registrar intenção visual ajuda a manter consistência entre sessões e ferramentas.                       | Não substituir implementação ou validação por narrativa.                               |
+| [USWDS: design tokens](https://designsystem.digital.gov/design-tokens/)                                    | Explicitar papéis de cor, tipo e espaçamento reduz decisões locais arbitrárias.                          | Referência de organização, sem importar paleta, biblioteca ou escalas USWDS.           |
+| [GOV.UK: critérios de contribuição](https://design-system.service.gov.uk/community/contribution-criteria/) | Padrões precisam ser úteis, consistentes, utilizáveis e documentados com evidência.                      | Um componente existente ou captura não equivale a pesquisa/homologação universal.      |
+| [W3C: referência WCAG 2.2](https://www.w3.org/WAI/WCAG22/quickref/)                                        | Transformar acessibilidade em critérios de contraste, teclado, zoom, reflow, nomes e estados.            | Guia documental não é auditoria WCAG completa.                                         |
+| [W3C: alvos mínimos](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum)                      | Distinguir alvo de 24 × 24 CSS px no critério AA (com exceções) da altura usual de 44 px da CAAB.        | Altura isolada não prova conformidade de alvo, contraste ou teclado.                   |
+
+**Decisão:** `docs/caab-design.md` canônico na pasta `docs/`, em português, com títulos visuais
+reconhecíveis e índice; fontes relativas, resumo dos valores atuais e padrões de interação. Sem
+segunda cópia `DESIGN.md`: capitalização pode representar o mesmo arquivo no Windows e outro em
+ambientes sensíveis a caixa. Sem YAML duplicado de cores por tema: o projeto já executa tokens CSS e
+não pediu exportador.
+
+**Alternativas:** baixar modelo pronto (não representa as decisões CAAB); copiar só screenshot
+(perde estados, teclado, permissões e valores); copiar todo CSS (repete regras superadas e aumenta
+manutenção); criar biblioteca/template genérico agora (reuso ainda hipotético); documentação apenas
+fragmentada (dificulta fornecer contexto). Guia central com links equilibra clareza e manutenção.
+
+**Inventário consultado:** `apps/web/styles/tokens.css`, cascata final de `app/globals.css`,
+controles em `components/ui/`, rascunhos em `components/workspace-drafts.tsx`, listagem/formulários
+de Parceiros/Associados, lista/exportação de Colaboradores no PR37, padrões de exportação e
+evidências sintéticas existentes. A importação do CSS em `app/layout.tsx` ocorre após tokens. Não há
+carregamento de fonte Inter nesse layout; a pilha pode renderizar fonte de sistema. O antigo
+`docs/UI-BUTTONS.md`, removido após consolidação, descrevia medidas de 10/09 superadas pela cascata
+atual. Valores históricos de cores em relatórios também não são a paleta normativa atual.
+
+**Separação de estado:** regra desejada/confirmada, comportamento observado e lacuna têm rótulos
+distintos. Exportação de Colaboradores serve como referência do fluxo direto; a existência de botão
+em outros módulos não conclui sua migração. Cores Legado e módulos futuros continuam pendentes.
+
+**Evidência visual:** imagens sintéticas de Parceiros (14/09), Colaboradores (CI35734927572) e
+exportação (CI35736033889), conferidas nesta pesquisa em desktop/celular e claro/escuro. Caminhos
+operacionais locais ficam no mapa/relatório local; procedência versionada ficará na evidência DS.
+Não ligar serviços para documentação, não apresentar essas imagens como nova execução de UI.
+
 **Decisão:** Consolidar exports:generate, ocultação por acesso e infraestrutura comum; oferecer
 exportação de Colaboradores sem alterar a gestão existente.
 

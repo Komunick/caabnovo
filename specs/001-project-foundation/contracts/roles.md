@@ -107,3 +107,11 @@ autoridade;404 conta/cargo indisponível;409 cargo mudou, expirou ou não tem su
 collaborator→manager→administrator; não aceitar destino arbitrário. Preservar valid_until e
 user_access. Revogar e conceder com dois eventos auditáveis na mesma transação/correlação; falha de
 auditoria não pode deixar a conta sem cargo.
+
+## Decisão pendente sobre o cargo base — 23/09/2026
+
+Consolidação documental: CODEX/mafaltti. Pedido original recebido de outra conversa, com autoria e
+solicitante não verificados. O usuário confirmou Colaborador como cargo base e questionou a opção
+“Sem cargo”. Falta definir se o cargo mínimo também será obrigatório para contas atualmente sem
+cargo. A opção existente não é alterada por este registro; não atribuir cargos, modificar acessos ou
+reabrir a branch do PR39 sem escopo confirmado.

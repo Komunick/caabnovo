@@ -1,0 +1,103 @@
+{
+  "codeBase": "3907248",
+  "node": "v24.20.0",
+  "unitContractFiles": 84,
+  "unitContractTests": 554,
+  "browserMeasurements": 43,
+  "computedStyleAssertions": 516,
+  "styleFailures": [],
+  "browserBehaviorChecks": 21,
+  "behaviorFindings": [
+    {
+      "name": "plain error before blur",
+      "pass": false,
+      "actual": {
+        "visible": 1
+      }
+    },
+    {
+      "name": "CPF error before blur",
+      "pass": false,
+      "actual": {
+        "visible": 1
+      }
+    }
+  ],
+  "axeScans": 18,
+  "axeViolations": 0,
+  "axeManualReview": [
+    {
+      "scenario": "bench",
+      "theme": "light",
+      "width": 1280,
+      "checks": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "scenario": "bench",
+      "theme": "light",
+      "width": 390,
+      "checks": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "scenario": "bench",
+      "theme": "light",
+      "width": 320,
+      "checks": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "scenario": "bench",
+      "theme": "dark",
+      "width": 1280,
+      "checks": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "scenario": "bench",
+      "theme": "dark",
+      "width": 390,
+      "checks": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "scenario": "bench",
+      "theme": "dark",
+      "width": 320,
+      "checks": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    }
+  ],
+  "browserRuntimeErrors": [],
+  "ariaDiagnostic": {
+    "rule": "aria-prohibited-attr",
+    "target": ".table-scroll",
+    "message": "aria-label attribute is not well supported on a div with no valid role attribute.",
+    "classification": "manual review; not an automatic violation"
+  }
+}
