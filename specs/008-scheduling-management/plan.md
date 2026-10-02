@@ -1,5 +1,17 @@
 # Implementation Plan: Agendamentos
 
+## Consolidação final em andamento — 02/10/2026-CODEX-Gabriel-Komunick
+
+Os três pareceres de b676974 foram recebidos e consolidados, com autoria/hashes preservados em
+[evidência](evidence/closeout-review-2026-10-02.md). S01/S02 de segurança confirmados por inspeção:
+isolamento dos comprovantes e reautorização/prazo após espera pelo arquivo corrigidos localmente;
+cinco regressões PostgreSQL reais preparadas e jornada de upload atualizada, aguardando CI próprio.
+Passaram96 unitários pertinentes, tipos web e lint; não são prova de PostgreSQL.
+Migrations0031–0034, HIN e contratos de Relatórios preservados. T107/T039 aprovados de b676974 não
+cobrem o delta novo. PR42 ainda aberto: conciliação com dev pendente. T110/T111 controlam o
+fechamento/correção desta rodada. QA humano e rollout no destino continuam pendentes; sem merge ou
+serviços locais.
+
 ## Retomada e adiamento de e-mail — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
 O usuário autorizou conciliar a worktree preservada com dev e concluir/validar sobreposição,

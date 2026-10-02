@@ -15,6 +15,7 @@ import {
 import type { RequestActor } from "../shared/request-context";
 import {
   schedulingAccess,
+  requireSchedulingAuthority,
   schedulingReplay,
   SchedulingError,
   type SchedulingContext,
@@ -213,17 +214,21 @@ export async function submitSchedulingAbsenceAppeal(
       const before = await readAbsence(client, id);
       if (before.version !== input.expectedVersion)
         throw new SchedulingError("SCHEDULING_VERSION_CONFLICT");
-      const now = await nowInDatabase(client);
+      let now = await nowInDatabase(client);
       if (!state(before, now.getTime()).canSubmitAppeal)
         throw new SchedulingError("SCHEDULING_ABSENCE_APPEAL_CLOSED", 422);
       const files = await client.query(
-        `SELECT id FROM stored_file WHERE id=ANY($1::uuid[]) AND owner_type='member'
+        `SELECT id FROM stored_file WHERE id=ANY($1::uuid[]) AND owner_type IN ('member','scheduling_absence_evidence')
       AND owner_id=$2 AND uploaded_by=$3 AND visibility='private' AND status='available' AND scan_result='clean'
       AND deleted_at IS NULL FOR SHARE`,
         [input.evidenceFileIds, before.member_id, context.actor.userId],
       );
       if (files.rowCount !== input.evidenceFileIds.length)
         throw new SchedulingError("SCHEDULING_ABSENCE_EVIDENCE_INVALID", 422);
+      await requireSchedulingAuthority(client, context.actor, true);
+      now = await nowInDatabase(client);
+      if (!state(before, now.getTime()).canSubmitAppeal)
+        throw new SchedulingError("SCHEDULING_ABSENCE_APPEAL_CLOSED", 422);
       await client.query(
         `INSERT INTO scheduling_absence_appeal(absence_id,kind,explanation,submitted_by,submitted_at) VALUES($1,$2,$3,$4,$5)`,
         [id, input.kind, input.explanation, context.actor.userId, now],

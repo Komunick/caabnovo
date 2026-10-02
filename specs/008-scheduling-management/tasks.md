@@ -1,5 +1,20 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## Consolidação final em andamento — 02/10/2026-CODEX-Gabriel-Komunick
+
+- [ ] T110 Consolidar a revisão própria de b676974 e os três pareceres de rollout/documentação,
+      acessos/segurança e compatibilidade de Relatórios; corrigir somente defeitos comprovados com
+      regressões pertinentes. Após PR42 integrado e PR43 ainda aberto, conciliar dev na mesma
+      branch, preservar HIN/contratos, registrar SHA/evidências e acompanhar checks do recorte
+      publicado. [Revisão própria e pendências](evidence/closeout-review-2026-10-02.md). T107/T039
+      não reabertos.
+
+- [ ] T111 Corrigir S01/S02 do parecer de segurança (CAAB-28/CAAB-41): isolar finalidade de
+      comprovantes desde upload e proteger os caminhos genéricos/legados; revalidar autoridade e
+      prazo após espera pelo arquivo. Correções locais e cinco regressões PostgreSQL reais
+      preparadas, com jornada de upload atualizada; executar no CI próprio e registrar resultados.
+      Não reescrever migrations aplicadas nem conceder cargos/permissões implicitamente.
+
 ## Estado técnico atual — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
 T107/T039 concluídos: CI37034671649/cac5cbb aprovado e18capturas revisadas conforme guia.

@@ -102,14 +102,24 @@ pertence à US1, não ao aceite desta exportação.
 T038 usa scheduling-export.test.ts e scheduling-export.spec.ts próprios; preserva a jornada de
 scheduling.spec.ts, a ação Nova reserva e a regressão /users/exportar do registry compartilhado.
 Arquivos reais e navegador aprovados localmente em
-[validação administrativa](../evidence/plan-2026-09-21-validation.md). CI/publicação seguem
-pendentes; integração em dev não é presumida.
+[validação administrativa](../evidence/plan-2026-09-21-validation.md). CI/publicação de b676974
+aprovados conforme [evidência](../evidence/publication-2026-10-02.md); T039/T107 concluídos
+tecnicamente. A nova correção sensível de fechamento requer seus próprios checks. Integração em dev
+e QA humano não são presumidos.
 
 ## Compatibilidade com Relatórios — 02/10/2026
 
 Preservar os três grupos de adapters no registry. A data de referência de Relatórios é
 coalesce(starts_at,original_start,created_at), inclusive para contar reservas canceladas sem horário
-no aviso do resumo; não preencher startsAt/endsAt exportados pela agenda. A correção local do aviso
-está em validação, com regressão PostgreSQL ainda não executada. O novo exportador de
-resumo/evolução da frente de Relatórios precisa aplicar a mesma referência na conciliação.
+no aviso do resumo; não preencher startsAt/endsAt exportados pela agenda. A correção do aviso foi
+executada em PostgreSQL descartável no CI da entrega b676974, incluindo regressão de cancelamento
+sem horário/período/autorização. Essa prova não valida a combinação futura com o gerador de
+Relatórios/c8a2614. O novo exportador de resumo/evolução da frente de Relatórios precisa aplicar a
+mesma referência na conciliação.
 [Comparação, hashes e instruções por arquivo](../evidence/reports-compatibility-2026-10-02.md).
+
+Parecer de fechamento por leitura em b676974/c8a2614: nenhuma regressão bloqueante no PR43;
+preservar registry, hooks do ExportScreen e a projeção bookings na futura combinação dos cinco
+arquivos.
+[Relatório independente preservado](../evidence/closeout-2026-10-02/relatorios-compatibilidade.md).
+T041/T042 da spec010 e QA humano permanecem próprios da ponta de Relatórios conciliada.

@@ -1,0 +1,23 @@
+{
+  "reviewedSha": "b676974a3514f87fcdfbdc943d74e9a013e5dbac",
+  "reports": [
+    {
+      "file": "rollout-documentacao.md",
+      "sha256": "447ffa6e0d29b4691feab0e59a5f15fe01c8f6b0b11beaa7c95bc61d7d6b64aa",
+      "source": "C:\\Projetos\\caabnovo\\.cache\\coordination\\scheduling-closeout-20261002\\rollout-documentacao.md",
+      "authorship": "Preservada no arquivo original; não reatribuída"
+    },
+    {
+      "file": "acessos-seguranca.md",
+      "sha256": "22ce649b5b3cd3cc963a23e81a8997e127f90a1d61a2a4cf2a3b570e3162c651",
+      "source": "C:\\Projetos\\caabnovo\\.cache\\coordination\\scheduling-closeout-20261002\\acessos-seguranca.md",
+      "authorship": "Preservada no arquivo original; não reatribuída"
+    },
+    {
+      "file": "relatorios-compatibilidade.md",
+      "sha256": "4e7d2a38c050ef5f4914018e393378ef1d20fb864a15a4cd03bc6e1e47739801",
+      "source": "C:\\Projetos\\caabnovo\\.cache\\coordination\\scheduling-closeout-20261002\\relatorios-compatibilidade.md",
+      "authorship": "Preservada no arquivo original; não reatribuída"
+    }
+  ]
+}

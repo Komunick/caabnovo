@@ -48,9 +48,10 @@ Cancelar também reservas posteriores ao bloqueio é somente possibilidade para 
 (T097), sem configuração ou código nesta entrega. Não retroagir sobre atendimentos passados nem
 cancelar reservas sem horário.
 
-Operações da extensão, sob /api/v1/scheduling, com sessão administrativa válida. Toda escrita exige
-CSRF e Idempotency-Key, schemas estritos e versão esperada; IDs e autoria não são aceitos como prova
-de identidade do cliente.
+Operações da extensão, sob /api/v1/scheduling, com sessão administrativa válida. Os comandos POST
+exigem CSRF e Idempotency-Key, schemas estritos e versão esperada; PUT de horários preserva a
+proteção Origin/CSRF e versão/transação existente, sem replay por chave. IDs e autoria não são
+aceitos como prova de identidade do cliente.
 
 | Método/caminho                         | Entrada e resultado                                                                                                         | Permissões                                   |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
@@ -273,3 +274,26 @@ avaliações/app.
 - T027: read/write verificados antes de 5010/1 em escrita e novamente após espera; GET sem lock.
 - Exportação própria: adapters/tela em [exports.md](exports.md), arquivos e navegador aprovados
   localmente. reports.bookings permanece scheduling:read sem scheduling:write.
+
+## Proteção dos comprovantes — fechamento de02/10/2026-CODEX-Gabriel-Komunick
+
+Novos uploads do formulário de falta usam owner_type=scheduling_absence_evidence e owner_id da
+pessoa, desde a intenção, reutilizando armazenamento/quarentena/scanner privados. Exigir permissões
+próprias de upload de Associados/arquivos e scheduling:read/write; finalizar revalida essa
+fronteira. Não criar concessões implícitas. Lista/download geral de Associados/arquivos não
+disponibilizam esses comprovantes, inclusive antes do protocolo. Arquivos legados member já
+vinculados em scheduling_absence_evidence também são excluídos da lista/status/download gerais.
+Documento comum não vinculado conserva seu acesso. Status do upload restrito é consultável apenas
+pelo próprio operador com read/write de Agendamentos e leitura de Associados/arquivos, sem revelar
+conteúdo.
+
+A revisão dedicada aceita arquivos restritos e legados vinculados à ocorrência correta, da pessoa
+correta, privados/disponíveis/limpos. Após adquirir o lock do arquivo, revalidar sessão pelo relógio
+atual e permissões persistidas antes de emitir grant. Submissão também revalida autoridade e janela
+de sete dias após a espera; não usar instante anterior ao lock para aceitar pedido vencido.
+
+O grant privado já emitido conserva o comportamento bearer temporário de até300s do pipeline
+existente. Não prometer revogação imediata de URLs emitidas nem confundir com reautorização por lote
+de exportações. Política de revogação de conteúdo exige decisão explícita se for alterada. Uploads
+antigos sem protocolo/classificação não têm finalidade inferível; não reclassificar
+indiscriminadamente documentos comuns.

@@ -253,7 +253,8 @@ async function safeFile(client: PoolClient, memberId: string, fileId: string) {
     size_bytes: string;
   }>(
     `SELECT object_key,status,scan_result,visibility,detected_mime,size_bytes FROM stored_file
-     WHERE id=$1 AND owner_type='member' AND owner_id=$2 AND deleted_at IS NULL FOR SHARE`,
+     WHERE id=$1 AND owner_type='member' AND owner_id=$2 AND deleted_at IS NULL
+       AND NOT EXISTS(SELECT 1 FROM scheduling_absence_evidence e WHERE e.file_id=stored_file.id) FOR SHARE`,
     [fileId, memberId],
   );
   const file = result.rows[0];
@@ -518,7 +519,9 @@ export async function memberFiles(pool: Pool, actor: RequestActor, id: string, p
       await record(client, id);
       const result = await client.query<MemberFile>(
         `SELECT id,original_name AS name,status,scan_result AS "scanStatus",size_bytes::int AS "sizeBytes"
-      FROM stored_file WHERE owner_type='member' AND owner_id=$1 AND deleted_at IS NULL ORDER BY created_at DESC,id LIMIT 26 OFFSET $2`,
+      FROM stored_file WHERE owner_type='member' AND owner_id=$1 AND deleted_at IS NULL
+        AND NOT EXISTS(SELECT 1 FROM scheduling_absence_evidence e WHERE e.file_id=stored_file.id)
+      ORDER BY created_at DESC,id LIMIT 26 OFFSET $2`,
         [id, (page - 1) * 25],
       );
       return { items: result.rows.slice(0, 25), page, hasNextPage: result.rows.length > 25 };
@@ -563,13 +566,20 @@ export async function memberFileStatus(
     actor,
     async (client) => {
       await record(client, id);
-      const result = await client.query<MemberFile>(
-        `SELECT id,original_name AS name,status,scan_result AS "scanStatus",size_bytes::int AS "sizeBytes"
-         FROM stored_file WHERE id=$1 AND owner_type='member' AND owner_id=$2 AND deleted_at IS NULL`,
-        [fileId, id],
+      const result = await client.query<MemberFile & { ownerType: string }>(
+        `SELECT id,original_name AS name,status,scan_result AS "scanStatus",size_bytes::int AS "sizeBytes",owner_type AS "ownerType"
+         FROM stored_file WHERE id=$1 AND owner_id=$2 AND deleted_at IS NULL AND
+         ((owner_type='member' AND NOT EXISTS(SELECT 1 FROM scheduling_absence_evidence e WHERE e.file_id=stored_file.id))
+           OR (owner_type='scheduling_absence_evidence' AND uploaded_by=$3))`,
+        [fileId, id, actor.userId],
       );
       if (!result.rows[0]) throw new MemberError("MEMBER_FILE_NOT_FOUND", 404);
-      return result.rows[0];
+      const { ownerType, ...file } = result.rows[0];
+      if (ownerType === "scheduling_absence_evidence") {
+        const { requireSchedulingAuthority } = await import("../scheduling/access");
+        await requireSchedulingAuthority(client, actor, true);
+      }
+      return file;
     },
     PERMISSIONS.membersRead,
     PERMISSIONS.filesRead,

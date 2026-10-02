@@ -10,6 +10,8 @@ import type {
   JobReference,
   UploadIntent,
 } from "@caab/contracts";
+import { SCHEDULING_ABSENCE_EVIDENCE_OWNER, idSchema } from "@caab/contracts";
+import { requireSchedulingAuthority } from "../scheduling/access";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { createJobExecution } from "@caab/db/repositories/job-execution";
@@ -93,7 +95,11 @@ export async function createUploadIntent(
     if (command.ownerType === "partner")
       await authorizePartnerUpload(client, command.actor, command.ownerId);
     if (command.ownerType === "news") await authorizeNewsFileAccess(client, command.actor, true);
-    if (command.ownerType === "member") {
+    if (command.ownerType === "member" || command.ownerType === SCHEDULING_ABSENCE_EVIDENCE_OWNER) {
+      if (command.ownerType === SCHEDULING_ABSENCE_EVIDENCE_OWNER) {
+        idSchema.parse(command.ownerId);
+        await requireSchedulingAuthority(client, command.actor, true);
+      }
       await authorizeMemberAccess(
         client,
         command.actor,
@@ -219,8 +225,10 @@ export async function finalizeUpload(
     await withTransaction(pool, (client) =>
       authorizePartnerUpload(client, command.actor, file.owner_id),
     );
-  if (file.owner_type === "member") {
+  if (file.owner_type === "member" || file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER) {
     await withTransaction(pool, async (client) => {
+      if (file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+        await requireSchedulingAuthority(client, command.actor, true);
       await authorizeMemberAccess(
         client,
         command.actor,
@@ -251,7 +259,9 @@ export async function finalizeUpload(
     if (file.owner_type === "partner")
       await authorizePartnerUpload(client, command.actor, file.owner_id);
     if (file.owner_type === "news") await authorizeNewsFileAccess(client, command.actor, true);
-    if (file.owner_type === "member") {
+    if (file.owner_type === "member" || file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER) {
+      if (file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+        await requireSchedulingAuthority(client, command.actor, true);
       await authorizeMemberAccess(
         client,
         command.actor,
@@ -270,6 +280,8 @@ export async function finalizeUpload(
     );
     const status = locked.rows[0]?.status;
     if (!status) throw operationError("NOT_FOUND", 404);
+    if (file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+      await requireSchedulingAuthority(client, command.actor, true);
     if (status !== "initiated") {
       const existing = await client.query<{ id: string }>(
         `SELECT id FROM job_execution
@@ -344,6 +356,9 @@ export async function createDownloadGrant(
   );
   const file = result.rows[0];
   if (!file) throw operationError("NOT_FOUND", 404);
+  // Only the occurrence-scoped review service may issue grants for restricted evidence.
+  if (file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+    throw operationError("PERMISSION_DENIED", 403);
   if (file.owner_type === "report_export") throw operationError("PERMISSION_DENIED", 403);
   if (file.owner_type === "member") {
     const { memberDownload } = await import("../members/member-service");

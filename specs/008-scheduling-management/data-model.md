@@ -1,5 +1,16 @@
 # Modelo de dados — primeira entrega
 
+## Checkpoint administrativo — 02/10/2026-CODEX-Gabriel-Komunick
+
+O schema administrativo vigente em b676974 é0032_scheduling_administrative_workflow, seguido de
+0033/0034 para faltas/autoria de sistema. Aceita pending_approval e campos opcionais conforme o
+contrato admin e foi validado no CI37037047877; T107/T039 concluídos tecnicamente. Propostas abaixo
+sobre0032_scheduling_channels/schema sem NULL são históricas e não instruções para criar ou
+reescrever migrations. App/site permanecem adiados. A correção de fechamento isola novos
+comprovantes por owner_type=scheduling_absence_evidence no campo textual existente de stored_file,
+sem nova migration. Comprovantes legados vinculados também ficam fora do acervo geral.
+[Evidência de revisão e limites](evidence/closeout-review-2026-10-02.md).
+
 ## Modelo implementado localmente — falta e bloqueio temporário, 28/09/2026
 
 BF-FR-01–06/BF-D01–05 de [spec.md](spec.md) orientam T091, autorizado a implementar a persistência

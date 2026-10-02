@@ -161,7 +161,7 @@ test("record, preserve deadlines and draft, upload privately, submit and accept 
     // Only the disposable fixture models a clean scanner result; no real worker/scanner is started.
     const file = (
       await db.query(
-        "SELECT id FROM stored_file WHERE owner_id=$1 AND original_name='prova-sintetica.pdf'",
+        "SELECT id FROM stored_file WHERE owner_type='scheduling_absence_evidence' AND owner_id=$1 AND original_name='prova-sintetica.pdf'",
         [data.id],
       )
     ).rows[0].id;

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   DOCUMENT_FILE_ACCEPT,
   MAX_UPLOAD_SIZE_BYTES,
+  SCHEDULING_ABSENCE_EVIDENCE_OWNER,
   uploadIntentSchema,
   uploadMimeSchema,
   type MemberFile,
@@ -72,7 +73,7 @@ export function AbsenceEvidenceUpload({
               declaredMime: current.file.type,
               sizeBytes: current.file.size,
               checksumSha256: checksum,
-              ownerType: "member",
+              ownerType: SCHEDULING_ABSENCE_EVIDENCE_OWNER,
               ownerId: memberId,
             }),
           }),

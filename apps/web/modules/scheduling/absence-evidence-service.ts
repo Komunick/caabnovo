@@ -7,7 +7,7 @@ import {
 } from "@caab/contracts";
 import type { RequestActor } from "../shared/request-context";
 import type { WebObjectStorage } from "../files/object-storage";
-import { schedulingAccess, SchedulingError } from "./access";
+import { schedulingAccess, SchedulingError, requireSchedulingAuthority } from "./access";
 
 export async function getSchedulingAbsenceReview(pool: Pool, actor: RequestActor, id: string) {
   idSchema.parse(id);
@@ -31,7 +31,7 @@ export async function getSchedulingAbsenceReview(pool: Pool, actor: RequestActor
         `SELECT f.id,f.original_name AS name,
         (f.deleted_at IS NULL AND f.visibility='private' AND f.status='available' AND f.scan_result='clean') AS available
        FROM scheduling_absence_evidence e JOIN scheduling_absence a ON a.id=e.absence_id
-       JOIN stored_file f ON f.id=e.file_id AND f.owner_type='member' AND f.owner_id=a.member_id::text
+       JOIN stored_file f ON f.id=e.file_id AND f.owner_type IN ('member','scheduling_absence_evidence') AND f.owner_id=a.member_id::text
        WHERE e.absence_id=$1 ORDER BY f.id`,
         [id],
       )
@@ -63,7 +63,7 @@ export async function getSchedulingAbsenceEvidenceDownload(
       await client.query<{ object_key: string }>(
         `SELECT f.object_key FROM scheduling_absence_evidence e
        JOIN scheduling_absence a ON a.id=e.absence_id
-       JOIN stored_file f ON f.id=e.file_id AND f.owner_type='member' AND f.owner_id=a.member_id::text
+       JOIN stored_file f ON f.id=e.file_id AND f.owner_type IN ('member','scheduling_absence_evidence') AND f.owner_id=a.member_id::text
        WHERE e.absence_id=$1 AND e.file_id=$2 AND f.deleted_at IS NULL
          AND f.visibility='private' AND f.status='available' AND f.scan_result='clean'
        FOR SHARE OF f`,
@@ -71,6 +71,7 @@ export async function getSchedulingAbsenceEvidenceDownload(
       )
     ).rows[0];
     if (!file) throw new SchedulingError("SCHEDULING_ABSENCE_EVIDENCE_NOT_FOUND", 404);
+    await requireSchedulingAuthority(client, actor, "review_absences");
     const grant = await storage.createPrivateDownload(file.object_key);
     return { url: grant.url, expiresAt: grant.expiresAt.toISOString() };
   });

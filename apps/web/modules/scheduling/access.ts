@@ -20,6 +20,27 @@ export type SchedulingContext = {
   correlationId: string;
   idempotencyKey: string;
 };
+/** Recheck after any additional contended lock, immediately before a protected effect. */
+export async function requireSchedulingAuthority(
+  client: PoolClient,
+  actor: RequestActor,
+  access: boolean | "review_absences",
+) {
+  const valid = await client.query(
+    `SELECT u.id FROM "user" u JOIN session s ON s.user_id=u.id
+     WHERE u.id=$1 AND s.id=$2 AND u.status='active' AND s.revoked_at IS NULL
+       AND s.expires_at>clock_timestamp()`,
+    [actor.userId, actor.sessionId],
+  );
+  if (!valid.rowCount) throw new SchedulingError("AUTHENTICATION_REQUIRED", 401);
+  const permissions = await readUserPermissions(client, actor.userId);
+  const mutation = access === "review_absences" ? "scheduling:review_absences" : "scheduling:write";
+  if (
+    !permissions.includes("scheduling:read") ||
+    (access !== false && !permissions.includes(mutation))
+  )
+    throw new SchedulingError("PERMISSION_DENIED", 403);
+}
 export async function schedulingAccess<T>(
   pool: Pool,
   actor: RequestActor,
@@ -46,17 +67,7 @@ export async function schedulingAccess<T>(
         throw new SchedulingError("PERMISSION_DENIED", 403);
       if (write) await lockMemberEligibility(client);
       // Revalidate after waiting for a contended write lock.
-      const valid = await client.query(
-        "SELECT id FROM session WHERE id=$1 AND expires_at>clock_timestamp() AND revoked_at IS NULL",
-        [actor.sessionId],
-      );
-      if (!valid.rowCount) throw new SchedulingError("AUTHENTICATION_REQUIRED", 401);
-      const permissions = await readUserPermissions(client, actor.userId);
-      if (
-        !permissions.includes("scheduling:read") ||
-        (write && !permissions.includes(mutationPermission))
-      )
-        throw new SchedulingError("PERMISSION_DENIED", 403);
+      await requireSchedulingAuthority(client, actor, access);
       return operation(client);
     });
   } catch (error) {
