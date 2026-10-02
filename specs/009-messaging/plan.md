@@ -1,5 +1,13 @@
 # Implementation Plan: Mensagens: revisão de aderência e exportação condicionada
 
+## Correção G01 — 02/10/2026
+
+Executar somente Fundação AC-T002: envolver o link Novo agendamento no `canWrite` existente de
+`schedules.tsx`. Preservar consulta e autorização transacional. Cobrir componente sem serviços e
+jornada Gestor/Colaborador no CI, incluindo revogação, teclado e capturas para revisão pelo guia.
+M016 e canais continuam pendentes. Não construir exportação ou preparar envio real.
+[Evidência do recorte](../001-project-foundation/evidence/messages-access-fix-2026-10-02.md).
+
 **Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
 
