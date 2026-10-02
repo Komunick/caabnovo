@@ -1,5 +1,19 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Execução autorizada de AC-T002 — 02/10/2026
+
+Pedido posterior autoriza correção, cobertura, commits e push para CI; PR funcional só após gates e
+conciliação documental integrada por humano. AC-T002 implementada localmente, aguardando CI de
+navegador e revisão das capturas antes de marcar conclusão. Cinco testes de componente cobrem
+consulta/escrita e revogação por foco, intervalo e mudança de rota; dois cenários Playwright usam
+Gestor/Colaborador atribuídos, concessão/revogação pela API e POST negado/permitido.
+[Resultados e limites](evidence/messages-access-fix-2026-10-02.md).
+
+AC-T003/G02 continua pendente: a nova jornada de Mensagens não conclui o cenário de delegação a
+terceiro previsto em direct-exports. AC-T004/G03 avança somente na atualização visual; falta a prova
+de expiração durante lock. AC-T005/P01 e o aceite global de AC-T006 permanecem pendentes. Preservar
+DS e a revisão já encaminhada na documentação; não reabrir tarefas da base integrada.
+
 ## Revisão de aceite de acessos — 02/10/2026
 
 Escopo: Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir

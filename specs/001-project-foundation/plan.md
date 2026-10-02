@@ -1,5 +1,19 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
+## Execução G01 — 02/10/2026
+
+Autorização posterior à revisão: corrigir AC-T002 na mesma worktree, acrescentar testes e publicar
+commits para CI. Reutilizar `canWrite` e o componente de link existentes, sem alterar autoridade,
+schema ou guards. Teste de componente usa o provider real com transporte simulado; navegador usa
+contas/cargos e concessões reais em banco sintético do CI, testa POST e registra capturas. G02/G03
+só avançam por cobertura; este recorte exercita os gatilhos de atualização visual de G03, sem
+concluir a prova de expiração durante lock.
+
+Preservar a revisão no commit `bb53ff2`. Após integração humana do PR documental, atualizar a branch
+com origin/dev e conciliar somente trechos, mantendo DS/AC/roles.md. Abrir PR funcional apenas com
+correção/cobertura e evidências posteriores, após gates. Sem merge ou serviços locais. Resultados:
+[evidência G01](evidence/messages-access-fix-2026-10-02.md).
+
 ## Revisão de aceite de acessos — 02/10/2026
 
 Entrega de revisão: `docs/access-review-20261002`, base `748539d`. Escopo e resultado na

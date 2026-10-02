@@ -1,5 +1,19 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Correção G01 — 02/10/2026
+
+Incremento autorizado de Mostrar apenas funções autorizadas na navegação (CAAB-20): condicionar Novo
+agendamento em Mensagens a `messages:write`, preservando consulta, controles existentes e guardas de
+gravação. Validar leitura, escrita concedida e revogação com Gestor e Colaborador reais em fixtures
+sintéticas. Não ampliar Mensagens nem ativar canais/envio. Critérios e resultados em
+[evidência G01](evidence/messages-access-fix-2026-10-02.md).
+
+A revisão AC01–AC14 abaixo é histórica e foi incorporada à entrega documental; não duplicá-la no PR
+funcional. G02/G03 permanecem lacunas de cobertura, P01 continua decisão do usuário, e Gerenciar
+cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) não recebe aceite global por este
+recorte. Publicação funcional condicionada aos gates e à conciliação após integração documental
+humana; sem serviços locais ou merge por esta instância.
+
 ## Revisão de aceite de acessos — 02/10/2026
 
 Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir criação de
