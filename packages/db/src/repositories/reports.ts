@@ -56,7 +56,11 @@ export const reportSources: Record<Exclude<ReportDataset, "access">, string> = {
 };
 
 export function reportSql(query: ReportQuery) {
-  const { from, until } = reportBounds(query);
+  const unrestricted = query.dateScope === "all" && query.dataset !== "access";
+  const from =
+    !unrestricted && query.from ? reportBounds({ from: query.from, to: query.from }).from : null;
+  const until =
+    !unrestricted && query.to ? reportBounds({ from: query.to, to: query.to }).until : null;
   const values: unknown[] = [from, until];
   let base: string;
   if (query.dataset === "access") {
@@ -64,14 +68,12 @@ export function reportSql(query: ReportQuery) {
     base = `SELECT min(id::text) AS id,date_trunc('day',occurred_at AT TIME ZONE 'America/Bahia') AT TIME ZONE 'America/Bahia' AS at,
       jsonb_build_object('name',screen,'channel',channel,'source',source,'device',device,'origin',origin,'version',app_version,
         'views',count(*) FILTER(WHERE event='page_view'),'sessions',count(DISTINCT session_hash),'visitors',count(DISTINCT visitor_hash)) AS cells
-      FROM analytics_event WHERE occurred_at >= $1 AND occurred_at < $2 AND environment=$3
+      FROM analytics_event WHERE ($1::timestamptz IS NULL OR occurred_at >= $1)
+      AND ($2::timestamptz IS NULL OR occurred_at < $2) AND environment=$3
       AND ($4='all' OR channel=$4) AND ($5='' OR source=$5)
       GROUP BY date_trunc('day',occurred_at AT TIME ZONE 'America/Bahia'),screen,channel,source,device,origin,app_version`;
   } else base = reportSources[query.dataset];
-  const filters =
-    query.dateScope === "all" && query.dataset !== "access"
-      ? ["$1::timestamptz IS NOT NULL", "$2::timestamptz IS NOT NULL"]
-      : ["at >= $1", "at < $2"];
+  const filters = ["($1::timestamptz IS NULL OR at >= $1)", "($2::timestamptz IS NULL OR at < $2)"];
   for (const [field, value] of [
     ["name", query.search],
     ["status", query.status],
@@ -95,6 +97,58 @@ export function reportSql(query: ReportQuery) {
     };
   return { sql: filtered, values };
 }
+/** Filters of a direct export: the screen's filters, without page, grouping or the 366-day window. */
+export type ReportExportQuery = Pick<
+  ReportQuery,
+  | "dataset"
+  | "from"
+  | "to"
+  | "dateScope"
+  | "search"
+  | "status"
+  | "category"
+  | "city"
+  | "channel"
+  | "environment"
+  | "source"
+>;
+/**
+ * Direct export of the detailed analysis (CAAB-24): the complete selection for a cursor, with no
+ * row cap. Same reviewed sources and parameterized filters as the screen; columns come out in the
+ * requested order and only catalog keys ever reach the SQL text.
+ */
+export function reportExportSql(
+  query: ReportExportQuery,
+  columns: readonly string[],
+  sort: readonly { field: string; direction: "asc" | "desc" }[],
+) {
+  const fields = reportCatalog[query.dataset].columns as Record<string, string>;
+  if (
+    !columns.length ||
+    columns.some((key) => !Object.hasOwn(fields, key)) ||
+    sort.some((entry) => !Object.hasOwn(fields, entry.field))
+  )
+    throw reportError("EXPORT_CONFIGURATION_INVALID", 422);
+  const { sql, values } = reportSql({
+    ...query,
+    view: "details",
+    groupBy: "",
+    columns: [],
+    sort: "date",
+    direction: "desc",
+    page: 1,
+  });
+  const order = sort.length
+    ? sort.map(
+        (entry) =>
+          `${entry.field === "date" ? "at" : `cells->'${entry.field}'`} ${entry.direction === "desc" ? "DESC" : "ASC"}`,
+      )
+    : ["at DESC"];
+  return {
+    text: `SELECT id AS "_recordId",${columns.map((key) => `cells->'${key}' AS "${key}"`).join(",")} FROM (${sql}) report ORDER BY ${[...order, "id ASC"].join(",")}`,
+    values,
+  };
+}
 export async function queryReport(
   db: ReportDb,
   actor: ReportActor,
@@ -109,6 +163,8 @@ export async function queryReport(
     values,
   );
   const total = Number(count.rows[0]!.total);
+  // Memory guard of the legacy queued export, which builds the whole file in the worker. The
+  // detailed analysis without grouping exports through reportExportSql instead (CAAB-24).
   if (exportAll && total > 50000) throw reportError("REPORT_TOO_LARGE", 422);
   const columns: Record<string, string> = query.groupBy
     ? {

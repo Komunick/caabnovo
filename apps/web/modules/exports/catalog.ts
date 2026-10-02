@@ -16,6 +16,8 @@ export type ExportAdapter = {
   dataset: string;
   label: string;
   permission: string;
+  /** Extra permissions the actor must also hold (e.g. reports:read for report sources). */
+  requires?: readonly string[];
   columns: ExportColumn[];
   filters: ExportFilter[];
   /** Explicitly declare whether all records share module-level authorization. */
@@ -39,7 +41,11 @@ export class ExportError extends Error {
   }
 }
 export function authorizedCatalog(adapter: ExportAdapter, actor: RequestActor) {
-  if (!actor.permissions.has("exports:generate") || !actor.permissions.has(adapter.permission))
+  if (
+    !actor.permissions.has("exports:generate") ||
+    !actor.permissions.has(adapter.permission) ||
+    adapter.requires?.some((permission) => !actor.permissions.has(permission))
+  )
     throw new ExportError("PERMISSION_DENIED");
   return {
     module: adapter.module,

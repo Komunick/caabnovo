@@ -12,6 +12,19 @@ foram pedidos nas specs e nos gates do projeto. Caminhos novos são destinos pla
 referências contra o inventário de artefatos deste incremento antes de editar. Nenhum arquivo de
 código foi criado agora.
 
+**Entrega de 30/09/2026 (Jira CAAB-24, branch `feature/caab-24-exportacao-relatorios`):** escopo
+autorizado só para a análise detalhada sem agrupamento — T028, T030 (parte do detalhe), T032–T035.
+Evidências em [caab-24-2026-09-30.md](evidence/caab-24-2026-09-30.md).
+
+**Revisão adicional de ambiente em 30/09/2026:** T032/T034/T035 também cobrem Produção explícita no
+campo Ambiente de Acessos e uso, sem opção Todos incompatível com a consulta, e regressão das três
+seleções. Evidência no mesmo documento da entrega.
+
+**Revisão P2 de 30/09/2026:** T032/T034/T035 incluem limites de data abertos (sem data inicial
+artificial ou data final implícita) e ordem inicial de exportação igual à tabela após
+desmarcar/remarcar colunas. Implementação e regressões no mesmo recorte de CAAB-24; validação e
+limites na evidência acima.
+
 ## Rastreabilidade e escopo
 
 EX01/EX02/DX01–DX03: detalhados em US1/US2/US3, compatibilidade e volume; migração de permissões
@@ -30,10 +43,11 @@ já concluídas.
 
 ## Foundational
 
-- [ ] T028 Preparar fixtures sintéticas isoladas e contratos da função em
+- [x] T028 Preparar fixtures sintéticas isoladas e contratos da função em
       `apps/web/modules/reports/export-fixtures.ts` (novo, exclusivo de testes), com datas
       empatadas, zero resultados, texto longo, campos restritos e filtros combinados; depende dos
-      schemas de 001.
+      schemas de 001. _30/09: 100 associados sintéticos em ~600 dias, empates a cada 10, nome no
+      limite de 160 caracteres e nome com fórmula; texto longo limitado pelo `member_name_check`._
 
 ## US1 — Resumo gerencial
 
@@ -54,25 +68,35 @@ seguem autorização atual U1.
       `packages/db/src/repositories/reports.ts`; implementar cursor/columns ordenadas, manter SQL
       parametrizado e exigir scheduling:read no dataset bookings e em
       métricas/séries/avisos/cancelamentos de `packages/db/src/repositories/report-summary.ts`, sem
-      alterar analytics.
+      alterar analytics. _Parcial 30/09: `reportExportSql` entrega a seleção completa ao cursor,
+      colunas na ordem pedida, SQL parametrizado e `scheduling:read` exigido em bookings pelo
+      adaptador. O teto de 50 mil fica só no caminho legado em memória (decisão em research.md).
+      Falta a parte de `report-summary.ts` (resumo/apresentação)._
 - [ ] T031 [US2] Aplicar `specs/010-reports-analytics/contracts/legacy-downloads.md` em
       `packages/db/src/repositories/report-storage.ts` e
       `apps/web/tests/integration/reports.test.ts`: exigir acessos atuais derivados também da
       configuração/gerador, inclusive scheduling:read omitido de snapshots antigos de
       detalhe/resumo/apresentação. Negar conteúdo de escopo indeterminável; testar revogação,
       caminhos genéricos/worker e propriedade, preservando hashes/bytes/registros.
-- [ ] T032 [US2] Escrever testes do adaptador em `apps/web/modules/reports/export-adapter.test.ts`
+- [x] T032 [US2] Escrever testes do adaptador em `apps/web/modules/reports/export-adapter.test.ts`
       (novo): filtro+sort, columns em ordem pedida, campo proibido, dados completos e matriz de
       autorização conforme `specs/010-reports-analytics/contracts/exports.md`.
-- [ ] T033 [US2] Implementar `apps/web/modules/reports/export-adapter.ts` (novo) reutilizando as
+- [x] T033 [US2] Implementar `apps/web/modules/reports/export-adapter.ts` (novo) reutilizando as
       consultas/projeções do domínio, IDs/dependências para reautorização por lote e cursor do
-      núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados.
-- [ ] T034 [US2] Integrar ação/tela em `apps/web/app/(admin)/reports/exportar/page.tsx` (nova) e nas
+      núcleo 001; cobrir todos os datasets do contrato, sem ampliar acesso ou alterar dados. _30/09:
+      um adaptador por fonte do catálogo, com `requires: ["reports:read"]` (campo novo e opcional do
+      núcleo, conferido a cada lote)._
+- [x] T034 [US2] Integrar ação/tela em `apps/web/app/(admin)/reports/exportar/page.tsx` (nova) e nas
       listas/abas existentes de `apps/web/modules/reports/ui/`; passar contexto/filtros, preservar
-      rascunho e oferecer os três formatos com defaults e reordenação acessível.
+      rascunho e oferecer os três formatos com defaults e reordenação acessível. _30/09: "Exportar
+      dados" na análise detalhada sem agrupamento; agrupado, resumo e apresentação seguem pela fila.
+      `ExportScreen` ganhou valores iniciais, contexto e rascunho separado por origem._
 - [ ] T035 [US2] Validar arquivos reais nos três formatos, ordem/contagem/IDs/filtros e negações em
       `apps/web/tests/integration/reports.test.ts` e `apps/web/tests/e2e/reports.spec.ts`; usar o
-      parser independente do núcleo 001 e confirmar erro recuperável sem corte.
+      parser independente do núcleo 001 e confirmar erro recuperável sem corte. _Parcial 30/09:
+      integração em `apps/web/tests/integration/report-exports.test.ts` (arquivo próprio) aprovada;
+      E2E atualizado para o novo fluxo, sem execução local (localhost desligado); fica para o job de
+      navegador do CI do PR._
 
 ## US3 — Resultados e evolução
 

@@ -16,6 +16,17 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
+  // This regression also runs alone, before any other browser test creates members.
+  const syntheticMemberName = `Report columns ${randomUUID()}`;
+  const createdMember = await page.request.post("/api/v1/members", {
+    headers: {
+      origin: new URL(page.url()).origin,
+      "x-csrf-token": randomUUID(),
+      "idempotency-key": randomUUID(),
+    },
+    data: { profile: { name: syntheticMemberName }, justification: "Synthetic report regression" },
+  });
+  expect(createdMember.status()).toBe(201);
   await expect(
     page
       .getByRole("navigation", { name: "Navegação administrativa" })
@@ -68,34 +79,49 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await expect(
     page.getByText("Nenhum registro encontrado. Ajuste os filtros ou escolha outro período."),
   ).toBeVisible();
-  await page.getByLabel("Buscar por nome ou tela").fill("");
+  await page.getByLabel("Buscar por nome ou tela").fill(syntheticMemberName);
   await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Exportar Excel", exact: true })).toBeEnabled();
+  // Re-selecting Name appends it to query.columns, while the table keeps catalog order.
+  await page.getByRole("checkbox", { name: "Nome", exact: true }).uncheck();
+  await page.getByRole("checkbox", { name: "Nome", exact: true }).check();
+  await page.getByRole("button", { name: "Gerar relatório", exact: true }).click();
+  const exportLink = page.getByRole("link", { name: "Exportar dados", exact: true });
+  await expect(exportLink).toBeVisible();
+  const displayedColumns = await page
+    .getByRole("table", { name: "Registros do relatório" })
+    .getByRole("columnheader")
+    .allTextContents();
+  expect(displayedColumns[0]).toBe("Nome");
+  const exportUrl = new URL((await exportLink.getAttribute("href"))!, page.url());
+  expect(exportUrl.searchParams.get("columns")?.split(",")[0]).toBe("name");
+  // CAAB-24: the detailed analysis without grouping downloads directly, with the applied selection.
+  await page.getByRole("link", { name: "Exportar dados", exact: true }).click();
+  await expect(page).toHaveURL(/\/reports\/exportar\?dataset=members/);
+  await expect(
+    page.getByRole("heading", { name: "Exportar associados", exact: true }),
+  ).toBeVisible();
   for (const [label, extension, signature] of [
     ["CSV", "csv", ""],
     ["Excel", "xlsx", "PK"],
     ["PDF", "pdf", "%PDF-"],
   ]) {
-    const requested = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/api/v1/reports/exports") &&
-        response.request().method() === "POST",
-    );
-    await page.getByRole("button", { name: `Exportar ${label}`, exact: true }).click();
-    const requestedResponse = await requested;
-    expect(requestedResponse.status()).toBe(202);
-    const { id } = await requestedResponse.json();
-    const downloadLink = page.locator(`a[href="/api/v1/reports/exports/${id}/download"]`);
-    await expect(downloadLink).toBeVisible({ timeout: 60000 });
-    const downloading = page.waitForEvent("download", { timeout: 15000 });
-    await downloadLink.click();
+    const downloading = page.waitForEvent("download", { timeout: 60000 });
+    await page.getByRole("button", { name: `Exportar em ${label}`, exact: true }).click();
     const download = await downloading;
+    expect(download.suggestedFilename()).toMatch(new RegExp(`^reports-.+\\.${extension}$`));
     const path = testInfo.outputPath(`reports-detail.${extension}`);
     await download.saveAs(path);
     const bytes = await readFile(path);
     if (signature) expect(bytes.subarray(0, signature.length).toString()).toBe(signature);
-    else expect(bytes.toString()).toContain("America/Bahia");
+    else
+      expect(
+        bytes
+          .toString()
+          .replace(/^\uFEFF/, "")
+          .split(/\r?\n/)[0],
+      ).toBe(displayedColumns.map((label) => `"${label}"`).join(","));
   }
+  await page.getByRole("link", { name: "Voltar aos relatórios", exact: true }).click();
   await page.getByRole("button", { name: "Resultados e evolução", exact: true }).click();
   await page
     .getByLabel("Comentários para a apresentação")
@@ -147,4 +173,48 @@ test("reports denies ordinary access and export before data", async ({ page }) =
   await page.goto("/reports");
   await expect(page.getByText("Você não tem permissão para acessar relatórios.")).toBeVisible();
   expect((await page.request.get("/api/v1/reports/exports")).status()).toBe(403);
+});
+
+test("access export explicitly selects production and preserves other environments", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(60000);
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill(syntheticUsers.administrator.email);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.goto("/reports/exportar?dataset=access&environment=");
+  const environment = page.getByRole("combobox", {
+    name: "Ambiente (padrão: produção)",
+    exact: true,
+  });
+  await expect(environment).toHaveValue("production");
+  await expect(environment.locator("option")).toHaveText(["Produção", "Desenvolvimento", "Teste"]);
+  await expect(
+    page.getByRole("combobox", { name: "Canal", exact: true }).locator('option[value=""]'),
+  ).toHaveText("Todos");
+  await expectWcag22AA(page);
+  await page.screenshot({
+    path: testInfo.outputPath("reports-access-environment.png"),
+    fullPage: true,
+  });
+  for (const value of ["production", "development", "test"]) {
+    if (value !== "production") await environment.selectOption(value);
+    const requested = page.waitForRequest(
+      (request) =>
+        request.url().endsWith("/api/v1/exports/download") && request.method() === "POST",
+    );
+    const downloading = page.waitForEvent("download");
+    const button = page.getByRole("button", { name: "Exportar em CSV", exact: true });
+    await expect(button).toBeEnabled();
+    await button.click();
+    const form = new URLSearchParams((await requested).postData()!);
+    expect(JSON.parse(form.get("config")!).filters.environment).toBe(value);
+    const download = await downloading;
+    await download.saveAs(testInfo.outputPath(`access-${value}.csv`));
+    await expect(page.locator(".export-form").getByRole("status")).toContainText(
+      "Geração e transferência concluídas pelo servidor",
+    );
+  }
 });

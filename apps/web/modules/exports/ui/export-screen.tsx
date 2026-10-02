@@ -16,29 +16,61 @@ const messageFor = (code: string) =>
       : code === "EXPORT_CONFIGURATION_INVALID"
         ? "Confira os filtros e as colunas selecionadas."
         : "Não foi possível concluir a exportação. Seus filtros foram preservados; tente novamente.";
+/** Short, stable signature of the screen a user came from, so each origin keeps its own draft. */
+const signature = (value: unknown) => {
+  let hash = 5381;
+  for (const char of JSON.stringify(value)) hash = ((hash * 33) ^ char.charCodeAt(0)) >>> 0;
+  return hash.toString(36);
+};
+export type ExportInitial = {
+  filters?: Record<string, string>;
+  columns?: string[];
+  sort?: string;
+  direction?: "asc" | "desc";
+};
 export function ExportScreen({
   catalog,
   sourcePermission,
   backHref,
+  initial,
   initialFilters = {},
   renderFilter,
+  context,
+  defaultOrderLabel = "Identificador",
+  backLabel = "Voltar à lista",
 }: {
   catalog: ExportCatalog;
   sourcePermission: string;
   backHref: string;
+  /** Selection brought from the originating screen (e.g. the report the user was reading). */
+  initial?: ExportInitial;
   initialFilters?: Record<string, string>;
   renderFilter?(key: string, value: string, onChange: (value: string) => void): ReactNode;
+  context?: ExportRequest["context"];
+  /** What the adapter orders by when no sort column is chosen. */
+  defaultOrderLabel?: string;
+  backLabel?: string;
 }) {
-  const key = `export:${catalog.module}:${catalog.dataset}`;
-  const [filters, setFilters] = useDraftState<Record<string, string>>(
+  const key = `export:${catalog.module}:${catalog.dataset}${initial ? `:${signature(initial)}` : ""}`;
+  const [draftFilters, setFilters] = useDraftState<Record<string, string>>(
     `${key}:filters`,
-    initialFilters,
+    initial?.filters ?? initialFilters,
   );
+  const accessReport = catalog.module === "reports" && catalog.dataset === "access";
+  // Normalize old empty drafts as well as the initial selection, for display and submission.
+  const filters = accessReport
+    ? { ...draftFilters, environment: draftFilters.environment || "production" }
+    : draftFilters;
   const [columns, setColumns] = useDraftState(`${key}:columns`, () =>
-    catalog.columns.filter((c) => c.defaultSelected).map((c) => c.key),
+    initial?.columns?.length
+      ? initial.columns
+      : catalog.columns.filter((c) => c.defaultSelected).map((c) => c.key),
   );
-  const [sort, setSort] = useDraftState(`${key}:sort`, "");
-  const [direction, setDirection] = useDraftState<"asc" | "desc">(`${key}:direction`, "asc");
+  const [sort, setSort] = useDraftState(`${key}:sort`, initial?.sort ?? "");
+  const [direction, setDirection] = useDraftState<"asc" | "desc">(
+    `${key}:direction`,
+    initial?.direction ?? "asc",
+  );
   const [format, setFormat] = useDraftState<ExportFormat>(`${key}:format`, "xlsx");
   const [error, setError] = useDraftState(`${key}:error`, "");
   const [operation, setOperation] = useState<ExportOperation | null>(null);
@@ -135,6 +167,7 @@ export function ExportScreen({
       columns,
       sort: sort ? [{ field: sort, direction }] : [],
       format: nextFormat,
+      ...(context ? { context } : {}),
     };
     requestId.current!.value = id;
     configuration.current!.value = JSON.stringify(config);
@@ -159,7 +192,7 @@ export function ExportScreen({
             <h1>Exportar {catalog.label.toLocaleLowerCase("pt-BR")}</h1>
             <p>Escolha os dados e baixe no formato desejado. Datas no horário da Bahia.</p>
             <Link href={backHref} className={buttonVariants({ size: "compact" })}>
-              <ArrowLeft size={18} aria-hidden="true" /> Voltar à lista
+              <ArrowLeft size={18} aria-hidden="true" /> {backLabel}
             </Link>
           </header>
           <form
@@ -194,7 +227,10 @@ export function ExportScreen({
                               setFilters({ ...filters, [filter.key]: e.target.value })
                             }
                           >
-                            {filter.key !== "deleted" && <option value="">Todos</option>}
+                            {filter.key !== "deleted" &&
+                              !(accessReport && filter.key === "environment") && (
+                                <option value="">Todos</option>
+                              )}
                             {filter.options?.map((option) => (
                               <option key={option.value} value={option.value}>
                                 {option.label}
@@ -215,7 +251,7 @@ export function ExportScreen({
                 )}
                 <FormField id="export-sort" label="Ordenar por">
                   <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                    <option value="">Ordem padrão</option>
+                    <option value="">{defaultOrderLabel}</option>
                     {catalog.columns
                       .filter((c) => c.sortable)
                       .map((c) => (
