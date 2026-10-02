@@ -5,7 +5,10 @@ test("scheduling grants guard home, navigation, quick search, pages and direct r
   page,
 }) => {
   test.setTimeout(120000);
-  const db = new Client({ connectionString: process.env.DATABASE_ADMIN_URL });
+  const db = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
   await db.connect();
   const userId = (
     await db.query('SELECT id FROM "user" WHERE email=$1', [syntheticUsers.ordinary.email])

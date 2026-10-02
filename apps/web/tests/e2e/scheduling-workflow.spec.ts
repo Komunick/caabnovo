@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
-import type { Page } from "@playwright/test";
+import type { Page, TestInfo } from "@playwright/test";
 import { test, expect, syntheticUsers } from "./fixtures";
 import { expectWcag22AA, expectThemeContrast } from "./accessibility";
 
@@ -17,6 +17,36 @@ async function prepareCapture(page: Page) {
     window.scrollTo({ top: 0, behavior: "instant" });
   });
 }
+async function captureMatrix(page: Page, info: TestInfo, name: string) {
+  const viewport = page.viewportSize();
+  const theme = await page.locator("html").getAttribute("data-theme");
+  try {
+    for (const width of [1280, 390, 320]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const nextTheme of ["light", "dark"]) {
+        await page.locator("html").evaluate((element, value) => {
+          element.dataset.theme = value;
+        }, nextTheme);
+        await expectWcag22AA(page);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+          true,
+        );
+        await prepareCapture(page);
+        await page.screenshot({
+          path: info.outputPath(`${name}-${width}-${nextTheme}.png`),
+          fullPage: true,
+        });
+      }
+    }
+  } finally {
+    if (viewport) await page.setViewportSize(viewport);
+    await page.locator("html").evaluate((element, value) => {
+      if (value === null) delete element.dataset.theme;
+      else element.dataset.theme = value;
+    }, theme);
+  }
+}
+
 test("operate capacity, publication, manual decisions, changes and recovery entirely through the panel", async ({
   page,
 }, testInfo) => {
@@ -26,7 +56,10 @@ test("operate capacity, publication, manual decisions, changes and recovery enti
     serviceName = `Serviço fluxo ${suffix}`,
     procedureName = `Atendimento fluxo ${suffix}`,
     memberName = `Beneficiário fluxo ${suffix}`;
-  const admin = new Client({ connectionString: process.env.DATABASE_ADMIN_URL });
+  const admin = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
   await admin.connect();
   try {
     await admin.query("INSERT INTO member(name) VALUES($1)", [memberName]);
@@ -85,11 +118,7 @@ test("operate capacity, publication, manual decisions, changes and recovery enti
     "catalog-publish-help",
   );
   await expectWcag22AA(page);
-  await prepareCapture(page);
-  await page.screenshot({
-    path: testInfo.outputPath("administrative-policy-390-light.png"),
-    fullPage: true,
-  });
+  await captureMatrix(page, testInfo, "administrative-policy");
   await page.getByRole("button", { name: "Publicar", exact: true }).click();
   await expect(page.getByText("Registro salvo.", { exact: true })).toBeVisible();
   await page.goto("/scheduling/new");
@@ -112,11 +141,7 @@ test("operate capacity, publication, manual decisions, changes and recovery enti
   await page.goto("/scheduling/approval");
   await expect(page.getByRole("link", { name: `${memberName} · ${procedureName}` })).toBeVisible();
   await expectWcag22AA(page);
-  await prepareCapture(page);
-  await page.screenshot({
-    path: testInfo.outputPath("administrative-queue-390-light.png"),
-    fullPage: true,
-  });
+  await captureMatrix(page, testInfo, "administrative-queue");
   await page.goto(bookingUrl);
   await page.getByRole("button", { name: "Aprovar pedido", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar decisão", exact: true }).click();
@@ -155,11 +180,7 @@ test("operate capacity, publication, manual decisions, changes and recovery enti
     element.dataset.theme = "dark";
     element.style.colorScheme = "dark";
   });
-  await prepareCapture(page);
-  await page.screenshot({
-    path: testInfo.outputPath("administrative-recovery-1280-dark.png"),
-    fullPage: true,
-  });
+  await captureMatrix(page, testInfo, "administrative-recovery");
   await page.setViewportSize({ width: 320, height: 800 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("button", { name: "Cancelar reserva", exact: true }).click();

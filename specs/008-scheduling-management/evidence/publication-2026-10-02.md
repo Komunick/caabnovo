@@ -83,3 +83,19 @@ Falha: packages/db/tests/migrations.test.ts esperava nomes somente até0030; rec
 reexecução, controles ou workflow. Formato/lint do teste corrigido aprovados localmente; exige nova
 execução do CI. Navegador ainda em andamento no momento deste registro. T107 continua aberto;
 nenhuma declaração de aprovação integral desta execução.
+
+## Lacuna de evidência visual identificada antes da nova execução
+
+A jornada administrativa capturava política/fila somente390 claro e recuperação1280 escuro;
+exportação capturava390/1280 nos dois temas. O guia pede conferência1280/390/320. Ampliada a mesma
+jornada para capturar política/fila/recuperação nas três larguras e dois temas, com axe e
+verificação de overflow; exportação agora inclui320. Sem nova regra de produto, sem reduzir
+asserções ou alterar workflow. Esta cobertura deve executar no CI; não contar capturas antigas como
+evidência desta versão.
+
+Primeiro browser encerrado com cinco falhas nos novos testes: conexão SASL sem senha string, pois
+DATABASE_ADMIN_URL não estava definida no processo de testes. A variável do webServer não é herdada
+pelo runner. Ajustados os quatro arquivos scheduling-absence/access/export/workflow para usar o
+mesmo fallback sintético já empregado em global-setup, scheduling.spec e outras suítes. Sem
+alteração de workflow, credenciais reais ou banco de uso. Os testes falharam antes das jornadas,
+portanto suas capturas de erro não comprovam a UI. Correção e matriz visual seguem para novo CI.

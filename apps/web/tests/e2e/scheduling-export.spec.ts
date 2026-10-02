@@ -8,7 +8,10 @@ test("scheduling read and export grants download three datasets and preserve con
   page,
 }, testInfo) => {
   test.setTimeout(180000);
-  const db = new Client({ connectionString: process.env.DATABASE_ADMIN_URL });
+  const db = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
   await db.connect();
   const id = crypto.randomUUID(),
     name = `Exportação agenda ${id.slice(0, 8)}`;
@@ -123,7 +126,7 @@ test("scheduling read and export grants download three datasets and preserve con
           page.getByRole("status").filter({ hasText: "Geração e transferência concluídas" }),
         ).toContainText("1 registros");
       }
-      for (const width of [390, 1280]) {
+      for (const width of [390, 1280, 320]) {
         await page.setViewportSize({ width, height: 900 });
         for (const theme of ["light", "dark"]) {
           await page.evaluate((theme) => {

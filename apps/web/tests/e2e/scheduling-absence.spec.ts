@@ -84,7 +84,10 @@ test("record, preserve deadlines and draft, upload privately, submit and accept 
   page,
 }, info) => {
   test.setTimeout(300000);
-  const db = new Client({ connectionString: process.env.DATABASE_ADMIN_URL });
+  const db = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
   await db.connect();
   try {
     const data = await fixture(db);
@@ -242,7 +245,10 @@ test("review grant without write decides and reads evidence; ordinary readers ca
   browser,
 }) => {
   test.setTimeout(180000);
-  const db = new Client({ connectionString: process.env.DATABASE_ADMIN_URL });
+  const db = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
   await db.connect();
   const ordinary = (
     await db.query('SELECT id FROM "user" WHERE email=$1', [syntheticUsers.ordinary.email])
