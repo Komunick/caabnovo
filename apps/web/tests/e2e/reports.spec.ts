@@ -196,7 +196,9 @@ test("grouped, summary and evolution download directly with preserved selection 
     if (dataset === "membersGrouped")
       await expect(page.getByLabel("Agrupar por", { exact: true })).toHaveValue("city");
     else {
-      await expect(page.getByLabel("Ambiente", { exact: true })).toHaveValue("test");
+      await expect(page.getByRole("combobox", { name: "Ambiente", exact: true })).toHaveValue(
+        "test",
+      );
       await expect(page.getByLabel("Análise da gestão (opcional)")).toHaveValue(
         "Análise sintética",
       );
