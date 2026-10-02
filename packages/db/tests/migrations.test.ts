@@ -55,6 +55,10 @@ describe("database foundation migrations", () => {
       "0028_account_member_lifecycle.sql",
       "0029_user_contact_details.sql",
       "0030_single_user_role.sql",
+      "0031_scheduling_beneficiary_overlap.sql",
+      "0032_scheduling_administrative_workflow.sql",
+      "0033_scheduling_absence_penalties.sql",
+      "0034_scheduling_system_events.sql",
     ]);
   });
 

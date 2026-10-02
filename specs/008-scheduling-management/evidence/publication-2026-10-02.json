@@ -1,0 +1,440 @@
+{
+  "commit": "cac5cbb8a4c8f61352d5513f5f3e21748132e88c",
+  "run": 37034671649,
+  "artifact": 11239956614,
+  "artifactDigest": "sha256:60179a675819424ef3f0737dd227c7203985aa7136d48cbbf535391cb4915bf5",
+  "files": [
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-1280-dark.png",
+      "sha256": "7fbc451ce340cca26641a2b5b0e6f06dc010777d6ddfcc9cedb1a73767ea2855",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-1280-light.png",
+      "sha256": "07d06e3e1ca2eb35e03ed14bc65e1d53a78be6563932bd9720ad8816cd390139",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-320-dark.png",
+      "sha256": "9e43bd3814523b933a59b1bdb49811ee42ff31bb75e04d635ef90e49d430c557",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/absence-export-320-dark.png"
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-320-light.png",
+      "sha256": "af79c8a2303835d77ca38f08d60d738df2afafe15090cb31eb1af246f464a069",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-390-dark.png",
+      "sha256": "6588a632021d799dbc2cb9329a9d02400aa9b3099a735abb8b50f737c16e61f6",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-390-light.png",
+      "sha256": "0e92f80be56c5c4ac73aff69ded18f06b1e69844be8a11fe22b226272febcb53",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-1280-dark.png",
+      "sha256": "7eac9090ca916a898209dbfcf4d7d35b5cdcd70e70053f8f179f0436aee5c568",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-1280-light.png",
+      "sha256": "5d3a629e33506325e77eee26c4810bde8d8951a5461c323608a97913fd2f3249",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/absence-list-1280-light.png"
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-320-dark.png",
+      "sha256": "fb097635b3d7f9a47f78190d4fe7820feeacfb5171919e3a70fdc0417fd359f2",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/absence-list-320-dark.png"
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-320-light.png",
+      "sha256": "6abf34d119aa33c10b5582543ee07caa12b0ae4180249e34bfb0357a4ab67dd0",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-390-dark.png",
+      "sha256": "ffe355ce20416984c8d06c250a59ff0f13ea7ecf2e38bc833e7c245f2cda2c6a",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-390-light.png",
+      "sha256": "5199219d3a58e822a8e28c0bb86cf6b3c53c856fdbec494448b6a02d25a2adb2",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-1280-dark.png",
+      "sha256": "543b91c80b21893b3a06371dca5ea983824ed36c72aedc247758b500d36f60ef",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-1280-light.png",
+      "sha256": "fc84ff7154f944685feaf6df49e00c924a9b530f6fb91ad94774736b644eb650",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-320-dark.png",
+      "sha256": "8bf9ee3a1221be22d18e041ba39eb33e3a7aca98eb97e03a558ea67a36ab9304",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-320-light.png",
+      "sha256": "21d182f6bbf3b7c6b2b843cc6ac8b14d841c35ee8807b3eca3e497f55171990b",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-390-dark.png",
+      "sha256": "49e985cdd18ef0db84f1762edbc08a0790994637756d03d3fba7a43198873e61",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-390-light.png",
+      "sha256": "2166b3c61e3423eda2d61cbc3f963afad2048e5cfecd2a5d43aa667afc45f053",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/absence-review-390-light.png"
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-agenda-desktop-light.png",
+      "sha256": "d468a7a864a2e4d6874569b4fa9d38ca609b2d7e8d2a1f4ad9ed5dfda7ef0658",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-agenda-mobile-light.png",
+      "sha256": "0c049413f28c5dd96e2c13bfe295a3962cd666eafdd2cc74e7363a273e4431d7",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-cancelled-mobile-light.png",
+      "sha256": "d82865638736b8f3fd028c594299aa0b9276718592599174e50eb773fe419db1",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-day-mobile-dark.png",
+      "sha256": "c41c1da27b4dee7998db08de53017fda482a270eabce965f78255a73f3dcb162",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-Dia-mobile-light.png",
+      "sha256": "260c5dd9e43cd3b98ce148514ad15d4268cba647e3295f3ff3b461fcfee18f40",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-Mês-mobile-light.png",
+      "sha256": "f65e28c6f87e5b828eb63913fb12380f76f8032270eec317892e63b4de21d7cb",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-Semana-mobile-light.png",
+      "sha256": "245153dad5ddeb2bf061ab74800232d3309f3582677597aaed99efe584084401",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-week-desktop-dark.png",
+      "sha256": "dbb8d328e4533dab4c5cc0b973c61b46582bc3e976ef84dafc8c29e69c67eef4",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/scheduling-calendar-week-desktop-dark.png"
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-catalog-desktop-light.png",
+      "sha256": "7a087fc3c89f21e1399ea0e364b9fd3ab8dbb0bc2a7081ed5db86f9c6746d829",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-catalog-mobile-light.png",
+      "sha256": "6c8840630c52f0898bcff948f2d0ac1cb5d9780319cfc4b85e78f69fb2c98e4b",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-combobox-mobile-light.png",
+      "sha256": "573a89c664818a11575fdb30c8f82b3109aa507b098c6a45a526a1d2946d2d4c",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-deleted-member-kept-mobile.png",
+      "sha256": "f2ce2a64a5d424a7c2a8b9b791fe23c86cd9ef0dd2f19d7dcdb085cd6d805665",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/scheduling-deleted-member-kept-mobile.png"
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-detail-desktop-dark.png",
+      "sha256": "af2ade1fb846801eac23b96b27c2175de8ed543758a583094d165da47793a5e9",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-detail-desktop-light.png",
+      "sha256": "3bd1b375ab2c44c3d3c889654cb20282abef5f653ceba4dbd4c3a3a2bc131013",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-detail-mobile-dark.png",
+      "sha256": "d00ee15f8dfc94fc776c7e5d04de1a9b13cc54440717d358cfc982c3a53a9eca",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-hours-mobile-light.png",
+      "sha256": "e6157f8e31c6a1a9e9673f75358582e4c718c00f137062d80b199f0eaa700a29",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-new-unit-mobile-light.png",
+      "sha256": "fbdbe404de24159b3f6f4b6f862c06ca342ba6e87ff1d35008c6aea9aa9ef00d",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-reserve-mobile-light.png",
+      "sha256": "eea89500bf76ab1f44fa8f466e14e98d69c784813d4981ceda43a6d157390965",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-1280-dark.png",
+      "sha256": "775e7e752c5b703a388b45300de158cd2d68bff5ff553ba32dd4289de26e6a7f",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-1280-light.png",
+      "sha256": "be6c81c4cd2182faf9ab70d908c346276c106554864548abf8a0d3934ebfb864",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/scheduling-export-bookings-1280-light.png"
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-320-dark.png",
+      "sha256": "c5f9ad30e7e2d81a6e8742e7efc3c57bcb1f5dc5676a21cd2209de463323ea49",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/scheduling-export-bookings-320-dark.png"
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-320-light.png",
+      "sha256": "bb947ba17d4f2de98943c99249ea4f282b76e3db505ffec09db0b0aa78ee4f0c",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-390-dark.png",
+      "sha256": "c043c0703cfdf68fea6ff30b311f10efad8380da828c03697d70d9d530eb5e72",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-390-light.png",
+      "sha256": "a9cce8b33670676f4364e0ee2ccd7097692c40a2ea027563c83800262f47657b",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-1280-dark.png",
+      "sha256": "05340c6b243963f21e0a4d5ca2a929e20dc83dda744b84cba490f7748cb3d36a",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-1280-light.png",
+      "sha256": "2e7eaf9f8592205fc43d48ec24ed23b34fc2008b52bd479bcbd6e1edfa1e2d8b",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-320-dark.png",
+      "sha256": "971f636645f4a7035741647f0b23b696f1aef9a987db33037324743afc6b5f6a",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-320-light.png",
+      "sha256": "becaa93988db696a9f9111d2004aac383efb07e8f84a8e61b65a613acd21e3c7",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-390-dark.png",
+      "sha256": "dad8bf781232b88ad5ef3ce920fade70076ba8cbc0e4ce5a5bd13b464818b95b",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-390-light.png",
+      "sha256": "da86fe9d83a01348d9235abda4c2b8ff3bd0e99793508e96b7cbbac56b154128",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/scheduling-export-catalog-390-light.png"
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-1280-dark.png",
+      "sha256": "a897be05fcf76915ef73fd7e8e39f755e194d870a7cb76f3226d9399093a354b",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-1280-light.png",
+      "sha256": "79460b8c222de7749365cff191be38c7fa584b1c3bfc7b3cb6b55194ca8bbe4d",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-320-dark.png",
+      "sha256": "9757c2a65138fcc44609a4200f80cc9c1f618d3e18c8038ad37938f844d12fb4",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-320-light.png",
+      "sha256": "7852640db6d35a95068dc2f2d459298c1ec1b8d0cc0e1a89deade3d8231bfcfe",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/scheduling-export-hours-320-light.png"
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-390-dark.png",
+      "sha256": "9f81a68db154149ca5aa69faedea6b29aad16d119024a8f713fe18f2035befc8",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-390-light.png",
+      "sha256": "0bfc391de165885be43f333ff4700a590f1e87b6672b584ed23ddf17e8956322",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-1280-dark.png",
+      "sha256": "1a3534a446b5227e2be7a00b061242f9e34ab8ed0c42d113810289ebe1e4b2f8",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-1280-light.png",
+      "sha256": "548e80dac5573be988c3447cea4868c608d0fa47979005a88fe542c2400b6c40",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-policy-1280-light.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-320-dark.png",
+      "sha256": "2beed90f4f63ff98fd3609965a16d78b3c734f5b1d2f1c5da94cdb6ad933178a",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-policy-320-dark.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-320-light.png",
+      "sha256": "19d53892c642be1aff4f698945b8491c81081ca24bdcfe6006c02f25ad21c7ba",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-390-dark.png",
+      "sha256": "b195d8b00505f239e00c6c57e4ed03505a553423438f68a070357dcf3a6f9265",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-390-light.png",
+      "sha256": "952935b2834cff807fc3db3d609bb3fb1c9612a7fe1c7e74a23f3112d54fa78c",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-1280-dark.png",
+      "sha256": "75af998ac5ec3035518ccb1b9c0cf20897db9cf19501de6fd3dba668a22b85cc",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-queue-1280-dark.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-1280-light.png",
+      "sha256": "96092ef6f6f05b95d5f3bbc7c9678c88406b06ab7c802010efd7d12b2b2b56eb",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-320-dark.png",
+      "sha256": "88d34a4048a84246a6c012313f6152caa7a5a29adea5beec0a6cee0cc86ca68c",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-320-light.png",
+      "sha256": "204b1a280e777017b357977b1126a4401cf02a96e7d22e827c606d4cfa8b840a",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-queue-320-light.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-390-dark.png",
+      "sha256": "09debe57fea3c6cadfedd1e21049af10381c2f8f7157d0149391ae09a6c18194",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-390-light.png",
+      "sha256": "307ef4dc0307e7c572f3f63ad26844009a60c34544ba36fd3f8e91d4daf9d554",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-queue-390-light.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-1280-dark.png",
+      "sha256": "7daf0e29234ba307e558727dff5901571445bd68f0ddd4e7c549d19ac9e81c12",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-recovery-1280-dark.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-1280-light.png",
+      "sha256": "3fc1a51d8cf8b9ac0ad5ceda93e4644b3102636740c5445c095471437791a634",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-320-dark.png",
+      "sha256": "0b89882a724b2d444015ec3066e0c48aa13ba8e97f03eb492d50dff0708bb63b",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-recovery-320-dark.png"
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-320-light.png",
+      "sha256": "c75ddd4c95d03f8bbff2aaeee2a40f511591af59cdd155fbd45f166a42b67725",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-390-dark.png",
+      "sha256": "e6be549b5b7cc52a8dc928f970e003e73ffbd5f54e1b7470edf56fdcb542d2a6",
+      "visuallyReviewed": false,
+      "preservedInGit": null
+    },
+    {
+      "path": "scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-390-light.png",
+      "sha256": "c0330f61c6f52488834d431a35148a88b8862295d40ac4ec12eaca3016fe08e4",
+      "visuallyReviewed": true,
+      "preservedInGit": "publication-2026-10-02/administrative-recovery-390-light.png"
+    }
+  ]
+}

@@ -1,5 +1,25 @@
 # Decisões institucionais pendentes
 
+## Complemento P02 — bloqueio por falta em Agendamentos, 28/09/2026
+
+Decisão registrada por CODEX, solicitante mafaltti (Danilo-Komunick), verificado nesta sessão: a
+equipe registra a falta; os 30 dias corridos começam nesse registro e atingem somente a pessoa que
+faltou, inclusive dependente, em todos os serviços de Agendamentos. Há sete dias corridos desde o
+registro para justificar/contestar, com reservas preservadas nesse prazo e durante análise de pedido
+tempestivo. Novas reservas ficam impedidas. Sem pedido no prazo, efetivar bloqueio e cancelar
+reservas abrangidas, preservando histórico. Ações OK/Justificar falta/Contestar falta, acesso
+posterior no app/site e e-mails no aviso, envio do pedido e decisão integram o requisito. Fonte
+canônica: [BF-FR-01–06 e BF-D01–05](../008-scheduling-management/spec.md).
+
+P02 de 10/09 abaixo descreve bloqueio cadastral/administrativo manual. A nova restrição por falta
+tem causa e regras próprias; “Sem prazo automático de 30 dias” e propagação familiar não se aplicam
+à nova política. Aceitação retira este impedimento. Cada falta tem período próprio de 30 dias e sete
+dias para justificar/contestar separadamente, sem soma automática de prazos. Aceitação/expiração
+retira somente a respectiva restrição. Ao completar os 30 dias encerrar esta restrição mesmo com
+análise pendente, liberando novas reservas somente sem outros impedimentos vigentes; a decisão
+posterior altera o histórico, sem prolongar esta restrição. Os detalhes restantes estão nas decisões
+abertas da spec. Ainda não há aplicação automática da nova regra nem alteração de dados reais.
+
 10/09/2026. Preservadas do inventário de pendências do projeto. Estes itens não impedem validar o
 incremento administrativo com regras e dados sintéticos, mas não autorizam regras reais implícitas.
 

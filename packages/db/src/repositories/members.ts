@@ -1,5 +1,15 @@
 import type { Pool, PoolClient } from "pg";
 
+/** Batch equivalent of findSchedulingBeneficiary's current holder-chain blocking rule. */
+export const schedulingBlockedMembersCte = `WITH RECURSIVE scheduling_blocked_members(id) AS (
+  SELECT id FROM member WHERE administrative_status='blocked'
+  UNION
+  SELECT r.dependent_id FROM member_relationship r
+  JOIN scheduling_blocked_members b ON b.id=r.holder_id
+  WHERE r.ended_at IS NULL
+    AND r.starts_on <= (clock_timestamp() AT TIME ZONE 'America/Bahia')::date
+)`;
+
 /** Same lock for relationship/status changes and booking confirmation; take before row locks. */
 export async function lockMemberEligibility(client: PoolClient): Promise<void> {
   await client.query("SELECT pg_advisory_xact_lock(5010,1)");
