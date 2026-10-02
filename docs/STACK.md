@@ -1,69 +1,30 @@
 # CAAB — Referência de Stack e Arquitetura
 
-## Incremento local de faltas — interface validada em 28/09/2026
-
-T090–T096/T098 e T099–T102 concluídas localmente na worktree de Agendamentos. Registro manual,
-sete/30 dias, revisão humana por permissão específica, impedimento individual, cancelamentos
-abrangidos e autoria de sistema preservados. Interface inclui lista, registro, pedido/comprovante,
-decisão e quarto dataset de exportação (faltas), sem texto/comprovantes no arquivo exportado.
-App/site e entrega real de e-mails permanecem adiados em T089. Upload real depende do scanner
-existente; liberação no E2E foi simulada somente em banco sintético.
-
-Núcleo: 94 integrações; incremento da interface: 62 integrações, duas jornadas Chromium, 18 capturas
-em 1280/390/320px claro/escuro, build/tipos/lint. Não somar regressões repetidas. Consolidação
-posterior: 702 unitários/contratos, lint completo, tipos do monorepo e gates de
-segurança/documentação. Migrations 0033/0034 novas; banco de uso não alterado; sem commit/push/PR.
-Fontes: [interface e T102](../specs/008-scheduling-management/evidence/absence-ui-2026-09-28.md) e
-[revisão para PR](../specs/008-scheduling-management/evidence/pr-review-2026-09-28.md).
-
-## Agendamentos: base integrada e entrega local em 28/09/2026
-
-Base dev/origin/dev 89d2356: FullCalendar PR #34 e acesso/lifecycle PR #36. A evolução posterior
-está somente na worktree codex/scheduling-market-research-20260923, sem commit/push/PR.
-T025–T038/AC03 e T078–T086 validadas localmente: pré-grants/revalidação, GiST global por pessoa,
-aviso aditivo preservando LC01 e três adapters ao lado de usersExport; políticas/publicação, agenda
-por profissional/capacidade, pendências ocupantes, decisões, edição/transferência, remarcações
-limitadas e recuperação isenta, equipe/fila, histórico e estados explícitos nos relatórios.
-
-0031 é overlap transitório; 0032 administrativa substitui ambas as exclusões para scheduled e
-pending_approval. Não editar 0020/0028 nem criar uma segunda 0032 de canais. Ator continua user,
-beneficiário member. Contagem legada desconhecida permanece NULL e impede nova troca voluntária sem
-conciliação. Banco de uso não alterado. Somente bancos sintéticos foram migrados.
-
-98 unitários, 169 contratos, 72 integrações e seis jornadas Chromium aprovados, além de build,
-tipos, lint e revisão visual.
-[Evidência e limites](../specs/008-scheduling-management/evidence/admin-workflow-2026-09-28.md).
-App/site adiados por decisão explícita; identidade/UI externos não bloqueiam o painel. Avisos
-possuem intenção transacional e estado no histórico, sem dispatcher/envio real/WAHA instalado. CI e
-publicação desta entrega permanecem pendentes. As seções datadas abaixo são históricas quando
-divergirem deste estado e não reabrem tarefas administrativas já concluídas.
-
 ## Desenho vigente após clarify — 21/09/2026
 
-Permissão geral `exports:generate` intersecta consulta de módulo/dados; sem acesso, zero descoberta
-no menu/busca/Início. Notícias preserva read/write/publish, mas a concessão implícita da view será
-removida; Agendamentos já tem read/write explícitos desde o PR #36. Exportações novas usam
-filtros/colunas e Excel/CSV/PDF diretos, sem teto funcional ou prazo/histórico obrigatório;
-dados/arquivos legados preservados. Desenho e tarefas em
-[programa002](../specs/002-integrated-modules/plan.md). Mensagens tem finalidade confirmada
-(comunicados/campanhas), mas continua protótipo sob revisão de aderência; canais reais, chat interno
-e suporte futuro permanecem adiados. Retenção institucional e critérios/documentos de dependentes
-ficam para depois. Estados e propostas anteriores abaixo são históricos quando divergirem desta
-revisão; nenhum código foi implementado pelo plan/tasks e localhost permanece desligado.
+Permissão geral `exports:generate` intersecta consulta de módulo/dados; sem acesso,
+zero descoberta no menu/busca/Início. Notícias preserva read/write/publish, mas a
+concessão implícita da view será removida; Agendamentos terá read/write explícitos.
+Exportações novas usam filtros/colunas e Excel/CSV/PDF diretos, sem teto funcional
+ou prazo/histórico obrigatório; dados/arquivos legados preservados. Desenho e tarefas
+em [programa002](../specs/002-integrated-modules/plan.md).
+Mensagens tem finalidade confirmada (comunicados/campanhas), mas continua protótipo
+sob revisão de aderência; canais reais, chat interno e suporte futuro permanecem adiados.
+Retenção institucional e critérios/documentos de dependentes ficam para depois.
+Estados e propostas anteriores abaixo são históricos quando divergirem desta revisão;
+nenhum código foi implementado pelo plan/tasks e localhost permanece desligado.
 
-**Revisão de 21/09/2026:** arquitetura e opções não equivalem a implementação. Estado por módulo e
-controles pendentes em [MODULES](MODULES.md) e na
-[revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md). O calendário
-FullCalendar e concessões de Agendamentos estão integrados (PR #34/#36); conflito global por
-beneficiário ainda não. Matriz completa de grants e ajuste pré-lock pendentes. Relatórios existe,
-com adaptações de autorização e exportação direta pendentes. Não interpretar bibliotecas apenas
-recomendadas como instaladas.
+
+**Revisão de 21/09/2026:** arquitetura e opções não equivalem a implementação.
+Estado por módulo e controles pendentes em [MODULES](MODULES.md) e na
+[revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md).
+O calendário FullCalendar está integrado; conflito por beneficiário e concessões
+de Agendamentos ainda não. Relatórios existe, com adaptações de autorização e
+exportação direta pendentes. Não interpretar bibliotecas apenas recomendadas como instaladas.
 
 ## Estado consolidado — 17/09/2026
 
-**Decisão vigente — 21/09/2026:** Mensagens prepara comunicados/campanhas aos associados, com
-público e programação. Finalidade confirmada; protótipo sem homologação, aderência/continuidade em
-M016 e meios/envio real adiados.
+**Decisão vigente — 21/09/2026:** Mensagens prepara comunicados/campanhas aos associados, com público e programação. Finalidade confirmada; protótipo sem homologação, aderência/continuidade em M016 e meios/envio real adiados.
 
 Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
 de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
@@ -76,15 +37,13 @@ continuam pendentes. As seções históricas não reabrem autorizações nem sub
 ## Agendamentos — implementação da etapa 1 em 15/09/2026
 
 A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
-oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento e histórico.
-Q8/Q9 consultar/alterar já implementadas no PR #36 (AC01/AC02/T028); T027/AC03 ainda exigem matriz
-completa e ajuste de autorização antes/depois do lock. Validação e limites na
-[spec 008](../specs/008-scheduling-management/spec.md) e nas
-[evidências](../specs/008-scheduling-management/evidence/release-review.md). Esta atualização
-substitui o estado anterior de “somente pesquisa” para esse recorte. Exceções, avaliações e demais
-estados permanecem posteriores. Calendário administrativo foi priorizado em 18/09 e está integrado,
-com CAL06 pendente; a primeira interface do usuário no app/site continua pendente; CAASSH continua
-desativado.
+oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
+e histórico. O código ainda aceita sessão ativa sem concessão; isso é lacuna. Q8/Q9 exigem consultar/alterar separadas, em 008 AC01–AC03.
+Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
+[evidências](../specs/008-scheduling-management/evidence/release-review.md).
+Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
+Exceções, avaliações e demais estados permanecem posteriores. Calendário administrativo foi priorizado em 18/09 e está integrado, com CAL06 pendente;
+a primeira interface do usuário no app/site continua pendente; CAASSH continua desativado.
 
 ## 1. Contexto e fontes da stack
 
@@ -199,13 +158,13 @@ embeds arbitrários.
 
 ## 6. Interface e design system
 
-Atualização de 18/09/2026, entrega em validação: FullCalendar Standard 7.1.0 adotado no painel de
-Agendamentos (mês/semana/dia), com temporal-polyfill 1.0.1, locale pt-BR, America/Bahia e tokens
-existentes. Lista diária preservada. Decisão e limites na
+Atualização de 18/09/2026, entrega em validação: FullCalendar Standard 7.1.0 adotado
+no painel de Agendamentos (mês/semana/dia), com temporal-polyfill 1.0.1, locale pt-BR,
+America/Bahia e tokens existentes. Lista diária preservada. Decisão e limites na
 [spec 008](../specs/008-scheduling-management/spec.md); evidências em
-[calendário](../specs/008-scheduling-management/evidence/calendar-2026-09-18.md). TanStack
-Table/Query e React Hook Form abaixo continuam escolhas históricas não adotadas nesta entrega;
-componentes e formulários próprios permanecem implementados.
+[calendário](../specs/008-scheduling-management/evidence/calendar-2026-09-18.md).
+TanStack Table/Query e React Hook Form abaixo continuam escolhas históricas não
+adotadas nesta entrega; componentes e formulários próprios permanecem implementados.
 
 - Tailwind CSS.
 - shadcn/ui.
@@ -232,10 +191,10 @@ Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais de
 
 ### 7.1 Decisão
 
-Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md): primeira entrega
-usou lista diária com componentes existentes. O incremento autorizado em 18/09/2026 adiciona
-FullCalendar Standard como camada visual, sem mudar a autoridade do servidor sobre vagas e reservas.
-App/site continua pendente.
+Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md):
+primeira entrega usou lista diária com componentes existentes. O incremento autorizado
+em 18/09/2026 adiciona FullCalendar Standard como camada visual, sem mudar a autoridade
+do servidor sobre vagas e reservas. App/site continua pendente.
 
 Implementação: núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário em 15/09/2026:
 Cal.com é referência de pesquisa e **não deve ser integrado, salvo se nenhuma outra possibilidade
@@ -380,8 +339,7 @@ Tabela append-only com:
 - Antes e depois, com campos sensíveis redigidos.
 - Data UTC.
 - Origem e request ID.
-- Ações sensíveis autorizadas e auditadas, sem motivo escrito obrigatório; preservar motivos
-  históricos.
+- Ações sensíveis autorizadas e auditadas, sem motivo escrito obrigatório; preservar motivos históricos.
 
 ### 14.2 Logs técnicos
 
@@ -391,8 +349,7 @@ cookies, arquivos completos ou dados pessoais sem necessidade operacional aprova
 Auditoria de negócio e logs técnicos possuem finalidades e retenções distintas.
 
 A experiência reúne Eventos e Processamentos na área Auditoria. A fusão não mistura tabelas nem
-permissões de leitura/operação: `audit:read`, `jobs:read` e `jobs:redrive`. `audit:export` é legado;
-sua substituição pela permissão geral combinada com leitura está pendente em 003 EX01. URLs
+permissões de leitura/operação: `audit:read`, `jobs:read` e `jobs:redrive`. `audit:export` é legado; sua substituição pela permissão geral combinada com leitura está pendente em 003 EX01. URLs
 existentes podem permanecer compatíveis. Jobs e exportações reutilizam os serviços atuais.
 
 ## 15. Segurança
@@ -499,11 +456,11 @@ responsabilidade definida.
 
 ## 21. Decisão resumida
 
-Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos privados no banco. PDFKit
-gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file gera XLSX com células tipadas,
-e CSV usa UTF-8 BOM e neutralização de fórmulas. São dependências do worker, com versões fixadas no
-lockfile. Coleta própria usa eventos permitidos e HMAC; não adiciona provedor ou serviço de
-analytics externo.
+Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos privados
+no banco. PDFKit gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file
+gera XLSX com células tipadas, e CSV usa UTF-8 BOM e neutralização de fórmulas.
+São dependências do worker, com versões fixadas no lockfile. Coleta própria usa
+eventos permitidos e HMAC; não adiciona provedor ou serviço de analytics externo.
 
 - Next.js + React + TypeScript.
 - PostgreSQL.
