@@ -1,5 +1,21 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
+## Revisão de aceite de acessos — 02/10/2026
+
+Entrega de revisão: `docs/access-review-20261002`, base `748539d`. Escopo e resultado na
+[matriz de aceite](evidence/access-acceptance-2026-10-02.md): cargos, bloqueio de autocadastro e
+descoberta já integrados. Não executar novamente o plano histórico de construção abaixo.
+
+Revisão realizada por inspeção e testes unitários/contratos sem serviços. Próximos trabalhos
+registrados em AC-T002–AC-T006: corrigir a descoberta de criação em Mensagens, complementar provas
+dos cargos e revalidação temporal, resolver o alcance do cargo base e validar em ambiente
+autorizado. Nenhuma implementação desses incrementos está autorizada por este registro. A correção
+de Mensagens deve preservar consulta e guardas de escrita, sem ativar envio real; ler o guia de
+design antes de alterar UI. Não há mudança funcional planejada para Agendamentos nesta revisão.
+
+Conciliação documental por blocos; preservar DS-T133–DS-T140 e o contrato documental de contas sem
+cargo. Sem serviços, push, PR, integração ou QA humano. Código, migrations e dados intactos.
+
 **Branch da entrega**: `feature/access-export-foundation-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: recorte implementado e validado; evidências no checkpoint e
 relatório do incremento.

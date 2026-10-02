@@ -1,5 +1,24 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Revisão de aceite de acessos — 02/10/2026
+
+Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir criação de
+contas ao fluxo administrativo (CAAB-18) e Mostrar apenas funções autorizadas na navegação (CAAB-20)
+foram conferidos na base integrada `748539d`. A implementação existente deve ser preservada;
+checkpoints anteriores sobre PRs pendentes não descrevem o estado desta revisão.
+[Matriz AC01–AC14, evidências e lacunas](evidence/access-acceptance-2026-10-02.md).
+
+Bloqueio público, autoridade por cargo, cargo único e filtros centrais estão presentes. Há lacuna de
+visibilidade do link Novo agendamento em Mensagens para consulta sem escrita (G01), além de
+cobertura dirigida pendente (G02/G03). Passaram 31 unitários e 28 contratos selecionados; não houve
+integração, navegador ou QA humano nesta revisão. Não declarar aceite integral por esses testes.
+
+Conforme o contrato da worktree documental consultado em02/10, Colaborador está confirmado como
+cargo base, mas o alcance para contas atualmente sem cargo permanece pendente. O comportamento
+existente que aceita zero cargos não é uma nova decisão de produto nem autorização para backfill.
+Preservar a opção e os dados até definição explícita. Seções DS e documentos transversais ficam sob
+responsabilidade da entrega documental; conciliar apenas este bloco e a evidência.
+
 ## Promover cargo — 22/09/2026
 
 Pedido: botão Promover ao lado de Revogar cargo. Promover avança um nível na hierarquia Colaborador

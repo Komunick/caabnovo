@@ -1,5 +1,36 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Revisão de aceite de acessos — 02/10/2026
+
+Escopo: Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir
+criação de contas ao fluxo administrativo (CAAB-18) e Mostrar apenas funções autorizadas na
+navegação (CAAB-20). Base `748539d`; branch `docs/access-review-20261002`.
+[Matriz e evidências](evidence/access-acceptance-2026-10-02.md). As tarefas abertas abaixo são
+encaminhamentos, não autorização para implementar, ligar serviços ou publicar. Não reabrir
+T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
+
+- [x] AC-T001 Conferir implementação integrada, contrato documental, critérios e evidências;
+      preparar matriz AC01–AC14, distinguir histórico/teste atual/QA humano e executar recorte sem
+      serviços. Resultado: 31 unitários e 28 contratos aprovados, com G01–G03/P01 registrados.
+- [ ] AC-T002 Corrigir G01 em `apps/web/modules/messaging/ui/schedules.tsx`: esconder Novo
+      agendamento sem `messages:write`, mantendo consulta; validar Gestor/Colaborador de leitura,
+      escrita concedida, revogação e POST negado. Coordenar Mensagens, ler guia de design e
+      preservar M016/envio real desativado. Não alterar Agendamentos por essa ocorrência.
+- [ ] AC-T003 Complementar G02 em `apps/web/tests/e2e/direct-exports.spec.ts`: atribuir cargo
+      Colaborador real ao destinatário, executar a escrita recebida e confirmar que Gestor permanece
+      negado e Colaborador não concede acessos/cargos por API forjada. Não converter a fixture sem
+      cargo em decisão de migração de contas.
+- [ ] AC-T004 Complementar G03: prova dirigida de expiração da autoridade durante espera por lock,
+      sem persistência/auditoria de sucesso indevidas; verificar separadamente atualização de
+      descoberta por intervalo15s, foco e mudança de rota. Preservar guardas e registrar falhas de
+      rede como limite de atualização visual, não autorização do servidor.
+- [ ] AC-T005 Obter decisão do alcance do cargo base para contas atualmente sem cargo (P01) e
+      atualizar o contrato existente antes de propor transição. Não atribuir cargos por inferência.
+- [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
+      concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
+      limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos
+      testes automatizados. Não iniciar serviços para concluir esta revisão documental.
+
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/collaborator-contact.md). **Branch da entrega:**
 `feature/collaborators-contact-20260921`. Incremento atual: T124–T129 e005 LC03, concluídos conforme
