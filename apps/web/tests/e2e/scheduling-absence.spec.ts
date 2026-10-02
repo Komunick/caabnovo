@@ -34,12 +34,21 @@ async function fixture(db: Client) {
     "INSERT INTO scheduling_procedure(id,unit_id,service_id,name,duration_minutes) VALUES($1,$1,$1,$2,60)",
     [id, name],
   );
+  // Keep future synthetic reservations valid for the shared browser database.
+  await db.query(
+    "INSERT INTO scheduling_unit_hours(unit_id,weekday,start_local,end_local) SELECT $1,day,'08:00','18:00' FROM generate_series(0,6) day",
+    [id],
+  );
+  await db.query(
+    "INSERT INTO scheduling_service_hours(service_id,weekday,start_local,end_local) SELECT $1,day,'08:00','18:00' FROM generate_series(0,6) day",
+    [id],
+  );
   const bookings: string[] = [];
   for (const days of [-2, 2, 40]) {
     const booking = randomUUID();
     await db.query(
       `INSERT INTO scheduling_booking(id,procedure_id,member_id,starts_at,ends_at,duration_snapshot,created_by,mode,confirmed_reschedules)
-      VALUES($1,$2,$2,date_trunc('hour',statement_timestamp())+$3*interval '1 day',date_trunc('hour',statement_timestamp())+$3*interval '1 day'+interval '1 hour',60,$4,'capacity',0)`,
+      VALUES($1,$2,$2,((statement_timestamp() AT TIME ZONE 'America/Bahia')::date+$3::integer+time '09:00') AT TIME ZONE 'America/Bahia',((statement_timestamp() AT TIME ZONE 'America/Bahia')::date+$3::integer+time '10:00') AT TIME ZONE 'America/Bahia',60,$4,'capacity',0)`,
       [booking, id, days, actor],
     );
     bookings.push(booking);
@@ -243,6 +252,7 @@ test("record, preserve deadlines and draft, upload privately, submit and accept 
 test("review grant without write decides and reads evidence; ordinary readers cannot access the request", async ({
   page,
   browser,
+  baseURL,
 }) => {
   test.setTimeout(180000);
   const db = new Client({
@@ -256,7 +266,7 @@ test("review grant without write decides and reads evidence; ordinary readers ca
   const permissions = (
     await db.query("SELECT permissions FROM user_access WHERE user_id=$1", [ordinary])
   ).rows[0].permissions;
-  const reviewerContext = await browser.newContext({ baseURL: process.env.PLAYWRIGHT_BASE_URL });
+  const reviewerContext = await browser.newContext({ baseURL });
   try {
     const data = await fixture(db);
     await login(page);

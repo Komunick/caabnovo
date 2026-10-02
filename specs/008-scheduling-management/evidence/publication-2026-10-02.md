@@ -99,3 +99,20 @@ pelo runner. Ajustados os quatro arquivos scheduling-absence/access/export/workf
 mesmo fallback sintético já empregado em global-setup, scheduling.spec e outras suítes. Sem
 alteração de workflow, credenciais reais ou banco de uso. Os testes falharam antes das jornadas,
 portanto suas capturas de erro não comprovam a UI. Correção e matriz visual seguem para novo CI.
+
+## Segunda execução remota — b3d8c87
+
+CI37032676133: quality/security aprovados;558 unitários,169 contratos,347 integrações aprovadas
+(incluindo118 de Agendamentos),1 volume opcional ignorado e build57 páginas. Browser:97 aprovados, 4
+falhas; a11y final não executada por dependência do passo anterior. Primeiro fluxo de faltas e
+exportação passaram, gerando as matrizes atuais. T107 continua aberto.
+
+Diagnóstico das quatro falhas: contexto adicional do revisor usava PLAYWRIGHT_BASE_URL ausente no
+runner, causando navegação relativa inválida. Passa a usar o fixture baseURL resolvido da
+configuração. As fixtures de faltas inseriam reservas futuras sem expediente da unidade/serviço;
+isso acionava corretamente SCHEDULING_FUTURE_BOOKINGS nas criações posteriores dos testes access,
+workflow e scheduling. Corrigida a fixture com expediente08–18 nos sete dias e reservas09–10
+America/Bahia, independentes da hora da execução. Preservadas as asserções de permissão, bloqueio e
+jornadas; sem alteração da aplicação, migrations ou workflow. Os gates anteriores não comprovam
+estes E2Es corrigidos; exige-se nova execução completa. Artefato11237769464,
+scheduling-synthetic-evidence, baixado localmente.
