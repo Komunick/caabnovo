@@ -28,11 +28,11 @@ de24/09 é histórica; a revisão atual usa o guia canônico disponível.
 
 Diff total conferido por caminhos: implementação administrativa, quatro migrations, workers de
 faltas, contratos/permissão, testes/evidências; dois acréscimos em spec005 preservam decisões de
-beneficiário/histórico, sem novo módulo de compras. Sem alteração de workflow, dependências,
-transporte de e-mail ou cópia do gerador novo de Relatórios. Registry preserva usersExport,
-reportExports e schedulingExports. report-summary.ts incorpora somente a correção do período;
-reportSources.bookings preserva os estados e campos opcionais. Fonte de hashes abaixo delimita os
-snapshots, não congela trabalho concorrente.
+restrição individual por falta/histórico, sem novo módulo de compras. Sem alteração de workflow,
+dependências, transporte de e-mail ou cópia do gerador novo de Relatórios. Registry preserva
+usersExport, reportExports e schedulingExports. report-summary.ts incorpora somente a correção do
+período; reportSources.bookings preserva os estados e campos opcionais. Fonte de hashes abaixo
+delimita os snapshots, não congela trabalho concorrente.
 
 ## Gates
 
@@ -66,3 +66,20 @@ aprovados nesta etapa. QA humano pendente. Sem serviços locais, WSL ou merge au
   }
 }
 ```
+
+## Primeira execução remota — 69fb803
+
+CI37031025184, push: https://github.com/Komunick/caabnovo/actions/runs/37031025184. Security
+aprovado (audit e Gitleaks); formatação/lint/tipos,558 unitários e169 contratos aprovados.
+Integrações:346 aprovadas,1 ignorada e1 falha;31 arquivos. As cinco suítes específicas de
+Agendamentos passaram: scheduling37, workflow19, absence22, export27 e absence-query13, total118.
+Incluem migrations reais em PostgreSQL18, concorrência/exclusões, permissões/revogação, aprovação,
+recuperação, faltas e os quatro datasets nos três formatos. A regressão de cancelamento sem horário
+passou dentro de workflow19. Teste ignorado é volume opcional de Relatórios (CAAB_EXPORT_VOLUME=1),
+fora da amostra C1, não um cenário de Agendamentos dispensado.
+
+Falha: packages/db/tests/migrations.test.ts esperava nomes somente até0030; recebeu corretamente
+0031–0034. Correção acrescenta os quatro nomes à lista explícita sem modificar migrations,
+reexecução, controles ou workflow. Formato/lint do teste corrigido aprovados localmente; exige nova
+execução do CI. Navegador ainda em andamento no momento deste registro. T107 continua aberto;
+nenhuma declaração de aprovação integral desta execução.
