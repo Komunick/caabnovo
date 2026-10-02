@@ -24,6 +24,8 @@ import {
 } from "../../modules/scheduling/approval-queue-service";
 import { schedulingExports } from "../../modules/scheduling/export-adapter";
 import { reportSources } from "@caab/db/repositories/reports";
+import { reportSummary } from "@caab/db/repositories/report-summary";
+import { reportQuerySchema } from "@caab/contracts";
 
 let container: StartedPostgreSqlContainer, admin: Client, pool: Pool, context: SchedulingContext;
 const next = () => ({
@@ -659,6 +661,39 @@ describe.sequential("administrative workflow with real PostgreSQL", () => {
       startsAt: null,
       professionalName: null,
     });
+    const reportActor = {
+      userId: context.actor.userId,
+      permissions: new Set(["reports:read", "scheduling:read"]),
+    };
+    const reportQuery = reportQuerySchema.parse({ from: date, to: date });
+    const before = await reportSummary(pool, reportActor, reportQuery);
+    const cancellationCount = (summary: typeof before) =>
+      Number(
+        summary.notices.find((notice) => notice.includes("canceladas atualmente"))!.split(" ")[0],
+      );
+    booking = (
+      await commandWorkflowBooking(pool, next(), booking.id, "cancel", {
+        expectedVersion: booking.version,
+      })
+    ).value;
+    expect(booking.startsAt).toBeNull();
+    expect(booking.status).toBe("cancelled");
+    const after = await reportSummary(pool, reportActor, reportQuery);
+    expect(cancellationCount(after)).toBe(cancellationCount(before) + 1);
+    const outside = await reportSummary(
+      pool,
+      reportActor,
+      reportQuerySchema.parse({ from: "2000-01-01", to: "2000-01-01" }),
+    );
+    expect(cancellationCount(outside)).toBe(0);
+    const withoutSource = await reportSummary(
+      pool,
+      { ...reportActor, permissions: new Set(["reports:read"]) },
+      reportQuery,
+    );
+    expect(withoutSource.notices.some((notice) => notice.includes("canceladas atualmente"))).toBe(
+      false,
+    );
   });
   it("denies revoked access on commands and replays without touching data", async () => {
     const o = await offer();

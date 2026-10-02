@@ -1,5 +1,34 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## Retomada e adiamento de e-mail — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+O usuário autorizou conciliar a worktree preservada com dev e concluir/validar sobreposição,
+bloqueios, permissões, aprovação/remarcação e faltas. Em resposta posterior, informou que o serviço
+de e-mail ainda não foi criado e adiou a integração e homologação dos avisos. O código SMTP de
+contas é referência técnica, não prova de serviço disponível.
+
+Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42)/T089 permanece pendente,
+dependente de Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). A pedido
+explícito foi criada a subtarefa Homologar os avisos operacionais após disponibilizar o serviço de
+e-mail (CAAB-45), bloqueada por CAAB-2. Confirmar ambiente, transporte/remetente, destinatários de
+teste autorizados e humano responsável na retomada; registrar versão e evidência que diferencie
+intenção, processamento, aceite e entrega. Não criar transporte ou enviar agora. App/site, WAHA e
+T097 permanecem adiados. O recorte administrativo segue independentemente.
+
+- [x] T106 Preservar alterações em backup verificado e commit local; conciliar dev na mesma
+      worktree, mantendo exportações de Agendamentos e Relatórios e atualizações de dependências.
+- [ ] T107 Revalidar o conjunto conciliado: sobreposição, bloqueios, permissões, aprovação,
+      remarcação, recuperação e faltas; incluir regressão de exportação compartilhada, tipos, lint,
+      build, testes e evidências da versão atual. Testes usam dados descartáveis.
+- [x] T108 Registrar o adiamento de T089 por ausência do serviço de e-mail, preservar critérios,
+      criar e verificar o ticket solicitado no Jira e suas dependências, sem marcar entrega pronta.
+
+- [x] T109 Revisar compatibilidade com a entrega atual de Relatórios somente por leitura; corrigir o
+      aviso de cancelamentos sem horário no lado de Agendamentos, executar testes sem serviços e
+      registrar hashes, limites e instruções de conciliação em
+      [evidência](evidence/reports-compatibility-2026-10-02.md). Regressão de banco ampliada
+      permanece sem execução em T107; não tentar recuperar WSL nem iniciar serviços.
+
 ## Falta e bloqueio — núcleo implementado, T087–T098
 
 Fonte: BF-FR-01–06/BF-D01–05 de [spec.md](spec.md), resposta do usuário em 28/09/2026. Pedido
@@ -1026,21 +1055,21 @@ itens LC acima foram concluídos; exportação própria e pendências anteriores
 
 ## Phase 7: Convergence
 
-Revisão estática de 30/09/2026, após analyze, no recorte administrativo vigente. Esta fase
-registra lacunas de implementação; não reabre app/site, entrega de mensagens ou CI já pendentes.
-Atualização de 30/09/2026: as três correções foram implementadas localmente e receberam quatro
-regressões de integração. 162 unitários e 19 integrações PostgreSQL aprovados, além de tipos,
-lint e formato. T103–T105 concluídas; ver [checkpoint](checkpoint.md). Banco sintético descartável
-autorizado nesta conversa, criado e removido pela suíte; painel e banco CAAB de uso não iniciados.
+Revisão estática de 30/09/2026, após analyze, no recorte administrativo vigente. Esta fase registra
+lacunas de implementação; não reabre app/site, entrega de mensagens ou CI já pendentes. Atualização
+de 30/09/2026: as três correções foram implementadas localmente e receberam quatro regressões de
+integração. 162 unitários e 19 integrações PostgreSQL aprovados, além de tipos, lint e formato.
+T103–T105 concluídas; ver [checkpoint](checkpoint.md). Banco sintético descartável autorizado nesta
+conversa, criado e removido pela suíte; painel e banco CAAB de uso não iniciados.
 
-- [x] T103 CRITICAL — Revalidar a disponibilidade do intervalo efetivamente retido na aprovação
-      em `apps/web/modules/scheduling/booking-workflow.ts`, conforme Constituição III,
-      2C-FR-03/20 e T082/T083 (partial). O ramo `approve` consulta oferta/beneficiário e horário
-      futuro, mas não verifica `scheduling_resource_block`. Cobrir pedido pendente por capacidade
-      cujo intervalo se tornou indisponível após recuperação de outro atendimento do serviço:
-      negar confirmação, preservando versão, ocupação e histórico do pedido. Validar dentro da
-      transação, excluindo a própria ocupação e preservando início/fim/duração contratados;
-      não recalcular a reserva pela grade ou duração atual. Adicionar regressão em
+- [x] T103 CRITICAL — Revalidar a disponibilidade do intervalo efetivamente retido na aprovação em
+      `apps/web/modules/scheduling/booking-workflow.ts`, conforme Constituição III, 2C-FR-03/20 e
+      T082/T083 (partial). O ramo `approve` consulta oferta/beneficiário e horário futuro, mas não
+      verifica `scheduling_resource_block`. Cobrir pedido pendente por capacidade cujo intervalo se
+      tornou indisponível após recuperação de outro atendimento do serviço: negar confirmação,
+      preservando versão, ocupação e histórico do pedido. Validar dentro da transação, excluindo a
+      própria ocupação e preservando início/fim/duração contratados; não recalcular a reserva pela
+      grade ou duração atual. Adicionar regressão em
       `apps/web/tests/integration/scheduling-workflow.test.ts` para bloqueio superveniente,
       fronteiras sem sobreposição, aprovação válida e concorrência, sem alterar terceiros.
 - [x] T104 CRITICAL — Completar a auditoria de salvar/publicar serviço no caminho
@@ -1048,18 +1077,18 @@ autorizado nesta conversa, criado e removido pela suíte; painel e banco CAAB de
       Constituição V, FR-011/SC-004, 2C-FR-19 e T081 (partial). Atualmente o formulário altera
       políticas/publicação, mas grava somente evento genérico created/updated com nome, ativo,
       duração e versão; não distingue publicação nem preserva as mudanças de política. Registrar
-      ação de publicação e mudanças permitidas da política/revisão com autoria, versão e
-      correlação na mesma transação, incluindo os valores necessários para rastrear a alteração,
-      sem dados sensíveis. Harmonizar com `service-policy.ts`; testar salvar rascunho, publicar,
-      republicar, falha/rollback e retry idempotente sem duplicar eventos em
+      ação de publicação e mudanças permitidas da política/revisão com autoria, versão e correlação
+      na mesma transação, incluindo os valores necessários para rastrear a alteração, sem dados
+      sensíveis. Harmonizar com `service-policy.ts`; testar salvar rascunho, publicar, republicar,
+      falha/rollback e retry idempotente sem duplicar eventos em
       `apps/web/tests/integration/scheduling-workflow.test.ts`.
 - [x] T105 HIGH — Gerar intenção durável de confirmação quando editar o destino de uma troca
-      pendente a confirma imediatamente pela política vigente, conforme 2C-FR-10/23,
-      plan: intenção junto ao evento de domínio e T084 (partial). Em
+      pendente a confirma imediatamente pela política vigente, conforme 2C-FR-10/23, plan: intenção
+      junto ao evento de domínio e T084 (partial). Em
       `apps/web/modules/scheduling/booking-workflow.ts` a ação resulta em `pending_edited`, mas
-      `apps/web/modules/scheduling/booking-service.ts` exclui esse evento da geração de
-      `confirmed`. Cobrir a transição pending_approval → scheduled sem notificar mera edição
-      ainda pendente; manter intenção e evento no mesmo commit e deduplicar retries. Adicionar
-      regressão em `apps/web/tests/integration/scheduling-workflow.test.ts` com troca pendente,
-      alteração da política para confirmação imediata, edição do destino, contador consolidado
-      uma vez e exatamente uma intenção de confirmação. Não implementar transporte externo.
+      `apps/web/modules/scheduling/booking-service.ts` exclui esse evento da geração de `confirmed`.
+      Cobrir a transição pending_approval → scheduled sem notificar mera edição ainda pendente;
+      manter intenção e evento no mesmo commit e deduplicar retries. Adicionar regressão em
+      `apps/web/tests/integration/scheduling-workflow.test.ts` com troca pendente, alteração da
+      política para confirmação imediata, edição do destino, contador consolidado uma vez e
+      exatamente uma intenção de confirmação. Não implementar transporte externo.

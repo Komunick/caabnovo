@@ -104,3 +104,12 @@ scheduling.spec.ts, a ação Nova reserva e a regressão /users/exportar do regi
 Arquivos reais e navegador aprovados localmente em
 [validação administrativa](../evidence/plan-2026-09-21-validation.md). CI/publicação seguem
 pendentes; integração em dev não é presumida.
+
+## Compatibilidade com Relatórios — 02/10/2026
+
+Preservar os três grupos de adapters no registry. A data de referência de Relatórios é
+coalesce(starts_at,original_start,created_at), inclusive para contar reservas canceladas sem horário
+no aviso do resumo; não preencher startsAt/endsAt exportados pela agenda. A correção local do aviso
+está em validação, com regressão PostgreSQL ainda não executada. O novo exportador de
+resumo/evolução da frente de Relatórios precisa aplicar a mesma referência na conciliação.
+[Comparação, hashes e instruções por arquivo](../evidence/reports-compatibility-2026-10-02.md).

@@ -1,5 +1,20 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Retomada e adiamento de e-mail — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+O usuário autorizou conciliar a worktree preservada com dev e concluir/validar sobreposição,
+bloqueios, permissões, aprovação/remarcação e faltas. Em resposta posterior, informou que o serviço
+de e-mail ainda não foi criado e adiou a integração e homologação dos avisos. O código SMTP de
+contas é referência técnica, não prova de serviço disponível.
+
+Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42)/T089 permanece pendente,
+dependente de Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). A pedido
+explícito foi criada a subtarefa Homologar os avisos operacionais após disponibilizar o serviço de
+e-mail (CAAB-45), bloqueada por CAAB-2. Confirmar ambiente, transporte/remetente, destinatários de
+teste autorizados e humano responsável na retomada; registrar versão e evidência que diferencie
+intenção, processamento, aceite e entrega. Não criar transporte ou enviar agora. App/site, WAHA e
+T097 permanecem adiados. O recorte administrativo segue independentemente.
+
 ## Falta e bloqueio temporário — decisão de 28/09/2026
 
 Registro: bloqueio-por-falta-CODEX-mafaltti. Solicitante mafaltti (Danilo-Komunick), identidade

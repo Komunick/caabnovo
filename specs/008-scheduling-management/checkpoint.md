@@ -1,45 +1,104 @@
-# Checkpoint vigente — Agendamentos, 28/09/2026
+# Checkpoint vigente — Agendamentos, 02/10/2026
+
+## Publicação autorizada — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+Branch efetiva: `feature/scheduling-administrative-20261002`, na mesma worktree
+`.cache/pr-scheduling-research-20260923`. Renomeada de codex/scheduling-market-research-20260923
+após fetch e ausência de colisão local/remota. Commits2733e01/4e9abac preservados, sem reescrita.
+Usuário autorizou commits, push para CI existente e PR para dev após gates técnicos; não merge,
+serviços locais ou recuperação WSL. T107 permanece aberto até evidência da versão publicada. QA
+humano continua pendente; e-mails, app/site e WAHA adiados. Evidências anteriores não são resultado
+do próximo CI:727 testes/build pertencem a4e9abac;107 posteriores não validam PostgreSQL.
+
+## Compatibilidade com Relatórios — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+Revisão concluída no escopo sem serviços:
+[evidência e instruções de conciliação](evidence/reports-compatibility-2026-10-02.md). Uma correção
+local no aviso de cancelamento considera a data de referência de reservas sem horário; regressão
+PostgreSQL ampliada, ainda não executada. Passaram 107 unitários/contratos, tipos e lint.
+HEAD4e9abac com delta local; build e 727 testes anteriores não cobrem o novo filtro SQL. T107
+permanece aberto. Ordem vigente: não recuperar WSL, não iniciar serviços; aguardar nova orientação
+para validações de banco/navegador. E-mails seguem adiados. Relatórios somente lido; nenhuma
+implementação copiada ou branch integrada.
+
+## Validação da conciliação — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+Versão conciliada: `4e9abac`, com dev `748539d` incorporada após backup verificado e commit local de
+preservação `2733e01`. Passaram 727 unitários/contratos, tipos sequenciais, lint, formatação, build
+(57 páginas), auditoria de dependências sem high/critical e Gitleaks. Detalhes e limites em
+[evidência da retomada](evidence/resume-2026-10-02.md).
+
+T107 ainda pendente: 118 integrações não executadas por runtime Docker/WSL indisponível; E2E/revisão
+visual atual não iniciados. Usuário autorizou ambiente temporário e depois reinício do WSL.
+`wsl --shutdown` excedeu 35 s; reinício de WslService negado pelo Windows por acesso administrativo.
+Solicitada recuperação do serviço em PowerShell administrativo e reinício do Docker. Conferência
+posterior: WslService em StopPending, Docker ainda sem endpoint. Nenhum banco de uso alterado e
+nenhum servidor na porta 3107 iniciado nesta etapa. Após recuperação, executar as cinco suítes
+scheduling em PostgreSQL descartável e jornadas de Agendamentos/Relatórios com build atual,
+preservando evidências antigas. Não repetir gates aprovados sem nova mudança/falha que justifique.
+Não houve push/PR nem CI remoto.
+
+Jira atualizado por acréscimo de oito comentários, preservando informações anteriores. Os cinco
+recortes administrativos entraram em Code Review (revisão/testes por IA); o épico continua Em
+Desenvolvimento e os dois itens de e-mail no Backlog. Títulos, códigos, resultados e limites na
+evidência acima. Atualizar Jira a cada etapa e conferir o estado antes de transicionar.
+
+## Retomada e adiamento de e-mail — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+O usuário autorizou conciliar a worktree preservada com dev e concluir/validar sobreposição,
+bloqueios, permissões, aprovação/remarcação e faltas. Em resposta posterior, informou que o serviço
+de e-mail ainda não foi criado e adiou a integração e homologação dos avisos. O código SMTP de
+contas é referência técnica, não prova de serviço disponível.
+
+Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42)/T089 permanece pendente,
+dependente de Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). A pedido
+explícito foi criada a subtarefa Homologar os avisos operacionais após disponibilizar o serviço de
+e-mail (CAAB-45), bloqueada por CAAB-2. Confirmar ambiente, transporte/remetente, destinatários de
+teste autorizados e humano responsável na retomada; registrar versão e evidência que diferencie
+intenção, processamento, aceite e entrega. Não criar transporte ou enviar agora. App/site, WAHA e
+T097 permanecem adiados. O recorte administrativo segue independentemente.
 
 ## Diagnóstico de retomada, 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
-Pedido restrito a conferir onde parou e o necessário para continuar. Inspeção documental e
-estática confirma HEAD 500f84f na worktree original, com alterações locais preservadas,
-incluindo T103–T105 de 30/09. O caderno principal ainda destaca a pausa de 28/09; o avanço
-mais recente está registrado abaixo. Não foram executados testes ou iniciados serviços neste diagnóstico.
+Pedido restrito a conferir onde parou e o necessário para continuar. Inspeção documental e estática
+confirma HEAD 500f84f na worktree original, com alterações locais preservadas, incluindo T103–T105
+de 30/09. O caderno principal ainda destaca a pausa de 28/09; o avanço mais recente está registrado
+abaixo. Não foram executados testes ou iniciados serviços neste diagnóstico.
 
-Antes de consolidar a entrega, reconciliar as atualizações de dev relativas aos PRs #40
-(exportação de Relatórios) e #41 (dependências), preservando alterações locais e conferindo
-arquivos compartilhados de exportação/Relatórios. Fetch de 02/10 concluído; dev e origin/dev
-em 748539d, sem divergência. Não houve merge, commit, push ou abertura de PR.
+Antes de consolidar a entrega, reconciliar as atualizações de dev relativas aos PRs #40 (exportação
+de Relatórios) e #41 (dependências), preservando alterações locais e conferindo arquivos
+compartilhados de exportação/Relatórios. Fetch de 02/10 concluído; dev e origin/dev em 748539d, sem
+divergência. Não houve merge, commit, push ou abertura de PR.
 
 Próximos recortes: T089 para integração de e-mails (contatos/vínculo, textos, transporte,
 deduplicação e prova de entrega); T039 para CI quando houver publicação autorizada. App/site
-continuam adiados, com T041/T043/UI01/UI02 e inventário de reservas legadas T042 antes da
-ativação externa; WhatsApp depende de preparação e homologação WAHA em T044/T069.
-T097 permanece possibilidade futura, sem autorização de implementação. As validações de
-28/09 e 30/09 são evidências históricas, não uma execução sobre uma base reconciliada hoje.
-Identidade consultada por gh api user em 02/10: HTTP 401; solicitante não verificado.
+continuam adiados, com T041/T043/UI01/UI02 e inventário de reservas legadas T042 antes da ativação
+externa; WhatsApp depende de preparação e homologação WAHA em T044/T069. T097 permanece
+possibilidade futura, sem autorização de implementação. As validações de 28/09 e 30/09 são
+evidências históricas, não uma execução sobre uma base reconciliada hoje. Identidade consultada por
+gh api user em 02/10: HTTP 401; solicitante não verificado.
 
 ## Correções do converge, 30/09/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
-Pedido: implementar T103–T105. Correções locais na mesma worktree, sem commit/push/PR:
-aprovação revalida bloqueios do intervalo retido; auditoria do formulário distingue publicação
-e registra políticas anteriores/posteriores e estado publicado; edição de troca pendente que
-confirma gera intenção de confirmação no mesmo commit. Sem mudança de UI, schema ou transporte.
+Pedido: implementar T103–T105. Correções locais na mesma worktree, sem commit/push/PR: aprovação
+revalida bloqueios do intervalo retido; auditoria do formulário distingue publicação e registra
+políticas anteriores/posteriores e estado publicado; edição de troca pendente que confirma gera
+intenção de confirmação no mesmo commit. Sem mudança de UI, schema ou transporte.
 
-Validação concluída em 30/09/2026: tipos, lint e formato aprovados; 125 unitários do módulo,
-37 dos contratos compartilhados e 19 integrações de scheduling-workflow aprovados. A suíte inclui
-quatro novas regressões: bloqueio superveniente com fronteira/decisões concorrentes, duração original
-após edição do procedimento, auditoria de publicação/rascunho/republicação/rollback/replay e
-confirmação por edição sem intenção duplicada. T103–T105 marcadas concluídas.
+Validação concluída em 30/09/2026: tipos, lint e formato aprovados; 125 unitários do módulo, 37 dos
+contratos compartilhados e 19 integrações de scheduling-workflow aprovados. A suíte inclui quatro
+novas regressões: bloqueio superveniente com fronteira/decisões concorrentes, duração original após
+edição do procedimento, auditoria de publicação/rascunho/republicação/rollback/replay e confirmação
+por edição sem intenção duplicada. T103–T105 marcadas concluídas.
 
-Execução: `node node_modules/vitest/vitest.mjs run --project integration apps/web/tests/integration/scheduling-workflow.test.ts --maxWorkers=1`,
-com `NODE_OPTIONS=--dns-result-order=ipv4first --max-old-space-size=384`. Resultado: 19/19 em 58,72s.
-PostgreSQL 18 sintético, 256 MB/1 CPU, autorizado nesta conversa; container e auxiliar Ryuk
-removidos automaticamente ao terminar. Nenhum painel, worker ou banco CAAB de uso iniciado.
-Aviso não impeditivo do driver pg sobre chamadas concorrentes a client.query; nenhuma falha.
-Fetch final concluído e dev/origin/dev sem divergência; worktree com alterações preservada.
-Identidade desta instância não verificada (gh api user retornou HTTP 401 nesta sessão).
+Execução:
+`node node_modules/vitest/vitest.mjs run --project integration apps/web/tests/integration/scheduling-workflow.test.ts --maxWorkers=1`,
+com `NODE_OPTIONS=--dns-result-order=ipv4first --max-old-space-size=384`. Resultado: 19/19 em
+58,72s. PostgreSQL 18 sintético, 256 MB/1 CPU, autorizado nesta conversa; container e auxiliar Ryuk
+removidos automaticamente ao terminar. Nenhum painel, worker ou banco CAAB de uso iniciado. Aviso
+não impeditivo do driver pg sobre chamadas concorrentes a client.query; nenhuma falha. Fetch final
+concluído e dev/origin/dev sem divergência; worktree com alterações preservada. Identidade desta
+instância não verificada (gh api user retornou HTTP 401 nesta sessão).
 
 ## Faltas e interface administrativa validadas localmente-CODEX-mafaltti
 
