@@ -2,7 +2,7 @@
   "base": "748539d28ec7c94af5ff3ca7a37c46c73ae102e4",
   "branch": "feature/reports-complete-20261002",
   "date": "2026-10-02",
-  "state": "feature snapshot for authorized commits; CI and combined scheduling model pending; no human QA",
+  "state": "local cancellation fix requires Scheduling schema; published 0775bf3 CI passed; C1 and visual/human QA pending",
   "files": [
     {
       "path": "apps/web/app/(admin)/reports/exportar/page.tsx",
@@ -50,11 +50,11 @@
     },
     {
       "path": "apps/web/tests/e2e/reports.spec.ts",
-      "sha256": "839555a38ab055b0bc609a28410a09b7011fbd93874f399bc50e4ec2ea31d548"
+      "sha256": "7304cb2f2e963825d030348951cc3d73eeac9db5506484420edafedf3d489783"
     },
     {
       "path": "apps/web/tests/integration/report-exports.test.ts",
-      "sha256": "d6a4a6b820a1b339249b1a673118690ea99916d6c804890fb9b59d877b423ee0"
+      "sha256": "b0f2a1e659a54d3fbc937da41f52576baafdd55c21fea759c93215876650643e"
     },
     {
       "path": "packages/contracts/src/reports.ts",
@@ -70,11 +70,11 @@
     },
     {
       "path": "packages/db/src/repositories/report-overview-export.ts",
-      "sha256": "c976296a2c6cb116c2eec9a4413b164e46990609a2d015b7c385154dc0804d46"
+      "sha256": "49bd688f136989410a726c1747fe5ebe2793e8fe530299d28f8e54d13e717453"
     },
     {
       "path": "packages/db/src/repositories/report-summary.ts",
-      "sha256": "c34d8989ad4b54d6d48f5df0c440025b336a29051c24833cb784d7edd3fa07aa"
+      "sha256": "ed963e0c2b41072adf5693d92f149da7a307ac941cbd503fcbe11e9f6d842b08"
     },
     {
       "path": "packages/db/src/repositories/reports.ts",
@@ -82,15 +82,15 @@
     },
     {
       "path": "specs/010-reports-analytics/contracts/exports.md",
-      "sha256": "8298158119891d6f2c83166819ef5279f1d5dde75e428ad25d771ea16616e3b5"
+      "sha256": "c68adad46fdfe1069927fc1fb431a5095327df4d86db05d99c7b303020f80511"
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "985fc22efb658dd8e3e64d5e5f1b374816e06f490cd5863b3b46809faad630ce"
+      "sha256": "246a0cbfc9d758f015e1a8c0343d8d0538f34a2ffb0a4ae9a150f541656d8a0d"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
-      "sha256": "86f34dbf5c2d9eacdbf824650656890fd878369e1290255b7d8bb7960c654164"
+      "sha256": "ed0dc187c139ddad20695a78243a6a4573de3fe01a06ee9a96e2f520bd83373a"
     },
     {
       "path": "specs/010-reports-analytics/research.md",
@@ -98,11 +98,13 @@
     },
     {
       "path": "specs/010-reports-analytics/spec.md",
-      "sha256": "001b399dd3ada9a95633cda0e9f8272d9dafb30109e4eb6b0ee59e51974b5eff"
+      "sha256": "8398c00d37a6bd281da7725474d2f2f21b3c19702e44678c88474bf3b4759bf9"
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "aff9050bd851ea201e6f546836175672001e01c9d2cc917a4bf9b1ca2e65f816"
+      "sha256": "0d07b945a2ce3b17c39a671c30981cc8a1044f525ba9b65b73076ea29f73a1ec"
     }
-  ]
+  ],
+  "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
+  "ciRun": 37032398048
 }

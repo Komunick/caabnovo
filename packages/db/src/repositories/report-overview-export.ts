@@ -242,7 +242,7 @@ export function reportOverviewExportSql(
       parameter("Reservas canceladas no período"),
       "count(*)",
       parameter("Reserva(s) do período canceladas atualmente."),
-      "FROM scheduling_booking WHERE status='cancelled' AND starts_at >= $1 AND starts_at < $2",
+      "FROM scheduling_booking WHERE status='cancelled' AND coalesce(starts_at,original_start,created_at) >= $1 AND coalesce(starts_at,original_start,created_at) < $2",
     );
   }
   if (input.datasets.includes("contracts")) {

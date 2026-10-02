@@ -2,8 +2,10 @@
 
 Autoria: CODEX. Solicitante GitHub não verificado: consulta única da sessão via gh api user retornou
 HTTP401. Windows, Node24.20.0, pnpm11.25.0. Branch `feature/reports-complete-20261002`, worktree
-`.cache/pr-reports-complete-20261002`, base dev748539d. Alterações locais sem commit, push, PR ou
-integração; versão dos arquivos identificada no manifesto desta pasta.
+`.cache/pr-reports-complete-20261002`, base dev748539d. Funcionalidade publicada em9995361 e ajuste
+E2E em0775bf3; correção de cancelamentos dependente do modelo de Agendamentos preservada
+separadamente. Sem PR ou integração; versão local dos arquivos identificada no manifesto desta
+pasta.
 
 ## Resultado e limites
 
@@ -14,11 +16,11 @@ migration, dependência, dado real ou serviço de produto foi alterado. O núcle
 motor compartilhado de download direto (CAAB-22) não foi reconstruído: mesmos cursor, snapshot,
 writers, revalidação por lote/heartbeat/final, cancelamento e estado operacional.
 
-Não declarar entrega homologada ou pronta para integração: SQL/arquivos reais dos novos modos,
-testes de banco/navegador e medições C1 não foram executados nesta frente. O usuário confirmou WSL
-indisponível e determinou registro no Jira. Nenhuma tentativa de recuperar WSL, iniciar Docker,
-PostgreSQL ou servidor local foi feita por esta instância. Autorizações de Agendamentos não foram
-usadas.
+Não declarar entrega homologada ou pronta para integração: o CI abaixo valida SQL/arquivos reais da
+base publicada, mas a correção dependente de Agendamentos, C1 e QA humano ainda não foram validados.
+Os resultados da primeira rodada local abaixo são históricos. O usuário confirmou WSL indisponível e
+determinou registro no Jira. Nenhuma tentativa de recuperar WSL, iniciar Docker, PostgreSQL ou
+servidor local foi feita por esta instância. Autorizações de Agendamentos não foram usadas.
 
 ## Implementação
 
@@ -39,7 +41,7 @@ usadas.
 - reportOverviewFiltersSchema separa período de comparação sem teto dos schemas de tela/legado.
   Detalhe conserva limites de data abertos. Resumo exige datas para uma comparação explícita.
 
-## Validações executadas
+## Validações da primeira rodada local
 
 | Verificação                                             | Resultado                                                             |
 | ------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -155,3 +157,88 @@ A base748539d não contém original_start e mantém starts_at obrigatório. A co
 exige o modelo de Agendamentos, cujas migrations não serão copiadas isoladamente. Conciliação futura
 deve preservar bookings de Agendamentos, helpers de report-summary e gerador agrupado desta entrega.
 Validações da base antiga não aprovam a versão combinada.
+
+### Correção preparada e gates locais da retomada
+
+Aplicado coalesce(starts_at,original_start,created_at) nos dois limites dos avisos de
+report-overview-export.ts e report-summary.ts. Helpers preservados. Regressão adicionada em
+report-exports.test.ts usa seis reservas sintéticas no schema real, três cancelamentos incluídos,
+limites excluídos, fallback/precedência temporal, três formatos, include_bookings omitido/no e
+revogação corrente. Não executada: depende das migrations reais de Agendamentos. Nenhuma cópia de
+migration, schema artificial, mock ou teste de string SQL foi usado como prova.
+
+Tipos passaram após a regressão. Suíte completa unitários+contratos:589/590,86 arquivos, 73,24s;
+falha preexistente Windows/ENOMEM em production-readiness.test.ts reproduzida. Não atribuir
+aprovação ao teste isolado. CI37031769176 acompanha9995361 (funcionalidade), sem a correção SQL
+dependente do modelo novo. Os resultados remotos devem ser registrados separadamente; não comprovam
+uma futura versão combinada.
+
+Gates locais posteriores à regressão: tipos, lint, formato e build54 páginas concluídos; auditoria
+de dependências sem high/critical (duas moderadas e uma baixa). Wrappers PowerShell com
+redirecionamento registraram NativeCommandError ao receber o anúncio pnpm em stderr, embora as
+tarefas internas tenham concluído; lint/formato foram reconferidos diretamente com exit0. Nenhum
+serviço de aplicação foi iniciado.
+
+### CI37031769176 — commit9995361
+
+[Execução no GitHub](https://github.com/Komunick/caabnovo/actions/runs/37031769176): quality e
+security aprovados; browser falhou no novo teste por seletor ambíguo de Ambiente (select de filtro e
+checkbox de coluna). Corrigido em0775bf3 usando combobox pelo nome; novo CI37032398048 em
+acompanhamento. Nenhuma asserção funcional foi removida.
+
+Logs do job quality110920081536 comprovam420/420 unitários (62 arquivos),170 contratos (24
+arquivos),257 integrações (27 arquivos),1 ignorada preexistente de grande volume opt-in.
+production-readiness.test.ts passou14/14 dentro da suíte completa: ENOMEM local não se reproduziu no
+Ubuntu. report-exports.test.ts passou10 testes reais; validou agrupado100, filtros75/25/vazio,
+CSV/Excel/PDF, resumo/evolução com métricas/séries/notas equivalentes, revogação antes e entre
+lotes, liberação de cursor e retentativa. Build54 páginas concluído. Não inclui a nova regressão de
+cancelamentos sem horário nem o modelo de Agendamentos.
+
+No navegador, três testes existentes passaram; o novo caso concluiu agrupado, mas parou antes de
+verificar resumo/evolução. A suíte global e o gate a11y separado não rodaram nessa execução.
+Capturas/arquivos foram preservados pelo job, ainda sem revisão visual nesta rodada. C1 (30 leituras
+do painel, p95 e recursos) e QA humano permanecem pendentes.
+
+A CLI retornou403 para o arquivo agregado de logs. Os logs de jobs foram lidos pelo conector GitHub
+autorizado; essa limitação não foi contornada por mudança de permissões.
+
+### CI final da funcionalidade — 0775bf3
+
+[CI37032398048](https://github.com/Komunick/caabnovo/actions/runs/37032398048), SHA
+0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22: quality, browser e security aprovados. 420 unitários/170
+contratos/257 integrações;1 ignorada opt-in de grande volume. Quatro jornadas de Relatórios passaram
+antes da suíte global;97 E2E globais e6 a11y passaram. Logs dos jobs110922202420/110922202573
+confirmados pelo conector GitHub. A falha Windows/ENOMEM não ocorreu nos420 testes completos do
+runner, incluindo os14 casos de production-readiness. Formatação, lint, tipos, build e segurança
+aprovados.
+
+As integrações executam PostgreSQL e writers reais com parsers independentes. Comprovam 100 grupos,
+contagens/filtros, agregados/séries/comentários, permissões, revogação, liberação de cursor e retry
+nos limites dos casos descritos acima. O E2E concluiu CSV/Excel/PDF de agrupado/resumo/evolução,
+período amplo, erro recuperável, mobile390, temas e Axe. Isso não comprova grande volume, todas as
+combinações possíveis ou QA humano.
+
+Artefato reports-synthetic-evidence:11237619588,2.153.641 bytes,
+SHA-2565f5c170b774e7e49525c5ca61dd2694c954dd20bb92e12bcad3c5e9679a1418f, expira em09/10/2026.
+Conteúdo preservado pelo CI, mas revisão visual manual pendente: CLI retornou401 no download; URL
+temporária do conector retornou403, inclusive fora da rede restrita. Nenhuma credencial/permissão
+foi alterada. Logs permaneceram acessíveis.
+
+### Limite de publicação e próximo passo
+
+A correção de cancelamentos e seu teste são preservados em commit local separado, sem push, pois
+original_start/procedure_id/reservas sem horário não existem na dev748539d. Não publicar essa ponta
+como pronta para implantação. Aguarda-se a base de Agendamentos ou decisão explícita de publicar com
+dependência pendente. Nenhuma migration foi copiada. O CI verde0775bf3 não valida a correção nem a
+futura conciliação T041/T042. PR não aberto.
+
+Pendências de Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46): regressão real de
+cancelamentos e agrupamentos no novo modelo; gates da versão combinada; revisão visual das capturas;
+C1 (tempos/primeiro byte/RSS/CPU/conexões e30 leituras de painel/p95); QA humano de Exportar análise
+detalhada sem agrupamento (CAAB-43) e Exportar detalhe agrupado, resumo e evolução sem os limites
+antigos (CAAB-44). Os testes técnicos da base publicada reduzem o bloqueio anterior, mas não
+encerram o aceite de Exportar o conjunto completo de dados em Relatórios (CAAB-24).
+
+Repasse operacional completo ficará no bloco próprio do agentcache principal, conforme pedido do
+usuário, com releitura sob abertura exclusiva; demais notas serão preservadas. Sem merge, serviços
+locais, alteração de outras worktrees ou de fontes transversais.

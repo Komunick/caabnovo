@@ -16,14 +16,16 @@ compartilhado de download direto (CAAB-22).
 | T030      | Agrupamento acrescentado ao SQL completo; colunas e ordenação preservadas. A proteção scheduling:read em resumo já existe na base integrada e foi preservada. Teste PostgreSQL ainda pendente. |
 | T031/T025 | Política U1 já integrada, conferida em código e unitários de legacy-exports; regressão PostgreSQL/worker/download ainda não reexecutada nesta entrega.                                         |
 | T032–T034 | Adaptadores/tela expandidos; testes unitários incluem fontes, agrupamento, períodos, colunas e negações. Extensão de UI compatível com Agendamentos4e9abac.                                    |
-| T035/T036 | Integrações dos três formatos,100 registros, agregados/séries equivalentes e E2E preparados; execução bloqueada. T036 permanece aberta até a prova de equivalência real.                       |
-| T037      | Regressão unitária da coleta passou; integração pendente. A extração do SQL do funil não muda sua regra.                                                                                       |
+| T035/T036 | Integrações reais e97 E2E/6 a11y aprovados em0775bf3. Cancelamentos/modelo combinado, revisão visual e C1 pendentes.                                                                           |
+| T037      | Regressões unitária e integrada da coleta aprovadas no CI9995361; versão combinada ainda não validada.                                                                                         |
 | T038      | Telemetria opcional CAAB_EXPORT_PROFILE=1 nos testes reais preparada; recursos/tempo/painel ainda sem medição atual.                                                                           |
-| T039      | Tipos, lint, build, contratos e testes focados aprovados; falha Windows na suíte unitária completa e gates de banco/navegador pendentes. Não declarar prontidão/QA.                            |
+| T039      | CI0775bf3 aprovou quality/browser/security, incluindo420 unitários completos sem ENOMEM. Correção dependente de Agendamentos, C1/revisão visual/QA pendentes.                                  |
 
 Usuário confirmou WSL indisponível e solicitou ticket próprio: Retomar validações de Relatórios
 bloqueadas pelo WSL (CAAB-46), subtarefa de Exportar o conjunto completo de dados em Relatórios
-(CAAB-24). Banco descartável, E2E/a11y e C1 não foram executados nesta frente. Não iniciar serviços,
+(CAAB-24). Banco descartável e arquivos reais da base publicada passaram no CI37031769176;
+CI37032398048 aprovou97 E2E e6 a11y em0775bf3; revisão visual dos artefatos pendente por401/403 no
+download. C1 e a versão combinada com Agendamentos permanecem pendentes. Não iniciar serviços,
 reparar WSL ou usar o ambiente de Agendamentos por inferência. Retomada autorizada: commits e push
 para CI; PR para dev somente após gates. Merge e serviços locais continuam proibidos. Os checkpoints
 abaixo preservam o histórico, sem substituir este estado atual.
@@ -318,3 +320,23 @@ quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, A
 Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
 filtros. Ver
 [evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).
+
+## Correção de compatibilidade — retomada de 02/10/2026
+
+- [x] T040 Aplicar o coalesce da revisão spec008 em notice:cancelled e no aviso de
+      report-summary.ts, preservando helpers, inclusão de fonte e autorização.
+- [ ] T041 Executar regressão PostgreSQL real de cancelamentos sem horário: início incluído, fim
+      excluído, fallback para criação, prioridade de original_start, três formatos, fonte não
+      selecionada e permissão revogada. Preparada em report-exports.test.ts; depende das migrations
+      reais de Agendamentos e da versão conciliada. Não usar mock, teste de string SQL ou alteração
+      artificial do schema como prova.
+
+Commit inicial da funcionalidade:9995361; ajuste E2E0775bf3 aprovado no CI37032398048. A correção
+dependente do modelo novo permanece em commit local separado; CI da base antiga não a comprova.
+
+- [ ] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
+      inteiros: manter registry com os três grupos de adaptadores, ExportScreen aditivo,
+      reportSources.bookings com procedure_id/data de referência/profissional opcional e cinco
+      estados, helpers do resumo e gerador agrupado. Conferir hashes e executar regressões reais de
+      agrupamento por estado/profissional nulo e datas, além de todos os gates da versão combinada.
+      Não copiar migrations nem considerar o CI anterior como aprovação.

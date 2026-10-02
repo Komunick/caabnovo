@@ -12,6 +12,11 @@ Sem migrations, novas permissões, serviços de produto ou reconstrução de Dis
 compartilhado de download direto (CAAB-22). Status de validação e limitações devem ser lidos na
 evidência desta entrega; checkpoints abaixo são históricos.
 
+A correção de compatibilidade de cancelamentos usa a data de referência
+`coalesce(starts_at,original_start,created_at)` no aviso da tela e do arquivo, mantendo fontes e
+permissões. Depende do modelo de Agendamentos, ainda ausente da base748539d; aprovação do CI da
+funcionalidade sem essa correção não comprova a versão combinada. Validação real em T041/T042.
+
 ## Checkpoint de padronização visual — 22/09/2026
 
 Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,

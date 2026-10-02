@@ -257,3 +257,11 @@ existentes de Colaboradores, Auditoria e Relatórios acima dos filtros, mantendo
 existentes. Remover agrupamento especial do cabeçalho de Colaboradores para seguir a inclusão de
 Parceiros/Associados. Validar posição, cores, navegação e responsividade em temas claro/escuro nos
 testes existentes.
+
+## Dependência confirmada para publicação — 02/10/2026
+
+A revisão spec008 foi conferida por hashes antes de corrigir notice:cancelled. A base748539d não tem
+original_start nem reservas sem horário. Não copiar migrations0031–0034 isoladamente: a versão
+combinada deverá manter a projeção bookings de Agendamentos e os helpers/gerador desta entrega e ser
+revalidada. Correção preparada no segundo commit, com regressão real T041. Publicação/PR
+condicionados aos gates; serviços e merge proibidos.

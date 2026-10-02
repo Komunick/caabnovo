@@ -40,6 +40,15 @@ conciliar, preservar sua projeção bookings com procedure_id, original_start e 
 além dos três grupos de adaptadores. ExportScreen reutiliza exatamente a extensão
 initialFilters/renderFilter da entrega4e9abac. Testes técnicos não concluem QA humano.
 
+## Cancelamentos sem horário — compatibilidade de 02/10/2026
+
+O aviso de cancelamentos em tela e arquivo usa `coalesce(starts_at,original_start,created_at)` nos
+limites inclusivo inicial e exclusivo final, preservando `include_bookings` e `scheduling:read`.
+Essa data de referência não preenche nem representa um horário confirmado. A regressão exige as
+migrations reais de Agendamentos; não altera o schema de teste para simular compatibilidade. A
+base748539d ainda não contém original_start; a correção depende da conciliação com Agendamentos
+antes de concluir os gates e abrir PR para dev.
+
 ## Planejamento anterior preservado
 
 Dataset reports com mode summary/details/presentation e domínios autorizados. Rotas existentes de

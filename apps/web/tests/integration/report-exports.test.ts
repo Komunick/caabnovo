@@ -269,6 +269,93 @@ describe("direct export of the detailed analysis", () => {
     expect(await reportUsage(control.pool, query)).toEqual(usage);
   }, 60000);
 
+  it("keeps cancelled bookings without a time in overview notices, with both period bounds and current access", async () => {
+    // Requires the real Scheduling migrations: never emulate the new columns or skip a missing schema.
+    const procedure = (
+      await admin.query(`WITH unit AS (
+      INSERT INTO scheduling_unit(name) VALUES('Unidade aviso sintético') RETURNING id
+    ), service AS (
+      INSERT INTO scheduling_service(unit_id,name) SELECT id,'Serviço aviso sintético' FROM unit
+      RETURNING id,unit_id
+    ) INSERT INTO scheduling_procedure(service_id,unit_id,name,duration_minutes)
+      SELECT id,unit_id,'Procedimento aviso sintético',30 FROM service RETURNING id`)
+    ).rows[0].id;
+    const member = (await admin.query("SELECT id FROM member ORDER BY id LIMIT 1")).rows[0].id;
+    await admin.query(
+      `INSERT INTO scheduling_booking(
+      procedure_id,member_id,mode,status,duration_snapshot,created_by,
+      starts_at,ends_at,original_start,process_id,process_kind,created_at)
+      SELECT $1,$2,'capacity','cancelled',30,$3,starts,
+        starts+interval '30 minutes',original,
+        CASE WHEN original IS NOT NULL THEN gen_random_uuid() END,
+        CASE WHEN original IS NOT NULL THEN 'recovery' END,created
+      FROM (VALUES
+        (NULL::timestamptz,'2026-06-01T00:00:00-03:00'::timestamptz,'2025-01-01'::timestamptz),
+        (NULL,NULL,'2026-06-30T23:59:59-03:00'),
+        ('2026-06-15T12:00:00-03:00',NULL,'2025-01-01'),
+        (NULL,'2026-05-31T23:59:59-03:00','2026-06-15'),
+        (NULL,'2026-07-01T00:00:00-03:00','2026-06-15'),
+        (NULL,NULL,'2026-07-01T00:00:00-03:00')
+      ) dates(starts,original,created)`,
+      [procedure, member, actor.userId],
+    );
+    const permissions = [...reportExporter, "scheduling:read"];
+    const query = reportQuerySchema.parse({ from: "2026-06-01", to: "2026-06-30" });
+    const notice = "Reservas canceladas no período";
+    try {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        permissions,
+      ]);
+      const summary = await reportSummary(
+        control.pool,
+        { ...actor, permissions: new Set(permissions) },
+        query,
+      );
+      expect(summary.notices).toContain("3 reserva(s) do período estão canceladas atualmente.");
+      for (const dataset of ["summary", "executive"]) {
+        const input = reportExportRequest({
+          dataset,
+          columns: ["label", "value"],
+          sort: [],
+          filters: { from: query.from, to: query.to, include_bookings: "yes" },
+        });
+        for (const format of ["csv", "xlsx", "pdf"] as const) {
+          const { bytes } = await download({ ...input, format });
+          if (format === "pdf") expect((await readPdf(bytes)).join(" ")).toContain(notice);
+          else {
+            const rows = format === "csv" ? readCsv(bytes) : readXlsx(bytes)[1]!;
+            expect(Number(rows.find((row) => row[0] === notice)![1])).toBe(3);
+          }
+        }
+        for (const include of ["no", undefined]) {
+          const filters = { ...input.filters };
+          delete filters.include_bookings;
+          const { bytes } = await download({
+            ...input,
+            filters: { ...filters, ...(include ? { include_bookings: include } : {}) },
+          });
+          expect(readCsv(bytes).some((row) => row[0] === notice)).toBe(false);
+        }
+        await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+          actor.userId,
+          [...reportExporter],
+        ]);
+        await expect(download(input)).rejects.toThrow();
+        await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+          actor.userId,
+          permissions,
+        ]);
+      }
+    } finally {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        [...reportExporter],
+      ]);
+      await admin.query("DELETE FROM scheduling_booking WHERE procedure_id=$1", [procedure]);
+    }
+  }, 60000);
+
   it("revalidates overview source permissions before any output and allows a clean retry", async () => {
     const input = reportExportRequest({
       dataset: "summary",
