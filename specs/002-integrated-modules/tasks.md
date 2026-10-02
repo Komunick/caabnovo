@@ -1,25 +1,106 @@
 # Tasks: Coordenação da entrega após clarify — incremento de 21/09/2026
 
+## Atualização do retrato de Agendamentos — 02/10/2026
+
+Conferência documental por CODEX; solicitante mafaltti. O incremento administrativo de Agendamentos
+está implementado na worktree própria e no PR #43, ainda aberto, com HEAD
+ba9a6eaa21182acedf48384d425a0e6e4810541a na consulta desta revisão. Correções de segurança
+identificadas no fechamento estão em validação pela frente responsável; checks de versões anteriores
+não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
+dev.
+
+A base integrada de referência continua 748539d, com migrations até0030. As migrations0031–0034 e a
+permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
+retratos anteriores de4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+
+**Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
+spec/plan/tasks do programa002 com o SHA efetivamente integrado, migrations e evidências vigentes.
+Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
+concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
+
+## Retrato anterior das quatro instâncias — primeira consolidação de 02/10/2026
+
+Agendamentos, Relatórios, Documentação e Acessos são quatro instâncias independentes; Agendamentos
+tem prioridade máxima. Este é um retrato datado, não uma fila de execução ou autorização de
+serviços.
+
+| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                      |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agendamentos | Base local4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E2E/revisão visual pendentes por WSL. Os727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
+| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente010. PostgreSQL/E2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente008 antes da validação conjunta. |
+| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                    |
+| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação:66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                          |
+
+A conciliação preserva DS-T133–DS-T140, AC-T001–AC-T006, IDs originais de cargo único e roles.md.
+Os31 unitários/28 contratos de acessos são evidência da instância na base748539d, não nova execução
+nesta versão documental. T099 e homologações continuam abertas. Ver a
+[conciliação de acessos](../001-project-foundation/evidence/documentation-access-conciliation-2026-10-02.md).
+
+Agendamentos mantém modelo/migrations0031–0034 e scheduling:review_absences. Na futura conciliação
+funcional, preservar seu modelo de reservas junto ao gerador agrupado de Relatórios; conferir
+runtime.ts, export-screen.tsx, repositories/reports.ts, report-summary.ts e
+report-overview-export.ts. A compatibilidade foi revisada sem serviços; testes anteriores não
+comprovam o conjunto futuro. E-mails operacionais continuam adiados por inexistência do serviço, sem
+alterar destinatários e finalidade já definidos. A fila ativa permanece somente no caderno
+principal.
+
+## Coordenação anterior à incorporação da revisão de acessos — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+Conciliação de Conciliar a documentação do projeto (CAAB-38). Incorpora por conteúdo a coordenação
+registrada pela entrega Jira/Confluence de 01–02/10, atualizada pela correção posterior do usuário.
+Agendamentos (CAAB-37) tem prioridade máxima, com Relatórios e documentação simultâneos. A revisão
+de acessos foi separada por pedido durante esta execução e iniciada em uma quarta instância, com
+base748539d; resultados e limites permanecem no caderno e na evidência da frente. Registros de
+pausa/ordem anteriores são históricos.
+
+| Frente       | Responsabilidade e limite                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Agendamentos | Spec008, modelo e migrations0031–0034. Validar a versão local conciliada `4e9abac`; não refazer sobreposição, bloqueio, permissões, aprovação/remarcação ou faltas já implementados. |
+| Relatórios   | Spec010/evidências e motor de exportação; nova entrega da dev, sem reutilizar a branch integrada do PR40. Preservar detalhe sem agrupamento e completar agrupado/resumo/evolução.    |
+| Documentação | MODULES/PRD/STACK/TOOLING, programa002 e recorte DS da spec001 na entrega documental existente; preservar fontes Jira/design por conteúdo.                                           |
+| Acessos      | Preparação de aceite da base integrada em worktree própria; somente conteúdo de acessos da spec001/evidências. Decisão sobre contas sem cargo continua pendente.                     |
+
+Conferir `runtime.ts`, `export-screen.tsx` e `repositories/reports.ts` antes de integração futura.
+Não alterar specs/evidências das outras frentes nem atribuir homologação por testes anteriores.
+Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42) e Homologar os avisos
+operacionais após disponibilizar o serviço de e-mail (CAAB-45) estão adiados por inexistência do
+serviço, dependentes de Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). A
+instrução anterior de completar transporte/T089 imediatamente está superada. Destinatários e caráter
+operacional permanecem definidos. App/site, campanhas, WAHA e caixa de entrada não entram por
+inferência.
+
+Base integrada `748539d`: cadastro público bloqueado, cargos/cargo único, navegação por acesso e
+motor de exportação entregues; Relatórios tem detalhe sem agrupamento integrado. As listas e
+checkpoints de 21/09 abaixo não reabrem a implementação. Tarefas de consumidor, decisões
+institucionais e aceite humano permanecem próprios. O [mapa de módulos](../../docs/MODULES.md) e a
+[evidência da consolidação](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md)
+distinguem esses estados. A documentação da spec011 permanece na entrega de origem, com suas
+pendências operacionais; não repetir publicações/criações nem alegar confirmação remota nova.
+
 Resumo da entrega: [plan/tasks e dependências](plan-tasks-result-2026-09-21.md).
 
-**Pendências preservadas pela revisão de código — 21/09:** DOC01 cobre a conciliação normativa
-identificada na revisão de código. A nova T099 continua como revisão final dos contratos/planos
-gerados em paralelo e não representa implementação. 001 T096 foi conciliada e validada nesta
-entrega, ainda sem merge. Preservar as pendências de auditoria 001 T097, 006 T025 e 010 T025/T026; a
-seção histórica não as cancela.
+## Estado das tarefas documentais — 02/10/2026
+
+DOC01 possui conclusão histórica em21/09, preservada abaixo. A conciliação complementar dos quatro
+documentos transversais, programa e recorte DS está concluída localmente, com
+[evidência](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md). T099
+permanece aberta para a revisão final dos contratos/modelos/planos de cada função e fechamento
+transversal das entregas simultâneas; não confundir essa cobertura com QA humano ou reexecução da
+Fundação integrada. Não há código a reconstruir por conta das listas históricas.
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
-[contrato](contracts/exports.md), [quickstart](quickstart.md). **Branch da entrega:**
-`docs/project-clarify-20260921`. Nenhuma tarefa nova executada. **Lista ativa:** T098–T108; testes
-foram pedidos nas specs e nos gates do projeto. Caminhos novos são destinos planejados; conferir
-referências contra o inventário de artefatos deste incremento antes de editar. Nenhum arquivo de
-código foi criado agora.
+[contrato](contracts/exports.md), [quickstart](quickstart.md). A lista T098–T108 coordena o
+programa; execução e evidências permanecem com cada função. A branch de21/09 é histórica. Cadastro
+público, T097 e núcleo de acessos/exportação já estão integrados; os aceites dos demais recortes
+continuam nas frentes responsáveis. Nenhum teste funcional é concluído por esta atualização
+documental.
 
 ## Rastreabilidade e escopo
 
 EXP01–EXP07/ACC01: coordenação e critérios nas histórias correspondentes; execução técnica pertence
-aos specs próprios. DOC01: conciliação iniciada no plan, revisão final na fundação destas tasks.
-FUT01/FUT02 continuam pesquisa futura, fora da lista ativa.
+aos specs próprios. DOC01: conciliação histórica concluída; complemento documental atual concluído,
+com revisão transversal T099 ainda aberta. FUT01/FUT02 continuam pesquisa futura, fora da lista
+ativa.
 
 O histórico abaixo conserva marcadores e evidências originais. IDs provisórios detalhados aqui não
 são uma segunda execução; usar a lista ativa. Pendências de política/pesquisa/homologação e funções
@@ -37,8 +118,10 @@ já concluídas.
 
 - [ ] T099 Revisar conformidade final dos contratos/modelos/planos com decisões vigentes em
       `.specify/memory/constitution.md`, `docs/STACK.md` e
-      `specs/002-integrated-modules/plan-tasks-result-2026-09-21.md`; fechar DOC01 apenas após essa
-      revisão, preservando histórico e pendências institucionais.
+      `specs/002-integrated-modules/plan-tasks-result-2026-09-21.md`; concluir a revisão transversal
+      após essa revisão, preservando histórico e pendências institucionais. Recorte transversal
+      documental concluído em02/10; restante é conferência por função das entregas simultâneas, sem
+      substituir seus contratos/evidências ou marcar QA humano.
 
 ## US1 — Auditoria integrada
 
@@ -124,10 +207,11 @@ e nada de Agendamentos sem scheduling:read.
 Setup → Foundational → histórias → Polish. Dentro de cada história, contratos/testes antecedem
 código e jornada; tarefas sem [P] seguem a ordem apresentada. Infraestrutura de 001 (concessões,
 schemas, writers, rotas e UI) precede adaptadores/exportações dos demais specs. Migração 0025
-precede0026;0027 antes de transferências;0028 depende do diagnóstico de conflitos e não altera dados
-automaticamente. Regressões004/006 e regras008 podem avançar após catálogo/migrações mesmo antes do
-núcleo de exportação. Aceite transversal002 depende das evidências das funções. Spec009 exige gate
-M016. Não há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
+precede0026;0027 antes de transferências. A antiga referência0028 para sobreposição está superada:
+Agendamentos mantém0031–0034 e seu diagnóstico de conflitos, sem alterar dados automaticamente.
+Regressões004/006 e regras008 podem avançar após catálogo/migrações mesmo antes do núcleo de
+exportação. Aceite transversal002 depende das evidências das funções. Spec009 exige gate M016. Não
+há dependência em retenção/P01/canais futuros para o recorte administrativo atual.
 
 ## Paralelismo por história
 
@@ -589,3 +673,34 @@ T025/T026. Exportação distribuída às specs 004/005/007/008/009 em DX01, exec
 duplicação de escopo.
 
 </details>
+
+## Pedidos e possibilidades preservados do caderno — 23/09/2026
+
+Transferência documental: CODEX, solicitante mafaltti. Assinaturas abaixo preservam a origem
+conhecida dos registros anteriores. Este índice remete às tarefas de cada função; não cria uma
+segunda lista executável nem concede autorização nova. Conferir estado e escopo na fonte antes de
+iniciar. Ideias futuras, suspensões e homologações adiadas continuam assim.
+
+| Assunto                                | Estado e próximo passo                                                                                                                                                                                                                                                         | Fonte                                                                                                                 | Assinatura                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| FormField                              | Correção futura registrada: texto incompleto e CPF mostram erro antes de blur/submit. Duas verificações reproduziram a divergência; não corrigida pela auditoria.                                                                                                              | [Evidência do guia](../001-project-foundation/evidence/design-guide-2026-09-22.md)                                    | `FormField-CODEX-SOLICITANTE_NAO_VERIFICADO`                              |
+| TableContainer                         | Revisão assistiva pendente: div focável com aria-label sem role explícito; Axe pediu revisão manual. Conferir teclado, nome e semântica no uso real.                                                                                                                           | [Evidência do guia](../001-project-foundation/evidence/design-guide-2026-09-22.md)                                    | `TableContainer-CODEX-SOLICITANTE_NAO_VERIFICADO`                         |
+| Tema Cores Legado                      | Pedido pendente: planejar e implementar vermelho/branco do site antigo nos mesmos elementos e disposição. Conferir referência, manter CAAB padrão; opção secundária discreta nas Configurações, acessível também no escuro. Atualizar spec/plano/tarefas antes de implementar. | Decisão de 21/09, substitui tema inspirado no clube                                                                   | `Tema Cores Legado-CODEX-SOLICITANTE_NAO_VERIFICADO`                      |
+| Exportações por módulo                 | Base compartilhada integrada; adaptar e validar os módulos restantes, com filtros, três formatos, seleção/ordem de colunas e permissões. Tarefas antigas podem exigir conciliação com o código já entregue, especialmente Colaboradores.                                       | [Programa 002](tasks.md), EXP01–EXP07; tarefas EX/DX nas specs001/003–010                                             | `Exportações por módulo-CODEX-SOLICITANTE_NAO_VERIFICADO`                 |
+| Acesso a Notícias/Agendamentos         | AC01–AC03 ainda abertos nas specs; conferir catálogo/guardas e revogação, worker e visibilidade no Início. Não recriar permissões já existentes.                                                                                                                               | [Notícias](../004-news-publishing/tasks.md), [Agendamentos](../008-scheduling-management/tasks.md)                    | `Acesso a Notícias/Agendamentos-CODEX-SOLICITANTE_NAO_VERIFICADO`         |
+| Auditoria e Relatórios                 | Adequar autorização da cadeia de exportação/download; Relatórios também exige consulta a Agendamentos nos dados de reservas. Conferir downloads antigos e proteger escopo desconhecido.                                                                                        | [Auditoria](../003-audit-operations/tasks.md), EX01/EX02; [Relatórios](../010-reports-analytics/tasks.md), EX/DX/T025 | `Auditoria e Relatórios-CODEX-SOLICITANTE_NAO_VERIFICADO`                 |
+| Dependentes/documentos                 | POL01: falta responder quais alterações exigem nova análise. POL02: aplicar a matriz documental confirmada, com análise manual e preservação do legado.                                                                                                                        | [Decisões P01](../005-members-management/open-decisions.md), [tarefas005](../005-members-management/tasks.md)         | `Dependentes/documentos-CODEX-SOLICITANTE_NAO_VERIFICADO`                 |
+| Calendário de Agendamentos             | CAL01–CAL05 integrados; CAL06 ainda consta aberto para revisão final e evidências. Conferir a entrega antes de repetir validações.                                                                                                                                             | [Tarefas008](../008-scheduling-management/tasks.md)                                                                   | `Calendário de Agendamentos-CODEX-SOLICITANTE_NAO_VERIFICADO`             |
+| Agendamentos: próximos incrementos     | Pendentes conflito por beneficiário, aviso de bloqueio em reservas e demais incrementos de horários/exceções, faltas, avaliações e comunicações. Reconciliar tarefas com o que já existe e seguir a ordem aprovada. Salas/equipamentos continuam sugestões.                    | Specs008 e programa002, incluindo T021/T023/T024 e AG-B/AG-R                                                          | `Agendamentos: próximos incrementos-CODEX-SOLICITANTE_NAO_VERIFICADO`     |
+| App/site                               | Primeira interface ainda depende de jornadas, identidade, telas e contratos próprios antes de implementação. A prioridade posterior do calendário administrativo substituiu a ordem anterior de começar pelo app/site.                                                         | Programa002 UI01/UI02 e spec008 T022                                                                                  | `App/site-CODEX-SOLICITANTE_NAO_VERIFICADO`                               |
+| Mensagens                              | Finalidade definida; M016 exige avaliar aderência do protótipo e registrar decisão de continuidade antes de nova construção. Envio real/M009/M010 adiados; testes antigos não homologam o produto.                                                                             | [Tarefas009](../009-messaging/tasks.md)                                                                               | `Mensagens-CODEX-SOLICITANTE_NAO_VERIFICADO`                              |
+| SMTP externo                           | Transporte implementado; homologação real de recuperação de senha/troca de e-mail depende de ambiente e destinatários autorizados.                                                                                                                                             | [Tarefas006](../006-account-settings/tasks.md), T025                                                                  | `SMTP externo-CODEX-SOLICITANTE_NAO_VERIFICADO`                           |
+| Métricas externas                      | Instrumentar e homologar consumidores quando app/site forem retomados; endpoint já existente.                                                                                                                                                                                  | Spec010 T026                                                                                                          | `Métricas externas-CODEX-SOLICITANTE_NAO_VERIFICADO`                      |
+| OAB-BA publicada                       | Configuração/homologação positiva adiada; última tentativa registrada retornou OAB_NOT_CONFIGURED. Não repetir sem mudança de configuração. Código/resultado já entregues, sem nova flag de ativação.                                                                          | Spec005 T028; histórico de 16/09                                                                                      | `OAB-BA publicada-CODEX-SOLICITANTE_NAO_VERIFICADO`                       |
+| Retenção/privacidade                   | Definição institucional pendente; manter descarte automático desligado e gates existentes. Não inventar prazos/aprovadores.                                                                                                                                                    | [Tarefas001](../001-project-foundation/tasks.md), T089                                                                | `Retenção/privacidade-CODEX-SOLICITANTE_NAO_VERIFICADO`                   |
+| Proteções remotas                      | T095 continua aberta para evidências remotas. Não realizar push proibido para testar proteção.                                                                                                                                                                                 | Spec001 T095                                                                                                          | `Proteções remotas-CODEX-SOLICITANTE_NAO_VERIFICADO`                      |
+| Aceite transversal                     | Conciliar tarefas e validar jornadas/contratos/evidências conforme conclusão dos módulos; não tratar módulos futuros como prontos.                                                                                                                                             | Programa002 T055–T057 e T098–T108                                                                                     | `Aceite transversal-CODEX-SOLICITANTE_NAO_VERIFICADO`                     |
+| Portal de parceiros / Meu trabalho     | Portal depende de definição/implementação própria; Meu trabalho tem base parcial e pendências operacionais, não é módulo inteiramente inexistente.                                                                                                                             | Programa002 T046–T053                                                                                                 | `Portal de parceiros / Meu trabalho-CODEX-SOLICITANTE_NAO_VERIFICADO`     |
+| Login com provedores externos          | Ideia futura registrada: Google, Apple ID e outros a definir; planejar vínculo com contas existentes e primeiro acesso, separando autenticação da autorização para criar conta. Sem integração/credenciais definidas.                                                          | Decisão de 17/09; identidade externa D02                                                                              | `Login com provedores externos-CODEX-SOLICITANTE_NAO_VERIFICADO`          |
+| Conversa interna / suporte por tickets | Duas possibilidades futuras separadas; pesquisar uso e funcionamento antes de nomear/especificar/construir.                                                                                                                                                                    | Programa002 FUT01/FUT02                                                                                               | `Conversa interna / suporte por tickets-CODEX-SOLICITANTE_NAO_VERIFICADO` |
+| Recursos Humanos / CAASSH-Créditos     | RH sem finalidade/escopo autorizado. CAASSH/Créditos segue suspenso e desativado; não reativar por estar no backlog.                                                                                                                                                           | Programa002 e decisões de 17/09                                                                                       | `Recursos Humanos / CAASSH-Créditos-CODEX-SOLICITANTE_NAO_VERIFICADO`     |

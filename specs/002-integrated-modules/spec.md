@@ -1,5 +1,38 @@
 # Feature Specification: Módulos integrados CAAB
 
+## Atualização do retrato de Agendamentos — 02/10/2026
+
+Conferência documental por CODEX; solicitante mafaltti. O incremento administrativo de Agendamentos
+está implementado na worktree própria e no PR #43, ainda aberto, com HEAD
+ba9a6eaa21182acedf48384d425a0e6e4810541a na consulta desta revisão. Correções de segurança
+identificadas no fechamento estão em validação pela frente responsável; checks de versões anteriores
+não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
+dev.
+
+A base integrada de referência continua 748539d, com migrations até0030. As migrations0031–0034 e a
+permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
+retratos anteriores de4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+
+**Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
+spec/plan/tasks do programa002 com o SHA efetivamente integrado, migrations e evidências vigentes.
+Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
+concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
+
+## Conciliação normativa e de estado — 02/10/2026
+
+Consolidado por CODEX; solicitante não verificado nesta sessão. Conciliar a documentação do projeto
+(CAAB-38) preserva os requisitos e atualiza o retrato histórico abaixo. Estado integrado/local em
+[MODULES](../../docs/MODULES.md); divisão das frentes no [plano](plan.md). Agendamentos tem
+prioridade; e-mails e app/site permanecem adiados conforme a decisão atual, sem autorizar serviços.
+
+Constituição2.1.0: motivo é obrigatório somente nas solicitações de exclusão de Colaboradores e
+Associados, preservado com autor/data por ocorrência; demais ações dispensam justificativa humana.
+Ausência histórica não recebe preenchimento retroativo. Esta exceção substitui a dispensa absoluta
+registrada em14/09. Colaboradores é a gestão de contas existente, sem cadastro de RH separado. DOC01
+tem conclusão histórica em21/09; T099 registra a revisão transversal ainda aberta por função. O
+fechamento documental atual e seus limites estão na
+[evidência da conciliação](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md).
+
 ## Complemento P01 — documentos definidos, 21/09/2026
 
 Titular/cônjuge/filho/enteado têm documentação definida pelo usuário, com limite de até 25 anos para
@@ -229,7 +262,8 @@ autorização, integridade, contratos e acessibilidade são obrigatórios confor
   pendente em POL02. Manter análise manual e a pergunta de reanálise aberta em POL01, sem exigências
   extras ou aprovação automática presumida.
 - **FR-007**: Proteger alterações/exportações/reenvios com autorização, auditoria e idempotência,
-  sem campo ou exigência de justificativa.
+  sem campo ou exigência de justificativa nessas ações. Solicitações de exclusão de Colaboradores e
+  Associados exigem motivo, com autor/data por ocorrência, conforme constituição2.1.0.
 - **FR-008**: Usar contratos novos/formalmente fornecidos e explicitar integração indisponível.
 - **FR-009**: Validar autorização, integridade, teclado, nomes acessíveis e responsividade nos
   fluxos alterados.
@@ -350,7 +384,7 @@ para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
 PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+## Registro de14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua
 obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação,

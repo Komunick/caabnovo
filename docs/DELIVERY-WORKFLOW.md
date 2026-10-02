@@ -1,6 +1,7 @@
 # Fluxo de Entrega — Git, PRs e Deployments
 
-Este documento define como alterações passam do desenvolvimento à produção.
+Este documento define como alterações passam do desenvolvimento à produção. As autorizações do
+agente seguem o [AGENTS](../AGENTS.md); testes e comandos ficam na [STACK](STACK.md).
 
 ## 1. Papéis das branches
 
@@ -30,8 +31,8 @@ do agente; checks não são aprovação humana.
   oficiais e registrar data, referências, decisões e limites da pesquisa no `research.md` existente.
 - Reunir as alterações autorizadas na única branch ativa até o PR. Cada função mantém spec, plano,
   tarefas, testes e evidências próprios dentro dessa mesma entrega.
-- Abrir o PR quando o conjunto estiver pronto para revisão. Correções posteriores usam a mesma
-  branch enquanto o PR não estiver integrado.
+- Abrir ou reabrir PR somente após pedido explícito e quando o conjunto estiver pronto para revisão.
+  Correções posteriores usam a mesma branch enquanto o PR não estiver integrado.
 - Produção recebe apenas PR de promoção `dev` → `main`.
 - Merge em `main` é exclusivamente humano.
 - Não contornar CI, reviews ou proteções de branch.
@@ -54,8 +55,8 @@ reutilizar silenciosamente build antigo; preservar banco, contas e arquivos. Ess
 ligar serviços agora.
 
 Quando ligado, o preview principal usa `http://localhost:3107` e os limites locais de recursos
-registrados em `AGENTS.md`. Builds e E2E pesados ficam no CI quando houver pouca memória local;
-testes usam bancos descartáveis.
+registrados no [runbook local](runbooks/local-workspace.md). Builds e E2E pesados ficam no CI quando
+houver pouca memória local; testes usam bancos descartáveis.
 
 ## 4. Fluxo padrão
 
@@ -64,7 +65,8 @@ testes usam bancos descartáveis.
 3. Reunir nessa branch as alterações autorizadas, com seus respectivos specs e tarefas.
 4. Adicionar ou atualizar testes e documentação.
 5. Executar os gates locais possíveis.
-6. Criar PR para `dev` usando o template.
+6. Somente após pedido explícito, criar PR para `dev` usando o template. Sem esse pedido, registrar
+   a entrega pronta nas evidências.
 7. Corrigir falhas de CI e observações da revisão na mesma branch do PR ainda aberto.
 8. Após merge, validar a implantação em DEV.
 9. Quando solicitado, preparar promoção `dev` → `main`.
@@ -72,6 +74,9 @@ testes usam bancos descartáveis.
 11. Realizar smoke test e observar métricas após o deploy.
 
 ## 5. Gates obrigatórios
+
+Selecionar suítes e comandos pela [matriz da stack](STACK.md#16-testes). Registrar escopo, versão,
+resultados e limitações na evidência da entrega; validação documental não homologa código.
 
 - Formatação de código e, para documentos alterados, `pnpm format:docs:check <arquivos>` conforme
   [TOOLING.md](TOOLING.md). A exclusão no comando geral não dispensa esta verificação explícita.
@@ -83,11 +88,11 @@ testes usam bancos descartáveis.
 - Migrations validadas em banco descartável ou DEV.
 - Verificação de dependências e segredos.
 - Testes de autorização quando uma rota, ação ou papel for alterado.
-- Teste de acessibilidade quando houver mudança de UI relevante.
-- Exportações seguem o [padrão obrigatório](EXPORT-STANDARD.md): Excel, CSV e PDF
-  em todos os módulos/abas aplicáveis, com filtros e download direto. Conferir os
-  três formatos, seleção/ordem das colunas, completude dos dados e permissões antes
-  de concluir sua entrega.
+- Teste de acessibilidade quando houver mudança de UI relevante. Toda alteração de UI/UX deve ser
+  planejada e revisada pelo [guia principal](caab-design.md).
+- Exportações seguem o [padrão obrigatório](EXPORT-STANDARD.md): Excel, CSV e PDF em todos os
+  módulos/abas aplicáveis, com filtros e download direto. Conferir os três formatos, seleção/ordem
+  das colunas, completude dos dados e permissões antes de concluir sua entrega.
 
 ## 6. Regras para migrations
 
@@ -119,8 +124,9 @@ A IA pode:
 2. Implementar mudanças pequenas e revisáveis.
 3. Executar lint, typecheck, testes e build.
 4. Preparar migrations e documentação.
-5. Abrir PR para `dev` com resumo, riscos e plano de teste.
-6. Preparar PR de promoção quando solicitado.
+5. Abrir ou reabrir PR para `dev` somente após pedido explícito, com resumo, riscos e plano de
+   teste.
+6. Preparar PR de promoção quando explicitamente solicitado.
 7. Cancelar/fechar PR aberto sem merge quando autorizado pelo pedido ou escopo da entrega.
 
 A IA não pode:

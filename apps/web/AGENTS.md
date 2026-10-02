@@ -12,3 +12,10 @@ This block is written and re-added by `next dev` — verify at
 the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Guia de UI/UX do projeto
+
+Antes de criar ou alterar interfaces, consultar [caab-design.md](../../docs/caab-design.md),
+referência principal de composição, componentes, validação, filtros, compactação e acessibilidade.
+Consultar também a spec da função para regras de negócio e registrar divergências entre regra e
+implementação.

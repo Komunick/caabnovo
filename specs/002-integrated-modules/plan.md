@@ -1,5 +1,82 @@
 # Implementation Plan: Coordenação da entrega após clarify
 
+## Atualização do retrato de Agendamentos — 02/10/2026
+
+Conferência documental por CODEX; solicitante mafaltti. O incremento administrativo de Agendamentos
+está implementado na worktree própria e no PR #43, ainda aberto, com HEAD
+ba9a6eaa21182acedf48384d425a0e6e4810541a na consulta desta revisão. Correções de segurança
+identificadas no fechamento estão em validação pela frente responsável; checks de versões anteriores
+não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
+dev.
+
+A base integrada de referência continua 748539d, com migrations até0030. As migrations0031–0034 e a
+permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
+retratos anteriores de4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+
+**Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
+spec/plan/tasks do programa002 com o SHA efetivamente integrado, migrations e evidências vigentes.
+Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
+concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
+
+## Retrato anterior das quatro instâncias — primeira consolidação de 02/10/2026
+
+Agendamentos, Relatórios, Documentação e Acessos são quatro instâncias independentes; Agendamentos
+tem prioridade máxima. Este é um retrato datado, não uma fila de execução ou autorização de
+serviços.
+
+| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                      |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agendamentos | Base local4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E2E/revisão visual pendentes por WSL. Os727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
+| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente010. PostgreSQL/E2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente008 antes da validação conjunta. |
+| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                    |
+| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação:66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                          |
+
+A conciliação preserva DS-T133–DS-T140, AC-T001–AC-T006, IDs originais de cargo único e roles.md.
+Os31 unitários/28 contratos de acessos são evidência da instância na base748539d, não nova execução
+nesta versão documental. T099 e homologações continuam abertas. Ver a
+[conciliação de acessos](../001-project-foundation/evidence/documentation-access-conciliation-2026-10-02.md).
+
+Agendamentos mantém modelo/migrations0031–0034 e scheduling:review_absences. Na futura conciliação
+funcional, preservar seu modelo de reservas junto ao gerador agrupado de Relatórios; conferir
+runtime.ts, export-screen.tsx, repositories/reports.ts, report-summary.ts e
+report-overview-export.ts. A compatibilidade foi revisada sem serviços; testes anteriores não
+comprovam o conjunto futuro. E-mails operacionais continuam adiados por inexistência do serviço, sem
+alterar destinatários e finalidade já definidos. A fila ativa permanece somente no caderno
+principal.
+
+## Coordenação anterior à incorporação da revisão de acessos — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
+
+Conciliação de Conciliar a documentação do projeto (CAAB-38). Incorpora por conteúdo a coordenação
+registrada pela entrega Jira/Confluence de 01–02/10, atualizada pela correção posterior do usuário.
+Agendamentos (CAAB-37) tem prioridade máxima, com Relatórios e documentação simultâneos. A revisão
+de acessos foi separada por pedido durante esta execução e iniciada em uma quarta instância, com
+base748539d; resultados e limites permanecem no caderno e na evidência da frente. Registros de
+pausa/ordem anteriores são históricos.
+
+| Frente       | Responsabilidade e limite                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Agendamentos | Spec008, modelo e migrations0031–0034. Validar a versão local conciliada `4e9abac`; não refazer sobreposição, bloqueio, permissões, aprovação/remarcação ou faltas já implementados. |
+| Relatórios   | Spec010/evidências e motor de exportação; nova entrega da dev, sem reutilizar a branch integrada do PR40. Preservar detalhe sem agrupamento e completar agrupado/resumo/evolução.    |
+| Documentação | MODULES/PRD/STACK/TOOLING, programa002 e recorte DS da spec001 na entrega documental existente; preservar fontes Jira/design por conteúdo.                                           |
+| Acessos      | Preparação de aceite da base integrada em worktree própria; somente conteúdo de acessos da spec001/evidências. Decisão sobre contas sem cargo continua pendente.                     |
+
+Conferir `runtime.ts`, `export-screen.tsx` e `repositories/reports.ts` antes de integração futura.
+Não alterar specs/evidências das outras frentes nem atribuir homologação por testes anteriores.
+Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42) e Homologar os avisos
+operacionais após disponibilizar o serviço de e-mail (CAAB-45) estão adiados por inexistência do
+serviço, dependentes de Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). A
+instrução anterior de completar transporte/T089 imediatamente está superada. Destinatários e caráter
+operacional permanecem definidos. App/site, campanhas, WAHA e caixa de entrada não entram por
+inferência.
+
+Base integrada `748539d`: cadastro público bloqueado, cargos/cargo único, navegação por acesso e
+motor de exportação entregues; Relatórios tem detalhe sem agrupamento integrado. As listas e
+checkpoints de 21/09 abaixo não reabrem a implementação. Tarefas de consumidor, decisões
+institucionais e aceite humano permanecem próprios. O [mapa de módulos](../../docs/MODULES.md) e a
+[evidência da consolidação](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md)
+distinguem esses estados. A documentação da spec011 permanece na entrega de origem, com suas
+pendências operacionais; não repetir publicações/criações nem alegar confirmação remota nova.
+
 ## Complemento P01 — documentos definidos, 21/09/2026
 
 Titular/cônjuge/filho/enteado têm documentação definida pelo usuário, com limite de até 25 anos para
@@ -27,8 +104,8 @@ Mensagens e US10 Relatórios. US8 CAASSH e US9 portal não são reativadas.
 TypeScript 6.0.3, Node 24, Next 16.3.4, React 19.2.8, Zod 4.5.4 e pg8.23.0 do checkout; PostgreSQL
 18 no CI. Monólito modular; banco também armazena arquivos legados. Sem S3/MinIO novo. Testes Vitest
 4.1.11, Playwright 1.62.1 e Axe existentes. UI desktop/390 px, temas, teclado e tokens
-compartilhados. Exportação incremental com pg-cursor/ExcelJS propostos e PDFKit existente, sujeitos
-a spike/versão fixada no código; nenhum pacote instalado agora.
+compartilhados. pg-cursor, ExcelJS e PDFKit já compõem o núcleo integrado de exportação direta.
+Versões vigentes nos manifests/lockfile; a conciliação documental não instala pacotes.
 
 **Performance/escala**: preservar p95 de 2s das telas comuns; não aplicar esse alvo a transferência
 integral arbitrária. Exportações não têm teto funcional de registros/período. Aplicar o
@@ -42,10 +119,12 @@ nesta fase. Q10/Q11 e módulos futuros continuam adiados.
 
 Pré-pesquisa: escopo decorre de Q1–Q11 e complementos, sem política institucional inferida.
 Pós-desenho: monólito/fonte única, negação por padrão, auditoria mínima, integridade no PostgreSQL e
-UI compartilhada preservados. Constituição 2.0.0 concilia justificativas já retiradas; autenticação
-continua sem MFA. Abstração de exportação cobre oito consumidores reais, sem CRUD genérico. Não há
-violação de desenho sem justificativa. Aprovações institucionais/produção permanecem pendentes;
-compatibilidade do desenho não é execução de gates.
+UI compartilhada preservados. Constituição 2.1.0 preserva a dispensa de justificativa nas demais
+ações e exige motivo nas solicitações de exclusão de Colaboradores/Associados, com autor/data por
+ocorrência e sem preenchimento retroativo. Autenticação continua sem MFA. Abstração de exportação
+cobre oito consumidores reais, sem CRUD genérico. Não há violação de desenho sem justificativa.
+Aprovações institucionais/produção permanecem pendentes; compatibilidade do desenho não é execução
+de gates.
 
 ## Phase 0 — Research
 
@@ -77,10 +156,12 @@ pelo planejamento.
 - Preservar tasks históricas e correspondência dos IDs provisórios AX/EX/DX/AC/BEN/BLQ/EXP para
   tarefas sequenciais novas. Pendências antigas não entram automaticamente no escopo ativo.
 - DOC01 inclui conciliação normativa e contratos derivados, não reexecução de remoção de MFA ou
-  justificativas. Constituição 2.0.0 documenta a retirada já decidida; sem templates alterados.
-- Reservar nomes de migração na mesma entrega: 0025 concessões gerais, 0026 acesso explícito, 0027
-  operações de exportação, 0028 sobreposição. Conferir último número antes de implementar; não
-  editar migrations aplicadas.
+  justificativas. Aplicar a constituição2.1.0 e a exceção posterior de motivo para solicitações de
+  exclusão, preservando os relatos históricos da revisão2.0.0.
+- Migrations0025/0026/0027 já integram a base para concessões gerais, acesso explícito e operações
+  de exportação. A antiga reserva de0028 para sobreposição foi superada: Agendamentos mantém
+  0031–0034 na entrega própria. Não reutilizar0028 nem alterar SQL aplicado; conferir números e
+  checksums antes de futura integração.
 
 Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
 e [contrato comum](../002-integrated-modules/contracts/direct-exports.md). UI preserva
@@ -97,13 +178,13 @@ função; servidor não confia no catálogo antigo do navegador.
 
 ## Rollout, migração e rollback
 
-Uma entrega/worktree; mudanças SQL aditivas e numeradas coordenadas pela spec001. Preparar
-compatibilidade de leitura de chaves/snapshots antes de ativar migrações e novos botões. Conta sem
-acesso não ganha concessão para preservar conveniência. Diagnosticar conflitos antes da
-restrição008; parar sem corrigir registros automaticamente. Rollback da UI/API deve preservar grants
-convertidos, dados e arquivos; não publicar binário antigo que dependa exclusivamente de
-audit:export/reports:export após conversão. Preferir correção compatível para frente; reversão SQL
-exige plano e evidência próprios.
+Uma worktree por entrega; Agendamentos controla suas migrations conforme a coordenação vigente, e
+Fundação mantém as já integradas. Mudanças SQL são aditivas e numeradas. Preparar compatibilidade de
+leitura de chaves/snapshots antes de ativar migrações e novos botões. Conta sem acesso não ganha
+concessão para preservar conveniência. Diagnosticar conflitos antes da restrição008; parar sem
+corrigir registros automaticamente. Rollback da UI/API deve preservar grants convertidos, dados e
+arquivos; não publicar binário antigo que dependa exclusivamente de audit:export/reports:export após
+conversão. Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.
 
 ## Validation e próximo passo
 
@@ -112,8 +193,9 @@ campos autorizados; reconciliar tarefas/evidências por função e políticas ad
 homologação ausente.
 
 Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior nunca conclui
-tarefa nova. Pesquisa/plan encerrados; próximo comando desta solicitação: speckit-tasks, organizado
-por história, com dependências e critérios independentes.
+tarefa nova. Plan/tasks de21/09 já foram produzidos; a sequência vigente está no início deste plano.
+T099 mantém a revisão transversal por função; a conciliação dos documentos centrais não executa os
+gates nem encerra aceites de outras frentes.
 
 ## Complexity Tracking
 
@@ -124,7 +206,7 @@ somente à transferência atual; não é fila/histórico obrigatório.
 ## Histórico anterior — referência, não sequência executável atual
 
 O conteúdo abaixo preserva decisões/evidências anteriores. Em caso de divergência, valem o desenho
-de 21/09 acima e a spec vigente; não reabrir branches/PRs já integrados.
+atualizado acima e a spec vigente; não reabrir branches/PRs já integrados.
 
 <details>
 <summary>Plano anterior preservado</summary>
@@ -333,7 +415,7 @@ para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
 PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+## Registro de14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no
 contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de

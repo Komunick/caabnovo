@@ -1,42 +1,12 @@
 # CAAB — Sistema Interno de Gestão
 
-**Estado de implementação — 21/09/2026:** este PRD reúne produto e expansões, não comprova entrega
-de todas as funções listadas. O [inventário atual](MODULES.md) e a
-[revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md) distinguem código,
-decisões ainda não implementadas, homologação e suspensões. MFA e justificativas obrigatórias foram
-retirados; Mensagens é protótipo de campanhas/comunicados; CAASSH está desativado, RH é
-possibilidade futura e Colaboradores significa contas/permissões. Exportações seguem
-[padrão vigente](EXPORT-STANDARD.md), ainda pendente no código. Retenção e critérios institucionais
-seguem adiados.
+Este PRD define objetivos, requisitos e limites do produto. Estado de implementação fica no
+[mapa de módulos](MODULES.md); critérios detalhados e tarefas ficam nas specs de cada função.
+Planejamento não comprova entrega ou homologação. UI/UX segue o [guia principal](caab-design.md).
 
-## Estado consolidado — 21/09/2026
-
-**Decisão vigente — 21/09/2026:** Mensagens destina-se a comunicados e campanhas aos associados, com
-seleção de público e programação. A finalidade foi confirmada; o protótipo ainda precisa da revisão
-de aderência e continuidade M016 e não está homologado. Meios, provedores e envio real permanecem
-adiados. Chat interno e suporte por tickets são possibilidades futuras separadas.
-
-Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
-de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
-definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os
-requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
-
-Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões
-continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
-
-## Agendamentos — implementação da etapa 1 em 15/09/2026
-
-A primeira versão do painel foi implementada na entrega histórica
-feature/scheduling-management-20260915 e está integrada: oferta, horários semanais/almoço, reservas
-futuras, consulta, remarcação, cancelamento e histórico. O código ainda aceita toda sessão ativa,
-lacuna de autorização A01. A decisão vigente exige concessões separadas de consulta e alteração; a
-adequação está pendente. Validação e limites na
-[spec 008](../specs/008-scheduling-management/spec.md) e nas
-[evidências](../specs/008-scheduling-management/evidence/release-review.md). Esta atualização
-substitui o estado anterior de “somente pesquisa” para esse recorte. Exceções, avaliações e demais
-estados permanecem posteriores. O calendário administrativo foi priorizado em 18/09 e CAL01–CAL05
-estão implementadas, com CAL06 pendente de validação final. A interface do usuário no app/site
-continua posterior; CAASSH permanece desativado.
+Colaboradores significa contas e permissões; RH é possibilidade futura. Mensagens tem finalidade de
+comunicados/campanhas, com envio real ainda dependente de definição própria. CAASSH permanece
+suspenso. O escopo previsto não autoriza construir módulos suspensos ou integrações sem contrato.
 
 ## 1. Controle do documento
 
@@ -44,21 +14,23 @@ continua posterior; CAASSH permanece desativado.
 
 **Tipo:** Product Requirements Document (PRD)
 
-**Versão:** 0.3
+**Versão:** 0.4
 
 **Status:** Escopo consolidado; Mensagens em protótipo com finalidade confirmada e aderência
 pendente; Recursos Humanos como possibilidade futura
 
-**Data:** 21/09/2026 (revisão de código e decisões; versão inicial de 09/09/2026)
+**Data:** 02/10/2026 (conciliação documental; versão inicial de 09/09/2026)
 
 **Escopo desta versão:** todos os módulos do painel e portal do parceiro
 
-**Prioridade atualizada em 15/09/2026:** após concluir e validar a primeira versão funcional de
-Agendamentos no painel, o próximo passo será a primeira versão da interface do usuário no app/site,
-antes das demais expansões e módulos pendentes. Essa etapa terá spec, plano, tarefas e critérios
-próprios, reutilizando os dados e serviços do painel. A exclusão de refazer app/site na seção 5
-limita a entrega administrativa inicial; não exclui essa próxima etapa confirmada do produto. Ver
-[sequência vigente](../specs/002-integrated-modules/plan.md).
+**Ordem de execução:** Agendamentos tem prioridade máxima, em paralelo a Relatórios e à consolidação
+documental e à frente independente de Acessos, totalizando quatro instâncias. A revisão de acessos
+já foi conciliada nesta entrega documental; suas correções e decisões continuam pendentes. Consultar
+o [plano do programa](../specs/002-integrated-modules/plan.md) e o
+[estado de implementação](MODULES.md). A interface do app/site permanece adiada e depende de
+jornadas, identidade, contratos e critérios próprios. Integração e homologação dos e-mails de
+Agendamentos estão adiadas porque o serviço não existe; preservar destinatários/finalidade já
+confirmados, sem transformar a dependência em construção autorizada de comunicação.
 
 O aplicativo e o site externo participam do desenho dos contratos de conteúdo, benefícios, cadastro,
 credencial, agenda e mensagens. Alterações nesses consumidores, contratação de serviços e migração
@@ -148,7 +120,8 @@ atuação/propostas anteriores, não cargos adicionais a criar nesta entrega. Co
 ### 6.1 Administrador
 
 Gerencia usuários, permissões, configurações, cadastros e auditoria. Pode executar ações sensíveis
-mediante autorização e confirmação aplicável, sem justificativa obrigatória.
+mediante autorização e confirmação aplicável. A solicitação de exclusão de Colaborador ou Associado
+exige motivo; as demais ações dispensam justificativa humana.
 
 ### 6.2 Comunicação
 
@@ -260,7 +233,7 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 ### 8.3 Remarcação e cancelamento
 
 1. Usuário abre o agendamento.
-2. Informa a ação e o motivo.
+2. Seleciona a ação, sem exigir motivo ou justificativa humana.
 3. Para remarcação, o novo horário passa por todas as validações de disponibilidade.
 4. O registro anterior é preservado no histórico.
 5. O sistema registra responsável, horário e origem da alteração.
@@ -329,8 +302,9 @@ Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não 
 
 Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é
 terminal no desenho de expansão; correções administrativas exigem autorização e auditoria, sem
-justificativa obrigatória. A versão atual usa Agendado/Cancelado; os demais estados dependem da
-spec 008.
+justificativa obrigatória. A base integrada usa Agendado/Cancelado; aprovação, recuperação e faltas
+têm incremento local ainda não integrado. Estados e transições efetivos pertencem à spec008 da
+entrega ativa; a lista de produto acima não homologa nem substitui seu contrato.
 
 ### 9.4 Associados
 
@@ -392,25 +366,25 @@ histórico e não representam tarefas aprovadas ou concluídas.
 
 ### 9.9 Requisitos adicionais da entrega integrada
 
-| ID      | Requisito                                                                                                            | Dependência institucional                  |
-| ------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| PES-001 | Cadastrar dependentes e vínculos, com histórico.                                                                     | Tipos de vínculo aceitos.                  |
-| PES-002 | Analisar documentação, registrar decisão e solicitar correções pontuais.                                             | Campos, documentos mínimos e responsáveis. |
-| PES-003 | Separar aprovação cadastral, vínculo, regularidade OAB, situação financeira, credencial e restrições por finalidade. | Matriz de consequências.                   |
-| PES-004 | Exibir fonte/data das verificações; sem política, não decidir elegibilidade automaticamente.                         | Fonte autorizada e política.               |
-| AVA-001 | Vincular avaliações a atendimento ou benefício e moderar com motivo, preservando nota/opinião original.              | Acesso e critérios de moderação.           |
-| COM-001 | Preparar públicos com critérios legíveis, prévia e exclusões.                                                        | Preferências e política de envio.          |
-| COM-002 | Preparar, revisar, enviar/programar mensagens e manter modelos transacionais.                                        | Responsáveis, canais e contratos.          |
-| COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                 | Evidência suportada por canal.             |
-| COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                              | Política de composição do público.         |
-| CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                    | Regras aprovadas de Caassh.                |
-| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                           | Autoridade e limites de concessão.         |
-| CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                | Regras de utilização e correção.           |
-| POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                   | Tarefas delegáveis.                        |
-| POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                | Estados e responsáveis da operação.        |
-| POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                     | Cadastro autoritativo único.               |
-| REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                              | Público e uso esperado.                    |
-| REL-002 | Oferecer Excel/CSV/PDF com download direto, filtros e seleção/ordem de colunas autorizadas.                          | Retenção e formato.                        |
+| ID      | Requisito                                                                                                                                  | Dependência institucional                  |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| PES-001 | Cadastrar dependentes e vínculos, com histórico.                                                                                           | Tipos de vínculo aceitos.                  |
+| PES-002 | Analisar documentação, registrar decisão e solicitar correções pontuais.                                                                   | Campos, documentos mínimos e responsáveis. |
+| PES-003 | Separar aprovação cadastral, vínculo, regularidade OAB, situação financeira, credencial e restrições por finalidade.                       | Matriz de consequências.                   |
+| PES-004 | Exibir fonte/data das verificações; sem política, não decidir elegibilidade automaticamente.                                               | Fonte autorizada e política.               |
+| AVA-001 | Vincular avaliações a atendimento ou benefício e moderar sem exigir justificativa, preservando nota/opinião original e motivos históricos. | Acesso e critérios de moderação.           |
+| COM-001 | Preparar públicos com critérios legíveis, prévia e exclusões.                                                                              | Preferências e política de envio.          |
+| COM-002 | Preparar, revisar, enviar/programar mensagens e manter modelos transacionais.                                                              | Responsáveis, canais e contratos.          |
+| COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                                       | Evidência suportada por canal.             |
+| COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                                                    | Política de composição do público.         |
+| CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                                          | Regras aprovadas de Caassh.                |
+| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                                                 | Autoridade e limites de concessão.         |
+| CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                                      | Regras de utilização e correção.           |
+| POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                                         | Tarefas delegáveis.                        |
+| POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                                      | Estados e responsáveis da operação.        |
+| POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                                           | Cadastro autoritativo único.               |
+| REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                                                    | Público e uso esperado.                    |
+| REL-002 | Oferecer Excel/CSV/PDF com download direto, filtros e seleção/ordem de colunas autorizadas.                                                | Retenção e formato.                        |
 
 ## 10. Modelo conceitual de dados
 
@@ -432,15 +406,16 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - **Oferta de serviço:** unidade, serviço, profissão e regras específicas.
 - **Vínculo profissional:** profissional, unidade, serviços habilitados e vigência.
 - **Disponibilidade:** profissional, unidade, regra semanal e validade.
-- **Bloqueio de agenda:** profissional/unidade, início, fim, motivo e origem.
+- **Bloqueio de agenda:** profissional/unidade, início, fim e origem; preservar motivo histórico,
+  sem exigir nova justificativa.
 - **Agendamento:** associado, unidade, serviço, profissional, início, fim, status e observações.
-- **Evento do agendamento:** status anterior, novo status, ator, data e motivo.
+- **Evento do agendamento:** status anterior, novo status, ator e data; motivo histórico opcional.
 
 ### 10.3 Cadastros
 
 - **Associado:** identificadores, contatos mínimos, OAB, seccional e situação interna.
 - **Verificação OAB:** associado, fonte, método, situação retornada, responsável e data.
-- **Bloqueio do associado:** tipo, motivo, início, fim, responsável e situação.
+- **Bloqueio do associado:** tipo, início, fim, responsável e situação; motivo histórico opcional.
 - **Parceiro:** dados institucionais, categoria, contatos, vigência e status.
 - **Serviço parceiro:** parceiro, descrição, condições, abrangência e status.
 - **Colaborador/Usuário:** a mesma conta de acesso, com identidade de autenticação, funções,
@@ -516,6 +491,9 @@ histórico e não representam tarefas aprovadas ou concluídas.
 
 ## 12. Requisitos de experiência
 
+Padrões visuais, componentes e revisão obrigatória: [caab-design.md](caab-design.md). Esta seção
+registra objetivos de experiência; medidas e instruções visuais pertencem ao guia.
+
 - Interface pt-BR.
 - Design desktop-first, responsivo para tablets.
 - Navegação lateral recolhível e busca global.
@@ -528,6 +506,11 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - Design tokens próprios da CAAB; evitar aparência de template genérico.
 
 ## 13. Segurança e privacidade
+
+Solicitar exclusão de Colaborador ou Associado exige motivo não vazio, com autor/data por
+ocorrência, inclusive após desfazer/restaurar. Demais ações dispensam justificativa humana; campos
+operacionais e motivos históricos são preservados. Fonte: princípio V da
+[constituição](../.specify/memory/constitution.md) e contratos das funções.
 
 - OWASP ASVS nível 2 como baseline verificável.
 - Autorização server-side e menor privilégio.
@@ -599,8 +582,9 @@ seguida das dependências internas.
 Cada funcionalidade nova terá seu próprio spec, plano e tarefas antes de implementar. Correções,
 melhorias e mudanças atualizam os artefatos da função existente, sem criar outro spec. A pesquisa de
 mercado atual fundamenta cada implementação e evolução e fica registrada no respectivo research.md.
-PRs separados acompanham as funcionalidades/specs concluídos e validados, conforme orientação de
-09/09/2026. O escopo continua integrado; documentação e testes acompanham a implementação da função.
+A organização das branches, autorização de PR e validações seguem o
+[fluxo de entrega](DELIVERY-WORKFLOW.md) e o [AGENTS](../AGENTS.md). Documentação e testes
+acompanham a implementação de cada função; o PRD não define uma política concorrente de publicação.
 
 ## 17. Critérios de aceite do MVP
 
