@@ -526,8 +526,8 @@ integração é HIN-FR-01–HIN-FR-05 no
 FR-007/FR-012 continuam descrevendo o histórico cadastral/documental desta função; a visão
 consolidada entre domínios é evolução planejada, sem declaração de implementação.
 
-Usar o identificador individual da pessoa e distinguir beneficiário de autor. Uma reserva feita
-pelo titular para o dependente integra o histórico do dependente com autoria do titular.
-Aplicar as permissões de cada domínio na consulta; vínculo familiar de agenda não concede
-automaticamente acesso a compras ou dados financeiros. Registros cancelados e novas reservas
-continuam individualmente rastreáveis.
+Usar o identificador individual da pessoa e distinguir beneficiário de autor. Uma reserva feita pelo
+titular para o dependente integra o histórico do dependente com autoria do titular. Aplicar as
+permissões de cada domínio na consulta; vínculo familiar de agenda não concede automaticamente
+acesso a compras ou dados financeiros. Registros cancelados e novas reservas continuam
+individualmente rastreáveis.

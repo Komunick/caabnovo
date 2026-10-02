@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { ExportCatalog, ExportFormat, ExportOperation, ExportRequest } from "@caab/contracts";
 import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
@@ -20,13 +20,20 @@ export function ExportScreen({
   catalog,
   sourcePermission,
   backHref,
+  initialFilters = {},
+  renderFilter,
 }: {
   catalog: ExportCatalog;
   sourcePermission: string;
   backHref: string;
+  initialFilters?: Record<string, string>;
+  renderFilter?(key: string, value: string, onChange: (value: string) => void): ReactNode;
 }) {
   const key = `export:${catalog.module}:${catalog.dataset}`;
-  const [filters, setFilters] = useDraftState<Record<string, string>>(`${key}:filters`, {});
+  const [filters, setFilters] = useDraftState<Record<string, string>>(
+    `${key}:filters`,
+    initialFilters,
+  );
   const [columns, setColumns] = useDraftState(`${key}:columns`, () =>
     catalog.columns.filter((c) => c.defaultSelected).map((c) => c.key),
   );
@@ -168,36 +175,47 @@ export function ExportScreen({
             <fieldset className="export-fields" disabled={active}>
               <legend>Filtros</legend>
               <div className="list-filters export-filters">
-                {catalog.filters.map((filter) => (
-                  <FormField
-                    key={filter.key}
-                    id={`export-filter-${filter.key}`}
-                    label={filter.label}
-                  >
-                    {filter.type === "choice" ? (
-                      <select
-                        value={filters[filter.key] ?? (filter.key === "deleted" ? "excluded" : "")}
-                        onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
+                {catalog.filters.map(
+                  (filter) =>
+                    renderFilter?.(filter.key, filters[filter.key] ?? "", (value) =>
+                      setFilters({ ...filters, [filter.key]: value }),
+                    ) ?? (
+                      <FormField
+                        key={filter.key}
+                        id={`export-filter-${filter.key}`}
+                        label={filter.label}
                       >
-                        {filter.key !== "deleted" && <option value="">Todos</option>}
-                        {filter.options?.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type={filter.type === "date" ? "date" : "text"}
-                        value={filters[filter.key] ?? ""}
-                        onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
-                      />
-                    )}
-                  </FormField>
-                ))}
+                        {filter.type === "choice" ? (
+                          <select
+                            value={
+                              filters[filter.key] ?? (filter.key === "deleted" ? "excluded" : "")
+                            }
+                            onChange={(e) =>
+                              setFilters({ ...filters, [filter.key]: e.target.value })
+                            }
+                          >
+                            {filter.key !== "deleted" && <option value="">Todos</option>}
+                            {filter.options?.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type={filter.type === "date" ? "date" : "text"}
+                            value={filters[filter.key] ?? ""}
+                            onChange={(e) =>
+                              setFilters({ ...filters, [filter.key]: e.target.value })
+                            }
+                          />
+                        )}
+                      </FormField>
+                    ),
+                )}
                 <FormField id="export-sort" label="Ordenar por">
                   <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                    <option value="">Identificador</option>
+                    <option value="">Ordem padrão</option>
                     {catalog.columns
                       .filter((c) => c.sortable)
                       .map((c) => (

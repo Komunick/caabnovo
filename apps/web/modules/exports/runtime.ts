@@ -11,11 +11,12 @@ import type { ExportRequest } from "@caab/contracts";
 import { authorizeExport, exportRegistry, ExportError, type ExportAdapter } from "./catalog";
 import { acquire, exportBatches, getExportPools } from "./query";
 import { usersExport } from "../users/export-adapter";
+import { schedulingExports } from "../scheduling/export-adapter";
 import { writeCsv } from "./formats/csv";
 import { writeXlsx } from "./formats/xlsx";
 import { writePdf } from "./formats/pdf";
 import type { ExportDependencies } from "./service";
-export const lookupExport = exportRegistry([usersExport]);
+export const lookupExport = exportRegistry([usersExport, ...schedulingExports]);
 export async function authorizeCurrentExport(
   pool: Pool,
   adapter: ExportAdapter,

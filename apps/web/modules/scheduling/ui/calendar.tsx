@@ -5,6 +5,7 @@ import timeGridPlugin from "@fullcalendar/react/timegrid";
 import themePlugin from "@fullcalendar/react/themes/classic";
 import ptBr from "@fullcalendar/react/locales/pt-br";
 import type { SchedulingBooking } from "@caab/contracts";
+import { schedulingStatusLabels } from "@caab/contracts";
 import { useRouter } from "next/navigation";
 import { calendarRange, type CalendarView } from "../calendar";
 import { DataState, timeLabel, useSchedulingData } from "./shared";
@@ -29,18 +30,23 @@ export default function SchedulingCalendar({
   query.set("end", range.end);
   const result = useSchedulingData<{ items: SchedulingBooking[] }>(`calendar?${query}`);
   if (!result.data) return <DataState error={result.error} reload={result.reload} />;
-  const events = result.data.items.map((booking) => {
-    const status = `${booking.status === "scheduled" ? "Agendado" : "Cancelado"}${booking.memberDeleted ? " · Associado excluído" : ""}`;
-    const label = `${booking.memberName}, ${timeLabel(booking.startsAt)} às ${timeLabel(booking.endsAt)}, ${booking.procedureName}, ${booking.professionalName}, ${booking.unitName}, ${status}`;
-    return {
-      id: booking.id,
-      start: booking.startsAt,
-      end: booking.endsAt,
-      title: `${status} · ${booking.memberName} · ${booking.procedureName} · ${booking.professionalName}`,
-      url: `/scheduling/${booking.id}`,
-      extendedProps: { label, status: booking.status },
-    };
-  });
+  const events = result.data.items
+    .filter(
+      (booking): booking is SchedulingBooking & { startsAt: string; endsAt: string } =>
+        !!booking.startsAt && !!booking.endsAt,
+    )
+    .map((booking) => {
+      const status = `${schedulingStatusLabels[booking.status]}${booking.memberDeleted ? " · Associado excluído" : ""}${booking.eligibilityWarning === "blocked" ? " · Beneficiário bloqueado" : ""}`;
+      const label = `${booking.memberName}, ${timeLabel(booking.startsAt)} às ${timeLabel(booking.endsAt)}, ${booking.procedureName}, ${booking.professionalName}, ${booking.unitName}, ${status}`;
+      return {
+        id: booking.id,
+        start: booking.startsAt,
+        end: booking.endsAt,
+        title: `${status} · ${booking.memberName} · ${booking.procedureName} · ${booking.professionalName}`,
+        url: `/scheduling/${booking.id}`,
+        extendedProps: { label, status: booking.status },
+      };
+    });
   return (
     <>
       <p role="status">

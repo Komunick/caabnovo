@@ -5,7 +5,7 @@ import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type KeyboardEvent } from "react";
 import { schedulingKinds, type SchedulingPage, type SchedulingKind } from "@caab/contracts";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ModuleNavigation } from "@/components/ui/module-navigation";
@@ -13,9 +13,47 @@ import { FormField } from "@/components/ui/form-field";
 import { catalogLabels } from "./catalog-labels";
 
 const messages: Record<string, string> = {
+  SCHEDULING_ABSENCE_ALREADY_RECORDED:
+    "Esta reserva já tem uma falta registrada. Atualize os dados para consultar a ocorrência.",
+  SCHEDULING_ABSENCE_BOOKING_STATE:
+    "A falta só pode ser registrada após o término previsto de um compromisso confirmado.",
+  SCHEDULING_ABSENCE_APPEAL_CLOSED:
+    "O prazo para apresentar justificativa ou contestação terminou, ou já existe um pedido para esta falta. Atualize os dados.",
+  SCHEDULING_ABSENCE_EVIDENCE_INVALID:
+    "Anexe um comprovante desta pessoa enviado por você e aguarde a liberação do arquivo antes de apresentar o pedido.",
+  SCHEDULING_ABSENCE_DECISION_STATE:
+    "Este pedido não está disponível para decisão. Atualize os dados e confira a situação.",
+  SCHEDULING_ABSENCE_APPEAL_NOT_FOUND: "O pedido de revisão não foi encontrado. Atualize os dados.",
+  SCHEDULING_ABSENCE_EVIDENCE_NOT_FOUND:
+    "O comprovante não está disponível para esta falta. Atualize os dados e tente novamente.",
+  SCHEDULING_ABSENCE_NOT_FOUND: "A falta não foi encontrada. Volte à lista e atualize os dados.",
+  SCHEDULING_ABSENCE_RESTRICTED:
+    "Esta pessoa está temporariamente impedida de realizar novas reservas por falta. Consulte o registro para conferir o prazo.",
+  PERMISSION_DENIED:
+    "Seu acesso não permite esta ação. Confira suas permissões ou procure a equipe responsável.",
   SCHEDULING_CALENDAR_LIMIT:
     "Há mais de 1.000 reservas neste período. Selecione Dia ou Semana, ou filtre por unidade e profissional para carregar a agenda completa.",
   SCHEDULING_CONFLICT: "Essa vaga não está mais disponível. Escolha outro horário.",
+  SCHEDULING_PROFESSIONAL_REVIEW_REQUIRED:
+    "Confira o profissional indicado para a vaga antes de enviar o pedido.",
+  SCHEDULING_HORIZON: "A data está além do período permitido para este serviço.",
+  SCHEDULING_NOTICE: "Este serviço exige maior antecedência para uma nova reserva.",
+  SCHEDULING_RESCHEDULE_NOTICE: "O prazo mínimo para pedir esta remarcação não foi atendido.",
+  SCHEDULING_RESCHEDULE_LIMIT:
+    "As duas remarcações já foram confirmadas. Cancele e faça uma nova reserva se precisar mudar novamente.",
+  SCHEDULING_COUNTER_UNKNOWN:
+    "O histórico anterior não informa o total de remarcações. A contagem precisa ser conciliada antes de iniciar outra troca.",
+  SCHEDULING_PUBLICATION_INVALID:
+    "Confira se a unidade e os procedimentos estão ativos e se há horários configurados para cada atendimento.",
+  SCHEDULING_AUDIENCE:
+    "Este serviço é exclusivo para titulares. Selecione um serviço disponível para esta pessoa.",
+  SCHEDULING_TRANSFER_DENIED:
+    "O atendimento só pode ser transferido para um dependente com vínculo vigente e elegível.",
+  SCHEDULING_STATE: "Esta ação não está disponível na situação atual. Atualize os dados.",
+  SCHEDULING_TEAM_ACCESS:
+    "Vincule colaboradores ativos que já tenham permissão para consultar e alterar Agendamentos.",
+  SCHEDULING_BENEFICIARY_CONFLICT:
+    "Essa pessoa já tem uma reserva nesse horário. Escolha outro horário.",
   SCHEDULING_VERSION_CONFLICT:
     "O registro foi alterado. Recarregue a página e confira os dados antes de salvar.",
   SCHEDULING_FUTURE_BOOKINGS:
@@ -124,7 +162,7 @@ export function useSchedulingMutation(draftKey: string) {
       setPending(false);
     }
   }
-  return { pending, error, mutate };
+  return { pending, error, mutate, clearError: () => setError("") };
 }
 export function SchedulingShell({
   title,
@@ -165,13 +203,27 @@ export function SchedulingShell({
           {
             href: "/scheduling",
             label: "Agenda",
-            active: !pathname.includes("/catalog") && !pathname.includes("/hours"),
+            active:
+              !pathname.includes("/catalog") &&
+              !pathname.includes("/hours") &&
+              !pathname.includes("/approval") &&
+              !pathname.includes("/absences"),
+          },
+          {
+            href: "/scheduling/absences",
+            label: "Faltas",
+            active: pathname === "/scheduling/absences",
           },
           ...schedulingKinds.map((item) => ({
             href: `/scheduling/catalog?kind=${item}`,
             label: catalogLabels[item].title,
             active: pathname === "/scheduling/catalog" && kind === item,
           })),
+          {
+            href: "/scheduling/approval",
+            label: "Pendências",
+            active: pathname === "/scheduling/approval",
+          },
           {
             href: "/scheduling/hours",
             label: "Horários",
@@ -234,6 +286,7 @@ export function Choice({
   required = false,
   disabled = false,
   selectedLabel,
+  onSelected,
 }: {
   label: string;
   resource: string;
@@ -243,6 +296,7 @@ export function Choice({
   required?: boolean;
   disabled?: boolean;
   selectedLabel?: string;
+  onSelected?(item: { id: string; name: string }): void;
 }) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
@@ -291,9 +345,28 @@ export function Choice({
   function choose(item: (typeof items)[number]) {
     setSelection({ id: item.id, text: optionLabel(item) });
     onChange(item.id);
+    onSelected?.(item);
     input.current?.focus();
     setOpen(false);
     setActive(-1);
+  }
+  function navigateOptions(event: KeyboardEvent<HTMLElement>) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      input.current?.focus();
+      setOpen(false);
+    }
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      setOpen(true);
+      setActive((index) =>
+        Math.max(0, Math.min(items.length - 1, index + (event.key === "ArrowDown" ? 1 : -1))),
+      );
+    }
+    if (event.key === "Enter" && open) {
+      event.preventDefault();
+      if (items[active]) choose(items[active]!);
+    }
   }
   return (
     <div
@@ -329,26 +402,7 @@ export function Choice({
             setPage(1);
             setActive(-1);
           }}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              event.preventDefault();
-              setOpen(false);
-            }
-            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-              event.preventDefault();
-              setOpen(true);
-              setActive((index) =>
-                Math.max(
-                  0,
-                  Math.min(items.length - 1, index + (event.key === "ArrowDown" ? 1 : -1)),
-                ),
-              );
-            }
-            if (event.key === "Enter" && open) {
-              event.preventDefault();
-              if (items[active]) choose(items[active]!);
-            }
-          }}
+          onKeyDown={navigateOptions}
         />
       </FormField>
       {open && !disabled && (
@@ -357,6 +411,9 @@ export function Choice({
             ref={options}
             id={`${id}-options`}
             role="listbox"
+            tabIndex={0}
+            onKeyDown={navigateOptions}
+            aria-activedescendant={items[active] ? `${id}-${items[active]!.id}` : undefined}
             aria-label={`Opções de ${label.toLocaleLowerCase("pt-BR")}`}
           >
             {items.map((item, index) => (
@@ -394,14 +451,16 @@ export function Choice({
   );
 }
 
-export function timeLabel(value: string) {
+export function timeLabel(value: string | null) {
+  if (!value) return "Sem horário";
   return new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Bahia",
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
 }
-export function dateTimeLabel(value: string) {
+export function dateTimeLabel(value: string | null) {
+  if (!value) return "Sem horário confirmado";
   return new Intl.DateTimeFormat("pt-BR", {
     timeZone: "America/Bahia",
     dateStyle: "short",

@@ -1,44 +1,49 @@
 # Pesquisa de mercado — Agendamentos (revisão integral e atualização de 25/09/2026)
 
-**Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra, integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23–25/09/2026. Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real ou teste de usabilidade. Preços públicos pesquisados em 25/09 são referências datadas, sem cotação contratual. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das práticas de mercado.
-
+**Estado:** pesquisa documental nova; recomendações para discussão, sem aprovação de escopo, compra,
+integração ou implementação. **Fontes:** documentação e guias oficiais consultados em 23–25/09/2026.
+Produtos podem variar por plano, região e configuração. Não houve demonstração em conta real ou
+teste de usabilidade. Preços públicos pesquisados em 25/09 são referências datadas, sem cotação
+contratual. O código e a spec da CAAB serviram apenas para definir o contexto, não como prova das
+práticas de mercado.
 
 ## Decisões posteriores do usuário — 28/09/2026
 
 **Estado vigente:** login geral do app/site, sem autenticação própria de Agendamentos; histórico
-antigo de recusa/cancelamento/edição opcional e de baixa prioridade; edição pendente permite data/horário/profissional mantendo pessoa/serviço e, como ação adicional,
-transferir atendimento a dependente compatível/disponível; **WAHA escolhido para WhatsApp**.
-O e-mail usará o serviço já definido para o sistema; WAHA foi escolhido e ainda será instalado.
-Pedido inicial em análise pode receber destino futuro mesmo após passar o horário anterior.
-A pesquisa de 25/09 permanece como comparação histórica. Better Auth/Clerk e seleção
-Meta/360dialog não são decisões a tomar dentro deste módulo. Continuidade de reservas futuras
-e permissões familiares permanece distinta da importação opcional de logs antigos.
+antigo de recusa/cancelamento/edição opcional e de baixa prioridade; edição pendente permite
+data/horário/profissional mantendo pessoa/serviço e, como ação adicional, transferir atendimento a
+dependente compatível/disponível; **WAHA escolhido para WhatsApp**. O e-mail usará o serviço já
+definido para o sistema; WAHA foi escolhido e ainda será instalado. Pedido inicial em análise pode
+receber destino futuro mesmo após passar o horário anterior. A pesquisa de 25/09 permanece como
+comparação histórica. Better Auth/Clerk e seleção Meta/360dialog não são decisões a tomar dentro
+deste módulo. Continuidade de reservas futuras e permissões familiares permanece distinta da
+importação opcional de logs antigos.
 
 ### WAHA — verificação documental da escolha
 
-O [envio](https://waha.devlike.pro/docs/how-to/send-messages/) documenta sendText e identificação
-de mensagem. A matriz de [motores](https://waha.devlike.pro/docs/how-to/engines/) exige conferir
-recursos da versão/motor usados; seleção do produto não demonstra instância operacional.
-Os [eventos](https://waha.devlike.pro/docs/how-to/events/) incluem message.ack: SERVER indica
-servidor, DEVICE dispositivo e READ leitura observada. Persistir ID/sessão, deduplicar recibos
-e reconciliar resposta incerta. Os controles de entrega continuam necessários com WAHA.
+O [envio](https://waha.devlike.pro/docs/how-to/send-messages/) documenta sendText e identificação de
+mensagem. A matriz de [motores](https://waha.devlike.pro/docs/how-to/engines/) exige conferir
+recursos da versão/motor usados; seleção do produto não demonstra instância operacional. Os
+[eventos](https://waha.devlike.pro/docs/how-to/events/) incluem message.ack: SERVER indica servidor,
+DEVICE dispositivo e READ leitura observada. Persistir ID/sessão, deduplicar recibos e reconciliar
+resposta incerta. Os controles de entrega continuam necessários com WAHA.
 
 As regras de templates, janela e tarifação pesquisadas para Cloud API não devem ser copiadas
 automaticamente para a interface WAHA. Textos dos quatro eventos serão versionados pelo CAAB.
-Instalação ainda futura, conforme resposta do usuário. Configuração/edição/motor, operação e
-custos da instância precisam ser planejados e verificados posteriormente;
-não houve instalação, chamada à conta, envio ou homologação.
+Instalação ainda futura, conforme resposta do usuário. Configuração/edição/motor, operação e custos
+da instância precisam ser planejados e verificados posteriormente; não houve instalação, chamada à
+conta, envio ou homologação.
 
 ## Reformulação orientada pelo mercado — 25/09/2026
 
-**Comparação anterior, parcialmente superada em 28/09:** recomendações de fornecedor de
-autenticação e WhatsApp abaixo não são pendências vigentes de Agendamentos.
+**Comparação anterior, parcialmente superada em 28/09:** recomendações de fornecedor de autenticação
+e WhatsApp abaixo não são pendências vigentes de Agendamentos.
 
 **Diretriz do usuário:** redesenhar o sistema antigo com práticas e soluções atuais. Preservar
 pessoas, vínculos, reservas e histórico; a tecnologia e os fornecedores antigos não são requisitos.
-A inspeção do legado informa a transição. Conhecer o fornecedor antigo não bloqueia a comparação
-ou recomendação de um novo. Esta seção atualiza a orientação anterior de integrar necessariamente
-o login existente e de começar pelo transporte SMTP/Evolution encontrado.
+A inspeção do legado informa a transição. Conhecer o fornecedor antigo não bloqueia a comparação ou
+recomendação de um novo. Esta seção atualiza a orientação anterior de integrar necessariamente o
+login existente e de começar pelo transporte SMTP/Evolution encontrado.
 
 **Método:** documentação primária dos produtos, critérios do CAAB e preços públicos. “Melhor”
 significa adequação ao caso de uso, com custos e limitações explícitos; não é ranking de adoção,
@@ -48,42 +53,42 @@ Pesquisa/especificação orientadas pelo speckit-plan; consolidação por CODEX 
 
 ### Práticas atuais aplicáveis
 
-| Função | Prática documentada e proposta para CAAB | Referências |
-| --- | --- | --- |
-| Acesso | Oferecer acesso sem senha e recuperação compreensível; avaliar passkey opcional com alternativa por código de e-mail verificado. Adoção gradual, compatibilidade e recuperação importam tanto quanto o primeiro login. | [FIDO](https://fidoalliance.org/passkeys/), [Better Auth passkey](https://better-auth.com/docs/plugins/passkey), [OTP](https://better-auth.com/docs/plugins/email-otp) |
-| Identidade e família | Separar conta autenticada de pessoa atendida e autorização atual. Fornecedor de login não decide quem representa um dependente. Preservar identidade estável na troca de provedor. | Aplicação arquitetural dos FR-01/02/24 do CAAB; não é alegação de comportamento familiar idêntico dos fornecedores. |
-| Avisos internos | Caixa persistente e preferências pessoais por canal; vínculo ao registro autorizado, leitura própria e histórico independente do prazo de retenção do provedor. | [Knock — preferências](https://docs.knock.app/preferences/overview), [Novu — workflows](https://docs.novu.co/platform/concepts/workflows) |
-| E-mail | API transacional, domínio autenticado, templates versionados, eventos de entrega/falha, supressões e prevenção de duplicatas. Aceitação pelo provedor difere de recebimento pelo servidor e de leitura. | [Resend — webhooks](https://resend.com/docs/webhooks/verify-webhooks-requests), [SES — eventos](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-sns-contents.html) |
-| WhatsApp | API oficial, templates aprovados quando necessários, identificação de cada envio e recibos. A reserva no app/site não abre uma conversa de atendimento no WhatsApp. | [Política WhatsApp](https://whatsappbusiness.com/policy/), [Twilio — API](https://www.twilio.com/docs/whatsapp/api) |
+| Função               | Prática documentada e proposta para CAAB                                                                                                                                                                               | Referências                                                                                                                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Acesso               | Oferecer acesso sem senha e recuperação compreensível; avaliar passkey opcional com alternativa por código de e-mail verificado. Adoção gradual, compatibilidade e recuperação importam tanto quanto o primeiro login. | [FIDO](https://fidoalliance.org/passkeys/), [Better Auth passkey](https://better-auth.com/docs/plugins/passkey), [OTP](https://better-auth.com/docs/plugins/email-otp)                   |
+| Identidade e família | Separar conta autenticada de pessoa atendida e autorização atual. Fornecedor de login não decide quem representa um dependente. Preservar identidade estável na troca de provedor.                                     | Aplicação arquitetural dos FR-01/02/24 do CAAB; não é alegação de comportamento familiar idêntico dos fornecedores.                                                                      |
+| Avisos internos      | Caixa persistente e preferências pessoais por canal; vínculo ao registro autorizado, leitura própria e histórico independente do prazo de retenção do provedor.                                                        | [Knock — preferências](https://docs.knock.app/preferences/overview), [Novu — workflows](https://docs.novu.co/platform/concepts/workflows)                                                |
+| E-mail               | API transacional, domínio autenticado, templates versionados, eventos de entrega/falha, supressões e prevenção de duplicatas. Aceitação pelo provedor difere de recebimento pelo servidor e de leitura.                | [Resend — webhooks](https://resend.com/docs/webhooks/verify-webhooks-requests), [SES — eventos](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-sns-contents.html) |
+| WhatsApp             | API oficial, templates aprovados quando necessários, identificação de cada envio e recibos. A reserva no app/site não abre uma conversa de atendimento no WhatsApp.                                                    | [Política WhatsApp](https://whatsappbusiness.com/policy/), [Twilio — API](https://www.twilio.com/docs/whatsapp/api)                                                                      |
 
-Na proposta de acesso, código por e-mail não tem a mesma resistência a phishing de passkey.
-Não impor passkey ou novo MFA obrigatório; recuperação, primeiro acesso e alcance de e-mail/telefone
+Na proposta de acesso, código por e-mail não tem a mesma resistência a phishing de passkey. Não
+impor passkey ou novo MFA obrigatório; recuperação, primeiro acesso e alcance de e-mail/telefone
 precisam ser definidos na spec transversal do app/site. Não acrescentar SMS, push móvel, campanhas,
 lembretes ou escolha automática de canal ao escopo aprovado de Agendamentos.
 
 ### Acesso: opções e recomendação
 
-| Opção | Adequação e capacidades documentadas | Limite e custo relevante |
-| --- | --- | --- |
-| **Better Auth — primeira candidata para operação própria** | TypeScript, licença MIT, plugins de passkey/OTP, sessões revogáveis e documentação Expo. Integração com o domínio sob controle do CAAB. | Biblioteca exige operação, atualização e recuperação de conta próprias. Documentação atual não prova compatibilidade da versão instalada nem integração direta com o app legado. Custo de infraestrutura/e-mail/equipe permanece. |
-| **Clerk — principal alternativa gerenciada** | Componentes de acesso/conta e operação gerenciada, passkeys e integração com apps. | Passkeys em produção requerem plano pago; cadastro inicial usa outro método. Configuração nativa adicional; regras familiares continuam no CAAB. Pro anunciado a US$20/mês com cobrança anual, 50 mil MRU inclusos: MRU não equivale a MAU. |
-| **Auth0 — alternativa para exigência empresarial** | Passkeys/passwordless e opções de federação/integração empresarial. | Avaliar se as exigências justificam custo/complexidade. Free até 25 mil MAU; Essentials desde US$35/mês para 500 MAU, com recursos diferentes. Faixas não são ofertas equivalentes. |
-| **Supabase Auth — alternativa se a plataforma fizer sentido** | OTP, links de acesso e outros métodos; pode operar como serviço de identidade. | Passkeys estão documentadas como experimentais. Adotar outra plataforma só para autenticação exige benefício demonstrável; não tratar o recurso experimental como equivalente maduro. |
+| Opção                                                         | Adequação e capacidades documentadas                                                                                                    | Limite e custo relevante                                                                                                                                                                                                                    |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Better Auth — primeira candidata para operação própria**    | TypeScript, licença MIT, plugins de passkey/OTP, sessões revogáveis e documentação Expo. Integração com o domínio sob controle do CAAB. | Biblioteca exige operação, atualização e recuperação de conta próprias. Documentação atual não prova compatibilidade da versão instalada nem integração direta com o app legado. Custo de infraestrutura/e-mail/equipe permanece.           |
+| **Clerk — principal alternativa gerenciada**                  | Componentes de acesso/conta e operação gerenciada, passkeys e integração com apps.                                                      | Passkeys em produção requerem plano pago; cadastro inicial usa outro método. Configuração nativa adicional; regras familiares continuam no CAAB. Pro anunciado a US$20/mês com cobrança anual, 50 mil MRU inclusos: MRU não equivale a MAU. |
+| **Auth0 — alternativa para exigência empresarial**            | Passkeys/passwordless e opções de federação/integração empresarial.                                                                     | Avaliar se as exigências justificam custo/complexidade. Free até 25 mil MAU; Essentials desde US$35/mês para 500 MAU, com recursos diferentes. Faixas não são ofertas equivalentes.                                                         |
+| **Supabase Auth — alternativa se a plataforma fizer sentido** | OTP, links de acesso e outros métodos; pode operar como serviço de identidade.                                                          | Passkeys estão documentadas como experimentais. Adotar outra plataforma só para autenticação exige benefício demonstrável; não tratar o recurso experimental como equivalente maduro.                                                       |
 
 Fontes: [Better Auth — projeto/licença](https://github.com/better-auth/better-auth),
 [sessões](https://better-auth.com/docs/concepts/session-management),
 [Expo](https://better-auth.com/docs/integrations/expo),
-[Clerk — métodos](https://clerk.com/docs/guides/configure/auth-strategies/sign-up-sign-in-options)
-e [preços](https://clerk.com/pricing), [Auth0 — preços](https://auth0.com/pricing),
+[Clerk — métodos](https://clerk.com/docs/guides/configure/auth-strategies/sign-up-sign-in-options) e
+[preços](https://clerk.com/pricing), [Auth0 — preços](https://auth0.com/pricing),
 [Supabase Auth](https://supabase.com/docs/guides/auth) e
 [passkeys](https://supabase.com/docs/guides/auth/passkeys).
 
 **Razão da recomendação:** Better Auth combina com a arquitetura TypeScript/PostgreSQL do CAAB e
 controle de identidade, desde que a equipe assuma sua operação. Clerk deve ser comparado quando
-reduzir manutenção de acesso compensar custo/serviço externo. A escolha não decorre apenas de
-Better Auth aparecer no painel existente. Fazer prova sintética web/iOS/Android, recuperação,
-revogação e associação individual antes de fechar T041. Compartilhar biblioteca não autoriza
-compartilhar sessão ou permissão entre associado e administração.
+reduzir manutenção de acesso compensar custo/serviço externo. A escolha não decorre apenas de Better
+Auth aparecer no painel existente. Fazer prova sintética web/iOS/Android, recuperação, revogação e
+associação individual antes de fechar T041. Compartilhar biblioteca não autoriza compartilhar sessão
+ou permissão entre associado e administração.
 
 Detalhes a verificar se Better Auth for escolhido: OTP pode criar conta automaticamente; configurar
 provisionamento controlado, sem transformar qualquer e-mail em associado. Cache de sessão pode
@@ -93,66 +98,69 @@ estratégia precisa ser desenhada, sem prometer compatibilidade automática com 
 
 ### E-mail transacional: opções e recomendação
 
-| Opção | Vantagens verificadas | Limitações para CAAB |
-| --- | --- | --- |
-| **Resend — candidata prioritária** | API com idempotência por 24 horas, webhooks assinados, templates e supressões. | Guardar deduplicação/histórico próprios além de 24 horas; retenção pública de 30 dias não substitui auditoria CAAB. |
-| **Postmark — alternativa de operação transacional** | Separação transacional/campanhas, templates e eventos; histórico padrão de 45 dias. | Não oferece idempotency keys. Webhooks sem assinatura: seguir proteção HTTPS, Basic Auth e allowlist documentadas. |
-| **Amazon SES — alternativa de escala e controle** | API/SMTP, templates, supressões e eventos SNS/EventBridge; cobrança por uso. | Mais configuração de IAM, acesso de produção e observabilidade. Não foi localizada garantia de idempotência em SendEmail v2. |
-| **SendGrid — alternativa de ecossistema** | Templates versionados, supressões e webhook com assinatura/OAuth. | Não foi localizada garantia de idempotência no Mail Send. Histórico ampliado depende de adicional. |
+| Opção                                               | Vantagens verificadas                                                               | Limitações para CAAB                                                                                                         |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Resend — candidata prioritária**                  | API com idempotência por 24 horas, webhooks assinados, templates e supressões.      | Guardar deduplicação/histórico próprios além de 24 horas; retenção pública de 30 dias não substitui auditoria CAAB.          |
+| **Postmark — alternativa de operação transacional** | Separação transacional/campanhas, templates e eventos; histórico padrão de 45 dias. | Não oferece idempotency keys. Webhooks sem assinatura: seguir proteção HTTPS, Basic Auth e allowlist documentadas.           |
+| **Amazon SES — alternativa de escala e controle**   | API/SMTP, templates, supressões e eventos SNS/EventBridge; cobrança por uso.        | Mais configuração de IAM, acesso de produção e observabilidade. Não foi localizada garantia de idempotência em SendEmail v2. |
+| **SendGrid — alternativa de ecossistema**           | Templates versionados, supressões e webhook com assinatura/OAuth.                   | Não foi localizada garantia de idempotência no Mail Send. Histórico ampliado depende de adicional.                           |
 
 Fontes: Resend [idempotência](https://resend.com/changelog/idempotency-keys),
 [templates](https://resend.com/docs/dashboard/templates/introduction),
-[supressões](https://www.resend.com/changelog/suppression-list-support);
-Postmark [idempotência](https://postmarkapp.com/support/article/what-is-an-idempotency-key),
+[supressões](https://www.resend.com/changelog/suppression-list-support); Postmark
+[idempotência](https://postmarkapp.com/support/article/what-is-an-idempotency-key),
 [webhooks](https://postmarkapp.com/developer/webhooks/webhooks-overview),
-[retenção](https://postmarkapp.com/support/article/how-does-the-retention-add-on-work);
-SES [SendEmail](https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html),
+[retenção](https://postmarkapp.com/support/article/how-does-the-retention-add-on-work); SES
+[SendEmail](https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html),
 [assinatura SNS](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message-verify-message-signature.html);
-SendGrid [segurança de eventos](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/getting-started-event-webhook-security-features)
+SendGrid
+[segurança de eventos](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/getting-started-event-webhook-security-features)
 e [Mail Send](https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send).
 
 **Recomendação:** comparar Resend e Postmark com domínio e destinatários representativos em ensaio
-futuro autorizado; API, diagnósticos e prevenção de duplicatas favorecem começar por Resend.
-Não há evidência nesta pesquisa para chamar qualquer um de “melhor entregabilidade”.
-SES ganha interesse com escala/equipe AWS; preço de envio isolado não mede custo operacional total.
+futuro autorizado; API, diagnósticos e prevenção de duplicatas favorecem começar por Resend. Não há
+evidência nesta pesquisa para chamar qualquer um de “melhor entregabilidade”. SES ganha interesse
+com escala/equipe AWS; preço de envio isolado não mede custo operacional total.
 
 ### Avisos no app/site: solução própria, Novu ou Knock
 
 **Recomendação para o recorte atual:** caixa de avisos e preferências no CAAB, com intenções
-duráveis, worker e infraestrutura de jobs já existentes; adaptadores para fornecedores de envio.
-A motivação é o escopo de quatro eventos, as permissões familiares e o domínio já integrado.
-Não é recomendação de construir servidor de e-mail ou transporte próprio de WhatsApp.
+duráveis, worker e infraestrutura de jobs já existentes; adaptadores para fornecedores de envio. A
+motivação é o escopo de quatro eventos, as permissões familiares e o domínio já integrado. Não é
+recomendação de construir servidor de e-mail ou transporte próprio de WhatsApp.
 
 [Novu](https://novu.co/pricing/) oferece workflows, Inbox e preferências: gratuito com 10 mil
 execuções/mês e Pro desde US$30 por 30 mil. Retenção de atividade de 24 horas no gratuito e sete
-dias no Pro; conferir diferenças Cloud/comunidade/Enterprise antes de presumir equivalência
-gratuita no self-hosting.
+dias no Pro; conferir diferenças Cloud/comunidade/Enterprise antes de presumir equivalência gratuita
+no self-hosting.
 
 [Knock](https://knock.app/pricing) oferece feed, preferências e workflows: gratuito até 10 mil
 mensagens; Starter US$250 por 50 mil. Destinatário/canal contam separadamente, provedores externos
 são cobrados à parte. [Idempotência](https://docs.knock.app/api-reference/overview) no disparo de
 workflow tem janela de 24 horas.
 
-**Quando reconsiderar:** vários módulos precisarem de editor de fluxos por operadores, composição
-de canais ou recursos que evitem manutenção relevante. Comparar trabalho economizado e custos de
+**Quando reconsiderar:** vários módulos precisarem de editor de fluxos por operadores, composição de
+canais ou recursos que evitem manutenção relevante. Comparar trabalho economizado e custos de
 execuções/mensagens/retentivas, sem equiparar unidades de cobrança diferentes. A capacidade de
 fallback de uma plataforma não muda a decisão CAAB de três canais inicialmente ativos.
 
-A [integração transacional do pg-boss](https://github.com/timgit/pg-boss/blob/master/docs/api/jobs.md)
-pode apoiar intenção/job com o banco; a versão instalada e seu uso precisam de verificação.
-Garantia de fila não produz envio externo exatamente uma vez. Revalidar vínculo/preferência e
-reconciliar timeout incerto antes de repetir; não criar outra infraestrutura de filas por padrão.
+A
+[integração transacional do pg-boss](https://github.com/timgit/pg-boss/blob/master/docs/api/jobs.md)
+pode apoiar intenção/job com o banco; a versão instalada e seu uso precisam de verificação. Garantia
+de fila não produz envio externo exatamente uma vez. Revalidar vínculo/preferência e reconciliar
+timeout incerto antes de repetir; não criar outra infraestrutura de filas por padrão.
 
 ### WhatsApp: opções e recomendação
 
-| Opção | Vantagem e responsabilidade | Referência de custo |
-| --- | --- | --- |
-| **Meta Cloud API direta — primeira candidata com operação própria** | API oficial; maior controle, integração/webhooks/templates e acompanhamento da conta ficam com CAAB. | Tarifas Meta por destino/categoria/vigência; sem BSP contratado nessa modalidade. |
-| **360dialog — principal alternativa com apoio especializado** | API oficial e apoio específico de WhatsApp; coexistência com Business App documentada e sujeita à elegibilidade. | Regular anunciado em €49/número/mês, mais tarifas Meta. |
-| **Twilio — alternativa para integração e outros canais** | SDKs, sandbox, identificador de mensagem e callbacks; ecossistema de comunicação. | US$0,005 por mensagem enviada ou recebida, além de Meta; suporte com prazo pode ter custo separado. |
-| **Zenvia — alternativa de contratação e atendimento local** | APIs/webhooks e oferta no Brasil. | Solicitar cotação de API transacional; pacote Customer Cloud não equivale automaticamente a essa contratação. |
+| Opção                                                               | Vantagem e responsabilidade                                                                                      | Referência de custo                                                                                           |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Meta Cloud API direta — primeira candidata com operação própria** | API oficial; maior controle, integração/webhooks/templates e acompanhamento da conta ficam com CAAB.             | Tarifas Meta por destino/categoria/vigência; sem BSP contratado nessa modalidade.                             |
+| **360dialog — principal alternativa com apoio especializado**       | API oficial e apoio específico de WhatsApp; coexistência com Business App documentada e sujeita à elegibilidade. | Regular anunciado em €49/número/mês, mais tarifas Meta.                                                       |
+| **Twilio — alternativa para integração e outros canais**            | SDKs, sandbox, identificador de mensagem e callbacks; ecossistema de comunicação.                                | US$0,005 por mensagem enviada ou recebida, além de Meta; suporte com prazo pode ter custo separado.           |
+| **Zenvia — alternativa de contratação e atendimento local**         | APIs/webhooks e oferta no Brasil.                                                                                | Solicitar cotação de API transacional; pacote Customer Cloud não equivale automaticamente a essa contratação. |
 
-Fontes: [Meta — Cloud API oficial](https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api?action=share&creator=22794852),
+Fontes:
+[Meta — Cloud API oficial](https://www.postman.com/meta/whatsapp-business-platform/collection/wlk6lh4/whatsapp-cloud-api?action=share&creator=22794852),
 [360dialog — preços](https://360dialog.com/pricing) e
 [coexistência](https://docs.360dialog.com/docs/resources/phone-numbers/coexistence),
 [Twilio — preços](https://www.twilio.com/en-us/whatsapp/pricing) e
@@ -160,60 +168,60 @@ Fontes: [Meta — Cloud API oficial](https://www.postman.com/meta/whatsapp-busin
 [Zenvia — API](https://zenvia.github.io/) e [preços](https://zenvia.com/precos/).
 
 Manter número e conta empresarial sob controle institucional, com portabilidade e responsabilidades
-contratuais verificadas. Não prometer coexistência ou transferência integral de conversas para
-todo provedor. A documentação de migração consultada da Twilio exige remover a conta do aplicativo
-nesse fluxo; conferir a modalidade pretendida antes de selecionar.
+contratuais verificadas. Não prometer coexistência ou transferência integral de conversas para todo
+provedor. A documentação de migração consultada da Twilio exige remover a conta do aplicativo nesse
+fluxo; conferir a modalidade pretendida antes de selecionar.
 
 A [Evolution](https://github.com/evolution-foundation/evolution-api) suporta conexão por
 Baileys/WhatsApp Web e por Cloud API oficial. O nome do software não prova a modalidade.
-Recomenda-se transporte oficial; acrescentar Evolution somente se resolver uma necessidade
-concreta, com manutenção justificada. Código antigo não concede preferência na seleção.
+Recomenda-se transporte oficial; acrescentar Evolution somente se resolver uma necessidade concreta,
+com manutenção justificada. Código antigo não concede preferência na seleção.
 
 **Templates e permissão:** fora da janela de atendimento de 24 horas aberta por mensagem do
-destinatário, usar template aprovado. Os quatro eventos da agenda são candidatos a utilidade,
-sem promoção, sujeitos à classificação da plataforma. Preferência CAAB ativa por padrão continua
+destinatário, usar template aprovado. Os quatro eventos da agenda são candidatos a utilidade, sem
+promoção, sujeitos à classificação da plataforma. Preferência CAAB ativa por padrão continua
 valendo; ela não é prova de permissão prévia para receber WhatsApp. Guardar elegibilidade de envio
-separadamente e respeitar saída. Não inferir permissão do dependente pela do titular nem exigir,
-por esta pesquisa, novo checkbox exclusivo. Fontes: [política](https://whatsappbusiness.com/policy/)
-e [guia oficial de 2026](https://whatsappbusiness.com/wp-content/uploads/2026/04/Best-Practices-for-Marketing-Messages-on-WhatsApp-.pdf).
+separadamente e respeitar saída. Não inferir permissão do dependente pela do titular nem exigir, por
+esta pesquisa, novo checkbox exclusivo. Fontes: [política](https://whatsappbusiness.com/policy/) e
+[guia oficial de 2026](https://whatsappbusiness.com/wp-content/uploads/2026/04/Best-Practices-for-Marketing-Messages-on-WhatsApp-.pdf).
 Conteúdo mínimo com ligação ao agendamento autenticado, sem dados clínicos/financeiros.
 
 **Vigência tarifária:** fornecedores anunciam mudanças em serviço/utilidade para 01/10/2026
 ([360dialog](https://360dialog.com/blog/whatsapp-service-message-charging-october-2026/),
-[Zenvia](https://support.zenvia.com/kb/category/perguntas-frequentes-zcc?kbCategoryId=120814)).
-A página direta de preços Meta não pôde ser confirmada nesta rodada. Não consolidar tarifa Meta
-nem gratuidade permanente no orçamento; revalidar tabela oficial vigente na contratação.
+[Zenvia](https://support.zenvia.com/kb/category/perguntas-frequentes-zcc?kbCategoryId=120814)). A
+página direta de preços Meta não pôde ser confirmada nesta rodada. Não consolidar tarifa Meta nem
+gratuidade permanente no orçamento; revalidar tabela oficial vigente na contratação.
 
 ### Referências de custo e cenários, sem volume real presumido
 
-Preços públicos em USD/EUR em 25/09/2026, sem impostos, câmbio, infraestrutura, suporte adicional
-ou contratação. [Resend](https://resend.com/pricing): Pro US$20/mês por 50 mil e-mails e
-US$0,90/mil excedentes; gratuito 3 mil/mês, limitado a 100/dia.
-[Postmark](https://postmarkapp.com/pricing): Basic US$15 por 10 mil e US$1,80/mil excedentes;
-Pro US$16,50 nessa faixa e US$1,30/mil excedentes.
+Preços públicos em USD/EUR em 25/09/2026, sem impostos, câmbio, infraestrutura, suporte adicional ou
+contratação. [Resend](https://resend.com/pricing): Pro US$20/mês por 50 mil e-mails e
+US$0,90/mil
+excedentes; gratuito 3 mil/mês, limitado a 100/dia. [Postmark](https://postmarkapp.com/pricing):
+Basic US$15 por 10 mil e US$1,80/mil excedentes; Pro US$16,50 nessa faixa e US$1,30/mil excedentes.
 [SES](https://aws.amazon.com/ses/pricing/): envio à-la-carte US$0,10/mil; Essentials US$0,16/mil,
 com funcionalidades distintas e aplicabilidade por conta/região.
-[SendGrid](https://www.twilio.com/en-us/products/email-api/pricing): Essentials desde US$19,95;
-não fixar franquia a esse preço sem validar o seletor/contratação.
+[SendGrid](https://www.twilio.com/en-us/products/email-api/pricing): Essentials desde US$19,95; não
+fixar franquia a esse preço sem validar o seletor/contratação.
 
-**Hipótese de cálculo, não previsão:** dois eventos notificáveis por agendamento e média de
-1,5 destinatário/evento (50% próprios, 50% de dependentes com titular elegível), todos os três
-canais elegíveis/ativos. Assim, cada canal recebe 3N avisos e o total é 9N. Isso não cria evento
-novo: é apenas uma média hipotética entre confirmações, recusas, cancelamentos e necessidade
-de remarcar. Códigos de login, respostas WhatsApp e demais módulos ficam fora desta conta.
+**Hipótese de cálculo, não previsão:** dois eventos notificáveis por agendamento e média de 1,5
+destinatário/evento (50% próprios, 50% de dependentes com titular elegível), todos os três canais
+elegíveis/ativos. Assim, cada canal recebe 3N avisos e o total é 9N. Isso não cria evento novo: é
+apenas uma média hipotética entre confirmações, recusas, cancelamentos e necessidade de remarcar.
+Códigos de login, respostas WhatsApp e demais módulos ficam fora desta conta.
 
 | Agendamentos/mês hipotéticos | Envios por canal | Total dos três canais | Resend Pro + excedente | SES Essentials, só envio |
-| --- | --- | --- | --- | --- |
-| 1.000 | 3.000 | 9.000 | US$20 | US$0,48 |
-| 10.000 | 30.000 | 90.000 | US$20 | US$4,80 |
-| 50.000 | 150.000 | 450.000 | US$110 | US$24,00 |
+| ---------------------------- | ---------------- | --------------------- | ---------------------- | ------------------------ |
+| 1.000                        | 3.000            | 9.000                 | US$20                  | US$0,48                  |
+| 10.000                       | 30.000           | 90.000                | US$20                  | US$4,80                  |
+| 50.000                       | 150.000          | 450.000               | US$110                 | US$24,00                 |
 
-Resend calculado pela franquia Pro e excedente público, não pela melhor proposta comercial para
-cada faixa. SES exclui dados/eventos/armazenamento/equipe; não é comparação de custo total.
-WhatsApp = tarifas Meta aplicáveis + custo BSP + suporte + respostas recebidas quando cobradas.
-Usuários ativos para autenticação não podem ser inferidos do número de agendamentos.
-Volume real, necessidade de manter Business App no número e responsabilidade operacional
-definem a escolha final; não bloqueiam a recomendação documental.
+Resend calculado pela franquia Pro e excedente público, não pela melhor proposta comercial para cada
+faixa. SES exclui dados/eventos/armazenamento/equipe; não é comparação de custo total. WhatsApp =
+tarifas Meta aplicáveis + custo BSP + suporte + respostas recebidas quando cobradas. Usuários ativos
+para autenticação não podem ser inferidos do número de agendamentos. Volume real, necessidade de
+manter Business App no número e responsabilidade operacional definem a escolha final; não bloqueiam
+a recomendação documental.
 
 ### Resultado para spec e plan
 
@@ -221,62 +229,61 @@ definem a escolha final; não bloqueiam a recomendação documental.
   migração controlada de credencial/sessão é alternativa, sem duplicar associados.
 - T044: comparar/selecionar provedores pelos critérios acima e fechar templates, elegibilidade,
   custos e operação. Fornecedor antigo entra apenas no plano de transição.
-- Caixa/histórico e preferências permanecem no domínio CAAB; fornecedor registra transporte.
-  Guardar eventos duráveis próprios, validar callbacks e aceitar chegada duplicada/fora de ordem.
+- Caixa/histórico e preferências permanecem no domínio CAAB; fornecedor registra transporte. Guardar
+  eventos duráveis próprios, validar callbacks e aceitar chegada duplicada/fora de ordem.
 - T042 mantém inventário e reconciliação como gate de corte. Pesquisa documental está consolidada;
   seleção comercial, provas de integração, inventário e homologação permanecem pendentes.
-- Nenhum comportamento de agenda aprovado, limite de trocas ou destinatário foi substituído por
-  uma convenção do fornecedor. Nenhum teste real, contratação ou envio foi realizado.
+- Nenhum comportamento de agenda aprovado, limite de trocas ou destinatário foi substituído por uma
+  convenção do fornecedor. Nenhum teste real, contratação ou envio foi realizado.
 
 ## Complemento — remarcação e prioridade (24/09/2026)
 
 O usuário autorizou remarcação/cancelamento no app/site para reservas futuras confirmadas e
-explicitou que a remarcação deve seguir a aceitação configurada no serviço. Definiu prioridade
-para remarcações pelo horário atual da reserva mais próximo, antes dos novos pedidos. A data
-pretendida não define a prioridade da fila; a data de envio só desempata. A urgência por
-proximidade do destino é um indicador separado, definido posteriormente em 2C-FR-22. Também definiu antecedência mínima
-de 24 horas para solicitar remarcação, editável e desativável. Para cancelamento de reserva
-confirmada, escolheu permitir até antes do início, sem antecedência mínima. São decisões do
-produto CAAB.
+explicitou que a remarcação deve seguir a aceitação configurada no serviço. Definiu prioridade para
+remarcações pelo horário atual da reserva mais próximo, antes dos novos pedidos. A data pretendida
+não define a prioridade da fila; a data de envio só desempata. A urgência por proximidade do destino
+é um indicador separado, definido posteriormente em 2C-FR-22. Também definiu antecedência mínima de
+24 horas para solicitar remarcação, editável e desativável. Para cancelamento de reserva confirmada,
+escolheu permitir até antes do início, sem antecedência mínima. São decisões do produto CAAB.
 
 Fontes oficiais conferidas em 24/09: a
-[Jane](https://jane.app/guide/jane-s-mobile-app-for-clients-managing-appointments) oferece remarcação
-nas reservas do usuário, sujeita à antecedência da clínica. A documentação do
+[Jane](https://jane.app/guide/jane-s-mobile-app-for-clients-managing-appointments) oferece
+remarcação nas reservas do usuário, sujeita à antecedência da clínica. A documentação do
 [SimplyBook.me](https://help.simplybook.me/index.php?mobileaction=toggle_view_mobile&title=Client_Rescheduling_custom_feature)
 informa que seu recurso de remarcação pelo cliente é incompatível com o recurso de aprovação de
 reservas. Isso evidencia uma limitação daquele produto; não comprova que priorizar remarcações
 reduza cancelamentos na CAAB.
 
-**Decisão vigente e implicações:** a prioridade considera o início original capturado ao enviar a troca: quem precisa
-adiar uma consulta de amanhã precede quem quer alterar uma consulta do próximo mês, mesmo com
-pedido mais recente. Isso substitui a recomendação inicial de usar antiguidade como critério
-principal. Revisão posterior aceita em 24/09: o envio bem-sucedido libera origem e ocupa somente
-novo destino, confirmado ou pendente conforme serviço. A regra anterior de manter origem até
-aprovação foi substituída. A precedência na análise não toma vagas já ocupadas/retidas nem dispensa a
-aprovação exigida pelo serviço. Na confirmação imediata, não há fila de análise a priorizar.
+**Decisão vigente e implicações:** a prioridade considera o início original capturado ao enviar a
+troca: quem precisa adiar uma consulta de amanhã precede quem quer alterar uma consulta do próximo
+mês, mesmo com pedido mais recente. Isso substitui a recomendação inicial de usar antiguidade como
+critério principal. Revisão posterior aceita em 24/09: o envio bem-sucedido libera origem e ocupa
+somente novo destino, confirmado ou pendente conforme serviço. A regra anterior de manter origem até
+aprovação foi substituída. A precedência na análise não toma vagas já ocupadas/retidas nem dispensa
+a aprovação exigida pelo serviço. Na confirmação imediata, não há fila de análise a priorizar.
 
-**Decisão adicional de 24/09:** no máximo uma troca pendente por reserva, permitindo desistência
-ou substituição sujeita ao prazo de remarcação. A garantia anterior de manter a consulta original
-na desistência foi substituída: origem é liberada no envio e não é restaurada automaticamente. O usuário também
-definiu o limite de duas remarcações confirmadas por reserva, sem contar recusa ou desistência.
-Depois desse limite, a pessoa pode cancelar e fazer novo agendamento, preservando o histórico.
-Confirmou também a visão de histórico individual integrado por associado/dependente, incluindo
-compras quando o domínio responsável estiver integrado; esse desenho transversal pertence ao
-programa 002.
-Como somente destino fica ocupado durante a análise após a revisão aceita, acompanhar seu tempo e a idade dos demais
-pedidos continua relevante. Validar o incentivo medindo remarcações concluídas, cancelamentos, tempo de análise e
-duração das retenções; não prometer redução antes de observar dados da CAAB.
+**Decisão adicional de 24/09:** no máximo uma troca pendente por reserva, permitindo desistência ou
+substituição sujeita ao prazo de remarcação. A garantia anterior de manter a consulta original na
+desistência foi substituída: origem é liberada no envio e não é restaurada automaticamente. O
+usuário também definiu o limite de duas remarcações confirmadas por reserva, sem contar recusa ou
+desistência. Depois desse limite, a pessoa pode cancelar e fazer novo agendamento, preservando o
+histórico. Confirmou também a visão de histórico individual integrado por associado/dependente,
+incluindo compras quando o domínio responsável estiver integrado; esse desenho transversal pertence
+ao programa 002. Como somente destino fica ocupado durante a análise após a revisão aceita,
+acompanhar seu tempo e a idade dos demais pedidos continua relevante. Validar o incentivo medindo
+remarcações concluídas, cancelamentos, tempo de análise e duração das retenções; não prometer
+redução antes de observar dados da CAAB.
 
 ## Escolha de profissional — decisão da rodada 3 de 24/09/2026
 
 O usuário escolheu oferecer profissional específico ou qualquer disponível, condicionado à
-existência de profissionais cadastrados. O estabelecimento pode desativar a escolha mesmo com
-equipe cadastrada. Nesse caso, o servidor resolve um responsável apto/disponível e o informa
-antes de concluir a reserva. O controle não aparece sem profissionais. Na resposta seguinte,
-o usuário autorizou reservas sem cadastro de profissionais, pelos horários e quantidade de vagas
-configurados para o serviço: individualizar equipe não deve ser obrigatório para estabelecimentos
-que não precisam disso. O modelo inicial exige vínculo profissional e precisa da extensão de 2C;
-a decisão não comprova implementação.
+existência de profissionais cadastrados. O estabelecimento pode desativar a escolha mesmo com equipe
+cadastrada. Nesse caso, o servidor resolve um responsável apto/disponível e o informa antes de
+concluir a reserva. O controle não aparece sem profissionais. Na resposta seguinte, o usuário
+autorizou reservas sem cadastro de profissionais, pelos horários e quantidade de vagas configurados
+para o serviço: individualizar equipe não deve ser obrigatório para estabelecimentos que não
+precisam disso. O modelo inicial exige vínculo profissional e precisa da extensão de 2C; a decisão
+não comprova implementação.
 
 Essa atribuição limitada ao fluxo aprovado passou a integrar 2C; algoritmos avançados de
 distribuição, turmas coletivas e outros recursos continuam dependentes de escopo próprio. A
@@ -284,33 +291,33 @@ capacidade simultânea por serviço para reservas individuais sem profissionais 
 
 Decisão seguinte da rodada 3: novas reservas não exigem antecedência mínima por padrão, e o
 estabelecimento pode configurá-la por serviço. Isso permite reservar vagas futuras próximas,
-respeitando disponibilidade e aceitação; não muda as 24 horas padrão para solicitar remarcação.
-A regra é uma escolha do usuário, não uma conclusão comparativa dos fornecedores.
+respeitando disponibilidade e aceitação; não muda as 24 horas padrão para solicitar remarcação. A
+regra é uma escolha do usuário, não uma conclusão comparativa dos fornecedores.
 
 ## Complemento — horizonte de agendamento futuro (24/09/2026)
 
-Consulta motivada pela dúvida do usuário durante o clarify. Após a comparação, o usuário
-aceitou a opção A: janela móvel de 90 dias, editável e desativável por serviço.
-Fontes oficiais consultadas nesta data:
+Consulta motivada pela dúvida do usuário durante o clarify. Após a comparação, o usuário aceitou a
+opção A: janela móvel de 90 dias, editável e desativável por serviço. Fontes oficiais consultadas
+nesta data:
 
-| Referência | Evidência sobre horizonte futuro | Limite da evidência |
-| --- | --- | --- |
-| [Jane — Online Rolling Availability](https://jane.app/guide/online-rolling-availability) | Padrão de 3 meses, com janela que avança diariamente e ajuste por profissional. | Meses de calendário não equivalem sempre a 90 dias; não comprova uso predominante no mercado. |
-| [Square — configurações](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Limite configurável entre 7 e 365 dias. | O guia consultado não informa o valor inicial. Documentação da região dos EUA. |
-| [Fresha — políticas e intervalos](https://www.fresha.com/blog/how-to-reduce-calendar-gaps) | Artigo sugere considerar 90 dias de antecedência máxima. | Recomendação editorial, não confirmação de configuração de fábrica; artigo atualizado em 11/06/2024. |
-| [Timely — políticas de horários](https://help.gettimely.com/hc/en-gb/articles/33525113423639-How-to-set-your-policies-for-online-booking-times) | Permite configurar até quando o cliente agenda; apresenta três semanas como exemplo. | Exemplo não é padrão do produto; guia atualizado em 05/02/2026. |
+| Referência                                                                                                                                      | Evidência sobre horizonte futuro                                                     | Limite da evidência                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| [Jane — Online Rolling Availability](https://jane.app/guide/online-rolling-availability)                                                        | Padrão de 3 meses, com janela que avança diariamente e ajuste por profissional.      | Meses de calendário não equivalem sempre a 90 dias; não comprova uso predominante no mercado.        |
+| [Square — configurações](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings)                         | Limite configurável entre 7 e 365 dias.                                              | O guia consultado não informa o valor inicial. Documentação da região dos EUA.                       |
+| [Fresha — políticas e intervalos](https://www.fresha.com/blog/how-to-reduce-calendar-gaps)                                                      | Artigo sugere considerar 90 dias de antecedência máxima.                             | Recomendação editorial, não confirmação de configuração de fábrica; artigo atualizado em 11/06/2024. |
+| [Timely — políticas de horários](https://help.gettimely.com/hc/en-gb/articles/33525113423639-How-to-set-your-policies-for-online-booking-times) | Permite configurar até quando o cliente agenda; apresenta três semanas como exemplo. | Exemplo não é padrão do produto; guia atualizado em 05/02/2026.                                      |
 
-**Síntese:** a amostra mostra janela futura configurável; não sustenta um único número como
-padrão universal, nem levantamento de participação ou adoção. Cerca de três meses tem apoio
-concreto como padrão da Jane e como sugestão da Fresha.
+**Síntese:** a amostra mostra janela futura configurável; não sustenta um único número como padrão
+universal, nem levantamento de participação ou adoção. Cerca de três meses tem apoio concreto como
+padrão da Jane e como sugestão da Fresha.
 
-**Decisão aceita pelo usuário:** 90 dias corridos como janela móvel no app/site,
-editável e desativável por serviço. A cada dia, avança o limite futuro; só disponibilizar horários
-realmente configurados e livres. O valor oferece planejamento sem abrir, por padrão, uma agenda
-indefinida. Essa justificativa é inferência de produto para a CAAB, não resultado medido.
-Desativação e configuração por serviço são decisões da CAAB; não foram comprovadas como
-capacidades idênticas em todos os fornecedores. Aceite registrado na spec em 24/09/2026,
-2C-FR-16, sem implementação nesta etapa.
+**Decisão aceita pelo usuário:** 90 dias corridos como janela móvel no app/site, editável e
+desativável por serviço. A cada dia, avança o limite futuro; só disponibilizar horários realmente
+configurados e livres. O valor oferece planejamento sem abrir, por padrão, uma agenda indefinida.
+Essa justificativa é inferência de produto para a CAAB, não resultado medido. Desativação e
+configuração por serviço são decisões da CAAB; não foram comprovadas como capacidades idênticas em
+todos os fornecedores. Aceite registrado na spec em 24/09/2026, 2C-FR-16, sem implementação nesta
+etapa.
 
 ## Complemento — vaga original e destino na remarcação (24/09/2026)
 
@@ -322,60 +329,60 @@ somente a nova retida, ciente de que recusa/desistência não garante recuperar 
 Fontes oficiais consultadas em 24/09/2026; fluxos distintos não devem ser apresentados como uma
 regra universal de mercado ou evidência de domínio comercial. Não houve teste em contas reais.
 
-| Produto/fluxo | Comportamento documentado | O que não comprova |
-| --- | --- | --- |
-| [Zanda — remarcação pelo cliente](https://zandahealth.com/support/client-portal/reschedule-appointments-on-client-portal/) | Cliente escolhe novo horário e confirma; então o compromisso é movido no portal/calendário, preservando registro da alteração. | O fluxo não documenta uma fila de aprovação manual com duas vagas retidas. |
-| [Calendly — solicitação pelo organizador](https://calendly.com/help/how-to-reschedule-a-meeting) | A opção Share new times to meet cancela a reunião atual e envia convite para escolher novo horário; Reschedule meeting now troca diretamente. | É ação do organizador, não prova de política equivalente quando um associado pede aprovação ao estabelecimento. |
-| [Tebra — solicitação pelo paciente](https://helpme.tebra.com/Platform/Practice_Settings/Scheduling_Widget/Configure_Patient_Appointment_Management) | Após enviar a remarcação, o original vai para Finished com status Rescheduled; o novo pedido fica pendente de confirmação da clínica. | Encerramento funcional da reserva original é explícito; a documentação não detalha a retenção exclusiva de cada vaga contra concorrência. |
-| [Tebra — análise do pedido](https://helpme.tebra.com/Platform/Dashboard/Confirm_Tentative_Appointments) | A equipe revisa conflitos e confirma ou recusa o pedido provisório. | Não permite afirmar que a vaga pretendida tem garantia exclusiva enquanto aguarda. |
-| [SimplyBook.me — Client Rescheduling](https://help.simplybook.me/index.php?title=Client_Rescheduling_custom_feature) | Remarcação pelo cliente é incompatível com Approve Bookings. | Não serve de referência para manter simultaneamente origem e destino na nossa aprovação manual. |
+| Produto/fluxo                                                                                                                                       | Comportamento documentado                                                                                                                     | O que não comprova                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [Zanda — remarcação pelo cliente](https://zandahealth.com/support/client-portal/reschedule-appointments-on-client-portal/)                          | Cliente escolhe novo horário e confirma; então o compromisso é movido no portal/calendário, preservando registro da alteração.                | O fluxo não documenta uma fila de aprovação manual com duas vagas retidas.                                                                |
+| [Calendly — solicitação pelo organizador](https://calendly.com/help/how-to-reschedule-a-meeting)                                                    | A opção Share new times to meet cancela a reunião atual e envia convite para escolher novo horário; Reschedule meeting now troca diretamente. | É ação do organizador, não prova de política equivalente quando um associado pede aprovação ao estabelecimento.                           |
+| [Tebra — solicitação pelo paciente](https://helpme.tebra.com/Platform/Practice_Settings/Scheduling_Widget/Configure_Patient_Appointment_Management) | Após enviar a remarcação, o original vai para Finished com status Rescheduled; o novo pedido fica pendente de confirmação da clínica.         | Encerramento funcional da reserva original é explícito; a documentação não detalha a retenção exclusiva de cada vaga contra concorrência. |
+| [Tebra — análise do pedido](https://helpme.tebra.com/Platform/Dashboard/Confirm_Tentative_Appointments)                                             | A equipe revisa conflitos e confirma ou recusa o pedido provisório.                                                                           | Não permite afirmar que a vaga pretendida tem garantia exclusiva enquanto aguarda.                                                        |
+| [SimplyBook.me — Client Rescheduling](https://help.simplybook.me/index.php?title=Client_Rescheduling_custom_feature)                                | Remarcação pelo cliente é incompatível com Approve Bookings.                                                                                  | Não serve de referência para manter simultaneamente origem e destino na nossa aprovação manual.                                           |
 
-**Conclusão da amostra:** há troca imediata, solicitação que encerra o original e produtos que
-nem combinam autosserviço de remarcação com aprovação manual. Não há base para afirmar que o
-padrão universal seja travar as duas vagas até a equipe decidir. A spec CAAB anterior mantinha
-ambas; a revisão agora aceita libera origem no envio e mantém somente destino.
+**Conclusão da amostra:** há troca imediata, solicitação que encerra o original e produtos que nem
+combinam autosserviço de remarcação com aprovação manual. Não há base para afirmar que o padrão
+universal seja travar as duas vagas até a equipe decidir. A spec CAAB anterior mantinha ambas; a
+revisão agora aceita libera origem no envio e mantém somente destino.
 
 **Alternativas pesquisadas — alternativa 2 aceita pelo usuário:**
 
-1. Preservar origem até aprovação, retendo também destino: protege o compromisso original em
-   caso de recusa/desistência, mas ocupa capacidade nos dois intervalos. Sem prazo de análise,
-   essa ocupação pode persistir até decisão explícita.
-2. Liberar origem ao enviar a troca e reter apenas destino como pendente: evita ocupar dois
-   horários e sinaliza que o associado abriu mão do anterior. Exige informar antes do envio que
-   recusa/desistência não restaura automaticamente a vaga antiga; ela pode ter sido ocupada.
-   Falha técnica antes de concluir o pedido preserva a origem; liberação/retenção devem ser
-   atômicas. Manter histórico, prioridade pelo horário original e contador de trocas confirmadas.
+1. Preservar origem até aprovação, retendo também destino: protege o compromisso original em caso de
+   recusa/desistência, mas ocupa capacidade nos dois intervalos. Sem prazo de análise, essa ocupação
+   pode persistir até decisão explícita.
+2. Liberar origem ao enviar a troca e reter apenas destino como pendente: evita ocupar dois horários
+   e sinaliza que o associado abriu mão do anterior. Exige informar antes do envio que
+   recusa/desistência não restaura automaticamente a vaga antiga; ela pode ter sido ocupada. Falha
+   técnica antes de concluir o pedido preserva a origem; liberação/retenção devem ser atômicas.
+   Manter histórico, prioridade pelo horário original e contador de trocas confirmadas.
 3. Preservar origem e não reter destino até decisão: protege o compromisso atual, mas a vaga
-   pretendida pode ser tomada; exige revalidar/oferecer outra opção. Altera a decisão anterior
-   de que pendências ocupam vaga, portanto não adotar por inferência.
+   pretendida pode ser tomada; exige revalidar/oferecer outra opção. Altera a decisão anterior de
+   que pendências ocupam vaga, portanto não adotar por inferência.
 
-**Decisão aceita:** alternativa 2. Liberar origem e reter destino atomicamente no envio;
-informar antes da confirmação que a vaga antiga não é garantida em caso de recusa/desistência.
-O registro mantém identidade, histórico, prioridade pelo início original e contagem apenas de
-remarcações confirmadas. Após recusa/desistência, fica sem horário confirmado; o usuário aceitou
-continuar escolhendo vaga no mesmo registro, inclusive após o horário original, preservando
-histórico e contador. Esclarecimento posterior: o primeiro pedido reserva uma das duas trocas;
-alternativas antes da aprovação e retomadas após recusa pertencem à mesma troca, sem cobrança
-adicional. Confirmar consolida essa utilização uma vez; mudar de novo após confirmar inicia a
-próxima troca. Distinguir utilização em andamento de confirmada. A finalidade declarada é impedir
-sucessivas mudanças de horários confirmados sem efetivo uso, sem punir tentativas recusadas.
-Essa regra é decisão da CAAB, não consenso de mercado.
-A confirmação imediata já pode efetivar a troca em uma transação e liberar a origem, sem fila
-duradoura; o tradeoff acima afeta especialmente serviços com aprovação manual.
+**Decisão aceita:** alternativa 2. Liberar origem e reter destino atomicamente no envio; informar
+antes da confirmação que a vaga antiga não é garantida em caso de recusa/desistência. O registro
+mantém identidade, histórico, prioridade pelo início original e contagem apenas de remarcações
+confirmadas. Após recusa/desistência, fica sem horário confirmado; o usuário aceitou continuar
+escolhendo vaga no mesmo registro, inclusive após o horário original, preservando histórico e
+contador. Esclarecimento posterior: o primeiro pedido reserva uma das duas trocas; alternativas
+antes da aprovação e retomadas após recusa pertencem à mesma troca, sem cobrança adicional.
+Confirmar consolida essa utilização uma vez; mudar de novo após confirmar inicia a próxima troca.
+Distinguir utilização em andamento de confirmada. A finalidade declarada é impedir sucessivas
+mudanças de horários confirmados sem efetivo uso, sem punir tentativas recusadas. Essa regra é
+decisão da CAAB, não consenso de mercado. A confirmação imediata já pode efetivar a troca em uma
+transação e liberar a origem, sem fila duradoura; o tradeoff acima afeta especialmente serviços com
+aprovação manual.
 
 ## Complemento — indisponibilidade causada pelo estabelecimento (24/09/2026)
 
-**Pergunta:** como tratar atendimento confirmado que o estabelecimento não poderá realizar?
-Consulta documental oficial em 24/09/2026, sem teste em contas reais. Trata-se da iniciativa da
+**Pergunta:** como tratar atendimento confirmado que o estabelecimento não poderá realizar? Consulta
+documental oficial em 24/09/2026, sem teste em contas reais. Trata-se da iniciativa da
 equipe/organizador, distinta da troca voluntária solicitada pelo associado.
 
-| Referência | Fluxo documentado | Limite da evidência |
-| --- | --- | --- |
-| [Calendly — remarcação pelo organizador](https://calendly.com/help/how-to-reschedule-a-meeting) | Pode escolher diretamente novo horário; em planos pagos, pode cancelar o encontro atual e enviar convite para o participante escolher outro, com lembrete de retomada. Guia atualizado em 20/08/2026. | Não comprova manutenção do mesmo ID nem estado interno equivalente a “aguardando nova data” do CAAB. |
-| [Fresha — gestão de atendimentos](https://www.fresha.com/help-center/academy/run-your-business/schedule-appointments/lessons/100253) | Equipe altera data, hora ou profissional no atendimento existente; cancelamento também é ação disponível. | Não documenta nessa jornada aceite obrigatório do cliente antes de efetivar a mudança, nem isenção de um limite de duas trocas. |
-| [Fresha — avisos de alteração](https://www.fresha.com/help-center/knowledge-base/calendar/130-send-appointment-updates) | Há mensagens automáticas para remarcação e cancelamento, conforme configuração. | Aviso enviado não comprova concordância do cliente com novo horário. |
-| [Jane — cancelamento pela equipe](https://jane.app/guide/cancel-or-delete-an-appointment-from-the-schedule) | Cancelamento permite registrar motivo e enviar notificação; registros cancelados podem continuar visíveis na agenda. | Não demonstra que toda interrupção da clínica gera uma pendência automática de remarcação. |
-| [Square — gestão e notificações](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Documenta notificações de mudança/cancelamento e escolha de aviso ao cancelar; mantém consulta de histórico. | Não estabelece fluxo universal de continuidade no mesmo ID após indisponibilidade do estabelecimento. |
+| Referência                                                                                                                           | Fluxo documentado                                                                                                                                                                                     | Limite da evidência                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [Calendly — remarcação pelo organizador](https://calendly.com/help/how-to-reschedule-a-meeting)                                      | Pode escolher diretamente novo horário; em planos pagos, pode cancelar o encontro atual e enviar convite para o participante escolher outro, com lembrete de retomada. Guia atualizado em 20/08/2026. | Não comprova manutenção do mesmo ID nem estado interno equivalente a “aguardando nova data” do CAAB.                            |
+| [Fresha — gestão de atendimentos](https://www.fresha.com/help-center/academy/run-your-business/schedule-appointments/lessons/100253) | Equipe altera data, hora ou profissional no atendimento existente; cancelamento também é ação disponível.                                                                                             | Não documenta nessa jornada aceite obrigatório do cliente antes de efetivar a mudança, nem isenção de um limite de duas trocas. |
+| [Fresha — avisos de alteração](https://www.fresha.com/help-center/knowledge-base/calendar/130-send-appointment-updates)              | Há mensagens automáticas para remarcação e cancelamento, conforme configuração.                                                                                                                       | Aviso enviado não comprova concordância do cliente com novo horário.                                                            |
+| [Jane — cancelamento pela equipe](https://jane.app/guide/cancel-or-delete-an-appointment-from-the-schedule)                          | Cancelamento permite registrar motivo e enviar notificação; registros cancelados podem continuar visíveis na agenda.                                                                                  | Não demonstra que toda interrupção da clínica gera uma pendência automática de remarcação.                                      |
+| [Square — gestão e notificações](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings)      | Documenta notificações de mudança/cancelamento e escolha de aviso ao cancelar; mantém consulta de histórico.                                                                                          | Não estabelece fluxo universal de continuidade no mesmo ID após indisponibilidade do estabelecimento.                           |
 
 **Síntese:** há diferentes fluxos: remarcação direta pela equipe, cancelamento com convite para
 escolher outro horário e cancelamento explícito. As fontes não sustentam que manter o mesmo
@@ -383,15 +390,15 @@ agendamento sem horário seja padrão universal, nem que exista uma regra geral 
 Preservar o mesmo ID e isentar o associado neste caso são decisões específicas de produto CAAB,
 aceitas pelo usuário após esta comparação em 24/09/2026.
 
-**Decisão aceita pelo usuário em 24/09/2026:** continuar pela opção A apresentada, com
-estado “Aguardando nova data — alteração pelo estabelecimento”, preservando registro/histórico.
-O horário inviável deixa de ser confirmado e de ocupar a agenda; o período/recurso realmente
-indisponível deve continuar bloqueado para não ser oferecido novamente. Avisar o associado,
-permitir escolher nova data ou cancelar e não consumir seu limite de trocas por essa interrupção.
-Não aplicar o prazo de 24 horas do horário inviabilizado à recuperação. Nova escolha deve
-respeitar disponibilidade, autorização e aceitação do serviço. Não impor outro horário ao
-associado sem acordo. Canais e destinatários foram definidos em 2C-FR-23/24; provedores e operação de entrega continuam
-pendentes de detalhamento.
+**Decisão aceita pelo usuário em 24/09/2026:** continuar pela opção A apresentada, com estado
+“Aguardando nova data — alteração pelo estabelecimento”, preservando registro/histórico. O horário
+inviável deixa de ser confirmado e de ocupar a agenda; o período/recurso realmente indisponível deve
+continuar bloqueado para não ser oferecido novamente. Avisar o associado, permitir escolher nova
+data ou cancelar e não consumir seu limite de trocas por essa interrupção. Não aplicar o prazo de 24
+horas do horário inviabilizado à recuperação. Nova escolha deve respeitar disponibilidade,
+autorização e aceitação do serviço. Não impor outro horário ao associado sem acordo. Canais e
+destinatários foram definidos em 2C-FR-23/24; provedores e operação de entrega continuam pendentes
+de detalhamento.
 
 A decisão foi incorporada em 2C-FR-20/2C-SC-19 e no planejamento. Não autoriza cancelamento
 automático em massa nem isenção genérica para toda edição administrativa. Recuperação isenta
@@ -402,27 +409,27 @@ Após confirmar a recuperação, outra mudança voluntária volta ao limite e ao
 
 Escolhas do usuário após cinco perguntas em lote, não padrões atribuídos a fornecedores:
 
-- Equipe vinculada ao estabelecimento como responsável principal; colaboradores com permissão
-  atuam como backup. Alerta de análise após 24 horas corridas, editável/desativável por serviço,
-  sem expiração automática. Em resposta posterior, usuário definiu urgência quando faltarem
-  24 horas para o atendimento, configurável por serviço e independente da idade da análise.
+- Equipe vinculada ao estabelecimento como responsável principal; colaboradores com permissão atuam
+  como backup. Alerta de análise após 24 horas corridas, editável/desativável por serviço, sem
+  expiração automática. Em resposta posterior, usuário definiu urgência quando faltarem 24 horas
+  para o atendimento, configurável por serviço e independente da idade da análise.
 - Confirmação, recusa, cancelamento e necessidade de remarcar: aviso interno app/site, e-mail e
-  WhatsApp, todos ativos por padrão, com seleção pessoal de meios no app. Fornecedores/entrega
-  ainda a detalhar; não confundir aviso interno com push nem com campanhas de Mensagens.
+  WhatsApp, todos ativos por padrão, com seleção pessoal de meios no app. Fornecedores/entrega ainda
+  a detalhar; não confundir aviso interno com push nem com campanhas de Mensagens.
 - Atendimento de dependente avisa dependente e titular vigente independentemente de autoria,
   respeitando preferências e autorização atuais de cada destinatário.
-- Na reserva autenticada, beneficiário vem primeiro, seguido de serviço/unidade, profissional
-  quando aplicável, data/horário e revisão/envio. Há serviços exclusivos para titulares;
-  elegibilidade depende da pessoa atendida e é revalidada no servidor. Descoberta pública antes
-  do login continua possível, com indicação da restrição de público.
+- Na reserva autenticada, beneficiário vem primeiro, seguido de serviço/unidade, profissional quando
+  aplicável, data/horário e revisão/envio. Há serviços exclusivos para titulares; elegibilidade
+  depende da pessoa atendida e é revalidada no servidor. Descoberta pública antes do login continua
+  possível, com indicação da restrição de público.
 
 ## Informações de continuidade — acessos e reservas (24/09/2026)
 
 O usuário informou que titulares e dependentes já possuem acessos individuais no app/site atual.
 Isso orienta mapear as identidades ao cadastro de Associados e avaliar a transição para a solução
-selecionada na reformulação, sem presumir credenciais compatíveis ou contas migradas. Sobre reservas futuras em
-uso no legado, respondeu que ainda é necessário conferir. Inventário deve resolver essa lacuna
-antes do corte; não inferir agenda vazia ou permitir perda de histórico. São informações do
+selecionada na reformulação, sem presumir credenciais compatíveis ou contas migradas. Sobre reservas
+futuras em uso no legado, respondeu que ainda é necessário conferir. Inventário deve resolver essa
+lacuna antes do corte; não inferir agenda vazia ou permitir perda de histórico. São informações do
 usuário, não verificações em produção nem práticas atribuídas às fontes de mercado.
 
 ## Planejamento técnico de integração — 24/09/2026
@@ -430,93 +437,93 @@ usuário, não verificações em produção nem práticas atribuídas às fontes
 Leitura remota na branch ativa; referências locais são artefatos do repositório, sem teste em
 produção. Estes achados distinguem desenho funcional e integração disponível.
 
-| Decisão de desenho | Evidência / razão | Alternativa descartada ou limite |
-| --- | --- | --- |
-| Resolver identidade autenticada para pessoa no servidor | [005 FR-010](../005-members-management/spec.md) e [contrato de Associados](../005-members-management/contracts/members.md) separam conta administrativa, pessoa e acesso externo. | Não criar login por módulo ou aceitar titularidade/ownerId enviados pelo cliente; acessos individuais informados ainda exigem adaptação verificada. |
-| Reutilizar infraestrutura de jobs | [Contrato de jobs](../001-project-foundation/contracts/jobs.md) define ao menos uma vez, mutação causal/enqueue transacionais, payload mínimo, idempotência e reenvio auditado. | Não criar outra fila; sucesso do job não comprova entrega externa exatamente uma vez. |
-| Preferências transacionais por pessoa/canal precisam de extensão | [Schema atual de Mensagens](../../packages/contracts/src/messaging.ts) possui bloqueio geral e channelConfigured=false; [009](../009-messaging/spec.md) registra protótipo sem envio real. | Não tratar programação de campanha como entrega nem mapear bloqueio geral para três preferências sem inventário de finalidade. |
-| Avaliar reuso do transporte de e-mail existente | [account-mail.ts](../../apps/web/modules/auth/account-mail.ts) usa SMTP/Nodemailer para confirmação de e-mail e recuperação de senha. | Não comprova SMTP configurado/homologado para agenda; não copiar credenciais ou expandir envios nesta etapa. |
-| Consolidar contrato lógico antes do vínculo de transporte | [channels.md](contracts/channels.md) fixa operações, permissões, estados, ocupação, publicação e avisos; [quickstart](quickstart.md) descreve cenários. | Caminhos HTTP, schemas executáveis e provedores dependem de evidência; não declarar fase automatizada do Spec Kit concluída. |
+| Decisão de desenho                                               | Evidência / razão                                                                                                                                                                          | Alternativa descartada ou limite                                                                                                                    |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Resolver identidade autenticada para pessoa no servidor          | [005 FR-010](../005-members-management/spec.md) e [contrato de Associados](../005-members-management/contracts/members.md) separam conta administrativa, pessoa e acesso externo.          | Não criar login por módulo ou aceitar titularidade/ownerId enviados pelo cliente; acessos individuais informados ainda exigem adaptação verificada. |
+| Reutilizar infraestrutura de jobs                                | [Contrato de jobs](../001-project-foundation/contracts/jobs.md) define ao menos uma vez, mutação causal/enqueue transacionais, payload mínimo, idempotência e reenvio auditado.            | Não criar outra fila; sucesso do job não comprova entrega externa exatamente uma vez.                                                               |
+| Preferências transacionais por pessoa/canal precisam de extensão | [Schema atual de Mensagens](../../packages/contracts/src/messaging.ts) possui bloqueio geral e channelConfigured=false; [009](../009-messaging/spec.md) registra protótipo sem envio real. | Não tratar programação de campanha como entrega nem mapear bloqueio geral para três preferências sem inventário de finalidade.                      |
+| Avaliar reuso do transporte de e-mail existente                  | [account-mail.ts](../../apps/web/modules/auth/account-mail.ts) usa SMTP/Nodemailer para confirmação de e-mail e recuperação de senha.                                                      | Não comprova SMTP configurado/homologado para agenda; não copiar credenciais ou expandir envios nesta etapa.                                        |
+| Consolidar contrato lógico antes do vínculo de transporte        | [channels.md](contracts/channels.md) fixa operações, permissões, estados, ocupação, publicação e avisos; [quickstart](quickstart.md) descreve cenários.                                    | Caminhos HTTP, schemas executáveis e provedores dependem de evidência; não declarar fase automatizada do Spec Kit concluída.                        |
 
-Contagem/capacidade, idempotência e relógio do servidor continuam no núcleo PostgreSQL. Provedor
-não é fonte de verdade da agenda. Mensagem transacional referencia evento da reserva; campanhas
+Contagem/capacidade, idempotência e relógio do servidor continuam no núcleo PostgreSQL. Provedor não
+é fonte de verdade da agenda. Mensagem transacional referencia evento da reserva; campanhas
 preservam seu domínio. Não reativar programações antigas bloqueadas ao conectar um novo canal.
 Preferências novas inicialmente ativas seguem a decisão do usuário, sem apagar supressões
 preexistentes ou comprovar validação de contato. Mapeamento dessas informações entra na transição.
 
-
 ## Inspeção das integrações existentes — 25/09/2026
 
-Continuação-CODEX-mafaltti. Perfil GitHub autenticado: mafaltti (Danilo-Komunick), consultado
-em 25/09/2026. Inspeção somente leitura de código remoto; sem contato com provedores,
-dados reais, segredos ou ambientes publicados. [Matriz do legado](legacy-parity.md) registra
-fontes/blobs, identidade, estados, autoria e inventário ainda necessário.
+Continuação-CODEX-mafaltti. Perfil GitHub autenticado: mafaltti (Danilo-Komunick), consultado em
+25/09/2026. Inspeção somente leitura de código remoto; sem contato com provedores, dados reais,
+segredos ou ambientes publicados. [Matriz do legado](legacy-parity.md) registra fontes/blobs,
+identidade, estados, autoria e inventário ainda necessário.
 
 ### Identidade e legado
 
-**Evidência:** em `Komunick/caab-caapp`, User tem ID individual e tipos titular/dependente.
-Login usa busca de titular por OAB/não titular por CPF, código de verificação, token
-intermediário e JWT de sessão; middlewares separam os dois tokens. A rota validateSession
-inspecionada apenas devolve o ID extraído. Vínculos são consultados por responsavel em um
-caminho e pela mesma OAB em outro; equivalência/vigência não foram comprovadas.
+**Evidência:** em `Komunick/caab-caapp`, User tem ID individual e tipos titular/dependente. Login
+usa busca de titular por OAB/não titular por CPF, código de verificação, token intermediário e JWT
+de sessão; middlewares separam os dois tokens. A rota validateSession inspecionada apenas devolve o
+ID extraído. Vínculos são consultados por responsavel em um caminho e pela mesma OAB em outro;
+equivalência/vigência não foram comprovadas.
 
-**Decisão de planejamento:** conservar correspondência explícita origem/User.id → member.id,
-com validação confiável de sessão e reconsulta dos vínculos/elegibilidade no domínio novo.
-Distinguir token intermediário de sessão de agenda; não confiar em ator/papel fornecido no
-corpo/header. Não concluir revogação ou compatibilidade pelo simples reconhecimento do JWT.
+**Decisão de planejamento:** conservar correspondência explícita origem/User.id → member.id, com
+validação confiável de sessão e reconsulta dos vínculos/elegibilidade no domínio novo. Distinguir
+token intermediário de sessão de agenda; não confiar em ator/papel fornecido no corpo/header. Não
+concluir revogação ou compatibilidade pelo simples reconhecimento do JWT.
 
-**Racional:** reaproveitar identidade individual requer comprovar representação atual. A fonte
-de código deixou de estar desconhecida, mas T041 ainda depende da versão efetivamente em uso,
+**Racional:** reaproveitar identidade individual requer comprovar representação atual. A fonte de
+código deixou de estar desconhecida, mas T041 ainda depende da versão efetivamente em uso,
 mapeamento reconciliado e teste autorizado. Repositório acessível não comprova deployment.
 
-**Alternativas descartadas:** vincular por nome/OAB; aceitar token somente decodificado;
-tratar sessão administrativa como externa; importar credenciais ou criar login paralelo.
+**Alternativas descartadas:** vincular por nome/OAB; aceitar token somente decodificado; tratar
+sessão administrativa como externa; importar credenciais ou criar login paralelo.
 
-**Transição:** o mesmo status legado reject e ação CANCELED aparecem em recusa administrativa
-e cancelamento pelo associado. EDITED não comprova remarcação confirmada; finished/not_appear
-devem preservar significado histórico, sem virar novos estados operacionais de 2C por inferência.
-Cancelamento pode aplicar punição no código antigo, comportamento que não substitui a decisão
-de permitir cancelamento antes do início sem criar penalidade automática. Datas são DATEONLY
-mais strings de horário; confirmar fuso real antes de converter. Detalhes/aceites em
+**Transição:** o mesmo status legado reject e ação CANCELED aparecem em recusa administrativa e
+cancelamento pelo associado. EDITED não comprova remarcação confirmada; finished/not_appear devem
+preservar significado histórico, sem virar novos estados operacionais de 2C por inferência.
+Cancelamento pode aplicar punição no código antigo, comportamento que não substitui a decisão de
+permitir cancelamento antes do início sem criar penalidade automática. Datas são DATEONLY mais
+strings de horário; confirmar fuso real antes de converter. Detalhes/aceites em
 [legacy-parity.md](legacy-parity.md); inventário de reservas futuras permanece desconhecido.
 
 ### Comunicação já existente e limites de reutilização
 
-| Fonte inspecionada | Blob SHA | Evidência e limite |
-| --- | --- | --- |
-| caabnovo: apps/web/modules/auth/account-mail.ts | 05f9d9ddee3793deeb116195578b62cfafb13b81 | SMTP/Nodemailer de conta; não prova remetente/provedor autorizado para avisos da agenda. |
-| caabnovo: apps/worker/src/queues.ts | 4fb73ae728afea0457fe7a272d138ae726603427 | pg-boss com políticas finitas; não há fila própria de avisos da agenda nesse registro. |
-| caabnovo: apps/worker/src/job-runtime.ts | 7fa2eeb8a863ea961dc9629b434162aa241bd1aa | Execução/progresso/correlação rastreados; infraestrutura reutilizável. |
-| caabnovo: packages/contracts/src/messaging.ts | 7c68da5b850aa830abad83c11ffb26d4c5a5a7fa | channelConfigured=false; preferência de bloqueio geral não corresponde a três escolhas pessoais por canal. |
-| caabnovo: packages/db/src/repositories/messaging.ts | c77de7eacbbd74d88193cd66f7d294b035d7641d | Preparação termina bloqueada sem canal; não reativar campanhas antigas ao integrar transporte. |
-| caab-whatsapp-router: src/lib/evolution/client.ts | 711329b6a8282b607766d8cd7ed952c60239066e | Cliente Evolution sendText, timeout 5s e retorno boolean; sem recibo/ID de entrega. |
-| caab-whatsapp-router: src/lib/routing/routeMessage.ts | 60ba59a18a04088cefdf49a049b1d928052ddf35 | Responde conversas; persistência de saída não depende de confirmação do resultado boolean. |
-| caab-whatsapp-router: src/lib/db/messageRepo.ts | 6547ba61e6f7cf1dd3398cdcbf0111aa0a94496d | Saída com message_id=null; deduplicação de entrada não prova idempotência de envio. |
-| caab-whatsapp-router: src/app/api/webhook/evolution/route.ts | 1c8cb493a64c473faed981b98baa8af25d631078 | Webhook conversacional; não é endpoint de entrega transacional para Agendamentos. |
+| Fonte inspecionada                                           | Blob SHA                                 | Evidência e limite                                                                                         |
+| ------------------------------------------------------------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| caabnovo: apps/web/modules/auth/account-mail.ts              | 05f9d9ddee3793deeb116195578b62cfafb13b81 | SMTP/Nodemailer de conta; não prova remetente/provedor autorizado para avisos da agenda.                   |
+| caabnovo: apps/worker/src/queues.ts                          | 4fb73ae728afea0457fe7a272d138ae726603427 | pg-boss com políticas finitas; não há fila própria de avisos da agenda nesse registro.                     |
+| caabnovo: apps/worker/src/job-runtime.ts                     | 7fa2eeb8a863ea961dc9629b434162aa241bd1aa | Execução/progresso/correlação rastreados; infraestrutura reutilizável.                                     |
+| caabnovo: packages/contracts/src/messaging.ts                | 7c68da5b850aa830abad83c11ffb26d4c5a5a7fa | channelConfigured=false; preferência de bloqueio geral não corresponde a três escolhas pessoais por canal. |
+| caabnovo: packages/db/src/repositories/messaging.ts          | c77de7eacbbd74d88193cd66f7d294b035d7641d | Preparação termina bloqueada sem canal; não reativar campanhas antigas ao integrar transporte.             |
+| caab-whatsapp-router: src/lib/evolution/client.ts            | 711329b6a8282b607766d8cd7ed952c60239066e | Cliente Evolution sendText, timeout 5s e retorno boolean; sem recibo/ID de entrega.                        |
+| caab-whatsapp-router: src/lib/routing/routeMessage.ts        | 60ba59a18a04088cefdf49a049b1d928052ddf35 | Responde conversas; persistência de saída não depende de confirmação do resultado boolean.                 |
+| caab-whatsapp-router: src/lib/db/messageRepo.ts              | 6547ba61e6f7cf1dd3398cdcbf0111aa0a94496d | Saída com message_id=null; deduplicação de entrada não prova idempotência de envio.                        |
+| caab-whatsapp-router: src/app/api/webhook/evolution/route.ts | 1c8cb493a64c473faed981b98baa8af25d631078 | Webhook conversacional; não é endpoint de entrega transacional para Agendamentos.                          |
 
-Repos: `Komunick/caabnovo` na branch documental e `mafaltti/caab-whatsapp-router` em main.
-O repositório de nome semelhante `mafaltti/caab-whatsapp-routing` contém somente README/.gitignore
-na árvore inspecionada (b6a705fa9362606f14835e6c2d5559fba909ec0b, sem truncamento).
-Árvore do router: 2e959ce48a9e0089d9a2d0f3a0105dc3547e3ee6, sem truncamento.
-A versão em uso e o número/remetente autorizados não foram comprovados.
+Repos: `Komunick/caabnovo` na branch documental e `mafaltti/caab-whatsapp-router` em main. O
+repositório de nome semelhante `mafaltti/caab-whatsapp-routing` contém somente README/.gitignore na
+árvore inspecionada (b6a705fa9362606f14835e6c2d5559fba909ec0b, sem truncamento). Árvore do router:
+2e959ce48a9e0089d9a2d0f3a0105dc3547e3ee6, sem truncamento. A versão em uso e o número/remetente
+autorizados não foram comprovados.
 
-**Hipótese anterior de planejamento, revisada pela pesquisa de mercado de 25/09 acima:**
-reutilizar jobs/worker e avaliar extração do transporte SMTP. O transporte existente não é obrigatório; Evolution é candidato encontrado, não provedor escolhido
-ou homologado. Se adotado, o adaptador deverá manter ID/correlação, resultado aceito/entregue/
-incerto, idempotência de intenção, tentativas finitas e reconciliação antes de repetir timeout.
-Não enviar mensagens nesta etapa nem copiar banco/roteamento por IA para o domínio da agenda.
+**Hipótese anterior de planejamento, revisada pela pesquisa de mercado de 25/09 acima:** reutilizar
+jobs/worker e avaliar extração do transporte SMTP. O transporte existente não é obrigatório;
+Evolution é candidato encontrado, não provedor escolhido ou homologado. Se adotado, o adaptador
+deverá manter ID/correlação, resultado aceito/entregue/ incerto, idempotência de intenção,
+tentativas finitas e reconciliação antes de repetir timeout. Não enviar mensagens nesta etapa nem
+copiar banco/roteamento por IA para o domínio da agenda.
 
-**Racional:** o cliente conversacional boolean não satisfaz 2C-FR-23/24. Mensagens prepara
-campanhas e sua preferência geral não pode sobrescrever decisões pessoais por canal.
-**Alternativas descartadas:** chamar o router diretamente como transporte pronto; considerar
-registro de conversa prova de entrega; retry cego; ativar campanhas antes bloqueadas.
+**Racional:** o cliente conversacional boolean não satisfaz 2C-FR-23/24. Mensagens prepara campanhas
+e sua preferência geral não pode sobrescrever decisões pessoais por canal. **Alternativas
+descartadas:** chamar o router diretamente como transporte pronto; considerar registro de conversa
+prova de entrega; retry cego; ativar campanhas antes bloqueadas.
 
 ### Dependências factuais e resultado da rodada
 
-- Confirmar revisão/repositório em uso e reconciliar IDs/vínculos para a transição de T041;
-  seleção da solução nova pode avançar com a pesquisa acima.
-- Confirmar serviço/número WhatsApp e remetente/serviço de e-mail autorizados para avisos;
-  mapear caixa de avisos e preferências existentes. Perguntas factuais encaminhadas ao usuário.
+- Confirmar revisão/repositório em uso e reconciliar IDs/vínculos para a transição de T041; seleção
+  da solução nova pode avançar com a pesquisa acima.
+- Confirmar serviço/número WhatsApp e remetente/serviço de e-mail autorizados para avisos; mapear
+  caixa de avisos e preferências existentes. Perguntas factuais encaminhadas ao usuário.
 - Inventário de reservas futuras/histórico ainda não recebido; T042 não concluída.
 - Guia visual remoto não localizado e executor local indisponível; arquivo/localização solicitado.
 - Documentação avança com as evidências acima; tarefas técnicas, testes e ativação continuam
@@ -524,76 +531,152 @@ registro de conversa prova de entrega; retry cego; ativar campanhas antes bloque
 
 ## Pergunta e método
 
-Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado, não um ranking absoluto de qualidade, adoção ou custo.
+Como desenhar hoje um módulo de agendamentos para a CAAB, que administra oferta no painel e
+futuramente atende associados e dependentes no app/site? Comparei seis referências por jornada de
+quem reserva, operação da equipe, disponibilidade, múltiplas unidades, famílias, capacidade e
+capacidade de integração. “Melhor” aqui significa referência mais útil em cada aspecto documentado,
+não um ranking absoluto de qualidade, adoção ou custo.
 
 ## Referências selecionadas
 
-| Produto | Evidência observada nos guias oficiais | Melhor uso como referência para a CAAB | Limite |
-| --- | --- | --- | --- |
-| [Fresha](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1) | A equipe cria pela grade ou encontra a próxima vaga; cliente, serviço, profissional e horário são revistos antes de salvar. Há [atribuição de profissional disponível](https://www.fresha.com/help-center/knowledge-base/calendar/102178-set-up-new-appointment-assignment), [bloqueios](https://www.fresha.com/help-center/knowledge-base/calendar/18-set-up-and-manage-blocked-time), [lista de espera](https://www.fresha.com/help-center/knowledge-base/calendar/259-set-up-and-manage-your-waitlist) e [otimização das vagas](https://www.fresha.com/help-center/knowledge-base/calendar/496-optimize-online-schedule-availability). | Rotina do painel, reserva rápida e busca de alternativas quando o horário desejado não existe. | Foco comercial em beleza e bem-estar; pagamentos, prioridade por valor e preenchimento artificial de agenda não são regras da CAAB. |
-| [Jane](https://jane.app/guide/booking-an-appointment-online-for-patients) | Paciente encontra atendimento por tipo ou profissional e escolhe horário; [familiares vinculados podem reservar para perfis individuais](https://jane.app/guide/how-do-family-members-book-appointments-online); [recursos limitados entram no cálculo](https://jane.app/guide/resource-booking). | Beneficiário explícito, jornadas de associado/dependente e recurso físico opcional. | Regras clínicas, faturamento e prontuário não devem ser importados por analogia. |
-| [Mindbody](https://www.mindbodyonline.com/en-gb/business/scheduling) | Reúne compromissos individuais e aulas, capacidade e lista de espera, com disponibilidade refletida nos canais. Sua [atualização de interface de 2026](https://www.mindbodyonline.com/business/education/blog/mindbody-ui-ux-todays-modern-workflows) destaca ações diretamente na agenda e reserva de familiares. | Separar agendamento individual de turma/vaga coletiva e reduzir passos na operação. | Turmas, penalidades e pagamento dependem de política específica da CAAB; não são parte automática do recorte atual. |
-| [Square Appointments](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Configura intervalo das vagas, antecedência, janela futura, aprovação automática ou manual, profissional indiferente e comunicação; o [fluxo público](https://squareup.com/help/us/en/article/5355-set-up-online-booking-with-square-appointments) permite escolher unidade, serviço e profissional. | Tornar regras de oferta explícitas por canal e evitar decisões escondidas no código. | Opções comerciais disponíveis no produto não equivalem a decisões institucionais aprovadas. |
-| [SimplyBook.me](https://help.simplybook.me/wiki/Custom_Features) | Trata locais, classes, recursos, múltiplas reservas e lista de espera como capacidades separadas. | Evoluir por tipos de oferta, ativando só a complexidade necessária. | Quantidade de recursos não é, por si, boa experiência; configuração extensa aumenta o custo operacional. |
-| [Cal.com](https://cal.com/teams) | Referência para agendas de equipe, disponibilidade, roteamento e fluxos. A documentação do [antigo plano Platform/Atoms](https://cal.com/docs/platform/atoms/booker) informa que ele está em manutenção para clientes existentes e fechado a novos clientes. | Ideias de apresentação e integração; avaliar produto/contrato atual somente se surgir necessidade concreta. | Não há evidência de que substituir o núcleo CAAB por Cal.com resolva beneficiários, elegibilidade e governança próprias. A condição anterior de não integrar por conveniência permanece. |
+| Produto                                                                                                              | Evidência observada nos guias oficiais                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Melhor uso como referência para a CAAB                                                                      | Limite                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Fresha](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1)                       | A equipe cria pela grade ou encontra a próxima vaga; cliente, serviço, profissional e horário são revistos antes de salvar. Há [atribuição de profissional disponível](https://www.fresha.com/help-center/knowledge-base/calendar/102178-set-up-new-appointment-assignment), [bloqueios](https://www.fresha.com/help-center/knowledge-base/calendar/18-set-up-and-manage-blocked-time), [lista de espera](https://www.fresha.com/help-center/knowledge-base/calendar/259-set-up-and-manage-your-waitlist) e [otimização das vagas](https://www.fresha.com/help-center/knowledge-base/calendar/496-optimize-online-schedule-availability). | Rotina do painel, reserva rápida e busca de alternativas quando o horário desejado não existe.              | Foco comercial em beleza e bem-estar; pagamentos, prioridade por valor e preenchimento artificial de agenda não são regras da CAAB.                                                      |
+| [Jane](https://jane.app/guide/booking-an-appointment-online-for-patients)                                            | Paciente encontra atendimento por tipo ou profissional e escolhe horário; [familiares vinculados podem reservar para perfis individuais](https://jane.app/guide/how-do-family-members-book-appointments-online); [recursos limitados entram no cálculo](https://jane.app/guide/resource-booking).                                                                                                                                                                                                                                                                                                                                         | Beneficiário explícito, jornadas de associado/dependente e recurso físico opcional.                         | Regras clínicas, faturamento e prontuário não devem ser importados por analogia.                                                                                                         |
+| [Mindbody](https://www.mindbodyonline.com/en-gb/business/scheduling)                                                 | Reúne compromissos individuais e aulas, capacidade e lista de espera, com disponibilidade refletida nos canais. Sua [atualização de interface de 2026](https://www.mindbodyonline.com/business/education/blog/mindbody-ui-ux-todays-modern-workflows) destaca ações diretamente na agenda e reserva de familiares.                                                                                                                                                                                                                                                                                                                        | Separar agendamento individual de turma/vaga coletiva e reduzir passos na operação.                         | Turmas, penalidades e pagamento dependem de política específica da CAAB; não são parte automática do recorte atual.                                                                      |
+| [Square Appointments](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings) | Configura intervalo das vagas, antecedência, janela futura, aprovação automática ou manual, profissional indiferente e comunicação; o [fluxo público](https://squareup.com/help/us/en/article/5355-set-up-online-booking-with-square-appointments) permite escolher unidade, serviço e profissional.                                                                                                                                                                                                                                                                                                                                      | Tornar regras de oferta explícitas por canal e evitar decisões escondidas no código.                        | Opções comerciais disponíveis no produto não equivalem a decisões institucionais aprovadas.                                                                                              |
+| [SimplyBook.me](https://help.simplybook.me/wiki/Custom_Features)                                                     | Trata locais, classes, recursos, múltiplas reservas e lista de espera como capacidades separadas.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Evoluir por tipos de oferta, ativando só a complexidade necessária.                                         | Quantidade de recursos não é, por si, boa experiência; configuração extensa aumenta o custo operacional.                                                                                 |
+| [Cal.com](https://cal.com/teams)                                                                                     | Referência para agendas de equipe, disponibilidade, roteamento e fluxos. A documentação do [antigo plano Platform/Atoms](https://cal.com/docs/platform/atoms/booker) informa que ele está em manutenção para clientes existentes e fechado a novos clientes.                                                                                                                                                                                                                                                                                                                                                                              | Ideias de apresentação e integração; avaliar produto/contrato atual somente se surgir necessidade concreta. | Não há evidência de que substituir o núcleo CAAB por Cal.com resolva beneficiários, elegibilidade e governança próprias. A condição anterior de não integrar por conveniência permanece. |
 
 ## O que converge entre as referências
 
-1. **Dois modos de uso compartilham a mesma agenda:** a equipe opera o dia, cadastra oferta e resolve exceções; a pessoa encontra um serviço, um horário e acompanha suas reservas no app/site. A documentação de [Mindbody](https://www.mindbodyonline.com/en-gb/business/scheduling) descreve atualização da oferta em diferentes canais; para a CAAB, a mesma regra de disponibilidade deve alimentar todos os canais autorizados.
-2. **A jornada começa pela necessidade e oferece caminhos alternativos:** buscar serviço/procedimento ou profissional, filtrar unidade, mostrar dias e horários reais, oferecer próxima data ou outros profissionais quando não houver vaga. [Fresha](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1) e [Jane](https://jane.app/guide/booking-an-appointment-online-for-patients) documentam esses caminhos.
-3. **Disponibilidade é calculada, não apenas uma grade visual:** duração do procedimento, funcionamento da unidade, jornada, pausas, bloqueios e, quando cabível, recursos/capacidade interferem na oferta. Antecedência e horizonte futuro são políticas configuradas em [Square](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings); [Jane](https://jane.app/guide/resource-booking) mostra o efeito de recursos limitados.
-4. **A pessoa atendida deve ser inequívoca:** uma conta pode reservar para familiares autorizados, mas cada compromisso pertence ao beneficiário individual. [Jane](https://jane.app/guide/how-do-family-members-book-appointments-online) oferece um exemplo concreto. Na CAAB, a autorização de representar dependente e a elegibilidade precisam vir dos contratos próprios de Associados.
-5. **Após a reserva, ainda há operação:** detalhes, remarcação, cancelamento, chegada/falta e histórico. [Jane](https://jane.app/guide/patient-arrivals-no-shows) distingue chegada e falta, enquanto [Fresha](https://www.fresha.com/help-center/knowledge-base/personal-account/35-respond-to-your-personal-reviews) vincula avaliação a atendimento concluído. Decorrer do horário não comprova atendimento.
-6. **Lista de espera e automação são incrementos com política:** Fresha permite operação manual ou aviso automático, com opções diferentes de prioridade; [Mindbody](https://www.mindbodyonline.com/business/education/product-waitlist-improvements) diferencia inclusão automática de primeira pessoa a confirmar. A CAAB deve decidir ordem, prazo de resposta, elegibilidade e prevenção de disputa antes de implementar.
-7. **Atendimento por IA é tendência de 2026, não pré-requisito:** [Fresha](https://www.fresha.com/blog/fresha-ai-concierge-launch) e [Mindbody](https://www.mindbodyonline.com/business/ai-concierge) anunciam assistentes que consultam dados vivos e acionam reservas/remarcações. Para a CAAB, só faria sentido após identidade, permissões, regras e ações auditáveis estarem consolidadas.
+1. **Dois modos de uso compartilham a mesma agenda:** a equipe opera o dia, cadastra oferta e
+   resolve exceções; a pessoa encontra um serviço, um horário e acompanha suas reservas no app/site.
+   A documentação de [Mindbody](https://www.mindbodyonline.com/en-gb/business/scheduling) descreve
+   atualização da oferta em diferentes canais; para a CAAB, a mesma regra de disponibilidade deve
+   alimentar todos os canais autorizados.
+2. **A jornada começa pela necessidade e oferece caminhos alternativos:** buscar
+   serviço/procedimento ou profissional, filtrar unidade, mostrar dias e horários reais, oferecer
+   próxima data ou outros profissionais quando não houver vaga.
+   [Fresha](https://www.fresha.com/help-center/knowledge-base/calendar/260-create-appointments-1) e
+   [Jane](https://jane.app/guide/booking-an-appointment-online-for-patients) documentam esses
+   caminhos.
+3. **Disponibilidade é calculada, não apenas uma grade visual:** duração do procedimento,
+   funcionamento da unidade, jornada, pausas, bloqueios e, quando cabível, recursos/capacidade
+   interferem na oferta. Antecedência e horizonte futuro são políticas configuradas em
+   [Square](https://squareup.com/help/us/en/article/5351-manage-your-square-appointments-account-settings);
+   [Jane](https://jane.app/guide/resource-booking) mostra o efeito de recursos limitados.
+4. **A pessoa atendida deve ser inequívoca:** uma conta pode reservar para familiares autorizados,
+   mas cada compromisso pertence ao beneficiário individual.
+   [Jane](https://jane.app/guide/how-do-family-members-book-appointments-online) oferece um exemplo
+   concreto. Na CAAB, a autorização de representar dependente e a elegibilidade precisam vir dos
+   contratos próprios de Associados.
+5. **Após a reserva, ainda há operação:** detalhes, remarcação, cancelamento, chegada/falta e
+   histórico. [Jane](https://jane.app/guide/patient-arrivals-no-shows) distingue chegada e falta,
+   enquanto
+   [Fresha](https://www.fresha.com/help-center/knowledge-base/personal-account/35-respond-to-your-personal-reviews)
+   vincula avaliação a atendimento concluído. Decorrer do horário não comprova atendimento.
+6. **Lista de espera e automação são incrementos com política:** Fresha permite operação manual ou
+   aviso automático, com opções diferentes de prioridade;
+   [Mindbody](https://www.mindbodyonline.com/business/education/product-waitlist-improvements)
+   diferencia inclusão automática de primeira pessoa a confirmar. A CAAB deve decidir ordem, prazo
+   de resposta, elegibilidade e prevenção de disputa antes de implementar.
+7. **Atendimento por IA é tendência de 2026, não pré-requisito:**
+   [Fresha](https://www.fresha.com/blog/fresha-ai-concierge-launch) e
+   [Mindbody](https://www.mindbodyonline.com/business/ai-concierge) anunciam assistentes que
+   consultam dados vivos e acionam reservas/remarcações. Para a CAAB, só faria sentido após
+   identidade, permissões, regras e ações auditáveis estarem consolidadas.
 
 ## Direção recomendada para a CAAB — inferência da comparação
 
 ### Experiência de quem reserva no app/site
 
-1. Permitir descoberta pública de serviços com duração, unidade, instruções e público-alvo; para reservar, após autenticação, identificar primeiro quem será atendido (decisão CAAB de 24/09).
-2. Selecionar serviço/unidade elegível para o beneficiário, incluindo restrição de serviços exclusivos para titular; depois permitir profissional específico ou qualquer disponível quando houver equipe apta e escolha habilitada. Autor titular não torna o dependente elegível por representação.
-3. Mostrar datas com vagas e horários legíveis, com próxima data e alternativas de unidade/profissional quando não houver vaga. A seleção é provisória até a confirmação no servidor.
-4. Revisar beneficiário, procedimento, unidade, profissional quando aplicável, data, hora e regras aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
-5. Em “Minhas reservas”, separar próximas e históricas, mostrar situação textual e permitir remarcação/cancelamento somente conforme política aprovada. Oferecer “agendar novamente” como atalho apenas se a oferta ainda for válida.
+1. Permitir descoberta pública de serviços com duração, unidade, instruções e público-alvo; para
+   reservar, após autenticação, identificar primeiro quem será atendido (decisão CAAB de 24/09).
+2. Selecionar serviço/unidade elegível para o beneficiário, incluindo restrição de serviços
+   exclusivos para titular; depois permitir profissional específico ou qualquer disponível quando
+   houver equipe apta e escolha habilitada. Autor titular não torna o dependente elegível por
+   representação.
+3. Mostrar datas com vagas e horários legíveis, com próxima data e alternativas de
+   unidade/profissional quando não houver vaga. A seleção é provisória até a confirmação no
+   servidor.
+4. Revisar beneficiário, procedimento, unidade, profissional quando aplicável, data, hora e regras
+   aplicáveis numa confirmação explícita. Em conflito, conservar escolhas e oferecer nova vaga.
+5. Em “Minhas reservas”, separar próximas e históricas, mostrar situação textual e permitir
+   remarcação/cancelamento somente conforme política aprovada. Oferecer “agendar novamente” como
+   atalho apenas se a oferta ainda for válida.
 
 ### Experiência da equipe no painel
 
-1. Manter Agenda como entrada operacional, com Lista/Dia/Semana/Mês, data e filtros persistentes. Mostrar ações de criar e abrir detalhes sem perder o contexto. A versão atual já possui esse fundamento; rever CAL06.
-2. Separar configuração de unidades, serviços/procedimentos, profissionais/habilitações e horários da rotina de reservas. Explicar por que uma combinação não produz vagas.
-3. Acrescentar, em incremento próprio, exceções de agenda e tratamento de reservas futuras afetadas. Evitar cancelamento implícito por mudança de configuração.
-4. Exibir alertas operacionais, como beneficiário bloqueado após reserva, com decisão humana registrada. Consulta e alteração permanecem permissões distintas.
-5. Distinguir situação da reserva, comparecimento e avaliação; só marcar presença/falta por ação autorizada, nunca por relógio.
+1. Manter Agenda como entrada operacional, com Lista/Dia/Semana/Mês, data e filtros persistentes.
+   Mostrar ações de criar e abrir detalhes sem perder o contexto. A versão atual já possui esse
+   fundamento; rever CAL06.
+2. Separar configuração de unidades, serviços/procedimentos, profissionais/habilitações e horários
+   da rotina de reservas. Explicar por que uma combinação não produz vagas.
+3. Acrescentar, em incremento próprio, exceções de agenda e tratamento de reservas futuras afetadas.
+   Evitar cancelamento implícito por mudança de configuração.
+4. Exibir alertas operacionais, como beneficiário bloqueado após reserva, com decisão humana
+   registrada. Consulta e alteração permanecem permissões distintas.
+5. Distinguir situação da reserva, comparecimento e avaliação; só marcar presença/falta por ação
+   autorizada, nunca por relógio.
 
 ### Núcleo de disponibilidade e integridade
 
-Uma única regra de servidor deve compor oferta ativa, habilitação, expediente, pausa, exceções, duração, políticas de canal, beneficiário e capacidade/recurso quando aplicáveis. Ela deve alimentar consulta de vagas e validação final para painel e futuros app/site. Registrar a reserva de forma transacional, com idempotência, revalidação de elegibilidade e proteção de conflitos do profissional e do beneficiário. O [PostgreSQL documenta restrições de exclusão sobre intervalos](https://www.postgresql.org/docs/current/rangetypes.html), mecanismo adequado para impedir sobreposição mesmo sob concorrência; a escolha exata deve respeitar o esquema existente e dados prévios. Horários persistidos em UTC são apresentados no fuso da unidade; calendário visual não é garantia de vaga.
+Uma única regra de servidor deve compor oferta ativa, habilitação, expediente, pausa, exceções,
+duração, políticas de canal, beneficiário e capacidade/recurso quando aplicáveis. Ela deve alimentar
+consulta de vagas e validação final para painel e futuros app/site. Registrar a reserva de forma
+transacional, com idempotência, revalidação de elegibilidade e proteção de conflitos do profissional
+e do beneficiário. O
+[PostgreSQL documenta restrições de exclusão sobre intervalos](https://www.postgresql.org/docs/current/rangetypes.html),
+mecanismo adequado para impedir sobreposição mesmo sob concorrência; a escolha exata deve respeitar
+o esquema existente e dados prévios. Horários persistidos em UTC são apresentados no fuso da
+unidade; calendário visual não é garantia de vaga.
 
 Essas são recomendações de desenho, não declaração de que cada parte já existe no código.
 
 ## Ordem sugerida de estudo e evolução
 
-| Sequência | Resultado a detalhar | Situação frente à spec vigente |
-| --- | --- | --- |
-| 1 | Fechar concessões consultar/alterar, conflito por beneficiário, aviso de bloqueio, exportação e revisão CAL06. | Lacunas já registradas em spec/plan/tasks; confirmar estado do Git antes de executar. |
-| 2 | Especificar primeira jornada app/site, identidade do titular/dependente, contrato de vagas e mutações, e transição do legado. | Etapa posterior priorizada no roadmap; decisões de produto e contrato ainda necessários. |
-| 3 | Detalhar indisponibilidades, agenda extra, antecedência, horizonte futuro, presença/falta e avaliações. | Funcionalidades do legado ou operação a confirmar uma a uma; sem implementação automática. |
-| 4 | Avaliar turmas coletivas, recursos físicos, lista de espera, distribuição avançada de profissionais, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
+| Sequência | Resultado a detalhar                                                                                                                                                             | Situação frente à spec vigente                                                             |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 1         | Fechar concessões consultar/alterar, conflito por beneficiário, aviso de bloqueio, exportação e revisão CAL06.                                                                   | Lacunas já registradas em spec/plan/tasks; confirmar estado do Git antes de executar.      |
+| 2         | Especificar primeira jornada app/site, identidade do titular/dependente, contrato de vagas e mutações, e transição do legado.                                                    | Etapa posterior priorizada no roadmap; decisões de produto e contrato ainda necessários.   |
+| 3         | Detalhar indisponibilidades, agenda extra, antecedência, horizonte futuro, presença/falta e avaliações.                                                                          | Funcionalidades do legado ou operação a confirmar uma a uma; sem implementação automática. |
+| 4         | Avaliar turmas coletivas, recursos físicos, lista de espera, distribuição avançada de profissionais, múltiplos serviços e assistente conversacional conforme demanda comprovada. | Possibilidades de mercado; não pressupor que existiam no legado nem que estão autorizadas. |
 
 ## Decisões que a pesquisa não pode tomar pela CAAB
 
-- Publicação conjunta app/site definida em 24/09, sem seleção de canal. Escolha de profissional específico ou qualquer disponível aprovada, condicionada à equipe e configuração do estabelecimento; sem profissionais, horários/capacidade por serviço. Serviços exclusivos para titular dependem do beneficiário selecionado primeiro.
-- Titular reserva para si/dependentes vigentes e dependente só para si; acesso familiar foi definido. Acessos individuais existentes foram confirmados pelo usuário; mecanismo, integração e gestão/revogação do vínculo ainda requerem verificação.
-- Horizonte futuro definido: janela móvel de 90 dias por padrão, editável/desativável por serviço. A antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável. Cancelamento é permitido até antes do início, sem antecedência mínima.
-- Indisponibilidade do estabelecimento resolvida em 2C-FR-20: mesmo registro aguardando nova data, recuperação isenta e aviso, sem reofertar período inviável.
-- Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem profissionais já foi autorizada.
-- Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida ou ocultada?
-- Haverá lista de espera? Em caso afirmativo, qual ordem, prazo de aceitação, canal de aviso e critério de elegibilidade?
-- Eventos, meios e destinatários transacionais foram definidos em 2C-FR-23/24; qual integração será homologada e como operar entrega/reenvio continuam dependências.
+- Publicação conjunta app/site definida em 24/09, sem seleção de canal. Escolha de profissional
+  específico ou qualquer disponível aprovada, condicionada à equipe e configuração do
+  estabelecimento; sem profissionais, horários/capacidade por serviço. Serviços exclusivos para
+  titular dependem do beneficiário selecionado primeiro.
+- Titular reserva para si/dependentes vigentes e dependente só para si; acesso familiar foi
+  definido. Acessos individuais existentes foram confirmados pelo usuário; mecanismo, integração e
+  gestão/revogação do vínculo ainda requerem verificação.
+- Horizonte futuro definido: janela móvel de 90 dias por padrão, editável/desativável por serviço. A
+  antecedência de novas reservas foi definida sem mínimo por padrão, configurável por serviço
+  (rodada 3 de 24/09); a remarcação mantém seu prazo separado de 24 horas, editável/desativável.
+  Cancelamento é permitido até antes do início, sem antecedência mínima.
+- Indisponibilidade do estabelecimento resolvida em 2C-FR-20: mesmo registro aguardando nova data,
+  recuperação isenta e aviso, sem reofertar período inviável.
+- Turmas coletivas exigem decisão separada; a capacidade por serviço para reservas individuais sem
+  profissionais já foi autorizada.
+- Como a equipe registra comparecimento/falta e quando uma avaliação pode ser solicitada, respondida
+  ou ocultada?
+- Haverá lista de espera? Em caso afirmativo, qual ordem, prazo de aceitação, canal de aviso e
+  critério de elegibilidade?
+- Eventos, meios e destinatários transacionais foram definidos em 2C-FR-23/24; qual integração será
+  homologada e como operar entrega/reenvio continuam dependências.
 
 ## Verificações necessárias antes de transformar a pesquisa em escopo
 
-Validar protótipo com operadores e usuários reais da CAAB, incluindo titular que agenda para dependente; testar tarefas em celular, teclado e leitor de tela; medir tempo até achar vaga, conflitos na confirmação, abandono, remarcações e trabalho manual da equipe. A [WCAG 2.2](https://www.w3.org/WAI/WCAG22/quickref/) exige foco visível e mensagens de estado acessíveis; o [exemplo de seletor de data da W3C](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/) alerta que componentes de calendário precisam de testes reais com tecnologias assistivas. Produtos consultados são referência, não evidência de conformidade da implementação CAAB.
+Validar protótipo com operadores e usuários reais da CAAB, incluindo titular que agenda para
+dependente; testar tarefas em celular, teclado e leitor de tela; medir tempo até achar vaga,
+conflitos na confirmação, abandono, remarcações e trabalho manual da equipe. A
+[WCAG 2.2](https://www.w3.org/WAI/WCAG22/quickref/) exige foco visível e mensagens de estado
+acessíveis; o
+[exemplo de seletor de data da W3C](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/)
+alerta que componentes de calendário precisam de testes reais com tecnologias assistivas. Produtos
+consultados são referência, não evidência de conformidade da implementação CAAB.
 
 ---
 

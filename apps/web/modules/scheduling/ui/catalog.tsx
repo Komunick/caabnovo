@@ -1,4 +1,6 @@
 "use client";
+import { PanelHeading } from "@/components/ui/panel-heading";
+import { SchedulingExportLink } from "./export-link";
 import { useModulePermission } from "@/components/workspace-permissions";
 import { DraftScope, useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftTextarea, DraftForm } from "@/components/ui/draft-controls";
@@ -8,8 +10,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SearchField } from "@/components/ui/search-controls";
 import { Table, TableContainer } from "@/components/ui/table";
 import { catalogLabels } from "./catalog-labels";
+import { ServicePolicyFields } from "./service-policy";
 import {
   schedulingKinds,
+  schedulingPolicySchema,
   brazilianPhoneSchema,
   contactFieldMessages,
   type SchedulingCatalogItem,
@@ -41,7 +45,15 @@ function CatalogForm({
   onClose(): void;
 }) {
   const [item] = useDraftState("baseline", currentItem);
+  const [policy, setPolicy] = useDraftState(
+    "catalog:policy",
+    schedulingPolicySchema.parse(item?.policy ?? {}),
+  );
   const [unitId, setUnitId] = useDraftState("catalog:unitId", item?.unitId ?? "");
+  const [initialProfessional, setInitialProfessional] = useDraftState(
+    "catalog:initialProfessional",
+    "",
+  );
   const [serviceId, setServiceId] = useDraftState("catalog:serviceId", item?.serviceId ?? "");
   const [procedureId, setProcedureId] = useDraftState(
     "catalog:procedureId",
@@ -80,7 +92,29 @@ function CatalogForm({
         ].map((key) => [key, form.get(key) ?? ""]),
       );
     }
-    if (kind === "services") data.unitId = unitId;
+    if (kind === "services") {
+      data.unitId = unitId;
+      data.policy = policy;
+      data.publish =
+        (event.nativeEvent as SubmitEvent).submitter?.getAttribute("value") === "publish";
+      if (!item && form.get("initialName"))
+        data.initialProcedure = {
+          name: form.get("initialName"),
+          durationMinutes: Number(form.get("initialDuration")),
+          ...(policy.mode === "professional" && initialProfessional
+            ? { professionalId: initialProfessional }
+            : {}),
+          ...(policy.mode === "capacity"
+            ? {
+                hours: form.getAll("initialWeekday").map((weekday) => ({
+                  weekday: Number(weekday),
+                  start: form.get("initialStart"),
+                  end: form.get("initialEnd"),
+                })),
+              }
+            : {}),
+        };
+    }
     if (kind === "procedures") {
       data.serviceId = serviceId;
       data.durationMinutes = Number(form.get("durationMinutes"));
@@ -100,6 +134,13 @@ function CatalogForm({
         className="scheduling-form"
       >
         <fieldset disabled={!canWrite || mutation.pending} className="scheduling-fields">
+          {kind === "services" && (
+            <p>
+              {item?.publishedAt
+                ? "Este serviço tem uma versão publicada. Salvar mantém as alterações como rascunho."
+                : "Serviço ainda não publicado. Pode ser configurado e usado internamente."}
+            </p>
+          )}
           {kind !== "assignments" && (
             <FormField id="catalog-name" label="Nome">
               <DraftInput
@@ -219,21 +260,104 @@ function CatalogForm({
             Ativo
           </label>
         </fieldset>
+        {kind === "services" && (
+          <fieldset disabled={!canWrite || mutation.pending} className="scheduling-fields">
+            <ServicePolicyFields value={policy} onChange={setPolicy} />
+            {!item && (
+              <section className="scheduling-form">
+                <h2>Primeiro atendimento</h2>
+                <p>
+                  Preencha para publicar o serviço agora. Para configurar depois, deixe em branco e
+                  use Salvar.
+                </p>
+                <div className="scheduling-grid">
+                  <FormField id="initial-name" label="Nome do primeiro procedimento">
+                    <DraftInput name="initialName" maxLength={160} />
+                  </FormField>
+                  <FormField id="initial-duration" label="Duração do atendimento (minutos)">
+                    <DraftInput type="number" name="initialDuration" min={1} max={1440} />
+                  </FormField>
+                </div>
+                {policy.mode === "professional" ? (
+                  <Choice
+                    label="Profissional do primeiro atendimento"
+                    resource="professionals"
+                    filters="active=true"
+                    value={initialProfessional}
+                    onChange={setInitialProfessional}
+                  />
+                ) : (
+                  <>
+                    <fieldset>
+                      <legend>Dias de atendimento</legend>
+                      {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map(
+                        (day, i) => (
+                          <label key={day} className="checkbox-field">
+                            <DraftInput type="checkbox" name="initialWeekday" value={i} />
+                            {day}
+                          </label>
+                        ),
+                      )}
+                    </fieldset>
+                    <div className="scheduling-grid">
+                      <FormField id="initial-start" label="Início do expediente">
+                        <DraftInput type="time" name="initialStart" />
+                      </FormField>
+                      <FormField id="initial-end" label="Fim do expediente">
+                        <DraftInput type="time" name="initialEnd" />
+                      </FormField>
+                    </div>
+                  </>
+                )}
+                <p>
+                  Os horários devem estar dentro do expediente já configurado da unidade. No modo
+                  por profissional, a jornada dele também precisa estar configurada.
+                </p>
+              </section>
+            )}
+          </fieldset>
+        )}
         {mutation.error && <p role="alert">{mutation.error}</p>}
         <div className="scheduling-actions">
-          <Button
-            type="submit"
-            intent="primary"
-            size={item ? "default" : "add"}
-            disabled={!canWrite || mutation.pending}
-          >
-            {!item && <Plus aria-hidden="true" />}
-            {mutation.pending
-              ? "Salvando…"
-              : item
-                ? "Salvar alterações"
-                : catalogLabels[kind].add.replace(/^Nov[ao]/, "Criar")}
-          </Button>
+          <div>
+            <Button
+              type="submit"
+              value="save"
+              aria-describedby={kind === "services" ? "catalog-save-help" : undefined}
+              intent="primary"
+              size={item ? "default" : "add"}
+              disabled={!canWrite || mutation.pending}
+            >
+              {!item && <Plus aria-hidden="true" />}
+              {mutation.pending
+                ? "Salvando…"
+                : item
+                  ? "Salvar alterações"
+                  : kind === "services"
+                    ? "Salvar"
+                    : catalogLabels[kind].add.replace(/^Nov[ao]/, "Criar")}
+            </Button>
+            {kind === "services" && (
+              <p id="catalog-save-help">
+                Salva para gestão interna. A versão publicada permanece como está.
+              </p>
+            )}
+          </div>
+          {kind === "services" && (
+            <div>
+              <Button
+                type="submit"
+                value="publish"
+                aria-describedby="catalog-publish-help"
+                disabled={!canWrite || mutation.pending}
+              >
+                {item ? "Publicar alterações" : "Publicar"}
+              </Button>
+              <p id="catalog-publish-help">
+                Salva e atualiza a oferta publicada em uma única ação.
+              </p>
+            </div>
+          )}
           <Button disabled={!canWrite || mutation.pending} onClick={onClose}>
             Cancelar
           </Button>
@@ -322,7 +446,9 @@ function CatalogPage({ kind }: { kind: SchedulingKind }) {
         </DraftScope>
       ) : (
         <section className="panel">
-          <h2>Encontrar {label.title.toLocaleLowerCase("pt-BR")}</h2>
+          <PanelHeading title={`Encontrar ${label.title.toLocaleLowerCase("pt-BR")}`}>
+            <SchedulingExportLink dataset="catalog" filters={{ kind, q }} />
+          </PanelHeading>
           <DraftForm
             draftKey="scheduling-catalog-2"
             role="search"

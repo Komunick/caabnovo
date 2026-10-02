@@ -23,9 +23,12 @@ export type SchedulingContext = {
 export async function schedulingAccess<T>(
   pool: Pool,
   actor: RequestActor,
-  write: boolean,
+  access: boolean | "review_absences",
   operation: (client: PoolClient) => Promise<T>,
 ): Promise<T> {
+  const write = access !== false;
+  const mutationPermission =
+    access === "review_absences" ? "scheduling:review_absences" : "scheduling:write";
   try {
     return await withTransaction(pool, async (client) => {
       const session = await client.query(
@@ -34,6 +37,13 @@ export async function schedulingAccess<T>(
         [actor.userId, actor.sessionId],
       );
       if (!session.rowCount) throw new SchedulingError("AUTHENTICATION_REQUIRED", 401);
+      // Reject unauthorized writers before they contend with member eligibility changes.
+      const initialPermissions = await readUserPermissions(client, actor.userId);
+      if (
+        !initialPermissions.includes("scheduling:read") ||
+        (write && !initialPermissions.includes(mutationPermission))
+      )
+        throw new SchedulingError("PERMISSION_DENIED", 403);
       if (write) await lockMemberEligibility(client);
       // Revalidate after waiting for a contended write lock.
       const valid = await client.query(
@@ -44,14 +54,22 @@ export async function schedulingAccess<T>(
       const permissions = await readUserPermissions(client, actor.userId);
       if (
         !permissions.includes("scheduling:read") ||
-        (write && !permissions.includes("scheduling:write"))
+        (write && !permissions.includes(mutationPermission))
       )
         throw new SchedulingError("PERMISSION_DENIED", 403);
       return operation(client);
     });
   } catch (error) {
     const code = typeof error === "object" && error && "code" in error ? error.code : undefined;
-    if (code === "23P01") throw new SchedulingError("SCHEDULING_CONFLICT");
+    if (code === "23P01") {
+      const constraint =
+        typeof error === "object" && error && "constraint" in error ? error.constraint : undefined;
+      throw new SchedulingError(
+        constraint === "scheduling_beneficiary_no_overlap"
+          ? "SCHEDULING_BENEFICIARY_CONFLICT"
+          : "SCHEDULING_CONFLICT",
+      );
+    }
     if (code === "23505") throw new SchedulingError("SCHEDULING_DUPLICATE");
     if (code === "23503" || code === "23514")
       throw new SchedulingError("SCHEDULING_INVALID_REFERENCE", 422);

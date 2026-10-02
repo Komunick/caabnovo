@@ -1,14 +1,60 @@
-# Validação planejada — Agendamentos externos 2C (28/09/2026)
+# Validação — Agendamentos administrativos; canais externos adiados
 
-**Estado:** roteiro para implementação futura, não evidência de testes executados.
-Referências: [spec](spec.md), [contrato lógico v1](contracts/channels.md), [modelo](data-model.md).
-Os roteiros administrativos anteriores permanecem abaixo e não comprovam o novo recorte.
+## Validação de faltas — T090–T102
+
+Usar somente banco descartável e identidades sintéticas. `scheduling-absence.test.ts` cobre prazos,
+concorrência, cancelamento e trabalhador automático; `scheduling-absence-query.test.ts` cobre
+filtros, projeção e permissões. `scheduling-export.test.ts` inclui os três formatos e privacidade.
+`scheduling-absence.spec.ts` cobre registro/OK, erro obrigatório, upload privado, rascunho na
+navegação, decisão, preservação/cancelamento e revisor sem alteração geral. A validação do scanner
+no navegador é simulada somente no banco descartável após upload real, sem ativar serviço de uso.
+
+Resultado e capturas em [interface de faltas](evidence/absence-ui-2026-09-28.md). Para Windows,
+propagar `NODE_OPTIONS=--dns-result-order=ipv4first` aos processos de teste; não basta passá-lo
+apenas ao processo inicial do Vitest. Configuração de runtime permanece no runbook local.
+
+## Validação atual — painel e banco primeiro
+
+App/site adiado pelo usuário. T078–T086 executam o domínio pela sessão administrativa, com as mesmas
+regras de aceitação, prazos e limite de duas trocas. Integração externa/identidade/UI01 não são
+pré-requisitos deste roteiro; continuam pendentes para a futura abertura de canais.
+
+- `packages/contracts/src/scheduling-policy.test.ts` e `modules/scheduling/policy.test.ts`:
+  defaults, negações e fronteiras exatas de prazos/alertas, sem relógio do navegador.
+- `tests/integration/scheduling-workflow.test.ts`: migration 0032, publicar no cadastro sem salvar
+  antes, rascunho e rollback, pendência/conflito global, capacidade 3/20 concorrentes, 20 retries,
+  decisão/cancelamento concorrentes, edição após horário, transferência elegível, limite e ciclo de
+  recusa/retomada, recuperação isenta/bloqueio, fila/equipe/revogação, Relatórios/exportação.
+- Regressões `scheduling.test.ts`, `scheduling-export.test.ts` e contratos/rotas existentes.
+- `tests/e2e/scheduling-workflow.spec.ts`: publicação/capacidade, pedido manual, fila, aprovação,
+  troca/recusa/retomada/recuperação/cancelamento no painel, 390/1280/320px, temas e Axe; executar
+  junto das jornadas administrativas anteriores. Capturas não comprovam app/site ou entrega WAHA.
+
+Windows/Docker: `DOCKER_HOST=npipe:////./pipe/dockerDesktopLinuxEngine` e
+`TESTCONTAINERS_HOST_OVERRIDE=127.0.0.1`. Banco descartável 256 MB/1 CPU; preview 3107 conforme
+runbook autorizado. Nunca usar URLs/seeds do banco de uso. Evidência própria em
+[administrativo completo](evidence/admin-workflow-2026-09-28.md).
+
+## Registro da validação anterior — 28/09/2026
+
+Estado de autorização e gates no [checkpoint vigente](checkpoint.md): implementação administrativa
+local T025–T039 e testes com Docker/PostgreSQL descartável autorizados; manter sem publicação. 2C
+aguarda identidade/UI01/contrato físico. T025–T038/AC03 concluídos localmente: 81 unitários, 169
+contratos, 57 integrações, cinco jornadas Chromium, build/tipos/lint e revisão visual aprovados.
+T039 conserva CI pendente. Evidência em [validação](evidence/plan-2026-09-21-validation.md).
+Declarações anteriores de ausência de execução ou espera por permissão descrevem a etapa documental
+histórica.
+
+**Estado:** roteiro para implementação futura, não evidência de testes executados. Referências:
+[spec](spec.md), [contrato lógico v1](contracts/channels.md), [modelo](data-model.md). Os roteiros
+administrativos anteriores permanecem abaixo e não comprovam o novo recorte.
 
 ## Decisões aplicadas ao roteiro — 28/09
 
 Login geral do app/site, WAHA escolhido mas ainda não instalado, e-mail do sistema já definido,
 edição/transferência a dependente antes da aprovação e histórico antigo opcional, conforme spec.
-Pedido inicial pode escolher nova data futura mesmo após passar o horário anterior. Esses pontos prevalecem sobre comparações de 25/09.
+Pedido inicial pode escolher nova data futura mesmo após passar o horário anterior. Esses pontos
+prevalecem sobre comparações de 25/09.
 
 ## Complemento de contratos — revisão de 28/09
 
@@ -16,34 +62,40 @@ Em T046/T067/T069/T070, cobrir os caminhos de channels §1.3 e a política técn
 catálogo público sem vaga/dados pessoais, sessão geral para associado e negação nas operações
 administrativas; edição/transferência preserva as guardas de cada tipo de processo.
 
-Usar relógio e adaptadores sintéticos para demonstrar orçamento persistido de cinco envios
-seguros, espera/backoff, reentrega sem reinício, timeout incerto sem novo envio, reconciliação
-limitada e encaminhamento operacional. Cobrir queda após aceite e antes de persistir o resultado.
-Validar HMAC de corpo bruto inválido/ausente, algoritmo não permitido, webhook repetido/fora de ordem,
-sessão desconectada e preferência/vínculo revogados durante retry. Retenção da fila não apaga
+Usar relógio e adaptadores sintéticos para demonstrar orçamento persistido de cinco envios seguros,
+espera/backoff, reentrega sem reinício, timeout incerto sem novo envio, reconciliação limitada e
+encaminhamento operacional. Cobrir queda após aceite e antes de persistir o resultado. Validar HMAC
+de corpo bruto inválido/ausente, algoritmo não permitido, webhook repetido/fora de ordem, sessão
+desconectada e preferência/vínculo revogados durante retry. Retenção da fila não apaga
 histórico/intenção/evento de negócio. Esses são cenários futuros, não resultados já obtidos.
 
 A [checklist de requisitos](checklists/channels.md) e o
-[checkpoint para autorização](evidence/pre-implement-2026-09-28.md) distinguem revisão documental
-de testes, instalação e homologação. Scripts e formatação local continuam sem execução.
+[checkpoint para autorização](evidence/pre-implement-2026-09-28.md) distinguem revisão documental de
+testes, instalação e homologação. A revisão documental local de 28/09 está registrada na
+reconciliação; scripts do workflow completo e testes de produto não foram executados nesta revisão.
 
 ## Pré-requisitos de 2C
 
-- Suite de contratos/domínio e adaptadores sintéticos de identidade/entrega implementados antes
-  de executar os cenários. Os testes atuais podem cobrir apenas a agenda administrativa.
+Seguir a ordem única de [roadmap.md](roadmap.md): revisão/CAL06, pendências administrativas e
+integração 2C. Estado reconciliado e limites em
+[evidence/reconciliation-2026-09-28.md](evidence/reconciliation-2026-09-28.md). O executor local e
+Git foram recuperados; isso não comprova execução das suites abaixo.
+
+- Suite de contratos/domínio e adaptadores sintéticos de identidade/entrega implementados antes de
+  executar os cenários. Os testes atuais podem cobrir apenas a agenda administrativa.
 - Ambiente CI/descartável conforme [stack](../../docs/STACK.md) e
   [workflow](../../docs/DELIVERY-WORKFLOW.md); nunca dados reais ou banco do preview.
 - Node/pnpm e dependências do lockfile. Guia de design acessível antes de desenhar/revisar UI.
-- Fixtures: titular T1 com dependente D1, outro titular T2, dependente D2 sem vínculo com T1,
-  equipe do estabelecimento E1, colaborador autorizado de backup e conta somente consulta.
-  Ofertas: serviço para ambos e exclusivo de titular; modo profissional e capacidade 2;
-  confirmação imediata/manual; revisão publicada e rascunho divergentes. Relógio controlável.
+- Fixtures: titular T1 com dependente D1, outro titular T2, dependente D2 sem vínculo com T1, equipe
+  do estabelecimento E1, colaborador autorizado de backup e conta somente consulta. Ofertas: serviço
+  para ambos e exclusivo de titular; modo profissional e capacidade 2; confirmação imediata/manual;
+  revisão publicada e rascunho divergentes. Relógio controlável.
 - Identidades/contatos/provedores sintéticos devem estar identificados como tal; nenhum envio real.
 
 ## Execução futura
 
-Conferir seletores de testes após implementá-los; zero testes encontrados ou suite apenas antiga
-não atende ao recorte. Comandos existem no package.json consultado, mas não foram executados:
+Conferir seletores de testes após implementá-los; zero testes encontrados ou suite apenas antiga não
+atende ao recorte. Comandos existem no package.json consultado, mas não foram executados:
 
 ```powershell
 corepack pnpm test:unit scheduling
@@ -55,70 +107,70 @@ corepack pnpm test:a11y --project=chromium
 
 Execução de integração/browser e demais gates no ambiente autorizado/CI. Este guia não inicia
 serviço local nem instala dependências. Rodar format/lint/typecheck/build/security conforme workflow
-quando houver código; não criar repetição de CI por mudança exclusivamente documental.
-Para documentos, o comando próprio é format:docs:check; format:check geral não cobre specs/docs.
+quando houver código; não criar repetição de CI por mudança exclusivamente documental. Para
+documentos, o comando próprio é format:docs:check; format:check geral não cobre specs/docs.
 
 ## Matriz de jornadas e resultados esperados
 
-| Caso | Ações com dados sintéticos | Resultado verificável | Referência |
-| --- | --- | --- | --- |
-| V01 Identidade e público | Visitante consulta oferta/tenta vagas; T1 escolhe D1 antes do serviço; D1 tenta T1; titular por dependente tenta serviço exclusivo. | Só catálogo público; representações indevidas negadas; perfil do atendido determina elegibilidade; API direta também nega. | FR-01/02/04/25; SC-03/24 |
-| V02 Publicação | Salvar novo, publicar direto; salvar edição e publicar alterações; repetir/comando concorrente/inválido. | Mesmo ID; rascunho invisível; revisão pública única app/site; falha preserva publicada; descrições acessíveis abaixo dos botões. | FR-19; SC-18 |
-| V03 Vagas e capacidade | 20 envios diferentes por painel/app/site para vaga única e capacidade 2; mesmo beneficiário entre unidades; adjacência. | Uma ou duas ocupações conforme recurso; conflito global da mesma pessoa; adjacências aceitas; nenhuma dupla confirmação. | FR-03/14; SC-01/02/13 |
-| V04 Equipe e confirmação | Criar imediato/manual; equipe vinculada e backup disputam decisão; usuário só consulta e permissão revogada tentam agir. | Pendência ocupa; um único efeito de aprovação/recusa; autoria/apoio auditados; nenhuma permissão herdada do vínculo. | FR-03/21; SC-20 |
-| V05 Troca voluntária | Pedir, substituir, recusar, retomar e confirmar; terceiro ocupa origem liberada; falhar transação inicial; usar duas trocas. | Só destino retido; falha inicial preserva origem; recusa não a restaura; uma utilização por ciclo; terceiro ciclo negado. | FR-07/08/10/11/18; SC-05/07/09/10/17 |
-| V06 Limites temporais | Prazo de troca 24h/exatamente/menos; horizonte 90 dias/início no limite/acima; políticas alteradas; destino já iniciado. | Guardas independentes; redução não reescreve reservas existentes; aprovação nunca retroativa; sem expiração automática. | FR-08/15/16/17; SC-07/14/15/16 |
-| V07 Cancelamento | Cancelar confirmado e pedido novo em análise antes/exatamente no início; replay após início; cancelar sem horário após recusa/indisponibilidade; corrida com aprovação/recusa. | Pedido novo cancelado sai da fila/alertas, libera só ocupação própria, preserva ID/histórico/contador e avisa sem duplicação; acesso familiar e ambos os modos; decisão atrasada não reabre registro. | FR-09/18/20; SC-08/17/19 |
-| V08 Recuperação isenta | Equipe registra indisponibilidade com 0/1/2 trocas usadas; nova escolha, recusa, retomada/confirmação/cancelamento. | Mesmo ID, bloqueio real mantido, zero vagas sem escolha, uso voluntário inalterado; cliente não forja isenção; terceiros preservados. | FR-20; SC-19 |
-| V09 Profissional e jornada | Seleção habilitada/desabilitada, qualquer disponível, nenhum profissional cadastrado, profissional sem vaga e troca de beneficiário. | Sem campo desnecessário; profissional informado antes de concluir e sem troca silenciosa; fallback indevido negado. | FR-13/14/25; SC-12/13/24 |
-| V10 Fila e alertas | Origem amanhã vs mês seguinte; destinos invertidos; empate; idade 23h59min59s/24h; início em 24h00min01s/24h; atraso desligado. | Prioridade usa origem; urgência usa destino e independe da idade; atraso/urgência não liberam vaga, mudam ordem ou transferem responsabilidade. | FR-07/22; SC-06/21 |
-| V11 Avisos e histórico | Quatro eventos; três canais ativos; preferências distintas, vínculo encerrado entre evento/envio, sem contato, retry e resultado externo incerto. | Destinatários atuais, sem duplicação cega; reserva não é revertida por envio; sem confirmação falsa; histórico por beneficiário com autor separado. | FR-12/23/24; SC-11/22/23 |
-| V12 Acesso e UX | Sessão/vínculo revogados entre leitura/comando/replay; ações por teclado, 390 px, temas, falha/conflito e retorno ao fluxo. | Zero exposição privada/ação indevida; campos preservados; estado textual e foco coerentes; evidência pelo guia/WCAG. | FR-01/02/04/05; SC-03/04 |
+| Caso                       | Ações com dados sintéticos                                                                                                                                                     | Resultado verificável                                                                                                                                                                                 | Referência                           |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| V01 Identidade e público   | Visitante consulta oferta/tenta vagas; T1 escolhe D1 antes do serviço; D1 tenta T1; titular por dependente tenta serviço exclusivo.                                            | Só catálogo público; representações indevidas negadas; perfil do atendido determina elegibilidade; API direta também nega.                                                                            | FR-01/02/04/25; SC-03/24             |
+| V02 Publicação             | Salvar novo, publicar direto; salvar edição e publicar alterações; repetir/comando concorrente/inválido.                                                                       | Mesmo ID; rascunho invisível; revisão pública única app/site; falha preserva publicada; descrições acessíveis abaixo dos botões.                                                                      | FR-19; SC-18                         |
+| V03 Vagas e capacidade     | 20 envios diferentes por painel/app/site para vaga única e capacidade 2; mesmo beneficiário entre unidades; adjacência.                                                        | Uma ou duas ocupações conforme recurso; conflito global da mesma pessoa; adjacências aceitas; nenhuma dupla confirmação.                                                                              | FR-03/14; SC-01/02/13                |
+| V04 Equipe e confirmação   | Criar imediato/manual; equipe vinculada e backup disputam decisão; usuário só consulta e permissão revogada tentam agir.                                                       | Pendência ocupa; um único efeito de aprovação/recusa; autoria/apoio auditados; nenhuma permissão herdada do vínculo.                                                                                  | FR-03/21; SC-20                      |
+| V05 Troca voluntária       | Pedir, substituir, recusar, retomar e confirmar; terceiro ocupa origem liberada; falhar transação inicial; usar duas trocas.                                                   | Só destino retido; falha inicial preserva origem; recusa não a restaura; uma utilização por ciclo; terceiro ciclo negado.                                                                             | FR-07/08/10/11/18; SC-05/07/09/10/17 |
+| V06 Limites temporais      | Prazo de troca 24h/exatamente/menos; horizonte 90 dias/início no limite/acima; políticas alteradas; destino já iniciado.                                                       | Guardas independentes; redução não reescreve reservas existentes; aprovação nunca retroativa; sem expiração automática.                                                                               | FR-08/15/16/17; SC-07/14/15/16       |
+| V07 Cancelamento           | Cancelar confirmado e pedido novo em análise antes/exatamente no início; replay após início; cancelar sem horário após recusa/indisponibilidade; corrida com aprovação/recusa. | Pedido novo cancelado sai da fila/alertas, libera só ocupação própria, preserva ID/histórico/contador e avisa sem duplicação; acesso familiar e ambos os modos; decisão atrasada não reabre registro. | FR-09/18/20; SC-08/17/19             |
+| V08 Recuperação isenta     | Equipe registra indisponibilidade com 0/1/2 trocas usadas; nova escolha, recusa, retomada/confirmação/cancelamento.                                                            | Mesmo ID, bloqueio real mantido, zero vagas sem escolha, uso voluntário inalterado; cliente não forja isenção; terceiros preservados.                                                                 | FR-20; SC-19                         |
+| V09 Profissional e jornada | Seleção habilitada/desabilitada, qualquer disponível, nenhum profissional cadastrado, profissional sem vaga e troca de beneficiário.                                           | Sem campo desnecessário; profissional informado antes de concluir e sem troca silenciosa; fallback indevido negado.                                                                                   | FR-13/14/25; SC-12/13/24             |
+| V10 Fila e alertas         | Origem amanhã vs mês seguinte; destinos invertidos; empate; idade 23h59min59s/24h; início em 24h00min01s/24h; atraso desligado.                                                | Prioridade usa origem; urgência usa destino e independe da idade; atraso/urgência não liberam vaga, mudam ordem ou transferem responsabilidade.                                                       | FR-07/22; SC-06/21                   |
+| V11 Avisos e histórico     | Quatro eventos; três canais ativos; preferências distintas, vínculo encerrado entre evento/envio, sem contato, retry e resultado externo incerto.                              | Destinatários atuais, sem duplicação cega; reserva não é revertida por envio; sem confirmação falsa; histórico por beneficiário com autor separado.                                                   | FR-12/23/24; SC-11/22/23             |
+| V12 Acesso e UX            | Sessão/vínculo revogados entre leitura/comando/replay; ações por teclado, 390 px, temas, falha/conflito e retorno ao fluxo.                                                    | Zero exposição privada/ação indevida; campos preservados; estado textual e foco coerentes; evidência pelo guia/WCAG.                                                                                  | FR-01/02/04/05; SC-03/04             |
 
 “FR/SC” na matriz refere-se ao prefixo 2C da spec. Além das jornadas, conferir rollback/idempotência
-com isolamento real no PostgreSQL; mock de repositório não comprova ausência de corrida.
-Revisar limites configurados também após espera por lock e com fusos de navegador diferentes.
+com isolamento real no PostgreSQL; mock de repositório não comprova ausência de corrida. Revisar
+limites configurados também após espera por lock e com fusos de navegador diferentes.
 
 ## Complemento de continuidade — inspeção de 25/09/2026
 
-Acrescentar aos cenários V01/V12: negar token intermediário de login como sessão de agenda,
-token inválido/expirado, identidade do corpo diferente da autenticada, vínculo revogado
-durante lock/replay e mesma OAB sem vínculo reconciliado. Não criar conta para ID sem
-correspondência. Sessão validada por assinatura não comprova elegibilidade/vínculo atual.
+Acrescentar aos cenários V01/V12: negar token intermediário de login como sessão de agenda, token
+inválido/expirado, identidade do corpo diferente da autenticada, vínculo revogado durante
+lock/replay e mesma OAB sem vínculo reconciliado. Não criar conta para ID sem correspondência.
+Sessão validada por assinatura não comprova elegibilidade/vínculo atual.
 
-Em V11, testar timeout após possível aceitação pelo provedor, correlação e reconciliação
-antes de nova tentativa; registro de conversa ou boolean do transporte não prova entrega.
-Distinguir teste sintético de validação autorizada com remetente/provedor reais.
+Em V11, testar timeout após possível aceitação pelo provedor, correlação e reconciliação antes de
+nova tentativa; registro de conversa ou boolean do transporte não prova entrega. Distinguir teste
+sintético de validação autorizada com remetente/provedor reais.
 
 Somente se a importação opcional desses históricos entrar na entrega, cobrir reject ambíguo,
-finished/not_appear históricos, EDITED sem
-prova de troca, contador desconhecido, conflito/exception e data/hora legadas com fuso
-comprovado. Não inventar causa, zerar contador ou deslocar horário. Comparar totais e IDs,
-mantendo casos não reconciliados identificados. Fontes/limites em
+finished/not_appear históricos, EDITED sem prova de troca, contador desconhecido, conflito/exception
+e data/hora legadas com fuso comprovado. Não inventar causa, zerar contador ou deslocar horário.
+Comparar totais e IDs, mantendo casos não reconciliados identificados. Fontes/limites em
 [legacy-parity.md](legacy-parity.md); nenhum caso foi executado nesta inspeção.
 
 ## Provas futuras das soluções atuais — 25/09
 
-WhatsApp definido como WAHA e login geral compartilhado; integração ainda não homologada.
-Usar fixtures sintéticas e registrar versões/limites:
+WhatsApp definido como WAHA e login geral compartilhado; integração ainda não homologada. Usar
+fixtures sintéticas e registrar versões/limites:
 
-- Abrir a agenda com sessão geral válida sem segundo login; sessão expirada segue o acesso
-  geral. Revogação e identidade→pessoa revalidadas em comandos, sem permissão administrativa.
+- Abrir a agenda com sessão geral válida sem segundo login; sessão expirada segue o acesso geral.
+  Revogação e identidade→pessoa revalidadas em comandos, sem permissão administrativa.
 - Pedido inicial pendente: testar edição antes, exatamente no início e após o horário solicitado;
   permitir novo destino futuro válido, negar atual/passado/indisponível e conservar versão/ocupação
-  em falha. Manter idade da análise. Chamar edição genérica em troca voluntária continua sujeito
-  às 24h configuradas sobre a origem; retomada/recuperação seguem suas exceções.
+  em falha. Manter idade da análise. Chamar edição genérica em troca voluntária continua sujeito às
+  24h configuradas sobre a origem; retomada/recuperação seguem suas exceções.
 - Editar data/horário/profissional permitido de pedido pendente mantendo pessoa/serviço;
-  transferência é a ação adicional autorizada. Transferir pedido a dependente elegível: mesmo ID, serviço e pendência; não consumir
-  troca confirmada. Negar serviço exclusivo, dependente de outro titular, vínculo encerrado,
-  conflito de horário e versão obsoleta. Corrida com aprovação não confirma pessoa diferente.
-  Falha conserva pedido/ocupação; dependente não pode transferir para terceiro. Não permitir
-  transferência após confirmação. Projeção de histórico/avisos não expõe antigo beneficiário.
+  transferência é a ação adicional autorizada. Transferir pedido a dependente elegível: mesmo ID,
+  serviço e pendência; não consumir troca confirmada. Negar serviço exclusivo, dependente de outro
+  titular, vínculo encerrado, conflito de horário e versão obsoleta. Corrida com aprovação não
+  confirma pessoa diferente. Falha conserva pedido/ocupação; dependente não pode transferir para
+  terceiro. Não permitir transferência após confirmação. Projeção de histórico/avisos não expõe
+  antigo beneficiário.
 
 - WhatsApp com preferência ligada mas permissão/contato ausentes não é enviado; opt-out e
   encerramento de vínculo são reavaliados antes de retry. Preferências não viram prova de permissão.
-- Callback válido/inválido, duplicado, fora de ordem e sem correlação; timeout após possível
-  aceite não produz reenvio cego. Expiração da chave de idempotência externa não duplica intenção.
+- Callback válido/inválido, duplicado, fora de ordem e sem correlação; timeout após possível aceite
+  não produz reenvio cego. Expiração da chave de idempotência externa não duplica intenção.
 - WAHA: enviar por adaptador sintético, persistir ID/sessão, processar message.ack e desconexão;
   distinguir SERVER/DEVICE/READ e retorno incerto. Quatro textos versionados com link autenticado;
   indisponibilidade não reverte agendamento. Não exigir API de templates Meta no WAHA.
@@ -128,16 +180,16 @@ Usar fixtures sintéticas e registrar versões/limites:
 
 ## Homologação externa e transição
 
-| Dependência | Evidência necessária antes de ativar |
-| --- | --- |
-| Identidade geral | Sessão do app/site reutilizada sem segundo login, identidade→pessoa, revogação e separação do painel. |
-| Mensagens | WAHA versão/motor/sessão, e-mail, contatos/textos, tentativas finitas, recibos seguros e preferências/supressões; falha não altera reserva. |
-| Legado | Reservas futuras necessárias ao corte e IDs reconciliados; histórico antigo detalhado apenas se incluído na importação opcional. |
-| Contrato HTTP/UI | Caminhos versionados e schemas executáveis vinculados ao contrato lógico, compatibilidade com UI01/UI02 e guia visual. |
+| Dependência      | Evidência necessária antes de ativar                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identidade geral | Sessão do app/site reutilizada sem segundo login, identidade→pessoa, revogação e separação do painel.                                       |
+| Mensagens        | WAHA versão/motor/sessão, e-mail, contatos/textos, tentativas finitas, recibos seguros e preferências/supressões; falha não altera reserva. |
+| Legado           | Reservas futuras necessárias ao corte e IDs reconciliados; histórico antigo detalhado apenas se incluído na importação opcional.            |
+| Contrato HTTP/UI | Caminhos versionados e schemas executáveis vinculados ao contrato lógico, compatibilidade com UI01/UI02 e guia visual.                      |
 
-Resultado desconhecido sobre reservas futuras mantém corte pendente. Não usar massa sintética
-como prova de inventário ou entrega real. Guardar commit, ambiente, casos, resultados e limitações
-em evidence/ da entrega; nenhuma tarefa é concluída apenas por este roteiro.
+Resultado desconhecido sobre reservas futuras mantém corte pendente. Não usar massa sintética como
+prova de inventário ou entrega real. Guardar commit, ambiente, casos, resultados e limitações em
+evidence/ da entrega; nenhuma tarefa é concluída apenas por este roteiro.
 
 ---
 
@@ -145,10 +197,10 @@ em evidence/ da entrega; nenhuma tarefa é concluída apenas por este roteiro.
 
 ## Estado e pré-requisitos
 
-Pré-requisitos de execução futura: Node 24/pnpm do package.json, dependências fixadas,
-PostgreSQL 18 descartável/Testcontainers e Chromium no CI. Nunca usar banco do preview
-ou contas reais como seed. Localhost continua desligado; os comandos abaixo são roteiro,
-não foram executados neste planejamento. Variáveis/segredos seguem `.github/workflows/ci.yml`.
+Pré-requisitos de execução futura: Node 24/pnpm do package.json, dependências fixadas, PostgreSQL 18
+descartável/Testcontainers e Chromium no CI. Nunca usar banco do preview ou contas reais como seed.
+Localhost continua desligado; os comandos abaixo são roteiro, não foram executados neste
+planejamento. Variáveis/segredos seguem `.github/workflows/ci.yml`.
 
 ```powershell
 corepack pnpm install --frozen-lockfile
@@ -159,34 +211,51 @@ corepack pnpm test:e2e scheduling.spec.ts --project=chromium
 corepack pnpm test:a11y --project=chromium
 ```
 
-O job browser existente prepara ambiente/contas sintéticos; não copiar seus seeds
-para o preview principal. Testes de migração/conflito usam banco descartável. Antes
-de entrega de código, completar format/lint/typecheck/build/security e evidências
-visuais pelo workflow de CI, sem iniciar builds/serviços pesados no computador.
+O job browser existente prepara ambiente/contas sintéticos; não copiar seus seeds para o preview
+principal. Testes de migração/conflito usam banco descartável. Antes de entrega de código, completar
+format/lint/typecheck/build/security e evidências visuais pelo workflow de CI, sem iniciar
+builds/serviços pesados no computador.
 
-## Jornada independente
+## Jornadas independentes por história
 
-Duas reservas concorrentes da mesma pessoa em profissionais/unidades distintos: uma aceita; titular/dependentes distintos podem coincidir. Bloqueio mantém reserva/vaga e mostra aviso. Sem read some/nega; só read não altera. Exportação não herda teto visual.
+US1: duas reservas concorrentes da mesma pessoa em profissionais/unidades distintos resultam em uma
+vencedora; familiares distintos podem coincidir. T029 antecede migration 0031 (reconferir número
+livre) e T030 preserva 0020/0028. Em T027, sem grants/read insuficiente não disputa 5010/1; GET não
+o adquire; conferir grants novamente após espera, inclusive revogação. Gestor consulta
+reports.bookings sem scheduling:write. Não repetir T028 ou migrations integradas.
 
-Para cada dataset do contrato, abrir Exportar [módulo], variar filtros, selecionar/reordenar colunas por teclado e baixar Excel/CSV/PDF. Ler arquivos com parsers independentes, confrontar IDs/contagem/conteúdo/ordem com a massa conhecida. Vazio mantém cabeçalho; mais de uma página não corta resultados.
+US2: bloqueio sinaliza lista/calendário/detalhe mantendo reserva/vaga; desbloqueio remove somente
+eligibilityWarning. Exclusão permanece em memberDeleted/memberDeletion*, com Manter reserva e
+Cancelar preservados. Cobrir a coexistência dos dois sinais e a regressão de LC01.
 
-Matriz negativa: anônimo, sessão revogada, sem acesso, leitura sem geral, geral sem
-leitura, leitura+geral sem escrita, campo proibido, operação de outro usuário e
-revogação entre lotes. Preservar filtros após falha; interrupção não retorna sucesso.
-Testar teclado,390 px, desktop e temas. Módulos negados têm zero entradas no menu,
-busca e Início; controles pessoais da conta continuam disponíveis.
+US4: exportação tem aceite próprio abaixo; não depende da corrida de reservas. Testes dedicados
+apps/web/tests/integration/scheduling-export.test.ts e apps/web/tests/e2e/scheduling-export.spec.ts;
+o comando E2E acima cobre a agenda, executar também a suite própria após sua implementação.
+Preservar /users/exportar ao acrescentar adapters ao registry, assim como a ação Nova reserva.
+
+Para cada dataset do contrato, abrir Exportar [módulo], variar filtros, selecionar/reordenar colunas
+por teclado e baixar Excel/CSV/PDF. Ler arquivos com parsers independentes, confrontar
+IDs/contagem/conteúdo/ordem com a massa conhecida. Vazio mantém cabeçalho; mais de uma página não
+corta resultados. Testar período maior que 42 dias, sem herdar o teto de 1.000 itens do calendário.
+Perfil C1/100 é amostra, não limite funcional; SQL com cursor evita carregar toda a exportação em
+memória. Consulta+exports:generate sem write é caso positivo, incluindo Gestor.
+
+Matriz negativa: anônimo, sessão revogada, sem acesso, leitura sem geral, geral sem leitura, campo
+proibido, operação de outro usuário e revogação entre lotes. Preservar filtros após falha;
+interrupção não retorna sucesso. Testar teclado,390 px, desktop e temas. Módulos negados têm zero
+entradas no menu, busca e Início; controles pessoais da conta continuam disponíveis.
 
 ## Evidência esperada
 
-Registrar comandos, versões/commit, fixtures sintéticas, resultados, arquivos
-validados e capturas em `specs/008-scheduling-management/evidence/plan-2026-09-21-validation.md`
-(arquivo futuro). Nunca marcar tarefas como concluídas por este roteiro.
-Requisitos e representações: [modelo](data-model.md), [contrato](contracts/exports.md).
+Registrar comandos, versões/commit, fixtures sintéticas, resultados, arquivos validados e capturas
+em `specs/008-scheduling-management/evidence/plan-2026-09-21-validation.md` (arquivo futuro). Nunca
+marcar tarefas como concluídas por este roteiro. Requisitos e representações:
+[modelo](data-model.md), [contrato](contracts/exports.md).
 
 ## Roteiro anterior — histórico
 
-Não executar serviços/seeds indicados abaixo no preview principal. O roteiro atual
-usa CI/banco descartável; passos substituídos não autorizam reativação local.
+Não executar serviços/seeds indicados abaixo no preview principal. O roteiro atual usa CI/banco
+descartável; passos substituídos não autorizam reativação local.
 
 <details>
 <summary>Roteiro anterior preservado</summary>
@@ -195,25 +264,24 @@ usa CI/banco descartável; passos substituídos não autorizam reativação loca
 
 ## Incremento de calendário — 18/09/2026
 
-Após configurar/criar pela jornada abaixo, alternar Mês/Semana/Dia/Lista; conferir
-filtros, URL, recarga, anterior/próximo/hoje e abrir reserva por teclado. Usar browser
-em Pacific/Auckland: a reserva de 08h da Bahia deve continuar às 08h. Remarcar e
-cancelar pelos detalhes, retornar ao calendário e verificar situação/horário.
-Testar 390px e desktop nos temas, rolando somente a grade quando necessário.
-Erros/mais de 1.000 reservas não podem resultar em calendário vazio ou parcial.
-Rodada final: testes scheduling de unidade/integração, scheduling.spec.ts completo,
-gates gerais do projeto e revisão das capturas do CI. Nenhum serviço local autorizado.
+Após configurar/criar pela jornada abaixo, alternar Mês/Semana/Dia/Lista; conferir filtros, URL,
+recarga, anterior/próximo/hoje e abrir reserva por teclado. Usar browser em Pacific/Auckland: a
+reserva de 08h da Bahia deve continuar às 08h. Remarcar e cancelar pelos detalhes, retornar ao
+calendário e verificar situação/horário. Testar 390px e desktop nos temas, rolando somente a grade
+quando necessário. Erros/mais de 1.000 reservas não podem resultar em calendário vazio ou parcial.
+Rodada final: testes scheduling de unidade/integração, scheduling.spec.ts completo, gates gerais do
+projeto e revisão das capturas do CI. Nenhum serviço local autorizado.
 
-**Estado atual:** código implementado e gates aprovados; [resultados e capturas](evidence/release-review.md).
-Não executar contra dados reais nem reativar localhost/PostgreSQL por este documento.
+**Estado atual:** código implementado e gates aprovados;
+[resultados e capturas](evidence/release-review.md). Não executar contra dados reais nem reativar
+localhost/PostgreSQL por este documento.
 
 ## Preparação
 
-Usar branch vigente sem PR, ambiente descartável/CI,
-banco vazio separado do preview, aplicar migrations pelo procedimento do projeto.
-Dados sintéticos: duas unidades, dois serviços numa unidade, dois procedimentos de
-30/60 minutos, dois profissionais, duas contas administrativas e associados/dependentes
-sintéticos. Q8 exige duas contas administrativas: uma com acesso concedido a
+Usar branch vigente sem PR, ambiente descartável/CI, banco vazio separado do preview, aplicar
+migrations pelo procedimento do projeto. Dados sintéticos: duas unidades, dois serviços numa
+unidade, dois procedimentos de 30/60 minutos, dois profissionais, duas contas administrativas e
+associados/dependentes sintéticos. Q8 exige duas contas administrativas: uma com acesso concedido a
 Agendamentos e outra sem essa concessão, para os cenários positivos/negativos.
 
 ## Comandos
@@ -230,41 +298,40 @@ Da raiz da worktree, com dependências e variáveis do CI configuradas:
 - corepack pnpm build
 - corepack pnpm security:scan
 
-Esses filtros encontram os testes da feature; zero testes não é
-aprovação. Integração/build/E2E no CI enquanto vigorar a suspensão dos serviços locais.
+Esses filtros encontram os testes da feature; zero testes não é aprovação. Integração/build/E2E no
+CI enquanto vigorar a suspensão dos serviços locais.
 
 ## Provas de aceite
 
 1. US1: configurar catálogo e horários pela UI; criar e reencontrar após recarga.
 2. Fora de expediente/almoço: horário não oferecido e POST forjado recusado.
-3. Disputa: 20 pedidos diferentes na mesma vaga → um sucesso; sobreposição parcial
-   entre procedimentos diferentes também recusada; horários adjacentes aceitos.
+3. Disputa: 20 pedidos diferentes na mesma vaga → um sucesso; sobreposição parcial entre
+   procedimentos diferentes também recusada; horários adjacentes aceitos.
 4. Retry: 20 envios com mesma chave/payload → mesmo resultado, uma reserva/evento.
 5. US2: remarcar; verificar vaga antiga livre. Conflito mantém versão/datas anteriores.
 6. Cancelar/repetir cancelamento; preservar histórico e liberar vaga.
 7. Editar em duas telas; versão desatualizada não sobrescreve.
-8. Após adequação Q8/AC01–AC03, conta administrativa sem concessão de Agendamentos
-   não vê o módulo na barra lateral/busca/Início nem acessa URL/API. Conta com acesso
-   realiza jornadas autorizadas; sessão ou concessão revogada falha. Código atual
-   ainda precisa ser adaptado; evidências anteriores não validam este novo controle.
-   Busca de beneficiário não expõe cadastro completo nem exige members:read.
-9. Bloqueio de associado/titular e alteração de vínculo concorrem com reserva; validar
-   ordem transacional e inexistência de confirmação baseada em leitura obsoleta.
+8. Após adequação Q8/AC01–AC03, conta administrativa sem concessão de Agendamentos não vê o módulo
+   na barra lateral/busca/Início nem acessa URL/API. Conta com acesso realiza jornadas autorizadas;
+   sessão ou concessão revogada falha. Código atual ainda precisa ser adaptado; evidências
+   anteriores não validam este novo controle. Busca de beneficiário não expõe cadastro completo nem
+   exige members:read.
+9. Bloqueio de associado/titular e alteração de vínculo concorrem com reserva; validar ordem
+   transacional e inexistência de confirmação baseada em leitura obsoleta.
 10. Mudança de horário com reserva incompatível é recusada sem cancelar a reserva.
-11. Desktop/celular 390 px, claro/escuro e teclado: listar/configurar/criar/remarcar/
-    cancelar sem overflow, foco perdido ou ações dependentes de cor/arraste.
+11. Desktop/celular 390 px, claro/escuro e teclado: listar/configurar/criar/remarcar/ cancelar sem
+    overflow, foco perdido ou ações dependentes de cor/arraste.
 12. Confirmar nenhuma chamada ao legado/Cal.com/app/site e nenhuma migração de dados reais.
 
-Guardar relatório e capturas sintéticas em evidence/. Não declarar equivalência com
-legado nem integração dos canais com base nestas provas da primeira entrega.
+Guardar relatório e capturas sintéticas em evidence/. Não declarar equivalência com legado nem
+integração dos canais com base nestas provas da primeira entrega.
 
 ## Matriz de permissões — Q9 de 21/09/2026
 
-Após AC01/AC02: sem consulta, módulo oculto e URL/API negados; somente consulta
-permite leituras e impede mutações; consulta+alteração permite oferta/horários e
-criação/remarcação/cancelamento de reservas. Concessão de alteração sem consulta é
-recusada. Testar UI e API, com revogação entre leitura e comando. Exportar exige
-consulta + permissão geral, sem exigir alteração. Código ainda tem lacuna; nenhum
-desses testes novos executado no clarify.
+Após AC01/AC02: sem consulta, módulo oculto e URL/API negados; somente consulta permite leituras e
+impede mutações; consulta+alteração permite oferta/horários e criação/remarcação/cancelamento de
+reservas. Concessão de alteração sem consulta é recusada. Testar UI e API, com revogação entre
+leitura e comando. Exportar exige consulta + permissão geral, sem exigir alteração. Código ainda tem
+lacuna; nenhum desses testes novos executado no clarify.
 
 </details>

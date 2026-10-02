@@ -1,15 +1,19 @@
 import "server-only";
 import type { Pool, PoolClient } from "pg";
 import { schedulingAvailabilitySchema } from "@caab/contracts";
+import { findSchedulingBeneficiary } from "@caab/db/repositories/members";
 import type { RequestActor } from "../shared/request-context";
 import { schedulingAccess, SchedulingError } from "./access";
 import { buildSlots, schedulingTimezone } from "./availability";
+import { getWorkflowAvailability } from "./workflow-availability";
+import { procedureActiveSql, serviceActiveSql } from "./offer-sql";
 
 export async function readSchedulingSlots(
   client: PoolClient,
   assignmentId: string,
   date: string,
   excludeBookingId?: string,
+  beneficiaryId?: string,
 ) {
   const assignment = (
     await client.query<{
@@ -18,7 +22,7 @@ export async function readSchedulingSlots(
       duration_minutes: number;
       active: boolean;
     }>(
-      `SELECT a.professional_id,a.unit_id,p.duration_minutes,(a.active AND u.active AND p.active AND s.active AND f.active) AS active
+      `SELECT a.professional_id,a.unit_id,coalesce((SELECT (item->>'durationMinutes')::int FROM jsonb_array_elements(s.published_revision->'procedures') item WHERE item->>'id'=p.id::text),p.duration_minutes) AS duration_minutes,(a.active AND u.active AND ${procedureActiveSql()} AND ${serviceActiveSql()} AND f.active) AS active
      FROM scheduling_assignment a JOIN scheduling_procedure p ON p.id=a.procedure_id JOIN scheduling_service s ON s.id=p.service_id
      JOIN scheduling_unit u ON u.id=a.unit_id JOIN scheduling_professional f ON f.id=a.professional_id WHERE a.id=$1`,
       [assignmentId],
@@ -46,10 +50,10 @@ export async function readSchedulingSlots(
     };
   const busy = (
     await client.query<{ starts_at: Date; ends_at: Date }>(
-      `SELECT starts_at,ends_at FROM scheduling_booking WHERE professional_id=$1 AND status='scheduled'
+      `SELECT starts_at,ends_at FROM scheduling_booking WHERE (professional_id=$1 OR member_id=$4::uuid) AND status IN ('scheduled','pending_approval')
     AND ($3::uuid IS NULL OR id<>$3) AND starts_at < (($2::date + 1)::timestamp AT TIME ZONE 'America/Bahia')
     AND ends_at > ($2::date::timestamp AT TIME ZONE 'America/Bahia')`,
-      [assignment.professional_id, date, excludeBookingId ?? null],
+      [assignment.professional_id, date, excludeBookingId ?? null, beneficiaryId ?? null],
     )
   ).rows;
   const items = buildSlots(
@@ -73,12 +77,37 @@ export async function readSchedulingSlots(
 export async function getSchedulingAvailability(pool: Pool, actor: RequestActor, raw: unknown) {
   const query = schedulingAvailabilitySchema.parse(raw);
   return schedulingAccess(pool, actor, false, async (client) => {
-    const result = await readSchedulingSlots(
-      client,
-      query.assignmentId,
-      query.date,
-      query.excludeBookingId,
-    );
+    let beneficiaryId = query.beneficiaryId;
+    if (query.excludeBookingId) {
+      const excluded = (
+        await client.query<{ member_id: string; status: string; process_kind: string | null }>(
+          "SELECT member_id,status,process_kind FROM scheduling_booking WHERE id=$1",
+          [query.excludeBookingId],
+        )
+      ).rows[0];
+      if (!excluded) throw new SchedulingError("SCHEDULING_INVALID_REFERENCE", 422);
+      if (beneficiaryId && excluded.member_id !== beneficiaryId) {
+        const allowed =
+          excluded.status === "pending_approval" &&
+          !excluded.process_kind &&
+          (
+            await client.query(
+              "SELECT 1 FROM member_relationship WHERE holder_id=$1 AND dependent_id=$2 AND ended_at IS NULL AND starts_on<=(clock_timestamp() AT TIME ZONE 'America/Bahia')::date",
+              [excluded.member_id, beneficiaryId],
+            )
+          ).rowCount;
+        if (!allowed) throw new SchedulingError("SCHEDULING_INVALID_REFERENCE", 422);
+      }
+      beneficiaryId ??= excluded.member_id;
+    }
+    if (beneficiaryId) {
+      const member = await findSchedulingBeneficiary(client, beneficiaryId);
+      if (!member) throw new SchedulingError("SCHEDULING_BENEFICIARY_NOT_FOUND", 404);
+      if (member.deleted) throw new SchedulingError("SCHEDULING_BENEFICIARY_DELETED", 422);
+      if (member.archived || member.blocked)
+        throw new SchedulingError("SCHEDULING_BENEFICIARY_BLOCKED", 422);
+    }
+    const result = await getWorkflowAvailability(client, { ...query, beneficiaryId });
     return {
       items: result.items,
       timezone: result.timezone,
