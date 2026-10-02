@@ -83,6 +83,7 @@ for (const roleCode of ["manager", "collaborator"] as const) {
         await view.screenshot({
           path: testInfo.outputPath(`messages-access-${roleCode}-${state}-${width}-${theme}.png`),
           fullPage: true,
+          animations: "disabled",
         });
       }
       const creation = view.getByRole("link", { name: "Novo agendamento", exact: true });

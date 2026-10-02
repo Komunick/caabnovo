@@ -53,5 +53,30 @@ Validação local antes do push: `pnpm test:unit --maxWorkers 1` aprovou417 test
 `pnpm format:check` aprovados. `pnpm security:scan` passou sem high/critical (um alerta low e dois
 moderate). A listagem Chromium encontrou os dois novos testes de navegador.
 
-PostgreSQL, E2E, a11y e build serão validados pelo workflow existente após push. Nenhum serviço
-local foi iniciado. A revisão AC anterior não constitui evidência da correção.
+## Primeiro CI e revisão das capturas
+
+Commit funcional `cfb1f946cd34ca33e8a1649a776900ffd202493f`, publicado com o título
+`fix(acessos): oculta criação em Mensagens sem permissão de escrita`.
+[CI37032166038](https://github.com/Komunick/caabnovo/actions/runs/37032166038): security, quality e
+browser aprovados. Foram417 unitários,169 contratos,253 integrações aprovadas e uma integração
+preexistente ignorada em Relatórios; build, tipos, lint, formato e segurança aprovados. Navegador:
+três testes prévios de Relatórios,98 E2E e seis testes de acessibilidade aprovados. As duas jornadas
+novas de Mensagens passaram na primeira tentativa, incluindo concessão/revogação, POST200/403,
+consulta, teclado e Axe.
+
+Artefato `messages-synthetic-screenshots`, ID11238232993; ZIP SHA-256
+`18a33f7a2304aaf368487aaa5668574db79f72b89d1b237da9ed4509874a63a4`, conferido após download. Cópia
+local em `.cache/ci-access-37032166038` da principal. Seis capturas de Gestor/Colaborador
+inspecionadas por CODEX: leitura1280/claro e revogação320/claro mostram consulta preservada e
+criação ausente; as duas capturas de escrita390/escuro pegaram a transição do menu lateral após
+redimensionamento. A regra funcional passou, mas essas duas imagens não encerram a revisão visual.
+
+O incremento de teste usa `animations: "disabled"` na captura para finalizar as transições finitas
+antes da imagem, sem alterar CSS ou a UI de produção. Reexecução pelo CI e inspeção dessas novas
+imagens permanecem necessárias; AC-T002 não é marcada concluída por antecipação. O texto de estado
+vazio preexistente ainda sugere criar campanha mesmo sem escrita; registrado como observação de
+conteúdo fora da correção do link, sem ampliar o protótipo.
+
+PR documental42 permanece aberto na conferência de02/10; nenhum PR funcional aberto antes de sua
+integração humana e da conciliação. Nenhum serviço local foi iniciado. A revisão AC anterior não
+constitui evidência da correção. QA humano e aceite global continuam pendentes.
