@@ -261,6 +261,11 @@ test("manager grants a write they do not possess, resets a colleague password, a
     colleague = await make("Colaborador sem gestão");
   const sql = db();
   await sql.connect();
+  // New accounts start with the base role, and only one role may be in force at a time.
+  await sql.query(
+    "UPDATE user_role SET revoked_at=now(),revocation_origin='system',revocation_reason='Synthetic role replacement' WHERE user_id=$1 AND revoked_at IS NULL",
+    [manager.id],
+  );
   await sql.query(
     "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'Synthetic manager role' FROM role WHERE code='manager'",
     [manager.id],

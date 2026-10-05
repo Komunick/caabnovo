@@ -66,15 +66,15 @@ describe.sequential("default collaborator role migration", () => {
   it("gives every account without a role in force the base role, without touching access or history", async () => {
     const users = (
       await db.query(
-        `INSERT INTO "user"(name,email,status,deletion_effective_at) VALUES
-          ('No role','none@example.test','active',NULL),
-          ('Explicit access','access@example.test','active',NULL),
-          ('Expired administrator','expired@example.test','active',NULL),
-          ('Revoked only','revoked@example.test','active',NULL),
-          ('Current administrator','admin@example.test','active',NULL),
-          ('Future manager','future@example.test','active',NULL),
-          ('Deleted','deleted@example.test','disabled',now()-interval '1 hour'),
-          ('Disabled','disabled@example.test','disabled',NULL)
+        `INSERT INTO "user"(name,email,status,deactivated_at,deletion_effective_at) VALUES
+          ('No role','none@example.test','active',NULLNULL,NULL)),
+          ('Explicit access','access@example.test','active',NULLNULL,NULL)),
+          ('Expired administrator','expired@example.test','active',NULLNULL,NULL)),
+          ('Revoked only','revoked@example.test','active',NULLNULL,NULL)),
+          ('Current administrator','admin@example.test','active',NULLNULL,NULL)),
+          ('Future manager','future@example.test','active',NULLNULL,NULL)),
+          ('Deleted','deleted@example.test','disabled',now()-interval '2 hours',now()-interval '1 hour'),
+          ('Disabled','disabled@example.test','disabled',now(),NULL)
          RETURNING id,email`,
       )
     ).rows as { id: string; email: string }[];

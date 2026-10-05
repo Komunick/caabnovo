@@ -694,6 +694,14 @@ describe.sequential("base role for new accounts", () => {
   const creatorPermissions = new Set(["users:read", "users:create"]);
   async function seedCreatorWithoutRoleGrant() {
     const actorId = await seedUser("creator@example.test");
+    // The access view only counts permissions that exist in the catalogue, which this suite truncates.
+    for (const permission of creatorPermissions) {
+      const [resource, action] = permission.split(":");
+      await admin.query(
+        "INSERT INTO permission(resource,action,description) VALUES($1,$2,$3) ON CONFLICT(resource,action) DO NOTHING",
+        [resource, action, permission],
+      );
+    }
     await admin.query("INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,$2,$1)", [
       actorId,
       [...creatorPermissions],
