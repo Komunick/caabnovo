@@ -11,13 +11,13 @@
       e adicionar índices das consultas reais.
 - [x] T115 Isolar falhas por ocorrência na finalização com savepoints, consultar vencidas antes do
       lock e provar que um erro não impede as demais.
-- [ ] T116 Corrigir isolamento de rascunhos de exportação por filtros de origem; registrar política
+- [x] T116 Corrigir isolamento de rascunhos de exportação por filtros de origem; registrar política
       legada e limites INFO, executar gates da nova ponta e atualizar corpo do PR43 sem merge.
 
-T112–T115 validadas pelo quality de eeb5e42, com 357 integrações aprovadas, incluindo 31 testes de
-faltas. T116 e T111 aguardam navegador final: corrigida a fixture que ainda submetia um documento
-member como nova prova; o servidor o recusou corretamente. Evidência em
-[revisão de 05/10](evidence/review-fixes-2026-10-05.md). A delimitação abaixo é anterior a esta
+T111 e T112–T116 validadas pelos runs 37337887070/37337878171 de e923e9d: quality/browser/security
+aprovados, incluindo 357 integrações, 31 testes de faltas, 101 E2Es e seis de acessibilidade.
+Fixture corrigida para nova prova restrita, mantendo as asserções do revisor sem escrita. Evidência
+em [revisão de 05/10](evidence/review-fixes-2026-10-05.md). A delimitação abaixo é anterior a esta
 correção e permanece como histórico; T110 mantém seus gates humanos/operacionais.
 
 ## Fila de fechamento delimitada — 05/10/2026-CODEX-mafaltti
@@ -27,10 +27,11 @@ fila de execução desta entrega é somente T111 → T110; os critérios de homo
 administrativos continuam obrigatórios. Não marcar tarefas técnicas ou QA como concluídos por esta
 organização. O [plano de 05/10](plan.md) contém o escopo e a sequência completa.
 
-- **T111 continua aberta:** corrigir a asserção em scheduling-absence.test.ts:880, concluir a matriz
-  S01/S02 e os gates da nova versão, incluindo evidências do upload. Em 4e427ac, browser/security
-  passaram, quality falhou com 351 integrações aprovadas, uma falha e uma opcional ignorada. A
-  guarda retorna PermissionDeniedError/status 403, sem o campo code esperado pelo teste.
+- **T111 estava aberta nesta delimitação; concluída na revisão acima:** corrigir a asserção em
+  scheduling-absence.test.ts:880, concluir a matriz S01/S02 e os gates da nova versão, incluindo
+  evidências do upload. Em 4e427ac, browser/security passaram, quality falhou com 351 integrações
+  aprovadas, uma falha e uma opcional ignorada. A guarda retorna PermissionDeniedError/status 403,
+  sem o campo code esperado pelo teste.
 - **T110 continua aberta:** consolidar revisão externa do delta final e seus achados, composição
   após PR42 e condições de implantação/retorno; registrar versão e resultado. Concluir homologação
   humana em DEV como aceite dos tickets após integração autorizada, sem presumir aceite pelo CI.
@@ -53,11 +54,14 @@ mafaltti/Danilo-Komunick. A coordenação encerra sua execução ao registrar es
       publicado. [Revisão própria e pendências](evidence/closeout-review-2026-10-02.md). T107/T039
       não reabertos.
 
-- [ ] T111 Corrigir S01/S02 do parecer de segurança (CAAB-28/CAAB-41): isolar finalidade de
+- [x] T111 Corrigir S01/S02 do parecer de segurança (CAAB-28/CAAB-41): isolar finalidade de
       comprovantes desde upload e proteger os caminhos genéricos/legados; revalidar autoridade e
       prazo após espera pelo arquivo. Correções locais e cinco regressões PostgreSQL reais
       preparadas, com jornada de upload atualizada; executar no CI próprio e registrar resultados.
       Não reescrever migrations aplicadas nem conceder cargos/permissões implicitamente.
+
+Fechamento técnico de T111 em 05/10/2026 por CODEX-mafaltti: e923e9d validado conforme evidência da
+revisão, preservando a autoria da tarefa original e os gates humanos/operacionais de T110.
 
 ## Estado técnico atual — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 

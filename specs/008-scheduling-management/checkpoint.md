@@ -4,13 +4,16 @@
 
 Revisão do usuário recebida com um HIGH, dois MEDIUM, nove LOW e observações INFO. Decisões
 confirmadas: contador desconhecido zero; preservar outras reservas confirmadas no modo capacidade.
-Correções publicadas em eeb5e42: quality/security aprovados nos runs 37335528991/37335523374; 357
-integrações, incluindo isolamento completo de faltas (31/31), aprovadas. Browser: 100 passaram, uma
-fixture de revisão ainda usava documento comum como nova prova e foi corretamente recusada. Correção
-dessa fixture em andamento; gates finais e revisão das capturas pendentes. Evidências antigas não
-validam o novo delta. Quatro documentos locais anteriores preservados em backup verificado por bytes
-em .cache/local-backups/scheduling-review-20261005-123015 da principal. Próximo passo: CI da fixture
-corrigida e fechamento de T116/T111, com atualização do PR43. T110 depende de condições externas.
+Correções e fixture publicadas em e923e9d: quality/browser/security aprovados nos runs
+37337887070/37337878171. São 577 unitários, 169 contratos, 357 integrações (um volume opcional
+ignorado), 101 E2Es, três testes dedicados de Relatórios, seis de acessibilidade e build aprovados.
+Isolamento completo de faltas (31/31) e consultas (13/13) executados. T111 e T112–T116 concluídas
+tecnicamente, conforme [evidência](evidence/review-fixes-2026-10-05.md). A primeira rodada eeb5e42
+falhou somente na fixture que ainda usava documento comum como nova prova; não afrouxamos produção.
+Quatro documentos locais anteriores preservados em backup verificado por bytes em
+.cache/local-backups/scheduling-review-20261005-123015 da principal. Publicação documental final e
+seus checks ficam identificados no PR43. T110 depende de revisão humana sensível, composição após
+PR42, preparo do rollout e homologação humana; sem merge ou alteração no ambiente de uso.
 
 ## Estado de fechamento delimitado — 05/10/2026-CODEX-mafaltti
 
