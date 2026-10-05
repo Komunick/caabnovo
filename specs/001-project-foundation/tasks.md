@@ -1039,3 +1039,23 @@ aplicação/E2E igual entre esses commits; a diferença corrige somente a fixtur
 teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR explicitamente;
 PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
 [evidências](evidence/single-role-2026-09-22-validation.md).
+
+## Cargo base de Colaboradores — 05/10/2026
+
+Decisão do usuário: contas existentes sem cargo migram para Colaborador preservando acessos; contas
+novas sem cargo informado nascem Colaborador, sem opção "Sem cargo". Contrato em
+[roles.md](contracts/roles.md#cargo-base--decisão-de-05102026). Corresponde ao P01 em aberto no
+retrato de acessos (AC-T005 no PR #42, ainda não integrado; esta entrega não o marca como
+concluído nem o renumera).
+
+- [x] CB01 Registrar a decisão no contrato de cargos.
+- [x] CB02 Migration 0035: origem de concessão do sistema, cargo base para contas sem cargo em
+      vigor, recusa se o cargo base tiver permissões, auditoria de sistema. Teste de migration
+      escrito; execução em PostgreSQL somente no CI.
+- [x] CB03 `createUser`: aplicar o cargo base sem `roles:grant`, recusar base ausente/com
+      permissões, auditar. Testes de integração escritos; execução somente no CI.
+- [x] CB04 Formulário: pré-selecionar Colaborador e remover "Sem cargo". Cinco testes de
+      componente aprovados localmente.
+- [ ] CB05 Validar no CI (integração e E2E) a versão publicada e registrar a evidência final.
+- [ ] CB06 Revisão humana antes de aplicar a migration em qualquer banco de uso: conferir a lista de
+      contas sem cargo e confirmar que Colaborador não tem permissões nesse banco.

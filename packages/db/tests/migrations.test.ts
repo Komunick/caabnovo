@@ -55,6 +55,7 @@ describe("database foundation migrations", () => {
       "0028_account_member_lifecycle.sql",
       "0029_user_contact_details.sql",
       "0030_single_user_role.sql",
+      "0035_default_collaborator_role.sql",
     ]);
   });
 

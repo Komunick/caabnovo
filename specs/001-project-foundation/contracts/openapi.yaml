@@ -739,6 +739,7 @@ components:
           minLength: 1
           maxLength: 160
         roleIds:
+          description: Zero ou um cargo. Sem cargo informado, a conta recebe Colaborador.
           type: array
           maxItems: 1
           uniqueItems: true

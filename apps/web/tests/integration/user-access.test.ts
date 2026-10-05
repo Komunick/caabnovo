@@ -66,6 +66,15 @@ async function seedRole(code: string, administrative = false) {
   return result.rows[0]!.id;
 }
 
+/** Base role as the migrations define it: no permissions of its own. */
+async function seedBaseRole() {
+  const result = await admin.query<{ id: string }>(
+    `INSERT INTO role (code, name, description) VALUES ('collaborator', 'Colaborador', 'Cargo base')
+     RETURNING id`,
+  );
+  return result.rows[0]!.id;
+}
+
 function context(actorId: string) {
   return {
     actor: {
@@ -323,6 +332,7 @@ describe.sequential("user access transactions", () => {
 describe("collaborator profile persistence", () => {
   it("persists normalized contact data, detects duplicates and version conflicts, and keeps legacy accounts", async () => {
     const actorId = await seedUser("manager@example.test");
+    await seedBaseRole();
     const contact = syntheticUserContact();
     const command = {
       ...context(actorId),
@@ -678,4 +688,84 @@ it("does not promote expired or unranked legacy assignments", async () => {
       )
     ).rows,
   ).toEqual([{ role_id: legacy }]);
+});
+
+describe.sequential("base role for new accounts", () => {
+  const creatorPermissions = new Set(["users:read", "users:create"]);
+  async function seedCreatorWithoutRoleGrant() {
+    const actorId = await seedUser("creator@example.test");
+    await admin.query("INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,$2,$1)", [
+      actorId,
+      [...creatorPermissions],
+    ]);
+    const base = context(actorId);
+    return { ...base, actor: { ...base.actor, permissions: creatorPermissions } };
+  }
+
+  it("gives the base role to an account created without one, even when the creator cannot grant roles", async () => {
+    const creator = await seedCreatorWithoutRoleGrant();
+    const baseRoleId = await seedBaseRole();
+    const created = await createUser(database.pool, {
+      ...creator,
+      ...syntheticUserContact(),
+      name: "Conta Base",
+      email: "base@example.test",
+      roleIds: [],
+    });
+
+    const assignments = await admin.query<{
+      role_id: string;
+      granted_by: string | null;
+      grant_origin: string;
+      valid_until: Date | null;
+      revoked_at: Date | null;
+    }>(
+      "SELECT role_id,granted_by,grant_origin,valid_until,revoked_at FROM user_role WHERE user_id=$1",
+      [created.id],
+    );
+    expect(assignments.rows).toEqual([
+      {
+        role_id: baseRoleId,
+        granted_by: creator.actor.userId,
+        grant_origin: "web",
+        valid_until: null,
+        revoked_at: null,
+      },
+    ]);
+    // The base role adds no access: only what the account is explicitly given.
+    expect(
+      (await admin.query("SELECT 1 FROM effective_user_permission WHERE user_id=$1", [created.id]))
+        .rowCount,
+    ).toBe(0);
+    const audit = await admin.query<{ after: { roleIds: string[]; baseRoleApplied?: boolean } }>(
+      "SELECT after FROM audit_event WHERE action='user.created' AND entity_id=$1",
+      [created.id],
+    );
+    expect(audit.rows[0]!.after).toMatchObject({ roleIds: [baseRoleId], baseRoleApplied: true });
+  });
+
+  it("refuses to create the account when the base role is missing or carries permissions", async () => {
+    const creator = await seedCreatorWithoutRoleGrant();
+    const attempt = (email: string) =>
+      createUser(database.pool, {
+        ...creator,
+        ...syntheticUserContact(),
+        name: "Sem Base",
+        email,
+        roleIds: [],
+      });
+
+    await expect(attempt("missing@example.test")).rejects.toMatchObject({
+      code: "BASE_ROLE_UNAVAILABLE",
+    });
+    // The helper that seeds ordinary roles attaches permissions, which the base role must not have.
+    await seedRole("collaborator");
+    await expect(attempt("permissions@example.test")).rejects.toMatchObject({
+      code: "BASE_ROLE_UNAVAILABLE",
+    });
+    const persisted = await admin.query(
+      `SELECT 1 FROM "user" WHERE email IN ('missing@example.test','permissions@example.test')`,
+    );
+    expect(persisted.rowCount).toBe(0);
+  });
 });

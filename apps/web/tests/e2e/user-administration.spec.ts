@@ -358,6 +358,16 @@ test("collaborator list uses compact shared actions and collapsible filters", as
     data: { ...contact, name, email: `list-${randomUUID()}@example.test`, roleIds: [] },
   });
   expect(response.status()).toBe(201);
+  // New accounts start with the base role; revoke it to keep an account without role for the filter.
+  const created = await response.json();
+  const baseRole = (await (await page.request.get("/api/v1/roles")).json()).find(
+    (role: { code: string }) => role.code === "collaborator",
+  );
+  expect(created.roles.map((role: { id: string }) => role.id)).toEqual([baseRole.id]);
+  const revoked = await page.request.delete(`/api/v1/users/${created.id}/roles/${baseRole.id}`, {
+    headers: { origin: new URL(page.url()).origin, "x-csrf-token": randomUUID() },
+  });
+  expect(revoked.status()).toBe(204);
   await page.goto("/users");
   await expect(page.getByLabel("CPF", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Novo colaborador", exact: true })).toBeVisible();
