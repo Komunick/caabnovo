@@ -1,7 +1,7 @@
 # Contrato do incremento — Coordenação da entrega após clarify
 
-Estado conciliado em02/10/2026: contrato transversal com núcleo integrado e consumidores em estágios
-diferentes; consultar [MODULES](../../../docs/MODULES.md). Homologação não é presumida.
+Estado conciliado em 02/10/2026: contrato transversal com núcleo integrado e consumidores em
+estágios diferentes; consultar [MODULES](../../../docs/MODULES.md). Homologação não é presumida.
 
 O contrato direct-exports.md é a autoridade comum. Cada contracts/exports.md aplica a mesma jornada
 ao domínio, incluindo exceções de leitura/privacidade já existentes. Nenhuma exportação nativa

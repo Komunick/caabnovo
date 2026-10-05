@@ -114,4 +114,4 @@ Consolidação documental: CODEX/mafaltti. Pedido original recebido de outra con
 solicitante não verificados. O usuário confirmou Colaborador como cargo base e questionou a opção
 “Sem cargo”. Falta definir se o cargo mínimo também será obrigatório para contas atualmente sem
 cargo. A opção existente não é alterada por este registro; não atribuir cargos, modificar acessos ou
-reabrir a branch do PR39 sem escopo confirmado.
+reabrir a branch do PR #39 sem escopo confirmado.

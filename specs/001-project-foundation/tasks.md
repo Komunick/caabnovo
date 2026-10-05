@@ -22,18 +22,18 @@ T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
       cargo em decisão de migração de contas.
 - [ ] AC-T004 Complementar G03: prova dirigida de expiração da autoridade durante espera por lock,
       sem persistência/auditoria de sucesso indevidas; verificar separadamente atualização de
-      descoberta por intervalo15s, foco e mudança de rota. Preservar guardas e registrar falhas de
+      descoberta por intervalo 15s, foco e mudança de rota. Preservar guardas e registrar falhas de
       rede como limite de atualização visual, não autorização do servidor.
 - [ ] AC-T005 Obter decisão do alcance do cargo base para contas atualmente sem cargo (P01) e
       atualizar o contrato existente antes de propor transição. Não atribuir cargos por inferência.
 - [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
-      concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
+      concessão, cargo único/migrations e E 2E da matriz na versão conciliada; registrar commit e
       limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos
       testes automatizados. Não iniciar serviços para concluir esta revisão documental.
 
 ## Conciliação do recorte DS — 02/10/2026
 
-Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
 incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
 design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
 humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
@@ -49,7 +49,7 @@ contratos, requisitos e evidências; não substituir este arquivo inteiro ao con
 ## Guia de design — incremento documental de 22/09/2026
 
 Escopo: DS-FR01–DS-FR08 e DS-SC01–DS-SC04 da US4, cenários DS1/DS2. Branch separada por pedido do
-usuário: `docs/design-guide-20260922`. T124–T132 pertencem ao PR37, integrado em `3907248` e já
+usuário: `docs/design-guide-20260922`. T124–T132 pertencem ao PR #37, integrado em `3907248` e já
 incorporado por fast-forward nesta entrega. Não reexecutar suas implementações.
 
 ### Auditoria ampliada solicitada — 22/09/2026
@@ -115,9 +115,9 @@ esta entrega.
 
 Fechamento local inicial (histórico): compactação incorporada, reanálise sem conflitos e validações
 documentais aprovadas. DS-T133–DS-T138 concluídas; 70 referências locais novas/20 âncoras, valores e
-formatação conferidos. PR38, aberto antes da instrução de não abrir PR ainda, foi fechado sem merge.
-Nenhum PR novo/reaberto; complemento mantido local, sem push. Não há implantação ou homologação
-funcional nova.
+formatação conferidos. PR #38, aberto antes da instrução de não abrir PR ainda, foi fechado sem
+merge. Nenhum PR novo/reaberto; complemento mantido local, sem push. Não há implantação ou
+homologação funcional nova.
 
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/collaborator-contact.md). **Branch da entrega:**

@@ -13,7 +13,7 @@ visibilidade do link Novo agendamento em Mensagens para consulta sem escrita (G0
 cobertura dirigida pendente (G02/G03). Passaram 31 unitários e 28 contratos selecionados; não houve
 integração, navegador ou QA humano nesta revisão. Não declarar aceite integral por esses testes.
 
-Conforme o contrato da worktree documental consultado em02/10, Colaborador está confirmado como
+Conforme o contrato da worktree documental consultado em 02/10, Colaborador está confirmado como
 cargo base, mas o alcance para contas atualmente sem cargo permanece pendente. O comportamento
 existente que aceita zero cargos não é uma nova decisão de produto nem autorização para backfill.
 Preservar a opção e os dados até definição explícita. Seções DS e documentos transversais ficam sob
@@ -21,7 +21,7 @@ responsabilidade da entrega documental; conciliar apenas este bloco e a evidênc
 
 ## Conciliação do recorte DS — 02/10/2026
 
-Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
 incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
 design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
 humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
@@ -126,7 +126,7 @@ nos respectivos specs.
 **Clarify DS — 22/09/2026:** nenhuma pergunta adicional necessária: escopo, atores, informação,
 jornada de leitura, qualidade, dependências, casos de borda, limites, termos e aceite estão claros
 para esta entrega documental. A instrução posterior do usuário exige branch separada porque fará
-merge do PR37; adotada `docs/design-guide-20260922`. A possibilidade de reutilização não autoriza
+merge do PR #37; adotada `docs/design-guide-20260922`. A possibilidade de reutilização não autoriza
 criar produto genérico, alterar aparência ou implementar pendências. O checklist global permanece
 13/16; as três ressalvas históricas não são encerradas por este documento. O pedido expresso de
 implementar o guia autoriza somente este recorte documental.
@@ -138,7 +138,7 @@ Compactação promovida a seção principal, com acesso direto no início e dest
 relato de dificuldade para localizá-la. Reanálise do complemento sem novos conflitos; mesmos oito
 requisitos e seis tarefas. Nove documentos passaram por formatação explícita; 70 referências locais
 novas, 20 âncoras, 25 pares de cores e dez medidas representativas conferidos sem falhas.
-DS-T133–DS-T138 concluídas no recorte documental. Usuário determinou não abrir PR ainda: o PR38,
+DS-T133–DS-T138 concluídas no recorte documental. Usuário determinou não abrir PR ainda: o PR #38,
 criado antes dessa instrução, foi fechado sem merge. Nenhum PR novo/reaberto; complemento mantido
 local, sem push nesta rodada. Principal dev sincronizada por fetch/ff-only, limpa, divergência 0/0.
 Nenhuma alteração funcional, serviço, banco ou homologação nova. CI anterior não valida o

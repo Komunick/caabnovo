@@ -24,12 +24,12 @@ Agendamentos, Relatórios, Documentação e Acessos são quatro instâncias inde
 tem prioridade máxima. Este é um retrato datado, não uma fila de execução ou autorização de
 serviços.
 
-| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                        |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Agendamentos | Base local 4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E2E/revisão visual pendentes por WSL. Os 727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
-| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente 010. PostgreSQL/E2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente 008 antes da validação conjunta. |
-| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                      |
-| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação: 66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                           |
+| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                         |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agendamentos | Base local 4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E 2E/revisão visual pendentes por WSL. Os 727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
+| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente 010. PostgreSQL/E 2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente 008 antes da validação conjunta. |
+| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                       |
+| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação: 66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                            |
 
 A conciliação preserva DS-T133–DS-T140, AC-T001–AC-T006, IDs originais de cargo único e roles.md. Os
 31 unitários/28 contratos de acessos são evidência da instância na base 748539d, não nova execução
@@ -156,11 +156,11 @@ pelo planejamento.
 - Preservar tasks históricas e correspondência dos IDs provisórios AX/EX/DX/AC/BEN/BLQ/EXP para
   tarefas sequenciais novas. Pendências antigas não entram automaticamente no escopo ativo.
 - DOC01 inclui conciliação normativa e contratos derivados, não reexecução de remoção de MFA ou
-  justificativas. Aplicar a constituição2.1.0 e a exceção posterior de motivo para solicitações de
-  exclusão, preservando os relatos históricos da revisão2.0.0.
+  justificativas. Aplicar a constituição 2.1.0 e a exceção posterior de motivo para solicitações de
+  exclusão, preservando os relatos históricos da revisão 2.0.0.
 - Migrations 0025/0026/0027 já integram a base para concessões gerais, acesso explícito e operações
   de exportação. A antiga reserva de 0028 para sobreposição foi superada: Agendamentos mantém
-  0031–0034 na entrega própria. Não reutilizar0028 nem alterar SQL aplicado; conferir números e
+  0031–0034 na entrega própria. Não reutilizar 0028 nem alterar SQL aplicado; conferir números e
   checksums antes de futura integração.
 
 Modelo em [data-model.md](data-model.md), interface em [contracts/exports.md](contracts/exports.md)
@@ -181,7 +181,7 @@ função; servidor não confia no catálogo antigo do navegador.
 Uma worktree por entrega; Agendamentos controla suas migrations conforme a coordenação vigente, e
 Fundação mantém as já integradas. Mudanças SQL são aditivas e numeradas. Preparar compatibilidade de
 leitura de chaves/snapshots antes de ativar migrações e novos botões. Conta sem acesso não ganha
-concessão para preservar conveniência. Diagnosticar conflitos antes da restrição008; parar sem
+concessão para preservar conveniência. Diagnosticar conflitos antes da restrição 008; parar sem
 corrigir registros automaticamente. Rollback da UI/API deve preservar grants convertidos, dados e
 arquivos; não publicar binário antigo que dependa exclusivamente de audit:export/reports:export após
 conversão. Preferir correção compatível para frente; reversão SQL exige plano e evidência próprios.

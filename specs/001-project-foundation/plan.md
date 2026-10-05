@@ -18,7 +18,7 @@ cargo. Sem serviços, push, PR, integração ou QA humano. Código, migrations e
 
 ## Conciliação do recorte DS — 02/10/2026
 
-Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
 incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
 design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
 humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
@@ -88,7 +88,7 @@ componentes, contatos, contratos e rascunhos; complementar com renderização is
 e CSS reais no navegador, sem iniciar servidor/banco. Medir regras finais, quebras, foco e
 contraste; confrontar achados com as afirmações do guia e corrigir apenas documentação. Registrar
 cenários não cobertos e limitações de capturas históricas; não confundir bancada de componentes com
-E2E completo.
+E 2E completo.
 
 ### Consolidação solicitada — DS-T140
 
@@ -117,7 +117,7 @@ legibilidade/alvos e comparação entre telas equivalentes. Reanálise e valida�
 DS-T133–DS-T140 concluídas. Auditoria posterior: 554 testes unitários/contratos e 516 comparações de
 estilos aprovados; duas divergências de validação precoce e uma revisão assistiva pendente
 registradas, sem correção funcional. Guia consolidado em `docs/caab-design.md`, dois guias
-redundantes removidos; 90 links locais/20 âncoras e formatação conferidos. PR38 fechado sem merge
+redundantes removidos; 90 links locais/20 âncoras e formatação conferidos. PR #38 fechado sem merge
 após instrução posterior de não abrir PR ainda; entrega final local, sem novo PR/reabertura e sem
 push deste complemento. Os artefatos e tarefas funcionais históricos abaixo permanecem preservados.
 

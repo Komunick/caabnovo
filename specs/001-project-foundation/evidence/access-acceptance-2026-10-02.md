@@ -15,7 +15,7 @@ inspeção de ambiente implantado ou nova consulta de resultados remotos de CI.
 A base integrada já contém bloqueio de autocadastro, cargos, concessão individual, cargo único,
 promoção e descoberta filtrada. Não reconstruir esses controles nem reabrir tarefas históricas.
 Passaram nesta base 31 testes unitários e 28 de contrato selecionados. Integração PostgreSQL,
-migrations, E2E e acessibilidade não foram executados nesta revisão: exigem serviços não
+migrations, E 2E e acessibilidade não foram executados nesta revisão: exigem serviços não
 autorizados.
 
 Há uma lacuna funcional confirmada por inspeção: o link **Novo agendamento**, em Mensagens, continua
@@ -46,15 +46,15 @@ código/testes abaixo são relativos à raiz desta worktree.
 | AC03 | Restringir criação de contas ao fluxo administrativo (CAAB-18)              | Criação autorizada fornece senha inicial uma vez; repetição não retorna o segredo; falha de auditoria desfaz conta/credencial.               | `apps/web/modules/users/user-service.ts`; integração `initial-password.test.ts`; contrato `initial-password.test.ts`.                                                                                        | I/T/H; atomicidade/login dependem da integração futura.                                                                                          |
 | AC04 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Administrador vigente usa todo o catálogo, mesmo com override vazio/parcial; nova permissão registrada entra na base.                        | `packages/db/migrations/0026_explicit_module_access.sql`, `repositories/user-roles.ts`; integrações `access-foundation-migrations.test.ts` e `user-permissions.test.ts`.                                     | I/H; sem execução SQL atual.                                                                                                                     |
 | AC05 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Gestor consulta módulos, exporta fontes autorizadas e tem Relatórios completos; escrita de outros módulos continua condicionada.             | Mesma view/base; teste de migration insere `future_test:read/write` e `reports:future_test`, nega `messages:write` e `members:write`; `direct-exports.spec.ts` nega POST em Associados.                      | I/H; não prova todos os adaptadores de exportação, que têm aceite próprio.                                                                       |
-| AC06 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Gestor concede escrita a terceiro sem recebê-la; não altera a si, atribui cargos ou repassa chaves de gestão.                                | `apps/web/modules/users/user-access-service.ts`, `current-authority.ts`, `user-access-form.tsx`; integração `user-permissions.test.ts`, E2E `direct-exports.spec.ts`.                                        | I/T/H; T cobre contrato/rota/política, não a transação; ampliar G02.                                                                             |
-| AC07 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Colaborador só usa concessões; chaves legadas de gestão não permitem conceder cargos/acessos.                                                | View exclui chaves de gestão da parte ordinária; serviço exige cargo vigente; `access-foundation-migrations.test.ts` atribui `collaborator` e injeta chaves proibidas.                                       | I/T/H; E2E existente usa destinatário sem cargo, não substitui jornada com cargo Colaborador (G02).                                              |
+| AC06 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Gestor concede escrita a terceiro sem recebê-la; não altera a si, atribui cargos ou repassa chaves de gestão.                                | `apps/web/modules/users/user-access-service.ts`, `current-authority.ts`, `user-access-form.tsx`; integração `user-permissions.test.ts`, E 2E `direct-exports.spec.ts`.                                       | I/T/H; T cobre contrato/rota/política, não a transação; ampliar G02.                                                                             |
+| AC07 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Colaborador só usa concessões; chaves legadas de gestão não permitem conceder cargos/acessos.                                                | View exclui chaves de gestão da parte ordinária; serviço exige cargo vigente; `access-foundation-migrations.test.ts` atribui `collaborator` e injeta chaves proibidas.                                       | I/T/H; E 2E existente usa destinatário sem cargo, não substitui jornada com cargo Colaborador (G02).                                             |
 | AC08 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Revogação/expiração, conta desativada e sessão inválida removem autoridade; edição concorrente retorna 409, auditoria falha causa rollback.  | `current-authority.ts` e `user-access-service.ts` reconsultam após locks; integrações `user-permissions.test.ts`, `user-access.test.ts`, `auth-session.test.ts`.                                             | I/H; falta cenário dirigido de expiração durante espera pelo lock (G03).                                                                         |
-| AC09 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Até um cargo vigente; segundo cargo retorna 409 e criação com dois retorna 422; último Administrador protegido.                              | Migration0030, `role-assignment-service.ts`, integrações `single-role-migration.test.ts` e `user-access.test.ts`, contrato `users.test.ts`.                                                                  | I/T/H; não reaplicar migration no banco de uso.                                                                                                  |
+| AC09 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Até um cargo vigente; segundo cargo retorna 409 e criação com dois retorna 422; último Administrador protegido.                              | Migration 0030, `role-assignment-service.ts`, integrações `single-role-migration.test.ts` e `user-access.test.ts`, contrato `users.test.ts`.                                                                 | I/T/H; não reaplicar migration no banco de uso.                                                                                                  |
 | AC10 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Promoção avança um nível, preserva término/acessos e dois eventos atômicos; clique duplo não avança duas vezes.                              | `role-assignment-service.ts`; `user-access.test.ts`; contrato `roles.test.ts`; histórico de cargo único/promoção.                                                                                            | I/T/H; concorrência real não reexecutada.                                                                                                        |
-| AC11 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Definir o alcance do cargo base para contas atualmente sem cargo antes de alterar dados ou opção existente.                                  | Contrato documental de23/09; schema atual permite zero ou um cargo.                                                                                                                                          | P01; sem decisão inferida.                                                                                                                       |
-| AC12 | Mostrar apenas funções autorizadas na navegação (CAAB-20)                   | Sem leitura, nenhum módulo/atalho/cartão/resultado; exportação isolada não dá descoberta. Conta/Sessões permanecem.                          | `apps/web/modules/workspace/areas.ts`, `search.ts`, `components/workspace-controls.tsx`, página `(admin)/page.tsx`; testes `areas.test.ts`, `search.test.ts`; E2E `direct-exports.spec.ts`.                  | I/T/H; 20 testes de áreas/busca dentro dos 31 unitários, sem nova renderização de navegador.                                                     |
+| AC11 | Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) | Definir o alcance do cargo base para contas atualmente sem cargo antes de alterar dados ou opção existente.                                  | Contrato documental de 23/09; schema atual permite zero ou um cargo.                                                                                                                                         | P01; sem decisão inferida.                                                                                                                       |
+| AC12 | Mostrar apenas funções autorizadas na navegação (CAAB-20)                   | Sem leitura, nenhum módulo/atalho/cartão/resultado; exportação isolada não dá descoberta. Conta/Sessões permanecem.                          | `apps/web/modules/workspace/areas.ts`, `search.ts`, `components/workspace-controls.tsx`, página `(admin)/page.tsx`; testes `areas.test.ts`, `search.test.ts`; E 2E `direct-exports.spec.ts`.                 | I/T/H; 20 testes de áreas/busca dentro dos 31 unitários, sem nova renderização de navegador.                                                     |
 | AC13 | Mostrar apenas funções autorizadas na navegação (CAAB-20)                   | Perfil parcial mantém consulta e oculta atalhos de criação/alteração sem concessão; API/URL continuam protegidas.                            | Busca condiciona `user-new`, `news-new`, `scheduling-new`, `messages-new`; layouts/serviços conferidos. Mensagens apresenta exceção G01 em navegação interna.                                                | I/T/H/L; não declarar visibilidade integral aprovada.                                                                                            |
-| AC14 | Mostrar apenas funções autorizadas na navegação (CAAB-20)                   | Revogação atualiza menu/busca e Início; o servidor nega a próxima ação independentemente do polling.                                         | `workspace-permissions.tsx`: GET `/api/v1/me` sem cache, intervalo15s/foco/pathname e `router.refresh`; E2E força evento focus e navega para Início após revogar.                                            | I/H; G03 cobre intervalo/foco/navegação separadamente. Erro transitório mantém UI anterior; não alegar ocultação instantânea/offline.            |
+| AC14 | Mostrar apenas funções autorizadas na navegação (CAAB-20)                   | Revogação atualiza menu/busca e Início; o servidor nega a próxima ação independentemente do polling.                                         | `workspace-permissions.tsx`: GET `/api/v1/me` sem cache, intervalo 15s/foco/pathname e `router.refresh`; E 2E força evento focus e navega para Início após revogar.                                          | I/H; G03 cobre intervalo/foco/navegação separadamente. Erro transitório mantém UI anterior; não alegar ocultação instantânea/offline.            |
 
 ## Lacunas e encaminhamento
 
@@ -62,8 +62,8 @@ código/testes abaixo são relativos à raiz desta worktree.
 
 Prioridade média; defeito de visibilidade confirmado por leitura, sem alegação de gravação indevida.
 `apps/web/modules/messaging/ui/schedules.tsx:70` renderiza incondicionalmente o link para
-`/messages/campaigns/new` com texto “Novo agendamento”. A variável `canWrite` existe na linha38, mas
-só condiciona outras ações. `MessageShell` protege seu próprio botão de inclusão; não filtra os
+`/messages/campaigns/new` com texto “Novo agendamento”. A variável `canWrite` existe na linha 38,
+mas só condiciona outras ações. `MessageShell` protege seu próprio botão de inclusão; não filtra os
 filhos recebidos. O layout permite consulta com `messages:access`, inclusive ao Gestor sem escrita.
 Em contraste, `packages/db/src/repositories/messaging.ts:45` e `:80` revalidam a escrita.
 
@@ -92,8 +92,8 @@ forjada. Usar dados sintéticos, sem decidir P01. AC-T003.
 Os testes existentes cobrem ator obsoleto, sessão revogada, disputa de versão, revogação do último
 Administrador e promoção concorrente. Não foi localizado, no recorte lido, teste dirigido que faça a
 validade do cargo do ator terminar enquanto a ação aguarda o lock, nem testes independentes de
-polling15s e mudança de pathname (o E2E existente força focus). Código presente não equivale a prova
-dessa sequência temporal. Complementar tais casos sem afirmar que o controle está ausente ou
+polling 15s e mudança de pathname (o E 2E existente força focus). Código presente não equivale a
+prova dessa sequência temporal. Complementar tais casos sem afirmar que o controle está ausente ou
 quebrado. AC-T004.
 
 ### P01 — contas sem cargo
@@ -104,13 +104,13 @@ antes de implementação. AC-T005.
 
 ## Evidências históricas conciliadas
 
-| Fonte local                                                     | O que sustenta                                                                                  | Limite                                                                                                           |
-| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| [Segurança de17/09](security-hardening-2026-09-17.md) e T096    | Bloqueio do cadastro público e teste sem criação de identidade.                                 | Checkpoints sobre PR pendente são históricos; o código já está nesta base.                                       |
-| [Fundação de21/09](plan-2026-09-21-validation.md)               | Relato do CI35644236348 em57d6b56, cargos, descoberta, exportação de Colaboradores e revogação. | Não revalidado remotamente nem executado em748539d nesta sessão.                                                 |
-| [Colaboradores de22/09](collaborators-2026-09-22-validation.md) | Incrementos de cadastro, ações e dados.                                                         | Não substitui matriz dos três cargos nem fecha G01.                                                              |
-| [Cargo único/promoção](single-role-2026-09-22-validation.md)    | Migrations, promoção, concorrência, rollback e relatos dos CIs correspondentes.                 | Evidência de versões anteriores, sem nova execução SQL/browser.                                                  |
-| [US1 de08/09](us1-access.md) e [US2 de08/09](us2-users.md)      | Procedência dos controles iniciais.                                                             | MFA e justificativas descritos ali foram substituídos; não reintroduzir. Aceite humano não consta desta revisão. |
+| Fonte local                                                      | O que sustenta                                                                                    | Limite                                                                                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [Segurança de 17/09](security-hardening-2026-09-17.md) e T096    | Bloqueio do cadastro público e teste sem criação de identidade.                                   | Checkpoints sobre PR pendente são históricos; o código já está nesta base.                                       |
+| [Fundação de 21/09](plan-2026-09-21-validation.md)               | Relato do CI 35644236348 em 57d6b56, cargos, descoberta, exportação de Colaboradores e revogação. | Não revalidado remotamente nem executado em 748539d nesta sessão.                                                |
+| [Colaboradores de 22/09](collaborators-2026-09-22-validation.md) | Incrementos de cadastro, ações e dados.                                                           | Não substitui matriz dos três cargos nem fecha G01.                                                              |
+| [Cargo único/promoção](single-role-2026-09-22-validation.md)     | Migrations, promoção, concorrência, rollback e relatos dos CIs correspondentes.                   | Evidência de versões anteriores, sem nova execução SQL/browser.                                                  |
+| [US1 de 08/09](us1-access.md) e [US2 de 08/09](us2-users.md)     | Procedência dos controles iniciais.                                                               | MFA e justificativas descritos ali foram substituídos; não reintroduzir. Aceite humano não consta desta revisão. |
 
 AX01–AX04 aparecem desmarcadas no histórico de tasks, mas foram detalhadas por T101–T118 já
 concluídas. Não transformar esses marcadores antigos em uma reconstrução. Novos achados usam IDs
@@ -119,7 +119,7 @@ AC-T, distintos de T139/T140 (cargo único) e DS-T133–DS-T140 da entrega docum
 ## Verificações desta revisão
 
 Instalação: `corepack pnpm install --offline --frozen-lockfile --ignore-scripts`, concluída sem
-downloads ou mudança de lockfile. Comandos abaixo executados na worktree em02/10/2026:
+downloads ou mudança de lockfile. Comandos abaixo executados na worktree em 02/10/2026:
 
 ```powershell
 corepack pnpm exec vitest run --project unit apps/web/modules/workspace/areas.test.ts apps/web/modules/workspace/search.test.ts apps/web/modules/auth/authorize.test.ts apps/web/modules/users/access-policy.test.ts apps/web/modules/users/http/user-access-route.test.ts --maxWorkers 1
@@ -127,15 +127,15 @@ corepack pnpm exec vitest run --project contract packages/contracts/tests/user-a
 ```
 
 Resultados: **5 arquivos/31 testes unitários aprovados** e **6 arquivos/28 testes de contrato
-aprovados**. Sem alterações de testes; não houve serviços, integração, E2E, a11y ou build. A mudança
-entregue é documental; não executar gates de implantação por inferência.
+aprovados**. Sem alterações de testes; não houve serviços, integração, E 2E, a11y ou build. A
+mudança entregue é documental; não executar gates de implantação por inferência.
 
 Fechamento documental: `corepack pnpm format:docs:check` nos quatro arquivos alterados e
 `git diff --check` aprovados. Verificação de preservação comparou o conteúdo anterior de spec, plano
 e tarefas com HEAD: preservado integralmente, com apenas 66 linhas acrescentadas no topo. Os seis
 links locais desta evidência existem. Não houve mudança de aplicação/lockfile nem edição da worktree
 documental ou de suas seções DS. Fetch final e fast-forward confirmaram dev/origin/dev em `748539d`,
-divergência0/0; quatro documentos locais não rastreados da principal preservados.
+divergência 0/0; quatro documentos locais não rastreados da principal preservados.
 
 ## Conciliação para a instância coordenadora
 

@@ -1,9 +1,9 @@
 # Contrato transversal de exportação direta — 21/09/2026
 
-Estado conciliado em02/10/2026: infraestrutura/Colaboradores e detalhe sem agrupamento de Relatórios
-integrados em748539d. Agendamentos e demais modos de Relatórios têm implementação local na frente
-responsável; outros consumidores e aceites seguem nas specs003–010. Este contrato não atesta
-cobertura, homologação ou integração desses incrementos. Fonte de produto:
+Estado conciliado em 02/10/2026: infraestrutura/Colaboradores e detalhe sem agrupamento de
+Relatórios integrados em 748539d. Agendamentos e demais modos de Relatórios têm implementação local
+na frente responsável; outros consumidores e aceites seguem nas specs 003–010. Este contrato não
+atesta cobertura, homologação ou integração desses incrementos. Fonte de produto:
 [padrão obrigatório](../../../docs/EXPORT-STANDARD.md). Contrato das rotas novas descrito abaixo.
 
 ## Autorização e cobertura

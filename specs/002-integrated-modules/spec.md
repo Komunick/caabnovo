@@ -25,7 +25,7 @@ Consolidado por CODEX; solicitante não verificado nesta sessão. Conciliar a do
 [MODULES](../../docs/MODULES.md); divisão das frentes no [plano](plan.md). Agendamentos tem
 prioridade; e-mails e app/site permanecem adiados conforme a decisão atual, sem autorizar serviços.
 
-Constituição2.1.0: motivo é obrigatório somente nas solicitações de exclusão de Colaboradores e
+Constituição 2.1.0: motivo é obrigatório somente nas solicitações de exclusão de Colaboradores e
 Associados, preservado com autor/data por ocorrência; demais ações dispensam justificativa humana.
 Ausência histórica não recebe preenchimento retroativo. Esta exceção substitui a dispensa absoluta
 registrada em 14/09. Colaboradores é a gestão de contas existente, sem cadastro de RH separado.
@@ -263,7 +263,7 @@ autorização, integridade, contratos e acessibilidade são obrigatórios confor
   extras ou aprovação automática presumida.
 - **FR-007**: Proteger alterações/exportações/reenvios com autorização, auditoria e idempotência,
   sem campo ou exigência de justificativa nessas ações. Solicitações de exclusão de Colaboradores e
-  Associados exigem motivo, com autor/data por ocorrência, conforme constituição2.1.0.
+  Associados exigem motivo, com autor/data por ocorrência, conforme constituição 2.1.0.
 - **FR-008**: Usar contratos novos/formalmente fornecidos e explicitar integração indisponível.
 - **FR-009**: Validar autorização, integridade, teclado, nomes acessíveis e responsividade nos
   fluxos alterados.

@@ -1,7 +1,7 @@
 # Conciliação documental e de acessos — 02/10/2026
 
-Autoria da conciliação: CODEX; solicitante não verificado nesta sessão (GitHub HTTP401). Repasse
-final das duas instâncias recebido do usuário. Fontes com base748539d:
+Autoria da conciliação: CODEX; solicitante não verificado nesta sessão (GitHub HTTP 401). Repasse
+final das duas instâncias recebido do usuário. Fontes com base 748539d:
 docs/documentation-roles-20260923 e docs/access-review-20261002.
 
 ## Resultado
@@ -31,7 +31,7 @@ foi somente lida; autoria e relato dos testes da instância foram preservados.
 
 Fontes: [consolidação documental](documentation-consolidation-2026-10-02.md),
 [matriz de acessos](access-acceptance-2026-10-02.md) e [tarefas conciliadas](../tasks.md). 31
-unitários e 28 contratos são resultados da instância de acessos na base748539d; não foram
+unitários e 28 contratos são resultados da instância de acessos na base 748539d; não foram
 reexecutados por esta coordenação. Nenhuma mudança funcional, serviço, commit, push, PR ou
 integração de branches nesta etapa. As entregas de Agendamentos e Relatórios não foram alteradas.
 
@@ -39,20 +39,20 @@ integração de branches nesta etapa. As entregas de Agendamentos e Relatórios 
 
 Autoria deste complemento: CODEX. O usuário autorizou commit, push e PR para dev nesta mesma
 worktree, sem merge. O resultado da conciliação acima permanece histórico e preservado. Foram
-atualizados os retratos das quatro instâncias em MODULES e programa002, sem importar a fila ativa do
-caderno. A evidência de acessos e roles.md permanecem intactos; DS, AC e cargo único têm IDs
+atualizados os retratos das quatro instâncias em MODULES e programa 002, sem importar a fila ativa
+do caderno. A evidência de acessos e roles.md permanecem intactos; DS, AC e cargo único têm IDs
 separados. As pendências funcionais/decisões e homologações permanecem abertas.
 
 A conferência desta entrega é documental: formatação explícita, links/âncoras, diff e preservação.
 Resultados históricos de aplicação não são promovidos a validação desta revisão. O CI do PR será
 acompanhado separadamente pelo SHA publicado; aprovação técnica não equivale a QA humano.
 
-Conferência pré-commit:36 arquivos documentais (34 Markdown/dois JSON),423 links relativos e20
+Conferência pré-commit: 36 arquivos documentais (34 Markdown/dois JSON), 423 links relativos e 20
 âncoras válidos; formatação explícita e diff sem falhas. Os cinco arquivos que contêm spec/plano/
 tarefas de Fundação, roles.md e a evidência de acessos são idênticos por SHA-256 ao backup desta
-publicação, preservando os66 acréscimos. Conferidos oito IDs DS,14 cenários AC, seis tarefas AC-T,
-T139/T140 originais e T099 aberta. Guia/evidências DS e21 pedidos/73 requisitos também preservados.
-Backup pré-publicação: `.cache/local-backups/docs-publication-20261002-125847` da principal,36
+publicação, preservando os 66 acréscimos. Conferidos oito IDs DS, 14 cenários AC, seis tarefas AC-T,
+T139/T140 originais e T099 aberta. Guia/evidências DS e 21 pedidos/73 requisitos também preservados.
+Backup pré-publicação: `.cache/local-backups/docs-publication-20261002-125847` da principal, 36
 cópias verificadas. O agentcache versionado contém somente orientação de uso; notas da execução e
 identidade autenticada desta sessão ficam apenas na principal. Nenhum teste de aplicação ou QA
 humano é declarado aprovado por esta conferência documental.

@@ -19,7 +19,7 @@ escuro e retirar o fundo acrescentado à logo CAAB.
 
 ## Verificação
 
-Inspeção visual no Chrome do localhost:3106, no viewport desktop existente: Início claro/escuro;
+Inspeção visual no Chrome do localhost: 3106, no viewport desktop existente: Início claro/escuro;
 formulário de Colaboradores escuro e tabela clara; Associados claro/escuro; menu da conta claro.
 Ícones diferentes e logo sem caixa de fundo confirmados visualmente. Tema alternado pelo controle
 real e mantido durante navegação; preferência inicial clara restaurada. Nenhum formulário foi
@@ -28,7 +28,7 @@ enviado e nenhum cadastro foi modificado.
 Medição dos tokens: 20 combinações de texto/superfície, texto secundário, links, ações normais ou
 hover, menu e estados ficaram acima de 4,5:1; menor razão 5,04:1. Isso não representa uma auditoria
 WCAG completa. Sete testes existentes de navegação passaram; lint do catálogo aprovado. Formatação
-dos arquivos alterados e integridade do diff conferidas. Não houve build completo, execução E2E
+dos arquivos alterados e integridade do diff conferidas. Não houve build completo, execução E 2E
 automatizada, inspeção mobile ou implantação nesta revisão.
 
 Estilos compartilhados estão no worktree .cache/pr-members, que atende o preview. O ícone de
@@ -83,7 +83,7 @@ testes unitários existentes de workspace/colaboradores aprovados e um teste de 
 aprovado em PostgreSQL descartável. O teste verifica limite de quatro notícias, ordem cronológica
 entre canais, deduplicação, exclusão de arquivadas/rascunhos e preservação da versão publicada após
 edição privada. Formatação e git diff --check conferidos. Não executados build de produção nem suíte
-E2E com seed. Nenhum formulário foi enviado, nenhum registro local foi alterado e nenhuma consulta
+E 2E com seed. Nenhum formulário foi enviado, nenhum registro local foi alterado e nenhuma consulta
 externa OAB foi acionada.
 
 Auditoria em linguagem simples registrada como tarefa pendente T014 em
@@ -110,7 +110,7 @@ Validação local desta revisão:
   lugar de letras acentuadas.
 
 Nenhum seed/reset do banco compartilhado, consulta externa OAB ou envio de formulário real foi usado
-nesta verificação. Build e E2E completos serão verificados no ambiente isolado do CI dos PRs;
+nesta verificação. Build e E 2E completos serão verificados no ambiente isolado do CI dos PRs;
 resultados serão registrados após sua execução.
 
 ## Acessos individuais e revisão autenticada da marca

@@ -61,22 +61,22 @@ foram usados.
 
 | Referência inspecionada                                                                               | Comparação com o guia e limite                                                                                                                                     |
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Parceiros, cadastros claros 1440px e campos escuros 390px, imagens versionadas na spec007             | Cabeçalho/Plus, abas, filtro recolhível, tabela e campos coerentes; menu/fonte refletem captura histórica, não medir tokens atuais por ela                         |
-| Associados, detalhe mobile da spec005, 10/09                                                          | Captura anterior à harmonização: azul, botões/links, quadros e espaçamento diferem; preservada como história, rejeitada como modelo visual atual                   |
-| Colaboradores, lista clara 1280px e escura 390px, CI35734927572                                       | Inclusão fora do quadro; exportação dentro; busca antes de filtros; tabela com rolagem no celular                                                                  |
-| Colaboradores, cadastro 1280/390px e ações escuras 1280px, CI35734927572                              | Endereço em coluna única; ação principal central no desktop/início no celular; senha e desativação separadas dos dados                                             |
-| Exportação de Colaboradores 1280/390px, CI35736033889                                                 | Filtros, seleção/ordem, três formatos; no celular setas e downloads empilhados explicam o aumento de altura                                                        |
+| Parceiros, cadastros claros 1440px e campos escuros 390px, imagens versionadas na spec 007            | Cabeçalho/Plus, abas, filtro recolhível, tabela e campos coerentes; menu/fonte refletem captura histórica, não medir tokens atuais por ela                         |
+| Associados, detalhe mobile da spec 005, 10/09                                                         | Captura anterior à harmonização: azul, botões/links, quadros e espaçamento diferem; preservada como história, rejeitada como modelo visual atual                   |
+| Colaboradores, lista clara 1280px e escura 390px, CI 35734927572                                      | Inclusão fora do quadro; exportação dentro; busca antes de filtros; tabela com rolagem no celular                                                                  |
+| Colaboradores, cadastro 1280/390px e ações escuras 1280px, CI 35734927572                             | Endereço em coluna única; ação principal central no desktop/início no celular; senha e desativação separadas dos dados                                             |
+| Exportação de Colaboradores 1280/390px, CI 35736033889                                                | Filtros, seleção/ordem, três formatos; no celular setas e downloads empilhados explicam o aumento de altura                                                        |
 | Capturas novas da bancada: formulário claro 1280px, exportação escura 390px e controles escuros 390px | Confirmaram cores finais de erro, medidas/compactação e exceções; ausência de shell e diferenças de fonte do sistema impedem comparação pixel a pixel com CI Linux |
 
 Foram inspecionadas **10 capturas existentes e 3 capturas novas** nesta rodada. Capturas históricas
 versionadas: [lista de Parceiros](../../007-partners-management/evidence/cadastros-light-1440.png),
 [endereço escuro de Parceiros](../../007-partners-management/evidence/address-fields-dark-390.png) e
 [Associados anterior à harmonização](../../005-members-management/evidence/associados-mobile.png). O
-CI35734927572 usou e9d05ed; entre essa origem e 3907248 só mudou um teste de exportação no conjunto
-apps/packages. O CI35736033889 usou 027d1f6; **apps/packages, manifests/lock, configuração Vitest e
-workflow CI são idênticos à base 3907248**. Jobs quality/browser/security anteriores passaram.
-Build, lint, typecheck, integração com banco e E2E completos desse CI são evidência da mesma base de
-código, **não novas execuções locais nem aprovação da consolidação documental**.
+CI 35734927572 usou e 9d05ed; entre essa origem e 3907248 só mudou um teste de exportação no
+conjunto apps/packages. O CI 35736033889 usou 027d1f6; **apps/packages, manifests/lock, configuração
+Vitest e workflow CI são idênticos à base 3907248**. Jobs quality/browser/security anteriores
+passaram. Build, lint, typecheck, integração com banco e E 2E completos desse CI são evidência da
+mesma base de código, **não novas execuções locais nem aprovação da consolidação documental**.
 
 ### Achados e tratamento
 
@@ -143,13 +143,13 @@ conformidade WCAG completa ou homologação de fluxos não exercitados.
 
 ## Base e preservação
 
-Pesquisa inicial consultou a entrega do PR37 em `027d1f6` e as alterações documentais locais então
+Pesquisa inicial consultou a entrega do PR #37 em `027d1f6` e as alterações documentais locais então
 existentes. Usuário pediu separação; a única seção adicionada à spec antiga foi retirada e o
-conteúdo original restaurado byte a byte com hash conferido. Nenhuma implementação ou metadado do
-PR37 foi alterado nesta tarefa.
+conteúdo original restaurado byte a byte com hash conferido. Nenhuma implementação ou metadado do PR
+#37 foi alterado nesta tarefa.
 
 Nova entrega criada a partir de `dev` em `af6f096`. Após confirmar o
-[merge do PR37](https://github.com/Komunick/caabnovo/pull/37), principal e nova branch receberam
+[merge do PR #37](https://github.com/Komunick/caabnovo/pull/37), principal e nova branch receberam
 `39072489ce6ffc1c7136eb4f0f0b8031015746e8` por fast-forward. As cinco adições documentais próprias
 foram isoladas e preservadas antes da atualização, depois incorporadas aos documentos integrados;
 nenhuma versão antiga do produto foi reaplicada. Essa é a base final de código consultada.
@@ -158,7 +158,7 @@ nenhuma versão antiga do produto foi reaplicada. Essa é a base final de códig
 
 | Fase      | Execução e resultado                                                                                                                                                                             |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Specify   | Template resolvido e constituição lidos; incremento na US4 da spec001 existente, conforme regra de não duplicar função; oito requisitos e quatro critérios de sucesso                            |
+| Specify   | Template resolvido e constituição lidos; incremento na US4 da spec 001 existente, conforme regra de não duplicar função; oito requisitos e quatro critérios de sucesso                           |
 | Clarify   | Resolução de caminhos executada; dez categorias de cobertura claras no recorte documental; zero perguntas adicionais necessárias; instruções posteriores de branch e campos/filtros incorporadas |
 | Plan      | `setup-plan.ps1 -Json` preservou plano existente; pesquisa, estrutura, limites, verificação constitucional e rollback acrescentados                                                              |
 | Tasks     | `setup-tasks.ps1 -Json` resolveu template; seis tarefas T133–T138 sequenciais com caminhos e cobertura; nenhuma implementação antiga reaberta                                                    |
@@ -203,11 +203,11 @@ autorizada ou aplicada pela análise.
 
 Imagens já existentes foram abertas e inspecionadas nesta sessão:
 
-| Captura                                | Procedência                                                                    | O que foi conferido                                                              |
-| -------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| `partners-cadastros-light-1440.png`    | Validação sintética de Parceiros em 14/09/2026                                 | Cabeçalho, inclusão com Plus, abas, busca/lupa, filtros, quadro e tabela         |
-| `collaborator-list-dark-390.png`       | [CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) | Tema escuro e celular, posição de exportação, busca, filtros e rolagem da tabela |
-| `collaborator-export-filters-1280.png` | [CI35736033889](https://github.com/Komunick/caabnovo/actions/runs/35736033889) | Filtros em grade, colunas/ordem e os três botões de download                     |
+| Captura                                | Procedência                                                                     | O que foi conferido                                                              |
+| -------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `partners-cadastros-light-1440.png`    | Validação sintética de Parceiros em 14/09/2026                                  | Cabeçalho, inclusão com Plus, abas, busca/lupa, filtros, quadro e tabela         |
+| `collaborator-list-dark-390.png`       | [CI 35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) | Tema escuro e celular, posição de exportação, busca, filtros e rolagem da tabela |
+| `collaborator-export-filters-1280.png` | [CI 35736033889](https://github.com/Komunick/caabnovo/actions/runs/35736033889) | Filtros em grade, colunas/ordem e os três botões de download                     |
 
 São referências históricas sintéticas, não nova execução de UI. Os arquivos operacionais permanecem
 locais, sem depender de seus caminhos no guia. Evidência funcional de base em
@@ -263,10 +263,10 @@ usuário relatar dificuldade para localizá-la. Conteúdo e medidas preservados;
 originais mantêm sua ordem. Verificação final: 70 destinos locais/20 âncoras válidos. Nenhum teste
 visual novo foi alegado por essas regras documentais.
 
-**Orientação final: não abrir PR ainda.** O [PR38](https://github.com/Komunick/caabnovo/pull/38)
+**Orientação final: não abrir PR ainda.** O [PR #38](https://github.com/Komunick/caabnovo/pull/38)
 havia sido aberto em rascunho antes da mensagem; foi fechado sem merge, preservando a branch. Nenhum
 novo PR/reabertura; complemento de compactação e fechamento mantidos localmente, sem push. CI
 iniciado anteriormente pertence à versão remota anterior e não valida o complemento local.
-Lint/typecheck/build/E2E não foram executados localmente nesta tarefa. Principal dev sincronizada
+Lint/typecheck/build/E 2E não foram executados localmente nesta tarefa. Principal dev sincronizada
 por fetch/ff-only e divergência 0/0. Localhost, Docker, dados, contas, migrations, permissões e
 dependências permaneceram inalterados.

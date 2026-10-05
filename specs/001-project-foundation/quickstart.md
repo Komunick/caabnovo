@@ -2,7 +2,7 @@
 
 ## Conciliação do recorte DS — 02/10/2026
 
-Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
 incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
 design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
 humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
@@ -42,7 +42,7 @@ arquivos exigiram repetição por restrições/dependências locais. Medidas/int
 por bancada dos componentes reais sem servidor, em Chromium, nos dois temas. Resultados, limites,
 fontes de capturas e configurações auxiliares constam na evidência DS. Para repetir, usar a base
 identificada, dependências das mesmas versões e banco/servidor desligados; não confundir a bancada
-com E2E autenticado. Conferir também referências aos dois guias removidos: somente menções
+com E 2E autenticado. Conferir também referências aos dois guias removidos: somente menções
 históricas e links imutáveis no relatório são esperados.
 
 Não confundir revisão de imagens históricas, cálculo estático de contraste ou análise documental com

@@ -2,7 +2,7 @@
 
 ## Conciliação do recorte DS — 02/10/2026
 
-Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP401). Conteúdo DS
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
 incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
 design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
 humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
@@ -50,7 +50,7 @@ fragmentada (dificulta fornecer contexto). Guia central com links equilibra clar
 
 **Inventário consultado:** `apps/web/styles/tokens.css`, cascata final de `app/globals.css`,
 controles em `components/ui/`, rascunhos em `components/workspace-drafts.tsx`, listagem/formulários
-de Parceiros/Associados, lista/exportação de Colaboradores no PR37, padrões de exportação e
+de Parceiros/Associados, lista/exportação de Colaboradores no PR #37, padrões de exportação e
 evidências sintéticas existentes. A importação do CSS em `app/layout.tsx` ocorre após tokens. Não há
 carregamento de fonte Inter nesse layout; a pilha pode renderizar fonte de sistema. O antigo
 `docs/UI-BUTTONS.md`, removido após consolidação, descrevia medidas de 10/09 superadas pela cascata
@@ -60,8 +60,8 @@ atual. Valores históricos de cores em relatórios também não são a paleta no
 distintos. Exportação de Colaboradores serve como referência do fluxo direto; a existência de botão
 em outros módulos não conclui sua migração. Cores Legado e módulos futuros continuam pendentes.
 
-**Evidência visual:** imagens sintéticas de Parceiros (14/09), Colaboradores (CI35734927572) e
-exportação (CI35736033889), conferidas nesta pesquisa em desktop/celular e claro/escuro. Caminhos
+**Evidência visual:** imagens sintéticas de Parceiros (14/09), Colaboradores (CI 35734927572) e
+exportação (CI 35736033889), conferidas nesta pesquisa em desktop/celular e claro/escuro. Caminhos
 operacionais locais ficam no mapa/relatório local; procedência versionada ficará na evidência DS.
 Não ligar serviços para documentação, não apresentar essas imagens como nova execução de UI.
 

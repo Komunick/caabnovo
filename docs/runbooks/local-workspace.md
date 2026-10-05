@@ -23,7 +23,7 @@ locais das cinco pastas reparadas foram preservados. Conferir o Git antes de reu
 Localhost está desautorizado até pedido explícito. Quando autorizado, preservar banco/contas, usar
 preview na porta 3107 e respeitar o perfil registrado: Node 384 MB, duas CPUs e prioridade baixa;
 PostgreSQL 256 MB e uma CPU; WSL 768 MB e duas CPUs. Worker/scanner permanecem pausados até
-autorização correspondente. Não executar build/E2E junto ao preview com pouca memória; usar CI ou
+autorização correspondente. Não executar build/E 2E junto ao preview com pouca memória; usar CI ou
 ambiente descartável autorizado. Estes valores são restrições registradas, não uma medição do estado
 atual dos processos.
 
@@ -40,9 +40,9 @@ este registro identifica a entrega, sem autorizar PR, publicação ou integraç�
 ## Consolidação de 02/10/2026
 
 A mesma entrega documental foi atualizada por fast-forward para `748539d` depois do backup
-verificado de20 arquivos em `.cache/local-backups/docs-roles-20261002-114857`. Conciliação e
+verificado de 20 arquivos em `.cache/local-backups/docs-roles-20261002-114857`. Conciliação e
 verificações na
 [evidência atual](../../specs/001-project-foundation/evidence/documentation-consolidation-2026-10-02.md).
 Os caminhos de outras frentes registrados no manifesto são procedência local; conferir Git/caderno
 antes de reutilizá-los. A divisão posterior separou aceite de acessos e documentação; conciliar
-somente os trechos correspondentes da spec001, preservando IDs DS e tarefas de cargo único.
+somente os trechos correspondentes da spec 001, preservando IDs DS e tarefas de cargo único.

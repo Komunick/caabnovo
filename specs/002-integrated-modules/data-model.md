@@ -1,6 +1,6 @@
 # Modelo de domínio e propriedade dos dados
 
-Mapa de propriedade conciliado em02/10/2026. As entidades descrevem o desenho; implementação e
+Mapa de propriedade conciliado em 02/10/2026. As entidades descrevem o desenho; implementação e
 homologação constam nas specs e em [MODULES](../../docs/MODULES.md). Créditos/Portal e novas
 integrações permanecem suspensos ou planejados; a tabela não autoriza criá-los. US1 não altera
 persistência.
@@ -33,7 +33,7 @@ geram tabelas, tipos, rotas ou grants neste recorte. Retenção permanece adiada
 parcialmente definida na matriz de Associados; aplicação em POL02 e pergunta sobre reanálise em
 POL01, sem inferir novas exigências.
 
-Nenhuma entidade de negócio nova nesta revisão. MFA permanece retirado. Constituição2.1.0 exige
+Nenhuma entidade de negócio nova nesta revisão. MFA permanece retirado. Constituição 2.1.0 exige
 motivo somente para solicitar exclusão de Colaboradores/Associados, com autoria/data, preservando
 motivos históricos sem backfill; demais ações dispensam justificativa. A revisão deste modelo não
 executa migration nem altera dados.

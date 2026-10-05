@@ -7,7 +7,7 @@ Versão documental 1.1 · Revisado em 22/09/2026 · Escopo: painel administrativ
 a origem e as evidências históricas estão no relatório vinculado em Adoption. Specs mantêm regras e
 jornadas próprias de cada função; não devem criar um catálogo visual concorrente.
 
-Base de código conferida: `3907248` em `dev`, após integração do PR37. O guia é uma entrega
+Base de código conferida: `3907248` em `dev`, após integração do PR #37. O guia é uma entrega
 documental separada; não representa nova alteração de interface nem homologação global.
 
 Este é o ponto de entrada para desenhar, implementar e revisar interfaces deste projeto. Reúne a
@@ -713,9 +713,9 @@ de CI.
 | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | Tokens claro/escuro, estrutura e controles     | Observados no código; cores/medidas documentadas, sem declaração de conformidade de todas as combinações                           |
 | Parceiros/Associados                           | Referência existente de listas, inclusão, filtros e formulários; não implica exportação direta concluída                           |
-| Cabeçalho de quadro/exportação e botão neutral | Integrados pelo PR37 em `3907248`; referências disponíveis nesta base                                                              |
-| Colaboradores: exportação direta               | Referência dos três formatos/colunas; evidência do PR37 não homologa outros módulos                                                |
-| Auditoria/Relatórios                           | Posição do botão padronizada no PR37; migração de fluxo/formato continua nas respectivas tarefas                                   |
+| Cabeçalho de quadro/exportação e botão neutral | Integrados pelo PR #37 em `3907248`; referências disponíveis nesta base                                                            |
+| Colaboradores: exportação direta               | Referência dos três formatos/colunas; evidência do PR #37 não homologa outros módulos                                              |
+| Auditoria/Relatórios                           | Posição do botão padronizada no PR #37; migração de fluxo/formato continua nas respectivas tarefas                                 |
 | Rascunhos                                      | Base compartilhada existente; cobertura de cada novo formulário precisa de verificação                                             |
 | Seletores pesquisáveis                         | Regra transversal; adoção deve ser conferida por controle, sem supor migração global                                               |
 | Erros e contraste                              | Cores finais de alertas verificadas; danger isolado não é a cor final de FormField. Validação precoce identificada, ainda pendente |

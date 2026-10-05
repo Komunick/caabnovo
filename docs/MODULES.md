@@ -24,12 +24,12 @@ Agendamentos, Relatórios, Documentação e Acessos são quatro instâncias inde
 tem prioridade máxima. Este é um retrato datado, não uma fila de execução ou autorização de
 serviços.
 
-| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                        |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Agendamentos | Base local 4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E2E/revisão visual pendentes por WSL. Os 727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
-| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente 010. PostgreSQL/E2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente 008 antes da validação conjunta. |
-| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                      |
-| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação: 66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                           |
+| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                         |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agendamentos | Base local 4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E 2E/revisão visual pendentes por WSL. Os 727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
+| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente 010. PostgreSQL/E 2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente 008 antes da validação conjunta. |
+| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                       |
+| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação: 66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                            |
 
 A conciliação preserva DS-T133–DS-T140, AC-T001–AC-T006, IDs originais de cargo único e roles.md. Os
 31 unitários/28 contratos de acessos são evidência da instância na base 748539d, não nova execução
@@ -68,7 +68,7 @@ revisão não confirma deploy nem modifica tickets. Procedência e limites na
 ## Coordenação anterior à incorporação da revisão de acessos — 02/10/2026
 
 Agendamentos (CAAB-37) tem prioridade máxima. A worktree local de Agendamentos foi conciliada em
-`4e9abac`; seu checkpoint registra testes técnicos aprovados e integrações/E2E ainda pendentes por
+`4e9abac`; seu checkpoint registra testes técnicos aprovados e integrações/E 2E ainda pendentes por
 indisponibilidade Docker/WSL. A pausa anterior foi substituída pela retomada autorizada. Consultar
 sempre checkpoint/evidência da frente para o resultado mais recente; não duplicá-los nesta entrega.
 
