@@ -111,7 +111,7 @@ somente a implementação técnica: React, Tailwind, componentes locais, Radix D
 componentes usam convenções de shadcn/ui; não presumir pacote ou CLI adicional instalado.
 FullCalendar está adotado no painel, com temporal-polyfill, locale pt-BR e America/Bahia; a lista
 diária permanece disponível. Versões no [manifest web](../apps/web/package.json), critérios na
-[spec008](../specs/008-scheduling-management/spec.md).
+[spec 008](../specs/008-scheduling-management/spec.md).
 
 TanStack Table/Query e React Hook Form foram propostas não adotadas. Não constam dos manifests
 atuais; não instalar para reproduzir uma lista antiga. Tabelas e formulários usam a implementação
@@ -282,7 +282,7 @@ Auditoria de negócio e logs técnicos possuem finalidades e retenções distint
 A experiência reúne Eventos e Processamentos na área Auditoria. A fusão não mistura tabelas nem
 permissões de leitura/operação: `audit:read`, `jobs:read` e `jobs:redrive`. `audit:export` é uma
 chave legada; a permissão geral `exports:generate` combinada com leitura já integra a autorização da
-cadeia existente. A migração do fluxo visual para download direto continua nas tarefas da spec003.
+cadeia existente. A migração do fluxo visual para download direto continua nas tarefas da spec 003.
 URLs existentes podem permanecer compatíveis. Jobs e exportações reutilizam os serviços atuais.
 
 ## 15. Segurança
@@ -409,7 +409,7 @@ Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos priv
 gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file gera XLSX com células tipadas,
 e CSV usa UTF-8 BOM e neutralização de fórmulas. Esses exportadores de Relatórios são dependências
 do worker para os caminhos legados, com versões fixadas no lockfile. Relatórios já usa o caminho
-direto no detalhe sem agrupamento; a migração dos demais modos pertence à spec010. O núcleo de
+direto no detalhe sem agrupamento; a migração dos demais modos pertence à spec 010. O núcleo de
 exportação direta no web usa pg-cursor, ExcelJS e PDFKit. Não confundir o núcleo integrado com a
 migração de todos os módulos ao download direto. Coleta própria usa eventos permitidos e HMAC; não
 adiciona provedor ou serviço de analytics externo.
@@ -421,7 +421,7 @@ adiciona provedor ou serviço de analytics externo.
 - Lucide React para ícones.
 - React e Zod; React Hook Form permanece opção histórica não incorporada.
 - FullCalendar Standard para a interface da agenda.
-- Núcleo próprio de Agendamentos implementado; expansões seguem a spec008. Cal.com permanece
+- Núcleo próprio de Agendamentos implementado; expansões seguem a spec 008. Cal.com permanece
   restrito à condição de esgotamento das alternativas, conforme a seção 7.
 - Conteúdo de arquivos exclusivamente no PostgreSQL; adaptadores legados retirados.
 - Worker e fila durável.

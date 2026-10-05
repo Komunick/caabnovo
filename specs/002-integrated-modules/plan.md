@@ -9,12 +9,12 @@ identificadas no fechamento estão em validação pela frente responsável; chec
 não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
 dev.
 
-A base integrada de referência continua 748539d, com migrations até0030. As migrations0031–0034 e a
-permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
-retratos anteriores de4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+A base integrada de referência continua 748539d, com migrations até 0030. As migrations 0031–0034 e
+a permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
+retratos anteriores de 4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
 
 **Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
-spec/plan/tasks do programa002 com o SHA efetivamente integrado, migrations e evidências vigentes.
+spec/plan/tasks do programa 002 com o SHA efetivamente integrado, migrations e evidências vigentes.
 Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
 concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
 
@@ -24,19 +24,19 @@ Agendamentos, Relatórios, Documentação e Acessos são quatro instâncias inde
 tem prioridade máxima. Este é um retrato datado, não uma fila de execução ou autorização de
 serviços.
 
-| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                      |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Agendamentos | Base local4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E2E/revisão visual pendentes por WSL. Os727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
-| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente010. PostgreSQL/E2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente008 antes da validação conjunta. |
-| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                    |
-| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação:66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                          |
+| Instância    | Estado confirmado e próximo limite                                                                                                                                                                                                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agendamentos | Base local 4e9abac e correção posterior de compatibilidade no aviso de cancelamento sem horário. T109 concluída; T107, PostgreSQL/E2E/revisão visual pendentes por WSL. Os 727 testes/build anteriores não validam a correção SQL posterior. Não tentar recuperar WSL ou iniciar serviços por este registro.              |
+| Relatórios   | Implementação local dos modos restantes e gates estáticos registrados na frente 010. PostgreSQL/E2E/a11y/C1 e QA humano pendentes; Retomar validações de Relatórios bloqueadas pelo WSL (CAAB-46) registra a retomada. Conferir o filtro de cancelamentos sem horário recebido da frente 008 antes da validação conjunta. |
+| Documentação | Consolidação transversal/DS e revisão AC reunidas nesta entrega; commit, push e PR para dev autorizados pelo usuário neste fechamento, sem merge. A autorização substitui apenas o impedimento anterior de publicação desta entrega.                                                                                      |
+| Acessos      | Revisão documental concluída e incorporada aqui pela coordenação: 66 acréscimos e matriz AC01–AC14. G01/AC-T002, G02/G03/AC-T003–AC-T004, P01/AC-T005 e validação AC-T006 continuam pendentes. Não abrir PR duplicado da revisão; correções funcionais seguem a frente própria.                                           |
 
-A conciliação preserva DS-T133–DS-T140, AC-T001–AC-T006, IDs originais de cargo único e roles.md.
-Os31 unitários/28 contratos de acessos são evidência da instância na base748539d, não nova execução
+A conciliação preserva DS-T133–DS-T140, AC-T001–AC-T006, IDs originais de cargo único e roles.md. Os
+31 unitários/28 contratos de acessos são evidência da instância na base 748539d, não nova execução
 nesta versão documental. T099 e homologações continuam abertas. Ver a
 [conciliação de acessos](../001-project-foundation/evidence/documentation-access-conciliation-2026-10-02.md).
 
-Agendamentos mantém modelo/migrations0031–0034 e scheduling:review_absences. Na futura conciliação
+Agendamentos mantém modelo/migrations 0031–0034 e scheduling:review_absences. Na futura conciliação
 funcional, preservar seu modelo de reservas junto ao gerador agrupado de Relatórios; conferir
 runtime.ts, export-screen.tsx, repositories/reports.ts, report-summary.ts e
 report-overview-export.ts. A compatibilidade foi revisada sem serviços; testes anteriores não
@@ -50,15 +50,15 @@ Conciliação de Conciliar a documentação do projeto (CAAB-38). Incorpora por 
 registrada pela entrega Jira/Confluence de 01–02/10, atualizada pela correção posterior do usuário.
 Agendamentos (CAAB-37) tem prioridade máxima, com Relatórios e documentação simultâneos. A revisão
 de acessos foi separada por pedido durante esta execução e iniciada em uma quarta instância, com
-base748539d; resultados e limites permanecem no caderno e na evidência da frente. Registros de
+base 748539d; resultados e limites permanecem no caderno e na evidência da frente. Registros de
 pausa/ordem anteriores são históricos.
 
-| Frente       | Responsabilidade e limite                                                                                                                                                            |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Agendamentos | Spec008, modelo e migrations0031–0034. Validar a versão local conciliada `4e9abac`; não refazer sobreposição, bloqueio, permissões, aprovação/remarcação ou faltas já implementados. |
-| Relatórios   | Spec010/evidências e motor de exportação; nova entrega da dev, sem reutilizar a branch integrada do PR40. Preservar detalhe sem agrupamento e completar agrupado/resumo/evolução.    |
-| Documentação | MODULES/PRD/STACK/TOOLING, programa002 e recorte DS da spec001 na entrega documental existente; preservar fontes Jira/design por conteúdo.                                           |
-| Acessos      | Preparação de aceite da base integrada em worktree própria; somente conteúdo de acessos da spec001/evidências. Decisão sobre contas sem cargo continua pendente.                     |
+| Frente       | Responsabilidade e limite                                                                                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agendamentos | Spec 008, modelo e migrations 0031–0034. Validar a versão local conciliada `4e9abac`; não refazer sobreposição, bloqueio, permissões, aprovação/remarcação ou faltas já implementados. |
+| Relatórios   | Spec 010/evidências e motor de exportação; nova entrega da dev, sem reutilizar a branch integrada do PR #40. Preservar detalhe sem agrupamento e completar agrupado/resumo/evolução.   |
+| Documentação | MODULES/PRD/STACK/TOOLING, programa 002 e recorte DS da spec 001 na entrega documental existente; preservar fontes Jira/design por conteúdo.                                           |
+| Acessos      | Preparação de aceite da base integrada em worktree própria; somente conteúdo de acessos da spec 001/evidências. Decisão sobre contas sem cargo continua pendente.                      |
 
 Conferir `runtime.ts`, `export-screen.tsx` e `repositories/reports.ts` antes de integração futura.
 Não alterar specs/evidências das outras frentes nem atribuir homologação por testes anteriores.
@@ -74,7 +74,7 @@ motor de exportação entregues; Relatórios tem detalhe sem agrupamento integra
 checkpoints de 21/09 abaixo não reabrem a implementação. Tarefas de consumidor, decisões
 institucionais e aceite humano permanecem próprios. O [mapa de módulos](../../docs/MODULES.md) e a
 [evidência da consolidação](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md)
-distinguem esses estados. A documentação da spec011 permanece na entrega de origem, com suas
+distinguem esses estados. A documentação da spec 011 permanece na entrega de origem, com suas
 pendências operacionais; não repetir publicações/criações nem alegar confirmação remota nova.
 
 ## Complemento P01 — documentos definidos, 21/09/2026
@@ -158,8 +158,8 @@ pelo planejamento.
 - DOC01 inclui conciliação normativa e contratos derivados, não reexecução de remoção de MFA ou
   justificativas. Aplicar a constituição2.1.0 e a exceção posterior de motivo para solicitações de
   exclusão, preservando os relatos históricos da revisão2.0.0.
-- Migrations0025/0026/0027 já integram a base para concessões gerais, acesso explícito e operações
-  de exportação. A antiga reserva de0028 para sobreposição foi superada: Agendamentos mantém
+- Migrations 0025/0026/0027 já integram a base para concessões gerais, acesso explícito e operações
+  de exportação. A antiga reserva de 0028 para sobreposição foi superada: Agendamentos mantém
   0031–0034 na entrega própria. Não reutilizar0028 nem alterar SQL aplicado; conferir números e
   checksums antes de futura integração.
 
@@ -193,9 +193,9 @@ campos autorizados; reconciliar tarefas/evidências por função e políticas ad
 homologação ausente.
 
 Executar roteiro [quickstart.md](quickstart.md) na implementação. Evidência anterior nunca conclui
-tarefa nova. Plan/tasks de21/09 já foram produzidos; a sequência vigente está no início deste plano.
-T099 mantém a revisão transversal por função; a conciliação dos documentos centrais não executa os
-gates nem encerra aceites de outras frentes.
+tarefa nova. Plan/tasks de 21/09 já foram produzidos; a sequência vigente está no início deste
+plano. T099 mantém a revisão transversal por função; a conciliação dos documentos centrais não
+executa os gates nem encerra aceites de outras frentes.
 
 ## Complexity Tracking
 
@@ -415,7 +415,7 @@ para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
 PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Registro de14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
+## Registro de 14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
 
 Atualizar contratos e serviços desta função para aceitar omissão/vazio; manter o campo opcional no
 contrato para compatibilidade com clientes antigos. Retirar entradas, estados e bloqueios de

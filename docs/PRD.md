@@ -303,7 +303,7 @@ Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não 
 Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é
 terminal no desenho de expansão; correções administrativas exigem autorização e auditoria, sem
 justificativa obrigatória. A base integrada usa Agendado/Cancelado; aprovação, recuperação e faltas
-têm incremento local ainda não integrado. Estados e transições efetivos pertencem à spec008 da
+têm incremento local ainda não integrado. Estados e transições efetivos pertencem à spec 008 da
 entrega ativa; a lista de produto acima não homologa nem substitui seu contrato.
 
 ### 9.4 Associados

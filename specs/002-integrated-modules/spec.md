@@ -9,12 +9,12 @@ identificadas no fechamento estão em validação pela frente responsável; chec
 não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
 dev.
 
-A base integrada de referência continua 748539d, com migrations até0030. As migrations0031–0034 e a
-permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
-retratos anteriores de4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+A base integrada de referência continua 748539d, com migrations até 0030. As migrations 0031–0034 e
+a permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
+retratos anteriores de 4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
 
 **Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
-spec/plan/tasks do programa002 com o SHA efetivamente integrado, migrations e evidências vigentes.
+spec/plan/tasks do programa 002 com o SHA efetivamente integrado, migrations e evidências vigentes.
 Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
 concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
 
@@ -28,9 +28,9 @@ prioridade; e-mails e app/site permanecem adiados conforme a decisão atual, sem
 Constituição2.1.0: motivo é obrigatório somente nas solicitações de exclusão de Colaboradores e
 Associados, preservado com autor/data por ocorrência; demais ações dispensam justificativa humana.
 Ausência histórica não recebe preenchimento retroativo. Esta exceção substitui a dispensa absoluta
-registrada em14/09. Colaboradores é a gestão de contas existente, sem cadastro de RH separado. DOC01
-tem conclusão histórica em21/09; T099 registra a revisão transversal ainda aberta por função. O
-fechamento documental atual e seus limites estão na
+registrada em 14/09. Colaboradores é a gestão de contas existente, sem cadastro de RH separado.
+DOC01 tem conclusão histórica em 21/09; T099 registra a revisão transversal ainda aberta por função.
+O fechamento documental atual e seus limites estão na
 [evidência da conciliação](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md).
 
 ## Complemento P01 — documentos definidos, 21/09/2026
@@ -384,7 +384,7 @@ para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
 PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Registro de14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
+## Registro de 14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua
 obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação,
