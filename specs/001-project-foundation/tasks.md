@@ -1044,28 +1044,31 @@ PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoç
 
 Decisão do usuário: contas existentes sem cargo migram para Colaborador preservando acessos; contas
 novas sem cargo informado nascem Colaborador, sem opção "Sem cargo". Contrato em
-[roles.md](contracts/roles.md#cargo-base--decisão-de-05102026). Corresponde ao P01 em aberto no
-retrato de acessos (AC-T005 no PR #42, ainda não integrado; esta entrega não o marca como
-concluído nem o renumera).
+[roles.md](contracts/roles.md#cargo-base--decisão-de-05102026). CB01 a CB06 são de Definir o
+tratamento das contas atualmente sem cargo (CAAB-47), subtarefa de Gerenciar cargos e acessos de
+Administrador, Gestor e Colaborador (CAAB-19); CB07 e CB08 são deste último. CB01 a CB06
+correspondem ao P01 em aberto no retrato de acessos (AC-T005 no PR #42, ainda não integrado; esta
+entrega não o marca como concluído nem o renumera).
 
-- [x] CB01 Registrar a decisão no contrato de cargos.
-- [x] CB02 Migration 0035: origem de concessão do sistema, cargo base para contas sem cargo em
-      vigor, recusa se o cargo base tiver permissões, auditoria de sistema. Teste de migration
-      escrito; execução em PostgreSQL somente no CI.
-- [x] CB03 `createUser`: aplicar o cargo base sem `roles:grant`, recusar base ausente/com
-      permissões, auditar. Testes de integração escritos; execução somente no CI.
-- [x] CB04 Formulário: pré-selecionar Colaborador e remover "Sem cargo". Cinco testes de
-      componente aprovados localmente.
-- [x] CB05 Validar no CI (integração e E2E) a versão publicada e registrar a evidência final.
-      Aprovado na execução 37340177136 (de3dade): security, quality e browser. Histórico das
-      falhas anteriores na evidência do cargo base.
-- [ ] CB06 Revisão humana antes de aplicar a migration em qualquer banco de uso: conferir a lista de
+- [x] CB01 (CAAB-47) Registrar a decisão no contrato de cargos.
+- [x] CB02 (CAAB-47) Migration 0035: origem de concessão do sistema, cargo base para contas sem
+      cargo em vigor, recusa se o cargo base tiver permissões, auditoria de sistema. Teste de
+      migration aprovado no CI.
+- [x] CB03 (CAAB-47) `createUser`: aplicar o cargo base sem `roles:grant`, recusar base ausente/com
+      permissões, auditar. Testes de integração aprovados no CI.
+- [x] CB04 (CAAB-47) Formulário: pré-selecionar Colaborador e remover "Sem cargo". Cinco testes de
+      componente aprovados, e o E2E do filtro "Sem cargo" aprovado no CI.
+- [x] CB05 (CAAB-47) Validar no CI (integração e E2E) a versão publicada e registrar a evidência
+      final. Aprovado em de3dade (execução 37340177136) e na ponta final 986fd4a (execução
+      37342044379): security, quality e browser. Histórico das falhas anteriores na evidência do
+      cargo base.
+- [ ] CB06 (CAAB-47) Revisão humana antes de aplicar a migration em qualquer banco de uso: conferir a lista de
       contas sem cargo e confirmar que Colaborador não tem permissões nesse banco.
-- [x] CB07 G02 (corresponde a AC-T003): Colaborador real recebe a delegação do Gestor, executa a
+- [x] CB07 (CAAB-19) G02 (corresponde a AC-T003): Colaborador real recebe a delegação do Gestor, executa a
       escrita, o Gestor segue negado e as chamadas forjadas são recusadas sem alterar estado.
       E2E e integração aprovados no CI. Evidência em
       [access-g02-g03-2026-10-05.md](evidence/access-g02-g03-2026-10-05.md).
-- [x] CB08 G03 (corresponde a AC-T004): expiração de sessão ou cargo durante a espera por lock sem
+- [x] CB08 (CAAB-19) G03 (corresponde a AC-T004): expiração de sessão ou cargo durante a espera por lock sem
       persistência nem auditoria de sucesso. Teste escrito antes da correção e visto falhar (7 de 32)
       no CI, depois aprovado; corrige `initializeUserPassword` e relê a autoridade após esperas
       tardias. Gravidade baixa; achados fora do escopo registrados na mesma evidência. QA humano e
