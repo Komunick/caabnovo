@@ -155,6 +155,11 @@ export async function createUser(
         }
       }
       const created = await insertUser(client, input);
+      // The idempotency claim and the unique e-mail/CPF insert can wait on a lock held by another
+      // transaction; re-read the authority once they are done, before anything else is written.
+      await currentAuthority(client, command.actor, PERMISSIONS.usersCreate);
+      if (command.roleIds.length)
+        await currentAuthority(client, command.actor, PERMISSIONS.rolesGrant);
       const initialPassword = await insertInitialCredential(client, created.id);
       let grantedRoleIds = command.roleIds;
       if (!command.roleIds.length) {

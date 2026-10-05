@@ -81,6 +81,8 @@ export async function grantRole(
         policy.validFrom,
         policy.validUntil,
       );
+      // The overlap lookup can wait on a lock; re-read the authority once it is obtained.
+      await currentAuthority(client, command.actor, "roles:grant", command.targetUserId);
       if (existing) {
         throw new UserAccessError(
           existing.roleId === role.id ? "ROLE_ALREADY_ASSIGNED" : "USER_ROLE_CONFLICT",
@@ -161,6 +163,8 @@ export async function revokeRole(
       reason: command.reason,
     });
     const assignment = await findActiveUserRole(client, target.id, role.id);
+    // The assignment lookup can wait on a lock; re-read the authority once it is obtained.
+    await currentAuthority(client, command.actor, "roles:revoke", command.targetUserId);
     if (!assignment) {
       throw new UserAccessError("ROLE_NOT_ASSIGNED", 409, "Role is not actively assigned");
     }
@@ -222,6 +226,8 @@ export async function promoteRole(
     if (!current || current.status !== "active")
       throw new UserAccessError("ROLE_NOT_FOUND", 404, "Role not found");
     const assignment = await findActiveUserRole(client, target.id, current.id);
+    // The assignment lookup can wait on a lock; re-read the authority once it is obtained.
+    await currentAuthority(client, command.actor, "roles:grant", command.targetUserId);
     if (!assignment)
       throw new UserAccessError("ROLE_PROMOTION_CONFLICT", 409, "Current role changed or expired");
     const nextCode = nextRoleCode(current.code);
