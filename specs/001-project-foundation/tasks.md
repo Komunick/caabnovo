@@ -1056,6 +1056,17 @@ concluído nem o renumera).
       permissões, auditar. Testes de integração escritos; execução somente no CI.
 - [x] CB04 Formulário: pré-selecionar Colaborador e remover "Sem cargo". Cinco testes de
       componente aprovados localmente.
-- [ ] CB05 Validar no CI (integração e E2E) a versão publicada e registrar a evidência final.
+- [x] CB05 Validar no CI (integração e E2E) a versão publicada e registrar a evidência final.
+      Aprovado na execução 37340177136 (de3dade): security, quality e browser. Histórico das
+      falhas anteriores na evidência do cargo base.
 - [ ] CB06 Revisão humana antes de aplicar a migration em qualquer banco de uso: conferir a lista de
       contas sem cargo e confirmar que Colaborador não tem permissões nesse banco.
+- [x] CB07 G02 (corresponde a AC-T003): Colaborador real recebe a delegação do Gestor, executa a
+      escrita, o Gestor segue negado e as chamadas forjadas são recusadas sem alterar estado.
+      E2E e integração aprovados no CI. Evidência em
+      [access-g02-g03-2026-10-05.md](evidence/access-g02-g03-2026-10-05.md).
+- [x] CB08 G03 (corresponde a AC-T004): expiração de sessão ou cargo durante a espera por lock sem
+      persistência nem auditoria de sucesso. Teste escrito antes da correção e visto falhar (7 de 32)
+      no CI, depois aprovado; corrige `initializeUserPassword` e relê a autoridade após esperas
+      tardias. Gravidade baixa; achados fora do escopo registrados na mesma evidência. QA humano e
+      AC-T006 continuam pendentes.

@@ -1,7 +1,9 @@
 # Cargo base de Colaboradores — evidência de 05/10/2026
 
-Autoria: CLAUDE; solicitante Gabriel-Komunick (`gh api user`, 05/10/2026). Estado: implementado na
-worktree, **ainda não publicado nem validado em PostgreSQL ou navegador**.
+Autoria: CLAUDE; solicitante Gabriel-Komunick (`gh api user`, 05/10/2026). Estado: publicado na branch
+`feature/roles-default-collaborator-20261005`, validado no CI (PostgreSQL e navegador) em de3dade,
+execução 37340177136, com security, quality e browser aprovados. Sem QA humano; a migration não foi
+aplicada em banco de uso (CB06 aberto).
 
 ## Escopo
 
@@ -20,7 +22,7 @@ Arquivos de produção: `packages/db/migrations/0035_default_collaborator_role.s
 | Unitários de `apps/web/modules/users` (inclui 5 testes novos da tela)      | 17 aprovados                             |
 | Contratos (`--project contract`)                                           | 169 aprovados                            |
 
-## Escrito e não executado
+## Escrito localmente e executado só no CI
 
 - `apps/web/tests/integration/default-collaborator-migration.test.ts`: recusa com base ausente,
   inativa ou com permissões e sem efeito persistido; cobertura de conta sem cargo, com acesso
@@ -34,8 +36,8 @@ Arquivos de produção: `packages/db/migrations/0035_default_collaborator_role.s
   revoga o cargo base para continuar tendo uma conta sem cargo.
 - `packages/db/tests/migrations.test.ts`: lista de migrations inclui 0035.
 
-Docker indisponível nesta máquina; PostgreSQL e navegador ficam para o CI. Nenhum teste de banco foi
-substituído por mock.
+Docker indisponível nesta máquina, então PostgreSQL e navegador só rodaram no CI (ver abaixo, onde
+esses testes falharam antes de passar). Nenhum teste de banco foi substituído por mock.
 
 ## Primeiro CI e correções
 
@@ -47,7 +49,9 @@ O CI do primeiro commit (d7b9c3c, execução 37327454231) falhou. Nenhuma falha 
 - E2E `direct-exports` (linha 237): a conta criada pela API já tem cargo, então inserir Gestor por SQL violava `user_role_single_period`.
 - `security`: aviso `braces` já presente em `dev`; resolvido trazendo o commit do PR #44 para esta branch.
 
-Correções em ab63396 e b551ac8. O CI de b551ac8 (execução 37329824115) mostrou que o ajuste da fixture de migration deixou texto SQL corrompido (`NULLNULL,NULL))`), erro de edição automática que o Prettier e o ESLint não detectam por estar dentro de uma string; corrigido no commit seguinte. Nesse CI, security passou e o quality falhou apenas nesse teste. Resultado final: ver o corpo do PR.
+Correções em ab63396 e b551ac8. O CI de b551ac8 (execução 37329824115) mostrou que o ajuste da fixture de migration deixou texto SQL corrompido (`NULLNULL,NULL))`), erro de edição automática que o Prettier e o ESLint não detectam por estar dentro de uma string; corrigido no commit seguinte. Nesse CI, security passou e o quality falhou apenas nesse teste. O CI de b2a61d9 (execução 37331901542) e o de de3dade (execução 37340177136, que já inclui os
+testes de G02 e G03) fecharam verdes nos três jobs. Quality aprovou 29 arquivos de integração, com
+os de migration e de criação de conta.
 
 ## Revisão pelo guia de design
 
