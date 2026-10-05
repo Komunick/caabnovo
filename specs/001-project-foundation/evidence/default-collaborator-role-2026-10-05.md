@@ -37,6 +37,18 @@ Arquivos de produção: `packages/db/migrations/0035_default_collaborator_role.s
 Docker indisponível nesta máquina; PostgreSQL e navegador ficam para o CI. Nenhum teste de banco foi
 substituído por mock.
 
+## Primeiro CI e correções
+
+O CI do primeiro commit (d7b9c3c, execução 37327454231) falhou. Nenhuma falha foi de produto; todas vieram de fixtures ou de pressupostos antigos:
+
+- Migration: a fixture criou contas `disabled` sem `deactivated_at` (`user_deactivation_consistent`); o terceiro teste falhou em cascata.
+- `user-access`: o criador sem `roles:grant` precisava das permissões no catálogo, que a suíte trunca.
+- `account-member-lifecycle`: o filtro "Sem cargo" usava contas criadas com `roleIds: []`, que agora nascem Colaborador.
+- E2E `direct-exports` (linha 237): a conta criada pela API já tem cargo, então inserir Gestor por SQL violava `user_role_single_period`.
+- `security`: aviso `braces` já presente em `dev`; resolvido trazendo o commit do PR #44 para esta branch.
+
+Correções em ab63396 e b551ac8. O CI de b551ac8 (execução 37329824115) mostrou que o ajuste da fixture de migration deixou texto SQL corrompido (`NULLNULL,NULL))`), erro de edição automática que o Prettier e o ESLint não detectam por estar dentro de uma string; corrigido no commit seguinte. Nesse CI, security passou e o quality falhou apenas nesse teste. Resultado final: ver o corpo do PR.
+
 ## Revisão pelo guia de design
 
 Mudança de interface restrita ao seletor de cargo inicial: um controle de rádio já existente, agora

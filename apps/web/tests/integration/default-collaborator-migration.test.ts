@@ -67,12 +67,12 @@ describe.sequential("default collaborator role migration", () => {
     const users = (
       await db.query(
         `INSERT INTO "user"(name,email,status,deactivated_at,deletion_effective_at) VALUES
-          ('No role','none@example.test','active',NULLNULL,NULL)),
-          ('Explicit access','access@example.test','active',NULLNULL,NULL)),
-          ('Expired administrator','expired@example.test','active',NULLNULL,NULL)),
-          ('Revoked only','revoked@example.test','active',NULLNULL,NULL)),
-          ('Current administrator','admin@example.test','active',NULLNULL,NULL)),
-          ('Future manager','future@example.test','active',NULLNULL,NULL)),
+          ('No role','none@example.test','active',NULL,NULL),
+          ('Explicit access','access@example.test','active',NULL,NULL),
+          ('Expired administrator','expired@example.test','active',NULL,NULL),
+          ('Revoked only','revoked@example.test','active',NULL,NULL),
+          ('Current administrator','admin@example.test','active',NULL,NULL),
+          ('Future manager','future@example.test','active',NULL,NULL),
           ('Deleted','deleted@example.test','disabled',now()-interval '2 hours',now()-interval '1 hour'),
           ('Disabled','disabled@example.test','disabled',now(),NULL)
          RETURNING id,email`,
