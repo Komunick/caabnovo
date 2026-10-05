@@ -46,6 +46,7 @@ export async function schedulingAccess<T>(
   actor: RequestActor,
   access: boolean | "review_absences",
   operation: (client: PoolClient) => Promise<T>,
+  options: { lockEligibility?: boolean } = {},
 ): Promise<T> {
   const write = access !== false;
   const mutationPermission =
@@ -65,7 +66,7 @@ export async function schedulingAccess<T>(
         (write && !initialPermissions.includes(mutationPermission))
       )
         throw new SchedulingError("PERMISSION_DENIED", 403);
-      if (write) await lockMemberEligibility(client);
+      if (write && options.lockEligibility !== false) await lockMemberEligibility(client);
       // Revalidate after waiting for a contended write lock.
       await requireSchedulingAuthority(client, actor, access);
       return operation(client);

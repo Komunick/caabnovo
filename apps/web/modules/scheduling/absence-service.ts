@@ -218,7 +218,7 @@ export async function submitSchedulingAbsenceAppeal(
       if (!state(before, now.getTime()).canSubmitAppeal)
         throw new SchedulingError("SCHEDULING_ABSENCE_APPEAL_CLOSED", 422);
       const files = await client.query(
-        `SELECT id FROM stored_file WHERE id=ANY($1::uuid[]) AND owner_type IN ('member','scheduling_absence_evidence')
+        `SELECT id FROM stored_file WHERE id=ANY($1::uuid[]) AND owner_type='scheduling_absence_evidence'
       AND owner_id=$2 AND uploaded_by=$3 AND visibility='private' AND status='available' AND scan_result='clean'
       AND deleted_at IS NULL FOR SHARE`,
         [input.evidenceFileIds, before.member_id, context.actor.userId],

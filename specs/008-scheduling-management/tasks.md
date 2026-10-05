@@ -1,5 +1,43 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## Correções da revisão — 05/10/2026-CODEX-mafaltti
+
+- [ ] T112 Corrigir a asserção inicial de upload (status/mensagem), verificar ausência de arquivos
+      após negações e completar a matriz de isolamento, provas legadas e autoridade durante locks.
+- [ ] T113 Aplicar contador legado zero e corrigir trigger sem reescrever migrations; validar
+      preservação das demais reservas confirmadas, bloqueio de nova ocupação e indisponibilidade
+      somente futura/sem falta.
+- [ ] T114 Auditar revisão/grants, restringir diretório, retirar lock global das leituras de revisão
+      e adicionar índices das consultas reais.
+- [ ] T115 Isolar falhas por ocorrência na finalização com savepoints, consultar vencidas antes do
+      lock e provar que um erro não impede as demais.
+- [ ] T116 Corrigir isolamento de rascunhos de exportação por filtros de origem; registrar política
+      legada e limites INFO, executar gates da nova ponta e atualizar corpo do PR43 sem merge.
+
+## Fila de fechamento delimitada — 05/10/2026-CODEX-mafaltti
+
+Decisão do usuário: fechar o escopo administrativo atual e parar após atualizar documentação/Jira. A
+fila de execução desta entrega é somente T111 → T110; os critérios de homologação dos cinco recortes
+administrativos continuam obrigatórios. Não marcar tarefas técnicas ou QA como concluídos por esta
+organização. O [plano de 05/10](plan.md) contém o escopo e a sequência completa.
+
+- **T111 continua aberta:** corrigir a asserção em scheduling-absence.test.ts:880, concluir a matriz
+  S01/S02 e os gates da nova versão, incluindo evidências do upload. Em 4e427ac, browser/security
+  passaram, quality falhou com 351 integrações aprovadas, uma falha e uma opcional ignorada. A
+  guarda retorna PermissionDeniedError/status 403, sem o campo code esperado pelo teste.
+- **T110 continua aberta:** consolidar revisão externa do delta final e seus achados, composição
+  após PR42 e condições de implantação/retorno; registrar versão e resultado. Concluir homologação
+  humana em DEV como aceite dos tickets após integração autorizada, sem presumir aceite pelo CI.
+- **Fora da fila atual:** T089, T097, T021–T024 e T041–T077 continuam registros de evolução futura/
+  canais. Não reexecutar as contrapartes administrativas já atendidas por T078–T086 e T090–T105. A
+  numeração e os estados históricos são preservados; backlog aberto não reabre esta entrega.
+- **T107/T039:** resultados históricos preservados, sem reabertura automática; não substituem os
+  gates das correções posteriores.
+
+Não criar tickets separados para cada teste/reexecução. Defeitos do recorte permanecem em seu ticket
+funcional; melhorias novas exigem nova priorização. Autor CODEX; solicitante
+mafaltti/Danilo-Komunick. A coordenação encerra sua execução ao registrar este pedido.
+
 ## Consolidação final em andamento — 02/10/2026-CODEX-Gabriel-Komunick
 
 - [ ] T110 Consolidar a revisão própria de b676974 e os três pareceres de rollout/documentação,

@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Choice, DataState, useSchedulingData, useSchedulingMutation } from "./shared";
 type Team = { version: number; items: Array<{ id: string; name: string }> };
 export function SchedulingTeam({ unitId }: { unitId: string }) {
+  const canWrite = useModulePermission("scheduling:write");
+  const canReadUsers = useModulePermission("users:read");
+  return canWrite || canReadUsers ? <SchedulingTeamDirectory unitId={unitId} /> : null;
+}
+function SchedulingTeamDirectory({ unitId }: { unitId: string }) {
   const result = useSchedulingData<Team>(`units/${unitId}/team`);
   return (
     <section className="panel scheduling-form">

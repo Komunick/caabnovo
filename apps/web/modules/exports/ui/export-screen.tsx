@@ -51,7 +51,7 @@ export function ExportScreen({
   defaultOrderLabel?: string;
   backLabel?: string;
 }) {
-  const key = `export:${catalog.module}:${catalog.dataset}${initial ? `:${signature(initial)}` : ""}`;
+  const key = `export:${catalog.module}:${catalog.dataset}:${signature({ ...initial, filters: Object.fromEntries(Object.entries(initial?.filters ?? initialFilters).sort(([a], [b]) => a.localeCompare(b))), context })}`;
   const [draftFilters, setFilters] = useDraftState<Record<string, string>>(
     `${key}:filters`,
     initial?.filters ?? initialFilters,

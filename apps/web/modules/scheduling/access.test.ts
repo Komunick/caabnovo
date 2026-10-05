@@ -105,6 +105,31 @@ describe("specific absence review authorization", () => {
   it.each([
     { grants: [], allowed: false },
     { grants: ["scheduling:read"], allowed: false },
+    { grants: ["scheduling:read", "scheduling:write"], allowed: false },
+    { grants: ["scheduling:review_absences"], allowed: false },
+    { grants: ["scheduling:read", "scheduling:review_absences"], allowed: true },
+  ])(
+    "authorizes review reads without the eligibility lock: $grants",
+    async ({ grants, allowed }) => {
+      vi.mocked(readUserPermissions).mockResolvedValue(grants);
+      const result = schedulingAccess(pool, actor, "review_absences", operation, {
+        lockEligibility: false,
+      });
+      if (allowed) {
+        await expect(result).resolves.toBe("authorized result");
+        expect(operation).toHaveBeenCalledWith(client);
+        expect(readUserPermissions).toHaveBeenCalledTimes(2);
+      } else {
+        await expect(result).rejects.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
+        expect(operation).not.toHaveBeenCalled();
+      }
+      expect(lockMemberEligibility).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    { grants: [], allowed: false },
+    { grants: ["scheduling:read"], allowed: false },
     { grants: ["scheduling:write"], allowed: false },
     { grants: ["scheduling:read", "scheduling:write"], allowed: false },
     { grants: ["scheduling:review_absences"], allowed: false },

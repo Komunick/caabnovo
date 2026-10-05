@@ -123,3 +123,11 @@ preservar registry, hooks do ExportScreen e a projeção bookings na futura comb
 arquivos.
 [Relatório independente preservado](../evidence/closeout-2026-10-02/relatorios-compatibilidade.md).
 T041/T042 da spec010 e QA humano permanecem próprios da ponta de Relatórios conciliada.
+
+## Rascunhos e revisão — 05/10/2026-CODEX-mafaltti
+
+A chave de rascunho inclui filtros efetivos de origem (initial.filters quando presente, senão
+initialFilters), colunas/ordenação iniciais e contexto. Filtros iguais com ordem de propriedades
+diferente compartilham a mesma identidade; origens A e B distintas preservam seleções próprias ao
+voltar. Contrato de download, três formatos, permissões e projeção de Relatórios permanecem iguais.
+A exportação não inclui texto nem comprovantes das faltas.

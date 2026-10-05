@@ -90,18 +90,19 @@ async function occurrence(memberId?: string) {
 }
 async function proof(
   memberId: string,
-  overrides: { owner?: string; status?: string; visibility?: string } = {},
+  overrides: { owner?: string; status?: string; visibility?: string; ownerType?: string } = {},
 ) {
   const fileId = crypto.randomUUID();
   await admin.query(
     `INSERT INTO stored_file(id,owner_type,owner_id,original_name,object_key,quarantine_key,declared_mime,detected_mime,visibility,status,scan_result,uploaded_by)
-    VALUES($1::uuid,'member',$2,'comprovante-sintetico.pdf',$1::text,$1::text,'application/pdf','application/pdf',$3,$4,'clean',$5)`,
+    VALUES($1::uuid,$6,$2,'comprovante-sintetico.pdf',$1::text,$1::text,'application/pdf','application/pdf',$3,$4,'clean',$5)`,
     [
       fileId,
       overrides.owner ?? memberId,
       overrides.visibility ?? "private",
       overrides.status ?? "available",
       context.actor.userId,
+      overrides.ownerType ?? SCHEDULING_ABSENCE_EVIDENCE_OWNER,
     ],
   );
   return fileId;
@@ -250,6 +251,37 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       recordSchedulingAbsence(pool, next(), b.id, { expectedVersion: 1 }),
     ).rejects.toMatchObject({ code: "SCHEDULING_ABSENCE_BOOKING_STATE" });
   });
+  it("refuses provider unavailability for past bookings or an existing absence without side effects", async () => {
+    const past = await booking(await person());
+    const a = await occurrence();
+    // A synthetic future date isolates the absence guard from the independent past-date guard.
+    await admin.query(
+      "UPDATE scheduling_booking SET starts_at=starts_at+interval '6 days',ends_at=ends_at+interval '6 days' WHERE id=$1",
+      [a.bookingId],
+    );
+    for (const [id, code] of [
+      [past.id, "SCHEDULING_PAST"],
+      [a.bookingId, "SCHEDULING_STATE"],
+    ]) {
+      const before = (await admin.query("SELECT * FROM scheduling_booking WHERE id=$1", [id]))
+        .rows[0];
+      const blocks = (await admin.query("SELECT count(*)::int AS n FROM scheduling_resource_block"))
+        .rows[0]!.n;
+      await expect(
+        commandWorkflowBooking(pool, next(), id, "provider-unavailability", { expectedVersion: 1 }),
+      ).rejects.toMatchObject({ code, status: 422 });
+      expect(
+        (await admin.query("SELECT * FROM scheduling_booking WHERE id=$1", [id])).rows[0],
+      ).toEqual(before);
+      expect(
+        (await admin.query("SELECT count(*)::int AS n FROM scheduling_resource_block")).rows[0]!.n,
+      ).toBe(blocks);
+      expect(
+        (await admin.query("SELECT 1 FROM scheduling_booking_event WHERE booking_id=$1", [id]))
+          .rowCount,
+      ).toBe(0);
+    }
+  });
   it("requires text and owned private available clean proof atomically", async () => {
     const a = await occurrence();
     for (const evidenceFileIds of [
@@ -265,7 +297,11 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
           explanation: "Texto",
           evidenceFileIds,
         }),
-      ).rejects.toBeDefined();
+      ).rejects.toMatchObject(
+        evidenceFileIds.length
+          ? { code: "SCHEDULING_ABSENCE_EVIDENCE_INVALID", status: 422 }
+          : { name: "ZodError" },
+      );
     }
     await expect(
       submitSchedulingAbsenceAppeal(pool, next(), a.id, {
@@ -274,7 +310,7 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
         explanation: " ",
         evidenceFileIds: [await proof(a.memberId)],
       }),
-    ).rejects.toBeDefined();
+    ).rejects.toMatchObject({ name: "ZodError" });
     expect((await getSchedulingAbsence(pool, context.actor, a.id)).version).toBe(1);
     expect(
       (await admin.query("SELECT 1 FROM scheduling_absence_appeal WHERE absence_id=$1", [a.id]))
@@ -546,6 +582,71 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       );
     }
   });
+  it("audits private review and grants without sensitive data or the global eligibility lock", async () => {
+    const a = await occurrence();
+    await appeal(a.id, a.memberId);
+    const locker = new Client({ connectionString: container.getConnectionUri() });
+    const url = new URL(container.getConnectionUri());
+    url.username = "caab_runtime";
+    url.password = "change-me-runtime";
+    const readingPool = new Pool({
+      connectionString: url.toString(),
+      statement_timeout: 1500,
+      max: 1,
+    });
+    const metadata = { requestId: crypto.randomUUID(), correlationId: crypto.randomUUID() };
+    await locker.connect();
+    try {
+      await locker.query("BEGIN");
+      await locker.query("SELECT pg_advisory_xact_lock(5010,1)");
+      const review = await getSchedulingAbsenceReview(readingPool, context.actor, a.id, metadata);
+      const fileId = review.evidence[0]!.id;
+      const grant = await getSchedulingAbsenceEvidenceDownload(
+        readingPool,
+        context.actor,
+        a.id,
+        fileId,
+        evidenceStorage,
+        metadata,
+      );
+      const audit = (
+        await admin.query(
+          "SELECT action,actor_user_id,effective_identity,entity_type,entity_id,request_id,correlation_id,before,after FROM audit_event WHERE entity_id=$1 AND action IN ('scheduling.absence.reviewed','scheduling.absence.evidence_granted') ORDER BY action",
+          [a.id],
+        )
+      ).rows;
+      expect(audit).toEqual([
+        {
+          action: "scheduling.absence.evidence_granted",
+          actor_user_id: context.actor.userId,
+          effective_identity: `user:${context.actor.userId}`,
+          entity_type: "scheduling_absence",
+          entity_id: a.id,
+          request_id: metadata.requestId,
+          correlation_id: metadata.correlationId,
+          before: null,
+          after: { fileId },
+        },
+        {
+          action: "scheduling.absence.reviewed",
+          actor_user_id: context.actor.userId,
+          effective_identity: `user:${context.actor.userId}`,
+          entity_type: "scheduling_absence",
+          entity_id: a.id,
+          request_id: metadata.requestId,
+          correlation_id: metadata.correlationId,
+          before: null,
+          after: null,
+        },
+      ]);
+      for (const secret of [review.explanation, review.evidence[0]!.name, grant.url])
+        expect(JSON.stringify(audit)).not.toContain(secret);
+    } finally {
+      await locker.query("ROLLBACK");
+      await readingPool.end();
+      await locker.end();
+    }
+  });
   it("serializes competing decisions so only one outcome and cancellation set commits", async () => {
     const a = await occurrence();
     await appeal(a.id, a.memberId);
@@ -581,7 +682,7 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
     try {
       await expect(
         decideSchedulingAbsence(pool, next(), a.id, { expectedVersion: 2, outcome: "rejected" }),
-      ).rejects.toBeDefined();
+      ).rejects.toThrow("synthetic audit unavailable");
       expect((await getSchedulingAbsence(pool, context.actor, a.id)).appeal?.outcome).toBeNull();
       expect(
         (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [future.id]))
@@ -771,14 +872,44 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       false,
     );
   });
-  it("rolls back a failed automatic finalization and safely retries it", async () => {
+  it("commits other occurrences despite a persistent finalization failure and safely retries it", async () => {
     const a = await occurrence(),
-      future = await booking(a.memberId, 4);
-    await age(a.id, 8);
+      future = await booking(a.memberId, 4),
+      other = await occurrence(),
+      otherFuture = await booking(other.memberId, 4);
+    await age(a.id, 9);
+    await age(other.id, 8);
     await admin.query(`CREATE FUNCTION reject_sweep_fixture() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action='finalized' AND NEW.absence_id='${a.id}'::uuid THEN RAISE EXCEPTION 'synthetic finalization audit unavailable'; END IF; RETURN NEW; END $$;
       CREATE TRIGGER reject_sweep_fixture BEFORE INSERT ON scheduling_absence_event FOR EACH ROW EXECUTE FUNCTION reject_sweep_fixture()`);
     try {
-      await expect(processExpiredSchedulingAbsences(pool)).rejects.toBeDefined();
+      for (let attempt = 0; attempt < 2; attempt++) {
+        await expect(processExpiredSchedulingAbsences(pool)).rejects.toThrow(
+          `SCHEDULING_ABSENCE_FINALIZATION_FAILED: ${a.id}`,
+        );
+        expect(
+          (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [otherFuture.id]))
+            .rows[0]!.status,
+        ).toBe("cancelled");
+        expect(
+          (await admin.query("SELECT finalized_at FROM scheduling_absence WHERE id=$1", [other.id]))
+            .rows[0]!.finalized_at,
+        ).not.toBeNull();
+        expect(
+          (
+            await admin.query("SELECT 1 FROM scheduling_absence_cancellation WHERE absence_id=$1", [
+              other.id,
+            ])
+          ).rowCount,
+        ).toBe(1);
+        expect(
+          (
+            await admin.query(
+              "SELECT 1 FROM scheduling_absence_event WHERE absence_id=$1 AND action='finalized'",
+              [other.id],
+            )
+          ).rowCount,
+        ).toBe(1);
+      }
       expect(
         (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [future.id]))
           .rows[0]!.status,
@@ -812,40 +943,86 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       ).rowCount,
     ).toBe(1);
   });
-  it("serializes deadline processing with a late submission without admitting the late appeal", async () => {
+  it("waits for the eligibility lock before processing deadlines or a late submission", async () => {
     const a = await occurrence(),
       future = await booking(a.memberId, 4),
       fileId = await proof(a.memberId);
     await age(a.id, 8);
-    await prewarmConcurrentConnections();
-    const results = await Promise.allSettled([
-      processExpiredSchedulingAbsences(pool),
-      submitSchedulingAbsenceAppeal(pool, next(), a.id, {
-        expectedVersion: 1,
-        kind: "justification",
-        explanation: "Pedido tardio",
-        evidenceFileIds: [fileId],
-      }),
-    ]);
-    expect(results[0]!.status).toBe("fulfilled");
-    expect(results[1]!.status).toBe("rejected");
-    if (results[1]!.status === "rejected")
-      expect(["SCHEDULING_ABSENCE_APPEAL_CLOSED", "SCHEDULING_VERSION_CONFLICT"]).toContain(
-        results[1]!.reason.code,
-      );
-    expect((await getSchedulingAbsence(pool, context.actor, a.id)).appeal).toBeNull();
-    expect(
-      (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [future.id])).rows[0]!
-        .status,
-    ).toBe("cancelled");
-    expect(
-      (
-        await admin.query("SELECT 1 FROM scheduling_absence_cancellation WHERE absence_id=$1", [
-          a.id,
-        ])
-      ).rowCount,
-    ).toBe(1);
-  });
+    const appName = `absence-deadline-wait-${crypto.randomUUID()}`;
+    const url = new URL(container.getConnectionUri());
+    url.username = "caab_runtime";
+    url.password = "change-me-runtime";
+    const waitingPool = new Pool({
+      connectionString: url.toString(),
+      application_name: appName,
+      statement_timeout: 10000,
+      max: 2,
+    });
+    const locker = new Client({ connectionString: container.getConnectionUri() });
+    await locker.connect();
+    let outcome: Promise<PromiseSettledResult<unknown>[]> | undefined;
+    try {
+      await locker.query("BEGIN");
+      await locker.query("SELECT pg_advisory_xact_lock(5010,1)");
+      outcome = Promise.allSettled([
+        processExpiredSchedulingAbsences(waitingPool),
+        submitSchedulingAbsenceAppeal(waitingPool, next(), a.id, {
+          expectedVersion: 1,
+          kind: "justification",
+          explanation: "Pedido tardio",
+          evidenceFileIds: [fileId],
+        }),
+      ]);
+      // Observing both actual advisory-lock waits makes removal of either lock fail this test.
+      await expect
+        .poll(
+          async () =>
+            Number(
+              (
+                await admin.query(
+                  "SELECT count(*) AS n FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock' AND wait_event='advisory'",
+                  [appName],
+                )
+              ).rows[0]!.n,
+            ),
+          { timeout: 4000 },
+        )
+        .toBe(2);
+      expect(
+        (await admin.query("SELECT finalized_at FROM scheduling_absence WHERE id=$1", [a.id]))
+          .rows[0]!.finalized_at,
+      ).toBeNull();
+      expect(
+        (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [future.id]))
+          .rows[0]!.status,
+      ).toBe("scheduled");
+      await locker.query("COMMIT");
+      const results = await outcome;
+      expect(results[0]!.status).toBe("fulfilled");
+      expect(results[1]!.status).toBe("rejected");
+      if (results[1]!.status === "rejected")
+        expect(["SCHEDULING_ABSENCE_APPEAL_CLOSED", "SCHEDULING_VERSION_CONFLICT"]).toContain(
+          results[1]!.reason.code,
+        );
+      expect((await getSchedulingAbsence(pool, context.actor, a.id)).appeal).toBeNull();
+      expect(
+        (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [future.id]))
+          .rows[0]!.status,
+      ).toBe("cancelled");
+      expect(
+        (
+          await admin.query("SELECT 1 FROM scheduling_absence_cancellation WHERE absence_id=$1", [
+            a.id,
+          ])
+        ).rowCount,
+      ).toBe(1);
+    } finally {
+      await locker.query("ROLLBACK");
+      await outcome;
+      await waitingPool.end();
+      await locker.end();
+    }
+  }, 15000);
 
   it("isolates pending evidence and legacy attached proofs from member and generic file access", async () => {
     const a = await occurrence();
@@ -877,7 +1054,7 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
         actor: reader,
         idempotencyKey: crypto.randomUUID(),
       }),
-    ).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
+    ).rejects.toMatchObject({ status: 403, message: "Permission denied" });
     const filesOnly = await evidenceActor([
       "members:read",
       "members:write",
@@ -891,6 +1068,14 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
         idempotencyKey: crypto.randomUUID(),
       }),
     ).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
+    expect(
+      (
+        await admin.query(
+          "SELECT 1 FROM stored_file WHERE owner_type='scheduling_absence_evidence' AND owner_id=$1",
+          [a.memberId],
+        )
+      ).rowCount,
+    ).toBe(0);
     const intent = await createUploadIntent(pool, evidenceStorage, intentCommand);
     expect(
       (await admin.query("SELECT owner_type FROM stored_file WHERE id=$1", [intent.fileId])).rows[0]
@@ -900,14 +1085,24 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       "UPDATE stored_file SET status='available',scan_result='clean',detected_mime='application/pdf' WHERE id=$1",
       [intent.fileId],
     );
-    const ordinary = await proof(a.memberId),
+    const ordinary = await proof(a.memberId, { ownerType: "member" }),
       legacy = await proof(a.memberId);
+    await expect(
+      submitSchedulingAbsenceAppeal(pool, next(), a.id, {
+        expectedVersion: 1,
+        kind: "justification",
+        explanation: "Documento comum não é nova prova",
+        evidenceFileIds: [ordinary],
+      }),
+    ).rejects.toMatchObject({ code: "SCHEDULING_ABSENCE_EVIDENCE_INVALID", status: 422 });
     await submitSchedulingAbsenceAppeal(pool, next(), a.id, {
       expectedVersion: 1,
       kind: "justification",
       explanation: "Pedido com prova legada",
       evidenceFileIds: [legacy],
     });
+    // Emulate an already-attached pre-isolation proof; new member files cannot be attached.
+    await admin.query("UPDATE stored_file SET owner_type='member' WHERE id=$1", [legacy]);
     expect((await memberFiles(pool, reader, a.memberId)).items.map((f) => f.id)).toEqual([
       ordinary,
     ]);
@@ -951,6 +1146,115 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       getSchedulingAbsenceEvidenceDownload(pool, reviewer, b.id, intent.fileId, evidenceStorage),
     ).resolves.toHaveProperty("url");
   });
+
+  it.each(["member", "idempotency"] as const)(
+    "rechecks scheduling authority after an upload intent waits for the %s lock",
+    async (kind) => {
+      const memberId = await person();
+      const actor = await evidenceActor([
+        "members:read",
+        "members:write",
+        "files:create",
+        "scheduling:read",
+        "scheduling:write",
+      ]);
+      const command = {
+        actor,
+        effectiveIdentity: `user:${actor.userId}`,
+        requestId: crypto.randomUUID(),
+        correlationId: crypto.randomUUID(),
+        idempotencyKey: crypto.randomUUID(),
+        ownerType: SCHEDULING_ABSENCE_EVIDENCE_OWNER,
+        ownerId: memberId,
+        originalName: "locked-proof.pdf",
+        declaredMime: "application/pdf" as const,
+        sizeBytes: 10,
+        checksumSha256: "b".repeat(64),
+      };
+      if (kind === "idempotency") await createUploadIntent(pool, evidenceStorage, command);
+      const appName = `absence-upload-wait-${crypto.randomUUID()}`;
+      const url = new URL(container.getConnectionUri());
+      url.username = "caab_runtime";
+      url.password = "change-me-runtime";
+      const waitingPool = new Pool({
+        connectionString: url.toString(),
+        application_name: appName,
+        statement_timeout: 10000,
+        max: 1,
+      });
+      const locker = new Client({ connectionString: container.getConnectionUri() });
+      await locker.connect();
+      let outcome: Promise<unknown> | undefined;
+      let issued = 0;
+      try {
+        await locker.query("BEGIN");
+        if (kind === "member")
+          await locker.query("SELECT id FROM member WHERE id=$1 FOR UPDATE", [memberId]);
+        else
+          await locker.query(
+            "SELECT key FROM idempotency_record WHERE scope='file:upload-intent' AND key=$1 FOR UPDATE",
+            [command.idempotencyKey],
+          );
+        outcome = createUploadIntent(
+          waitingPool,
+          {
+            ...evidenceStorage,
+            createQuarantineUpload: async (key, input) => {
+              issued++;
+              return evidenceStorage.createQuarantineUpload(key, input);
+            },
+          },
+          command,
+        ).then(
+          () => ({ code: "UNEXPECTED_SUCCESS" }),
+          (error) => error,
+        );
+        await expect
+          .poll(
+            async () =>
+              Number(
+                (
+                  await admin.query(
+                    "SELECT count(*) AS n FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock'",
+                    [appName],
+                  )
+                ).rows[0]!.n,
+              ),
+            { timeout: 4000 },
+          )
+          .toBe(1);
+        await admin.query(
+          "UPDATE user_access SET permissions=ARRAY['members:read','members:write','files:create','scheduling:read'] WHERE user_id=$1",
+          [actor.userId],
+        );
+        await locker.query("COMMIT");
+        await expect(outcome).resolves.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
+        expect(issued).toBe(0);
+        expect(
+          (
+            await admin.query(
+              "SELECT 1 FROM stored_file WHERE owner_type='scheduling_absence_evidence' AND owner_id=$1",
+              [memberId],
+            )
+          ).rowCount,
+        ).toBe(kind === "member" ? 0 : 1);
+        expect(
+          (
+            await admin.query(
+              "SELECT 1 FROM idempotency_record WHERE scope='file:upload-intent' AND key=$1",
+              [command.idempotencyKey],
+            )
+          ).rowCount,
+        ).toBe(kind === "member" ? 0 : 1);
+      } finally {
+        await locker.query("ROLLBACK");
+        await outcome;
+        await waitingPool.end();
+        await locker.end();
+      }
+    },
+    15000,
+  );
 
   it.each(["session", "role", "submission", "deadline"] as const)(
     "rechecks %s after a real evidence row-lock wait",

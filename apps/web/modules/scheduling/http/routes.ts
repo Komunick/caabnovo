@@ -74,7 +74,10 @@ export function createSchedulingRoute(deps: {
           result = await listSchedulingAbsences(deps.pool, actor, query);
         } else if (resource === "absences" && id && action === "review") {
           z.object({}).strict().parse(query);
-          result = await getSchedulingAbsenceReview(deps.pool, actor, id);
+          result = await getSchedulingAbsenceReview(deps.pool, actor, id, {
+            requestId: rid,
+            correlationId: correlationId(request),
+          });
         } else if (resource === "absences" && id && action === "evidence") {
           const { fileId } = z.object({ fileId: idSchema }).strict().parse(query);
           result = await getSchedulingAbsenceEvidenceDownload(
@@ -83,6 +86,7 @@ export function createSchedulingRoute(deps: {
             id,
             fileId,
             (deps.getStorage ?? getObjectStorage)(),
+            { requestId: rid, correlationId: correlationId(request) },
           );
         } else if (resource === "absences" && id && !action)
           result = await getSchedulingAbsence(deps.pool, actor, id);

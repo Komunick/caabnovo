@@ -12,6 +12,7 @@ import { saveSchedulingHours } from "../../modules/scheduling/hours-service";
 import {
   createSchedulingBooking,
   getSchedulingBooking,
+  keepSchedulingBooking,
 } from "../../modules/scheduling/booking-service";
 import { commandWorkflowBooking } from "../../modules/scheduling/booking-workflow";
 import { getSchedulingAvailability } from "../../modules/scheduling/availability-service";
@@ -21,6 +22,7 @@ import {
   listSchedulingApprovalQueue,
   saveSchedulingTeam,
   getSchedulingTeam,
+  listSchedulingTeamCandidates,
 } from "../../modules/scheduling/approval-queue-service";
 import { schedulingExports } from "../../modules/scheduling/export-adapter";
 import { reportSources } from "@caab/db/repositories/reports";
@@ -126,18 +128,67 @@ describe("convergence regressions", () => {
     });
   });
 
-  it("rejects approval after a capacity resource block without changing the held interval", async () => {
-    const o = await offer(false, 3);
+  it("preserves confirmed capacity reservations while rejecting new occupancy and approval after a resource block", async () => {
+    const o = await offer(false, 4);
     const pending = (await reserve(o)).value;
     const affected = (await reserve({ ...o, memberId: await person() })).value;
+    const unaffected = (await reserve({ ...o, memberId: await person() })).value;
+    const preserved = (
+      await commandWorkflowBooking(pool, next(), unaffected.id, "approve", {
+        expectedVersion: unaffected.version,
+      })
+    ).value;
     const confirmed = (
       await commandWorkflowBooking(pool, next(), affected.id, "approve", {
         expectedVersion: affected.version,
       })
     ).value;
-    await commandWorkflowBooking(pool, next(), confirmed.id, "provider-unavailability", {
-      expectedVersion: confirmed.version,
+    const recovery = (
+      await commandWorkflowBooking(pool, next(), confirmed.id, "provider-unavailability", {
+        expectedVersion: confirmed.version,
+      })
+    ).value;
+    expect(recovery).toMatchObject({
+      status: "awaiting_new_time",
+      processKind: "recovery",
+      startsAt: null,
+      endsAt: null,
     });
+    expect((await getSchedulingBooking(pool, context.actor, preserved.id)).booking).toEqual(
+      preserved,
+    );
+    await admin.query(
+      "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
+      [preserved.memberId],
+    );
+    const beforeKeep = (await getSchedulingBooking(pool, context.actor, preserved.id)).booking;
+    const kept = (
+      await keepSchedulingBooking(pool, next(), preserved.id, {
+        expectedVersion: beforeKeep.version,
+        deletionEffectiveAt: beforeKeep.memberDeletionEffectiveAt,
+      })
+    ).value;
+    expect(kept).toMatchObject({
+      status: "scheduled",
+      startsAt: preserved.startsAt,
+      endsAt: preserved.endsAt,
+      version: preserved.version + 1,
+      keptAfterMemberDeletion: true,
+    });
+    await expect(reserve({ ...o, memberId: await person() })).rejects.toMatchObject({
+      code: "SCHEDULING_CONFLICT",
+    });
+    // Exercise the database guard independently of the availability/approval service checks.
+    await expect(
+      admin.query(
+        `INSERT INTO scheduling_booking(procedure_id,member_id,starts_at,ends_at,duration_snapshot,created_by,mode,status,confirmed_reschedules)
+         VALUES($1,$2,$3,$4,60,$5,'capacity','scheduled',0)`,
+        [o.procedure.id, await person(), pending.startsAt, pending.endsAt, context.actor.userId],
+      ),
+    ).rejects.toMatchObject({ code: "23P01" });
+    await expect(
+      admin.query("UPDATE scheduling_booking SET status='scheduled' WHERE id=$1", [pending.id]),
+    ).rejects.toMatchObject({ code: "23P01" });
     await expect(
       commandWorkflowBooking(pool, next(), pending.id, "approve", {
         expectedVersion: pending.version,
@@ -145,6 +196,16 @@ describe("convergence regressions", () => {
     ).rejects.toMatchObject({ code: "SCHEDULING_CONFLICT" });
     expect((await getSchedulingBooking(pool, context.actor, pending.id)).booking).toEqual(pending);
     const adjacent = (await reserve({ ...o, memberId: await person() }, "10:00")).value;
+    await expect(
+      admin.query("UPDATE scheduling_booking SET starts_at=$2,ends_at=$3 WHERE id=$1", [
+        adjacent.id,
+        pending.startsAt,
+        pending.endsAt,
+      ]),
+    ).rejects.toMatchObject({ code: "23P01" });
+    expect((await getSchedulingBooking(pool, context.actor, adjacent.id)).booking).toEqual(
+      adjacent,
+    );
     const decisions = await Promise.allSettled(
       Array.from({ length: 2 }, () =>
         commandWorkflowBooking(pool, next(), adjacent.id, "approve", {
@@ -331,7 +392,7 @@ afterAll(async () => {
 });
 
 describe.sequential("administrative workflow with real PostgreSQL", () => {
-  it("upgrades a pre-0032 reservation without inventing its counter or rewriting old migrations", async () => {
+  it("preserves the pre-0032 unknown counter then applies the explicit zero policy without inventing history", async () => {
     await admin.query("CREATE DATABASE scheduling_upgrade_fixture");
     const url = new URL(container.getConnectionUri());
     url.pathname = "/scheduling_upgrade_fixture";
@@ -397,6 +458,116 @@ describe.sequential("administrative workflow with real PostgreSQL", () => {
           [old.id],
         ),
       ).rejects.toMatchObject({ code: "23514" });
+      const known = (
+        await upgrade.query<{ id: string }>(
+          `INSERT INTO scheduling_booking(assignment_id,professional_id,procedure_id,member_id,starts_at,ends_at,duration_snapshot,created_by,confirmed_reschedules,version)
+           SELECT assignment_id,professional_id,procedure_id,member_id,starts_at+interval '2 hours',ends_at+interval '2 hours',duration_snapshot,created_by,2,7
+           FROM scheduling_booking WHERE id=$1 RETURNING id`,
+          [old.id],
+        )
+      ).rows[0]!;
+      // A pre-existing block must not prevent the counter-only migration of a confirmed booking.
+      await upgrade.query(
+        `INSERT INTO scheduling_resource_block(service_id,professional_id,starts_at,ends_at,created_by)
+         SELECT p.service_id,b.professional_id,b.starts_at,b.ends_at,b.created_by
+         FROM scheduling_booking b JOIN scheduling_procedure p ON p.id=b.procedure_id WHERE b.id=$1`,
+        [old.id],
+      );
+      const eventsBefore = (
+        await upgrade.query("SELECT * FROM scheduling_booking_event WHERE booking_id=$1", [old.id])
+      ).rows;
+      for (const name of [
+        "0033_scheduling_absence_penalties.sql",
+        "0034_scheduling_system_events.sql",
+        "0036_scheduling_review_fixes.sql",
+      ]) {
+        await upgrade.query("BEGIN");
+        try {
+          await upgrade.query(await readFile(new URL(name, folder), "utf8"));
+          await upgrade.query("COMMIT");
+        } catch (error) {
+          await upgrade.query("ROLLBACK");
+          throw error;
+        }
+      }
+      expect(
+        (
+          await upgrade.query(
+            "SELECT status,confirmed_reschedules,procedure_id,reserved_reschedule,version FROM scheduling_booking WHERE id=$1",
+            [old.id],
+          )
+        ).rows[0],
+      ).toEqual({ ...migrated, confirmed_reschedules: 0, version: 2 });
+      expect(
+        (
+          await upgrade.query(
+            "SELECT confirmed_reschedules,version FROM scheduling_booking WHERE id=$1",
+            [known.id],
+          )
+        ).rows[0],
+      ).toEqual({ confirmed_reschedules: 2, version: 7 });
+      expect(
+        (
+          await upgrade.query("SELECT * FROM scheduling_booking_event WHERE booking_id=$1", [
+            old.id,
+          ])
+        ).rows,
+      ).toEqual(eventsBefore);
+      const legacy = (
+        await upgrade.query<{ created_by: string; assignment_id: string }>(
+          "SELECT created_by,assignment_id FROM scheduling_booking WHERE id=$1",
+          [old.id],
+        )
+      ).rows[0]!;
+      const sessionId = crypto.randomUUID();
+      await upgrade.query(
+        "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$2,now()+interval '1 hour')",
+        [sessionId, legacy.created_by],
+      );
+      await upgrade.query(
+        "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['scheduling:read','scheduling:write'],$1)",
+        [legacy.created_by],
+      );
+      await upgrade.query(
+        `INSERT INTO scheduling_unit_hours(unit_id,weekday,start_local,end_local)
+         SELECT unit_id,weekday,'08:00'::time,'18:00'::time FROM scheduling_assignment CROSS JOIN generate_series(0,6) weekday WHERE id=$1`,
+        [legacy.assignment_id],
+      );
+      await upgrade.query(
+        `INSERT INTO scheduling_professional_hours(professional_id,unit_id,weekday,start_local,end_local)
+         SELECT professional_id,unit_id,weekday,'08:00'::time,'18:00'::time FROM scheduling_assignment CROSS JOIN generate_series(0,6) weekday WHERE id=$1`,
+        [legacy.assignment_id],
+      );
+      url.username = "caab_runtime";
+      url.password = "change-me-runtime";
+      const upgradePool = new Pool({ connectionString: url.toString() });
+      const legacyContext = {
+        ...next(),
+        actor: { ...context.actor, userId: legacy.created_by, sessionId },
+      };
+      try {
+        const destination = { assignmentId: legacy.assignment_id, startsAt: at("12:00") };
+        await expect(
+          commandWorkflowBooking(upgradePool, legacyContext, old.id, "reschedule", {
+            ...destination,
+            expectedVersion: 1,
+          }),
+        ).rejects.toMatchObject({ code: "SCHEDULING_VERSION_CONFLICT" });
+        const rescheduled = (
+          await commandWorkflowBooking(upgradePool, legacyContext, old.id, "reschedule", {
+            ...destination,
+            expectedVersion: 2,
+          })
+        ).value;
+        expect(rescheduled).toMatchObject({
+          id: old.id,
+          status: "scheduled",
+          confirmedReschedules: 1,
+          version: 3,
+        });
+      } finally {
+        await upgradePool.end();
+      }
     } finally {
       await upgrade.end();
     }
@@ -694,6 +865,70 @@ describe.sequential("administrative workflow with real PostgreSQL", () => {
     expect(withoutSource.notices.some((notice) => notice.includes("canceladas atualmente"))).toBe(
       false,
     );
+  });
+  it("checks current scheduling or users authority for team directory grants and revocations", async () => {
+    const o = await offer();
+    const team = await getSchedulingTeam(pool, context.actor, o.unit.id);
+    await saveSchedulingTeam(pool, next(), o.unit.id, {
+      expectedVersion: team.version,
+      userIds: [context.actor.userId],
+    });
+    const userId = (
+      await admin.query<{ id: string }>(
+        `INSERT INTO "user"(name,email) VALUES('Leitor do diretório','team-directory@example.test') RETURNING id`,
+      )
+    ).rows[0]!.id;
+    const sessionId = crypto.randomUUID();
+    await admin.query(
+      "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$2,now()+interval '1 hour')",
+      [sessionId, userId],
+    );
+    await admin.query(
+      "INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,ARRAY['scheduling:read'],$1)",
+      [userId],
+    );
+    // A stale request snapshot cannot grant access that the database has denied or revoked.
+    const actor = {
+      userId,
+      sessionId,
+      permissions: new Set(["scheduling:read", "scheduling:write", "users:read"]),
+    };
+    const expectDenied = async () => {
+      await expect(getSchedulingTeam(pool, actor, o.unit.id)).rejects.toMatchObject({
+        code: "PERMISSION_DENIED",
+        status: 403,
+      });
+      await expect(listSchedulingTeamCandidates(pool, actor, {})).rejects.toMatchObject({
+        code: "PERMISSION_DENIED",
+        status: 403,
+      });
+    };
+    const expectAllowed = async () => {
+      expect((await getSchedulingTeam(pool, actor, o.unit.id)).items).toEqual([
+        { id: context.actor.userId, name: "Fluxo sintético" },
+      ]);
+      expect(
+        (await listSchedulingTeamCandidates(pool, actor, { q: "Fluxo sintético" })).items,
+      ).toEqual([{ id: context.actor.userId, name: "Fluxo sintético" }]);
+    };
+    await expectDenied();
+    for (const permission of ["users:read", "scheduling:write"]) {
+      await admin.query("UPDATE user_access SET permissions=$2::text[] WHERE user_id=$1", [
+        userId,
+        ["scheduling:read", permission],
+      ]);
+      await expectAllowed();
+      await admin.query(
+        "UPDATE user_access SET permissions=ARRAY['scheduling:read'] WHERE user_id=$1",
+        [userId],
+      );
+      await expectDenied();
+    }
+    await admin.query(
+      "UPDATE user_access SET permissions=ARRAY['users:read','scheduling:write'] WHERE user_id=$1",
+      [userId],
+    );
+    await expectDenied();
   });
   it("denies revoked access on commands and replays without touching data", async () => {
     const o = await offer();

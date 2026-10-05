@@ -127,56 +127,73 @@ export async function cancelSchedulingAbsenceBookings(
 export async function processExpiredSchedulingAbsences(pool: Pool, limit = 25) {
   if (!Number.isSafeInteger(limit) || limit < 1)
     throw new Error("SCHEDULING_ABSENCE_BATCH_INVALID");
-  return withTransaction(pool, async (client) => {
-    await lockMemberEligibility(client);
-    const now = (await client.query<{ now: Date }>("SELECT clock_timestamp() AS now")).rows[0]!.now;
+  const failures: string[] = [];
+  const result = await withTransaction(pool, async (client) => {
     const due = await client.query<{ id: string }>(
-      `SELECT a.id FROM scheduling_absence a WHERE a.finalized_at IS NULL AND a.appeal_deadline<=$1
+      `SELECT a.id FROM scheduling_absence a WHERE a.finalized_at IS NULL AND a.appeal_deadline<=clock_timestamp()
        AND NOT EXISTS(SELECT 1 FROM scheduling_absence_appeal p WHERE p.absence_id=a.id)
-       ORDER BY a.appeal_deadline,a.id LIMIT $2 FOR UPDATE OF a`,
-      [now, limit],
+       ORDER BY a.appeal_deadline,a.id LIMIT $1`,
+      [limit],
     );
     let finalized = 0;
     let cancelled = 0;
+    if (due.rows.length) await lockMemberEligibility(client);
     for (const absence of due.rows) {
-      const actor: SchedulingAbsenceCancellationActor = {
-        kind: "system",
-        requestId: randomUUID(),
-        correlationId: absence.id,
-      };
-      const result = await cancelSchedulingAbsenceBookings(client, absence.id, actor, now);
-      if (!result.changed) continue;
-      const row = (
-        await client.query<{ member_id: string; restriction_ends_at: Date; version: number }>(
-          "UPDATE scheduling_absence SET version=version+1 WHERE id=$1 RETURNING member_id,restriction_ends_at,version",
-          [absence.id],
-        )
-      ).rows[0]!;
-      const after = {
-        id: absence.id,
-        memberId: row.member_id,
-        version: row.version,
-        finalizedAt: now.toISOString(),
-        restrictionEndsAt: row.restriction_ends_at.toISOString(),
-        restrictionActive: now < row.restriction_ends_at,
-        reason: now < row.restriction_ends_at ? "no_appeal" : "restriction_expired",
-        cancelledBookingIds: result.cancelledIds,
-      };
-      await client.query(
-        `INSERT INTO scheduling_absence_event(absence_id,action,actor_id,actor_type,occurred_at,after)
+      await client.query("SAVEPOINT absence_finalization");
+      try {
+        const now = (await client.query<{ now: Date }>("SELECT clock_timestamp() AS now")).rows[0]!
+          .now;
+        const actor: SchedulingAbsenceCancellationActor = {
+          kind: "system",
+          requestId: randomUUID(),
+          correlationId: absence.id,
+        };
+        const result = await cancelSchedulingAbsenceBookings(client, absence.id, actor, now);
+        if (!result.changed) {
+          await client.query("RELEASE SAVEPOINT absence_finalization");
+          continue;
+        }
+        const row = (
+          await client.query<{ member_id: string; restriction_ends_at: Date; version: number }>(
+            "UPDATE scheduling_absence SET version=version+1 WHERE id=$1 RETURNING member_id,restriction_ends_at,version",
+            [absence.id],
+          )
+        ).rows[0]!;
+        const after = {
+          id: absence.id,
+          memberId: row.member_id,
+          version: row.version,
+          finalizedAt: now.toISOString(),
+          restrictionEndsAt: row.restriction_ends_at.toISOString(),
+          restrictionActive: now < row.restriction_ends_at,
+          reason: now < row.restriction_ends_at ? "no_appeal" : "restriction_expired",
+          cancelledBookingIds: result.cancelledIds,
+        };
+        await client.query(
+          `INSERT INTO scheduling_absence_event(absence_id,action,actor_id,actor_type,occurred_at,after)
          VALUES($1,'finalized',NULL,'system',$2,$3)`,
-        [absence.id, now, after],
-      );
-      await writeAuditEvent(client, {
-        ...auditActor(actor),
-        action: "scheduling.absence.finalized",
-        entityType: "scheduling_absence",
-        entityId: absence.id,
-        after,
-      });
-      finalized++;
-      cancelled += result.cancelledIds.length;
+          [absence.id, now, after],
+        );
+        await writeAuditEvent(client, {
+          ...auditActor(actor),
+          action: "scheduling.absence.finalized",
+          entityType: "scheduling_absence",
+          entityId: absence.id,
+          after,
+        });
+        finalized++;
+        cancelled += result.cancelledIds.length;
+        await client.query("RELEASE SAVEPOINT absence_finalization");
+      } catch {
+        await client.query("ROLLBACK TO SAVEPOINT absence_finalization");
+        await client.query("RELEASE SAVEPOINT absence_finalization");
+        failures.push(absence.id);
+      }
     }
     return { finalized, cancelled };
   });
+  // Commit successful occurrences before notifying the queue to retry failed ones.
+  if (failures.length)
+    throw new Error("SCHEDULING_ABSENCE_FINALIZATION_FAILED: " + failures.join(","));
+  return result;
 }

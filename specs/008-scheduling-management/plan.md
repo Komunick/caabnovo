@@ -1,5 +1,75 @@
 # Implementation Plan: Agendamentos
 
+## Correções da revisão — 05/10/2026-CODEX-mafaltti
+
+Tratar os achados confirmados na branch do PR43. Preservar migrations 0031–0034; acrescentar
+migration 0036 (0035 reservada pela frente de cargo base) para contador legado, trigger e índices.
+Validar atualização sobre schema anterior, manutenção de reserva confirmada após bloqueio e negação
+de nova ocupação/aprovação. Isolar provas novas, revalidar upload após locks, auditar leitura/grant
+e separar leitura de revisão do lock global. Savepoints isolam falhas do job; exceção após commit
+mantém retry e observabilidade. Rascunhos de exportação incluem filtros de origem. Política padrão
+de serviços legados (90 dias/24 horas) será explícita no roteiro de rollout. Testes locais leves e
+CI completo; nenhum serviço de uso iniciado.
+
+## Fechamento do escopo atual — 05/10/2026-CODEX-mafaltti
+
+Decisão do usuário: concluir a entrega administrativa atual, sem ampliar funcionalidades. Este
+recorte prevalece sobre sequências antigas de pesquisa, canais e roadmap abaixo. Autoria CODEX;
+solicitante mafaltti (Danilo-Komunick), perfil GitHub consultado em 05/10. A atualização organiza o
+fechamento; não declara implementação validada, integração ou homologação.
+
+### O que entra nesta entrega
+
+- Impedir sobreposição de agendamentos da mesma pessoa (CAAB-26).
+- Sinalizar reservas de pessoa bloqueada sem cancelá-las (CAAB-27).
+- Separar consulta e alteração em Agendamentos (CAAB-28), incluindo revisão dedicada de faltas.
+- Operar aprovação, remarcação e recuperação de atendimentos (CAAB-40).
+- Tratar faltas, justificativas e contestações (CAAB-41), com comprovantes privados.
+- Preservar calendário, catálogo/horários, auditoria, exportações administrativas já implementadas e
+  compatibilidade com consumidores existentes. Preservar migrations 0031–0034 e os dados.
+
+As regras BF/2C e os contratos existentes não são redesenhados. Intenções de aviso persistidas
+continuam no recorte; transporte e entrega real não entram.
+
+### Sequência restante, sem frentes novas
+
+| Ordem | Trabalho restante                                                                                                                                                                                                         | Controle                                                            |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 1     | Corrigir a asserção incompatível em scheduling-absence.test.ts:880, preservando tipo/status e negação sem efeitos; concluir a matriz de comprovantes e as provas S01/S02 na nova ponta.                                   | T111; permissões e faltas.                                          |
+| 2     | Concluir CI aplicável ao delta e revisão das evidências de upload; tratar apenas falhas comprovadas. Não repetir pesquisa ou suítes já válidas sem mudança pertinente.                                                    | T111; mesma branch/PR43.                                            |
+| 3     | Receber revisão externa da versão final de permissões, arquivos, agenda e concorrência; responder aos achados. Lacunas L01/L02 permanecem registradas, sem inventar funcionalidades ou presumir aprovação.                | T110; cinco tickets administrativos.                                |
+| 4     | Após integração real do PR42, conferir composição documental por trechos, preservando DS/AC/roles/HIN e contratos. Verificar gates afetados da versão resultante.                                                         | T110.                                                               |
+| 5     | Preparar diagnóstico de legado, backup/restore, janela/executor único e compatibilidade app/worker; solicitar decisão de merge com resultado concreto. Se merge dispara implantação, resolver condições do destino antes. | T110; revisão sensível humana.                                      |
+| 6     | Após integração autorizada, registrar homologação humana em DEV por versão, responsável e resultado; corrigir somente defeitos que contrariem os critérios atuais.                                                        | Aceite dos tickets administrativos; sem promoção automática a main. |
+
+Última versão conferida: PR43 aberto em 4e427ac. CI de PR/push com browser/security aprovados e
+quality falhando: 351 integrações aprovadas, uma falha de asserção e uma opcional ignorada. A
+resposta 403 não tem o campo code esperado pelo teste; o caso interrompido não prova toda a matriz
+de isolamento. CI antigo de b676974 não cobre o delta. Não iniciar implementação nesta atualização
+documental.
+
+### O que fica para depois
+
+- Permitir agendamento pelo app e site (CAAB-30): sessão externa, UI01/UI02, consumidores e
+  reconciliação/migração externa; T041–T077 conservam seu escopo futuro, sem nova execução para
+  repetir as contrapartes administrativas já entregues.
+- Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42) e Homologar os avisos
+  operacionais após disponibilizar o serviço de e-mail (CAAB-45): T089, dependentes de Serviço de
+  e-mail transacional e definição da caixa de entrada (CAAB-2). Não bloqueiam esta entrega.
+- WAHA, avaliações, expansões de horários/comunicação e novas equivalências de legado (T021–T024);
+  cancelamento além do período contratado (T097) permanece possibilidade não autorizada.
+- Exportações agrupadas, resumo/evolução e validação da combinação futura pertencem a Relatórios, em
+  Exportar detalhe agrupado, resumo e evolução sem os limites antigos (CAAB-44). Não são
+  pré-requisito invertido de Agendamentos.
+
+### Critério de encerramento
+
+Encerrar o recorte administrativo quando os cinco tickets atenderem seus critérios com revisão
+externa, gates da versão final, integração autorizada e homologação identificada. O épico
+Agendamentos (CAAB-37) pode continuar aberto pelos recortes futuros, sem prolongar este fechamento.
+Nenhum item é concluído apenas por este limite de escopo. Novos pedidos vão ao backlog responsável e
+exigem priorização explícita; defeitos do escopo atual continuam sendo corrigidos.
+
 ## Consolidação final em andamento — 02/10/2026-CODEX-Gabriel-Komunick
 
 Os três pareceres de b676974 foram recebidos e consolidados, com autoria/hashes preservados em
@@ -438,10 +508,10 @@ autorização pela mesma OAB. A revisão publicada permanece não verificada.
 Se a importação opcional desses registros antigos for escolhida, T042 preserva informação
 verificável e registra ambiguidades, sem exigir reconstrução detalhada como gate: reject também
 representa cancelamento; EDITED não prova troca confirmada; finished/not_appear são histórico, sem
-novas ações de comparecimento em 2C. Não zerar contador desconhecido nem converter horário sem fuso
-comprovado. T045 fecha a representação histórica apenas se essa importação entrar na entrega;
-conflitos e casos sem correspondência permanecem para resolução explícita. Nenhum inventário real
-executado.
+novas ações de comparecimento em 2C. A decisão de 05/10/2026 inicializa em zero o contador
+desconhecido na transição administrativa; não converter horário sem fuso comprovado. T045 fecha a
+representação histórica apenas se essa importação entrar na entrega; conflitos e casos sem
+correspondência permanecem para resolução explícita. Nenhum inventário real executado.
 
 Comunicação: jobs/worker existentes são reutilizáveis; SMTP de contas é candidato à extração
 compatível. `mafaltti/caab-whatsapp-router` contém cliente Evolution conversacional, sem recibo de
@@ -667,7 +737,8 @@ continuação manual dos artefatos na branch existente, sem conclusão automatiz
   indisponibilidade do estabelecimento. Cancelamento definitivo encerra ciclo sem consolidar
   utilização; não restitui confirmadas nem apaga histórico. Novo agendamento tem outra
   identidade/contador zero. Projeções mostram confirmadas/em andamento separadas. Conciliar eventos
-  legados antes de definir contagem, sem presumir zero desconhecido.
+  legados; contador desconhecido recebe zero pela política de transição aprovada em 05/10/2026, sem
+  reconstruir histórico.
 - Indisponibilidade do estabelecimento (2C-FR-20): comando explícito da equipe autorizada para
   atendimento confirmado, com ator/causa e snapshot do horário afetado. Na mesma transação,
   registrar a indisponibilidade efetiva do recurso/período, remover a ocupação da reserva e iniciar

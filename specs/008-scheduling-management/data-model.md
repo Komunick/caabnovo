@@ -93,9 +93,10 @@ scheduling_unit_team(unit_id,user_id); scheduling_resource_block(service_id,prof
 opcional,starts_at,ends_at,created_by); scheduling_notification_intent(event_id,member_id,kind,
 state,created_at), com unicidade event_id/member_id/kind. Runtime insere/lê intenções, sem poder
 marcar entrega. Estados pending/suppressed/delivered/failed/uncertain não ativam processamento.
-0001–0031 permanecem intactas. Upgrade preserva contador desconhecido como NULL; novas reservas
-recebem zero. Nova remarcação voluntária em reserva histórica exige conciliação desse contador.
-Teste de upgrade e replay registrado na evidência administrativa de 28/09.
+0001–0031 permanecem intactas. A migration 0032 preserva contador desconhecido como NULL; a correção
+0036 o inicializa em zero e incrementa a versão por decisão de 05/10/2026. Novas reservas recebem
+zero. Nova remarcação voluntária em reserva histórica exige conciliação desse contador. Teste de
+upgrade e replay registrado na evidência administrativa de 28/09.
 
 DTOs, calendário, lista, Relatórios e exportação devem representar estados novos e ausência de
 profissional/horário antes de habilitar escrita. A seção histórica abaixo não limita esta evolução
@@ -450,7 +451,9 @@ contar confirmação; trocas confirmadas anteriores permanecem. Cancelamento do 
 possível mesmo após início original, sem reativar origem ou alterar atendimento confirmado
 retroativamente. Usar versão, idempotência, locks e integridade de ciclo/proposta para concorrência
 e retry. Reconciliar legado com evidência; não inferir contador pelo total de eventos/pedidos nem
-zerar histórico desconhecido. Expor contagem de confirmadas e em andamento separadamente.
+inventar eventos históricos. A transição de 05/10/2026 inicializa contadores desconhecidos em zero
+pela migration 0036, sem alegar reconstrução. Expor contagem de confirmadas e em andamento
+separadamente.
 
 Recuperação por indisponibilidade do estabelecimento (2C-FR-20): distinguir causa do processo ativo
 (troca voluntária debitável ou recuperação isenta), vinculando a segunda a ocorrência registrada por

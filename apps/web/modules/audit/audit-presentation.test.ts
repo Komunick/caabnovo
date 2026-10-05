@@ -11,6 +11,34 @@ const event = {
 };
 
 describe("plain-language audit presentation", () => {
+  it.each([
+    ["scheduling.absence.recorded", "registrou uma falta"],
+    ["scheduling.absence.appeal_submitted", "apresentou pedido de análise de falta"],
+    ["scheduling.absence.accepted", "abonou uma falta"],
+    ["scheduling.absence.rejected", "recusou um pedido de análise de falta"],
+    ["scheduling.absence.finalized", "finalizou o prazo de uma falta"],
+    ["scheduling.absence.reviewed", "consultou a justificativa de uma falta"],
+    ["scheduling.absence.evidence_granted", "emitiu acesso a um comprovante de falta"],
+  ])("explains %s without leaking private evidence", (action, description) => {
+    const result = presentAuditEvent(
+      {
+        ...event,
+        action,
+        entityType: "scheduling_absence",
+        before: null,
+        after: {
+          explanation: "Private explanation",
+          url: "https://private.test/grant",
+          fileId: "private-file-id",
+        },
+      },
+      { actorName: "Gabriel" },
+    );
+    expect(result.description).toBe(`Gabriel ${description}`);
+    expect(result.targetLabel).toBe("Falta");
+    expect(JSON.stringify(result)).not.toMatch(/Private explanation|private\.test|private-file-id/);
+  });
+
   it.each(["user.role.revoked", "role.revoked"])(
     "explains %s without exposing identifiers",
     (action) => {

@@ -1,5 +1,29 @@
 # Checkpoint vigente — Agendamentos, 02/10/2026
 
+## Correções da revisão — 05/10/2026-CODEX-mafaltti
+
+Revisão do usuário recebida com um HIGH, dois MEDIUM, nove LOW e observações INFO. Decisões
+confirmadas: contador desconhecido zero; preservar outras reservas confirmadas no modo capacidade.
+Correções em andamento; evidências antigas não validam o novo delta. Quatro documentos locais
+anteriores preservados em backup verificado por bytes em
+.cache/local-backups/scheduling-review-20261005-123015 da principal. Próximo passo: implementação e
+regressões T112–T116, CI e atualização do PR43.
+
+## Estado de fechamento delimitado — 05/10/2026-CODEX-mafaltti
+
+Pedido do usuário: concluir no escopo administrativo atual, organizar Jira e parar esta coordenação.
+[Plano](plan.md) e [tarefas](tasks.md) agora distinguem T111/T110 dos recortes futuros. Cinco
+tickets administrativos permanecem em Code Review; app/site e e-mail real/homologação ficam no
+Backlog. Nenhum aceite concluído por esta organização.
+
+PR43/4e427ac ainda aberto na conferência; CI37061317002 e37061310305 terminaram com browser/security
+aprovados, quality falhando na asserção de erro em scheduling-absence.test.ts:880. Falta concluir
+matriz S01/S02, gates/revisão externa da ponta final, composição após PR42, preparo de implantação e
+homologação humana. Os registros de 02/10 abaixo são históricos, não prontidão atual.
+
+Alteração desta coordenação somente documental, sem código, serviço, commit/push ou merge. Autoria
+CODEX; solicitante mafaltti (Danilo-Komunick), consulta GitHub desta retomada em 05/10.
+
 ## Consolidação final em andamento — 02/10/2026-CODEX-Gabriel-Komunick
 
 Os três pareceres de b676974 foram recebidos e consolidados, com autoria/hashes preservados em

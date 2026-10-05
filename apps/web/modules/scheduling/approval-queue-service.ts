@@ -18,6 +18,16 @@ import {
 import { bookingFrom, bookingSelect } from "./booking-service";
 import { schedulingQueueSignals } from "./policy";
 import { readCatalogItem, auditScheduling } from "./catalog-service";
+import { readUserPermissions } from "@caab/db/repositories/user-access";
+
+async function requireTeamDirectoryAccess(
+  client: Parameters<typeof readUserPermissions>[0],
+  actor: RequestActor,
+) {
+  const permissions = await readUserPermissions(client, actor.userId);
+  if (!permissions.includes("scheduling:write") && !permissions.includes("users:read"))
+    throw new SchedulingError("PERMISSION_DENIED", 403);
+}
 
 export async function listSchedulingApprovalQueue(pool: Pool, actor: RequestActor, raw: unknown) {
   const query = schedulingPageQuerySchema.parse(raw);
@@ -80,6 +90,7 @@ export async function listSchedulingApprovalQueue(pool: Pool, actor: RequestActo
 export async function getSchedulingTeam(pool: Pool, actor: RequestActor, id: string) {
   idSchema.parse(id);
   return schedulingAccess(pool, actor, false, async (client) => {
+    await requireTeamDirectoryAccess(client, actor);
     const unit = await readCatalogItem(client, "units", id);
     const items = (
       await client.query<{ id: string; name: string }>(
@@ -93,6 +104,7 @@ export async function getSchedulingTeam(pool: Pool, actor: RequestActor, id: str
 export async function listSchedulingTeamCandidates(pool: Pool, actor: RequestActor, raw: unknown) {
   const query = schedulingPageQuerySchema.parse(raw);
   return schedulingAccess(pool, actor, false, async (client) => {
+    await requireTeamDirectoryAccess(client, actor);
     const where = `FROM "user" u WHERE u.status='active' AND u.name ILIKE $1
       AND EXISTS(SELECT 1 FROM effective_user_permission WHERE user_id=u.id AND permission='scheduling:read')
       AND EXISTS(SELECT 1 FROM effective_user_permission WHERE user_id=u.id AND permission='scheduling:write')`;

@@ -137,12 +137,16 @@ export async function createUploadIntent(
         [record.response_reference, command.actor.userId],
       );
       if (!reused.rows[0]) throw operationError("NOT_FOUND", 404);
+      if (command.ownerType === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+        await requireSchedulingAuthority(client, command.actor, true);
       return reused.rows[0];
     }
 
     const id = crypto.randomUUID();
     const quarantineKey = `${storage.keyPrefix ?? ""}quarantine/${id}`;
     const objectKey = `${storage.keyPrefix ?? ""}private/${id}`;
+    if (command.ownerType === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+      await requireSchedulingAuthority(client, command.actor, true);
     await client.query(
       `INSERT INTO stored_file
         (id, owner_type, owner_id, original_name, object_key, quarantine_key, declared_mime,

@@ -1,5 +1,34 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Correções da revisão — 05/10/2026-CODEX-mafaltti
+
+Decisões explícitas do usuário nesta revisão: contador legado desconhecido passa a zero por política
+de transição, sem afirmar histórico reconstruído. Em capacidade, somente a reserva afetada pela
+indisponibilidade entra em recuperação; outras reservas já confirmadas permanecem válidas. Novas
+ocupações e pedidos pendentes de aprovação continuam sujeitos ao bloqueio. Estas decisões substituem
+a exigência anterior de conciliação manual do contador.
+
+Novas provas exigem finalidade scheduling_absence_evidence. Arquivos member já vinculados continuam
+legíveis pela revisão dedicada; não se permite converter documento comum em nova prova.
+Indisponibilidade exige início futuro e ausência de falta registrada. Consulta de equipe exige
+scheduling:write ou users:read, além de scheduling:read. Leitura da justificativa e emissão de grant
+geram auditoria sem explicação, nome de arquivo, conteúdo ou URL. Falha individual de finalização
+não desfaz ocorrências válidas do lote.
+
+## Limite da entrega atual — 05/10/2026-CODEX-mafaltti
+
+O usuário determinou fechar a entrega no escopo administrativo já contratado: sobreposição
+individual, sinalização de bloqueio, consulta/alteração, aprovação/remarcação/recuperação e
+faltas/justificativas/contestações, preservando exportações, auditoria e dados existentes. Os cinco
+recortes responsáveis e seus critérios estão identificados no [plano vigente](plan.md).
+
+O fechamento exige correções comprovadas, validação da versão final, revisão externa, integração
+autorizada e homologação humana; não exige implementar os canais e expansões adiados. App/site,
+WAHA, e-mail real/T089, avaliações, expansões de legado e T097 permanecem fora desta entrega.
+Requisitos BF/2C e contratos aceitos permanecem intactos; não ampliar nem reduzir suas garantias. O
+plano de 05/10 e T110/T111 delimitam a sequência restante. Não declarar homologação nem concluir o
+épico por esta atualização documental. Autoria CODEX; solicitante mafaltti/Danilo-Komunick.
+
 ## Consolidação final em andamento — 02/10/2026-CODEX-Gabriel-Komunick
 
 Os três pareceres de b676974 foram recebidos e consolidados, com autoria/hashes preservados em

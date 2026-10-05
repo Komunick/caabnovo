@@ -221,6 +221,11 @@ export async function commandWorkflowBooking(
       } else if (action === "provider-unavailability") {
         if (before.status !== "scheduled" || !before.startsAt || !before.endsAt)
           throw new SchedulingError("SCHEDULING_STATE");
+        if (Date.parse(before.startsAt) <= now) throw new SchedulingError("SCHEDULING_PAST", 422);
+        const absence = await client.query("SELECT 1 FROM scheduling_absence WHERE booking_id=$1", [
+          id,
+        ]);
+        if (absence.rowCount) throw new SchedulingError("SCHEDULING_STATE", 422);
         // The affected resource is blocked before releasing the reservation. Other reservations are untouched.
         await client.query(
           "INSERT INTO scheduling_resource_block(service_id,professional_id,starts_at,ends_at,created_by) VALUES($1,$2,$3,$4,$5)",

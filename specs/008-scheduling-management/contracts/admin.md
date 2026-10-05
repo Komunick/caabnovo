@@ -145,7 +145,9 @@ distingue scheduled, pending_approval, rejected, cancelled e awaiting_new_time. 
 quando aguardando nova data; modo capacidade tem assignment/professional nulos e procedureId
 explícito. Contagem confirmada/reservada, tipo de processo, origem e entrada em análise são campos
 separados. Não aceitar contador/causa/autor confiável do cliente. Contagem histórica desconhecida
-continua nula, sem dedução; não permitir nova troca voluntária desse registro sem conciliação.
+recebe zero na migration 0036 por decisão explícita do usuário em 05/10/2026, substituindo o
+bloqueio anterior por conciliação. Eventos históricos e contadores conhecidos permanecem intactos; a
+transição não afirma que não houve remarcações anteriores.
 
 Disponibilidade aceita procedureId ou assignmentId; cada vaga traz o assignmentId/nome do
 profissional escolhido quando aplicável. No comando profissional, exigir o ID apresentado, sem
@@ -297,3 +299,42 @@ existente. Não prometer revogação imediata de URLs emitidas nem confundir com
 de exportações. Política de revogação de conteúdo exige decisão explícita se for alterada. Uploads
 antigos sem protocolo/classificação não têm finalidade inferível; não reclassificar
 indiscriminadamente documentos comuns.
+
+## Correções da revisão — 05/10/2026-CODEX-mafaltti
+
+- Indisponibilidade do prestador exige reserva confirmada com início futuro e nenhuma falta
+  registrada. Em capacidade, só a reserva afetada entra em recuperação; as demais confirmadas são
+  preservadas. Bloqueio impede novas ocupações, destinos alterados e aprovação de pedidos ainda
+  pendentes. Manter reserva após exclusão do associado não altera ocupação e não é recusado pelo
+  bloqueio superveniente.
+- Nova submissão aceita apenas owner_type=scheduling_absence_evidence. A compatibilidade member
+  limita-se à leitura de provas já vinculadas; documento comum não é convertido nem retirado do
+  acervo por nova submissão.
+- Intenção de upload revalida autoridade de Agendamentos depois de esperas por membro/idempotência,
+  tanto no INSERT como no replay. Finalização mantém sua revalidação existente.
+- GET de revisão e de comprovante exige scheduling:read + scheduling:review_absences; dispensa lock
+  global de elegibilidade e registra scheduling.absence.reviewed/evidence_granted, com ator,
+  ocorrência, correlação e fileId quando pertinente. Não grava justificativa, nome, conteúdo, chave
+  de storage nem URL. Comandos de decisão continuam usando lock global.
+- Diretório e equipe exigem scheduling:read e pelo menos scheduling:write ou users:read. A UI não
+  monta o diretório sem essa autorização; revogação é refletida pelo provider compartilhado.
+- Finalização consulta vencidas antes de esperar pelo lock global, revalida cada ocorrência após
+  adquiri-lo e usa savepoint por item. Sucessos são commitados antes de reportar as falhas
+  individuais ao mecanismo de retry do worker; repetição continua idempotente. Falha de
+  conexão/transação impede afirmar commit.
+
+### Política legada e roteiro de rollout
+
+A policy vazia de serviços legados usa os defaults atuais: horizonte de 90 dias para novos destinos
+e antecedência de 24 horas para troca voluntária. Essa aplicação não exige opt-in no código atual e
+não cancela reservas existentes. Antes de ativar, inventariar serviços/reservas futuras, apresentar
+esses limites ao responsável e ajustar/publicar políticas por serviço quando necessário. Recuperação
+isenta mantém suas exceções; não confundir antecedência de nova reserva com remarcação. Este
+registro atende ao achado de rollout, sem afirmar aceite operacional ou alterar silenciosamente a
+política.
+
+0031–0034 ficam intactas. Aplicar 0036 em sequência pelo runner, preservando a 0035 independente de
+cargo base quando presente. Backup/restore testado, janela e executor único, diagnóstico de
+sobreposição, revisão humana e compatibilidade app/worker continuam gates antes do rollout.
+Migration nova incrementa versão de reservas cujo contador era NULL; telas antigas precisam
+recarregar em conflito de versão. Não executar neste banco de uso.

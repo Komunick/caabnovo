@@ -58,7 +58,7 @@ async function fixture(name: string, status: SchedulingAbsenceStatus, days: numb
     const fileId = crypto.randomUUID();
     await admin.query(
       `INSERT INTO stored_file(id,owner_type,owner_id,original_name,object_key,quarantine_key,declared_mime,detected_mime,visibility,status,scan_result,uploaded_by)
-      VALUES($1::uuid,'member',$2,'secret-proof.pdf',$1::text,$1::text,'application/pdf','application/pdf','private','available','clean',$3)`,
+      VALUES($1::uuid,'scheduling_absence_evidence',$2,'secret-proof.pdf',$1::text,$1::text,'application/pdf','application/pdf','private','available','clean',$3)`,
       [fileId, memberId, writer.actor.userId],
     );
     result = (

@@ -296,21 +296,30 @@ it("rejects caller-supplied authority and a missing decision version through the
 });
 
 it("gets the private review projection separately from the basic absence", async () => {
+  const requestId = crypto.randomUUID();
+  const correlationId = crypto.randomUUID();
   vi.mocked(getSchedulingAbsenceReview).mockResolvedValue({
     id: absenceId,
     explanation: "Texto",
     evidence: [],
   } as never);
   const response = await absenceRoute()(
-    new Request(`https://caab.test/api/v1/scheduling/absences/${absenceId}/review`),
+    new Request(`https://caab.test/api/v1/scheduling/absences/${absenceId}/review`, {
+      headers: { "x-request-id": requestId, "x-correlation-id": correlationId },
+    }),
     ["absences", absenceId, "review"],
   );
   expect(response.status).toBe(200);
-  expect(getSchedulingAbsenceReview).toHaveBeenCalledWith(pool, actor, absenceId);
+  expect(getSchedulingAbsenceReview).toHaveBeenCalledWith(pool, actor, absenceId, {
+    requestId,
+    correlationId,
+  });
   expect(getSchedulingAbsence).not.toHaveBeenCalled();
   expect(response.headers.get("cache-control")).toBe("no-store");
 });
 it("requests a file grant through the scoped review service", async () => {
+  const requestId = crypto.randomUUID();
+  const correlationId = crypto.randomUUID();
   const storage = {} as WebObjectStorage;
   const getStorage = vi.fn(() => storage);
   const fileId = crypto.randomUUID();
@@ -328,6 +337,7 @@ it("requests a file grant through the scoped review service", async () => {
   const response = await route(
     new Request(
       `https://caab.test/api/v1/scheduling/absences/${absenceId}/evidence?fileId=${fileId}`,
+      { headers: { "x-request-id": requestId, "x-correlation-id": correlationId } },
     ),
     ["absences", absenceId, "evidence"],
   );
@@ -338,6 +348,7 @@ it("requests a file grant through the scoped review service", async () => {
     absenceId,
     fileId,
     storage,
+    { requestId, correlationId },
   );
   expect(await response.json()).toEqual({ ...grant, expiresAt: grant.expiresAt });
   expect(response.headers.get("cache-control")).toBe("no-store");
