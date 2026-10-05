@@ -76,7 +76,7 @@ visual. Não houve alteração de UI nem nova certificação visual/acessível.
    operacionais de Agendamentos por e-mail (CAAB-42) e Homologar os avisos operacionais após
    disponibilizar o serviço de e-mail (CAAB-45), dependentes de Serviço de e-mail transacional e
    definição da caixa de entrada (CAAB-2). Destinatários e caráter operacional já definidos.
-3. Agendamentos/Relatórios: integrações/E 2E da versão conciliada e entrega dos modos restantes de
+3. Agendamentos/Relatórios: integrações/E2E da versão conciliada e entrega dos modos restantes de
    Relatórios pertencem às respectivas frentes. Evidência local não é integração ou QA humano.
 4. Design: FormField com validação precoce, revisão assistiva de TableContainer e Tema Cores Legado
    permanecem no índice de pedidos do programa. Homologação humana do guia e correções funcionais

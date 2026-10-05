@@ -161,8 +161,8 @@ desfaz a revogação. Não alterar a migration 0030 já validada.
 Checkpoint T141/T142 concluídas. Quality/security do
 [CI35747105170](https://github.com/Komunick/caabnovo/actions/runs/35747105170), em1a4e0d0: 387
 unitários,169 contratos,247 integração, formatação, lint, tipos e build aprovados. Navegador
-aprovado no [CI35746642120](https://github.com/Komunick/caabnovo/actions/runs/35746642120),
-eme46e12a: 95 E2E e6 a11y. Entre esses commits mudou somente a fixture do teste de integração;
+aprovado no [CI35746642120](https://github.com/Komunick/caabnovo/actions/runs/35746642120), em
+e46e12a: 95 E2E e 6 a11y. Entre esses commits mudou somente a fixture do teste de integração;
 aplicação e E2E idênticos. Capturas da promoção revisadas em1280/390px: botões juntos, secundário
 para Promover e vermelho para Revogar. A falha anterior da fixture foi corrigida e o teste passou.
 
@@ -211,7 +211,7 @@ posição, botão secundário e ícone compartilhados em Colaboradores, Auditori
 colaborador segue a inclusão primária com Plus de Parceiros/Associados. Senha cinza e exclusão
 restrita aos desativados preservadas.
 [CI35736033889](https://github.com/Komunick/caabnovo/actions/runs/35736033889) aprovou027d1f6 em
-quality/browser/security:387 unitários,167 contratos,238 integração,95 E2E e6 a11y,
+quality/browser/security:387 unitários,167 contratos,238 integração,95 E2E e 6 a11y,
 migrations/build/lint/tipos/formatação/segurança. Imagens desktop/celular e claro/escuro revisadas;
 captura móvel da exportação corrigida e conferida. Tarefas deste complemento concluídas. Esta
 padronização não conclui adequações de exportação pendentes nos módulos. PR segue aberto, sem
@@ -240,9 +240,9 @@ imagens e limites. Localhost permanece desligado.
 
 Incremento001 T124–T129 e005 LC03 implementado e validado em3ca6410 pelo
 [CI35728053078](https://github.com/Komunick/caabnovo/actions/runs/35728053078): quality, browser e
-security aprovados;387 unitários,161 contratos,237 integração,94 E2E e6 a11y, mais formatação, lint,
-tipos, migrations e build. Imagens sintéticas1280/390 revisadas, com lista/ações em claro e escuro.
-[Evidências e limites](evidence/collaborators-2026-09-22-validation.md).
+security aprovados;387 unitários,161 contratos,237 integração,94 E2E e 6 a11y, mais formatação,
+lint, tipos, migrations e build. Imagens sintéticas1280/390 revisadas, com lista/ações em claro e
+escuro. [Evidências e limites](evidence/collaborators-2026-09-22-validation.md).
 
 Clarify concluído (cinco respostas); analyze somente do incremento: nove grupos de requisitos, sete
 tarefas, cobertura100%, sem bloqueadores. Checklist13/16 preservado por autorização. CPF único e

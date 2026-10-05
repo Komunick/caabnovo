@@ -137,7 +137,7 @@ atribuições.
   Não foi feito repair, prune nem exclusão nesta tarefa.
 - Localhost permanece desautorizado; não ativar serviços. Quando autorizado, preservar preview
   3107/banco e limites locais já registrados: Node 384 MB/duas CPUs/prioridade baixa; PostgreSQL 256
-  MB/uma CPU; WSL 768 MB/duas CPUs; worker/scanner pausados. Não compilar nem executar E 2E com
+  MB/uma CPU; WSL 768 MB/duas CPUs; worker/scanner pausados. Não compilar nem executar E2E com
   preview ativo e pouca memória livre; preferir CI.
 - O guia ainda disponível está em `.cache/pr-design-guide-20260922/docs/caab-design.md`. Caminho
   canônico planejado: `docs/caab-design.md`. Conferir localização antes de UI/UX.

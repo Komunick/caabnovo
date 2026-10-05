@@ -42,7 +42,7 @@ arquivos exigiram repetição por restrições/dependências locais. Medidas/int
 por bancada dos componentes reais sem servidor, em Chromium, nos dois temas. Resultados, limites,
 fontes de capturas e configurações auxiliares constam na evidência DS. Para repetir, usar a base
 identificada, dependências das mesmas versões e banco/servidor desligados; não confundir a bancada
-com E 2E autenticado. Conferir também referências aos dois guias removidos: somente menções
+com E2E autenticado. Conferir também referências aos dois guias removidos: somente menções
 históricas e links imutáveis no relatório são esperados.
 
 Não confundir revisão de imagens históricas, cálculo estático de contraste ou análise documental com

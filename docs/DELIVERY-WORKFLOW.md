@@ -55,8 +55,8 @@ reutilizar silenciosamente build antigo; preservar banco, contas e arquivos. Ess
 ligar serviços agora.
 
 Quando ligado, o preview principal usa `http://localhost:3107` e os limites locais de recursos
-registrados no [runbook local](runbooks/local-workspace.md). Builds e E 2E pesados ficam no CI
-quando houver pouca memória local; testes usam bancos descartáveis.
+registrados no [runbook local](runbooks/local-workspace.md). Builds e E2E pesados ficam no CI quando
+houver pouca memória local; testes usam bancos descartáveis.
 
 ## 4. Fluxo padrão
 

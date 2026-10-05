@@ -23,7 +23,7 @@ locais das cinco pastas reparadas foram preservados. Conferir o Git antes de reu
 Localhost está desautorizado até pedido explícito. Quando autorizado, preservar banco/contas, usar
 preview na porta 3107 e respeitar o perfil registrado: Node 384 MB, duas CPUs e prioridade baixa;
 PostgreSQL 256 MB e uma CPU; WSL 768 MB e duas CPUs. Worker/scanner permanecem pausados até
-autorização correspondente. Não executar build/E 2E junto ao preview com pouca memória; usar CI ou
+autorização correspondente. Não executar build/E2E junto ao preview com pouca memória; usar CI ou
 ambiente descartável autorizado. Estes valores são restrições registradas, não uma medição do estado
 atual dos processos.
 

@@ -27,7 +27,7 @@ T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
 - [ ] AC-T005 Obter decisão do alcance do cargo base para contas atualmente sem cargo (P01) e
       atualizar o contrato existente antes de propor transição. Não atribuir cargos por inferência.
 - [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
-      concessão, cargo único/migrations e E 2E da matriz na versão conciliada; registrar commit e
+      concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
       limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos
       testes automatizados. Não iniciar serviços para concluir esta revisão documental.
 
@@ -952,8 +952,8 @@ Evidências RM03:
 - [x] NV04 Validar atraso controlado, interrupção, shell, acessibilidade e regressões no CI.
 - [x] NV05 Revisar capturas sintéticas do build remoto, registrar evidências e preparar PR. Preview
       local adiado por pedido posterior do usuário: web e banco desligados; não reativar. Código
-      7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações, 66 E2E e6 a11y;
-      evidências em evidence/navigation-speed-2026-09-15.md.
+      7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações, 66 E2E e 6
+      a11y; evidências em evidence/navigation-speed-2026-09-15.md.
 
 ## Contraste do shell durante troca de tema — 16/09/2026
 
@@ -1129,7 +1129,7 @@ sem homologar políticas institucionais pendentes ou marcar o checklist13/16 com
 
 Validação da padronização22/09:
 [CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) aprovou
-quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, Auditoria e
+quality/browser/security em e9d05ed (95 E2E e 6 a11y). Imagens de Colaboradores, Auditoria e
 Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
 filtros. Ver
 [evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).
@@ -1160,8 +1160,8 @@ posterior de aplicação/testes. PR preparado para revisão humana, sem aprovaç
       responsividade compartilhadas; validar UI/a11y e CI. PR somente mediante pedido explícito.
 
 Fechamento T141/T142: quality/security CI35747105170 em1a4e0d0 (387 unitários,169 contratos, 247
-integração, build/lint/tipos/formatação); browser CI35746642120 eme46e12a (95 E2E,6 a11y). Código de
-aplicação/E2E igual entre esses commits; a diferença corrige somente a fixture de conta inativa no
-teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR explicitamente;
-PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
+integração, build/lint/tipos/formatação); browser CI35746642120 em e46e12a (95 E2E,6 a11y). Código
+de aplicação/E2E igual entre esses commits; a diferença corrige somente a fixture de conta inativa
+no teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR
+explicitamente; PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
 [evidências](evidence/single-role-2026-09-22-validation.md).

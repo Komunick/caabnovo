@@ -317,9 +317,9 @@ Os comandos vigentes estão no [package.json](../package.json). A seleção das 
 | Regras e componentes                   | Casos normais, limites e falhas                                                      | `pnpm test:unit`; projetos unit do Vitest                                                            |
 | Contratos e schemas                    | Entradas, saídas, compatibilidade e campos proibidos                                 | `pnpm test:contract`; [contratos](../packages/contracts/tests/) e [web](../apps/web/tests/contract/) |
 | Persistência, permissões, concorrência | Constraints, migrations, negação, escalada horizontal/vertical, transições e retries | `pnpm test:integration`; [banco](../packages/db/tests/) e [web](../apps/web/tests/integration/)      |
-| Jornadas críticas afetadas             | Percurso completo e falhas de operação                                               | `pnpm test:e2e`; [E 2E](../apps/web/tests/e2e/)                                                      |
-| Interface e acessibilidade             | Axe, teclado/foco, temas, responsividade e roteiro manual do guia                    | `pnpm test:a11y`, E 2E afetados e [caab-design](caab-design.md)                                      |
-| Autorização, uploads e conteúdo rico   | Matriz de acesso, XSS, arquivos inválidos/maliciosos e isolamento                    | Suítes unit/contract/integration/E 2E pertinentes e critérios da spec                                |
+| Jornadas críticas afetadas             | Percurso completo e falhas de operação                                               | `pnpm test:e2e`; [E2E](../apps/web/tests/e2e/)                                                       |
+| Interface e acessibilidade             | Axe, teclado/foco, temas, responsividade e roteiro manual do guia                    | `pnpm test:a11y`, E2E afetados e [caab-design](caab-design.md)                                       |
+| Autorização, uploads e conteúdo rico   | Matriz de acesso, XSS, arquivos inválidos/maliciosos e isolamento                    | Suítes unit/contract/integration/E2E pertinentes e critérios da spec                                 |
 | Exportações                            | Filtros, três formatos, colunas, completude, permissões e recuperação                | Suítes pertinentes e [perfil aprovado](../specs/002-integrated-modules/export-validation-100.md)     |
 
 Para recorte local de Vitest, usar

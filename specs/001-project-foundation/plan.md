@@ -88,7 +88,7 @@ componentes, contatos, contratos e rascunhos; complementar com renderização is
 e CSS reais no navegador, sem iniciar servidor/banco. Medir regras finais, quebras, foco e
 contraste; confrontar achados com as afirmações do guia e corrigir apenas documentação. Registrar
 cenários não cobertos e limitações de capturas históricas; não confundir bancada de componentes com
-E 2E completo.
+E2E completo.
 
 ### Consolidação solicitada — DS-T140
 

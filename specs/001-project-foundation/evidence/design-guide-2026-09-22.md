@@ -72,11 +72,11 @@ Foram inspecionadas **10 capturas existentes e 3 capturas novas** nesta rodada. 
 versionadas: [lista de Parceiros](../../007-partners-management/evidence/cadastros-light-1440.png),
 [endereço escuro de Parceiros](../../007-partners-management/evidence/address-fields-dark-390.png) e
 [Associados anterior à harmonização](../../005-members-management/evidence/associados-mobile.png). O
-CI 35734927572 usou e 9d05ed; entre essa origem e 3907248 só mudou um teste de exportação no
-conjunto apps/packages. O CI 35736033889 usou 027d1f6; **apps/packages, manifests/lock, configuração
-Vitest e workflow CI são idênticos à base 3907248**. Jobs quality/browser/security anteriores
-passaram. Build, lint, typecheck, integração com banco e E 2E completos desse CI são evidência da
-mesma base de código, **não novas execuções locais nem aprovação da consolidação documental**.
+CI 35734927572 usou e9d05ed; entre essa origem e 3907248 só mudou um teste de exportação no conjunto
+apps/packages. O CI 35736033889 usou 027d1f6; **apps/packages, manifests/lock, configuração Vitest e
+workflow CI são idênticos à base 3907248**. Jobs quality/browser/security anteriores passaram.
+Build, lint, typecheck, integração com banco e E2E completos desse CI são evidência da mesma base de
+código, **não novas execuções locais nem aprovação da consolidação documental**.
 
 ### Achados e tratamento
 
@@ -267,6 +267,6 @@ visual novo foi alegado por essas regras documentais.
 havia sido aberto em rascunho antes da mensagem; foi fechado sem merge, preservando a branch. Nenhum
 novo PR/reabertura; complemento de compactação e fechamento mantidos localmente, sem push. CI
 iniciado anteriormente pertence à versão remota anterior e não valida o complemento local.
-Lint/typecheck/build/E 2E não foram executados localmente nesta tarefa. Principal dev sincronizada
+Lint/typecheck/build/E2E não foram executados localmente nesta tarefa. Principal dev sincronizada
 por fetch/ff-only e divergência 0/0. Localhost, Docker, dados, contas, migrations, permissões e
 dependências permaneceram inalterados.
