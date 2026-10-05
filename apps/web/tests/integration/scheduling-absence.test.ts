@@ -2,7 +2,10 @@ import { Client, Pool } from "pg";
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { runMigrations } from "@caab/db";
-import { processExpiredSchedulingAbsences } from "@caab/db/repositories/scheduling-absence-finalization";
+import {
+  processExpiredSchedulingAbsences,
+  SchedulingAbsenceFinalizationError,
+} from "@caab/db/repositories/scheduling-absence-finalization";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
 import { saveSchedulingCatalog } from "../../modules/scheduling/catalog-service";
 import { saveSchedulingHours } from "../../modules/scheduling/hours-service";
@@ -883,9 +886,32 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       CREATE TRIGGER reject_sweep_fixture BEFORE INSERT ON scheduling_absence_event FOR EACH ROW EXECUTE FUNCTION reject_sweep_fixture()`);
     try {
       for (let attempt = 0; attempt < 2; attempt++) {
-        await expect(processExpiredSchedulingAbsences(pool)).rejects.toThrow(
-          `SCHEDULING_ABSENCE_FINALIZATION_FAILED: ${a.id}`,
+        const failure = await processExpiredSchedulingAbsences(pool).then(
+          () => {
+            throw new Error("Expected the failed occurrence to reject after committing the others");
+          },
+          (error: unknown) => error,
         );
+        expect(failure).toBeInstanceOf(SchedulingAbsenceFinalizationError);
+        expect(failure).toMatchObject({
+          code: "SCHEDULING_ABSENCE_FINALIZATION_FAILED",
+          message: `SCHEDULING_ABSENCE_FINALIZATION_FAILED: ${a.id}`,
+          failures: [
+            {
+              absenceId: a.id,
+              cause: {
+                code: "P0001",
+                message: "synthetic finalization audit unavailable",
+              },
+            },
+          ],
+        });
+        const batchError = failure as SchedulingAbsenceFinalizationError;
+        expect(batchError.failures).toHaveLength(1);
+        expect(batchError.cause).toBeInstanceOf(AggregateError);
+        const causes = (batchError.cause as AggregateError).errors;
+        expect(causes).toHaveLength(1);
+        expect(causes[0]).toBe(batchError.failures[0]!.cause);
         expect(
           (await admin.query("SELECT status FROM scheduling_booking WHERE id=$1", [otherFuture.id]))
             .rows[0]!.status,

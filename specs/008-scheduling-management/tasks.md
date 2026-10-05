@@ -2,6 +2,11 @@
 
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
+- [x] T117 Implementar preservação das causas originais de falhas individuais de finalização,
+      diagnóstico seguro no worker e regressões de serialização/isolamento. Dezesseis unitários e
+      tipos/lint aprovados; regressão PostgreSQL segue no CI do PR43, destino confirmado pelo
+      usuário. SHA e resultado dos gates na descrição do PR, conforme evidência complementar.
+
 - [x] T112 Corrigir a asserção inicial de upload (status/mensagem), verificar ausência de arquivos
       após negações e completar a matriz de isolamento, provas legadas e autoridade durante locks.
 - [x] T113 Aplicar contador legado zero e corrigir trigger sem reescrever migrations; validar

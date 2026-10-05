@@ -20,6 +20,42 @@ type AbsenceDeadlineRow = {
   outcome: "accepted" | "rejected" | null;
 };
 
+export class SchedulingAbsenceFinalizationError extends Error {
+  readonly code = "SCHEDULING_ABSENCE_FINALIZATION_FAILED";
+
+  constructor(readonly failures: readonly { absenceId: string; cause: unknown }[]) {
+    super(
+      "SCHEDULING_ABSENCE_FINALIZATION_FAILED: " +
+        failures.map((failure) => failure.absenceId).join(","),
+      {
+        cause: new AggregateError(
+          failures.map((failure) => failure.cause),
+          "Scheduling absence finalization failures",
+        ),
+      },
+    );
+    this.name = "SchedulingAbsenceFinalizationError";
+  }
+
+  // pg-boss serializes terminal errors. Keep raw database causes in memory only.
+  toJSON() {
+    return {
+      name: this.name,
+      code: this.code,
+      message: this.message,
+      failures: this.failures.map(({ absenceId, cause }) => {
+        const code =
+          typeof cause === "object" && cause !== null && "code" in cause ? cause.code : undefined;
+        return {
+          absenceId,
+          errorCode:
+            typeof code === "string" && /^[0-9A-Z]{5}$/.test(code) ? code : "UNKNOWN_ERROR",
+        };
+      }),
+    };
+  }
+}
+
 function auditActor(actor: SchedulingAbsenceCancellationActor) {
   return {
     actorUserId: actor.kind === "user" ? actor.userId : undefined,
@@ -127,7 +163,7 @@ export async function cancelSchedulingAbsenceBookings(
 export async function processExpiredSchedulingAbsences(pool: Pool, limit = 25) {
   if (!Number.isSafeInteger(limit) || limit < 1)
     throw new Error("SCHEDULING_ABSENCE_BATCH_INVALID");
-  const failures: string[] = [];
+  const failures: { absenceId: string; cause: unknown }[] = [];
   const result = await withTransaction(pool, async (client) => {
     const due = await client.query<{ id: string }>(
       `SELECT a.id FROM scheduling_absence a WHERE a.finalized_at IS NULL AND a.appeal_deadline<=clock_timestamp()
@@ -184,16 +220,15 @@ export async function processExpiredSchedulingAbsences(pool: Pool, limit = 25) {
         finalized++;
         cancelled += result.cancelledIds.length;
         await client.query("RELEASE SAVEPOINT absence_finalization");
-      } catch {
+      } catch (error) {
         await client.query("ROLLBACK TO SAVEPOINT absence_finalization");
         await client.query("RELEASE SAVEPOINT absence_finalization");
-        failures.push(absence.id);
+        failures.push({ absenceId: absence.id, cause: error });
       }
     }
     return { finalized, cancelled };
   });
   // Commit successful occurrences before notifying the queue to retry failed ones.
-  if (failures.length)
-    throw new Error("SCHEDULING_ABSENCE_FINALIZATION_FAILED: " + failures.join(","));
+  if (failures.length) throw new SchedulingAbsenceFinalizationError(failures);
   return result;
 }

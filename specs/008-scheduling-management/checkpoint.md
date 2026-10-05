@@ -1,5 +1,14 @@
 # Checkpoint vigente — Agendamentos, 02/10/2026
 
+## Diagnóstico da finalização — 05/10/2026-CODEX-mafaltti
+
+Revisão complementar de aa2deaa: T117 implementa preservação das causas originais por ocorrência,
+logs com SQLSTATE/mensagem segura e serialização sem causas brutas na fila. Dezesseis unitários,
+tipos web/worker/db e lint passaram; regressão PostgreSQL ampliada segue no CI da publicação.
+Usuário confirmou PR43 como destino; PR44 de dependências preservado. Versão e resultados de CI
+ficam no corpo do PR43; [evidência complementar](evidence/review-fixes-2026-10-05.md) distingue este
+delta dos testes anteriores. R04 explicitamente histórico, sem mudança adicional de UI/índices.
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 Revisão do usuário recebida com um HIGH, dois MEDIUM, nove LOW e observações INFO. Decisões

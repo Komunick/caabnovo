@@ -5,6 +5,30 @@ sessão. Revisão e decisões recebidas do usuário. Branch feature/scheduling-a
 base técnica 4e427ac. Trabalho anterior de delimitação preservado; esta evidência não reatribui sua
 autoria.
 
+## Revisão complementar: causa da falha de finalização — 05/10/2026
+
+LOW confirmado na ponta aa2deaa: o catch preservava apenas IDs e descartava a causa original.
+Correção local preserva causas por ocorrência em SchedulingAbsenceFinalizationError, com
+AggregateError como cause, e só rejeita após confirmar as ocorrências válidas. O handler direto do
+pg-boss registra código SQLSTATE validado e mensagem fixa por categoria, correlacionados à
+ocorrência. Mensagem e código originais continuam acessíveis em memória, sem alterar retry.
+
+O serializador usado pelo pg-boss respeita toJSON: a projeção explícita contém apenas IDs e códigos,
+impedindo que causas SQL brutas, detalhes ou stack sejam persistidos na saída da fila. Regressão
+PostgreSQL ampliada para exigir código P0001, mensagem original, vínculo com o ID e identidade da
+causa, mantendo commit das outras ocorrências e idempotência em duas tentativas.
+
+Passaram 16 testes unitários (11 de finalização, dois de redaction e três de estado de job), tipos
+web/worker/db, lint dos fontes alterados, formatação e diff-check. O teste do serializador usa a
+dependência real instalada do pg-boss, sem dependência nova. A regressão PostgreSQL será executada
+no CI da publicação; SHA, runs e resultados desta revisão são registrados no corpo do
+[PR43](https://github.com/Komunick/caabnovo/pull/43), sem atribuir CIs anteriores a este delta.
+
+Destino confirmado pelo usuário: manter a correção no PR43. PR44/b71c337 contém apenas a remediação
+de Sass/lockfile e não contém o job; nenhuma mudança foi feita nele. R04 recebeu nota datada de
+superação. UI de reserva passada, repetição dos eventos de leitura e índices sem medição continuam
+observações, sem mudança de regra ou expansão desta correção.
+
 ## Escopo e decisões
 
 - HIGH: primeiro reject confere status 403/mensagem da guarda de files:create; segunda guarda mantém

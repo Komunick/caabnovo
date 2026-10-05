@@ -322,6 +322,11 @@ indiscriminadamente documentos comuns.
   adquiri-lo e usa savepoint por item. Sucessos são commitados antes de reportar as falhas
   individuais ao mecanismo de retry do worker; repetição continua idempotente. Falha de
   conexão/transação impede afirmar commit.
+- Falhas individuais preservam occurrenceId (absenceId no erro) e causa original em memória;
+  SCHEDULING_ABSENCE_FINALIZATION_FAILED contém as causas em AggregateError. O handler registra
+  evento scheduling.absence.finalization_failed, correlationId da ocorrência, SQLSTATE validado (ou
+  UNKNOWN_ERROR) e mensagem fixa por categoria. A serialização para pg-boss contém apenas
+  identificadores e códigos, sem causa, mensagem SQL bruta, parâmetros, detalhes ou stack.
 
 ### Política legada e roteiro de rollout
 

@@ -13,7 +13,9 @@ legíveis pela revisão dedicada; não se permite converter documento comum em n
 Indisponibilidade exige início futuro e ausência de falta registrada. Consulta de equipe exige
 scheduling:write ou users:read, além de scheduling:read. Leitura da justificativa e emissão de grant
 geram auditoria sem explicação, nome de arquivo, conteúdo ou URL. Falha individual de finalização
-não desfaz ocorrências válidas do lote.
+não desfaz ocorrências válidas do lote. Cada falha preserva sua causa original em memória e sua
+ocorrência; logs e saída persistida da fila expõem somente identificador, código técnico validado e
+mensagem segura, sem SQL, detalhes de registros, segredos ou stack bruto.
 
 ## Limite da entrega atual — 05/10/2026-CODEX-mafaltti
 

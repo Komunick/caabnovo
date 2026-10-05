@@ -11,6 +11,13 @@ encaminhamentos pertinentes na spec008; este relatório local não substitui seu
 
 ## Versões e conclusão
 
+Atualização de 05/10/2026-CODEX-mafaltti: R04 abaixo é o retrato de b676974 e está superado pela
+decisão explícita do usuário e pela migration 0036. Contadores NULL passam a zero, com incremento de
+versão; eventos e contadores conhecidos são preservados. Uma reserva com remarcações históricas e
+contador desconhecido recebe o orçamento de remarcações a partir de zero. A política atual e sua
+validação constam na [revisão de 05/10](../review-fixes-2026-10-05.md); não executar R04 como regra
+vigente nem atribuir esta decisão ao autor da revisão original.
+
 - PR42: 4b4a79b46dd5e274cc1730e04e3138c08216291a, worktree
   C:/Projetos/caabnovo/.cache/pr-docs-roles-20260923, preservada e sem alterações.
 - PR43: b676974a3514f87fcdfbdc943d74e9a013e5dbac, worktree

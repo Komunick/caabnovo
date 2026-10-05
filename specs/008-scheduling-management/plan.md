@@ -7,9 +7,11 @@ migration 0036 (0035 reservada pela frente de cargo base) para contador legado, 
 Validar atualização sobre schema anterior, manutenção de reserva confirmada após bloqueio e negação
 de nova ocupação/aprovação. Isolar provas novas, revalidar upload após locks, auditar leitura/grant
 e separar leitura de revisão do lock global. Savepoints isolam falhas do job; exceção após commit
-mantém retry e observabilidade. Rascunhos de exportação incluem filtros de origem. Política padrão
-de serviços legados (90 dias/24 horas) será explícita no roteiro de rollout. Testes locais leves e
-CI completo; nenhum serviço de uso iniciado.
+mantém retry e observabilidade. Causas originais são preservadas por ocorrência em erro agregado;
+handler registra SQLSTATE validado e mensagem segura. Serialização explícita protege a saída
+persistida pelo pg-boss sem perder a causa em memória. Rascunhos de exportação incluem filtros de
+origem. Política padrão de serviços legados (90 dias/24 horas) será explícita no roteiro de rollout.
+Testes locais leves e CI completo; nenhum serviço de uso iniciado.
 
 ## Fechamento do escopo atual — 05/10/2026-CODEX-mafaltti
 
