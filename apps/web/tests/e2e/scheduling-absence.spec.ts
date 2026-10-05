@@ -273,9 +273,10 @@ test("review grant without write decides and reads evidence; ordinary readers ca
     const absence = await mutate(page, `bookings/${data.past}/absence`, { expectedVersion: 1 });
     const file = randomUUID(),
       bytes = Buffer.from("%PDF-1.4\nProva revisao sintetica\n%%EOF");
+    // New appeals require a dedicated proof; member documents are readable only when already linked.
     await db.query(
       `INSERT INTO stored_file(id,owner_type,owner_id,original_name,object_key,quarantine_key,declared_mime,detected_mime,visibility,status,scan_result,uploaded_by)
-      VALUES($1::uuid,'member',$2,'prova-restrita.pdf','database/private/'||$1::text,'database/quarantine/'||$1::text,'application/pdf','application/pdf','private','available','clean',$3)`,
+      VALUES($1::uuid,'scheduling_absence_evidence',$2,'prova-restrita.pdf','database/private/'||$1::text,'database/quarantine/'||$1::text,'application/pdf','application/pdf','private','available','clean',$3)`,
       [file, data.id, data.actor],
     );
     await db.query(

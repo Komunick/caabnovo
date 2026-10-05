@@ -2,17 +2,23 @@
 
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
-- [ ] T112 Corrigir a asserção inicial de upload (status/mensagem), verificar ausência de arquivos
+- [x] T112 Corrigir a asserção inicial de upload (status/mensagem), verificar ausência de arquivos
       após negações e completar a matriz de isolamento, provas legadas e autoridade durante locks.
-- [ ] T113 Aplicar contador legado zero e corrigir trigger sem reescrever migrations; validar
+- [x] T113 Aplicar contador legado zero e corrigir trigger sem reescrever migrations; validar
       preservação das demais reservas confirmadas, bloqueio de nova ocupação e indisponibilidade
       somente futura/sem falta.
-- [ ] T114 Auditar revisão/grants, restringir diretório, retirar lock global das leituras de revisão
+- [x] T114 Auditar revisão/grants, restringir diretório, retirar lock global das leituras de revisão
       e adicionar índices das consultas reais.
-- [ ] T115 Isolar falhas por ocorrência na finalização com savepoints, consultar vencidas antes do
+- [x] T115 Isolar falhas por ocorrência na finalização com savepoints, consultar vencidas antes do
       lock e provar que um erro não impede as demais.
 - [ ] T116 Corrigir isolamento de rascunhos de exportação por filtros de origem; registrar política
       legada e limites INFO, executar gates da nova ponta e atualizar corpo do PR43 sem merge.
+
+T112–T115 validadas pelo quality de eeb5e42, com 357 integrações aprovadas, incluindo 31 testes de
+faltas. T116 e T111 aguardam navegador final: corrigida a fixture que ainda submetia um documento
+member como nova prova; o servidor o recusou corretamente. Evidência em
+[revisão de 05/10](evidence/review-fixes-2026-10-05.md). A delimitação abaixo é anterior a esta
+correção e permanece como histórico; T110 mantém seus gates humanos/operacionais.
 
 ## Fila de fechamento delimitada — 05/10/2026-CODEX-mafaltti
 

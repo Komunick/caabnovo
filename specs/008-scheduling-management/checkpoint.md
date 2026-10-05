@@ -4,10 +4,13 @@
 
 Revisão do usuário recebida com um HIGH, dois MEDIUM, nove LOW e observações INFO. Decisões
 confirmadas: contador desconhecido zero; preservar outras reservas confirmadas no modo capacidade.
-Correções em andamento; evidências antigas não validam o novo delta. Quatro documentos locais
-anteriores preservados em backup verificado por bytes em
-.cache/local-backups/scheduling-review-20261005-123015 da principal. Próximo passo: implementação e
-regressões T112–T116, CI e atualização do PR43.
+Correções publicadas em eeb5e42: quality/security aprovados nos runs 37335528991/37335523374; 357
+integrações, incluindo isolamento completo de faltas (31/31), aprovadas. Browser: 100 passaram, uma
+fixture de revisão ainda usava documento comum como nova prova e foi corretamente recusada. Correção
+dessa fixture em andamento; gates finais e revisão das capturas pendentes. Evidências antigas não
+validam o novo delta. Quatro documentos locais anteriores preservados em backup verificado por bytes
+em .cache/local-backups/scheduling-review-20261005-123015 da principal. Próximo passo: CI da fixture
+corrigida e fechamento de T116/T111, com atualização do PR43. T110 depende de condições externas.
 
 ## Estado de fechamento delimitado — 05/10/2026-CODEX-mafaltti
 
