@@ -84,6 +84,11 @@ function safeOriginalName(value: string): string {
     .join("");
 }
 
+async function requireAbsenceEvidenceUploadAccess(client: PoolClient, actor: RequestActor) {
+  await requireSchedulingAuthority(client, actor, true);
+  await authorizeMemberAccess(client, actor, PERMISSIONS.membersWrite, PERMISSIONS.filesCreate);
+}
+
 export async function createUploadIntent(
   pool: Pool,
   storage: WebObjectStorage,
@@ -142,6 +147,8 @@ export async function createUploadIntent(
       return reused.rows[0];
     }
 
+    if (command.ownerType === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
+      await requireAbsenceEvidenceUploadAccess(client, command.actor);
     const id = crypto.randomUUID();
     const quarantineKey = `${storage.keyPrefix ?? ""}quarantine/${id}`;
     const objectKey = `${storage.keyPrefix ?? ""}private/${id}`;
@@ -285,7 +292,7 @@ export async function finalizeUpload(
     const status = locked.rows[0]?.status;
     if (!status) throw operationError("NOT_FOUND", 404);
     if (file.owner_type === SCHEDULING_ABSENCE_EVIDENCE_OWNER)
-      await requireSchedulingAuthority(client, command.actor, true);
+      await requireAbsenceEvidenceUploadAccess(client, command.actor);
     if (status !== "initiated") {
       const existing = await client.query<{ id: string }>(
         `SELECT id FROM job_execution

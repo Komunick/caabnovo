@@ -33,8 +33,13 @@ import {
   memberFileStatus,
   memberDownload,
 } from "../../modules/members/member-service";
-import { createDownloadGrant, createUploadIntent } from "../../modules/files/file-service";
+import {
+  createDownloadGrant,
+  createUploadIntent,
+  finalizeUpload,
+} from "../../modules/files/file-service";
 import type { WebObjectStorage } from "../../modules/files/object-storage";
+import { PermissionDeniedError } from "../../modules/auth/authorize";
 
 async function evidenceActor(permissions: string[]) {
   const userId = crypto.randomUUID(),
@@ -1087,11 +1092,12 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       "files:read",
       "files:create",
     ]);
+    const filesOnlyUploadKey = crypto.randomUUID();
     await expect(
-      createUploadIntent(pool, evidenceStorage, {
+      createUploadIntent(pool, restrictedStorage, {
         ...intentCommand,
         actor: filesOnly,
-        idempotencyKey: crypto.randomUUID(),
+        idempotencyKey: filesOnlyUploadKey,
       }),
     ).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
     expect(
