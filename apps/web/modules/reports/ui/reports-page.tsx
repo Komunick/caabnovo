@@ -2,6 +2,7 @@
 import { PanelHeading } from "@/components/ui/panel-heading";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Download, Plus, Presentation, X } from "lucide-react";
 import {
   reportCatalog,
@@ -66,6 +67,7 @@ export function ReportsPage({
   environment: ReportQuery["environment"];
   datasets: ReportDataset[];
 }) {
+  const router = useRouter();
   const cache = useDraftCache();
   const [selected, setSelected] = useDraftState<Saved | null>("reports:selection", null);
   const prefix = `reports:${selected?.id ?? "new"}:`;
@@ -750,8 +752,9 @@ export function ReportsPage({
                 onChange={(e) => setNotes(e.target.value)}
               />
               <span>
-                Interpretação da gestão, separada dos indicadores medidos. Vai no arquivo exportado
-                (Excel, CSV e PDF) como a coluna "Análise da gestão", repetida em cada linha.
+                Interpretação da gestão, separada dos indicadores medidos. O PDF de Resultados e
+                evolução inclui um bloco de análise e o gráfico mensal. Nos três formatos, a coluna
+                "Análise da gestão" também pode ser selecionada.
               </span>
             </label>
           )}
@@ -871,13 +874,20 @@ export function ReportsPage({
                         </a>
                       )}
                       {item.status === "failed" && (
-                        <Link
-                          className={buttonVariants()}
-                          href={reportExportHref(item.configuration.query)}
-                          onClick={() => stashReportExportNotes(item.configuration.notes)}
+                        <Button
+                          onClick={() => {
+                            stashReportExportNotes(item.configuration.notes);
+                            router.push(
+                              reportExportHref(
+                                item.configuration.query,
+                                undefined,
+                                item.configuration.format,
+                              ),
+                            );
+                          }}
                         >
                           Solicitar novamente
-                        </Link>
+                        </Button>
                       )}
                     </li>
                   ))}

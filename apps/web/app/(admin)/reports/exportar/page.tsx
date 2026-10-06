@@ -1,9 +1,11 @@
 import { headers } from "next/headers";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { loadServerEnv } from "@caab/config";
 import { reportPreset } from "@caab/contracts";
 import { resolveRequestActor } from "@/modules/auth/request-actor";
-import { authorizedCatalog } from "@/modules/exports/catalog";
+import { authorizedCatalog, ExportError } from "@/modules/exports/catalog";
+import { buttonVariants } from "@/components/ui/button";
 import { exportCsrf } from "@/modules/exports/http";
 import { reportExportAdapter } from "@/modules/reports/export-adapter";
 import { type ExportInitial } from "@/modules/exports/ui/export-screen";
@@ -31,8 +33,19 @@ export default async function ReportExportPage({
   let catalog;
   try {
     catalog = authorizedCatalog(adapter, actor);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (!(error instanceof ExportError) || error.code !== "PERMISSION_DENIED") throw error;
+    return (
+      <div className="page-stack">
+        <h1>Exportar Relatórios</h1>
+        <section className="panel">
+          <p role="alert">Seu acesso mudou. Você não tem permissão para exportar esses dados.</p>
+          <Link href="/reports" className={buttonVariants()}>
+            Voltar aos relatórios
+          </Link>
+        </section>
+      </div>
+    );
   }
   const filterKeys = new Set(catalog.filters.map((filter) => filter.key));
   const columnKeys = new Set(catalog.columns.map((column) => column.key));
@@ -64,6 +77,9 @@ export default async function ReportExportPage({
         ? "count"
         : "date";
   const initial: ExportInitial = {
+    ...(["xlsx", "csv", "pdf"].includes(one(params.format))
+      ? { format: one(params.format) as NonNullable<ExportInitial["format"]> }
+      : {}),
     filters,
     ...(columns.length ? { columns } : {}),
     sort,

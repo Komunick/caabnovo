@@ -1,5 +1,15 @@
 # Feature Specification: Relatórios e Análises
 
+## Correção do PR46 — 06/10/2026-CODEX-mafaltti
+
+Solicitante mafaltti (login Danilo-Komunick, GitHub get_profile em 06/10). O usuário decidiu
+restaurar o gráfico e o bloco de análise no PDF de Resultados e evolução. O PDF mantém a tabela com
+seleção e ordem de colunas, acrescenta análise da gestão identificada e evolução mensal das fontes
+escolhidas e autorizadas, no mesmo snapshot. Excel/CSV permanecem tabulares. Solicitar novamente
+preserva filtros, comentário e formato em navegação na mesma aba; acesso revogado apresenta mensagem
+clara. Entrega na branch aberta `feature/reports-complete-combined-20261006`; validações e limites
+na [evidência da correção](evidence/pr46-corrections-2026-10-06.md).
+
 ## Entrega em validação — 02/10/2026
 
 Exportar o conjunto completo de dados em Relatórios (CAAB-24): o detalhe sem agrupamento integrado

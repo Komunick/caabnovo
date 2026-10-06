@@ -10,6 +10,7 @@ import {
   reportOverviewExportSql,
 } from "@caab/db/repositories/report-overview-export";
 import { ExportError, type ExportAdapter } from "../exports/catalog";
+import { createPdfWriter } from "../exports/formats/pdf";
 
 const datasets = (Object.keys(reportCatalog) as ReportDataset[]).filter((key) => key !== "access");
 const filters: ExportFilter[] = [
@@ -98,6 +99,7 @@ function overviewAdapter(dataset: "summary" | "executive"): ExportAdapter {
           },
           input.columns,
           input.sort,
+          dataset === "executive" && input.format === "pdf",
         );
       } catch (error) {
         if (error instanceof ExportError) throw error;
@@ -105,11 +107,13 @@ function overviewAdapter(dataset: "summary" | "executive"): ExportAdapter {
       }
     },
     map(row) {
+      const chart = row._chart as { label: string; value: number } | null | undefined;
       return {
         id: String(row._recordId),
+        ...(chart ? { chart } : {}),
         values: Object.fromEntries(
           Object.entries(row)
-            .filter(([key]) => key !== "_recordId")
+            .filter(([key]) => key !== "_recordId" && key !== "_chart")
             .map(([key, value]) => [
               key,
               value == null ? null : typeof value === "number" ? value : String(value),
@@ -117,6 +121,17 @@ function overviewAdapter(dataset: "summary" | "executive"): ExportAdapter {
         ),
       };
     },
+    ...(dataset === "executive"
+      ? {
+          writePdf: (input) =>
+            createPdfWriter({
+              title: "Resultados e evolução",
+              notes: String(input.filters.notes ?? "").trim(),
+              context: `${input.filters.from} a ${input.filters.to} | Canal: ${input.filters.channel || "Todos"} | Ambiente: ${input.filters.environment || "production"} | Fonte: ${input.filters.source || "Todas"}`,
+              evolution: true,
+            }),
+        }
+      : {}),
   };
 }
 export const overviewExports = [overviewAdapter("summary"), overviewAdapter("executive")];

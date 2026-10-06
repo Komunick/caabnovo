@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { test, expect, syntheticUsers } from "./fixtures";
 import { expectWcag22AA, expectThemeContrast } from "./accessibility";
+import { readPdf } from "../helpers/read-export";
+import { reportQuerySchema } from "@caab/contracts";
 test.use({
   actionTimeout: 15000,
   userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36",
@@ -173,6 +175,65 @@ test("reports denies ordinary access and export before data", async ({ page }) =
   await page.goto("/reports");
   await expect(page.getByText("Você não tem permissão para acessar relatórios.")).toBeVisible();
   expect((await page.request.get("/api/v1/reports/exports")).status()).toBe(403);
+  await page.goto("/reports/exportar?dataset=members&format=csv");
+  await expect(page.getByRole("alert")).toContainText(
+    "Você não tem permissão para exportar esses dados.",
+  );
+  await expect(page.locator(".export-form")).toHaveCount(0);
+});
+
+test("retry preserves format, filters and a full management comment in the restored executive PDF", async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(120000);
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill(syntheticUsers.administrator.email);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  const notes = "Análise sintética ".repeat(110) + "FIM_ANALISE";
+  const query = reportQuerySchema.parse({
+    view: "executive",
+    from: "2026-01-01",
+    to: "2026-09-30",
+    environment: "test",
+  });
+  // Only the legacy history feed is synthetic; navigation, authorization, cursor and PDF are real.
+  await page.route("**/api/v1/reports/exports?page=*", (route) =>
+    route.fulfill({
+      json: [
+        {
+          id: randomUUID(),
+          status: "failed",
+          progress: 0,
+          created_at: "2026-10-06T12:00:00Z",
+          safe_error_code: "REPORT_TOO_LARGE",
+          configuration: { query, format: "pdf", notes },
+        },
+      ],
+    }),
+  );
+  await page.goto("/reports");
+  await page.getByRole("button", { name: "Solicitar novamente", exact: true }).click();
+  await expect(page).toHaveURL(/\/reports\/exportar\?.*format=pdf/);
+  expect(new URL(page.url()).searchParams.has("notes")).toBe(false);
+  await expect(page.getByLabel("Análise da gestão (opcional)")).toHaveValue(notes);
+  await expect(page.getByLabel("Data inicial da comparação")).toHaveValue(query.from);
+  await expect(page.getByText("Formato anterior: PDF.", { exact: false })).toBeVisible();
+  for (const checkbox of await page.locator(".export-column-order input[type=checkbox]").all()) {
+    const label = (await checkbox.locator("..").textContent())?.trim();
+    if (!["Indicador", "Atual"].includes(label ?? "")) await checkbox.uncheck();
+  }
+  await expectWcag22AA(page);
+  const downloading = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Exportar em PDF", exact: true }).click();
+  const download = await downloading;
+  const path = testInfo.outputPath("reports-executive-restored.pdf");
+  await download.saveAs(path);
+  const text = (await readPdf(await readFile(path))).join(" ");
+  expect(text).toContain("Análise da gestão");
+  expect(text.replace(/\s/g, "")).toContain("FIM_ANALISE");
+  expect(text).toContain("Evolução mensal");
 });
 
 test("grouped, summary and evolution download directly with preserved selection and recoverable failure", async ({

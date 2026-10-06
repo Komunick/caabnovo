@@ -9,8 +9,14 @@ import {
   type ExportScalar,
 } from "@caab/contracts";
 import type { RequestActor } from "../shared/request-context";
+import type { Writer } from "./formats/shared";
 
-export type ExportRow = { id: string; values: Record<string, ExportScalar> };
+export type ExportRow = {
+  id: string;
+  values: Record<string, ExportScalar>;
+  /** Authorized aggregate series from the same cursor, used only by presentation PDFs. */
+  chart?: { label: string; value: number };
+};
 export type ExportAdapter = {
   module: ExportModule;
   dataset: string;
@@ -24,6 +30,7 @@ export type ExportAdapter = {
   scope: "module" | "records";
   query(input: ExportRequest): { text: string; values: unknown[] };
   map(row: Record<string, unknown>): ExportRow;
+  writePdf?(input: ExportRequest): Writer;
   authorizeRecords?(
     db: PoolClient,
     actor: RequestActor,

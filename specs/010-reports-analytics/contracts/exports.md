@@ -24,10 +24,10 @@ cancelamentos; analytics de jornadas conserva sua semântica existente.
 Resumo/evolução são tabelas com seções: indicadores/comparação, base atual, séries, acessos,
 cobertura, jornada, avisos e contexto. Colunas: section, label, date (mês), value, previous, change,
 definition, from, to, channel, environment, source, updatedAt e notes. Todos os formatos usam
-exatamente a seleção e ordem solicitadas, inclusive definições/contexto quando selecionados. Estado
-atual e período são distintos; comentários não se tornam evidência; nenhuma reconstrução histórica
-ou total de pessoas entre canais é inferido. Comparação usa período anterior de mesma duração;
-anterior zero resulta em variação nula, ou zero quando ambos são zero.
+exatamente a seleção e ordem solicitadas na tabela, inclusive definições/contexto quando
+selecionados. Estado atual e período são distintos; comentários não se tornam evidência; nenhuma
+reconstrução histórica ou total de pessoas entre canais é inferido. Comparação usa período anterior
+de mesma duração; anterior zero resulta em variação nula, ou zero quando ambos são zero.
 
 Consultas parametrizadas usam reportSources e inventário/definições/funil compartilhados com a tela;
 cursor read-only repeatable-read do núcleo entrega o conjunto integral, sem LIMIT/OFFSET. O núcleo
@@ -40,6 +40,22 @@ conciliar, preservar sua projeção bookings com procedure_id, original_start e 
 além dos três grupos de adaptadores. ExportScreen reutiliza exatamente a extensão
 initialFilters/renderFilter da entrega4e9abac. Testes técnicos não concluem QA humano.
 
+## PDF executivo e retentativa — decisão de 06/10/2026-CODEX-mafaltti
+
+Por escolha explícita do usuário, PDF de Resultados e evolução acrescenta um bloco de análise da
+gestão e gráfico de barras mensais à tabela. Bloco usa `notes` integral (até 2000 caracteres), mesmo
+sem a coluna notes; gráfico usa séries dos domínios selecionados/autorizados e visualizações no
+canal/ambiente/fonte escolhidos, mesmo sem colunas date/value na tabela. Continua o mesmo snapshot e
+reautorização; não exporta domínio omitido. Séries paginadas sem corte, escala comum ao gráfico e
+estado vazio explícito. CSV/Excel mantêm exatamente a tabela e colunas escolhidas. Agregados de
+gráfico usam arquivo temporário privado, apagado ao terminar/falhar/cancelar.
+
+Solicitar novamente é botão que navega na mesma aba para filtros do download direto. Preserva
+formato validado (`xlsx/csv/pdf`), ordenação, filtros e comentário via sessionStorage de leitura
+única. O formato anterior aparece como primeira ação, com opção de outro; não dispara download
+automaticamente. Sem acesso à fonte, mostra mensagem e volta para Relatórios, sem formulário.
+Dataset inexistente continua 404; requisições e revalidações continuam negando acesso com 403.
+
 ## Cancelamentos sem horário — compatibilidade de 02/10/2026
 
 O aviso de cancelamentos em tela e arquivo usa `coalesce(starts_at,original_start,created_at)` nos
@@ -49,9 +65,10 @@ migrations reais de Agendamentos; não altera o schema de teste para simular com
 base748539d ainda não contém original_start; a correção depende da conciliação com Agendamentos
 antes de concluir os gates e abrir PR para dev.
 
-_Atualização de 06/10/2026: o PR #43 de Agendamentos foi integrado na `dev` (squash `ea0bc3b`) e esta
-entrega foi atualizada com ela; a dependência de `original_start` está cumprida na `dev`. A
-migration 0035 do PR #45 também já está na `dev` (squash `212c4ea`), e esta entrega foi atualizada com ela._
+_Atualização de 06/10/2026: o PR #43 de Agendamentos foi integrado na `dev` (squash `ea0bc3b`) e
+esta entrega foi atualizada com ela; a dependência de `original_start` está cumprida na `dev`. A
+migration 0035 do PR #45 também já está na `dev` (squash `212c4ea`), e esta entrega foi atualizada
+com ela._
 
 ## Planejamento anterior preservado
 

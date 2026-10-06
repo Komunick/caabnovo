@@ -23,6 +23,7 @@ const signature = (value: unknown) => {
   return hash.toString(36);
 };
 export type ExportInitial = {
+  format?: ExportFormat;
   filters?: Record<string, string>;
   columns?: string[];
   sort?: string;
@@ -77,7 +78,10 @@ export function ExportScreen({
     `${key}:direction`,
     initial?.direction ?? "asc",
   );
-  const [format, setFormat] = useDraftState<ExportFormat>(`${key}:format`, "xlsx");
+  const [format, setFormat] = useDraftState<ExportFormat>(
+    `${key}:format`,
+    initial?.format ?? "xlsx",
+  );
   const [error, setError] = useDraftState(`${key}:error`, "");
   const [operation, setOperation] = useState<ExportOperation | null>(null);
   const frame = useRef<HTMLIFrameElement>(null),
@@ -345,6 +349,13 @@ export function ExportScreen({
               </ol>
             </fieldset>
             {error ? <p role="alert">{error}</p> : null}
+            {initial?.format && (
+              <p className="export-hint">
+                Formato anterior:{" "}
+                {initial.format === "xlsx" ? "Excel" : initial.format.toUpperCase()}. Você pode
+                escolher outro formato abaixo.
+              </p>
+            )}
             <div className="button-row">
               {(
                 [
@@ -352,18 +363,22 @@ export function ExportScreen({
                   ["csv", "CSV"],
                   ["pdf", "PDF"],
                 ] as const
-              ).map(([value, label]) => (
-                <Button
-                  key={value}
-                  type="submit"
-                  value={value}
-                  intent="primary"
-                  size="compact"
-                  disabled={active}
-                >
-                  <Download size={18} aria-hidden="true" /> Exportar em {label}
-                </Button>
-              ))}
+              )
+                .toSorted(
+                  ([a], [b]) => Number(b === initial?.format) - Number(a === initial?.format),
+                )
+                .map(([value, label]) => (
+                  <Button
+                    key={value}
+                    type="submit"
+                    value={value}
+                    intent="primary"
+                    size="compact"
+                    disabled={active}
+                  >
+                    <Download size={18} aria-hidden="true" /> Exportar em {label}
+                  </Button>
+                ))}
             </div>
             <p role="status" aria-live="polite">
               {operation?.phase === "completed"

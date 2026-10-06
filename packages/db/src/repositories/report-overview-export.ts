@@ -34,6 +34,7 @@ export function reportOverviewExportSql(
   input: OverviewInput,
   columns: readonly string[],
   sort: readonly { field: string; direction: "asc" | "desc" }[],
+  presentation = false,
 ) {
   if (
     !columns.length ||
@@ -113,7 +114,8 @@ export function reportOverviewExportSql(
     count(DISTINCT visitor_hash) AS visitors,count(DISTINCT account_hash) AS accounts`;
   const ctes = `current_usage AS (SELECT ${count} FROM analytics_event WHERE ${scope} AND occurred_at >= $1 AND occurred_at < $2),
     previous_usage AS (SELECT ${count} FROM analytics_event WHERE ${scope} AND occurred_at >= $3 AND occurred_at < $1),
-    coverage AS (SELECT min(occurred_at) AS first_event,max(occurred_at) AS last_event FROM analytics_event WHERE ${scope})`;
+    coverage AS (SELECT min(occurred_at) AS first_event,max(occurred_at) AS last_event FROM analytics_event WHERE ${scope}),
+    funnel AS MATERIALIZED (${reportUsageFunnelSql(scope, "$1", "$2")})`;
   for (const [key, label] of Object.entries({
     views: "Visualizações",
     sessions: "Sessões",
@@ -214,7 +216,7 @@ export function reportOverviewExportSql(
       parameter(label),
       `${key}::numeric`,
       parameter("Sessões com etapas em sequência. Etapa sem coleta não comprova abandono."),
-      `FROM (${reportUsageFunnelSql(scope, "$1", "$2")}) funnel`,
+      "FROM funnel",
     );
   }
   row(
@@ -266,7 +268,7 @@ export function reportOverviewExportSql(
   return {
     text: `WITH ${ctes}, rows AS (${parts.join(" UNION ALL ")}), contextual AS
       (SELECT id,cells || ${context} || jsonb_build_object('change',${change}) AS cells FROM rows)
-      SELECT id AS "_recordId",${columns.map((key) => `cells->'${key}' AS "${key}"`).join(",")}
+      SELECT id AS "_recordId",${columns.map((key) => `cells->'${key}' AS "${key}"`).join(",")}${presentation ? ", CASE WHEN cells->>'date' IS NOT NULL THEN jsonb_build_object('label',cells->>'date' || ' ' || (cells->>'label'),'value',cells->'value') END AS \"_chart\"" : ""}
       FROM contextual ORDER BY ${[...order, "id ASC"].join(",")}`,
     values,
   };

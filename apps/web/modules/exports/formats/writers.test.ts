@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import { readCsv, readXlsx, readPdf } from "../../../tests/helpers/read-export";
 import { writeCsv } from "./csv";
 import { writeXlsx } from "./xlsx";
-import { writePdf } from "./pdf";
+import { createPdfWriter, writePdf } from "./pdf";
 import type { ExportColumn } from "@caab/contracts";
 const columns: ExportColumn[] = ["id", "name"].map((key) => ({
   key,
@@ -33,6 +33,47 @@ function target() {
   });
   return { sink, bytes: () => Buffer.concat(chunks) };
 }
+it("executive PDF restores management analysis and paginated bars without changing selected table columns", async () => {
+  async function* source() {
+    for (let n = 0; n < 35; n++)
+      yield {
+        id: String(n),
+        values: { name: `Indicador ${n}`, hidden: "COLUNA_NAO_SELECIONADA" },
+        chart: {
+          label: `2026-${String(n + 1).padStart(2, "0")} Série sintética com rótulo extenso`,
+          value: n,
+        },
+      };
+  }
+  const t = target();
+  await createPdfWriter({
+    title: "Resultados e evolução",
+    context: "2020-01-01 a 2026-10-06 | Teste",
+    notes: "Comentário da gestão ".repeat(95) + "FIM_ANALISE",
+    evolution: true,
+  })(source(), [columns[1]!], t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes()),
+    text = pages.join(" ");
+  expect(text).toContain("Análise da gestão");
+  expect(text.replace(/\s/g, "")).toContain("FIM_ANALISE");
+  expect(text).toContain("Evolução mensal (continuação)");
+  expect(text).toContain("Indicador 34");
+  expect(text).not.toContain("COLUNA_NAO_SELECIONADA");
+  expect(text).toContain("2026-35");
+}, 30000);
+it("executive PDF makes an empty series explicit", async () => {
+  async function* empty() {}
+  const t = target();
+  await createPdfWriter({
+    title: "Resultados e evolução",
+    context: "Teste",
+    notes: "",
+    evolution: true,
+  })(empty(), columns, t.sink, new AbortController().signal);
+  const text = (await readPdf(t.bytes())).join(" ");
+  expect(text).toContain("Nenhum comentário incluído.");
+  expect(text).toContain("Sem dados de evolução no período selecionado.");
+});
 it("CSV preserves 100 rows, identifiers, quoted newlines and neutralizes formulas", async () => {
   const t = target();
   await writeCsv(records(), columns, t.sink, new AbortController().signal);

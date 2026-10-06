@@ -111,7 +111,10 @@ async function download(input: ExportRequest, afterBatch?: (index: number) => Pr
     const result = await runExport(
       {
         columns: input.columns.map((key) => members.columns.find((c) => c.key === key)!),
-        write: { csv: writeCsv, xlsx: writeXlsx, pdf: writePdf }[input.format],
+        write:
+          input.format === "pdf" && members.writePdf
+            ? members.writePdf(input)
+            : { csv: writeCsv, xlsx: writeXlsx, pdf: writePdf }[input.format],
         batches: async function* (signal) {
           let index = 0;
           for await (const batch of exportBatches(
@@ -243,6 +246,10 @@ describe("direct export of the detailed analysis", () => {
           const text = (await readPdf(bytes)).join(" ");
           expect(text).toContain("Análise sintética");
           expect(text).toContain("Associados cadastrados no período");
+          if (dataset === "executive") {
+            expect(text).toContain("Análise da gestão");
+            expect(text).toContain("Evolução mensal");
+          }
         } else {
           const rows = (format === "csv" ? readCsv(bytes) : readXlsx(bytes)[1]!).slice(1);
           const metric = rows.find(
@@ -259,6 +266,12 @@ describe("direct export of the detailed analysis", () => {
           );
           expect(rows.every((row) => row[7] === "Análise sintética")).toBe(true);
           expect(Number(rows.find((row) => row[1] === "Visualizações")![3])).toBe(usage.views);
+          for (const step of usage.funnel)
+            expect(
+              Number(
+                rows.find((row) => row[0] === "Jornada de agendamento" && row[1] === step.step)![3],
+              ),
+            ).toBe(step.sessions);
           expect(rows.some((row) => String(row[1]).includes("Reservas no período"))).toBe(false);
         }
       }
@@ -268,6 +281,29 @@ describe("direct export of the detailed analysis", () => {
     });
     expect(await reportUsage(control.pool, query)).toEqual(usage);
   }, 60000);
+
+  it("executive PDF charts authorized series even when date/value are not selected table columns", async () => {
+    const { bytes } = await download(
+      reportExportRequest({
+        dataset: "executive",
+        format: "pdf",
+        columns: ["label"],
+        sort: [],
+        filters: {
+          from: "2024-01-01",
+          to: "2026-09-30",
+          environment: "test",
+          include_members: "yes",
+          notes: "Bloco de análise sem coluna notes",
+        },
+      }),
+    );
+    const text = (await readPdf(bytes)).join(" ");
+    expect(text).toContain("Bloco de análise sem coluna notes");
+    expect(text).toContain("Evolução mensal");
+    expect(text).toMatch(/202[46]-\d{2} Associados/);
+    expect(text).not.toContain("Reservas no período");
+  });
 
   it("keeps cancelled bookings without a time in overview notices, with both period bounds and current access", async () => {
     // Requires the real Scheduling migrations: never emulate the new columns or skip a missing schema.

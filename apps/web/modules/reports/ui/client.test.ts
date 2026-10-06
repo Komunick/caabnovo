@@ -9,6 +9,13 @@ import {
   takeReportExportNotes,
 } from "./client";
 afterEach(() => vi.unstubAllGlobals());
+it("preserves only supported formats when requesting a failed export again", () => {
+  const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-30" });
+  for (const format of ["xlsx", "csv", "pdf", "html"]) {
+    const href = new URL(reportExportHref(query, undefined, format), "http://caab.test");
+    expect(href.searchParams.get("format")).toBe(format === "html" ? null : format);
+  }
+});
 it("preserves grouped order and overview filters in direct export links, without the comment", () => {
   const query = reportQuerySchema.parse({
     view: "details",

@@ -11,6 +11,8 @@ vi.mock("./client", async (original) => ({
   reportRequest: vi.fn(),
 }));
 const request = vi.mocked(reportRequest);
+const push = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 let root: Root, container: HTMLDivElement, value: number, exportStatus: string;
 const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
 function result() {
@@ -42,6 +44,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   value = 17;
   exportStatus = "retrying";
+  push.mockClear();
   request.mockReset().mockImplementation(async (path) => {
     if (path === "/queries") return [];
     if (path.startsWith("/exports"))
@@ -143,11 +146,14 @@ it("hands the saved comment of a failed export over when requesting it again", a
   await render();
   exportStatus = "failed";
   await act(() => vi.advanceTimersByTimeAsync(3000));
-  const link = Array.from(container.querySelectorAll("a")).find(
-    (anchor) => anchor.textContent?.trim() === "Solicitar novamente",
+  const button = Array.from(container.querySelectorAll("button")).find(
+    (candidate) => candidate.textContent?.trim() === "Solicitar novamente",
   )!;
-  expect(link.getAttribute("href")).not.toContain("notes");
-  await clickWithoutNavigating(link);
+  await act(() => button.click());
+  const href = new URL(push.mock.calls[0]![0], "http://caab.test");
+  expect(href.searchParams.get("format")).toBe("csv");
+  expect(href.searchParams.has("notes")).toBe(false);
+  expect(href.searchParams.get("from")).toBe(query.from);
   expect(JSON.parse(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)!).text).toHaveLength(
     2000,
   );

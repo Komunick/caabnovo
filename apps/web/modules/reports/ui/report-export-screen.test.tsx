@@ -70,6 +70,23 @@ const notes = () => container.querySelector<HTMLTextAreaElement>("#export-filter
 const from = () => container.querySelector<HTMLInputElement>("#export-filter-from")!;
 
 describe("report export screen comment", () => {
+  it("offers the previous format first and submits it with the preserved comment and filters", async () => {
+    stashReportExportNotes(text);
+    await render({ ...initial, format: "csv" });
+    const form = container.querySelector<HTMLFormElement>(".export-form")!;
+    const preferred = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    expect(preferred.value).toBe("csv");
+    expect(container.textContent).toContain("Formato anterior: CSV.");
+    await act(() =>
+      form.dispatchEvent(
+        new SubmitEvent("submit", { bubbles: true, cancelable: true, submitter: preferred }),
+      ),
+    );
+    const config = JSON.parse(form.querySelector<HTMLInputElement>('input[name="config"]')!.value);
+    expect(config.format).toBe("csv");
+    expect(config.filters).toEqual({ from: "2026-09-01", notes: text });
+    expect(form.querySelectorAll('button[type="submit"]')).toHaveLength(3);
+  });
   it("fills the comment with the full text handed over by the link and removes the key", async () => {
     stashReportExportNotes(text);
     await render();

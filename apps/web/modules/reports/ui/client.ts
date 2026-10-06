@@ -47,7 +47,11 @@ export function takeReportExportNotes(): string {
  * the visible columns in their order and the sort. The export page validates everything again.
  * The management comment is not part of the URL; see `stashReportExportNotes`.
  */
-export function reportExportHref(query: ReportQuery, columns?: ReportTable["columns"]): string {
+export function reportExportHref(
+  query: ReportQuery,
+  columns?: ReportTable["columns"],
+  format?: string,
+): string {
   const overview = query.view !== "details";
   const selectedColumns =
     columns ??
@@ -91,6 +95,7 @@ export function reportExportHref(query: ReportQuery, columns?: ReportTable["colu
     ["direction", query.direction],
   ];
   for (const [key, value] of entries) if (value) params.set(key, value);
+  if (format && ["xlsx", "csv", "pdf"].includes(format)) params.set("format", format);
   return `/reports/exportar?${params}`;
 }
 export async function reportRequest<T>(path: string, options: RequestInit = {}): Promise<T> {

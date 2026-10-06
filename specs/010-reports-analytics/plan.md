@@ -1,5 +1,17 @@
 # Implementation Plan: Relatórios: exportação direta nas três abas
 
+## Correção do PR46 — 06/10/2026-CODEX-mafaltti
+
+Restaurar análise e barras mensais no PDF executivo conforme decisão do usuário. O adaptador fornece
+um writer PDF opcional ao núcleo existente; o cursor devolve metadados internos de séries apenas
+nesse modo/formato, excluídos das colunas tabulares. O gráfico usa as mesmas fontes e
+reautorizações. Um spool temporário de agregados em diretório privado do sistema mantém memória
+constante e é removido no sucesso, erro ou cancelamento; não cria armazenamento permanente nem
+guarda o arquivo inteiro. Funil passa a CTE materializado único, sem alterar suas etapas.
+Retentativa leva formato validado e notas via sessionStorage; botão na mesma aba evita perder o
+comentário em nova aba. Mensagem de acesso negado substitui 404 apenas para autorização. Validar
+writers, autorização, paridade PostgreSQL, E2E da retentativa e PDF renderizado.
+
 ## Execução de 02/10/2026 — CODEX/SOLICITANTE_NAO_VERIFICADO
 
 Entrega `feature/reports-complete-20261002`, base dev748539d. Concluir Exportar detalhe agrupado,
@@ -266,7 +278,6 @@ combinada deverá manter a projeção bookings de Agendamentos e os helpers/gera
 revalidada. Correção preparada no segundo commit, com regressão real T041. Publicação/PR
 condicionados aos gates; serviços e merge proibidos.
 
-
 ## Conciliação da branch combinada — 06/10/2026-CLAUDE-Gabriel-Komunick
 
 Autoria CLAUDE, solicitante Gabriel-Komunick. A dependência registrada acima foi atendida na branch
@@ -275,8 +286,8 @@ dev (b80bf6e, #44) sobre c8a2614, sem copiar migrations isoladamente. A concilia
 foi feita por leitura: registry com os três grupos de adaptadores, ExportScreen aditivo, projeção
 bookings com original_start/procedure_id e profissional opcional, helpers do resumo e gerador
 agrupado preservados. Gates locais (tipos, lint, Prettier, unitários e contratos) passaram; SQL real
-em PostgreSQL, T041, T038, T039, E2E, acessibilidade e QA humano seguem pendentes e a ponta ainda não
-tem CI. Detalhes e limites em [evidência](evidence/plan-2026-09-21-validation.md). A migration 0035
-pertence ao PR #45; as listas de migrations de dois testes precisarão incluí-la quando ele chegar à
-dev. PR para dev somente depois que o PR #43 estiver na dev, após nova atualização com `origin/dev`,
-repetição dos gates e pedido explícito do usuário.
+em PostgreSQL, T041, T038, T039, E2E, acessibilidade e QA humano seguem pendentes e a ponta ainda
+não tem CI. Detalhes e limites em [evidência](evidence/plan-2026-09-21-validation.md). A migration
+0035 pertence ao PR #45; as listas de migrations de dois testes precisarão incluí-la quando ele
+chegar à dev. PR para dev somente depois que o PR #43 estiver na dev, após nova atualização com
+`origin/dev`, repetição dos gates e pedido explícito do usuário.
