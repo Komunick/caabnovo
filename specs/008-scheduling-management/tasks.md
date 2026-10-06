@@ -71,9 +71,11 @@ mafaltti/Danilo-Komunick. A coordenação encerra sua execução ao registrar es
 - [x] T111 Corrigir S01/S02 do parecer de segurança (CAAB-28/CAAB-41): isolar finalidade de
       comprovantes desde upload e proteger os caminhos genéricos/legados; revalidar autoridade e
       prazo após espera pelo arquivo. Correções locais e cinco regressões PostgreSQL reais
-      preparadas, com jornada de upload atualizada; executadas no CI 37319200057/ef66884, com três
-      regressões adicionais de upload e evidências revisadas em 05/10. Não reescrever migrations
-      aplicadas nem conceder cargos/permissões implicitamente.
+      preparadas, com jornada de upload atualizada; executadas no CI 37319200057/ef66884 da branch
+      de fechamento, com três regressões adicionais de upload e evidências revisadas em 05/10.
+      Nesta base entrou a regressão dos grants temporários de membro e arquivo; as outras duas
+      têm variante equivalente já integrada pelo PR43. Não reescrever migrations aplicadas nem
+      conceder cargos/permissões implicitamente.
 
 Fechamento técnico de T111 em 05/10/2026 por CODEX-mafaltti: e923e9d validado conforme evidência da
 revisão, preservando a autoria da tarefa original e os gates humanos/operacionais de T110.
