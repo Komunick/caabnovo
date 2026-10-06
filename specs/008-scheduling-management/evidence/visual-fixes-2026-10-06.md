@@ -96,3 +96,10 @@ do PR será contra o novo dev, excluindo a atualização de dependências já in
 O novo CI da ponta publicada será conferido antes da declaração de prontidão. A descrição do PR
 registra a versão e seus gates reais; captura/validação de componentes local não substitui E2E,
 integração, build ou segurança do CI. Sem autorização de merge/deploy desta correção.
+
+O browser do primeiro CI concluiu com 101 cenários aprovados e duas falhas em expectativas antigas
+de “1 registros”, em direct-exports.spec.ts:793 e scheduling-export.spec.ts:127. Os logs mostram
+recebimento correto de “1 registro.”. Expectativas ajustadas para o singular com ponto final;
+parsers e verificações de conteúdo/quantidade/permissões preservados. A jornada administrativa de
+Agendamentos com as novas provas de foco/geometria passou. Quality e security da execução sobre
+`332fe59` já passaram; a publicação seguinte valida também as duas expectativas corrigidas.
