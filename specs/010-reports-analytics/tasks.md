@@ -490,3 +490,15 @@ Terceira revisão externa do PR #46, verificada por leitura:
   notas vão por sessionStorage e, sem permissão da fonte, o destino é 404. Não testado no navegador.
 - **security vermelho no CI**, alerta alto do `sharp` 0.35.4 (patch em 0.35.5), igual na `dev`; fora
   do escopo deste PR, aguardando decisão sobre o override em PR próprio.
+
+### Texto da tela sobre o PDF e solicitação de novo — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Quarta revisão externa do PR #46, mesmos pontos já registrados acima; verificados por leitura em 06/10/2026.
+- **PDF de Resultados e evolução, texto corrigido; layout segue aberto.** A tela dizia "Incluída no
+  PDF" sobre o comentário da análise, o que sugeria o bloco do PDF antigo. Agora diz que o texto vai no
+  arquivo exportado (Excel, CSV e PDF) como a coluna "Análise da gestão", repetida em cada linha, que é
+  o que o download direto gera. O gráfico de barras e o bloco de análise do PDF antigo não fazem parte
+  do download direto; refazer o layout do PDF depende de decisão de produto e não foi planejado.
+- **"Solicitar novamente".** Só navega para a tela de exportação, sem o formato; em nova aba o
+  comentário pode se perder (sessionStorage é por aba) e, sem a permissão da fonte, o destino é 404.
+  Inconveniente pequeno, sem mudança de código nesta etapa e não testado no navegador.

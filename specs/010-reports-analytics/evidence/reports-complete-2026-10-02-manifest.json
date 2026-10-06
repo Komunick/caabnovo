@@ -46,7 +46,7 @@
     },
     {
       "path": "apps/web/modules/reports/ui/reports-page.tsx",
-      "sha256": "dd2cae572d7702c5614a7dcd4988ca40cf70a7473be7ecc535efe5b1ab628481"
+      "sha256": "d739128d470b44340b291b4080600af56f2329d59e579075a64627b3f8642170"
     },
     {
       "path": "apps/web/tests/e2e/reports.spec.ts",
@@ -86,7 +86,7 @@
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "205f51319a1ed4064dce24664c8ccc88b936284b027896019789bfed4057ecd6"
+      "sha256": "11f0fad58b758306830fd73117fd6f7e18a353acaf7181c9db577de1632af363"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
@@ -102,7 +102,7 @@
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "c54df206f57bd8bc5edbe69c1abef370cfe9356a7debc2a1b72116650fba2363"
+      "sha256": "c9121963cda3839ae66dfc51cc436e46dce8d9456b859c0b2c1d41f086d54c25"
     }
   ],
   "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
@@ -223,6 +223,6 @@
       "ci": null,
       "also": "PR #45 (212c4ea) merged in dev and into this branch (00991bf); migrations lists include 0035"
     },
-    "openProductDecision": "PDF of Resultados e evolucao: no chart or analysis block, notes repeated per row"
+    "openProductDecision": "PDF of Resultados e evolucao: no chart or analysis block, notes repeated per row; screen text corrected to say so"
   }
 }

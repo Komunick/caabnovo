@@ -750,7 +750,8 @@ export function ReportsPage({
                 onChange={(e) => setNotes(e.target.value)}
               />
               <span>
-                Interpretação da gestão, separada dos indicadores medidos. Incluída no PDF.
+                Interpretação da gestão, separada dos indicadores medidos. Vai no arquivo exportado
+                (Excel, CSV e PDF) como a coluna "Análise da gestão", repetida em cada linha.
               </span>
             </label>
           )}
