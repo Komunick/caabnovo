@@ -189,3 +189,47 @@ funcionais preservados. Nenhum serviço, banco de uso, merge de PR ou homologaç
 Os checks verdes de `cb1bea0` (runs 37370079795/37370076178) são anteriores a esta correção. O CI da
 nova ponta deve ser conferido e registrado no corpo atualizado do PR #42; não atribuir os runs
 anteriores ao novo conteúdo. Testes de aplicação locais não foram executados.
+
+## Remediação dos dois jobs security do PR #42 — 06/10/2026
+
+Autoria: CODEX. Solicitante: mafaltti, login Danilo-Komunick; identidade GitHub get_profile já
+consultada nesta sessão. Pedidos: corrigir os dois erros de CI e a causa recorrente nos PRs.
+Correção/publicação na mesma branch autorizadas; merge não autorizado. Amplia o recorte anterior
+exclusivamente documental com um patch de dependência transitiva, sem alterar código de domínio.
+
+**Causa conferida:** os dois jobs security de `696f9a8` (PR 37467134396, push 37467128244) falharam
+no audit pela mesma HIGH de `source-map-js@1.2.1`, GHSA-68fv-2mgg-jv7q. Quality e browser passaram
+nos dois; Gitleaks foi ignorado porque o audit falhou. O lockfile vulnerável é compartilhado com
+`dev/b80bf6e`, por isso a mesma checagem pode falhar nos demais PRs. Não atribuir uma falha nova a
+cada alteração documental nem afirmar que todas as branches foram executadas aqui.
+
+**Fontes oficiais consultadas em 06/10:**
+[advisory](https://github.com/advisories/GHSA-68fv-2mgg-jv7q) atualizado em 05/10, versões
+afetadas >=1.0.0/<1.2.2; patch 1.2.2 na
+[release do mantenedor](https://github.com/7rulnik/source-map-js/releases/tag/v1.2.2). A base de
+advisories consultada pelo audit evolui independentemente do commit; CI verde de uma versão anterior
+não garante que a mesma árvore continuará aprovada em consultas posteriores.
+
+**Correção:** override exato `source-map-js: 1.2.2` no workspace e lockfile gerado por pnpm 11.25.0.
+Atualiza os consumidores já presentes (Tailwind, magicast, PostCSS e Sass) e a integridade do
+pacote. Comparação estrutural YAML com `696f9a8` confirmou somente override, pacote/snapshot de
+source-map-js e suas cinco referências alterados; as 962 entradas e os demais importers/versões
+foram preservados. Formatação do lockfile normalizada pelo Prettier do projeto para evitar diff de
+serialização.
+
+**Validações locais:**
+
+- `pnpm install --lockfile-only --ignore-scripts` com store isolado no workspace: aprovado.
+- `pnpm install --frozen-lockfile` com o mesmo store: aprovado, incluindo scripts permitidos pelo
+  `allowBuilds`; sem iniciar localhost, worker, scanner ou banco de uso.
+- `pnpm audit --audit-level high --json`: aprovado; zero HIGH/CRITICAL, duas LOW e duas MODERATE.
+  Relatório local `.cache/pr42-source-map-audit.json`; nenhuma exceção ou supressão acrescentada.
+- Prettier explícito de workspace/lockfile e desta evidência; `git diff --check` aprovados.
+- Três backups da ponta anterior conferidos contra HEAD e por SHA-256. Store, node_modules, backups
+  e scripts auxiliares permanecem locais, fora do commit.
+
+Os workflows, thresholds do audit e varredura de segredos permanecem intactos. CI da nova ponta
+precisa passar e será registrado no corpo do PR; checks de `696f9a8` permanecem históricos. Build,
+suites de aplicação, PostgreSQL e navegador desta correção ficam no CI. Sem QA humano. A correção
+comum entra por este PR; outros PRs precisam receber o patch ao atualizar suas branches com `dev`
+após integração humana. Nenhum outro PR, branch funcional ou worktree alterado aqui.
