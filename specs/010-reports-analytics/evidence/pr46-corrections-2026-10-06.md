@@ -24,6 +24,27 @@ As correções anteriores (403 auditado, teto legado e sharp via PR47 já na dev
 report-exports teve 13 testes aprovados e 1 opt-in de volume não executado, incluindo T041 em 590
 ms. Esse CI anterior não valida as novas mudanças.
 
+## Falhas do primeiro CI e correções adicionais
+
+Commit b67c30b, CI 37519461893: quality aprovado (tipos/unit/contract/PostgreSQL/build). Log
+confirma 14 testes de report-exports aprovados e 1 opt-in de volume não executado, incluindo o PDF
+com gráfico independente das colunas e T041. Browser aprovou retentativa/PDF/Axe, mas falhou no
+teste de negação: `getByRole("alert")` também encontrou o route-announcer do Next. Corrigido
+selecionando o alerta pelo texto, mantendo a asserção de negação e ausência do formulário.
+
+Security falhou por cinco avisos high e um critical de Payload 3.89.0, publicados no banco de
+advisories em 06/10. Atualizados todos os pacotes Payload para 3.90.0 e o override Sass
+correspondente, com lockfile regenerado. Editor passa a importar Lexical dos reexports oficiais do
+Payload, evitando duas versões. Local, audit --audit-level high passou: somente 2 low/2 moderate.
+Fonte primária: [release 3.90.0](https://github.com/payloadcms/payload/releases/tag/v3.90.0) e
+[advisory crítico](https://github.com/payloadcms/payload/security/advisories/GHSA-vc4h-q48j-5hcx).
+Config desativa auth local/HTTP/GraphQL/admin e não usa uploads/jobs do Payload; campo novo de reset
+não é adicionado à projeção user. Teste da configuração garante ausência desses campos; sem
+migration ou aplicação no banco de uso. Tipos web/news/worker passaram após instalação.
+
+A revisão automática recusou atualizar a descrição do PR, por tratar o envio de detalhes internos
+como egress não autorizado. Não foi contornada; texto será preparado localmente para aprovação.
+
 ## Validação local e visual
 
 Notebook-Gabriel-Brazil, Node 24.20.0, 8 CPUs, aproximadamente 3,6 GiB livres ao conferir. Execução
@@ -33,9 +54,10 @@ resolveram os executáveis; ferramentas executadas diretamente por Node dos mesm
 - `node node_modules/typescript/bin/tsc --noEmit -p apps/web/tsconfig.json`: aprovado.
 - `node node_modules/typescript/bin/tsc --noEmit -p packages/db/tsconfig.json`: aprovado.
 - `node node_modules/eslint/bin/eslint.js .`: aprovado.
-- Vitest unit completo com `--maxWorkers 2`: 638 testes aprovados fora do sandbox. A primeira
-  execução no sandbox teve 637 aprovados e uma falha do tsx (`uv_os_get_passwd ENOMEM`), resolvida
-  pela execução autorizada fora da restrição, sem mudar o teste do worker.
+- Vitest unit completo com `--maxWorkers 2`: 639 testes aprovados após atualização Payload e teste
+  real da configuração. Rodada anterior teve 638 aprovados fora do sandbox. A primeira execução no
+  sandbox teve 637 aprovados e uma falha do tsx (`uv_os_get_passwd ENOMEM`), resolvida pela execução
+  autorizada fora da restrição, sem mudar o teste do worker.
 - Vitest contract completo com `--maxWorkers 2`: 172 testes aprovados.
 - Prettier geral e documentos alterados, `git diff --check`: aprovados.
 - PostgreSQL/E2E/build/security da ponta final: serão executados no CI após publicação.

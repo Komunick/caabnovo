@@ -1,12 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { LexicalExtensionComposer } from "@lexical/react/LexicalExtensionComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin, createEmptyHistoryState } from "@lexical/react/LexicalHistoryPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { RichTextExtension } from "@lexical/rich-text";
-import { ListExtension } from "@lexical/list";
+import { LexicalExtensionComposer } from "@payloadcms/richtext-lexical/lexical/react/LexicalExtensionComposer";
+import { ContentEditable } from "@payloadcms/richtext-lexical/lexical/react/LexicalContentEditable";
+import {
+  HistoryPlugin,
+  createEmptyHistoryState,
+} from "@payloadcms/richtext-lexical/lexical/react/LexicalHistoryPlugin";
+import { OnChangePlugin } from "@payloadcms/richtext-lexical/lexical/react/LexicalOnChangePlugin";
+import { useLexicalComposerContext } from "@payloadcms/richtext-lexical/lexical/react/LexicalComposerContext";
+import { RichTextExtension } from "@payloadcms/richtext-lexical/lexical/rich-text";
+import { ListExtension } from "@payloadcms/richtext-lexical/lexical/list";
 import {
   $createParagraphNode,
   $getRoot,
@@ -18,7 +21,7 @@ import {
   defineExtension,
   HISTORY_PUSH_TAG,
   type BaseSelection,
-} from "lexical";
+} from "@payloadcms/richtext-lexical/lexical";
 import { ImagePlus } from "lucide-react";
 import type { NewsBody, NewsDraftMetadata } from "@caab/contracts";
 import { Button } from "@/components/ui/button";

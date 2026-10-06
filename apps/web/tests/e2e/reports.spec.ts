@@ -176,7 +176,7 @@ test("reports denies ordinary access and export before data", async ({ page }) =
   await expect(page.getByText("Você não tem permissão para acessar relatórios.")).toBeVisible();
   expect((await page.request.get("/api/v1/reports/exports")).status()).toBe(403);
   await page.goto("/reports/exportar?dataset=members&format=csv");
-  await expect(page.getByRole("alert")).toContainText(
+  await expect(page.getByRole("alert").filter({ hasText: "Seu acesso mudou." })).toContainText(
     "Você não tem permissão para exportar esses dados.",
   );
   await expect(page.locator(".export-form")).toHaveCount(0);

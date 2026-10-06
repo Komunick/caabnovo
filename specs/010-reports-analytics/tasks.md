@@ -370,7 +370,10 @@ explícita: restaurar gráfico e bloco de análise no PDF executivo.
       tabulares; spool temporário com remoção e paginação; funil calculado uma vez. Regressores de
       writer e PostgreSQL preparados; PDF sintético renderizado e sete páginas conferidas.
 - [ ] T045 Publicar correções na mesma branch aberta, confirmar quality/browser/security da ponta
-      entregue e registrar resultados na evidência, incluindo SQL real e E2E novo.
+      entregue e registrar resultados na evidência, incluindo SQL real e E2E novo. _Primeiro CI
+      b67c30b: quality passou, incluindo PostgreSQL/build; browser passou o fluxo novo de
+      PDF/retentativa, mas o locator de negação era ambíguo (corrigido). Security bloqueou Payload;
+      atualização 3.90.0 e alinhamento Lexical preparados, sem migração ou serviço novo._
 
 Estado desta correção: [evidência](evidence/pr46-corrections-2026-10-06.md). T038 e aceite humano
 continuam independentes; checkpoints abaixo são históricos.
