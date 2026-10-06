@@ -86,7 +86,7 @@
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "12bf5a6fcedda66f355171f4509da6d4f8465bd36078e3e61fbff8b47bbd6d0f"
+      "sha256": "7c423783cfcac05cca39a79b1202fa89aabe6ca864c8af7d155754dc834e43fe"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
@@ -102,7 +102,7 @@
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "328c03320ceef84c4ab6731e890e8f40dd2d61081c44f6dc400076f8b1ced3e9"
+      "sha256": "d863e99ef7b3811a559ea3eb50f6e1106530f938a57faa6226b870fe567aae0c"
     }
   ],
   "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
@@ -211,6 +211,16 @@
         "sha": "61d361c",
         "conclusion": "success (quality, browser, security); logs nao lidos"
       }
+    },
+    "afterScheduling43Merged": {
+      "date": "2026-10-06",
+      "devSquash": "ea0bc3b",
+      "conflicts": [
+        "specs/008 (dev version taken)",
+        "apps/web/modules/exports/ui/export-screen.tsx (renderFilter additive kept)"
+      ],
+      "localGates": "typecheck, lint, prettier, 616 unit, 171 contract passed",
+      "ci": null
     }
   }
 }

@@ -454,3 +454,15 @@ Gates locais após as correções: typecheck, lint, Prettier, 616 unitários e 1
 CI do push 37473938245 na ponta 61d361c (anterior a estas correções): quality, browser e security
 aprovados; os logs dos jobs não puderam ser lidos pela API, então os resultados por teste não foram
 conferidos. As correções acima ainda não têm CI.
+
+### Integração do PR #43 na dev e atualização da branch — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Em 06/10/2026 o PR #43 (Agendamentos) foi integrado na `dev` por squash (ea0bc3b). A branch combinada
+passou a conflitar com o squash e foi atualizada com `origin/dev` por merge. Conflitos: as três
+fontes de `specs/008-scheduling-management` (checkpoint, tasks, review-fixes), resolvidas com a
+versão da `dev`, sem alteração própria desta frente; e `apps/web/modules/exports/ui/export-screen.tsx`,
+resolvido mantendo o quarto argumento opcional de `renderFilter` desta entrega. Delta contra a `dev`
+agora só de Relatórios e exportação (23 arquivos fora de `specs`). Gates locais depois do merge:
+typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram. A condição "depois do #43 na
+dev" das notas anteriores está cumprida; o CI desta ponta ainda não existe e T041, T042, T038 e T039
+seguem como descritos acima.
