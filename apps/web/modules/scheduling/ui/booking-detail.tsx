@@ -2,7 +2,7 @@
 import { useEffectiveDeletion } from "@/components/use-effective-deletion";
 import { useModulePermission } from "@/components/workspace-permissions";
 import { useDraftState } from "@/components/workspace-drafts";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { SchedulingBooking, SchedulingEvent, SchedulingPage } from "@caab/contracts";
 import { schedulingStatusLabels } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
@@ -18,16 +18,18 @@ import {
   useSchedulingMutation,
 } from "./shared";
 type Details = { booking: SchedulingBooking; history: SchedulingPage<SchedulingEvent> };
+type WorkflowDialogAction = { action: string; title: string; description: string };
 export function SchedulingBookingDetail({ id }: { id: string }) {
   const [page, setPage] = useState(1);
   const [rescheduling, setRescheduling] = useDraftState("booking-detail:rescheduling", false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [notice, setNotice] = useState("");
-  const [workflowAction, setWorkflowAction] = useState<{
-    action: string;
-    title: string;
-    description: string;
-  } | null>(null);
+  const [workflowAction, setWorkflowAction] = useState<WorkflowDialogAction | null>(null);
+  const workflowTrigger = useRef<HTMLButtonElement>(null);
+  function openWorkflowAction(action: WorkflowDialogAction, trigger: HTMLButtonElement) {
+    workflowTrigger.current = trigger;
+    setWorkflowAction(action);
+  }
   const result = useSchedulingData<Details>(`bookings/${id}?page=${page}`);
   const canWrite = useModulePermission("scheduling:write");
   const mutation = useSchedulingMutation("booking-detail");
@@ -140,7 +142,7 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                 <dd>
                   {booking.confirmedReschedules == null
                     ? "Contagem anterior desconhecida"
-                    : `${booking.confirmedReschedules} confirmadas`}{" "}
+                    : `${booking.confirmedReschedules} ${booking.confirmedReschedules === 1 ? "confirmada" : "confirmadas"}`}{" "}
                   · {booking.reservedReschedule ? "1" : "0"} em andamento
                 </dd>
               </div>
@@ -167,27 +169,33 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                         booking.eligibilityWarning === "blocked" ||
                         Date.parse(booking.startsAt ?? "") <= Date.now()
                       }
-                      onClick={() =>
-                        setWorkflowAction({
-                          action: "approve",
-                          title: "Aprovar este pedido?",
-                          description:
-                            "Confirma o horário solicitado e registra a decisão no histórico.",
-                        })
+                      onClick={(event) =>
+                        openWorkflowAction(
+                          {
+                            action: "approve",
+                            title: "Aprovar este pedido?",
+                            description:
+                              "Confirma o horário solicitado e registra a decisão no histórico.",
+                          },
+                          event.currentTarget,
+                        )
                       }
                     >
                       Aprovar pedido
                     </Button>
                     <Button
                       disabled={mutation.pending}
-                      onClick={() =>
-                        setWorkflowAction({
-                          action: "reject",
-                          title: "Recusar este pedido?",
-                          description: booking.processKind
-                            ? "Libera o destino e mantém a mesma troca aguardando nova escolha. A vaga antiga não será restaurada."
-                            : "Encerra o pedido e libera o horário solicitado.",
-                        })
+                      onClick={(event) =>
+                        openWorkflowAction(
+                          {
+                            action: "reject",
+                            title: "Recusar este pedido?",
+                            description: booking.processKind
+                              ? "Libera o destino e mantém a mesma troca aguardando nova escolha. A vaga antiga não será restaurada."
+                              : "Encerra o pedido e libera o horário solicitado.",
+                          },
+                          event.currentTarget,
+                        )
                       }
                     >
                       Recusar pedido
@@ -196,13 +204,16 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                       Date.parse(booking.originalStart ?? "") > Date.now() && (
                         <Button
                           disabled={mutation.pending}
-                          onClick={() =>
-                            setWorkflowAction({
-                              action: "withdraw",
-                              title: "Retirar esta proposta?",
-                              description:
-                                "Libera o destino para escolher outra data, sem restaurar a vaga anterior nem consumir outra troca.",
-                            })
+                          onClick={(event) =>
+                            openWorkflowAction(
+                              {
+                                action: "withdraw",
+                                title: "Retirar esta proposta?",
+                                description:
+                                  "Libera o destino para escolher outra data, sem restaurar a vaga anterior nem consumir outra troca.",
+                              },
+                              event.currentTarget,
+                            )
                           }
                         >
                           Retirar proposta
@@ -213,13 +224,16 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                 {booking.status === "scheduled" && (
                   <Button
                     disabled={mutation.pending}
-                    onClick={() =>
-                      setWorkflowAction({
-                        action: "provider-unavailability",
-                        title: "Registrar indisponibilidade do estabelecimento?",
-                        description:
-                          "Bloqueia o período deste recurso, libera o atendimento e permite recuperar uma nova data sem consumir remarcação. Reservas de outras pessoas serão preservadas.",
-                      })
+                    onClick={(event) =>
+                      openWorkflowAction(
+                        {
+                          action: "provider-unavailability",
+                          title: "Registrar indisponibilidade do estabelecimento?",
+                          description:
+                            "Bloqueia o período deste recurso, libera o atendimento e permite recuperar uma nova data sem consumir remarcação. Reservas de outras pessoas serão preservadas.",
+                        },
+                        event.currentTarget,
+                      )
                     }
                   >
                     Estabelecimento não poderá atender
@@ -363,15 +377,26 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                   ))}
                   {event.before?.startsAt && (
                     <p>
-                      Antes: {dateTimeLabel(event.before.startsAt)} ·{" "}
-                      {event.before.professionalName} · {event.before.procedureName}
+                      Antes:{" "}
+                      {[
+                        dateTimeLabel(event.before.startsAt),
+                        event.before.professionalName,
+                        event.before.procedureName,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </p>
                   )}
                   {event.after.startsAt && (
                     <p>
                       {event.action === "cancelled" ? "Horário liberado" : "Atendimento"}:{" "}
-                      {dateTimeLabel(event.after.startsAt)} · {event.after.professionalName} ·{" "}
-                      {event.after.procedureName}
+                      {[
+                        dateTimeLabel(event.after.startsAt),
+                        event.after.professionalName,
+                        event.after.procedureName,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </p>
                   )}
                 </li>
@@ -388,6 +413,13 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
             <DialogContent
               title={workflowAction?.title ?? "Confirmar ação"}
               description={workflowAction?.description ?? ""}
+              onCloseAutoFocus={(event) => {
+                const trigger = workflowTrigger.current;
+                if (trigger?.isConnected && !trigger.disabled) {
+                  event.preventDefault();
+                  trigger.focus({ preventScroll: true });
+                }
+              }}
             >
               {mutation.error && <p role="alert">{mutation.error}</p>}
               <div className="scheduling-actions">

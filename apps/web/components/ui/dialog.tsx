@@ -39,7 +39,11 @@ export function DialogContent({
             : undefined
         }
       >
-        <DialogPrimitive.Title ref={titleRef} tabIndex={focusTitle ? -1 : undefined}>
+        <DialogPrimitive.Title
+          ref={titleRef}
+          className="dialog-title"
+          tabIndex={focusTitle ? -1 : undefined}
+        >
           {title}
         </DialogPrimitive.Title>
         {description ? (

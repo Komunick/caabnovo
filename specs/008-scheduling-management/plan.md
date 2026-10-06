@@ -1,5 +1,24 @@
 # Implementation Plan: Agendamentos
 
+## Correção visual após revisão — 06/10/2026-CODEX-mafaltti
+
+Autorização atual: implementar VQA01–VQA04 na worktree da revisão, atualizada com origin/dev
+`9dc6a7f` e branch renomeada para `fix/scheduling-visual-20261006`. Preservar relatório/capturas
+originais e não reutilizar branches de PRs integrados.
+
+1. Reservar no título do diálogo compartilhado a área do botão Fechar, com a medida existente do
+   alvo, sem mudar paleta ou reduzir fonte; revisar o título longo nos dois temas e três larguras.
+2. Guardar a referência do acionador das decisões de reserva e restaurar foco no fechamento, quando
+   ainda conectado e habilitado; não executar comandos ao desistir.
+3. Corrigir a identificação no calendário por capacidade e a apresentação de histórico/contadores,
+   preservando conteúdo de snapshots, vínculos, datas e dados exportados.
+4. Acrescentar regressões de componentes e ao E2E administrativo existente; validar tipos, lint,
+   formatação e Chromium com componentes reais e respostas sintéticas interceptadas, sem iniciar
+   servidor/banco. Registrar evidência distinguindo componentes locais de E2E com backend e do site
+   hospedado. Build/CI, publicação, PR, deploy e homologação não são presumidos por este recorte.
+
+Critérios no [incremento visual da spec](spec.md) e em VQA01–VQA04 de [tasks.md](tasks.md).
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 Tratar os achados confirmados na branch do PR43. Preservar migrations 0031–0034; acrescentar

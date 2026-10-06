@@ -1118,6 +1118,11 @@ progress {
   box-shadow: var(--shadow-dialog);
 }
 
+.dialog-title {
+  /* Reserve the close button's target area, including when the title wraps. */
+  padding-inline-end: 2.75rem;
+}
+
 .dialog-close {
   position: absolute;
   top: var(--space-3);

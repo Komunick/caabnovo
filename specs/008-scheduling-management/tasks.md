@@ -1,5 +1,27 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## Revisão visual do DEV hospedado — 06/10/2026-CODEX-mafaltti
+
+Verificação solicitada pelo usuário, com Playwright e banco de teste confirmado. Base documental dev
+`9dc6a7f`; SHA hospedado não confirmado. Jornadas e limitações na
+[evidência visual](evidence/visual-hosted-2026-10-06.md). Os itens abaixo registram defeitos
+observados; a revisão inicial não executou nem autorizou automaticamente as correções. O pedido
+posterior de correção autorizou a implementação local abaixo; T110 não é encerrada por isso.
+
+**Correção local concluída:** componentes e textos ajustados; regressões e validação em Chromium com
+respostas sintéticas, conforme [evidência](evidence/visual-fixes-2026-10-06.md). E2E com backend,
+CI, publicação e homologação não são inferidos dos testes de componentes.
+
+- [x] VQA01 Corrigir a sobreposição do título com Fechar no modal de indisponibilidade em 320 px;
+      conferir geometria, teclado e os dois temas, preservando as demais utilizações do diálogo.
+- [x] VQA02 Restaurar foco ao acionador após fechar os modais de decisão de Agendamentos por
+      Escape/Fechar/Voltar; validar continuidade do teclado sem executar a decisão ao desistir.
+- [x] VQA03 Tratar profissional ausente nos eventos do calendário por capacidade, evitando `null` em
+      texto, tooltip e aria-label de dia/semana/mês, preservando identificação e horário.
+- [x] VQA04 Ajustar separadores do histórico sem profissional e singular/plural nos contadores
+      observados (“1 confirmadas”, “1 registros”) e colunas selecionadas, sem alterar contagem,
+      estados ou exportação.
+
 ## Conciliação após PR42 — 06/10/2026-CODEX-mafaltti
 
 Recorte de composição de T110: dev `46a3417` incorporada à branch do PR43 após a integração real do

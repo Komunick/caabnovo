@@ -1,5 +1,25 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Correções visuais autorizadas — 06/10/2026-CODEX-mafaltti
+
+Pedido do usuário após a revisão com Playwright: atualizar uma worktree de Agendamentos e corrigir
+VQA01–VQA04. Preservar os contratos administrativos, permissões, contadores e histórico; nenhum
+schema, migration, transporte ou nova regra de reserva entra neste recorte.
+
+- VQA01: título de modal permanece legível e fora da área de Fechar em 320/390/1280 px e nos dois
+  temas.
+- VQA02: fechar uma decisão por Escape, Fechar ou Voltar devolve o foco ao respectivo acionador
+  disponível, sem enviar a decisão ou alterar a reserva.
+- VQA03: calendário de dia/semana/mês usa identificação compreensível do atendimento por capacidade
+  quando não há profissional, incluindo texto, tooltip e nome acessível; não expor `null`.
+- VQA04: histórico omite separadores de campos ausentes; contadores de remarcações, registros
+  exportados e colunas selecionadas usam singular/plural conforme a quantidade. Valores e datas
+  permanecem iguais.
+
+Origem, capturas e limites na [revisão hospedada](evidence/visual-hosted-2026-10-06.md);
+implementação e validação local na [evidência da correção](evidence/visual-fixes-2026-10-06.md). Não
+atribuir o código local ao site hospedado antes de publicação e conferência da versão.
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 Decisões explícitas do usuário nesta revisão: contador legado desconhecido passa a zero por política
