@@ -1,0 +1,17 @@
+{
+  "jira": {
+    "NEW-ADMIN": "CAAB-40",
+    "NEW-ABSENCE": "CAAB-41",
+    "NEW-EMAIL": "CAAB-42",
+    "NEW-DETAIL": "CAAB-43",
+    "NEW-REPORTS": "CAAB-44"
+  },
+  "confluence": {
+    "NEW-PREVISTAS": "7700481",
+    "NEW-SUGESTOES": "7700506",
+    "NEW-GUIAS": "7700526",
+    "NEW-DECISOES": "7700546",
+    "NEW-CAASSH": "7700572",
+    "NEW-RH": "7700596"
+  }
+}

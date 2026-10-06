@@ -1,0 +1,1145 @@
+[
+  {
+    "id": "CAAB-2:summary",
+    "target": "CAAB-2",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-2",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-2:description",
+    "target": "CAAB-2",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-2",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-2:labels",
+    "target": "CAAB-2",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-2",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-3:labels",
+    "target": "CAAB-3",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-3",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-3:assignee",
+    "target": "CAAB-3",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-3",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-4:description",
+    "target": "CAAB-4",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-4",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-4:labels",
+    "target": "CAAB-4",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-4",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-5:description",
+    "target": "CAAB-5",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-5",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-5:labels",
+    "target": "CAAB-5",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-5",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-7:labels",
+    "target": "CAAB-7",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-7",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-7:assignee",
+    "target": "CAAB-7",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-7",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-8:labels",
+    "target": "CAAB-8",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-8",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-8:assignee",
+    "target": "CAAB-8",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-8",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-9:labels",
+    "target": "CAAB-9",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-9",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-10:labels",
+    "target": "CAAB-10",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-10",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-11:labels",
+    "target": "CAAB-11",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-11",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-12:labels",
+    "target": "CAAB-12",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-12",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-13:labels",
+    "target": "CAAB-13",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-13",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-13:assignee",
+    "target": "CAAB-13",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-13",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-14:description",
+    "target": "CAAB-14",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-14",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-14:labels",
+    "target": "CAAB-14",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-14",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-14:assignee",
+    "target": "CAAB-14",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-14",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-15:labels",
+    "target": "CAAB-15",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-15",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-15:assignee",
+    "target": "CAAB-15",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-15",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-16:labels",
+    "target": "CAAB-16",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-16",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-16:assignee",
+    "target": "CAAB-16",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-16",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-17:description",
+    "target": "CAAB-17",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-17",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-17:labels",
+    "target": "CAAB-17",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-17",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-17:assignee",
+    "target": "CAAB-17",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-17",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-18:summary",
+    "target": "CAAB-18",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-18",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-18:description",
+    "target": "CAAB-18",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-18",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-18:labels",
+    "target": "CAAB-18",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-18",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-19:summary",
+    "target": "CAAB-19",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-19",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-19:description",
+    "target": "CAAB-19",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-19",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-19:type",
+    "target": "CAAB-19",
+    "kind": "jira-field",
+    "field": "type",
+    "resolvedTarget": "CAAB-19",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-19:labels",
+    "target": "CAAB-19",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-19",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-20:summary",
+    "target": "CAAB-20",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-20",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-20:description",
+    "target": "CAAB-20",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-20",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-20:type",
+    "target": "CAAB-20",
+    "kind": "jira-field",
+    "field": "type",
+    "resolvedTarget": "CAAB-20",
+    "state": "bloqueado",
+    "reason": "Conversão nativa recusada pelo endpoint de edição (400); sem navegador conectado."
+  },
+  {
+    "id": "CAAB-20:parent",
+    "target": "CAAB-20",
+    "kind": "jira-field",
+    "field": "parent",
+    "resolvedTarget": "CAAB-20",
+    "state": "bloqueado",
+    "reason": "Depende da conversão nativa de CAAB-20."
+  },
+  {
+    "id": "CAAB-20:labels",
+    "target": "CAAB-20",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-20",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-21:summary",
+    "target": "CAAB-21",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-21",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-21:description",
+    "target": "CAAB-21",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-21",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-21:labels",
+    "target": "CAAB-21",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-21",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-22:summary",
+    "target": "CAAB-22",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-22",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-22:description",
+    "target": "CAAB-22",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-22",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-22:labels",
+    "target": "CAAB-22",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-22",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-23:summary",
+    "target": "CAAB-23",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-23",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-23:description",
+    "target": "CAAB-23",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-23",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-23:type",
+    "target": "CAAB-23",
+    "kind": "jira-field",
+    "field": "type",
+    "resolvedTarget": "CAAB-23",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-23:labels",
+    "target": "CAAB-23",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-23",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-24:summary",
+    "target": "CAAB-24",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-24",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-24:description",
+    "target": "CAAB-24",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-24",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-24:labels",
+    "target": "CAAB-24",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-24",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-24:status",
+    "target": "CAAB-24",
+    "kind": "jira-field",
+    "field": "status",
+    "resolvedTarget": "CAAB-24",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-25:summary",
+    "target": "CAAB-25",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-25",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-25:description",
+    "target": "CAAB-25",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-25",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-25:labels",
+    "target": "CAAB-25",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-25",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-26:summary",
+    "target": "CAAB-26",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-26",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-26:description",
+    "target": "CAAB-26",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-26",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-26:parent",
+    "target": "CAAB-26",
+    "kind": "jira-field",
+    "field": "parent",
+    "resolvedTarget": "CAAB-26",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-26:labels",
+    "target": "CAAB-26",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-26",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-27:summary",
+    "target": "CAAB-27",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-27",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-27:description",
+    "target": "CAAB-27",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-27",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-27:parent",
+    "target": "CAAB-27",
+    "kind": "jira-field",
+    "field": "parent",
+    "resolvedTarget": "CAAB-27",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-27:labels",
+    "target": "CAAB-27",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-27",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-28:summary",
+    "target": "CAAB-28",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-28",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-28:description",
+    "target": "CAAB-28",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-28",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-28:parent",
+    "target": "CAAB-28",
+    "kind": "jira-field",
+    "field": "parent",
+    "resolvedTarget": "CAAB-28",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-28:labels",
+    "target": "CAAB-28",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-28",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-28:assignee",
+    "target": "CAAB-28",
+    "kind": "jira-field",
+    "field": "assignee",
+    "resolvedTarget": "CAAB-28",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-29:summary",
+    "target": "CAAB-29",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-29",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-29:description",
+    "target": "CAAB-29",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-29",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-29:type",
+    "target": "CAAB-29",
+    "kind": "jira-field",
+    "field": "type",
+    "resolvedTarget": "CAAB-29",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-29:labels",
+    "target": "CAAB-29",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-29",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-30:summary",
+    "target": "CAAB-30",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-30",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-30:description",
+    "target": "CAAB-30",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-30",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-30:type",
+    "target": "CAAB-30",
+    "kind": "jira-field",
+    "field": "type",
+    "resolvedTarget": "CAAB-30",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-30:parent",
+    "target": "CAAB-30",
+    "kind": "jira-field",
+    "field": "parent",
+    "resolvedTarget": "CAAB-30",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-30:labels",
+    "target": "CAAB-30",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-30",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-31:summary",
+    "target": "CAAB-31",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-31",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-31:description",
+    "target": "CAAB-31",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-31",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-31:labels",
+    "target": "CAAB-31",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-31",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-32:summary",
+    "target": "CAAB-32",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-32",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-32:description",
+    "target": "CAAB-32",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-32",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-32:labels",
+    "target": "CAAB-32",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-32",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-33:summary",
+    "target": "CAAB-33",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-33",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-33:description",
+    "target": "CAAB-33",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-33",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-33:labels",
+    "target": "CAAB-33",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-33",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-34:summary",
+    "target": "CAAB-34",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-34",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-34:description",
+    "target": "CAAB-34",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-34",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-34:labels",
+    "target": "CAAB-34",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-34",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-35:summary",
+    "target": "CAAB-35",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-35",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-35:description",
+    "target": "CAAB-35",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-35",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-35:labels",
+    "target": "CAAB-35",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-35",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-36:summary",
+    "target": "CAAB-36",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-36",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-36:description",
+    "target": "CAAB-36",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-36",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-36:labels",
+    "target": "CAAB-36",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-36",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-37:summary",
+    "target": "CAAB-37",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-37",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-37:description",
+    "target": "CAAB-37",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-37",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-37:type",
+    "target": "CAAB-37",
+    "kind": "jira-field",
+    "field": "type",
+    "resolvedTarget": "CAAB-37",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-37:labels",
+    "target": "CAAB-37",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-37",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-38:summary",
+    "target": "CAAB-38",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-38",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-38:description",
+    "target": "CAAB-38",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-38",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-38:labels",
+    "target": "CAAB-38",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-38",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-39:summary",
+    "target": "CAAB-39",
+    "kind": "jira-field",
+    "field": "summary",
+    "resolvedTarget": "CAAB-39",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-39:description",
+    "target": "CAAB-39",
+    "kind": "jira-field",
+    "field": "description",
+    "resolvedTarget": "CAAB-39",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "CAAB-39:labels",
+    "target": "CAAB-39",
+    "kind": "jira-field",
+    "field": "labels",
+    "resolvedTarget": "CAAB-39",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "ISSUE:NEW-ADMIN",
+    "target": "NEW-ADMIN",
+    "kind": "jira-create",
+    "field": null,
+    "resolvedTarget": "CAAB-40",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "ISSUE:NEW-ABSENCE",
+    "target": "NEW-ABSENCE",
+    "kind": "jira-create",
+    "field": null,
+    "resolvedTarget": "CAAB-41",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "ISSUE:NEW-EMAIL",
+    "target": "NEW-EMAIL",
+    "kind": "jira-create",
+    "field": null,
+    "resolvedTarget": "CAAB-42",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "ISSUE:NEW-DETAIL",
+    "target": "NEW-DETAIL",
+    "kind": "jira-create",
+    "field": null,
+    "resolvedTarget": "CAAB-43",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "ISSUE:NEW-REPORTS",
+    "target": "NEW-REPORTS",
+    "kind": "jira-create",
+    "field": null,
+    "resolvedTarget": "CAAB-44",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:1867914",
+    "target": "1867914",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "1867914",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:819227",
+    "target": "819227",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "819227",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:2588761",
+    "target": "2588761",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "2588761",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:3244094",
+    "target": "3244094",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "3244094",
+    "state": "bloqueado",
+    "reason": "Confluence informa edição ativa. Usuário informou não ser sua sessão; página preservada."
+  },
+  {
+    "id": "PAGE:2621487",
+    "target": "2621487",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "2621487",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:2588776",
+    "target": "2588776",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "2588776",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:7143436",
+    "target": "7143436",
+    "kind": "confluence-update",
+    "field": null,
+    "resolvedTarget": "7143436",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:NEW-PREVISTAS",
+    "target": "NEW-PREVISTAS",
+    "kind": "confluence-create",
+    "field": null,
+    "resolvedTarget": "7700481",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:NEW-SUGESTOES",
+    "target": "NEW-SUGESTOES",
+    "kind": "confluence-create",
+    "field": null,
+    "resolvedTarget": "7700506",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:NEW-GUIAS",
+    "target": "NEW-GUIAS",
+    "kind": "confluence-create",
+    "field": null,
+    "resolvedTarget": "7700526",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:NEW-DECISOES",
+    "target": "NEW-DECISOES",
+    "kind": "confluence-create",
+    "field": null,
+    "resolvedTarget": "7700546",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:NEW-CAASSH",
+    "target": "NEW-CAASSH",
+    "kind": "confluence-create",
+    "field": null,
+    "resolvedTarget": "7700572",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "PAGE:NEW-RH",
+    "target": "NEW-RH",
+    "kind": "confluence-create",
+    "field": null,
+    "resolvedTarget": "7700596",
+    "state": "verificado",
+    "reason": null
+  },
+  {
+    "id": "FILTER:ACTIVE",
+    "target": "CAAB — trabalho ativo",
+    "kind": "jira-filter-create",
+    "field": null,
+    "resolvedTarget": "CAAB — trabalho ativo",
+    "state": "bloqueado",
+    "reason": "JQL validada; criação de filtro não exposta pelo conector e navegador indisponível."
+  }
+]

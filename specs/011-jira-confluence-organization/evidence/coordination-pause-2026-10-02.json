@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-02",
+  "author": "CODEX",
+  "requester": "SOLICITANTE_NAO_VERIFICADO",
+  "scope": "Transições concluídas antes do pedido de parada; nenhum acesso remoto novo neste salvamento.",
+  "externalReviewEvidence": {
+    "pullRequests": [
+      35,
+      36,
+      40,
+      43
+    ],
+    "reviewsReturned": 0,
+    "discussionCommentsReturned": 0,
+    "limitation": "Ausência de evidência nos registros consultados; não prova que revisão fora dessas fontes nunca ocorreu."
+  },
+  "moved": [
+    {
+      "key": "CAAB-18",
+      "title": "Restringir criação de contas ao fluxo administrativo",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    },
+    {
+      "key": "CAAB-20",
+      "title": "Mostrar apenas funções autorizadas na navegação",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    },
+    {
+      "key": "CAAB-22",
+      "title": "Disponibilizar motor compartilhado de download direto",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    },
+    {
+      "key": "CAAB-26",
+      "title": "Impedir sobreposição de agendamentos da mesma pessoa",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    },
+    {
+      "key": "CAAB-27",
+      "title": "Sinalizar reservas de pessoa bloqueada sem cancelá-las",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    },
+    {
+      "key": "CAAB-40",
+      "title": "Operar aprovação, remarcação e recuperação de atendimentos",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    },
+    {
+      "key": "CAAB-43",
+      "title": "Exportar análise detalhada sem agrupamento",
+      "from": "Em Teste / QA",
+      "to": "Code Review"
+    }
+  ],
+  "lastVerifiedOtherStatuses": [
+    {
+      "key": "CAAB-28",
+      "title": "Separar consulta e alteração em Agendamentos",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-41",
+      "title": "Tratar faltas, justificativas e contestações",
+      "status": "Code Review"
+    }
+  ],
+  "qaRemainingAtVerification": 0
+}

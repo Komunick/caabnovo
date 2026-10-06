@@ -1,0 +1,190 @@
+{
+  "date": "2026-10-05",
+  "author": "CODEX",
+  "requester": {
+    "name": "mafaltti",
+    "login": "Danilo-Komunick",
+    "source": "GitHub get_profile"
+  },
+  "prs": [
+    {
+      "number": 42,
+      "state": "open",
+      "merged": false,
+      "head": "docs/documentation-roles-20260923",
+      "sha": "d3d043d2b2255cb37ddac305c1f91b873d568786",
+      "runs": [
+        {
+          "id": 37061609473,
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 337,
+          "jobs_url": "https://api.github.com/repos/Komunick/caabnovo/actions/runs/37061609473/jobs",
+          "logs_url": "https://api.github.com/repos/Komunick/caabnovo/actions/runs/37061609473/logs",
+          "workflow_id": 353112961
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 43,
+      "state": "open",
+      "merged": false,
+      "head": "feature/scheduling-administrative-20261002",
+      "sha": "4e427ac4615ee46cabcf5b1979c54b600c498c14",
+      "runs": [
+        {
+          "id": 37061317002,
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_number": 335,
+          "jobs_url": "https://api.github.com/repos/Komunick/caabnovo/actions/runs/37061317002/jobs",
+          "logs_url": "https://api.github.com/repos/Komunick/caabnovo/actions/runs/37061317002/logs",
+          "workflow_id": 353112961
+        }
+      ],
+      "reviews": []
+    }
+  ],
+  "jobs": [
+    {
+      "run": 37061609473,
+      "jobs": [
+        {
+          "id": 111019333198,
+          "name": "security",
+          "conclusion": "success"
+        },
+        {
+          "id": 111019333484,
+          "name": "quality",
+          "conclusion": "success"
+        },
+        {
+          "id": 111019333689,
+          "name": "browser",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "run": 37061317002,
+      "jobs": [
+        {
+          "id": 111018376562,
+          "name": "browser",
+          "conclusion": "success"
+        },
+        {
+          "id": 111018376694,
+          "name": "security",
+          "conclusion": "success"
+        },
+        {
+          "id": 111018376770,
+          "name": "quality",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "run": 37061310305,
+      "jobs": [
+        {
+          "id": 111018354308,
+          "name": "quality",
+          "conclusion": "failure"
+        },
+        {
+          "id": 111018354577,
+          "name": "security",
+          "conclusion": "success"
+        },
+        {
+          "id": 111018354583,
+          "name": "browser",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "jira": [
+    {
+      "key": "CAAB-18",
+      "title": "Restringir criação de contas ao fluxo administrativo",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-20",
+      "title": "Mostrar apenas funções autorizadas na navegação",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-22",
+      "title": "Disponibilizar motor compartilhado de download direto",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-26",
+      "title": "Impedir sobreposição de agendamentos da mesma pessoa",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-27",
+      "title": "Sinalizar reservas de pessoa bloqueada sem cancelá-las",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-28",
+      "title": "Separar consulta e alteração em Agendamentos",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-38",
+      "title": "Conciliar a documentação do projeto",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-39",
+      "title": "Consolidar o guia de design do projeto",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-40",
+      "title": "Operar aprovação, remarcação e recuperação de atendimentos",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-41",
+      "title": "Tratar faltas, justificativas e contestações",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-43",
+      "title": "Exportar análise detalhada sem agrupamento",
+      "status": "Code Review"
+    },
+    {
+      "key": "CAAB-44",
+      "title": "Exportar detalhe agrupado, resumo e evolução sem os limites antigos",
+      "status": "Em Desenvolvimento"
+    },
+    {
+      "key": "CAAB-46",
+      "title": "Retomar validações de Relatórios bloqueadas pelo WSL",
+      "status": "Backlog"
+    }
+  ],
+  "comments": [
+    {
+      "issue": "CAAB-41",
+      "id": "10183"
+    },
+    {
+      "issue": "CAAB-38",
+      "id": "10184"
+    }
+  ]
+}
