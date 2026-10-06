@@ -46,11 +46,11 @@ describe("complete report exports", () => {
     expect(catalog.filters.map((filter) => filter.key)).toContain("include_members");
     expect(catalog.filters.map((filter) => filter.key)).not.toContain("include_bookings");
     const input = overview();
-    // Losing only the source permission hides its filter, so the selection no longer validates:
-    // a 422 configuration error, not a 403 (the download route reports it as such).
+    // Losing only the source permission hides its filter from the catalog, but the selection still
+    // names it: that is an access change (403), not a configuration error (422).
     expect(() =>
       authorizeExport(adapter, actor(["reports:read", "exports:generate"]), input),
-    ).toThrowError(expect.objectContaining({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 }));
+    ).toThrowError(expect.objectContaining({ code: "PERMISSION_DENIED", status: 403 }));
     for (const key of ["include_bookings", "include_partners", "include_users", "include_news"]) {
       expect(() =>
         authorizeExport(
@@ -58,10 +58,23 @@ describe("complete report exports", () => {
           actor(),
           overview("summary", { filters: { ...input.filters, [key]: "yes" } }),
         ),
+      ).toThrowError(expect.objectContaining({ code: "PERMISSION_DENIED", status: 403 }));
+    }
+    // Unrelated invalid input keeps the 422 diagnosis, with or without the source permission.
+    for (const [permissions, filters] of [
+      [undefined, { unknown: "yes" }],
+      [undefined, { include_members: "anything" }],
+      [["reports:read", "exports:generate"], { unknown: "yes" }],
+    ] as const)
+      expect(() =>
+        authorizeExport(
+          adapter,
+          actor(permissions && [...permissions]),
+          overview("summary", { filters: { from: "2020-01-01", to: "2026-10-02", ...filters } }),
+        ),
       ).toThrowError(
         expect.objectContaining({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 }),
       );
-    }
     for (const missing of ["reports:read", "exports:generate"]) {
       expect(() =>
         authorizeExport(

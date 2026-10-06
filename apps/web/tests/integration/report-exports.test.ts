@@ -388,7 +388,8 @@ describe("direct export of the detailed analysis", () => {
     let revokedAfterBatch = 0;
     try {
       // Revoking only members:read hides include_members from the current catalog, so the next
-      // authorization rejects the selection (EXPORT_CONFIGURATION_INVALID, 422; see service.ts).
+      // authorization rejects the selection as an access change (PERMISSION_DENIED, 403; catalog.ts),
+      // which runExport preserves as the operation's error_code.
       await expect(
         download(input, async (batch) => {
           if (batch === 1) {
@@ -399,7 +400,7 @@ describe("direct export of the detailed analysis", () => {
             ]);
           }
         }),
-      ).rejects.toMatchObject({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 });
+      ).rejects.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
       // The revocation happened after the pre-flight authorization had passed and a batch had
       // been produced, and the operation ended as failed, never completed.
       expect(revokedAfterBatch).toBe(1);
@@ -411,7 +412,7 @@ describe("direct export of the detailed analysis", () => {
           [actor.userId],
         )
       ).rows[0];
-      expect(operationRow).toMatchObject({ phase: "failed", error_code: "EXPORT_FAILED" });
+      expect(operationRow).toMatchObject({ phase: "failed", error_code: "PERMISSION_DENIED" });
       expect(operationRow.finished_at).not.toBeNull();
       expect(
         (
