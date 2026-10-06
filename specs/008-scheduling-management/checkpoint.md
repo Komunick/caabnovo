@@ -1,5 +1,22 @@
 # Checkpoint vigente — Agendamentos, 02/10/2026
 
+## Conciliação com dev após PR42 — 06/10/2026-CODEX-mafaltti
+
+Pedido atual: resolver os conflitos do PR43 com dev, preservando a entrega administrativa.
+Solicitante mafaltti, login Danilo-Komunick, identidade GitHub get_profile já consultada nesta
+sessão. Base da branch `ffd8997`; PR42 integrado em dev `46a3417`. A retomada se limita a esta
+conciliação e seus gates, sem novas regras, canais ou homologação.
+
+Os dois conflitos em workspace/lockfile foram resolvidos mantendo o patch `source-map-js@1.2.2` de
+dev. Código, testes de aplicação e migrations 0031–0034/0036 de Agendamentos preservados; 0035
+continua pertencendo ao PR45. Composição documental conserva HIN do programa e DS/AC/cargo base da
+Fundação. Instalação congelada aprovada. Versão publicada e CI da composição serão registrados no
+corpo do PR43; os runs de `ffd8997` são históricos e não validam a nova ponta.
+
+Evidência na [revisão existente](evidence/review-fixes-2026-10-05.md). T110 conserva revisão humana
+sensível, rollout e homologação pendentes; a composição após PR42 não conclui esses gates. Nenhum
+serviço, banco de uso ou merge do PR executado. Checkpoints anteriores permanecem históricos.
+
 ## Diagnóstico da finalização — 05/10/2026-CODEX-mafaltti
 
 Revisão complementar de aa2deaa: T117 implementa preservação das causas originais por ocorrência,
