@@ -6,11 +6,11 @@
   "files": [
     {
       "path": "apps/web/app/(admin)/reports/exportar/page.tsx",
-      "sha256": "ef9c3d80e2a16f1c3e85be4753dd20c6c9bb39546b68237510533706ac146bcd"
+      "sha256": "2d29d55ead236b7f62eb2d92d7c45b9ec94d4ad145380e9d9a0b48f9d84dcb8c"
     },
     {
       "path": "apps/web/modules/exports/ui/export-screen.tsx",
-      "sha256": "ff465480b83acf49dca1fb410ed9522d7a4b9b62bb0de0b8de8b6e23a9139092"
+      "sha256": "5b03c7edde784c4a91df67e0a3080cead648bf6f308b6fce6b824a822a1f4ffc"
     },
     {
       "path": "apps/web/modules/reports/export-adapter.test.ts",
@@ -22,11 +22,11 @@
     },
     {
       "path": "apps/web/modules/reports/overview-export-adapter.test.ts",
-      "sha256": "abb584dc951b9686e312319f943424cae31770cd3f63f67e127ca6dd56ca1d61"
+      "sha256": "4e619fc12a9ec293cbf7232b2da0539508c0926608db6c5b76d7c9dfe5690066"
     },
     {
       "path": "apps/web/modules/reports/overview-export-adapter.ts",
-      "sha256": "eb45c267095391d1d1e039c3d3c09dbc603b0bf5c1b4236716be2e437ccf42bc"
+      "sha256": "7f181aa706e67e43d96f02969b48d3d3280e61f31b67554dc6fbffbd8c82fdb8"
     },
     {
       "path": "apps/web/modules/reports/ui/client.test.ts",
@@ -38,7 +38,7 @@
     },
     {
       "path": "apps/web/modules/reports/ui/report-export-screen.tsx",
-      "sha256": "1fe31714145064fed9ab0b3a188974d6eb4cfc8b46d158be760b3ea9a83deb88"
+      "sha256": "5d555ef8ffeb6691cf3584c4920cc8ec14f93340111070b68594801aeb878d88"
     },
     {
       "path": "apps/web/modules/reports/ui/reports-page.test.tsx",
@@ -54,15 +54,15 @@
     },
     {
       "path": "apps/web/tests/integration/report-exports.test.ts",
-      "sha256": "b0f2a1e659a54d3fbc937da41f52576baafdd55c21fea759c93215876650643e"
+      "sha256": "bc2c6569787fbbaf752b86c13cc26758f4dd54b92c0727027b4c1af635aa59bb"
     },
     {
       "path": "packages/contracts/src/reports.ts",
-      "sha256": "2db6ad67d55e9baf2a56e12628fbc31a5169482028ba01789a4b7e60bd12b07c"
+      "sha256": "29fd223011f02fafbce61db133f4d94499c37a8a89f9a6fc2b6d0ab2bfae6633"
     },
     {
       "path": "packages/contracts/tests/reports.test.ts",
-      "sha256": "423cbbe25b9388b35f9e79877d61c27683a5adf9afb644e306a1fc3fe1a37754"
+      "sha256": "ccaf6a5f8af7aff384b974b7e20aec25efea8ff126e7c105e1921a3f9882e22a"
     },
     {
       "path": "packages/db/src/repositories/report-analytics.ts",
@@ -86,7 +86,7 @@
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "df46ea92429464c3ec278aba1628ac5bc24b6430e681eca7b0129b15f2719cbd"
+      "sha256": "92324f1127965a33045e0ac8a8920ebfacfb564f7e6d46e065126ff9d7ffdd47"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
@@ -102,7 +102,7 @@
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "eb7dcd58d97d102f06ebac54ed8842d27d05f8491fdf124b664cd9c9bcca690a"
+      "sha256": "2694999422cae42eedcbd68f5c4d3e1bc8bc4db211cd71d3d43e288cf4be2d99"
     }
   ],
   "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
@@ -163,6 +163,41 @@
     "combinedHeadHasCi": false,
     "readiness": "not declared ready for PR, QA or deploy; CAAB-44 remains Em Desenvolvimento, blocked by CAAB-40 / PR #43",
     "prCondition": "only after PR #43 is in dev: update with origin/dev, repeat gates, and open PR to dev only on explicit user request, title 'feat(relatorios): completa exportações agrupadas, resumo e evolução'",
-    "migration0035": "belongs to PR #45 (feature/roles-default-collaborator-20261005); migrations.test.ts:57-62 and scheduling-workflow.test.ts:482 must include it when #45 reaches dev"
+    "migration0035": "belongs to PR #45 (feature/roles-default-collaborator-20261005); migrations.test.ts:57-62 and scheduling-workflow.test.ts:482 must include it when #45 reaches dev",
+    "review": {
+      "date": "2026-10-06",
+      "author": "CLAUDE",
+      "requester": "Gabriel-Komunick",
+      "commit": "4b0c515",
+      "kind": "independent read-only review of CAAB-44 plus fixes",
+      "t042": "reopened ([ ]): reconciliation by reading and local gates done; real regressions (grouping by null state/professional, dates, hashes) pending in CI",
+      "fixed": {
+        "C1": "default-order label of the overview only; SQL not changed",
+        "A2": "overview adapter converts failures to EXPORT_CONFIGURATION_INVALID 422; reportOverviewFiltersSchema bounds previous period (year >= 1000) and end (year <= 9999)",
+        "C2": "eight include_* selects grouped in fieldset/legend 'Fontes incluídas'; ExportScreen renderFilter gets an optional fourth argument",
+        "D1": "revocation between batches asserts code, status and failed operation",
+        "D2": "grouping tests for empty member state and booking without professional",
+        "D3": "grouped total equals screen detail total"
+      },
+      "open": [
+        "A1",
+        "A3",
+        "B1",
+        "C3",
+        "D4"
+      ],
+      "localGates": {
+        "typecheck": "passed (6 projects)",
+        "lint": "passed",
+        "prettier": "passed (9 changed code files)",
+        "vitestUnit": "passed (72 files, 596 tests)",
+        "contract": "passed (24 files, 171 tests)"
+      },
+      "notExecuted": [
+        "report-exports.test.ts (new and reinforced tests need PostgreSQL)",
+        "E2E",
+        "browser and visual review of the new fieldset"
+      ]
+    }
   }
 }

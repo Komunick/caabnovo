@@ -360,7 +360,7 @@ filtros. Ver
 Commit inicial da funcionalidade:9995361; ajuste E2E0775bf3 aprovado no CI37032398048. A correção
 dependente do modelo novo permanece em commit local separado; CI da base antiga não a comprova.
 
-- [x] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
+- [ ] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
       inteiros: manter registry com os três grupos de adaptadores, ExportScreen aditivo,
       reportSources.bookings com procedure_id/data de referência/profissional opcional e cinco
       estados, helpers do resumo e gerador agrupado. Conferir hashes e executar regressões reais de
@@ -369,3 +369,61 @@ dependente do modelo novo permanece em commit local separado; CI da base antiga 
   _06/10 (CLAUDE, solicitante Gabriel-Komunick): conciliação por leitura e gates locais concluídos;
   validação em PostgreSQL pendente no CI. Sem substituir arquivos inteiros; sem correção necessária.
   Não satisfaz T041, T038 nem T039._
+  _06/10 (CLAUDE, solicitante Gabriel-Komunick), reaberta após a revisão independente: conciliação
+  por leitura e gates locais concluídos; faltam as regressões reais (agrupamento por estado/profissional
+  nulo, datas, hashes) no CI._
+
+## Revisão independente de 06/10/2026 e correções — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
+refeita por este registro). Exportar detalhe agrupado, resumo e evolução sem os limites antigos
+(CAAB-44), branch `feature/reports-complete-combined-20261006`. Nada acima foi apagado; T042
+voltou a `[ ]` pelos motivos abaixo.
+
+**Revisão independente (somente leitura).** Leu: o diff integral, sem specs, contra a base de
+Agendamentos; os módulos de Relatórios e de exportação citados; o guia de design só por trechos.
+Não leu: os corpos completos de report-exports.test.ts, reports.spec.ts e reports-page.tsx, nem
+http.ts, export-authority, os writers csv/xlsx/pdf, as migrations e apps/worker. Não executou
+testes. A revisão não achou bug de SQL nem de autorização.
+
+**Conferência por leitura nesta etapa (CLAUDE).** Cada achado foi conferido no código antes de
+alterar. CONFIRMADO = comprovado por leitura de código; PLAUSÍVEL = coerente com o código lido, sem
+execução ou medição.
+
+| Achado | Classificação | Situação                                                                                               |
+| ------ | ------------- | ------------------------------------------------------------------------------------------------------ |
+| A1     | CONFIRMADO    | Aberto. `''` e NULL formam dois grupos com o mesmo rótulo; igual à tela, herdado do PR40.              |
+| A2     | CONFIRMADO    | Corrigido em 4b0c515 (falta de conversão); falha de SQL por período extremo: PLAUSÍVEL, não executada. |
+| A3     | PLAUSÍVEL     | Aberto. O funil é recalculado 4 vezes (laço em report-overview-export.ts); timeout de 30 s não medido. |
+| B1     | CONFIRMADO    | Aberto, comportamento seguro. Fonte revogada sai do catálogo e vira EXPORT_CONFIGURATION_INVALID.      |
+| C1     | CONFIRMADO    | Corrigido em 4b0c515 só no rótulo; o SQL de ordenação não foi alterado.                                |
+| C2     | CONFIRMADO    | Corrigido em 4b0c515 (fieldset/legend "Fontes incluídas").                                             |
+| C3     | PLAUSÍVEL     | Aberto. O campo notes (até 2000 caracteres) na URL GET não foi verificado; decisão de produto.         |
+| D1     | CONFIRMADO    | Reforçado em 4b0c515; teste de integração sem execução.                                                |
+| D2     | CONFIRMADO    | Casos acrescentados em 4b0c515; sem execução.                                                          |
+| D3     | CONFIRMADO    | Paridade acrescentada em 4b0c515; sem execução.                                                        |
+| D4     | CONFIRMADO    | Aberto. reports.spec.ts não tem revogação (busca textual); outros specs não verificados.               |
+
+**Corrigido (commit 4b0c515).**
+
+- C1: rótulo da ordenação padrão da visão geral trocado de "Seção e indicador" para "Identificador
+  interno da seção e do indicador", descrevendo a ordem real por id (prefixos coverage, funnel,
+  inventory, metric, notice, series, usage). SQL intocado: ordenar por seção exigiria mudar a
+  consulta sem poder rodá-la.
+- A2: overview-export-adapter.ts passou a converter qualquer falha de montagem em
+  EXPORT_CONFIGURATION_INVALID 422, no mesmo padrão de export-adapter.ts; reportOverviewFiltersSchema
+  rejeita período cujo início anterior (do dobro do intervalo) fique antes do ano 1000 ou cujo fim
+  passe do ano 9999. Testes unitário e de contrato acrescentados.
+- C2: oito seletores include\_\* agrupados em fieldset/legend "Fontes incluídas" (padrão
+  export-fields do ExportScreen), sem mudar nomes nem valores. Mudança aditiva em export-screen.tsx:
+  quarto argumento opcional de renderFilter (filters e setFilter); escopo CSS `.export-sources`.
+- D1: a revogação entre lotes agora exige código EXPORT_CONFIGURATION_INVALID/422, que a revogação
+  ocorreu após o primeiro lote e que a operação terminou `failed`, com `finished_at`, nunca
+  `completed`. Testes unitários de autorização passaram a conferir código e status.
+- D2: agrupamento de associados sem UF (residence_state é NOT NULL DEFAULT '', então só o texto vazio
+  existe) e de reservas sem profissional (modo capacity) resulta em "Não informado".
+- D3: o total agrupado é comparado com o total da consulta da tela nas mesmas fixtures.
+
+**Aberto.** A1, A3, B1, C3 e D4 (não corrigidos por decisão do pedido). T042 reaberta. Testes de
+integração (D1, D2, D3) escritos e não executados: dependem de PostgreSQL, só no CI. T041, T038 e
+T039 seguem abertas. A ponta combinada continua sem CI.

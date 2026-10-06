@@ -305,3 +305,70 @@ recuperação de atendimentos (CAAB-40) / PR #43. Só depois que o PR #43 estive
 branch com `origin/dev`, repetir os gates e, com pedido explícito do usuário, abrir PR para dev com
 o título `feat(relatorios): completa exportações agrupadas, resumo e evolução`. Sem push, PR ou
 alteração no Jira nesta etapa.
+
+## Revisão independente e correções — 06/10/2026-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
+refeita por este registro). Exportar detalhe agrupado, resumo e evolução sem os limites antigos
+(CAAB-44). Nada acima foi apagado.
+
+### Revisão independente (somente leitura)
+
+Leu: diff integral, sem specs, contra a base de Agendamentos; os módulos de Relatórios e de
+exportação citados; o guia de design só por trechos. Não leu: corpos completos de
+report-exports.test.ts, reports.spec.ts e reports-page.tsx, nem http.ts, export-authority, writers
+csv/xlsx/pdf, migrations e apps/worker. Não executou testes. Não achou bug de SQL nem de
+autorização.
+
+### Achados A1–D4 (conferidos por leitura de código nesta etapa)
+
+- A1 CONFIRMADO, aberto: reports.ts:95 agrupa por COALESCE(valor,'Não informado') e rotula por
+  COALESCE(NULLIF(valor,''),'Não informado'); '' e NULL geram dois grupos com o rótulo "Não
+  informado", igual à tela (herdado do PR40).
+- A2 CONFIRMADO, corrigido em 4b0c515: o adaptador da visão geral não convertia falha em erro 422,
+  ao contrário de export-adapter.ts. A falha de SQL por período extremo é PLAUSÍVEL (não
+  executada). O período anterior dobra o intervalo para trás; o schema agora limita-o ao ano 1000 e
+  o fim ao ano 9999.
+- A3 PLAUSÍVEL, aberto: report-overview-export.ts chama reportUsageFunnelSql uma vez por etapa (4
+  vezes); o statement_timeout de 30 s (exports/query.ts) vira o teto em bases grandes. Sem medição.
+- B1 CONFIRMADO, aberto, comportamento seguro: a fonte revogada deixa o catálogo,
+  validateExportSelection rejeita o filtro e o erro é EXPORT_CONFIGURATION_INVALID 422 (operação
+  `failed`, código EXPORT_FAILED), em vez de PERMISSION_DENIED. Mexer exigiria o núcleo de
+  exportação (CAAB-22).
+- C1 CONFIRMADO, corrigido em 4b0c515 só no rótulo: o SQL ordena por id interno com prefixos
+  coverage, funnel, inventory, metric, notice, series e usage (ORDER BY final de
+  report-overview-export.ts), não por seção. Rótulo agora "Identificador interno da seção e do
+  indicador". SQL não alterado por não poder ser testado aqui.
+- C2 CONFIRMADO, corrigido em 4b0c515: os oito include\_\* tinham só o nome da fonte; agora ficam em
+  fieldset/legend "Fontes incluídas", conforme o guia (agrupar escolhas relacionadas).
+- C3 PLAUSÍVEL, aberto: o campo notes (até 2000 caracteres) viajar na URL GET e ir para
+  log/histórico não foi verificado por esta etapa; é decisão de produto/segurança.
+- D1 CONFIRMADO, corrigido em 4b0c515: o teste de revogação entre lotes só usava
+  rejects.toThrow().
+- D2 CONFIRMADO, corrigido em 4b0c515: sem casos de grupo vazio. residence_state é NOT NULL DEFAULT ''
+  (migration 0023); logo só '' é testável em associados; em reservas, a LEFT JOIN gera NULL.
+- D3 CONFIRMADO, corrigido em 4b0c515: paridade entre total agrupado e total da consulta da tela.
+- D4 CONFIRMADO, aberto: reports.spec.ts não tem teste de revogação (busca textual); outros specs
+  não foram verificados.
+
+### Mudanças em 4b0c515
+
+page.tsx (rótulo), overview-export-adapter.ts e seu teste (try/catch 422, período extremo, códigos
+esperados), contracts/src/reports.ts e seu teste (limites de período), export-screen.tsx (argumento
+opcional `group` de renderFilter), report-export-screen.tsx e globals.css (`.export-sources`),
+report-exports.test.ts (revogação entre lotes, UF vazia, reserva sem profissional, paridade). Os
+hashes do manifesto dos arquivos listados foram atualizados.
+
+### Gates locais na ponta 4b0c515
+
+Sem serviços locais: typecheck (6 projetos) passou; lint passou; Prettier dos 9 arquivos alterados
+passou; vitest unitário 72 arquivos/596 testes passaram; contratos 24 arquivos/171 testes
+passaram. O production-readiness do worker não foi rodado isoladamente; passou no conjunto
+unitário completo.
+
+### Sem execução e aberto
+
+report-exports.test.ts (os três testes novos e o reforçado), PostgreSQL real, migrations, E2E,
+acessibilidade, navegador e revisão visual do fieldset "Fontes incluídas" nos dois temas e no
+celular. A ponta combinada continua sem CI. T042 reaberta; T041, T038 e T039 seguem abertas. Não
+declarar prontidão para PR, QA ou deploy.
