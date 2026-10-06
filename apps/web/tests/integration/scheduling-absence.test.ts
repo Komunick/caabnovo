@@ -39,7 +39,6 @@ import {
   finalizeUpload,
 } from "../../modules/files/file-service";
 import type { WebObjectStorage } from "../../modules/files/object-storage";
-import { PermissionDeniedError } from "../../modules/auth/authorize";
 
 async function evidenceActor(permissions: string[]) {
   const userId = crypto.randomUUID(),
@@ -1092,12 +1091,11 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
       "files:read",
       "files:create",
     ]);
-    const filesOnlyUploadKey = crypto.randomUUID();
     await expect(
-      createUploadIntent(pool, restrictedStorage, {
+      createUploadIntent(pool, evidenceStorage, {
         ...intentCommand,
         actor: filesOnly,
-        idempotencyKey: filesOnlyUploadKey,
+        idempotencyKey: crypto.randomUUID(),
       }),
     ).rejects.toMatchObject({ code: "PERMISSION_DENIED" });
     expect(
@@ -1287,6 +1285,303 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
     },
     15000,
   );
+
+  it.each(["session", "role", "submission", "deadline"] as const)(
+    "rechecks %s after a real evidence row-lock wait",
+    async (kind) => {
+      const a = await occurrence();
+      const fileId = await proof(a.memberId);
+      const isSubmission = kind === "submission" || kind === "deadline";
+      if (!isSubmission)
+        await submitSchedulingAbsenceAppeal(pool, next(), a.id, {
+          expectedVersion: 1,
+          kind: "justification",
+          explanation: "Pedido para revisão",
+          evidenceFileIds: [fileId],
+        });
+      const actor = isSubmission
+        ? context.actor
+        : await evidenceActor(["scheduling:read", "scheduling:review_absences"]);
+      const appName = `absence-proof-wait-${crypto.randomUUID()}`;
+      const url = new URL(container.getConnectionUri());
+      url.username = "caab_runtime";
+      url.password = "change-me-runtime";
+      const waitingPool = new Pool({
+        connectionString: url.toString(),
+        application_name: appName,
+        statement_timeout: 15000,
+        max: 1,
+      });
+      const locker = new Client({ connectionString: container.getConnectionUri() });
+      await locker.connect();
+      let outcome: Promise<unknown> | undefined;
+      let issued = 0;
+      try {
+        await waitingPool.query("SELECT 1");
+        const deadline = (await admin.query("SELECT clock_timestamp()+interval '5 seconds' AS at"))
+          .rows[0].at;
+        if (kind === "role") {
+          await admin.query("DELETE FROM user_access WHERE user_id=$1", [actor.userId]);
+          const role = (
+            await admin.query(
+              "INSERT INTO role(code,name,description) VALUES($1,$1,'Revisão sintética temporária') RETURNING id",
+              [`proof.${crypto.randomUUID()}`],
+            )
+          ).rows[0].id;
+          await admin.query(
+            "INSERT INTO role_permission(role_id,permission_id) SELECT $1,id FROM permission WHERE resource='scheduling' AND action IN ('read','review_absences')",
+            [role],
+          );
+          await admin.query(
+            "INSERT INTO user_role(user_id,role_id,granted_by,justification,valid_until) VALUES($1,$2,$1,'Teste sintético',$3)",
+            [actor.userId, role, deadline],
+          );
+        } else if (kind === "deadline") {
+          await admin.query(
+            "UPDATE scheduling_absence SET recorded_at=$2::timestamptz-interval '168 hours',appeal_deadline=$2,restriction_ends_at=$2::timestamptz+interval '552 hours' WHERE id=$1",
+            [a.id, deadline],
+          );
+        } else {
+          await admin.query("UPDATE session SET expires_at=$2 WHERE id=$1", [
+            actor.sessionId,
+            deadline,
+          ]);
+        }
+        await locker.query("BEGIN");
+        await locker.query("SELECT id FROM stored_file WHERE id=$1 FOR UPDATE", [fileId]);
+        const pending = isSubmission
+          ? submitSchedulingAbsenceAppeal(waitingPool, { ...next(), actor }, a.id, {
+              expectedVersion: 1,
+              kind: "contestation",
+              explanation: "Enviado antes da espera",
+              evidenceFileIds: [fileId],
+            })
+          : getSchedulingAbsenceEvidenceDownload(waitingPool, actor, a.id, fileId, {
+              ...evidenceStorage,
+              createPrivateDownload: async (key) => {
+                issued++;
+                return evidenceStorage.createPrivateDownload(key);
+              },
+            });
+        outcome = pending.then(
+          () => ({ code: "UNEXPECTED_SUCCESS" }),
+          (error) => error,
+        );
+        await expect
+          .poll(
+            async () =>
+              Number(
+                (
+                  await admin.query(
+                    "SELECT count(*) AS n FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock'",
+                    [appName],
+                  )
+                ).rows[0].n,
+              ),
+            { timeout: 4000 },
+          )
+          .toBe(1);
+        await admin.query(
+          "SELECT pg_sleep(greatest(0,extract(epoch FROM $1::timestamptz-clock_timestamp()))+0.05)",
+          [deadline],
+        );
+        await locker.query("COMMIT");
+        const code =
+          kind === "role"
+            ? "PERMISSION_DENIED"
+            : kind === "deadline"
+              ? "SCHEDULING_ABSENCE_APPEAL_CLOSED"
+              : "AUTHENTICATION_REQUIRED";
+        await expect(outcome).resolves.toMatchObject({ code });
+        expect(issued).toBe(0);
+        if (isSubmission) {
+          expect(
+            (
+              await admin.query("SELECT 1 FROM scheduling_absence_appeal WHERE absence_id=$1", [
+                a.id,
+              ])
+            ).rowCount,
+          ).toBe(0);
+          expect(
+            (await admin.query("SELECT version FROM scheduling_absence WHERE id=$1", [a.id]))
+              .rows[0].version,
+          ).toBe(1);
+          expect(
+            (
+              await admin.query(
+                "SELECT 1 FROM scheduling_absence_event WHERE absence_id=$1 AND action='appeal_submitted'",
+                [a.id],
+              )
+            ).rowCount,
+          ).toBe(0);
+        }
+      } finally {
+        await locker.query("ROLLBACK");
+        await outcome;
+        if (isSubmission)
+          await admin.query(
+            "UPDATE session SET expires_at=clock_timestamp()+interval '1 hour' WHERE id=$1",
+            [actor.sessionId],
+          );
+        await waitingPool.end();
+        await locker.end();
+      }
+    },
+    20000,
+  );
+
+  it("rechecks temporary member and file grants after a restricted upload row-lock wait", async () => {
+    const memberId = await person();
+    const actor = await evidenceActor([
+      "scheduling:read",
+      "scheduling:write",
+      "members:read",
+      "members:write",
+      "files:create",
+    ]);
+    await admin.query(
+      "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write'] WHERE user_id=$1",
+      [actor.userId],
+    );
+    await admin.query(
+      "INSERT INTO role(code,name,description,is_administrative) VALUES('administrator','Administrador sintético de upload','Fixture isolada para expiração de acesso a comprovantes',true) ON CONFLICT(code) DO NOTHING",
+    );
+    const grant = (
+      await admin.query(
+        "INSERT INTO user_role(user_id,role_id,granted_by,justification,valid_until) SELECT $1,id,$1,'Upload sintético temporário',clock_timestamp()+interval '1 hour' FROM role WHERE code='administrator' RETURNING id",
+        [actor.userId],
+      )
+    ).rows[0];
+    const checksumSha256 = "b".repeat(64);
+    const intent = await createUploadIntent(pool, evidenceStorage, {
+      actor,
+      effectiveIdentity: `user:${actor.userId}`,
+      requestId: crypto.randomUUID(),
+      correlationId: crypto.randomUUID(),
+      idempotencyKey: crypto.randomUUID(),
+      ownerType: SCHEDULING_ABSENCE_EVIDENCE_OWNER,
+      ownerId: memberId,
+      originalName: "prova-finalizacao-restrita.pdf",
+      declaredMime: "application/pdf",
+      sizeBytes: 10,
+      checksumSha256,
+    });
+    const original = (
+      await admin.query("SELECT status,updated_at FROM stored_file WHERE id=$1", [intent.fileId])
+    ).rows[0];
+    const command = {
+      actor,
+      effectiveIdentity: `user:${actor.userId}`,
+      requestId: crypto.randomUUID(),
+      correlationId: crypto.randomUUID(),
+      fileId: intent.fileId,
+      checksumSha256,
+    };
+    const appName = `absence-finalize-wait-${crypto.randomUUID()}`;
+    const url = new URL(container.getConnectionUri());
+    url.username = "caab_runtime";
+    url.password = "change-me-runtime";
+    const waitingPool = new Pool({
+      connectionString: url.toString(),
+      application_name: appName,
+      statement_timeout: 15000,
+      max: 1,
+    });
+    const locker = new Client({ connectionString: container.getConnectionUri() });
+    await locker.connect();
+    let outcome: Promise<unknown> | undefined;
+    let queued = 0;
+    const enqueuer = {
+      enqueue: async () => {
+        queued++;
+      },
+    };
+    const storage: WebObjectStorage = {
+      ...evidenceStorage,
+      inspectQuarantine: async () => ({ sizeBytes: 10 }),
+    };
+    try {
+      await waitingPool.query("SELECT 1");
+      const deadline = (await admin.query("SELECT clock_timestamp()+interval '5 seconds' AS at"))
+        .rows[0].at;
+      await admin.query("UPDATE user_role SET valid_until=$2 WHERE id=$1", [grant.id, deadline]);
+      await locker.query("BEGIN");
+      await locker.query("SELECT id FROM stored_file WHERE id=$1 FOR UPDATE", [intent.fileId]);
+      outcome = finalizeUpload(waitingPool, storage, enqueuer, command).then(
+        () => ({ code: "UNEXPECTED_SUCCESS" }),
+        (error) => error,
+      );
+      await expect
+        .poll(
+          async () =>
+            Number(
+              (
+                await admin.query(
+                  "SELECT count(*) AS n FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock' AND query LIKE '%stored_file%FOR UPDATE%'",
+                  [appName],
+                )
+              ).rows[0].n,
+            ),
+          { timeout: 4000 },
+        )
+        .toBe(1);
+      await admin.query(
+        "SELECT pg_sleep(greatest(0,extract(epoch FROM $1::timestamptz-clock_timestamp()))+0.05)",
+        [deadline],
+      );
+      await locker.query("COMMIT");
+      await expect(outcome).resolves.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
+      expect(
+        (
+          await admin.query(
+            "SELECT permission FROM effective_user_permission WHERE user_id=$1 ORDER BY permission",
+            [actor.userId],
+          )
+        ).rows.map((row) => row.permission),
+      ).toEqual(["scheduling:read", "scheduling:write"]);
+      expect(queued).toBe(0);
+      expect(
+        (
+          await admin.query("SELECT status,updated_at FROM stored_file WHERE id=$1", [
+            intent.fileId,
+          ])
+        ).rows[0],
+      ).toEqual(original);
+      expect(
+        (
+          await admin.query(
+            "SELECT 1 FROM job_execution WHERE aggregate_id=$1 OR idempotency_key=$1",
+            [intent.fileId],
+          )
+        ).rowCount,
+      ).toBe(0);
+      expect(
+        (
+          await admin.query("SELECT 1 FROM audit_event WHERE correlation_id=$1", [
+            command.correlationId,
+          ])
+        ).rowCount,
+      ).toBe(0);
+      await admin.query(
+        "UPDATE user_role SET valid_until=clock_timestamp()+interval '1 hour' WHERE id=$1",
+        [grant.id],
+      );
+      const retried = await finalizeUpload(waitingPool, storage, enqueuer, command);
+      await expect(finalizeUpload(waitingPool, storage, enqueuer, command)).resolves.toEqual(
+        retried,
+      );
+      expect(queued).toBe(1);
+      expect(
+        (await admin.query("SELECT status FROM stored_file WHERE id=$1", [intent.fileId])).rows[0]
+          .status,
+      ).toBe("uploaded");
+    } finally {
+      await locker.query("ROLLBACK");
+      await outcome;
+      await waitingPool.end();
+      await locker.end();
+    }
+  }, 20000);
 
   it.each(["session", "role", "submission", "deadline"] as const)(
     "rechecks %s after a real evidence row-lock wait",
