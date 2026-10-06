@@ -372,3 +372,18 @@ report-exports.test.ts (os três testes novos e o reforçado), PostgreSQL real, 
 acessibilidade, navegador e revisão visual do fieldset "Fontes incluídas" nos dois temas e no
 celular. A ponta combinada continua sem CI. T042 reaberta; T041, T038 e T039 seguem abertas. Não
 declarar prontidão para PR, QA ou deploy.
+
+### Revisão externa (PR #46) e correções — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Atualiza B1 e C3 acima, que ficam como histórico da revisão de 06/10/2026.
+
+- C3 corrigido: o link de exportação não leva mais `notes` na URL (2000 caracteres multibyte geram
+  cerca de 18 KB e o parser HTTP responde 431). Transferência por `sessionStorage`, texto integral,
+  leitura única, prazo de 5 minutos, falha de storage não bloqueia a tela.
+- B1 corrigido: `authorizeExport` devolve PERMISSION_DENIED (403) para filtro, coluna ou ordenação
+  restritos cuja permissão foi perdida; o estado final da operação é PERMISSION_DENIED. Alteração
+  aditiva e pequena no núcleo (CAAB-22), com `catalog.test.ts` novo; os testes dos outros consumidores
+  não especificavam 422 para esse cenário e não foram alterados.
+- Locais: typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram. Não executados:
+  `report-exports.test.ts` (assert atualizado para PERMISSION_DENIED), E2E e navegador. As correções
+  ainda não têm CI; o CI 37473938245 (61d361c) é anterior a elas.

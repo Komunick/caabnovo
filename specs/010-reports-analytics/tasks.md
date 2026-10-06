@@ -427,3 +427,30 @@ execução ou medição.
 **Aberto.** A1, A3, B1, C3 e D4 (não corrigidos por decisão do pedido). T042 reaberta. Testes de
 integração (D1, D2, D3) escritos e não executados: dependem de PostgreSQL, só no CI. T041, T038 e
 T039 seguem abertas. A ponta combinada continua sem CI.
+
+### Revisão externa (PR #46) e correções — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Em 06/10/2026 uma revisão externa do PR #46 (ponta eb1c142) apontou dois achados, ambos confirmados
+por leitura e corrigidos nesta entrega. Atualiza as linhas B1 e C3 da tabela acima, que ficam como
+histórico.
+
+- **C3 / MEDIUM, corrigido.** `reportExportHref` levava o campo `notes` (até 2000 caracteres) na
+  URL; 2000 caracteres multibyte geram cerca de 18 KB e o servidor HTTP responde 431 antes do
+  handler. Agora o link não leva `notes`; o texto integral vai por `sessionStorage` (chave
+  `caab:reports-export-notes`, prazo de 5 minutos, leitura única, tratado como entrada não confiável)
+  e a tela de exportação o consome na montagem. Sem storage, a tela abre normalmente e o usuário
+  digita o comentário nela. `?notes=` legado continua aceito. Testes de unidade novos em
+  `client.test.ts`, `report-export-screen.test.tsx` e `reports-page.test.tsx`. Sem E2E do caminho
+  clique → tela.
+- **B1 / LOW, corrigido.** `authorizeExport` (`apps/web/modules/exports/catalog.ts`) devolve
+  PERMISSION_DENIED (403) quando a seleção ainda cita filtro, coluna ou campo de ordenação que o
+  adaptador restringe e o ator perdeu; configuração inválida sem relação com permissão segue 422.
+  Nada é afrouxado, só o diagnóstico muda. A operação passa a terminar com `error_code`
+  PERMISSION_DENIED e a tela mostra "Seu acesso mudou". Testes: `catalog.test.ts` (novo),
+  `overview-export-adapter.test.ts` e o de integração `report-exports.test.ts`, este sem execução
+  local (PostgreSQL só no CI).
+
+Gates locais após as correções: typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram.
+CI do push 37473938245 na ponta 61d361c (anterior a estas correções): quality, browser e security
+aprovados; os logs dos jobs não puderam ser lidos pela API, então os resultados por teste não foram
+conferidos. As correções acima ainda não têm CI.

@@ -22,7 +22,7 @@
     },
     {
       "path": "apps/web/modules/reports/overview-export-adapter.test.ts",
-      "sha256": "4e619fc12a9ec293cbf7232b2da0539508c0926608db6c5b76d7c9dfe5690066"
+      "sha256": "4e29446d551137a4a4a23ff4529aa5ee66d6301bad94c9a963779c9874186bf3"
     },
     {
       "path": "apps/web/modules/reports/overview-export-adapter.ts",
@@ -30,23 +30,23 @@
     },
     {
       "path": "apps/web/modules/reports/ui/client.test.ts",
-      "sha256": "3f92b3d215d9bb24d9d24357023ff4096689dba29d5e78393d6bfd6a73b70dc4"
+      "sha256": "88009b8cd74ad5eebefee6ebac9c9aff4981924f0719aa1cd6ed3f7baca0785e"
     },
     {
       "path": "apps/web/modules/reports/ui/client.ts",
-      "sha256": "277c11cda47679aec6ef1e957d9d9fc822b2ecc6a5c8150c3570629ebb8de07d"
+      "sha256": "a0c132cfa0b8c824a8c4d5619ceeb208852360c1f952221b9b73cec11d03adc3"
     },
     {
       "path": "apps/web/modules/reports/ui/report-export-screen.tsx",
-      "sha256": "5d555ef8ffeb6691cf3584c4920cc8ec14f93340111070b68594801aeb878d88"
+      "sha256": "401d36d79e5590c859ae5bfd54989aa86561a33132e9b8498cc94fc6a91ce5ab"
     },
     {
       "path": "apps/web/modules/reports/ui/reports-page.test.tsx",
-      "sha256": "1b5bc18b393d524e7735d23c0cc4b76d5d53fdbb9e2b61b7ebe9bfeea84b0d80"
+      "sha256": "4ff0bf471db8fc12352051078ca3172b8502153ef424811cb1188e8fd668f47f"
     },
     {
       "path": "apps/web/modules/reports/ui/reports-page.tsx",
-      "sha256": "1f11d1cc3151b1a443579455d42905e62064315454694c6a6fa6e670e54c2504"
+      "sha256": "dd2cae572d7702c5614a7dcd4988ca40cf70a7473be7ecc535efe5b1ab628481"
     },
     {
       "path": "apps/web/tests/e2e/reports.spec.ts",
@@ -54,7 +54,7 @@
     },
     {
       "path": "apps/web/tests/integration/report-exports.test.ts",
-      "sha256": "bc2c6569787fbbaf752b86c13cc26758f4dd54b92c0727027b4c1af635aa59bb"
+      "sha256": "46248ff7873074f2b8c71249e911f77077fef9ed3e874fea43ffa58ac8c02d83"
     },
     {
       "path": "packages/contracts/src/reports.ts",
@@ -78,7 +78,7 @@
     },
     {
       "path": "packages/db/src/repositories/reports.ts",
-      "sha256": "2bb8056115adfebd5de1a0e633f9f652e28d47ddec27ef4b7b3422ca52dcdc76"
+      "sha256": "4696ce7ff480173b98fb458c6ccb156022c5c90ae43690893f45bb4de1efa0f6"
     },
     {
       "path": "specs/010-reports-analytics/contracts/exports.md",
@@ -86,7 +86,7 @@
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "92324f1127965a33045e0ac8a8920ebfacfb564f7e6d46e065126ff9d7ffdd47"
+      "sha256": "12bf5a6fcedda66f355171f4509da6d4f8465bd36078e3e61fbff8b47bbd6d0f"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
@@ -102,7 +102,7 @@
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "2694999422cae42eedcbd68f5c4d3e1bc8bc4db211cd71d3d43e288cf4be2d99"
+      "sha256": "328c03320ceef84c4ab6731e890e8f40dd2d61081c44f6dc400076f8b1ced3e9"
     }
   ],
   "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
@@ -198,6 +198,19 @@
         "E2E",
         "browser and visual review of the new fieldset"
       ]
+    },
+    "afterExternalReview": {
+      "date": "2026-10-06",
+      "fixed": [
+        "C3 notes na URL -> sessionStorage",
+        "B1 PERMISSION_DENIED para fonte/coluna/ordenacao revogada"
+      ],
+      "ciOfFixes": null,
+      "previousCi": {
+        "run": 37473938245,
+        "sha": "61d361c",
+        "conclusion": "success (quality, browser, security); logs nao lidos"
+      }
     }
   }
 }
