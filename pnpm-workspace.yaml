@@ -20,6 +20,8 @@ overrides:
   "@payloadcms/next@3.89.0>sass": "1.79.4"
   # Indexed source-map offset validation (GHSA-68fv-2mgg-jv7q); keep the patched 1.2 line.
   "source-map-js": "1.2.2"
+  # librsvg vulnerability in sharp (GHSA-wq5f-xc86-pv6w); patched in 0.35.5, same line as the Next dependency.
+  "sharp": "0.35.5"
 
 allowBuilds:
   cpu-features: false
