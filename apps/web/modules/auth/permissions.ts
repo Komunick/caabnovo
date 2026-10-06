@@ -3,6 +3,7 @@ export const PERMISSIONS = {
   accessManage: "access:manage",
   schedulingRead: "scheduling:read",
   schedulingWrite: "scheduling:write",
+  schedulingReviewAbsences: "scheduling:review_absences",
   messagesWrite: "messages:write",
   reportsRead: "reports:read",
   reportsExport: "exports:generate",

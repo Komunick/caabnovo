@@ -1,4 +1,7 @@
 "use client";
+import { SchedulingTeam } from "./team";
+import { PanelHeading } from "@/components/ui/panel-heading";
+import { SchedulingExportLink } from "./export-link";
 import { useModulePermission } from "@/components/workspace-permissions";
 import { useDraftState } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
@@ -156,20 +159,32 @@ function HoursEditor({
 export function SchedulingHours() {
   const [unitId, setUnitId] = useDraftState("hours:unitId", "");
   const [professionalId, setProfessionalId] = useDraftState("hours:professionalId", "");
+  const [serviceId, setServiceId] = useDraftState("hours:serviceId", "");
   const [kind, setKind] = useDraftState("hours:kind", "units");
-  const id = kind === "units" ? unitId : professionalId;
+  const id = kind === "units" ? unitId : kind === "services" ? serviceId : professionalId;
   return (
     <SchedulingShell
       title="Horários de atendimento"
       description="Configure primeiro o expediente da unidade e depois a jornada e o almoço de cada profissional nessa unidade."
     >
       <section className="panel scheduling-form">
-        <h2>Selecionar atendimento</h2>
+        <PanelHeading title="Selecionar atendimento">
+          <SchedulingExportLink
+            dataset="hours"
+            filters={{
+              kind,
+              unitId,
+              ...(kind === "professionals" ? { professionalId } : {}),
+              ...(kind === "services" ? { serviceId } : {}),
+            }}
+          />
+        </PanelHeading>
         <div className="scheduling-grid">
           <FormField id="hours-kind" label="Configurar">
             <DraftSelect value={kind} onChange={(event) => setKind(event.target.value)}>
               <option value="units">Expediente da unidade</option>
               <option value="professionals">Jornada do profissional</option>
+              <option value="services">Horários por capacidade do serviço</option>
             </DraftSelect>
           </FormField>
           <Choice
@@ -179,6 +194,7 @@ export function SchedulingHours() {
             onChange={(value) => {
               setUnitId(value);
               setProfessionalId("");
+              setServiceId("");
             }}
           />
           {kind === "professionals" && (
@@ -189,10 +205,26 @@ export function SchedulingHours() {
               onChange={setProfessionalId}
             />
           )}
+          {kind === "services" && (
+            <Choice
+              label="Serviço"
+              resource="services"
+              filters={`unitId=${unitId}`}
+              value={serviceId}
+              onChange={setServiceId}
+              disabled={!unitId}
+            />
+          )}
         </div>
       </section>
       <section className="panel scheduling-form">
-        <h2>{kind === "units" ? "Expediente da unidade" : "Jornada do profissional"}</h2>
+        <h2>
+          {kind === "units"
+            ? "Expediente da unidade"
+            : kind === "services"
+              ? "Horários do serviço"
+              : "Jornada do profissional"}
+        </h2>
         {id && unitId ? (
           <HoursForm
             key={`${kind}-${id}-${unitId}`}
@@ -204,6 +236,7 @@ export function SchedulingHours() {
           <p>Selecione os cadastros para consultar e definir os horários.</p>
         )}
       </section>
+      {kind === "units" && unitId && <SchedulingTeam key={unitId} unitId={unitId} />}
     </SchedulingShell>
   );
 }

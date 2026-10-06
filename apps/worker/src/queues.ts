@@ -7,6 +7,7 @@ export const QUEUES = {
   auditExport: "audit-export",
   reportExport: "report-export",
   messagePreparation: "message-preparation",
+  schedulingAbsenceFinalization: "scheduling-absence-finalization",
   newsPublication: "news-publication",
   retention: "retention",
   deadLetter: "caab-dead-letter",

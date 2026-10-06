@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { ExportCatalog, ExportFormat, ExportOperation, ExportRequest } from "@caab/contracts";
 import { useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
@@ -33,6 +33,8 @@ export function ExportScreen({
   sourcePermission,
   backHref,
   initial,
+  initialFilters = {},
+  renderFilter,
   context,
   defaultOrderLabel = "Identificador",
   backLabel = "Voltar à lista",
@@ -42,15 +44,17 @@ export function ExportScreen({
   backHref: string;
   /** Selection brought from the originating screen (e.g. the report the user was reading). */
   initial?: ExportInitial;
+  initialFilters?: Record<string, string>;
+  renderFilter?(key: string, value: string, onChange: (value: string) => void): ReactNode;
   context?: ExportRequest["context"];
   /** What the adapter orders by when no sort column is chosen. */
   defaultOrderLabel?: string;
   backLabel?: string;
 }) {
-  const key = `export:${catalog.module}:${catalog.dataset}${initial ? `:${signature(initial)}` : ""}`;
+  const key = `export:${catalog.module}:${catalog.dataset}:${signature({ ...initial, filters: Object.fromEntries(Object.entries(initial?.filters ?? initialFilters).sort(([a], [b]) => a.localeCompare(b))), context })}`;
   const [draftFilters, setFilters] = useDraftState<Record<string, string>>(
     `${key}:filters`,
-    initial?.filters ?? {},
+    initial?.filters ?? initialFilters,
   );
   const accessReport = catalog.module === "reports" && catalog.dataset === "access";
   // Normalize old empty drafts as well as the initial selection, for display and submission.
@@ -204,36 +208,47 @@ export function ExportScreen({
             <fieldset className="export-fields" disabled={active}>
               <legend>Filtros</legend>
               <div className="list-filters export-filters">
-                {catalog.filters.map((filter) => (
-                  <FormField
-                    key={filter.key}
-                    id={`export-filter-${filter.key}`}
-                    label={filter.label}
-                  >
-                    {filter.type === "choice" ? (
-                      <select
-                        value={filters[filter.key] ?? (filter.key === "deleted" ? "excluded" : "")}
-                        onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
+                {catalog.filters.map(
+                  (filter) =>
+                    renderFilter?.(filter.key, filters[filter.key] ?? "", (value) =>
+                      setFilters({ ...filters, [filter.key]: value }),
+                    ) ?? (
+                      <FormField
+                        key={filter.key}
+                        id={`export-filter-${filter.key}`}
+                        label={filter.label}
                       >
-                        {filter.key !== "deleted" &&
-                          !(accessReport && filter.key === "environment") && (
-                            <option value="">Todos</option>
-                          )}
-                        {filter.options?.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type={filter.type === "date" ? "date" : "text"}
-                        value={filters[filter.key] ?? ""}
-                        onChange={(e) => setFilters({ ...filters, [filter.key]: e.target.value })}
-                      />
-                    )}
-                  </FormField>
-                ))}
+                        {filter.type === "choice" ? (
+                          <select
+                            value={
+                              filters[filter.key] ?? (filter.key === "deleted" ? "excluded" : "")
+                            }
+                            onChange={(e) =>
+                              setFilters({ ...filters, [filter.key]: e.target.value })
+                            }
+                          >
+                            {filter.key !== "deleted" &&
+                              !(accessReport && filter.key === "environment") && (
+                                <option value="">Todos</option>
+                              )}
+                            {filter.options?.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type={filter.type === "date" ? "date" : "text"}
+                            value={filters[filter.key] ?? ""}
+                            onChange={(e) =>
+                              setFilters({ ...filters, [filter.key]: e.target.value })
+                            }
+                          />
+                        )}
+                      </FormField>
+                    ),
+                )}
                 <FormField id="export-sort" label="Ordenar por">
                   <select value={sort} onChange={(e) => setSort(e.target.value)}>
                     <option value="">{defaultOrderLabel}</option>

@@ -1,7 +1,10 @@
 "use client";
+import { schedulingStatusLabels } from "@caab/contracts";
 import { DraftScope, useDraftState, useDraftCache } from "@/components/workspace-drafts";
 import { DraftInput, DraftSelect, DraftForm } from "@/components/ui/draft-controls";
 import Link from "next/link";
+import { PanelHeading } from "@/components/ui/panel-heading";
+import { SchedulingExportLink } from "./export-link";
 import dynamic from "next/dynamic";
 import { schedulingDateSchema } from "@caab/contracts";
 import {
@@ -82,7 +85,21 @@ export function SchedulingAgenda() {
       description="Consulte os atendimentos, crie reservas e acompanhe a agenda."
     >
       <section className="panel">
-        <h2>Encontrar reserva</h2>
+        <PanelHeading title="Encontrar reserva">
+          <SchedulingExportLink
+            dataset="bookings"
+            filters={{
+              ...Object.fromEntries(calendarFilters),
+              ...(view === "list" && query.get("memberId")
+                ? { memberId: query.get("memberId")! }
+                : {}),
+              from: period.start,
+              to: new Date(Date.parse(`${period.end}T12:00:00Z`) - 86400000)
+                .toISOString()
+                .slice(0, 10),
+            }}
+          />
+        </PanelHeading>
         <DraftScope name={`agenda-filters:${date}:${calendarFilters}`}>
           <AgendaFilters key={query.toString()} initial={new URLSearchParams(query)} date={date} />
         </DraftScope>
@@ -153,6 +170,9 @@ export function SchedulingAgenda() {
                           >
                             {booking.memberName}
                             {booking.memberDeleted ? " · Associado excluído" : ""}
+                            {booking.eligibilityWarning === "blocked"
+                              ? " · Beneficiário bloqueado"
+                              : ""}
                           </Link>
                         </td>
                         <td>
@@ -164,7 +184,7 @@ export function SchedulingAgenda() {
                         </td>
                         <td>
                           <span className="status-badge">
-                            {booking.status === "scheduled" ? "Agendado" : "Cancelado"}
+                            {schedulingStatusLabels[booking.status]}
                           </span>
                         </td>
                       </tr>
@@ -268,8 +288,11 @@ function AgendaFilters({ initial, date }: { initial: URLSearchParams; date: stri
           <FormField id="agenda-status" label="Estado">
             <DraftSelect name="status" defaultValue={initial.get("status") ?? ""}>
               <option value="">Todos</option>
-              <option value="scheduled">Agendado</option>
-              <option value="cancelled">Cancelado</option>
+              {Object.entries(schedulingStatusLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </DraftSelect>
           </FormField>
           <Choice label="Unidade" resource="units" value={unitId} onChange={setUnitId} />

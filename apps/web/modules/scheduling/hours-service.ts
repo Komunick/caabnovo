@@ -5,16 +5,26 @@ import type { RequestActor } from "../shared/request-context";
 import { SchedulingError, schedulingAccess, type SchedulingContext } from "./access";
 import { assertFutureBookingsValid, auditScheduling, readCatalogItem } from "./catalog-service";
 
-type HoursKind = "units" | "professionals";
+type HoursKind = "units" | "professionals" | "services";
 async function readHours(client: PoolClient, kind: HoursKind, id: string, unitId?: string) {
   const owner = await readCatalogItem(client, kind, id);
   if (kind === "professionals" && !unitId) throw new SchedulingError("UNIT_REQUIRED", 422);
   const professional = kind === "professionals";
+  const table = professional
+    ? "scheduling_professional_hours"
+    : kind === "services"
+      ? "scheduling_service_hours"
+      : "scheduling_unit_hours";
+  const ownerColumn = professional
+    ? "professional_id"
+    : kind === "services"
+      ? "service_id"
+      : "unit_id";
   const rows = (
     await client.query<SchedulingHoursRow>(
       `SELECT weekday,to_char(start_local,'HH24:MI') AS start,to_char(end_local,'HH24:MI') AS end,
     ${professional ? "to_char(lunch_start,'HH24:MI')" : "NULL"} AS "lunchStart", ${professional ? "to_char(lunch_end,'HH24:MI')" : "NULL"} AS "lunchEnd"
-    FROM ${professional ? "scheduling_professional_hours" : "scheduling_unit_hours"} WHERE ${professional ? "professional_id=$1 AND unit_id=$2" : "unit_id=$1"} ORDER BY weekday`,
+    FROM ${table} WHERE ${ownerColumn}=$1 ${professional ? "AND unit_id=$2" : ""} ORDER BY weekday`,
       professional ? [id, unitId] : [id],
     )
   ).rows;
@@ -44,11 +54,26 @@ export async function saveSchedulingHours(
     const old = await readHours(client, kind, id, input.unitId);
     if (old.version !== input.expectedVersion)
       throw new SchedulingError("SCHEDULING_VERSION_CONFLICT");
-    if (kind === "units" && input.rows.some((row) => row.lunchStart !== null))
+    if (kind !== "professionals" && input.rows.some((row) => row.lunchStart !== null))
       throw new SchedulingError("UNIT_LUNCH_NOT_SUPPORTED", 422);
     const professional = kind === "professionals";
+    const table = professional
+      ? "scheduling_professional_hours"
+      : kind === "services"
+        ? "scheduling_service_hours"
+        : "scheduling_unit_hours";
+    const ownerColumn = professional
+      ? "professional_id"
+      : kind === "services"
+        ? "service_id"
+        : "unit_id";
+    const unitId = professional
+      ? input.unitId
+      : kind === "services"
+        ? (await readCatalogItem(client, "services", id)).unitId
+        : id;
     await client.query(
-      `DELETE FROM ${professional ? "scheduling_professional_hours" : "scheduling_unit_hours"} WHERE ${professional ? "professional_id=$1 AND unit_id=$2" : "unit_id=$1"}`,
+      `DELETE FROM ${table} WHERE ${ownerColumn}=$1 ${professional ? "AND unit_id=$2" : ""}`,
       professional ? [id, input.unitId] : [id],
     );
     for (const row of input.rows) {
@@ -59,19 +84,26 @@ export async function saveSchedulingHours(
         );
       else
         await client.query(
-          "INSERT INTO scheduling_unit_hours(unit_id,weekday,start_local,end_local) VALUES($1,$2,$3,$4)",
+          `INSERT INTO ${table}(${ownerColumn},weekday,start_local,end_local) VALUES($1,$2,$3,$4)`,
           [id, row.weekday, row.start, row.end],
         );
     }
     const incompatible = await client.query(
       `SELECT 1 FROM scheduling_professional_hours p LEFT JOIN scheduling_unit_hours u ON u.unit_id=p.unit_id AND u.weekday=p.weekday
       WHERE p.unit_id=$1 AND (u.unit_id IS NULL OR p.start_local<u.start_local OR p.end_local>u.end_local) LIMIT 1`,
-      [professional ? input.unitId : id],
+      [unitId],
     );
     if (incompatible.rowCount) throw new SchedulingError("HOURS_OUTSIDE_UNIT", 422);
+    const serviceHours = await client.query(
+      `SELECT 1 FROM scheduling_service_hours h JOIN scheduling_service s ON s.id=h.service_id
+      LEFT JOIN scheduling_unit_hours u ON u.unit_id=s.unit_id AND u.weekday=h.weekday
+      WHERE s.unit_id=$1 AND (u.unit_id IS NULL OR h.start_local<u.start_local OR h.end_local>u.end_local) LIMIT 1`,
+      [unitId],
+    );
+    if (serviceHours.rowCount) throw new SchedulingError("HOURS_OUTSIDE_UNIT", 422);
     await assertFutureBookingsValid(client);
     await client.query(
-      `UPDATE ${professional ? "scheduling_professional" : "scheduling_unit"} SET version=version+1 WHERE id=$1`,
+      `UPDATE ${professional ? "scheduling_professional" : kind === "services" ? "scheduling_service" : "scheduling_unit"} SET version=version+1 WHERE id=$1`,
       [id],
     );
     const summary = (rows: SchedulingHoursRow[]) =>

@@ -4,9 +4,11 @@ import { useModulePermission } from "@/components/workspace-permissions";
 import { useDraftState } from "@/components/workspace-drafts";
 import { useState } from "react";
 import type { SchedulingBooking, SchedulingEvent, SchedulingPage } from "@caab/contracts";
+import { schedulingStatusLabels } from "@caab/contracts";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { BookingForm } from "./booking-form";
+import { BookingAbsence } from "./booking-absence";
 import {
   DataState,
   Pagination,
@@ -21,6 +23,11 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
   const [rescheduling, setRescheduling] = useDraftState("booking-detail:rescheduling", false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const [workflowAction, setWorkflowAction] = useState<{
+    action: string;
+    title: string;
+    description: string;
+  } | null>(null);
   const result = useSchedulingData<Details>(`bookings/${id}?page=${page}`);
   const canWrite = useModulePermission("scheduling:write");
   const mutation = useSchedulingMutation("booking-detail");
@@ -54,6 +61,15 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
         <>
           <section className="panel scheduling-form">
             <h2>{booking.memberName}</h2>
+            {booking.eligibilityWarning === "blocked" && (
+              <section className="scheduling-notice" aria-label="Beneficiário bloqueado">
+                <p>
+                  <strong>Beneficiário bloqueado</strong>. O registro foi preservado. Novas reservas
+                  e remarcações estão indisponíveis enquanto houver bloqueio. A equipe pode manter
+                  esta reserva ou cancelá-la.
+                </p>
+              </section>
+            )}
             {memberDeleted && (
               <section className="scheduling-notice" aria-label="Associado excluído">
                 <p>
@@ -68,7 +84,7 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                 ) : (
                   canWrite &&
                   booking.status === "scheduled" &&
-                  Date.parse(booking.startsAt) > Date.now() && (
+                  Date.parse(booking.startsAt ?? "") > Date.now() && (
                     <Button
                       disabled={mutation.pending}
                       onClick={async () => {
@@ -113,23 +129,140 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
               </div>
               <div>
                 <dt>Profissional</dt>
-                <dd>{booking.professionalName}</dd>
+                <dd>{booking.professionalName ?? "Atendimento por capacidade do serviço"}</dd>
               </div>
               <div>
                 <dt>Estado</dt>
-                <dd>{booking.status === "scheduled" ? "Agendado" : "Cancelado"}</dd>
+                <dd>{schedulingStatusLabels[booking.status]}</dd>
+              </div>
+              <div>
+                <dt>Remarcações</dt>
+                <dd>
+                  {booking.confirmedReschedules == null
+                    ? "Contagem anterior desconhecida"
+                    : `${booking.confirmedReschedules} confirmadas`}{" "}
+                  · {booking.reservedReschedule ? "1" : "0"} em andamento
+                </dd>
               </div>
             </dl>
-            {canWrite &&
-            booking.status === "scheduled" &&
-            new Date(booking.startsAt).getTime() > Date.now() ? (
+            {booking.processKind === "recovery" && (
+              <p>
+                Recuperação por indisponibilidade do estabelecimento. Não consome uma remarcação.
+              </p>
+            )}
+            {booking.status === "awaiting_new_time" && (
+              <p>
+                A reserva está sem horário confirmado. A vaga anterior não foi restaurada; escolha
+                uma nova data ou cancele.
+              </p>
+            )}
+            {canWrite && (
               <div className="scheduling-actions">
-                <Button disabled={memberDeleted} onClick={() => setRescheduling((value) => !value)}>
-                  {rescheduling ? "Fechar remarcação" : "Remarcar"}
+                {booking.status === "pending_approval" && (
+                  <>
+                    <Button
+                      disabled={
+                        mutation.pending ||
+                        memberDeleted ||
+                        booking.eligibilityWarning === "blocked" ||
+                        Date.parse(booking.startsAt ?? "") <= Date.now()
+                      }
+                      onClick={() =>
+                        setWorkflowAction({
+                          action: "approve",
+                          title: "Aprovar este pedido?",
+                          description:
+                            "Confirma o horário solicitado e registra a decisão no histórico.",
+                        })
+                      }
+                    >
+                      Aprovar pedido
+                    </Button>
+                    <Button
+                      disabled={mutation.pending}
+                      onClick={() =>
+                        setWorkflowAction({
+                          action: "reject",
+                          title: "Recusar este pedido?",
+                          description: booking.processKind
+                            ? "Libera o destino e mantém a mesma troca aguardando nova escolha. A vaga antiga não será restaurada."
+                            : "Encerra o pedido e libera o horário solicitado.",
+                        })
+                      }
+                    >
+                      Recusar pedido
+                    </Button>
+                    {booking.processKind &&
+                      Date.parse(booking.originalStart ?? "") > Date.now() && (
+                        <Button
+                          disabled={mutation.pending}
+                          onClick={() =>
+                            setWorkflowAction({
+                              action: "withdraw",
+                              title: "Retirar esta proposta?",
+                              description:
+                                "Libera o destino para escolher outra data, sem restaurar a vaga anterior nem consumir outra troca.",
+                            })
+                          }
+                        >
+                          Retirar proposta
+                        </Button>
+                      )}
+                  </>
+                )}
+                {booking.status === "scheduled" && (
+                  <Button
+                    disabled={mutation.pending}
+                    onClick={() =>
+                      setWorkflowAction({
+                        action: "provider-unavailability",
+                        title: "Registrar indisponibilidade do estabelecimento?",
+                        description:
+                          "Bloqueia o período deste recurso, libera o atendimento e permite recuperar uma nova data sem consumir remarcação. Reservas de outras pessoas serão preservadas.",
+                      })
+                    }
+                  >
+                    Estabelecimento não poderá atender
+                  </Button>
+                )}
+              </div>
+            )}
+            {canWrite &&
+            (booking.status === "pending_approval" ||
+              booking.status === "awaiting_new_time" ||
+              (booking.status === "scheduled" &&
+                Date.parse(booking.startsAt ?? "") > Date.now())) ? (
+              <div className="scheduling-actions">
+                <Button
+                  disabled={
+                    memberDeleted ||
+                    booking.eligibilityWarning === "blocked" ||
+                    (booking.status === "scheduled" &&
+                      (booking.confirmedReschedules == null || booking.confirmedReschedules >= 2))
+                  }
+                  onClick={() => setRescheduling((value) => !value)}
+                >
+                  {rescheduling
+                    ? "Fechar edição"
+                    : booking.status === "pending_approval"
+                      ? "Editar pedido"
+                      : booking.status === "awaiting_new_time"
+                        ? "Escolher nova data"
+                        : "Remarcar"}
                 </Button>
                 <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
                   <DialogTrigger asChild>
-                    <Button intent="danger">Cancelar reserva</Button>
+                    <Button
+                      intent="danger"
+                      disabled={
+                        booking.status !== "awaiting_new_time" &&
+                        Date.parse(
+                          (booking.processKind ? booking.originalStart : booking.startsAt) ?? "",
+                        ) <= Date.now()
+                      }
+                    >
+                      Cancelar reserva
+                    </Button>
                   </DialogTrigger>
                   <DialogContent
                     title="Cancelar esta reserva?"
@@ -155,21 +288,29 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
               <p>Esta reserva não permite novas alterações.</p>
             )}
           </section>
-          {rescheduling && canWrite && !memberDeleted && (
-            <section className="panel">
-              <h2>Remarcar atendimento</h2>
-              <BookingForm
-                key={booking.version}
-                booking={booking}
-                onSaved={() => {
-                  setRescheduling(false);
-                  setNotice("Reserva remarcada.");
-                  setPage(1);
-                  result.reload();
-                }}
-              />
-            </section>
-          )}
+          {rescheduling &&
+            canWrite &&
+            !memberDeleted &&
+            booking.eligibilityWarning !== "blocked" && (
+              <section className="panel">
+                <h2>Remarcar atendimento</h2>
+                <BookingForm
+                  key={booking.version}
+                  booking={booking}
+                  onSaved={(saved) => {
+                    setRescheduling(false);
+                    setNotice(
+                      saved.status === "scheduled"
+                        ? "Reserva remarcada."
+                        : "Pedido atualizado. Confira a situação da reserva.",
+                    );
+                    setPage(1);
+                    result.reload();
+                  }}
+                />
+              </section>
+            )}
+          <BookingAbsence booking={booking} onChanged={result.reload} />
           <section className="panel">
             <h2>Histórico</h2>
             <ol className="scheduling-history">
@@ -182,12 +323,44 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
                         rescheduled: "Reserva remarcada",
                         cancelled: "Reserva cancelada",
                         kept_after_member_deletion: "Reserva mantida após exclusão do associado",
+                        pending_edited: "Pedido editado",
+                        transferred: "Atendimento transferido para dependente",
+                        approved: "Pedido aprovado",
+                        rejected: "Pedido recusado",
+                        reschedule_requested: "Remarcação solicitada",
+                        proposal_withdrawn: "Proposta retirada",
+                        resumed: "Nova data solicitada",
+                        provider_unavailable: "Indisponibilidade do estabelecimento registrada",
                       }[event.action]
                     }
                   </strong>
                   <p>
                     {dateTimeLabel(event.occurredAt)} · {event.actorName}
                   </p>
+                  {event.notifications?.map((notification) => (
+                    <p key={notification.kind}>
+                      Aviso de{" "}
+                      {
+                        {
+                          confirmed: "confirmação",
+                          rejected: "recusa",
+                          cancelled: "cancelamento",
+                          reschedule_required: "nova data necessária",
+                        }[notification.kind]
+                      }
+                      :
+                      {
+                        {
+                          pending: " envio pendente",
+                          suppressed: " não enviado",
+                          delivered: " entrega comprovada",
+                          failed: " envio falhou",
+                          uncertain: " entrega não comprovada",
+                        }[notification.status]
+                      }
+                      .
+                    </p>
+                  ))}
                   {event.before?.startsAt && (
                     <p>
                       Antes: {dateTimeLabel(event.before.startsAt)} ·{" "}
@@ -206,6 +379,44 @@ export function SchedulingBookingDetail({ id }: { id: string }) {
             </ol>
             <Pagination {...result.data.history} onPage={setPage} />
           </section>
+          <Dialog
+            open={!!workflowAction}
+            onOpenChange={(open) => {
+              if (!open) setWorkflowAction(null);
+            }}
+          >
+            <DialogContent
+              title={workflowAction?.title ?? "Confirmar ação"}
+              description={workflowAction?.description ?? ""}
+            >
+              {mutation.error && <p role="alert">{mutation.error}</p>}
+              <div className="scheduling-actions">
+                <DialogClose asChild>
+                  <Button disabled={mutation.pending}>Voltar</Button>
+                </DialogClose>
+                <Button
+                  intent="primary"
+                  disabled={!canWrite || mutation.pending}
+                  onClick={async () => {
+                    if (
+                      workflowAction &&
+                      (await mutation.mutate(`bookings/${id}/${workflowAction.action}`, "POST", {
+                        expectedVersion: booking.version,
+                      }))
+                    ) {
+                      setWorkflowAction(null);
+                      setRescheduling(false);
+                      setNotice("Decisão registrada.");
+                      setPage(1);
+                      result.reload();
+                    }
+                  }}
+                >
+                  Confirmar decisão
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </>
       ) : (
         <DataState error={result.error} reload={result.reload} />
