@@ -328,7 +328,7 @@ export function UserForm(props: Readonly<UserFormProps>) {
         {props.mode === "create" ? (
           <>
             {props.roles.length ? (
-              <RoleOptions roles={props.roles} name="roleIds" optional />
+              <RoleOptions roles={props.roles} name="roleIds" defaultCode="collaborator" />
             ) : null}
           </>
         ) : null}

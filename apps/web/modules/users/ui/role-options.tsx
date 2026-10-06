@@ -20,45 +20,40 @@ export function roleDescription(role: Pick<DescribedRole, "code" | "description"
   }
 }
 
+/** Initial selection: the base role when listed, otherwise nothing (the user must choose). */
+export function defaultRoleId(roles: readonly DescribedRole[], code: string | undefined) {
+  return roles.find((role) => role.code === code)?.id ?? "";
+}
+
 export function RoleOptions({
   roles,
   name,
-  optional = false,
-}: Readonly<{ roles: DescribedRole[]; name: string; optional?: boolean }>) {
-  const [selected, setSelected] = useDraftState(`single-role:${name}`, "");
+  defaultCode,
+}: Readonly<{ roles: DescribedRole[]; name: string; defaultCode?: string }>) {
+  const initial = defaultRoleId(roles, defaultCode);
+  const [stored, setSelected] = useDraftState(`single-role:${name}`, initial);
+  // A saved draft can point to a role that is no longer offered; fall back to the default.
+  const selected = roles.some((role) => role.id === stored) ? stored : initial;
   const fieldset = useRef<HTMLFieldSetElement>(null);
   useEffect(() => {
     const form = fieldset.current?.form;
-    const reset = () => setSelected("");
+    const reset = () => setSelected(initial);
     form?.addEventListener("reset", reset);
     return () => form?.removeEventListener("reset", reset);
-  }, [setSelected]);
-  const options = [
-    ...(optional
-      ? [
-          {
-            id: "",
-            code: "none",
-            name: "Sem cargo",
-            description: "Os acessos podem ser definidos individualmente depois do cadastro.",
-          },
-        ]
-      : []),
-    ...roles,
-  ];
+  }, [setSelected, initial]);
   return (
     <fieldset ref={fieldset} className="user-role-options">
-      <legend>{optional ? "Cargo inicial" : "Cargo"}</legend>
+      <legend>{defaultCode ? "Cargo inicial" : "Cargo"}</legend>
       <div className="role-options">
-        {options.map((role) => {
-          const id = `${name}-${role.id || "none"}`;
+        {roles.map((role) => {
+          const id = `${name}-${role.id}`;
           return (
             <label className="role-option" key={role.id}>
               <input
                 name={name}
                 type="radio"
                 value={role.id}
-                required={!optional}
+                required
                 checked={selected === role.id}
                 onChange={() => setSelected(role.id)}
                 aria-labelledby={`${id}-name`}

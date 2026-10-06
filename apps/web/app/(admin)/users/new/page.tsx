@@ -15,7 +15,7 @@ export default async function NewUserPage() {
   if (!actor) redirect("/login");
   if (!actor.permissions.has("users:read") || !actor.permissions.has("users:create"))
     return <p role="alert">Você não tem permissão para cadastrar colaboradores.</p>;
-  const records = actor.permissions.has("roles:read")
+  const records = actor.permissions.has("roles:grant")
     ? await listActiveRoles(getDatabase().pool)
     : [];
   const roles = records.map((role) =>

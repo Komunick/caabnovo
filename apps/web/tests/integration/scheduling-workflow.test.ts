@@ -479,6 +479,7 @@ describe.sequential("administrative workflow with real PostgreSQL", () => {
       for (const name of [
         "0033_scheduling_absence_penalties.sql",
         "0034_scheduling_system_events.sql",
+        "0035_default_collaborator_role.sql",
         "0036_scheduling_review_fixes.sql",
       ]) {
         await upgrade.query("BEGIN");

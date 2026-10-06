@@ -101,6 +101,43 @@ revogados. Migration0030 normaliza duplicidades com prioridade Administrador, Ge
 depois legado; preserva user_access, linhas de atribuição e eventos anteriores, acrescentando
 auditoria de sistema às revogações automáticas.
 
+## Cargo base — decisão de 05/10/2026
+
+Colaborador é o cargo base. A decisão do usuário em 05/10/2026 encerra P01/AC-T005 e a dúvida de
+23/09, mantida ao final somente como histórico. Cadastro sem cargo informado aplica Colaborador;
+"Sem cargo" deixa de ser uma escolha de cadastro. A transição das contas existentes ocorre pela
+migration 0035, preservando acessos, e não impede revogar posteriormente o único cargo. Substitui a
+regra de não atribuir cargos existentes por inferência somente no recorte explicitamente definido.
+
+- **Contas novas:** `roleIds` vazio ou ausente cria a conta com Colaborador, vigente desde a criação
+  e sem término. Cargo informado continua valendo e não recebe o cargo base junto (cargo único). O
+  padrão é aplicado pelo sistema e não exige `roles:grant` de quem cria a conta; o autor do cadastro
+  consta como quem concedeu. A auditoria `user.created` registra `baseRoleApplied`. O formulário
+  pré-seleciona Colaborador e não oferece "Sem cargo"; o seletor continua visível só a quem pode
+  atribuir cargos.
+- **Contas existentes:** a migration 0035 concede Colaborador a toda conta sem cargo em vigor (cargo
+  expirado, revogado ou nunca atribuído), exceto contas cuja exclusão já entrou em vigor. Cargo
+  futuro já concedido é preservado: o cargo base termina onde ele começa. Contas desativadas, mas
+  não excluídas, recebem o cargo.
+- **Sem acesso novo:** o cargo base não pode ter permissões próprias. A migration recusa-se a rodar,
+  e `createUser` recusa o cadastro com `BASE_ROLE_UNAVAILABLE` (409), se Colaborador estiver
+  ausente, inativo, administrativo ou com permissões. `user_access` não é alterado e a permissão
+  efetiva de cada conta permanece idêntica.
+- **Autoria do sistema:** `user_role.granted_by` passa a aceitar nulo quando
+  `grant_origin='system'`, como a revogação automática da migration 0030; não há usuário fictício.
+  Concessão pela web exige `granted_by`. Cada concessão da migration gera evento `user.role.granted`
+  com identidade `system:migration:0035` e origem `system`.
+- **Não muda:** revogar o único cargo continua permitido e deixa a conta sem cargo; o filtro "Sem
+  cargo" da lista permanece para esses casos. Contas sem cargo desse tipo não são regularizadas
+  novamente. Cargo único, promoção e proteção do último Administrador seguem como definidos acima.
+- **Numeração:** 0035 evita as migrations 0031–0034 reservadas ao PR de Agendamentos; o runner
+  aplica por nome e aceita a lacuna.
+
+Aceite: conta nova sem cargo nasce Colaborador sem `roles:grant`; cargo explícito prevalece; cargo
+base com permissões ou ausente recusa o cadastro sem criar a conta; migration cobre cada situação
+acima sem alterar `user_access`, permissões efetivas ou histórico e gera auditoria de sistema;
+restrição de origem recusa concessão web sem autor e de sistema com autor.
+
 ## Promoção — 22/09/2026
 
 POST /api/v1/users/{userId}/roles/{roleId}/promote, sem corpo. Exige sessão, origem/CSRF e

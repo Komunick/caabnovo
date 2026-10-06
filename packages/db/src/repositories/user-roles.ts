@@ -28,7 +28,8 @@ export interface UserRoleRecord {
   id: string;
   userId: string;
   roleId: string;
-  grantedBy: string;
+  /** Null for system grants, such as the base role applied by migration 0035. */
+  grantedBy: string | null;
   justification: string;
   validFrom: Date;
   validUntil: Date | null;
@@ -39,7 +40,7 @@ interface UserRoleRow {
   id: string;
   user_id: string;
   role_id: string;
-  granted_by: string;
+  granted_by: string | null;
   justification: string;
   valid_from: Date;
   valid_until: Date | null;

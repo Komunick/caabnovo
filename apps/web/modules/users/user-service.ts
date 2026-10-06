@@ -13,7 +13,7 @@ import type { Pool, PoolClient } from "pg";
 import { withTransaction } from "@caab/db";
 import { writeAuditEvent } from "@caab/db/repositories/audit-writer";
 import { writeSecurityEvent } from "@caab/db/repositories/security-events";
-import { findRoleById } from "@caab/db/repositories/roles";
+import { findActiveRoleByCode, findRoleById } from "@caab/db/repositories/roles";
 import {
   hasActiveAdministrativeRole,
   insertUserRole,
@@ -33,6 +33,9 @@ import { validateRoleGrant } from "./access-policy";
 import { UserAccessError } from "./errors";
 import { insertInitialCredential } from "./initial-password-service";
 import { currentAuthority } from "./current-authority";
+
+const BASE_ROLE_CODE = "collaborator";
+const BASE_ROLE_JUSTIFICATION = "Cargo base: conta criada sem cargo informado.";
 
 interface CommandContext {
   actor: RequestActor;
@@ -152,7 +155,34 @@ export async function createUser(
         }
       }
       const created = await insertUser(client, input);
+      // The idempotency claim and the unique e-mail/CPF insert can wait on a lock held by another
+      // transaction; re-read the authority once they are done, before anything else is written.
+      await currentAuthority(client, command.actor, PERMISSIONS.usersCreate);
+      if (command.roleIds.length)
+        await currentAuthority(client, command.actor, PERMISSIONS.rolesGrant);
       const initialPassword = await insertInitialCredential(client, created.id);
+      let grantedRoleIds = command.roleIds;
+      if (!command.roleIds.length) {
+        // Default base role: applied by the system, so it needs no roles:grant. It must never carry
+        // permissions of its own, otherwise this path would grant access without that authority.
+        const base = await findActiveRoleByCode(client, BASE_ROLE_CODE);
+        if (!base || base.permissions.length || base.administrative) {
+          throw new UserAccessError(
+            "BASE_ROLE_UNAVAILABLE",
+            409,
+            "Base role is missing, inactive or carries permissions",
+          );
+        }
+        await insertUserRole(client, {
+          userId: created.id,
+          roleId: base.id,
+          grantedBy: command.actor.userId,
+          justification: BASE_ROLE_JUSTIFICATION,
+          validFrom: created.createdAt,
+          validUntil: null,
+        });
+        grantedRoleIds = [base.id];
+      }
       for (const roleId of command.roleIds) {
         const role = await findRoleById(client, roleId);
         if (!role || role.status !== "active") {
@@ -182,7 +212,12 @@ export async function createUser(
         action: "user.created",
         entityType: "user",
         entityId: created.id,
-        after: { name: result.name, status: result.status, roleIds: command.roleIds },
+        after: {
+          name: result.name,
+          status: result.status,
+          roleIds: grantedRoleIds,
+          ...(command.roleIds.length ? {} : { baseRoleApplied: true }),
+        },
         reason,
         origin: "web",
         requestId: command.requestId,

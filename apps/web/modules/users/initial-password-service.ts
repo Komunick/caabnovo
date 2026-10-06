@@ -67,7 +67,7 @@ export async function initializeUserPassword(
     ]);
     const session = await client.query(
       `SELECT s.id FROM session s JOIN "user" u ON u.id=s.user_id
-       WHERE s.id=$1 AND s.user_id=$2 AND s.revoked_at IS NULL AND s.expires_at>now()
+       WHERE s.id=$1 AND s.user_id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp()
          AND u.status='active' FOR SHARE OF s`,
       [command.actor.sessionId, command.actor.userId],
     );
