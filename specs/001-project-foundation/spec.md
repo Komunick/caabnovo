@@ -1,5 +1,163 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Conciliação da decisão de cargo base — 06/10/2026
+
+Atualização documental por CODEX/mafaltti, login Danilo-Komunick, identidade consultada nesta sessão
+pelo GitHub get_profile. A decisão de 05/10, registrada no
+[contrato de cargos](contracts/roles.md#histórico-do-cargo-base--23092026-encerrado-em-05102026),
+encerra a dúvida de produto P01/AC-T005: contas novas sem cargo informado nascem Colaborador; contas
+existentes sem cargo em vigor recebem o cargo pela migration 0035, preservando `user_access`.
+Implementação e provas G02/G03 estão no [PR #45](https://github.com/Komunick/caabnovo/pull/45), HEAD
+`310aacd`, ainda aberto na consulta. Esta conciliação não aplica a migration nem declara integração,
+homologação ou encerramento de AC-T006. O retrato de 02/10 abaixo permanece histórico e não reabre a
+decisão já tomada.
+
+## Revisão de aceite de acessos — 02/10/2026
+
+Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir criação de
+contas ao fluxo administrativo (CAAB-18) e Mostrar apenas funções autorizadas na navegação (CAAB-20)
+foram conferidos na base integrada `748539d`. A implementação existente deve ser preservada;
+checkpoints anteriores sobre PRs pendentes não descrevem o estado desta revisão.
+[Matriz AC01–AC14, evidências e lacunas](evidence/access-acceptance-2026-10-02.md).
+
+Bloqueio público, autoridade por cargo, cargo único e filtros centrais estão presentes. Há lacuna de
+visibilidade do link Novo agendamento em Mensagens para consulta sem escrita (G01), além de
+cobertura dirigida pendente (G02/G03). Passaram 31 unitários e 28 contratos selecionados; não houve
+integração, navegador ou QA humano nesta revisão. Não declarar aceite integral por esses testes.
+
+Conforme o contrato da worktree documental consultado em 02/10, Colaborador está confirmado como
+cargo base, mas o alcance para contas atualmente sem cargo permanece pendente. O comportamento
+existente que aceita zero cargos não é uma nova decisão de produto nem autorização para backfill.
+Preservar a opção e os dados até definição explícita. Seções DS e documentos transversais ficam sob
+responsabilidade da entrega documental; conciliar apenas este bloco e a evidência.
+
+## Conciliação do recorte DS — 02/10/2026
+
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
+incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
+design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
+humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
+retroativa à conta desta sessão.
+
+Os IDs históricos T133–T140 do guia são referidos aqui como **DS-T133–DS-T140**; T139/T140 sem
+prefixo continuam sendo cargo único na base integrada. A evidência original permanece intacta. A
+consolidação de 23/09 conservou UI-BUTTONS e a revisão visual como históricos explicitamente
+subordinados ao guia; não serão removidos nem tratados como padrões concorrentes. Menções abaixo à
+remoção/branch/testes descrevem a entrega original. A frente separada de acessos mantém seus
+contratos, requisitos e evidências; não substituir este arquivo inteiro ao conciliá-la.
+
+## Auditoria e consolidação do guia — concluídas, 22/09/2026
+
+Pedidos atendidos: comparação visual, auditoria e consolidação em `docs/caab-design.md`, guia
+principal de UI/UX. Base de código `3907248`; guia de partida `4a2b609`. Inventário de 215 Markdown,
+46 candidatos por conteúdo. UI-BUTTONS e revisão visual de 11/09 foram absorvidos e removidos; specs
+de função, contratos e evidências independentes foram preservados. Destino em `docs/` confirmado
+pelo usuário; referências ajustadas, sem cópia na raiz.
+
+DS-T139/DS-T140 concluídas: 554 testes unitários/contratos em 84 arquivos; 516 comparações de
+estilos; 43 observações no navegador; 18 análises Axe sem violação automática. Das 21 verificações
+de comportamento, 19 passaram e duas reproduziram a mesma divergência de validação precoce. Revisão
+assistiva das tabelas permanece pendente. Dez imagens existentes e três novas foram inspecionadas.
+Documentação corrigida, sem alteração funcional: 90 links locais, 20 âncoras, 25 pares de cores, dez
+medidas e formatação de 15 Markdown/um JSON conferidos. Evidências distinguem CI histórico e
+execuções novas. Localhost/banco desligados; nenhum PR novo ou push. Próximo passo: revisão humana
+do guia; publicação e correções funcionais dependem de trabalho posterior próprio.
+
+## Guia de design do projeto — 22/09/2026
+
+Pedido: criar `docs/caab-design.md` próprio da CAAB, pesquisado e fundamentado nas interfaces
+existentes, com possibilidade de servir de base a outros projetos. Incremento documental da US4, sem
+novo módulo ou spec concorrente. Escopo do ciclo Spec Kit: DS-FR01–DS-FR08, DS-T133–DS-T138 de
+criação e DS-T139–DS-T140 de auditoria/consolidação.
+
+**Cenário DS1 (P1):** quem desenha, implementa ou revisa uma tela encontra uma referência central
+para reproduzir o padrão de Parceiros/Associados, incluindo as decisões posteriores de interface.
+Aceite independente: localizar valores, componentes, composição e estados pelos links do guia;
+conferir uma listagem, um formulário e uma exportação contra as fontes citadas.
+
+**Cenário DS2 (P2):** quem inicia outro projeto identifica o que pode reaproveitar e o que precisa
+substituir. Aceite independente: o roteiro separa princípios de interação da marca, domínio,
+permissões, caminhos e decisões institucionais da CAAB, sem criar biblioteca ou template genérico.
+
+### Requisitos do incremento documental
+
+- **DS-FR01:** disponibilizar um único guia central, em português, com índice e identificação de
+  versão/data/base consultada; acessível a partir da documentação de trabalho do projeto. Nome
+  vigente: `docs/caab-design.md`, referência principal de UI/UX por decisão posterior do usuário.
+- **DS-FR02:** descrever identidade, cores dos dois temas, tipografia, medidas, espaçamento,
+  profundidade, formas, ícones e marca com referências verificáveis e distinção entre valores
+  declarados e aparência efetivamente aplicada.
+- **DS-FR03:** documentar cabeçalho, navegação/abas, inclusão explícita com Plus, quadro de lista,
+  busca/filtros, tabela/paginação, formulário, seleção digitável, diálogo e exportação, com exemplo
+  de composição e indicação de quando usar cada padrão. Complemento explícito do usuário nesta
+  sessão: incluir posição e ordem dos campos/botões, agrupamento e ações no celular,
+  formato/localização/aplicação dos filtros, máscaras por tipo de campo, momento de validação e
+  posição das mensagens de erro; distinguir cadastro de busca parcial. Complemento posterior:
+  detalhar compactação visual de cabeçalhos, quadros, campos, filtros, tabelas, ações e exportação,
+  com medidas existentes, limites de legibilidade/acesso e aceite comparável no desktop/celular; não
+  criar modo de densidade nem alterar a aplicação. A compactação deve ter seção principal própria,
+  acesso direto no início e destaque no índice, para ser facilmente localizada.
+- **DS-FR04:** cobrir vazio, carregamento, sucesso, erro de campo, falha de operação, concorrência,
+  sem acesso, somente consulta e indisponibilidade; preservar edições durante navegação, com limpeza
+  ao salvar/cancelar/sair e limites de persistência explicitados.
+- **DS-FR05:** reunir critérios verificáveis de acessibilidade, responsividade, temas, teclado,
+  linguagem e datas; não declarar homologação global com base em capturas ou testes históricos.
+- **DS-FR06:** distinguir regra vigente, implementação observada, pendência e evidência histórica;
+  preservar a exceção de Consulta OAB, os três formatos e a seleção/ordem de colunas; não ampliar
+  escopo de módulos futuros nem transformar decisões pendentes em funcionalidades prontas.
+- **DS-FR07:** orientar manutenção e adaptação a outros projetos, identificando fontes e fluxo de
+  mudança; consolidar guias redundantes, preservar informação útil e procedência histórica e
+  atualizar referências após sua remoção. Mapas de domínio e evidências independentes não são
+  substituídos por um guia visual.
+- **DS-FR08:** registrar pesquisa em fontes oficiais, decisões e alternativas; validar coerência,
+  links locais, valores citados e formatação, com evidência e limitações reais da entrega.
+
+### Critérios de sucesso do incremento
+
+- **DS-SC01:** os oito grupos de requisitos possuem tarefas e evidência documental correspondente.
+- **DS-SC02:** todas as cores e medidas apresentadas como existentes correspondem às fontes
+  indicadas; todos os links locais novos resolvem para arquivos ou seções existentes.
+- **DS-SC03:** listagem, formulário e exportação têm roteiro verificável; os nove estados de DS-FR04
+  têm resposta prevista; claro/escuro, desktop/celular e teclado constam dos critérios de revisão.
+- **DS-SC04:** o guia contém um roteiro de adaptação sem transferir regras institucionais da CAAB
+  automaticamente; não há mudança de aplicação, banco, permissões ou serviços neste incremento.
+
+**Casos de borda:** documento antigo diverge do estilo atual; regra aprovada ainda sem
+implementação; captura antiga diverge da versão consultada; fonte Inter não instalada; datas nativas
+variam com o navegador; tabela larga em celular; revogação de acesso durante edição/exportação; erro
+de concorrência ao retornar ao formulário; outro projeto possui identidade e regras diferentes.
+
+**Premissas e limites:** foco no painel administrativo; login e leitura pública somente nas partes
+compartilhadas, sem inventar um design de app/site futuros. O nome canônico será
+`docs/caab-design.md`, como solicitado, sem segunda cópia que difira apenas por maiúsculas.
+Referências visuais serão capturas sintéticas existentes com origem/data; localhost permanece
+desligado. A revisão do documento não autoriza corrigir lacunas funcionais descobertas. A
+especificação existente continua responsável pela fundação; requisitos de outras funções permanecem
+nos respectivos specs.
+
+**Clarify DS — 22/09/2026:** nenhuma pergunta adicional necessária: escopo, atores, informação,
+jornada de leitura, qualidade, dependências, casos de borda, limites, termos e aceite estão claros
+para esta entrega documental. A instrução posterior do usuário exige branch separada porque fará
+merge do PR #37; adotada `docs/design-guide-20260922`. A possibilidade de reutilização não autoriza
+criar produto genérico, alterar aparência ou implementar pendências. O checklist global permanece
+13/16; as três ressalvas históricas não são encerradas por este documento. O pedido expresso de
+implementar o guia autoriza somente este recorte documental.
+
+**Checkpoint DS — criação inicial, histórico:** base `3907248`, branch separada
+`docs/design-guide-20260922`. Specify/clarify/plan/tasks/analyze e implementação documental
+concluídos, incluindo posição de campos/botões, filtros, máscaras/validações e compactação.
+Compactação promovida a seção principal, com acesso direto no início e destaque no índice, após
+relato de dificuldade para localizá-la. Reanálise do complemento sem novos conflitos; mesmos oito
+requisitos e seis tarefas. Nove documentos passaram por formatação explícita; 70 referências locais
+novas, 20 âncoras, 25 pares de cores e dez medidas representativas conferidos sem falhas.
+DS-T133–DS-T138 concluídas no recorte documental. Usuário determinou não abrir PR ainda: o PR #38,
+criado antes dessa instrução, foi fechado sem merge. Nenhum PR novo/reaberto; complemento mantido
+local, sem push nesta rodada. Principal dev sincronizada por fetch/ff-only, limpa, divergência 0/0.
+Nenhuma alteração funcional, serviço, banco ou homologação nova. CI anterior não valida o
+complemento local. Hooks ausentes; checklist global preservado em 13/16. Evidência em
+[design-guide-2026-09-22.md](evidence/design-guide-2026-09-22.md). Demais checkpoints abaixo são
+históricos.
+
 ## Promover cargo — 22/09/2026
 
 Pedido: botão Promover ao lado de Revogar cargo. Promover avança um nível na hierarquia Colaborador
@@ -15,8 +173,8 @@ desfaz a revogação. Não alterar a migration 0030 já validada.
 Checkpoint T141/T142 concluídas. Quality/security do
 [CI35747105170](https://github.com/Komunick/caabnovo/actions/runs/35747105170), em1a4e0d0: 387
 unitários,169 contratos,247 integração, formatação, lint, tipos e build aprovados. Navegador
-aprovado no [CI35746642120](https://github.com/Komunick/caabnovo/actions/runs/35746642120),
-eme46e12a: 95 E2E e6 a11y. Entre esses commits mudou somente a fixture do teste de integração;
+aprovado no [CI35746642120](https://github.com/Komunick/caabnovo/actions/runs/35746642120), em
+e46e12a: 95 E2E e 6 a11y. Entre esses commits mudou somente a fixture do teste de integração;
 aplicação e E2E idênticos. Capturas da promoção revisadas em1280/390px: botões juntos, secundário
 para Promover e vermelho para Revogar. A falha anterior da fixture foi corrigida e o teste passou.
 
@@ -65,7 +223,7 @@ posição, botão secundário e ícone compartilhados em Colaboradores, Auditori
 colaborador segue a inclusão primária com Plus de Parceiros/Associados. Senha cinza e exclusão
 restrita aos desativados preservadas.
 [CI35736033889](https://github.com/Komunick/caabnovo/actions/runs/35736033889) aprovou027d1f6 em
-quality/browser/security:387 unitários,167 contratos,238 integração,95 E2E e6 a11y,
+quality/browser/security:387 unitários,167 contratos,238 integração,95 E2E e 6 a11y,
 migrations/build/lint/tipos/formatação/segurança. Imagens desktop/celular e claro/escuro revisadas;
 captura móvel da exportação corrigida e conferida. Tarefas deste complemento concluídas. Esta
 padronização não conclui adequações de exportação pendentes nos módulos. PR segue aberto, sem
@@ -94,9 +252,9 @@ imagens e limites. Localhost permanece desligado.
 
 Incremento001 T124–T129 e005 LC03 implementado e validado em3ca6410 pelo
 [CI35728053078](https://github.com/Komunick/caabnovo/actions/runs/35728053078): quality, browser e
-security aprovados;387 unitários,161 contratos,237 integração,94 E2E e6 a11y, mais formatação, lint,
-tipos, migrations e build. Imagens sintéticas1280/390 revisadas, com lista/ações em claro e escuro.
-[Evidências e limites](evidence/collaborators-2026-09-22-validation.md).
+security aprovados;387 unitários,161 contratos,237 integração,94 E2E e 6 a11y, mais formatação,
+lint, tipos, migrations e build. Imagens sintéticas1280/390 revisadas, com lista/ações em claro e
+escuro. [Evidências e limites](evidence/collaborators-2026-09-22-validation.md).
 
 Clarify concluído (cinco respostas); analyze somente do incremento: nove grupos de requisitos, sete
 tarefas, cobertura100%, sem bloqueadores. Checklist13/16 preservado por autorização. CPF único e

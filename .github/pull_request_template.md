@@ -16,6 +16,9 @@
 
 ## Evidências de UI
 
+Conferir o [guia principal de UI/UX](../docs/caab-design.md); registrar temas, larguras, estados e
+acessibilidade nas jornadas afetadas, ou indicar que a alteração é somente documental.
+
 ## Riscos e rollback
 
 - [ ] Formatação, lint e typecheck passaram

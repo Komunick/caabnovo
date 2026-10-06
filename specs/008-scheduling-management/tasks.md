@@ -1,5 +1,14 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## Conciliação após PR42 — 06/10/2026-CODEX-mafaltti
+
+Recorte de composição de T110: dev `46a3417` incorporada à branch do PR43 após a integração real do
+PR42. Dois conflitos de dependências resolvidos preservando `source-map-js@1.2.2`, demais versões e
+configuração. Código/testes/migrations de Agendamentos e HIN/DS/AC/roles preservados. Gates da nova
+ponta e SHA serão registrados no corpo do PR43 e na
+[evidência da revisão](evidence/review-fixes-2026-10-05.md). Não marcar T110 concluída por esta
+conciliação: revisão humana, rollout e homologação continuam pendentes. Sem mudança de produto.
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 - [x] T117 Implementar preservação das causas originais de falhas individuais de finalização,

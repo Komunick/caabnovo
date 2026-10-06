@@ -129,3 +129,44 @@ Histórico de commits não será reescrito para remover mensagens repetidas. Vol
 do PR já aberto; corpo novo deve resumir o resultado e distinguir evidência histórica/atual.
 
 Rollout e QA humano permanecem pendentes; nenhum merge autorizado.
+
+## Conciliação com dev após integração do PR42 — 06/10/2026
+
+Autoria: CODEX. Solicitante: mafaltti, login Danilo-Komunick; perfil GitHub get_profile já
+consultado nesta sessão. Pedido: resolver os conflitos do próximo PR (43), validar e publicar na
+mesma branch. Sem autorização de merge do PR, serviços ou banco de uso.
+
+Base da entrega: `ffd89973920dbdfcbf9f71fc21d6c8c347e2c4a3`. dev recebida:
+`46a341799802210e44308f3a9d65cd7e25be65b9`, com PR42 integrado. Simulação por merge-tree e merge
+local confirmaram conflitos somente em `pnpm-workspace.yaml` e `pnpm-lock.yaml`, no override
+adicionado para source-map-js. Resolução mantém os arquivos de dev após comparação estrutural: único
+delta contra a branch é source-map-js 1.2.1 → 1.2.2, seu override, resolução/snapshot e cinco
+referências; 962 entradas e demais configurações/importers/versões preservados. Nenhum threshold ou
+workflow alterado.
+
+Documentação de dev conciliada, incluindo DS/AC/roles e o guia; acréscimos HIN do programa 002
+conservados na spec e no plano. Código, testes e migrations de Agendamentos permanecem os de
+ffd8997. Migrations 0031–0034 e 0036 intactas, sem incorporar 0035 do PR45. Projeção de reservas,
+coalesce temporal, exportações e serialização segura do worker preservadas. A conciliação com a
+implementação de Relatórios no PR46 continua na frente própria.
+
+Instalação com `pnpm install --frozen-lockfile` no store já registrado pela worktree aprovada,
+incluindo as políticas de supply chain. Sem reinstalação no ambiente de uso, serviços ou banco. A
+composição passa por audit, formatação documental e conferência de links/preservação antes de
+publicar; resultados da nova ponta ficam no corpo atualizado do PR43. Runs verdes de ffd8997
+continuam históricos. T110 não é encerrada por composição documental ou CI: gates humanos e de
+rollout permanecem próprios.
+
+Principal sincronizada por fast-forward para 46a3417. Quatro cópias locais que colidiam com os
+arquivos novos de dev e o caderno vazio da worktree preservados em backup verificado por SHA-256.
+Caderno ativo da principal restaurado byte a byte e mantido fora de commits por flag local no
+índice; nenhuma nota das outras frentes sobrescrita. Procedência local em
+.cache/pr43-sync-backup.txt e manifest adjacente, sem incluir backups/runtime no PR.
+
+Validações da composição local: 39 Markdown passam no Prettier existente; 470 links relativos e 26
+âncoras (incluindo duas de entrada) válidos, sem destinos ausentes. URLs externas e outras formas
+Markdown não auditadas integralmente. Git confirma ausência de delta em código/testes/ migrations de
+apps/packages/workflows contra ffd8997; somente apps/web/AGENTS.md recebe a orientação documental de
+dev. Fundação e guia idênticos a dev; caudas HIN da spec/plano 002 preservadas. Cinco backups locais
+íntegros. Audit aprovado sem HIGH/CRITICAL, com duas LOW e duas MODERATE; nenhum gate reduzido. Diff
+e índice sem erros ou entradas em conflito.

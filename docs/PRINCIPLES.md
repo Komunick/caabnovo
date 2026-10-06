@@ -41,6 +41,9 @@
 
 ## Interface
 
+Aplicar estes princípios seguindo o [guia principal de UI/UX](caab-design.md), que concentra padrões
+e critérios de revisão.
+
 - A interface deve ser rápida para o trabalho diário, não apenas visualmente atraente.
 - Acessibilidade faz parte do aceite, não é melhoria posterior.
 - Nunca comunicar estado somente por cor ou ícone.

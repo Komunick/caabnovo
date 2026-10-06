@@ -43,12 +43,13 @@ aceitar campos restritos por requisição direta.
 
 ## Estado e validação
 
-Este documento define o padrão alvo. A aplicação integrada ainda precisa de adequação; não
-representa implementação ou homologação concluída. Validar os três formatos, arquivos completos,
-filtros, seleção/ordem das colunas, autorização, grandes volumes e erros em cada função. Coordenação
-em [002 EXP06/EXP07](../specs/002-integrated-modules/tasks.md). Preservar registros e arquivos
-legados; esta decisão não autoriza apagá-los nem altera por extensão o download de anexos/documentos
-já existentes.
+Este documento define o padrão transversal. Núcleo compartilhado e Colaboradores estão integrados; a
+adequação dos demais módulos é acompanhada em [MODULES](MODULES.md) e nas suas tarefas. O padrão
+escrito não comprova implementação ou homologação de todos os consumidores. Validar os três
+formatos, arquivos completos, filtros, seleção/ordem das colunas, autorização, grandes volumes e
+erros em cada função. Coordenação em [002 EXP06/EXP07](../specs/002-integrated-modules/tasks.md).
+Preservar registros e arquivos legados; esta decisão não autoriza apagá-los nem altera por extensão
+o download de anexos/documentos já existentes.
 
 ## Validação inicial — decisão C1 de21/09/2026
 
@@ -60,6 +61,8 @@ antigos de Relatórios seguem a
 somente de permissões registradas no passado.
 
 ## Posição da ação — decisão de 22/09/2026
+
+Aplicar e revisar a apresentação pelo [guia principal de UI/UX](caab-design.md).
 
 “Exportar [módulo]” fica dentro do quadro da listagem, acima dos filtros, com botão secundário e
 ícone Download. Usar o cabeçalho de quadro compartilhado: título à esquerda, ações à direita, com

@@ -1,56 +1,16 @@
 # CAAB — Referência de Stack e Arquitetura
 
-## Desenho vigente após clarify — 21/09/2026
-
-Permissão geral `exports:generate` intersecta consulta de módulo/dados; sem acesso,
-zero descoberta no menu/busca/Início. Notícias preserva read/write/publish, mas a
-concessão implícita da view será removida; Agendamentos terá read/write explícitos.
-Exportações novas usam filtros/colunas e Excel/CSV/PDF diretos, sem teto funcional
-ou prazo/histórico obrigatório; dados/arquivos legados preservados. Desenho e tarefas
-em [programa002](../specs/002-integrated-modules/plan.md).
-Mensagens tem finalidade confirmada (comunicados/campanhas), mas continua protótipo
-sob revisão de aderência; canais reais, chat interno e suporte futuro permanecem adiados.
-Retenção institucional e critérios/documentos de dependentes ficam para depois.
-Estados e propostas anteriores abaixo são históricos quando divergirem desta revisão;
-nenhum código foi implementado pelo plan/tasks e localhost permanece desligado.
-
-
-**Revisão de 21/09/2026:** arquitetura e opções não equivalem a implementação.
-Estado por módulo e controles pendentes em [MODULES](MODULES.md) e na
-[revisão de código](../specs/002-integrated-modules/code-audit-2026-09-21.md).
-O calendário FullCalendar está integrado; conflito por beneficiário e concessões
-de Agendamentos ainda não. Relatórios existe, com adaptações de autorização e
-exportação direta pendentes. Não interpretar bibliotecas apenas recomendadas como instaladas.
-
-## Estado consolidado — 17/09/2026
-
-**Decisão vigente — 21/09/2026:** Mensagens prepara comunicados/campanhas aos associados, com público e programação. Finalidade confirmada; protótipo sem homologação, aderência/continuidade em M016 e meios/envio real adiados.
-
-Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
-de RH. Um módulo futuro chamado **Recursos Humanos** permanece como possibilidade, pendente de
-definição de finalidade, escopo e autorização de construção. Essa possibilidade não reativa os
-requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões.
-
-Agendamentos já possui uma primeira versão administrativa implementada; app/site e expansões
-continuam pendentes. As seções históricas não reabrem autorizações nem substituem este estado.
-
-## Agendamentos — implementação da etapa 1 em 15/09/2026
-
-A primeira versão do painel está implementada na branch feature/scheduling-management-20260915:
-oferta, horários semanais/almoço, reservas futuras, consulta, remarcação, cancelamento
-e histórico. O código ainda aceita sessão ativa sem concessão; isso é lacuna. Q8/Q9 exigem consultar/alterar separadas, em 008 AC01–AC03.
-Validação e limites na [spec 008](../specs/008-scheduling-management/spec.md) e nas
-[evidências](../specs/008-scheduling-management/evidence/release-review.md).
-Esta atualização substitui o estado anterior de “somente pesquisa” para esse recorte.
-Exceções, avaliações e demais estados permanecem posteriores. Calendário administrativo foi priorizado em 18/09 e está integrado, com CAL06 pendente;
-a primeira interface do usuário no app/site continua pendente; CAASSH continua desativado.
+Revisão documental de 02/10/2026, base integrada `748539d`. Arquitetura, dependências e validação
+técnica. Estado das entregas: [MODULES](MODULES.md). Regras de produto: [PRD](PRD.md) e specs.
+UI/UX: [guia principal](caab-design.md). Regras de execução: [AGENTS](../AGENTS.md). Versões
+efetivas são as dos manifests e lockfile da entrega; exemplos não autorizam instalação.
 
 ## 1. Contexto e fontes da stack
 
-Revisão de 17/09/2026: este documento distingue implementação, requisitos de operação e opções
-futuras. Versões exatas vêm dos manifests de cada checkout e do lockfile; não duplicar uma tabela de
-versões que envelheça separadamente das dependências. Configuração no repositório não comprova
-instalação ou estado da hospedagem.
+Este documento distingue implementação, requisitos de operação e opções futuras. Versões exatas vêm
+dos manifests de cada checkout e do lockfile; não duplicar uma tabela de versões que envelheça
+separadamente das dependências. Configuração no repositório não comprova instalação ou estado da
+hospedagem.
 
 | Fonte                                                                                      | Informação verificável                                                               |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
@@ -64,23 +24,11 @@ instalação ou estado da hospedagem.
 
 Esta arquitetura atende ao novo painel CAAB e ao portal do parceiro. O desenho contempla contratos
 para app/site; alterar esses consumidores ou conectar serviços externos depende de escopo e contrato
-autorizados. Todos os módulos constam da [entrega integrada](MODULES.md), sem consultar código ou
-telas do legado. A fundação atual deve ser reutilizada, com uma fonte de verdade por domínio.
+autorizados. O estado de cada módulo consta do [mapa de módulos](MODULES.md), sem consultar código
+ou telas do legado. A fundação atual deve ser reutilizada, com uma fonte de verdade por domínio.
 
-Módulos principais:
-
-- Notícias e mídia.
-- Unidades, serviços, profissões e profissionais.
-- Agendamentos e disponibilidade.
-- Associados e verificações da OAB.
-- Parceiros e serviços parceiros.
-- Colaboradores.
-- Usuários, permissões e auditoria.
-- Dependentes, documentação, credencial e elegibilidade em Pessoas.
-- Campanhas, segmentos e modelos de mensagens em Comunicação.
-- Caassh e extrato em Créditos; portal restrito usando os mesmos cadastros de parceiros.
-- Avaliações contextuais e relatórios dos domínios.
-- Operações incorporadas à navegação de Auditoria como Processamentos.
+Os domínios, funções suspensas e pendências são descritos em [MODULES](MODULES.md), sem repetir sua
+fila na stack.
 
 ## 2. Arquitetura
 
@@ -158,43 +106,25 @@ embeds arbitrários.
 
 ## 6. Interface e design system
 
-Atualização de 18/09/2026, entrega em validação: FullCalendar Standard 7.1.0 adotado
-no painel de Agendamentos (mês/semana/dia), com temporal-polyfill 1.0.1, locale pt-BR,
-America/Bahia e tokens existentes. Lista diária preservada. Decisão e limites na
-[spec 008](../specs/008-scheduling-management/spec.md); evidências em
-[calendário](../specs/008-scheduling-management/evidence/calendar-2026-09-18.md).
-TanStack Table/Query e React Hook Form abaixo continuam escolhas históricas não
-adotadas nesta entrega; componentes e formulários próprios permanecem implementados.
+O [guia principal de UI/UX](caab-design.md) governa padrões e revisão visual. Esta seção registra
+somente a implementação técnica: React, Tailwind, componentes locais, Radix Dialog, Lucide e Zod. Os
+componentes usam convenções de shadcn/ui; não presumir pacote ou CLI adicional instalado.
+FullCalendar está adotado no painel, com temporal-polyfill, locale pt-BR e America/Bahia; a lista
+diária permanece disponível. Versões no [manifest web](../apps/web/package.json), critérios na
+[spec 008](../specs/008-scheduling-management/spec.md).
 
-- Tailwind CSS.
-- shadcn/ui.
-- Radix UI para primitivas acessíveis.
-- Lucide React para ícones.
-- TanStack Table para tabelas administrativas.
-- TanStack Query para cache, polling e mutations.
-- React Hook Form: opção histórica não incorporada; formulários atuais usam React e validação Zod.
-- Zod para validação compartilhada.
-- FullCalendar Standard para visualizações de agenda.
-
-Design tokens mínimos:
-
-- Cores institucionais e semânticas.
-- Tipografia.
-- Espaçamento.
-- Raios e sombras.
-- Estados de foco, hover, disabled e erro.
-- Densidade confortável e compacta para tabelas.
-
-Não usar ícones de múltiplas bibliotecas. Logos e símbolos institucionais devem ser assets próprios.
+TanStack Table/Query e React Hook Form foram propostas não adotadas. Não constam dos manifests
+atuais; não instalar para reproduzir uma lista antiga. Tabelas e formulários usam a implementação
+existente. Tokens e medidas são mantidos no guia e no código, sem catálogo paralelo nesta stack.
 
 ## 7. Agenda
 
 ### 7.1 Decisão
 
-Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md):
-primeira entrega usou lista diária com componentes existentes. O incremento autorizado
-em 18/09/2026 adiciona FullCalendar Standard como camada visual, sem mudar a autoridade
-do servidor sobre vagas e reservas. App/site continua pendente.
+Planejamento incremental em [spec 008](../specs/008-scheduling-management/plan.md): primeira entrega
+usou lista diária com componentes existentes. O incremento autorizado em 18/09/2026 adiciona
+FullCalendar Standard como camada visual, sem mudar a autoridade do servidor sobre vagas e reservas.
+App/site continua pendente.
 
 Implementação: núcleo próprio de Agendamentos no domínio CAAB. Decisão do usuário em 15/09/2026:
 Cal.com é referência de pesquisa e **não deve ser integrado, salvo se nenhuma outra possibilidade
@@ -217,8 +147,7 @@ impedimentos se a exceção vier a ser investigada. Detalhes em
 - Chave de idempotência na criação para evitar duplicação por retry.
 - Histórico de transições preservado.
 
-Se FullCalendar vier a ser adotado, será apenas camada visual; a disponibilidade final permanece no
-domínio e no banco.
+FullCalendar é a camada visual adotada; a disponibilidade final permanece no domínio e no banco.
 
 ## 8. Banco de dados
 
@@ -339,7 +268,9 @@ Tabela append-only com:
 - Antes e depois, com campos sensíveis redigidos.
 - Data UTC.
 - Origem e request ID.
-- Ações sensíveis autorizadas e auditadas, sem motivo escrito obrigatório; preservar motivos históricos.
+- Solicitações de exclusão de Colaboradores/Associados exigem motivo não vazio e autor/data por
+  ocorrência. Demais ações dispensam justificativa humana. Preservar motivos históricos sem
+  preencher ausências retroativamente, conforme o princípio V da constituição.
 
 ### 14.2 Logs técnicos
 
@@ -349,8 +280,10 @@ cookies, arquivos completos ou dados pessoais sem necessidade operacional aprova
 Auditoria de negócio e logs técnicos possuem finalidades e retenções distintas.
 
 A experiência reúne Eventos e Processamentos na área Auditoria. A fusão não mistura tabelas nem
-permissões de leitura/operação: `audit:read`, `jobs:read` e `jobs:redrive`. `audit:export` é legado; sua substituição pela permissão geral combinada com leitura está pendente em 003 EX01. URLs
-existentes podem permanecer compatíveis. Jobs e exportações reutilizam os serviços atuais.
+permissões de leitura/operação: `audit:read`, `jobs:read` e `jobs:redrive`. `audit:export` é uma
+chave legada; a permissão geral `exports:generate` combinada com leitura já integra a autorização da
+cadeia existente. A migração do fluxo visual para download direto continua nas tarefas da spec 003.
+URLs existentes podem permanecer compatíveis. Jobs e exportações reutilizam os serviços atuais.
 
 ## 15. Segurança
 
@@ -373,21 +306,37 @@ Controles mínimos:
 
 ## 16. Testes
 
-- Vitest para unidade e integração.
-- Playwright para jornadas críticas.
-- Testcontainers ou banco efêmero para constraints reais.
-- Axe em testes essenciais de acessibilidade.
+Os comandos vigentes estão no [package.json](../package.json). A seleção das suítes está em
+[vitest.workspace.ts](../vitest.workspace.ts), e os fluxos de navegador em
+[playwright.config.ts](../apps/web/playwright.config.ts). Executar a partir da raiz da entrega.
 
-Cobertura obrigatória por risco:
+| Alteração / risco                      | Verificação                                                                          | Comando e fonte                                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Documentação                           | Formato dos arquivos alterados, links e consistência entre fontes                    | `pnpm format:docs:check <arquivos>`, `git diff --check`; [TOOLING](TOOLING.md)                       |
+| Código TypeScript                      | Formato, lint, tipos e build                                                         | `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm build`                                     |
+| Regras e componentes                   | Casos normais, limites e falhas                                                      | `pnpm test:unit`; projetos unit do Vitest                                                            |
+| Contratos e schemas                    | Entradas, saídas, compatibilidade e campos proibidos                                 | `pnpm test:contract`; [contratos](../packages/contracts/tests/) e [web](../apps/web/tests/contract/) |
+| Persistência, permissões, concorrência | Constraints, migrations, negação, escalada horizontal/vertical, transições e retries | `pnpm test:integration`; [banco](../packages/db/tests/) e [web](../apps/web/tests/integration/)      |
+| Jornadas críticas afetadas             | Percurso completo e falhas de operação                                               | `pnpm test:e2e`; [E2E](../apps/web/tests/e2e/)                                                       |
+| Interface e acessibilidade             | Axe, teclado/foco, temas, responsividade e roteiro manual do guia                    | `pnpm test:a11y`, E2E afetados e [caab-design](caab-design.md)                                       |
+| Autorização, uploads e conteúdo rico   | Matriz de acesso, XSS, arquivos inválidos/maliciosos e isolamento                    | Suítes unit/contract/integration/E2E pertinentes e critérios da spec                                 |
+| Exportações                            | Filtros, três formatos, colunas, completude, permissões e recuperação                | Suítes pertinentes e [perfil aprovado](../specs/002-integrated-modules/export-validation-100.md)     |
 
-- Matriz de permissões.
-- XSS no conteúdo de notícias.
-- Upload inválido/malicioso.
-- Publicação por canal e agendamento.
-- Concorrência e conflito de horários.
-- Transições de agendamento.
-- Bloqueio/desbloqueio de associado.
-- Redação de dados nos logs.
+Para recorte local de Vitest, usar
+`pnpm exec vitest run --project <unit|contract|integration> <arquivo>`; isso não substitui os gates
+completos da entrega. Evidências registram comandos reais, versão, resultado e limitações. Não
+marcar teste como aprovado só por existir uma tarefa concluída.
+
+Integrações usam banco efêmero/Testcontainers conforme o teste; navegador exige ambiente sintético,
+banco, migrations e serviços configurados. A configuração Playwright pode construir e iniciar o
+servidor: não executar contra preview/banco de uso nem ligar localhost sem autorização. Consultar
+[CI](../.github/workflows/ci.yml) e [runbook local](runbooks/local-workspace.md) para preparação,
+recursos e restrições. Não copiar credenciais de produção nem aplicar seeds no banco do usuário.
+
+O [workflow de entrega](DELIVERY-WORKFLOW.md) define os gates e aprovações obrigatórios. O CI
+executa suas verificações mesmo quando a revisão local teve escopo documental; esta matriz não
+altera workflows, proteções ou critérios de merge. Alteração apenas documental requer as
+verificações documentais, sem iniciar serviços para simular validação de código inalterado.
 
 ## 17. Estrutura existente
 
@@ -454,35 +403,26 @@ responsabilidade definida.
 - Renovate/Dependabot: opções para automação futura; não há configuração encontrada nesta revisão.
 - CI para lint, typecheck, testes, build, auditoria de dependências e migrations.
 
-## 21. Decisão resumida
+## 21. Componentes adotados
 
-Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos privados
-no banco. PDFKit gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file
-gera XLSX com células tipadas, e CSV usa UTF-8 BOM e neutralização de fórmulas.
-São dependências do worker, com versões fixadas no lockfile. Coleta própria usa
-eventos permitidos e HMAC; não adiciona provedor ou serviço de analytics externo.
+Relatórios (spec 010, 18/09/2026) reutiliza PostgreSQL, pg-boss e arquivos privados no banco. PDFKit
+gera PDF paginado e gráficos vetoriais sem Chromium; write-excel-file gera XLSX com células tipadas,
+e CSV usa UTF-8 BOM e neutralização de fórmulas. Esses exportadores de Relatórios são dependências
+do worker para os caminhos legados, com versões fixadas no lockfile. Relatórios já usa o caminho
+direto no detalhe sem agrupamento; a migração dos demais modos pertence à spec 010. O núcleo de
+exportação direta no web usa pg-cursor, ExcelJS e PDFKit. Não confundir o núcleo integrado com a
+migração de todos os módulos ao download direto. Coleta própria usa eventos permitidos e HMAC; não
+adiciona provedor ou serviço de analytics externo.
 
 - Next.js + React + TypeScript.
 - PostgreSQL.
 - Payload CMS + Lexical para notícias.
 - Tailwind + shadcn/ui + Radix UI.
 - Lucide React para ícones.
-- TanStack Table/Query.
 - React e Zod; React Hook Form permanece opção histórica não incorporada.
 - FullCalendar Standard para a interface da agenda.
-- Agenda própria em avaliação; Cal.com somente se nenhuma outra possibilidade for encontrada.
+- Núcleo próprio de Agendamentos implementado; expansões seguem a spec 008. Cal.com permanece
+  restrito à condição de esgotamento das alternativas, conforme a seção 7.
 - Conteúdo de arquivos exclusivamente no PostgreSQL; adaptadores legados retirados.
 - Worker e fila durável.
 - OWASP ASVS nível 2, auditoria append-only e LGPD desde o desenho.
-
-## Estado vigente — Agendamentos e CAASSH, consolidado em 17/09/2026
-
-A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da
-[spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta,
-remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes
-continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja
-apenas em pesquisa.
-
-**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima são referências
-históricas, sem ativação ou implementação autorizada no ciclo atual. A revisão deverá confirmar
-finalidade, escopo e eventuais dependências antes da retomada.

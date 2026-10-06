@@ -91,13 +91,15 @@ inicial continua em endpoint próprio.
 
 ## Cargo único — decisão de22/09/2026
 
-roleIds na criação aceita zero ou um identificador; mais de um resulta422. Conceder um cargo durante
-a validade de outro retorna409 USER_ROLE_CONFLICT; repetição do mesmo cargo mantém
-ROLE_ALREADY_ASSIGNED. Revogar antes de trocar, preservando proteção do último Administrador e
-autorização atual. Não há soma de cargos. Intervalos consecutivos/expirados são históricos válidos;
-não sobrepor intervalos não revogados. Migration0030 normaliza duplicidades com prioridade
-Administrador, Gestor, Colaborador, depois legado; preserva user_access, linhas de atribuição e
-eventos anteriores, acrescentando auditoria de sistema às revogações automáticas.
+roleIds na criação aceita zero ou um identificador; mais de um resulta422. Com a decisão de
+05/10/2026 registrada ao final, zero cargos informados aplica Colaborador; não significa criar conta
+sem cargo. A implementação desse padrão pertence ao PR #45. Conceder um cargo durante a validade de
+outro retorna409 USER_ROLE_CONFLICT; repetição do mesmo cargo mantém ROLE_ALREADY_ASSIGNED. Revogar
+antes de trocar, preservando proteção do último Administrador e autorização atual. Não há soma de
+cargos. Intervalos consecutivos/expirados são históricos válidos; não sobrepor intervalos não
+revogados. Migration0030 normaliza duplicidades com prioridade Administrador, Gestor, Colaborador,
+depois legado; preserva user_access, linhas de atribuição e eventos anteriores, acrescentando
+auditoria de sistema às revogações automáticas.
 
 ## Promoção — 22/09/2026
 
@@ -107,3 +109,23 @@ autoridade;404 conta/cargo indisponível;409 cargo mudou, expirou ou não tem su
 collaborator→manager→administrator; não aceitar destino arbitrário. Preservar valid_until e
 user_access. Revogar e conceder com dois eventos auditáveis na mesma transação/correlação; falha de
 auditoria não pode deixar a conta sem cargo.
+
+## Histórico do cargo base — 23/09/2026, encerrado em 05/10/2026
+
+Consolidação documental original: CODEX/mafaltti. Pedido original recebido de outra conversa, com
+autoria e solicitante não verificados. Em 23/09, Colaborador estava confirmado como cargo base e o
+alcance para contas existentes sem cargo aguardava definição. Esse registro é histórico e não
+constitui uma pendência vigente.
+
+Em 05/10/2026, o usuário definiu que contas novas sem cargo informado nascem Colaborador e que
+contas existentes sem cargo em vigor recebem esse cargo pela migration 0035, preservando
+`user_access`. A implementação e o contrato detalhado pertencem ao
+[PR #45](https://github.com/Komunick/caabnovo/pull/45), HEAD `310aacd`, ainda aberto na consulta de
+06/10. A decisão encerra P01/AC-T005; integração, revisão humana e aplicação em banco de uso
+continuam distintas dessa definição. A revogação do único cargo continua permitida no PR #45; não
+interpretar cargo base como obrigação permanente de toda conta possuir cargo.
+
+Conciliação por CODEX/mafaltti em 06/10/2026. Ao integrar o segundo dos PRs #42/#45, preservar a
+seção de decisão de 05/10 e este encerramento histórico. A ausência de conflito textual não dispensa
+conferir o contrato resultante. Não aplicar migrations ou alterar contas por esta revisão
+documental.
