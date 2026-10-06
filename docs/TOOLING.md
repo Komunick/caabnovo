@@ -1,8 +1,12 @@
 # Ferramentas, skills e verificação documental
 
-Revisado em 17/09/2026. A stack do produto está em [STACK.md](STACK.md). Este documento descreve o
+Revisado em 02/10/2026. A stack do produto está em [STACK.md](STACK.md). Este documento descreve o
 processo de trabalho; uma ferramenta disponível ao agente não se torna dependência da aplicação nem
 uma automação em execução.
+
+UI/UX deve seguir o [guia principal](caab-design.md) antes da implementação e na revisão. Testes de
+produto e seleção de comandos: [STACK](STACK.md#16-testes). Trabalho em execução:
+[caderno temporário](agentcache.md); regras de manutenção no [AGENTS](../AGENTS.md).
 
 ## Skills versionadas do projeto
 
@@ -27,10 +31,6 @@ O [workflow completo](../.specify/workflows/speckit/workflow.yml) encadeia espec
 plano, revisão, tarefas e implementação. Sua existência não comprova execução. Para cada trabalho,
 distinguir skill consultada, workflow executado e edição direta. Não declarar cumprimento integral
 de uma skill apenas porque seu arquivo foi lido.
-
-Esta revisão de stack e ferramentas foi feita por inspeção e edição direta, sem executar o ciclo
-completo do Spec Kit. Não modifica o código de produto nem aciona os módulos futuros descritos na
-documentação.
 
 ## Seleção da especificação
 
@@ -72,11 +72,10 @@ apresentações, imagens, navegador, Sites e Notion dependem da sessão e devem 
 aplicáveis; não são requisitos do CAAB. Não instalar bibliotecas do produto para corresponder a
 ferramentas do agente.
 
-Na consulta de 17/09/2026, estavam disponíveis ferramentas Atlassian Rovo para Jira/Confluence e
-ferramentas Notion. Isso não confirma acesso a um quadro/espaço específico e não configura
-sincronização. A divisão de responsabilidades entre Kanban, base de conhecimento e repositório ainda
-precisa ser definida com o usuário. Nenhuma integração automática, criação de tickets ou migração
-foi executada nesta revisão.
+Ferramentas e conexões variam por sessão e computador. Consultar o que está disponível antes de
+usar; uma integração instalada não prova acesso a um espaço nem autorização para publicar, criar
+tickets ou enviar mensagens. Evidências de uso pertencem à entrega, não a uma lista fixa neste
+documento.
 
 ## Formatação e conferência de documentos
 
@@ -116,8 +115,14 @@ do CI.
 - Configurações de dependências devem corresponder a pacotes ainda usados. As exceções antigas de
   idade de release do SDK S3 foram removidas porque esse SDK não consta dos manifests nem do
   lockfile revisados.
-- Não instalar TanStack, React Hook Form, FullCalendar ou outra biblioteca apenas porque constava de
-  uma proposta antiga. Adoção futura depende de necessidade concreta.
+- Conferir a adoção no manifest e na stack antes de instalar dependências. TanStack/React Hook Form
+  continuam propostas não adotadas; FullCalendar já integra o painel.
 - Arquivos de Compose, alertas ou proxy não provam que serviços estejam ativos na hospedagem.
 - Localhost permanece desativado até ordem explícita, conforme
   [fluxo de entrega](DELIVERY-WORKFLOW.md).
+
+## Referência a tickets Jira
+
+Decisão do usuário em 02/10/2026: em respostas e documentação nova, identificar tickets pelo título
+e código, no formato Título (CAAB-N), sem usar links de tickets como referência. Preservar links de
+evidências e relações nativas no Jira; não apagar histórico para reformatação.

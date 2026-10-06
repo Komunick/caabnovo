@@ -1,5 +1,48 @@
 # Feature Specification: Módulos integrados CAAB
 
+## Atualização do retrato de Agendamentos e Acessos — 06/10/2026
+
+Conferência documental por CODEX; solicitante mafaltti (GitHub get_profile nesta sessão, login
+Danilo-Komunick). Base integrada `dev`: `b80bf6e`, após o merge do PR #44 em 05/10. Schema integrado
+ainda com migrations até 0030; a correção de dependências não integra mudanças de schema.
+
+O [PR #43](https://github.com/Komunick/caabnovo/pull/43) continua aberto em
+`ffd89973920dbdfcbf9f71fc21d6c8c347e2c4a3`. Agendamentos inclui migrations 0031–0034 e
+`0036_scheduling_review_fixes.sql`, além de `scheduling:review_absences`. Quality, security e
+browser passaram nos eventos
+[PR 37349161935](https://github.com/Komunick/caabnovo/actions/runs/37349161935) e
+[push 37349152527](https://github.com/Komunick/caabnovo/actions/runs/37349152527). Esse resultado é
+validação técnica dessa ponta; revisão humana, rollout e homologação permanecem pendentes.
+
+O [PR #45](https://github.com/Komunick/caabnovo/pull/45) continua aberto em `310aacd`, com a
+migration `0035_default_collaborator_role.sql`, cargo base e provas G02/G03. A decisão de 05/10
+encerra a dúvida de produto P01/AC-T005; implementação em PR não equivale a integração ou aplicação
+no banco. CI [37348954157](https://github.com/Komunick/caabnovo/actions/runs/37348954157) aprovado
+nessa ponta. AC-T006 e revisão humana permanecem pendentes; os detalhes pertencem ao contrato de
+cargos e às evidências da frente responsável.
+
+**Conciliação pós-integração:** atualizar o mapa e as specs com os SHAs efetivamente integrados.
+Quem integrar o segundo PR funcional deve preservar a lista completa de migrations 0031–0036 em
+`packages/db/tests/migrations.test.ts`; 0035 pertence a Acessos e 0036 a Agendamentos. Preservar
+HIN, DS/AC, contratos e autoria. Nenhuma migration foi aplicada nem aceite humano inferido nesta
+revisão. Os retratos de 02/10 abaixo são históricos, superados por esta conferência nos pontos de
+versão, CI, migrations e decisão sobre cargo base.
+
+## Conciliação normativa e de estado — 02/10/2026
+
+Consolidado por CODEX; solicitante não verificado nesta sessão. Conciliar a documentação do projeto
+(CAAB-38) preserva os requisitos e atualiza o retrato histórico abaixo. Estado integrado/local em
+[MODULES](../../docs/MODULES.md); divisão das frentes no [plano](plan.md). Agendamentos tem
+prioridade; e-mails e app/site permanecem adiados conforme a decisão atual, sem autorizar serviços.
+
+Constituição 2.1.0: motivo é obrigatório somente nas solicitações de exclusão de Colaboradores e
+Associados, preservado com autor/data por ocorrência; demais ações dispensam justificativa humana.
+Ausência histórica não recebe preenchimento retroativo. Esta exceção substitui a dispensa absoluta
+registrada em 14/09. Colaboradores é a gestão de contas existente, sem cadastro de RH separado.
+DOC01 tem conclusão histórica em 21/09; T099 registra a revisão transversal ainda aberta por função.
+O fechamento documental atual e seus limites estão na
+[evidência da conciliação](../001-project-foundation/evidence/documentation-consolidation-2026-10-02.md).
+
 ## Complemento P01 — documentos definidos, 21/09/2026
 
 Titular/cônjuge/filho/enteado têm documentação definida pelo usuário, com limite de até 25 anos para
@@ -229,7 +272,8 @@ autorização, integridade, contratos e acessibilidade são obrigatórios confor
   pendente em POL02. Manter análise manual e a pergunta de reanálise aberta em POL01, sem exigências
   extras ou aprovação automática presumida.
 - **FR-007**: Proteger alterações/exportações/reenvios com autorização, auditoria e idempotência,
-  sem campo ou exigência de justificativa.
+  sem campo ou exigência de justificativa nessas ações. Solicitações de exclusão de Colaboradores e
+  Associados exigem motivo, com autor/data por ocorrência, conforme constituição 2.1.0.
 - **FR-008**: Usar contratos novos/formalmente fornecidos e explicitar integração indisponível.
 - **FR-009**: Validar autorização, integridade, teclado, nomes acessíveis e responsividade nos
   fluxos alterados.
@@ -350,7 +394,7 @@ para essa renomeação.
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
 PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
 
-## Regra vigente: nenhuma justificativa obrigatória — 14/09/2026
+## Registro de 14/09/2026 — dispensa de justificativa, com exceção posterior para exclusões
 
 Decisão final do usuário: remover os campos de motivo/justificativa de todas as abas e sua
 obrigatoriedade no servidor. Abrange criação, edição, publicação, retirada, recuperação,

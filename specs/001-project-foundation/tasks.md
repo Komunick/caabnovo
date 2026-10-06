@@ -1,5 +1,126 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Revisão de aceite de acessos — 02/10/2026
+
+Escopo: Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir
+criação de contas ao fluxo administrativo (CAAB-18) e Mostrar apenas funções autorizadas na
+navegação (CAAB-20). Base `748539d`; branch `docs/access-review-20261002`.
+[Matriz e evidências](evidence/access-acceptance-2026-10-02.md). As tarefas abertas abaixo são
+encaminhamentos, não autorização para implementar, ligar serviços ou publicar. Não reabrir
+T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
+
+- [x] AC-T001 Conferir implementação integrada, contrato documental, critérios e evidências;
+      preparar matriz AC01–AC14, distinguir histórico/teste atual/QA humano e executar recorte sem
+      serviços. Resultado: 31 unitários e 28 contratos aprovados, com G01–G03/P01 registrados.
+- [ ] AC-T002 Corrigir G01 em `apps/web/modules/messaging/ui/schedules.tsx`: esconder Novo
+      agendamento sem `messages:write`, mantendo consulta; validar Gestor/Colaborador de leitura,
+      escrita concedida, revogação e POST negado. Coordenar Mensagens, ler guia de design e
+      preservar M016/envio real desativado. Não alterar Agendamentos por essa ocorrência.
+- [ ] AC-T003 Complementar G02 em `apps/web/tests/e2e/direct-exports.spec.ts`: atribuir cargo
+      Colaborador real ao destinatário, executar a escrita recebida e confirmar que Gestor permanece
+      negado e Colaborador não concede acessos/cargos por API forjada. Não converter a fixture sem
+      cargo em decisão de migração de contas.
+- [ ] AC-T004 Complementar G03: prova dirigida de expiração da autoridade durante espera por lock,
+      sem persistência/auditoria de sucesso indevidas; verificar separadamente atualização de
+      descoberta por intervalo 15s, foco e mudança de rota. Preservar guardas e registrar falhas de
+      rede como limite de atualização visual, não autorização do servidor.
+- [x] AC-T005 Decisão de produto P01 obtida em 05/10: contas novas sem cargo informado nascem
+      Colaborador e existentes sem cargo em vigor recebem o cargo pela migration 0035, preservando
+      `user_access`. Contrato conciliado em 06/10; implementação no PR #45/`310aacd`, ainda não
+      integrado. Não atribuir aplicação em banco, QA humano ou AC-T006 a este encerramento.
+- [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
+      concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
+      limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos
+      testes automatizados. Não iniciar serviços para concluir esta revisão documental.
+
+## Conciliação do recorte DS — 02/10/2026
+
+Consolidação por CODEX; solicitante desta sessão não verificado (GitHub HTTP 401). Conteúdo DS
+incorporado seletivamente de `docs/design-guide-20260922`, commit `ab643a5`, em Consolidar o guia de
+design do projeto (CAAB-39). Relatos de execução abaixo pertencem a 22/09, sem nova execução ou QA
+humano. Autoria/solicitante originais permanecem os demonstrados pelas evidências, sem atribuição
+retroativa à conta desta sessão.
+
+Os IDs históricos T133–T140 do guia são referidos aqui como **DS-T133–DS-T140**; T139/T140 sem
+prefixo continuam sendo cargo único na base integrada. A evidência original permanece intacta. A
+consolidação de 23/09 conservou UI-BUTTONS e a revisão visual como históricos explicitamente
+subordinados ao guia; não serão removidos nem tratados como padrões concorrentes. Menções abaixo à
+remoção/branch/testes descrevem a entrega original. A frente separada de acessos mantém seus
+contratos, requisitos e evidências; não substituir este arquivo inteiro ao conciliá-la.
+
+## Guia de design — incremento documental de 22/09/2026
+
+Escopo: DS-FR01–DS-FR08 e DS-SC01–DS-SC04 da US4, cenários DS1/DS2. Branch separada por pedido do
+usuário: `docs/design-guide-20260922`. T124–T132 pertencem ao PR #37, integrado em `3907248` e já
+incorporado por fast-forward nesta entrega. Não reexecutar suas implementações.
+
+### Auditoria ampliada solicitada — 22/09/2026
+
+- [x] DS-T139 [US4] Auditar visualmente `docs/caab-design.md`, confrontar capturas com sua versão,
+      executar testes aplicáveis de componentes/contratos, medidas e referências; registrar
+      divergências, corrigir lacunas documentais e publicar evidências com limites, sem alterar a
+      aplicação ou abrir PR. Complementa DS-FR02–08; depende de DS-T138.
+- [x] DS-T140 [US4] Inventariar documentos semelhantes, comparar e incorporar informação útil no
+      `docs/caab-design.md`, adotá-lo como guia principal, remover guias redundantes e atualizar
+      links e orientações de trabalho. Registrar procedência e verificar que specs/evidências
+      próprias foram preservadas. Complementa DS-FR01/DS-FR07/DS-FR08; depende de DS-T139.
+
+Fechamento da auditoria/consolidação: guia principal em `docs/caab-design.md`; dois guias
+redundantes removidos, referências atualizadas e evidência preservada. 554 testes
+unitários/contratos e 516 comparações de estilos passaram; 19/21 verificações de comportamento
+passaram, com as duas divergências de validação precoce documentadas. Revisão assistiva de tabela
+continua pendente. 90 links locais/20 âncoras e formatação conferidos. DS-T133–DS-T140 concluídas
+somente no recorte documental; relatório registra alcance e limites. Nenhum PR novo/reaberto ou
+push.
+
+### Preparação e fundamentos
+
+- [x] DS-T133 Consolidar pesquisa oficial e inventário em
+      `specs/001-project-foundation/research.md`, com alternativas, fontes/data e limites de
+      evidência; cobre DS-FR02/DS-FR08.
+
+### US4 / DS1 — referência para telas CAAB
+
+- [x] DS-T134 [US4] Criar `docs/caab-design.md` com identidade, temas, tipografia, medidas, formas,
+      profundidade, ícones e índice/fontes; conferir cascata vigente; cobre DS-FR01/DS-FR02.
+- [x] DS-T135 [US4] Completar `docs/caab-design.md` com composição de lista/formulário/exportação,
+      componentes, estados, rascunhos, permissões, linguagem, responsividade e acessibilidade;
+      incluir matrizes de posição/ordem de campos/botões, localização/formato/aplicação de filtros e
+      máscaras/validação e compactação por região com limites e aceite comparável conforme
+      complemento do usuário, com compactação em seção principal e acesso destacado no início; cobre
+      DS-FR03–06.
+
+Aceite independente: leitor consegue reconstruir a hierarquia das três jornadas e localizar as
+fontes dos valores e controles, distinguindo regras de evidência e pendência.
+
+### US4 / DS2 — manutenção e adaptação
+
+- [x] DS-T136 [US4] Completar manutenção e adaptação em `docs/caab-design.md`; conciliar
+      `docs/UI-BUTTONS.md` e adicionar entrada em `docs/TOOLING.md`; cobre DS-FR01/DS-FR07.
+
+Aceite independente: roteiro separa estrutura reutilizável da marca, caminhos, módulos, permissões e
+decisões institucionais da CAAB, sem criar dependência genérica.
+
+### Verificação e fechamento
+
+- [x] DS-T137 Conferir links/âncoras, tokens/medidas, formatação e diff; registrar matriz de
+      cobertura, análise, evidência visual consultada e limitações em
+      `specs/001-project-foundation/evidence/design-guide-2026-09-22.md`; cobre DS-FR08/DS-SC01–04.
+- [x] DS-T138 Fechar checkpoint DS em `specs/001-project-foundation/spec.md`, `plan.md` e
+      `tasks.md`, conferir sincronização da principal e finalizar entrega documental local; PR
+      adiado por pedido posterior do usuário; cobre DS-FR06–08. Não aprovar nem integrar PRs.
+
+Dependências: DS-T133 → DS-T134 → DS-T135 → DS-T136 → DS-T137 → DS-T138. Execução sequencial porque
+o guia e os artefatos compartilham conteúdo. MVP documental: DS-T133–DS-T135; entrega solicitada
+inclui as seis. Não executar tarefas antigas nem marcar checklist global 13/16 como concluído por
+esta entrega.
+
+Fechamento local inicial (histórico): compactação incorporada, reanálise sem conflitos e validações
+documentais aprovadas. DS-T133–DS-T138 concluídas; 70 referências locais novas/20 âncoras, valores e
+formatação conferidos. PR #38, aberto antes da instrução de não abrir PR ainda, foi fechado sem
+merge. Nenhum PR novo/reaberto; complemento mantido local, sem push. Não há implantação ou
+homologação funcional nova.
+
 **Input:** [spec](spec.md), [plan](plan.md), [research](research.md), [modelo](data-model.md),
 [contrato](contracts/collaborator-contact.md). **Branch da entrega:**
 `feature/collaborators-contact-20260921`. Incremento atual: T124–T129 e005 LC03, concluídos conforme
@@ -166,15 +287,20 @@ auditável e sem spinner infinito ou afirmação de gravação local.
       `specs/001-project-foundation/evidence/plan-2026-09-21-validation.md` (novo), preservando T089
       pendente.
 
-## Pendências anteriores que continuam prioritárias
+## Checkpoint histórico de pendências — 21/09/2026, anterior à integração
 
 T096 (cadastro público) foi conciliada nesta entrega e validada no CI de 7d4d507: HTTP negado sem
 criação de usuário/credencial/sessão, login/recuperação e provisionamento administrativo cobertos
-pelas suítes de integração. PR #35 ainda sem merge. T097 (preservação de erro/versão dos rascunhos)
-foi executada nesta entrega; resultado atual no checkpoint e nas evidências. T097 atua em
-`apps/web/components/workspace-drafts.tsx` e estados dos editores de Notícias/acessos, com
-`apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas pendências resolvidas por
-plan/tasks nem recriar correções já existentes sem confronto.
+pelas suítes de integração. Naquele checkpoint de 21/09/2026, o PR #35 ainda aguardava merge. T097
+(preservação de erro/versão dos rascunhos) foi executada nesta entrega; resultado atual no
+checkpoint e nas evidências. T097 atua em `apps/web/components/workspace-drafts.tsx` e estados dos
+editores de Notícias/acessos, com `apps/web/tests/e2e/workspace-drafts.spec.ts`. Não declarar essas
+pendências resolvidas por plan/tasks nem recriar correções já existentes sem confronto.
+
+**Integração posterior, conferida em 02/10/2026:** o PR #35 foi integrado em dev em 21/09/2026
+(15:41:10 UTC). A menção anterior a merge pendente descreve somente o checkpoint histórico; T096 não
+exige nova implementação ou integração. O estado e os limites de T097 permanecem no checkpoint e nas
+evidências próprios.
 
 ## Dependências e ordem de execução
 
@@ -828,8 +954,8 @@ Evidências RM03:
 - [x] NV04 Validar atraso controlado, interrupção, shell, acessibilidade e regressões no CI.
 - [x] NV05 Revisar capturas sintéticas do build remoto, registrar evidências e preparar PR. Preview
       local adiado por pedido posterior do usuário: web e banco desligados; não reativar. Código
-      7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações, 66 E2E e6 a11y;
-      evidências em evidence/navigation-speed-2026-09-15.md.
+      7c07626 aprovado no CI34990339186: 276 unitários,94 contratos,152 integrações, 66 E2E e 6
+      a11y; evidências em evidence/navigation-speed-2026-09-15.md.
 
 ## Contraste do shell durante troca de tema — 16/09/2026
 
@@ -904,7 +1030,8 @@ alterar o gate de produção.
       provisionamento administrativo validados no
       [CI de 7d4d507](https://github.com/Komunick/caabnovo/actions/runs/35617770034), incluindo
       auth-session, account-auth-hardening e initial-password. Sem reaplicar infraestrutura
-      retirada. Implementado na branch de entrega; merge em dev pendente no PR #35. Origem:
+      retirada. No checkpoint anterior à integração, estava implementado na branch de entrega. O PR
+      #35 foi integrado em dev em 21/09/2026, conforme conferência de 02/10/2026. Origem:
       US1/FR-001–FR-004, Constituição IV; achado A03.
 - [x] T097 Preservar mensagens de conflito e versão original ao navegar entre abas/módulos em todos
       os formulários; começar por NewsEditor e UserAccessForm, ampliar inventário dos estados de
@@ -926,8 +1053,9 @@ existentes e evitando duas versões incompatíveis. Nenhuma migration ou altera�
 retirada anteriormente foi reintroduzida. As decisões do clarify e as 108 tarefas novas continuam
 planejadas, sem execução implícita. No CI de 7d4d507 passaram formatação, lint, tipos, 363 testes
 unitários, 122 de contrato, 220 de integração, build e segurança. Suíte completa de
-navegador/acessibilidade ainda em andamento neste checkpoint; acompanhar o PR #35. Localhost
-permanece desligado. Evidências:
+navegador/acessibilidade ainda em andamento no checkpoint histórico de 21/09/2026, anterior à
+integração do PR #35 naquele dia. Este registro não descreve checks atuais. Localhost permanece
+desligado. Evidências:
 [segurança](../001-project-foundation/evidence/security-hardening-2026-09-17.md).
 
 ## Ampliação autorizada: ciclo de vida — 21/09/2026
@@ -1003,7 +1131,7 @@ sem homologar políticas institucionais pendentes ou marcar o checklist13/16 com
 
 Validação da padronização22/09:
 [CI35734927572](https://github.com/Komunick/caabnovo/actions/runs/35734927572) aprovou
-quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, Auditoria e
+quality/browser/security em e9d05ed (95 E2E e 6 a11y). Imagens de Colaboradores, Auditoria e
 Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
 filtros. Ver
 [evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).
@@ -1034,8 +1162,8 @@ posterior de aplicação/testes. PR preparado para revisão humana, sem aprovaç
       responsividade compartilhadas; validar UI/a11y e CI. PR somente mediante pedido explícito.
 
 Fechamento T141/T142: quality/security CI35747105170 em1a4e0d0 (387 unitários,169 contratos, 247
-integração, build/lint/tipos/formatação); browser CI35746642120 eme46e12a (95 E2E,6 a11y). Código de
-aplicação/E2E igual entre esses commits; a diferença corrige somente a fixture de conta inativa no
-teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR explicitamente;
-PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
+integração, build/lint/tipos/formatação); browser CI35746642120 em e46e12a (95 E2E,6 a11y). Código
+de aplicação/E2E igual entre esses commits; a diferença corrige somente a fixture de conta inativa
+no teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR
+explicitamente; PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
 [evidências](evidence/single-role-2026-09-22-validation.md).
