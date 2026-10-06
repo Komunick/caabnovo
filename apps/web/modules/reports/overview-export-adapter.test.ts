@@ -46,9 +46,11 @@ describe("complete report exports", () => {
     expect(catalog.filters.map((filter) => filter.key)).toContain("include_members");
     expect(catalog.filters.map((filter) => filter.key)).not.toContain("include_bookings");
     const input = overview();
+    // Losing only the source permission hides its filter, so the selection no longer validates:
+    // a 422 configuration error, not a 403 (the download route reports it as such).
     expect(() =>
       authorizeExport(adapter, actor(["reports:read", "exports:generate"]), input),
-    ).toThrow();
+    ).toThrowError(expect.objectContaining({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 }));
     for (const key of ["include_bookings", "include_partners", "include_users", "include_news"]) {
       expect(() =>
         authorizeExport(
@@ -56,7 +58,9 @@ describe("complete report exports", () => {
           actor(),
           overview("summary", { filters: { ...input.filters, [key]: "yes" } }),
         ),
-      ).toThrow();
+      ).toThrowError(
+        expect.objectContaining({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 }),
+      );
     }
     for (const missing of ["reports:read", "exports:generate"]) {
       expect(() =>
@@ -65,7 +69,7 @@ describe("complete report exports", () => {
           actor(["reports:read", "exports:generate", "members:read"].filter((p) => p !== missing)),
           input,
         ),
-      ).toThrow();
+      ).toThrowError(expect.objectContaining({ code: "PERMISSION_DENIED", status: 403 }));
     }
   });
   it("does not add a domain omitted from the request and parametrizes management notes", () => {
@@ -100,6 +104,18 @@ describe("complete report exports", () => {
     expect(() =>
       authorizeExport(adapter, actor(), overview("summary", { columns: ["cpf"] })),
     ).toThrow();
+  });
+  it("turns an extreme comparison period into a 422 before any SQL runs", () => {
+    const adapter = reportExportAdapter("summary")!;
+    for (const filters of [
+      { from: "0001-01-01", to: "9999-12-31" },
+      { from: "0500-01-01", to: "2026-10-02" },
+    ])
+      expect(() =>
+        adapter.query(overview("summary", { filters: { ...overview().filters, ...filters } })),
+      ).toThrowError(
+        expect.objectContaining({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 }),
+      );
   });
   it("groups the full filtered dataset and preserves numeric sorting, order of columns and stable ties", () => {
     const adapter = reportExportAdapter("membersGrouped")!;

@@ -185,7 +185,16 @@ export const reportOverviewFiltersSchema = z
   .refine((input) => input.from <= input.to, {
     path: ["to"],
     message: "Confira a ordem das datas.",
-  });
+  })
+  // The previous period doubles the span back from `from`; keep every bound well inside
+  // the range PostgreSQL accepts so an extreme period is a 422 before download, not a SQL error.
+  .refine(
+    (input) => {
+      const { previousFrom, until } = reportBounds(input);
+      return previousFrom.getUTCFullYear() >= 1000 && until.getUTCFullYear() <= 9999;
+    },
+    { path: ["from"], message: "Período fora do intervalo suportado." },
+  );
 /** JSONB changes object key order; pagination does not change the exported filters. */
 export function sameReportFilters(candidate: ReportQuery, applied: ReportQuery): boolean {
   const left = reportQuerySchema.safeParse({ ...candidate, page: 1 });

@@ -21,6 +21,17 @@ describe("report contracts", () => {
     ])
       expect(reportOverviewFiltersSchema.safeParse(input).success).toBe(false);
   });
+  it("rejects periods whose previous window or end leave the range PostgreSQL accepts", () => {
+    for (const input of [
+      { from: "0001-01-01", to: "9999-12-31" },
+      { from: "0500-01-01", to: "2026-10-02" },
+      { from: "2020-01-01", to: "9999-12-31" },
+    ])
+      expect(reportOverviewFiltersSchema.safeParse(input).success).toBe(false);
+    expect(
+      reportOverviewFiltersSchema.safeParse({ from: "1990-01-01", to: "2026-10-02" }).success,
+    ).toBe(true);
+  });
   it("compares saved JSONB filters independently of object order and page", () => {
     const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
     const restored = Object.fromEntries(Object.entries(query).reverse()) as typeof query;

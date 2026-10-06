@@ -74,30 +74,35 @@ function overviewAdapter(dataset: "summary" | "executive"): ExportAdapter {
         if (typeof value !== "string" || value.length > max) return invalid();
         return value.trim();
       };
-      const from = text("from", 10),
-        to = text("to", 10);
-      const channel = text("channel", 10) || "all",
-        environment = text("environment", 20) || "production";
-      const source = text("source", 80);
-      const parsed = reportOverviewFiltersSchema.safeParse({
-        from,
-        to,
-        channel,
-        environment,
-        source,
-        notes: text("notes", 2000),
-      });
-      if (!parsed.success) return invalid();
-      for (const key of datasets)
-        if (!["", "yes", "no"].includes(text(`include_${key}`, 3))) invalid();
-      return reportOverviewExportSql(
-        {
-          ...parsed.data,
-          datasets: datasets.filter((key) => input.filters[`include_${key}`] === "yes"),
-        },
-        input.columns,
-        input.sort,
-      );
+      try {
+        const from = text("from", 10),
+          to = text("to", 10);
+        const channel = text("channel", 10) || "all",
+          environment = text("environment", 20) || "production";
+        const source = text("source", 80);
+        const parsed = reportOverviewFiltersSchema.safeParse({
+          from,
+          to,
+          channel,
+          environment,
+          source,
+          notes: text("notes", 2000),
+        });
+        if (!parsed.success) return invalid();
+        for (const key of datasets)
+          if (!["", "yes", "no"].includes(text(`include_${key}`, 3))) invalid();
+        return reportOverviewExportSql(
+          {
+            ...parsed.data,
+            datasets: datasets.filter((key) => input.filters[`include_${key}`] === "yes"),
+          },
+          input.columns,
+          input.sort,
+        );
+      } catch (error) {
+        if (error instanceof ExportError) throw error;
+        throw invalid();
+      }
     },
     map(row) {
       return {

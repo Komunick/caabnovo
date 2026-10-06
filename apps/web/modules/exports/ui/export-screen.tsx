@@ -45,7 +45,13 @@ export function ExportScreen({
   /** Selection brought from the originating screen (e.g. the report the user was reading). */
   initial?: ExportInitial;
   initialFilters?: Record<string, string>;
-  renderFilter?(key: string, value: string, onChange: (value: string) => void): ReactNode;
+  renderFilter?(
+    key: string,
+    value: string,
+    onChange: (value: string) => void,
+    /** Lets a renderer group several filters under one fieldset. */
+    group?: { filters: Record<string, string>; setFilter(key: string, value: string): void },
+  ): ReactNode;
   context?: ExportRequest["context"];
   /** What the adapter orders by when no sort column is chosen. */
   defaultOrderLabel?: string;
@@ -210,8 +216,14 @@ export function ExportScreen({
               <div className="list-filters export-filters">
                 {catalog.filters.map(
                   (filter) =>
-                    renderFilter?.(filter.key, filters[filter.key] ?? "", (value) =>
-                      setFilters({ ...filters, [filter.key]: value }),
+                    renderFilter?.(
+                      filter.key,
+                      filters[filter.key] ?? "",
+                      (value) => setFilters({ ...filters, [filter.key]: value }),
+                      {
+                        filters,
+                        setFilter: (key, value) => setFilters({ ...filters, [key]: value }),
+                      },
                     ) ?? (
                       <FormField
                         key={filter.key}

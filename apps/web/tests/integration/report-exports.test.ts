@@ -385,16 +385,34 @@ describe("direct export of the detailed analysis", () => {
       sort: [],
       filters: { from: "2024-01-01", to: "2026-09-30", include_members: "yes" },
     });
+    let revokedAfterBatch = 0;
     try {
+      // Revoking only members:read hides include_members from the current catalog, so the next
+      // authorization rejects the selection (EXPORT_CONFIGURATION_INVALID, 422; see service.ts).
       await expect(
         download(input, async (batch) => {
-          if (batch === 1)
+          if (batch === 1) {
+            revokedAfterBatch = batch;
             await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
               actor.userId,
               ["reports:read", "exports:generate"],
             ]);
+          }
         }),
-      ).rejects.toThrow();
+      ).rejects.toMatchObject({ code: "EXPORT_CONFIGURATION_INVALID", status: 422 });
+      // The revocation happened after the pre-flight authorization had passed and a batch had
+      // been produced, and the operation ended as failed, never completed.
+      expect(revokedAfterBatch).toBe(1);
+      const operationRow = (
+        await admin.query(
+          `SELECT phase,error_code,finished_at FROM export_operation
+           WHERE actor_id=$1 AND module='reports' AND dataset='executive'
+           ORDER BY started_at DESC LIMIT 1`,
+          [actor.userId],
+        )
+      ).rows[0];
+      expect(operationRow).toMatchObject({ phase: "failed", error_code: "EXPORT_FAILED" });
+      expect(operationRow.finished_at).not.toBeNull();
       expect(
         (
           await admin.query(
@@ -411,6 +429,112 @@ describe("direct export of the detailed analysis", () => {
     }
     expect((await download(input)).result.rows).toBeGreaterThan(0);
   });
+  it("groups members without a state under 'Não informado' and matches the screen's total", async () => {
+    // member.residence_state is NOT NULL DEFAULT '' (migration 0023), so "no state" is the empty
+    // string here; the label is COALESCE(NULLIF(value,''),'Não informado') (reports.ts reportSql).
+    await admin.query(
+      `INSERT INTO member(name,city,category,residence_state) VALUES
+       ('Grupo UF sintético 1','Salvador','Advocacia','BA'),
+       ('Grupo UF sintético 2','Salvador','Advocacia','BA'),
+       ('Grupo UF sintético 3','Salvador','Advocacia','')`,
+    );
+    try {
+      const { bytes } = await download(
+        reportExportRequest({
+          dataset: "membersGrouped",
+          columns: ["group", "count"],
+          sort: [{ field: "count", direction: "desc" }],
+          filters: { groupBy: "state", search: "Grupo UF sintético" },
+        }),
+      );
+      const rows = readCsv(bytes);
+      expect(rows).toEqual([
+        ["Grupo", "Quantidade"],
+        ["BA", "2"],
+        ["Não informado", "1"],
+      ]);
+      // Parity: the grouped total equals the row count of the screen's detail query.
+      const screen = await queryReport(
+        control.pool,
+        { userId: actor.userId, permissions: actor.permissions },
+        {
+          view: "details",
+          dataset: "members",
+          from: "2024-01-01",
+          to: "2024-01-02",
+          dateScope: "all",
+          search: "Grupo UF sintético",
+        },
+      );
+      expect(screen.total).toBe(3);
+      expect(rows.slice(1).reduce((total, row) => total + Number(row[1]), 0)).toBe(screen.total);
+    } finally {
+      await admin.query("DELETE FROM member WHERE name LIKE 'Grupo UF sintético %'");
+    }
+  }, 60000);
+
+  it("groups bookings without a professional under 'Não informado' and matches the screen's total", async () => {
+    // Capacity-mode bookings have no professional (professional_id IS NULL), so the LEFT JOIN
+    // yields a NULL name. Requires the real Scheduling migrations, like the notice test above.
+    const permissions = [...reportExporter, "scheduling:read"];
+    const procedure = (
+      await admin.query(`WITH unit AS (
+      INSERT INTO scheduling_unit(name) VALUES('Unidade agrupamento sintética') RETURNING id
+    ), service AS (
+      INSERT INTO scheduling_service(unit_id,name) SELECT id,'Serviço agrupamento sintético' FROM unit
+      RETURNING id,unit_id
+    ) INSERT INTO scheduling_procedure(service_id,unit_id,name,duration_minutes)
+      SELECT id,unit_id,'Procedimento agrupado sintético',30 FROM service RETURNING id`)
+    ).rows[0].id;
+    const member = (await admin.query("SELECT id FROM member ORDER BY id LIMIT 1")).rows[0].id;
+    await admin.query(
+      `INSERT INTO scheduling_booking(
+      procedure_id,member_id,mode,status,duration_snapshot,created_by,starts_at,ends_at)
+      SELECT $1,$2,'capacity','cancelled',30,$3,starts,starts+interval '30 minutes'
+      FROM (VALUES ('2026-03-10T12:00:00-03:00'::timestamptz),
+        ('2026-03-11T12:00:00-03:00'::timestamptz)) dates(starts)`,
+      [procedure, member, actor.userId],
+    );
+    try {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        permissions,
+      ]);
+      const { bytes } = await download(
+        reportExportRequest({
+          dataset: "bookingsGrouped",
+          columns: ["group", "count"],
+          sort: [],
+          filters: { groupBy: "professional", search: "Procedimento agrupado sintético" },
+        }),
+      );
+      const rows = readCsv(bytes);
+      expect(rows).toEqual([
+        ["Grupo", "Quantidade"],
+        ["Não informado", "2"],
+      ]);
+      const screen = await queryReport(
+        control.pool,
+        { userId: actor.userId, permissions: new Set(permissions) },
+        {
+          view: "details",
+          dataset: "bookings",
+          from: "2026-03-01",
+          to: "2026-03-31",
+          dateScope: "all",
+          search: "Procedimento agrupado sintético",
+        },
+      );
+      expect(screen.total).toBe(2);
+      expect(rows.slice(1).reduce((total, row) => total + Number(row[1]), 0)).toBe(screen.total);
+    } finally {
+      await admin.query("UPDATE user_access SET permissions=$2 WHERE user_id=$1", [
+        actor.userId,
+        [...reportExporter],
+      ]);
+      await admin.query("DELETE FROM scheduling_booking WHERE procedure_id=$1", [procedure]);
+    }
+  }, 60000);
   it("writes all 100 records in each format, in the requested columns and order", async () => {
     for (const format of ["csv", "xlsx", "pdf"] as const) {
       const input = reportExportRequest({

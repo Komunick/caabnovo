@@ -76,7 +76,7 @@ export default async function ReportExportPage({
       backLabel="Voltar aos relatórios"
       defaultOrderLabel={
         overview
-          ? "Seção e indicador"
+          ? "Identificador interno da seção e do indicador"
           : grouped
             ? "Quantidade (maior primeiro)"
             : "Data (mais recente primeiro)"
