@@ -9,9 +9,9 @@ import {
   HISTORY_PUSH_TAG,
   type NodeKey,
   type SerializedLexicalNode,
-} from "lexical";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
+} from "@payloadcms/richtext-lexical/lexical";
+import { useLexicalComposerContext } from "@payloadcms/richtext-lexical/lexical/react/LexicalComposerContext";
+import { useLexicalEditable } from "@payloadcms/richtext-lexical/lexical/react/useLexicalEditable";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { ArrowUp, ArrowDown, Trash2, Settings2 } from "lucide-react";

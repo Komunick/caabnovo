@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState, type ReactNode } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
+import { useLexicalComposerContext } from "@payloadcms/richtext-lexical/lexical/react/LexicalComposerContext";
+import { $createHeadingNode, $isHeadingNode } from "@payloadcms/richtext-lexical/lexical/rich-text";
 import {
   $isListNode,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
-} from "@lexical/list";
-import { $setBlocksType } from "@lexical/selection";
+} from "@payloadcms/richtext-lexical/lexical/list";
+import { $setBlocksType } from "@payloadcms/richtext-lexical/lexical/selection";
 import {
   $createParagraphNode,
   $getSelection,
@@ -23,7 +23,7 @@ import {
   HISTORY_PUSH_TAG,
   REDO_COMMAND,
   UNDO_COMMAND,
-} from "lexical";
+} from "@payloadcms/richtext-lexical/lexical";
 import {
   Bold,
   Italic,
