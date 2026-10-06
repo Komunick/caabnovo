@@ -75,3 +75,24 @@ inferiores não cobertas não foram interpretadas como defeito de modal.
 VQA01–VQA04 concluídas localmente em [tasks.md](../tasks.md). T110 e demais pendências
 institucionais não são encerradas. A entrega está disponível na worktree para revisão/publicação
 quando solicitada.
+
+## Preparação do PR — 06/10/2026-CODEX-mafaltti
+
+Pedido explícito posterior: abrir PR para análise. Código, testes e evidências publicados em
+`d5f8885824a6287617678d0963193aa0b5e78cec`. O limite de ausência de publicação registrado acima
+descreve a etapa local anterior.
+
+O primeiro [CI de push](https://github.com/Komunick/caabnovo/actions/runs/37524336230) reprovou
+security por Payload <3.90.0 (cinco HIGH e um CRITICAL), já existente na base `9dc6a7f`.
+Quality/browser ainda estavam em execução quando o usuário informou a integração do PR #49. Não
+contornar o gate nem atribuir essa falha à alteração de interface.
+
+Integração confirmada: PR #49 em dev `2b30f538025121253c336425b6c8c6b5264193cd`. Principal
+atualizada por fast-forward e base incorporada à branch por merge local
+`8d7979c1fd2ec75842a75c9ba22933ff602c0f86`, sem reescrever histórico publicado ou executar merge de
+PR nesta frente. Os cinco arquivos de produção da correção conservam os hashes do manifesto. O diff
+do PR será contra o novo dev, excluindo a atualização de dependências já integrada.
+
+O novo CI da ponta publicada será conferido antes da declaração de prontidão. A descrição do PR
+registra a versão e seus gates reais; captura/validação de componentes local não substitui E2E,
+integração, build ou segurança do CI. Sem autorização de merge/deploy desta correção.
