@@ -1,5 +1,14 @@
 # Relatórios e exportações — execução de 02/10/2026
 
+## Resultado vigente — correções do PR46 em 06/10/2026-CODEX-mafaltti
+
+Usuário confirmou restauração de gráfico e análise no PDF executivo. Implementação, retentativa,
+diagnóstico de acesso e gate de segurança corrigidos em b67c30b/90f82e2. CI 37520740384 aprovado em
+quality/browser/security, incluindo PostgreSQL real, build, E2E e Axe. T039/T041/T042 concluídas
+tecnicamente; T038 e aceite humano permanecem pendentes. Versões, hashes, contagens e evidência
+visual em [correção do PR46](pr46-corrections-2026-10-06.md). Registros abaixo são históricos e
+preservam seus autores/solicitantes; não descrevem o estado atual da entrega.
+
 Autoria: CODEX. Solicitante GitHub não verificado: consulta única da sessão via gh api user retornou
 HTTP401. Windows, Node24.20.0, pnpm11.25.0. Branch `feature/reports-complete-20261002`, worktree
 `.cache/pr-reports-complete-20261002`, base dev748539d. Funcionalidade publicada em9995361 e ajuste
@@ -243,7 +252,6 @@ Repasse operacional completo ficará no bloco próprio do agentcache principal, 
 usuário, com releitura sob abertura exclusiva; demais notas serão preservadas. Sem merge, serviços
 locais, alteração de outras worktrees ou de fontes transversais.
 
-
 ## Conciliação com Agendamentos e gates locais — 06/10/2026-CLAUDE-Gabriel-Komunick
 
 Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
@@ -301,9 +309,9 @@ visual; QA humano. A ponta combinada ainda não tem CI. T041, T038 e T039 perman
 
 Não declarar prontidão para PR, QA ou deploy. Exportar detalhe agrupado, resumo e evolução sem os
 limites antigos (CAAB-44) segue Em Desenvolvimento, bloqueado por Operar aprovação, remarcação e
-recuperação de atendimentos (CAAB-40) / PR #43. Só depois que o PR #43 estiver na dev: atualizar esta
-branch com `origin/dev`, repetir os gates e, com pedido explícito do usuário, abrir PR para dev com
-o título `feat(relatorios): completa exportações agrupadas, resumo e evolução`. Sem push, PR ou
+recuperação de atendimentos (CAAB-40) / PR #43. Só depois que o PR #43 estiver na dev: atualizar
+esta branch com `origin/dev`, repetir os gates e, com pedido explícito do usuário, abrir PR para dev
+com o título `feat(relatorios): completa exportações agrupadas, resumo e evolução`. Sem push, PR ou
 alteração no Jira nesta etapa.
 
 ## Revisão independente e correções — 06/10/2026-CLAUDE-Gabriel-Komunick
@@ -326,9 +334,9 @@ autorização.
   COALESCE(NULLIF(valor,''),'Não informado'); '' e NULL geram dois grupos com o rótulo "Não
   informado", igual à tela (herdado do PR40).
 - A2 CONFIRMADO, corrigido em 4b0c515: o adaptador da visão geral não convertia falha em erro 422,
-  ao contrário de export-adapter.ts. A falha de SQL por período extremo é PLAUSÍVEL (não
-  executada). O período anterior dobra o intervalo para trás; o schema agora limita-o ao ano 1000 e
-  o fim ao ano 9999.
+  ao contrário de export-adapter.ts. A falha de SQL por período extremo é PLAUSÍVEL (não executada).
+  O período anterior dobra o intervalo para trás; o schema agora limita-o ao ano 1000 e o fim ao
+  ano 9999.
 - A3 PLAUSÍVEL, aberto: report-overview-export.ts chama reportUsageFunnelSql uma vez por etapa (4
   vezes); o statement_timeout de 30 s (exports/query.ts) vira o teto em bases grandes. Sem medição.
 - B1 CONFIRMADO, aberto, comportamento seguro: a fonte revogada deixa o catálogo,
@@ -343,10 +351,9 @@ autorização.
   fieldset/legend "Fontes incluídas", conforme o guia (agrupar escolhas relacionadas).
 - C3 PLAUSÍVEL, aberto: o campo notes (até 2000 caracteres) viajar na URL GET e ir para
   log/histórico não foi verificado por esta etapa; é decisão de produto/segurança.
-- D1 CONFIRMADO, corrigido em 4b0c515: o teste de revogação entre lotes só usava
-  rejects.toThrow().
-- D2 CONFIRMADO, corrigido em 4b0c515: sem casos de grupo vazio. residence_state é NOT NULL DEFAULT ''
-  (migration 0023); logo só '' é testável em associados; em reservas, a LEFT JOIN gera NULL.
+- D1 CONFIRMADO, corrigido em 4b0c515: o teste de revogação entre lotes só usava rejects.toThrow().
+- D2 CONFIRMADO, corrigido em 4b0c515: sem casos de grupo vazio. residence_state é NOT NULL DEFAULT
+  '' (migration 0023); logo só '' é testável em associados; em reservas, a LEFT JOIN gera NULL.
 - D3 CONFIRMADO, corrigido em 4b0c515: paridade entre total agrupado e total da consulta da tela.
 - D4 CONFIRMADO, aberto: reports.spec.ts não tem teste de revogação (busca textual); outros specs
   não foram verificados.
@@ -362,9 +369,8 @@ hashes do manifesto dos arquivos listados foram atualizados.
 ### Gates locais na ponta 4b0c515
 
 Sem serviços locais: typecheck (6 projetos) passou; lint passou; Prettier dos 9 arquivos alterados
-passou; vitest unitário 72 arquivos/596 testes passaram; contratos 24 arquivos/171 testes
-passaram. O production-readiness do worker não foi rodado isoladamente; passou no conjunto
-unitário completo.
+passou; vitest unitário 72 arquivos/596 testes passaram; contratos 24 arquivos/171 testes passaram.
+O production-readiness do worker não foi rodado isoladamente; passou no conjunto unitário completo.
 
 ### Sem execução e aberto
 
@@ -382,56 +388,62 @@ Atualiza B1 e C3 acima, que ficam como histórico da revisão de 06/10/2026.
   leitura única, prazo de 5 minutos, falha de storage não bloqueia a tela.
 - B1 corrigido: `authorizeExport` devolve PERMISSION_DENIED (403) para filtro, coluna ou ordenação
   restritos cuja permissão foi perdida; o estado final da operação é PERMISSION_DENIED. Alteração
-  aditiva e pequena no núcleo (CAAB-22), com `catalog.test.ts` novo; os testes dos outros consumidores
-  não especificavam 422 para esse cenário e não foram alterados.
+  aditiva e pequena no núcleo (CAAB-22), com `catalog.test.ts` novo; os testes dos outros
+  consumidores não especificavam 422 para esse cenário e não foram alterados.
 - Locais: typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram. Não executados:
   `report-exports.test.ts` (assert atualizado para PERMISSION_DENIED), E2E e navegador. As correções
   ainda não têm CI; o CI 37473938245 (61d361c) é anterior a elas.
 
 ### Integração do PR #43 na dev e atualização da branch — CAAB-44-CLAUDE-Gabriel-Komunick
 
-Em 06/10/2026 o PR #43 (Agendamentos) foi integrado na `dev` por squash (ea0bc3b). A branch combinada
-passou a conflitar com o squash e foi atualizada com `origin/dev` por merge. Conflitos: as três
-fontes de `specs/008-scheduling-management` (checkpoint, tasks, review-fixes), resolvidas com a
-versão da `dev`, sem alteração própria desta frente; e `apps/web/modules/exports/ui/export-screen.tsx`,
-resolvido mantendo o quarto argumento opcional de `renderFilter` desta entrega. Delta contra a `dev`
-agora só de Relatórios e exportação (23 arquivos fora de `specs`). Gates locais depois do merge:
-typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram. A condição "depois do #43 na
-dev" das notas anteriores está cumprida; o CI desta ponta ainda não existe e T041, T042, T038 e T039
-seguem como descritos acima.
+Em 06/10/2026 o PR #43 (Agendamentos) foi integrado na `dev` por squash (ea0bc3b). A branch
+combinada passou a conflitar com o squash e foi atualizada com `origin/dev` por merge. Conflitos: as
+três fontes de `specs/008-scheduling-management` (checkpoint, tasks, review-fixes), resolvidas com a
+versão da `dev`, sem alteração própria desta frente; e
+`apps/web/modules/exports/ui/export-screen.tsx`, resolvido mantendo o quarto argumento opcional de
+`renderFilter` desta entrega. Delta contra a `dev` agora só de Relatórios e exportação (23 arquivos
+fora de `specs`). Gates locais depois do merge: typecheck, lint, Prettier, 616 unitários e 171 de
+contrato passaram. A condição "depois do #43 na dev" das notas anteriores está cumprida; o CI desta
+ponta ainda não existe e T041, T042, T038 e T039 seguem como descritos acima.
 
 ### Integração do PR #45 e correções adicionais — CAAB-44-CLAUDE-Gabriel-Komunick
 
-Em 06/10/2026 o PR #45 (cargo base Colaborador, migration 0035) também foi integrado na `dev` (squash
-212c4ea) e esta branch foi atualizada por merge sem conflito (00991bf); as listas de migrations de
-`packages/db/tests/migrations.test.ts` e `apps/web/tests/integration/scheduling-workflow.test.ts` já
-trazem 0035 entre 0034 e 0036, o que torna obsoleta a nota sobre a 0035 pendente acima.
+Em 06/10/2026 o PR #45 (cargo base Colaborador, migration 0035) também foi integrado na `dev`
+(squash 212c4ea) e esta branch foi atualizada por merge sem conflito (00991bf); as listas de
+migrations de `packages/db/tests/migrations.test.ts` e
+`apps/web/tests/integration/scheduling-workflow.test.ts` já trazem 0035 entre 0034 e 0036, o que
+torna obsoleta a nota sobre a 0035 pendente acima.
 
 Terceira revisão externa do PR #46, verificada por leitura:
+
 - **403 sem registro de falha, corrigido.** Em `apps/web/modules/exports/http.ts` a falha só era
   gravada para status 422; a seleção com item restrito, que passou a devolver 403, deixou de ser
   gravada. Agora também é gravada quando o código é PERMISSION_DENIED depois de a operação existir
   (origem e CSRF inválidos continuam sem operação e sem registro). Teste de contrato novo em
   `apps/web/tests/contract/exports.test.ts`.
-- **Documentação, corrigida.** `research.md` (teto de 50 mil) e `contracts/exports.md` (dependência do
-  #43 e do #45) ganharam atualização datada; a mensagem do teto legado em `apps/worker/src/job-state.ts`
-  deixou de mandar agrupar e orienta Exportar dados.
-- **PDF de Resultados e evolução sem gráfico nem bloco de análise, ABERTO e sem decisão registrada.**
-  O download direto gera tabela, com as notas repetidas como coluna de contexto, e a tela ainda diz
-  "Incluída no PDF". Depende de decisão de produto sobre o layout do PDF.
-- **"Solicitar novamente", observação.** O link só navega para a tela de exportação, sem o formato; as
-  notas vão por sessionStorage e, sem permissão da fonte, o destino é 404. Não testado no navegador.
+- **Documentação, corrigida.** `research.md` (teto de 50 mil) e `contracts/exports.md` (dependência
+  do #43 e do #45) ganharam atualização datada; a mensagem do teto legado em
+  `apps/worker/src/job-state.ts` deixou de mandar agrupar e orienta Exportar dados.
+- **PDF de Resultados e evolução sem gráfico nem bloco de análise, ABERTO e sem decisão
+  registrada.** O download direto gera tabela, com as notas repetidas como coluna de contexto, e a
+  tela ainda diz "Incluída no PDF". Depende de decisão de produto sobre o layout do PDF.
+- **"Solicitar novamente", observação.** O link só navega para a tela de exportação, sem o formato;
+  as notas vão por sessionStorage e, sem permissão da fonte, o destino é 404. Não testado no
+  navegador.
 - **security vermelho no CI**, alerta alto do `sharp` 0.35.4 (patch em 0.35.5), igual na `dev`; fora
   do escopo deste PR, aguardando decisão sobre o override em PR próprio.
 
 ### Texto da tela sobre o PDF e solicitação de novo — CAAB-44-CLAUDE-Gabriel-Komunick
 
-Quarta revisão externa do PR #46, mesmos pontos já registrados acima; verificados por leitura em 06/10/2026.
+Quarta revisão externa do PR #46, mesmos pontos já registrados acima; verificados por leitura em
+06/10/2026.
+
 - **PDF de Resultados e evolução, texto corrigido; layout segue aberto.** A tela dizia "Incluída no
-  PDF" sobre o comentário da análise, o que sugeria o bloco do PDF antigo. Agora diz que o texto vai no
-  arquivo exportado (Excel, CSV e PDF) como a coluna "Análise da gestão", repetida em cada linha, que é
-  o que o download direto gera. O gráfico de barras e o bloco de análise do PDF antigo não fazem parte
-  do download direto; refazer o layout do PDF depende de decisão de produto e não foi planejado.
+  PDF" sobre o comentário da análise, o que sugeria o bloco do PDF antigo. Agora diz que o texto vai
+  no arquivo exportado (Excel, CSV e PDF) como a coluna "Análise da gestão", repetida em cada linha,
+  que é o que o download direto gera. O gráfico de barras e o bloco de análise do PDF antigo não
+  fazem parte do download direto; refazer o layout do PDF depende de decisão de produto e não foi
+  planejado.
 - **"Solicitar novamente".** Só navega para a tela de exportação, sem o formato; em nova aba o
   comentário pode se perder (sessionStorage é por aba) e, sem a permissão da fonte, o destino é 404.
   Inconveniente pequeno, sem mudança de código nesta etapa e não testado no navegador.

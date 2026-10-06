@@ -6,6 +6,28 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
+## Versão e resultado final
+
+Código entregue em b67c30b e 90f82e2.
+[CI 37520740384](https://github.com/Komunick/caabnovo/actions/runs/37520740384) de 90f82e2 aprovado:
+quality 112465181426, security 112465181695, browser 112465182174. Logs lidos: 639 unitários, 172
+contratos, 403 integração, 105 E2E e 6 a11y aprovados. Pré-etapa isolada de Relatórios: 5 E2E
+aprovados; retentativa/PDF passou isolada e no conjunto completo. Suíte report-exports: 14 aprovados
+e 1 teste opt-in de volume desativado. Notícias (editor, capa e concorrência) também passou após
+alinhamento Lexical. Build, migrations, auditoria de dependências e scan de segredos aprovados;
+nenhum gate contornado.
+
+T042: projeção bookings e árvore de migrations idênticas à dev 9dc6a7f, verificadas por hash: SHA256
+da projeção ea550007110394ed8df699ba04f91104d8dfdc2eeaf8f4434e6542a0ac356a98; árvore Git das
+migrations 7a4e691985accee4d859ebfeca9c1b7678b01ba1. Registry preserva usersExport, reportExports e
+schedulingExports. PostgreSQL validou agrupamentos/filtros/profissional nulo, datas, cancelamentos,
+paridade da tela e revogação entre lotes. T039/T041/T042/T043–T045 encerradas; T038 e homologação
+humana permanecem pendentes.
+
+Atualização documental posterior registra essa versão de código, sem nova mudança funcional.
+Proposta de descrição do PR em `.cache/qa-pr46/pr-description.md`, local/ignorada, aguarda
+aprovação.
+
 ## Resultado implementado
 
 - PDF executivo: bloco de análise integral identificado; tabela com colunas escolhidas; barras
@@ -60,7 +82,7 @@ resolveram os executáveis; ferramentas executadas diretamente por Node dos mesm
   autorizada fora da restrição, sem mudar o teste do worker.
 - Vitest contract completo com `--maxWorkers 2`: 172 testes aprovados.
 - Prettier geral e documentos alterados, `git diff --check`: aprovados.
-- PostgreSQL/E2E/build/security da ponta final: serão executados no CI após publicação.
+- PostgreSQL/E2E/build/security: aprovados no CI de 90f82e2 acima.
 
 PDF de teste criado pelo writer real com 45 registros e 45 pontos (um zero), duas colunas escolhidas
 e comentário com aproximadamente 2000 caracteres. Renderizado com PyMuPDF 1.28.2 (Poppler ausente).
@@ -70,5 +92,5 @@ ignorado `.cache/qa-pr46/executive-restored.pdf` e PNGs correspondentes, sem dad
 
 Revisão pelo guia: Button compartilhado, três formatos, ordem visual/teclado coerente, texto de erro
 com role alert e retorno, ausência de estilo novo da interface. E2E acrescenta Axe no fluxo de
-retentativa e arquivo real; execução em navegador ficará no CI. QA humano e medições C1/T038
-permanecem pendentes e não são presumidos por estes testes. Sem nova migration/permissão/env.
+retentativa e arquivo real; execução no CI confirmada acima. QA humano e medições C1/T038 permanecem
+pendentes e não são presumidos por estes testes. Sem nova migration/permissão/env.

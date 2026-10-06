@@ -1,5 +1,14 @@
 # Tasks: Relatórios: exportação direta nas três abas — incremento de 21/09/2026
 
+## Estado atual — 06/10/2026-CODEX-mafaltti
+
+Correções do PR46 publicadas em b67c30b/90f82e2. CI 37520740384 de 90f82e2 aprovado em
+quality/browser/security: 639 unitários, 172 contratos, 403 integração, 105 E2E e 6 a11y; 1 teste
+opt-in de volume não executado. T039, T041, T042 e T043–T045 concluídas tecnicamente. T038 (medições
+C1) e aceite humano permanecem independentes. Histórico abaixo preserva autoria e estados
+anteriores; resultado vigente na [evidência](evidence/pr46-corrections-2026-10-06.md). Descrição do
+PR aguarda aprovação explícita após rejeição automática; não impede correções de código.
+
 ## Estado da entrega combinada de 06/10/2026 — Conciliação com Agendamentos e gates locais-CLAUDE-Gabriel-Komunick
 
 Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
@@ -182,7 +191,7 @@ duplica eventos ou altera métricas.
       do painel, revogação/interrupção/retentativa. Sem massa maior ou teste de estresse nesta
       rodada; registrar limites da evidência, sem alegar validação da virada real de planilha/grande
       volume.
-- [ ] T039 Executar gates/testes da função no CI e registrar resultados/capturas/limites em
+- [x] T039 Executar gates/testes da função no CI e registrar resultados/capturas/limites em
       `specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md` (novo); marcar conclusão
       somente com evidência, preservando tarefas institucionais e históricas.
 
@@ -369,7 +378,7 @@ explícita: restaurar gráfico e bloco de análise no PDF executivo.
 - [x] T044 Restaurar análise e gráfico mensal autorizado no PDF executivo, conservando colunas
       tabulares; spool temporário com remoção e paginação; funil calculado uma vez. Regressores de
       writer e PostgreSQL preparados; PDF sintético renderizado e sete páginas conferidas.
-- [ ] T045 Publicar correções na mesma branch aberta, confirmar quality/browser/security da ponta
+- [x] T045 Publicar correções na mesma branch aberta, confirmar quality/browser/security da ponta
       entregue e registrar resultados na evidência, incluindo SQL real e E2E novo. _Primeiro CI
       b67c30b: quality passou, incluindo PostgreSQL/build; browser passou o fluxo novo de
       PDF/retentativa, mas o locator de negação era ambíguo (corrigido). Security bloqueou Payload;
@@ -381,7 +390,7 @@ continuam independentes; checkpoints abaixo são históricos.
 Commit inicial da funcionalidade:9995361; ajuste E2E0775bf3 aprovado no CI37032398048. A correção
 dependente do modelo novo permanece em commit local separado; CI da base antiga não a comprova.
 
-- [ ] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
+- [x] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
       inteiros: manter registry com os três grupos de adaptadores, ExportScreen aditivo,
       reportSources.bookings com procedure_id/data de referência/profissional opcional e cinco
       estados, helpers do resumo e gerador agrupado. Conferir hashes e executar regressões reais de
