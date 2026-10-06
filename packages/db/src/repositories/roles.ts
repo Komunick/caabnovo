@@ -54,6 +54,22 @@ export async function findRoleById(
   return result.rows[0] ? mapRole(result.rows[0]) : null;
 }
 
+export async function findActiveRoleByCode(
+  connection: DatabaseConnection,
+  code: string,
+): Promise<RoleRecord | null> {
+  const result = await connection.query<RoleRow>(
+    `SELECT ${roleSelection}
+     FROM role r
+     LEFT JOIN role_permission rp ON rp.role_id = r.id
+     LEFT JOIN permission p ON p.id = rp.permission_id
+     WHERE r.code = $1 AND r.status = 'active' AND r.deleted_at IS NULL
+     GROUP BY r.id`,
+    [code],
+  );
+  return result.rows[0] ? mapRole(result.rows[0]) : null;
+}
+
 export async function listActiveRoles(connection: DatabaseConnection): Promise<RoleRecord[]> {
   const result = await connection.query<RoleRow>(
     `SELECT ${roleSelection}

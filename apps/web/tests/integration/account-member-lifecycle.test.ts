@@ -444,6 +444,12 @@ it("combines dates, role, status, pending deletion and pagination filters", asyn
   });
   await admin.query(`UPDATE "user" SET created_at='2018-01-15T02:30:00Z' WHERE id=$1`, [user.id]);
   await admin.query(`UPDATE "user" SET created_at='2018-01-15T03:00:00Z' WHERE id=$1`, [second.id]);
+  // New accounts start with the base role; revoke it so the "no role" filter has accounts to find.
+  await admin.query(
+    `UPDATE user_role SET revoked_at=now(),revocation_origin='system',revocation_reason='Conta sem cargo para o filtro'
+     WHERE user_id=ANY($1) AND revoked_at IS NULL`,
+    [[user.id, second.id]],
+  );
   const query = {
     q: "Lifecycle",
     roleId: "none",

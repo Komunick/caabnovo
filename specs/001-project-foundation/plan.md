@@ -1,5 +1,15 @@
 # Implementation Plan: Fundação, Colaboradores e infraestrutura de exportação
 
+## Correção do seletor no cadastro delegado — 06/10/2026-CODEX-mafaltti
+
+Trocar a condição da página de `roles:read` para `roles:grant`, sem alterar RoleOptions, UserForm ou
+createUser: lista vazia remove o controle, FormData envia `roleIds: []` e o servidor aplica o cargo
+base. Provar a divergência com regressão da página antes/depois e validar o perfil Colaborador
+delegado no navegador, com cadastro 201, cargo/auditoria no PostgreSQL e tentativa explícita 403 sem
+persistência. Manter teste do Administrador, Axe e capturas 1280/claro, 390/escuro e 320/claro.
+Guia: funções iniciais somente se permitidas, mesma ordem/controles e preservação da edição. CI e
+revisão humana continuam distintos; não iniciar serviços locais.
+
 ## Conciliação da decisão de cargo base — 06/10/2026
 
 Atualização documental por CODEX/mafaltti, login Danilo-Komunick, identidade consultada nesta sessão

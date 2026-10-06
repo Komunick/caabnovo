@@ -1,5 +1,15 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Cadastro delegado sem concessão de cargo — 06/10/2026-CODEX-mafaltti
+
+Correção do achado MEDIUM do PR45, mantendo a decisão de cargo base já contratada. A página
+`/users/new` oferece cargos iniciais somente com `roles:grant`; `roles:read` permite consulta e não
+autoriza atribuição. Perfil com `users:read`, `users:create` e `roles:read`, sem `roles:grant`,
+cadastra pela interface com `roleIds: []`; o servidor aplica Colaborador. Cargo explicitamente
+enviado por esse perfil continua negado, sem criar conta. Administrador conserva o seletor e sua
+atribuição explícita. Preservar guardas de consulta/criação, rascunhos, contatos e auditoria;
+nenhuma nova permissão ou mudança de concessão por esta correção.
+
 ## Conciliação da decisão de cargo base — 06/10/2026
 
 Atualização documental por CODEX/mafaltti, login Danilo-Komunick, identidade consultada nesta sessão

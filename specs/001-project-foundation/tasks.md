@@ -1,5 +1,25 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Correção do cadastro delegado — 06/10/2026-CODEX-mafaltti
+
+- [x] CB09 Corrigir a disponibilidade do seletor inicial para `roles:grant` e preparar regressão de
+      página e jornada do perfil com criação/consulta de cargos sem concessão. Unidade comprovou a
+      falha antes e passou depois; 23 testes de página/usuários aprovados, tipos/lint/formato
+      aprovados. A nova jornada de navegador e suas evidências serão verificadas no CI da ponta
+      publicada, com resultado no PR45 e na
+      [evidência](evidence/default-collaborator-role-2026-10-05.md). Não atribuir esse fechamento de
+      implementação a CB06, AC-T006 ou homologação humana.
+
+## Conciliação após PR42/43 — 06/10/2026-CODEX-mafaltti
+
+Pedido atual: resolver os conflitos do PR45 com dev `ea0bc3b`, que já contém PR42/43. Sequência
+0031–0036 preservada nos testes de migration e no upgrade de Agendamentos, incluindo 0035 desta
+entrega. Código de cargo base/G02/G03 e migrations preservados; source-map-js 1.2.2 recebido de dev.
+Contrato e bloco CB conciliados com P01/AC-T005 encerrada, sem transformar cargo base em obrigação
+permanente após revogação. Versão e CI da composição ficam no corpo do PR45 e na
+[evidência existente](evidence/default-collaborator-role-2026-10-05.md). CB06 e AC-T006 permanecem
+pendentes; nenhum banco de uso, serviço ou merge de PR por esta conciliação.
+
 ## Revisão de aceite de acessos — 02/10/2026
 
 Escopo: Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir
@@ -1167,3 +1187,38 @@ de aplicação/E2E igual entre esses commits; a diferença corrige somente a fix
 no teste de integração. Capturas1280/390px revisadas. Usuário autorizou novamente o PR
 explicitamente; PR39 reaberto e atualizado, sem aprovação ou merge. Ver complemento de promoção nas
 [evidências](evidence/single-role-2026-09-22-validation.md).
+
+## Cargo base de Colaboradores — 05/10/2026
+
+Decisão do usuário: contas existentes sem cargo migram para Colaborador preservando acessos; contas
+novas sem cargo informado nascem Colaborador, sem opção "Sem cargo". Contrato em
+[roles.md](contracts/roles.md#cargo-base--decisão-de-05102026). CB01 a CB06 são de Definir o
+tratamento das contas atualmente sem cargo (CAAB-47), subtarefa de Gerenciar cargos e acessos de
+Administrador, Gestor e Colaborador (CAAB-19); CB07 e CB08 são deste último. CB01 a CB06
+correspondem à decisão P01/AC-T005, encerrada em 05/10 e conciliada documentalmente no PR #42, já
+integrado. CB06 e AC-T006 conservam seus gates próprios; a decisão não equivale a aplicação da
+migration, integração deste PR ou homologação.
+
+- [x] CB01 (CAAB-47) Registrar a decisão no contrato de cargos.
+- [x] CB02 (CAAB-47) Migration 0035: origem de concessão do sistema, cargo base para contas sem
+      cargo em vigor, recusa se o cargo base tiver permissões, auditoria de sistema. Teste de
+      migration aprovado no CI.
+- [x] CB03 (CAAB-47) `createUser`: aplicar o cargo base sem `roles:grant`, recusar base ausente/com
+      permissões, auditar. Testes de integração aprovados no CI.
+- [x] CB04 (CAAB-47) Formulário: pré-selecionar Colaborador e remover "Sem cargo". Cinco testes de
+      componente aprovados, e o E2E do filtro "Sem cargo" aprovado no CI.
+- [x] CB05 (CAAB-47) Validar no CI (integração e E2E) a versão publicada e registrar a evidência
+      final. Aprovado em de3dade (execução 37340177136) e na ponta final 986fd4a (execução
+      37342044379): security, quality e browser. Histórico das falhas anteriores na evidência do
+      cargo base.
+- [ ] CB06 (CAAB-47) Revisão humana antes de aplicar a migration em qualquer banco de uso: conferir
+      a lista de contas sem cargo e confirmar que Colaborador não tem permissões nesse banco.
+- [x] CB07 (CAAB-19) G02 (corresponde a AC-T003): Colaborador real recebe a delegação do Gestor,
+      executa a escrita, o Gestor segue negado e as chamadas forjadas são recusadas sem alterar
+      estado. E2E e integração aprovados no CI. Evidência em
+      [access-g02-g03-2026-10-05.md](evidence/access-g02-g03-2026-10-05.md).
+- [x] CB08 (CAAB-19) G03 (corresponde a AC-T004): expiração de sessão ou cargo durante a espera por
+      lock sem persistência nem auditoria de sucesso. Teste escrito antes da correção e visto falhar
+      (7 de 32) no CI, depois aprovado; corrige `initializeUserPassword` e relê a autoridade após
+      esperas tardias. Gravidade baixa; achados fora do escopo registrados na mesma evidência. QA
+      humano e AC-T006 continuam pendentes.
