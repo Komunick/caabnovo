@@ -18,6 +18,8 @@ overrides:
   "brace-expansion@5": "5.0.12"
   # Sass supports Chokidar 4; remove the vulnerable braces chain (GHSA-vfj7-8cjw-p6xm).
   "@payloadcms/next@3.89.0>sass": "1.79.4"
+  # Indexed source-map offset validation (GHSA-68fv-2mgg-jv7q); keep the patched 1.2 line.
+  "source-map-js": "1.2.2"
 
 allowBuilds:
   cpu-features: false
