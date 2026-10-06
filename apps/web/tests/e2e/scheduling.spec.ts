@@ -109,7 +109,7 @@ test("configure and manage a real reservation through the panel at 390px, with e
     await keyboardActivate(
       page,
       page.getByRole("button", {
-        name: /^Criar (unidade|serviço|procedimento|profissional|habilitação)$/,
+        name: /^(Criar (unidade|procedimento|profissional|habilitação)|Salvar)$/,
       }),
     );
     await expect(page.getByText("Registro salvo.", { exact: true })).toBeVisible();
@@ -147,7 +147,14 @@ test("configure and manage a real reservation through the panel at 390px, with e
     path: testInfo.outputPath("scheduling-combobox-mobile-light.png"),
     fullPage: true,
   });
+  await page.bringToFront();
+  await page.keyboard.press("Tab");
+  const unitOptions = page.getByRole("listbox", { name: "Opções de unidade" });
+  await expect(unitOptions).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(unitOptions).toHaveAttribute("aria-activedescendant", /.+/);
   await page.keyboard.press("Escape");
+  await expect(page.getByRole("combobox", { name: "Unidade", exact: true })).toBeFocused();
   await save();
   await open("procedures");
   await page.getByLabel("Nome", { exact: true }).fill(procedure);
@@ -350,6 +357,37 @@ test("configure and manage a real reservation through the panel at 390px, with e
   await lifecycleDb.connect();
   try {
     await lifecycleDb.query(
+      "UPDATE member SET administrative_status='blocked',administrative_changed_at=now(),administrative_changed_by=(SELECT id FROM \"user\" WHERE email=$2) WHERE id=$1",
+      [memberId, syntheticUsers.administrator.email],
+    );
+    await page.reload();
+    await expect(
+      page.getByRole("region", { name: "Beneficiário bloqueado", exact: true }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Remarcar", exact: true })).toBeDisabled();
+    await page.goto(`/scheduling?date=${date}&q=${encodeURIComponent(member)}&view=list`);
+    await expect(
+      page.getByRole("link", { name: new RegExp(`Ver reserva de ${member}`) }),
+    ).toContainText("Beneficiário bloqueado");
+    await page.goto(`/scheduling?date=${date}&q=${encodeURIComponent(member)}&view=day`);
+    await expect(
+      page
+        .getByRole("region", { name: "Calendário de reservas" })
+        .getByRole("link", { name: /Beneficiário bloqueado/ }),
+    ).toBeVisible();
+    await page.goto(detailUrl);
+    await lifecycleDb.query("UPDATE member SET administrative_status='active' WHERE id=$1", [
+      memberId,
+    ]);
+    await page.reload();
+    await expect(
+      page.getByRole("region", { name: "Beneficiário bloqueado", exact: true }),
+    ).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Remarcar", exact: true })).toBeEnabled();
+    await lifecycleDb.query("UPDATE member SET administrative_status='blocked' WHERE id=$1", [
+      memberId,
+    ]);
+    await lifecycleDb.query(
       "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
       [memberId],
     );
@@ -359,6 +397,9 @@ test("configure and manage a real reservation through the panel at 390px, with e
   await page.reload();
   const deletionNotice = page.getByRole("region", { name: "Associado excluído", exact: true });
   await expect(deletionNotice).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Beneficiário bloqueado", exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Remarcar", exact: true })).toBeDisabled();
   await keyboardActivate(
     page,
@@ -396,7 +437,10 @@ test("configure and manage a real reservation through the panel at 390px, with e
   });
   await restoreDb.connect();
   try {
-    await restoreDb.query("UPDATE member SET deletion_effective_at=NULL WHERE id=$1", [memberId]);
+    await restoreDb.query(
+      "UPDATE member SET deletion_effective_at=NULL,administrative_status='active' WHERE id=$1",
+      [memberId],
+    );
   } finally {
     await restoreDb.end();
   }

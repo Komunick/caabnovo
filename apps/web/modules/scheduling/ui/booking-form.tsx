@@ -7,7 +7,12 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { SchedulingBooking, SchedulingSlot } from "@caab/contracts";
+import {
+  schedulingPolicySchema,
+  type SchedulingPolicy,
+  type SchedulingBooking,
+  type SchedulingSlot,
+} from "@caab/contracts";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { schedulingDate } from "../availability";
@@ -46,25 +51,64 @@ export function BookingForm({
   );
   const [date, setDate] = useDraftState(
     "booking-form:date",
-    booking ? schedulingDate(booking.startsAt) : schedulingDate(),
+    booking?.startsAt ? schedulingDate(booking.startsAt) : schedulingDate(),
   );
   const [startsAt, setStartsAt] = useDraftState("booking-form:startsAt", "");
   const canWrite = useModulePermission("scheduling:write");
   const mutation = useSchedulingMutation("booking-form");
+  const settings = useSchedulingData<{
+    policy: SchedulingPolicy;
+    publishedRevision: { policy: SchedulingPolicy } | null;
+  }>(serviceId ? `services/${serviceId}/policy` : null);
+  const policy = schedulingPolicySchema.parse(
+    settings.data?.publishedRevision?.policy ?? settings.data?.policy ?? {},
+  );
+  const [anyProfessional, setAnyProfessional] = useDraftState(
+    "booking-form:anyProfessional",
+    false,
+  );
+  const automatic =
+    policy.mode === "professional" && (!policy.allowProfessionalChoice || anyProfessional);
+  const professionals = useSchedulingData<{ total: number }>(
+    procedureId && policy.mode === "professional"
+      ? `assignments?active=true&procedureId=${procedureId}&pageSize=1`
+      : null,
+  );
+  const hasProfessionals = (professionals.data?.total ?? 0) > 0;
   const slots = useSchedulingData<{ items: SchedulingSlot[]; durationMinutes: number }>(
-    assignmentId && date
-      ? `availability?assignmentId=${assignmentId}&date=${date}${booking ? `&excludeBookingId=${booking.id}` : ""}`
+    procedureId &&
+      settings.data &&
+      date &&
+      (policy.mode === "capacity" || automatic || assignmentId)
+      ? `availability?procedureId=${procedureId}${assignmentId && !automatic && policy.mode === "professional" ? `&assignmentId=${assignmentId}` : ""}&date=${date}${memberId ? `&beneficiaryId=${memberId}` : ""}${booking ? `&excludeBookingId=${booking.id}` : ""}`
       : null,
   );
   async function submit(event: FormEvent) {
     event.preventDefault();
     const saved = await mutation.mutate<SchedulingBooking>(
-      booking ? `bookings/${booking.id}/reschedule` : "bookings",
+      booking
+        ? `bookings/${booking.id}/${booking.status === "pending_approval" ? "pending" : booking.status === "awaiting_new_time" ? "resume" : "reschedule"}`
+        : "bookings",
       "POST",
       {
-        assignmentId,
+        procedureId,
+        ...(slots.data?.items.find((slot) => slot.startsAt === startsAt)?.assignmentId
+          ? {
+              assignmentId: slots.data.items.find((slot) => slot.startsAt === startsAt)!
+                .assignmentId,
+            }
+          : {}),
         startsAt,
-        ...(booking ? { expectedVersion: baseline!.version } : { memberId }),
+        ...(booking
+          ? {
+              expectedVersion: baseline!.version,
+              ...(booking.status === "pending_approval" &&
+              !booking.processKind &&
+              memberId !== booking.memberId
+                ? { memberId }
+                : {}),
+            }
+          : { memberId }),
       },
     );
     if (saved) {
@@ -80,15 +124,32 @@ export function BookingForm({
         <div>
           <h2>Dados da reserva</h2>
           {booking ? (
-            <p>
-              <strong>Beneficiário:</strong> {booking.memberName}
-            </p>
+            <div>
+              <p>
+                <strong>Beneficiário:</strong> {booking.memberName}
+              </p>
+              {booking.status === "pending_approval" && !booking.processKind && (
+                <Choice
+                  label="Transferir para dependente (opcional)"
+                  resource="beneficiaries"
+                  filters={`holderId=${booking.memberId}`}
+                  value={memberId === booking.memberId ? "" : memberId}
+                  onChange={(value) => {
+                    setMemberId(value || booking.memberId);
+                    setStartsAt("");
+                  }}
+                />
+              )}
+            </div>
           ) : (
             <Choice
               label="Beneficiário"
               resource="beneficiaries"
               value={memberId}
-              onChange={setMemberId}
+              onChange={(value) => {
+                setMemberId(value);
+                setStartsAt("");
+              }}
               required
             />
           )}
@@ -102,6 +163,7 @@ export function BookingForm({
               filters="active=true"
               selectedLabel={booking?.unitName}
               value={unitId}
+              disabled={!!booking}
               required
               onChange={(value) => {
                 setUnitId(value);
@@ -115,9 +177,9 @@ export function BookingForm({
               key={`service-${unitId}`}
               label="Serviço"
               resource="services"
-              filters={`active=true&unitId=${unitId}`}
+              filters={`catalogView=booking&active=true&unitId=${unitId}${memberId ? `&beneficiaryId=${memberId}` : ""}`}
               selectedLabel={booking?.serviceName}
-              disabled={!unitId}
+              disabled={!unitId || !!booking}
               value={serviceId}
               required
               onChange={(value) => {
@@ -128,11 +190,27 @@ export function BookingForm({
                 setStartsAt("");
               }}
             />
+            {policy.mode === "professional" &&
+              policy.allowProfessionalChoice &&
+              hasProfessionals && (
+                <label className="checkbox-field">
+                  <DraftInput
+                    type="checkbox"
+                    checked={anyProfessional}
+                    onChange={(event) => {
+                      setAnyProfessional(event.target.checked);
+                      setAssignmentId("");
+                      setStartsAt("");
+                    }}
+                  />
+                  Qualquer profissional disponível
+                </label>
+              )}
             <Choice
               key={`procedure-${serviceId}`}
               label="Procedimento"
               resource="procedures"
-              filters={`active=true&serviceId=${serviceId}`}
+              filters={`catalogView=booking&active=true&serviceId=${serviceId}`}
               selectedLabel={booking?.procedureName}
               disabled={!serviceId}
               value={procedureId}
@@ -143,20 +221,25 @@ export function BookingForm({
                 setStartsAt("");
               }}
             />
-            <Choice
-              key={`assignment-${procedureId}`}
-              label="Profissional habilitado"
-              resource="assignments"
-              filters={`active=true&procedureId=${procedureId}&unitId=${unitId}`}
-              selectedLabel={booking?.professionalName}
-              disabled={!procedureId}
-              value={assignmentId}
-              required
-              onChange={(value) => {
-                setAssignmentId(value);
-                setStartsAt("");
-              }}
-            />
+            {policy.mode === "professional" &&
+              policy.allowProfessionalChoice &&
+              hasProfessionals &&
+              !anyProfessional && (
+                <Choice
+                  key={`assignment-${procedureId}`}
+                  label="Profissional habilitado"
+                  resource="assignments"
+                  filters={`active=true&procedureId=${procedureId}&unitId=${unitId}`}
+                  selectedLabel={booking?.professionalName ?? undefined}
+                  disabled={!procedureId}
+                  value={assignmentId}
+                  required
+                  onChange={(value) => {
+                    setAssignmentId(value);
+                    setStartsAt("");
+                  }}
+                />
+              )}
           </div>
         </section>
         <section aria-labelledby="booking-time-heading" className="scheduling-form">
@@ -177,7 +260,7 @@ export function BookingForm({
             Horário de Salvador (America/Bahia). A disponibilidade será conferida novamente ao
             confirmar.
           </p>
-          {assignmentId && date ? (
+          {procedureId && date && (policy.mode === "capacity" || automatic || assignmentId) ? (
             slots.data ? (
               <>
                 <FormField id="booking-slot" label="Vaga disponível">
@@ -198,6 +281,7 @@ export function BookingForm({
                     {slots.data.items.map((slot) => (
                       <option key={slot.startsAt} value={slot.startsAt}>
                         {timeLabel(slot.startsAt)} às {timeLabel(slot.endsAt)}
+                        {automatic && slot.professionalName ? ` · ${slot.professionalName}` : ""}
                       </option>
                     ))}
                   </DraftSelect>
@@ -213,11 +297,26 @@ export function BookingForm({
               <DataState error={slots.error} reload={slots.reload} />
             )
           ) : (
-            <p>Selecione a oferta para consultar as vagas.</p>
+            <p>
+              {procedureId && professionals.data && !hasProfessionals
+                ? "Nenhum profissional habilitado. Confira a configuração do serviço e dos horários."
+                : "Selecione a oferta e o profissional, quando necessário, para consultar as vagas."}
+            </p>
           )}
         </section>
       </fieldset>
       {mutation.error && <p role="alert">{mutation.error}</p>}
+      {booking?.status === "scheduled" && (
+        <p>
+          Ao enviar a remarcação, a vaga anterior será liberada e poderá ser ocupada por outra
+          pessoa. Somente a nova vaga ficará reservada.
+        </p>
+      )}
+      <p>
+        {policy.immediateConfirmation
+          ? "A reserva será confirmada imediatamente."
+          : "O pedido ocupará a vaga e aguardará aprovação da equipe."}
+      </p>
       <Button
         intent="primary"
         type="submit"
@@ -228,7 +327,15 @@ export function BookingForm({
           !slots.data?.items.some((slot) => slot.startsAt === startsAt)
         }
       >
-        {mutation.pending ? "Confirmando…" : booking ? "Confirmar remarcação" : "Confirmar reserva"}
+        {mutation.pending
+          ? "Salvando…"
+          : booking?.status === "pending_approval"
+            ? "Salvar pedido"
+            : !policy.immediateConfirmation
+              ? "Enviar pedido"
+              : booking
+                ? "Confirmar remarcação"
+                : "Confirmar reserva"}
       </Button>
     </DraftForm>
   );

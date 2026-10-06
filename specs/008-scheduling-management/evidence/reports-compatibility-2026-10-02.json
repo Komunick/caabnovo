@@ -1,0 +1,90 @@
+{
+  "capturedAt": "2026-10-02T15:23:11.206163+00:00",
+  "worktrees": {
+    "scheduling": {
+      "head": "4e9abac729418453ed20bbef466cf1ded39711c7",
+      "status": " M specs/008-scheduling-management/checkpoint.md\n M specs/008-scheduling-management/contracts/admin.md\n M specs/008-scheduling-management/contracts/channels.md\n M specs/008-scheduling-management/plan.md\n M specs/008-scheduling-management/spec.md\n M specs/008-scheduling-management/tasks.md\n?? docs/agentcache.md\n?? specs/008-scheduling-management/evidence/resume-2026-10-02.md\n",
+      "files": {
+        "apps/web/modules/exports/runtime.ts": "555c4977e6af080b4448896ad6773284d00b3fdbf88411352b8bbd044967b27b",
+        "apps/web/modules/exports/ui/export-screen.tsx": "ff465480b83acf49dca1fb410ed9522d7a4b9b62bb0de0b8de8b6e23a9139092",
+        "apps/web/modules/exports/catalog.ts": "854920aeba12b64aaaf7af84be16f325396ed13f75f3c05cad5c23352305f16d",
+        "apps/web/modules/exports/query.ts": "59745818eba43247165b15e10b0bbfd44868d825b33145629cf2ecb6f613c664",
+        "apps/web/modules/reports/export-adapter.ts": "95e1febcfe606036af6843e90777264325a65ed190bc7825adf8f7ed97414af7",
+        "apps/web/modules/reports/overview-export-adapter.ts": null,
+        "apps/web/modules/reports/ui/report-export-screen.tsx": null,
+        "apps/web/modules/scheduling/export-adapter.ts": "02c0671264a01879496f008306915a14d1e6f920201d0c8a18659b1a0a02739d",
+        "apps/web/modules/scheduling/ui/export-screen.tsx": "62e0c2931c6164f56421a93a9a95daa8d677d37add50d14957558a7981420568",
+        "packages/contracts/src/reports.ts": "fd0007878cf14eab8c74f274e83865b405473816b7776ce2d371015eb016e4fe",
+        "packages/db/src/repositories/reports.ts": "dbe9e56b098d5f0ea6b2a992bc4211cea5d6e63db56c02528421ea3b994a99a7",
+        "packages/db/src/repositories/report-summary.ts": "09f34c5c302ad029c8b78451f6197850ce60b906266b91dbcf67f7a18a792138",
+        "packages/db/src/repositories/report-overview-export.ts": null
+      }
+    },
+    "reports": {
+      "head": "748539d28ec7c94af5ff3ca7a37c46c73ae102e4",
+      "status": " M apps/web/app/(admin)/reports/exportar/page.tsx\n M apps/web/modules/exports/ui/export-screen.tsx\n M apps/web/modules/reports/export-adapter.test.ts\n M apps/web/modules/reports/export-adapter.ts\n M apps/web/modules/reports/ui/client.test.ts\n M apps/web/modules/reports/ui/client.ts\n M apps/web/modules/reports/ui/reports-page.test.tsx\n M apps/web/modules/reports/ui/reports-page.tsx\n M apps/web/tests/e2e/reports.spec.ts\n M apps/web/tests/integration/report-exports.test.ts\n M packages/contracts/src/reports.ts\n M packages/contracts/tests/reports.test.ts\n M packages/db/src/repositories/report-analytics.ts\n M packages/db/src/repositories/report-summary.ts\n M packages/db/src/repositories/reports.ts\n M specs/010-reports-analytics/contracts/exports.md\n M specs/010-reports-analytics/plan.md\n M specs/010-reports-analytics/research.md\n M specs/010-reports-analytics/spec.md\n M specs/010-reports-analytics/tasks.md\n?? apps/web/modules/reports/overview-export-adapter.test.ts\n?? apps/web/modules/reports/overview-export-adapter.ts\n?? apps/web/modules/reports/ui/report-export-screen.tsx\n?? packages/db/src/repositories/report-overview-export.ts\n?? specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md\n?? specs/010-reports-analytics/evidence/reports-complete-2026-10-02-manifest.json\n",
+      "files": {
+        "apps/web/modules/exports/runtime.ts": "7132944ebfc70763b947716171ef266e741c13fa2cf40c91e6182585444eefa4",
+        "apps/web/modules/exports/ui/export-screen.tsx": "ff465480b83acf49dca1fb410ed9522d7a4b9b62bb0de0b8de8b6e23a9139092",
+        "apps/web/modules/exports/catalog.ts": "854920aeba12b64aaaf7af84be16f325396ed13f75f3c05cad5c23352305f16d",
+        "apps/web/modules/exports/query.ts": "59745818eba43247165b15e10b0bbfd44868d825b33145629cf2ecb6f613c664",
+        "apps/web/modules/reports/export-adapter.ts": "f47ba6391eaaaabd03dc27f857d50e6bc500f421dafa9630eebe7fc32b2a5725",
+        "apps/web/modules/reports/overview-export-adapter.ts": "eb45c267095391d1d1e039c3d3c09dbc603b0bf5c1b4236716be2e437ccf42bc",
+        "apps/web/modules/reports/ui/report-export-screen.tsx": "1fe31714145064fed9ab0b3a188974d6eb4cfc8b46d158be760b3ea9a83deb88",
+        "apps/web/modules/scheduling/export-adapter.ts": null,
+        "apps/web/modules/scheduling/ui/export-screen.tsx": null,
+        "packages/contracts/src/reports.ts": "2db6ad67d55e9baf2a56e12628fbc31a5169482028ba01789a4b7e60bd12b07c",
+        "packages/db/src/repositories/reports.ts": "2bb8056115adfebd5de1a0e633f9f652e28d47ddec27ef4b7b3422ca52dcdc76",
+        "packages/db/src/repositories/report-summary.ts": "c34d8989ad4b54d6d48f5df0c440025b336a29051c24833cb784d7edd3fa07aa",
+        "packages/db/src/repositories/report-overview-export.ts": "c976296a2c6cb116c2eec9a4413b164e46990609a2d015b7c385154dc0804d46"
+      }
+    }
+  },
+  "verifiedAt": "2026-10-02T15:25:31.988316+00:00",
+  "end": {
+    "scheduling": {
+      "head": "4e9abac729418453ed20bbef466cf1ded39711c7",
+      "status": " M apps/web/tests/integration/scheduling-workflow.test.ts\n M packages/db/src/repositories/report-summary.ts\n M specs/008-scheduling-management/checkpoint.md\n M specs/008-scheduling-management/contracts/admin.md\n M specs/008-scheduling-management/contracts/channels.md\n M specs/008-scheduling-management/plan.md\n M specs/008-scheduling-management/spec.md\n M specs/008-scheduling-management/tasks.md\n?? docs/agentcache.md\n?? specs/008-scheduling-management/evidence/resume-2026-10-02.md\n",
+      "files": {
+        "apps/web/modules/exports/runtime.ts": "555c4977e6af080b4448896ad6773284d00b3fdbf88411352b8bbd044967b27b",
+        "apps/web/modules/exports/ui/export-screen.tsx": "ff465480b83acf49dca1fb410ed9522d7a4b9b62bb0de0b8de8b6e23a9139092",
+        "apps/web/modules/exports/catalog.ts": "854920aeba12b64aaaf7af84be16f325396ed13f75f3c05cad5c23352305f16d",
+        "apps/web/modules/exports/query.ts": "59745818eba43247165b15e10b0bbfd44868d825b33145629cf2ecb6f613c664",
+        "apps/web/modules/reports/export-adapter.ts": "95e1febcfe606036af6843e90777264325a65ed190bc7825adf8f7ed97414af7",
+        "apps/web/modules/reports/overview-export-adapter.ts": null,
+        "apps/web/modules/reports/ui/report-export-screen.tsx": null,
+        "apps/web/modules/scheduling/export-adapter.ts": "02c0671264a01879496f008306915a14d1e6f920201d0c8a18659b1a0a02739d",
+        "apps/web/modules/scheduling/ui/export-screen.tsx": "62e0c2931c6164f56421a93a9a95daa8d677d37add50d14957558a7981420568",
+        "packages/contracts/src/reports.ts": "fd0007878cf14eab8c74f274e83865b405473816b7776ce2d371015eb016e4fe",
+        "packages/db/src/repositories/reports.ts": "dbe9e56b098d5f0ea6b2a992bc4211cea5d6e63db56c02528421ea3b994a99a7",
+        "packages/db/src/repositories/report-summary.ts": "b393c319a893ab2b114d366f99752a7ada0b09ecad8e086a32e8e073fefb30a4",
+        "packages/db/src/repositories/report-overview-export.ts": null
+      },
+      "changedDuringReview": ["packages/db/src/repositories/report-summary.ts"]
+    },
+    "reports": {
+      "head": "748539d28ec7c94af5ff3ca7a37c46c73ae102e4",
+      "status": " M apps/web/app/(admin)/reports/exportar/page.tsx\n M apps/web/modules/exports/ui/export-screen.tsx\n M apps/web/modules/reports/export-adapter.test.ts\n M apps/web/modules/reports/export-adapter.ts\n M apps/web/modules/reports/ui/client.test.ts\n M apps/web/modules/reports/ui/client.ts\n M apps/web/modules/reports/ui/reports-page.test.tsx\n M apps/web/modules/reports/ui/reports-page.tsx\n M apps/web/tests/e2e/reports.spec.ts\n M apps/web/tests/integration/report-exports.test.ts\n M packages/contracts/src/reports.ts\n M packages/contracts/tests/reports.test.ts\n M packages/db/src/repositories/report-analytics.ts\n M packages/db/src/repositories/report-summary.ts\n M packages/db/src/repositories/reports.ts\n M specs/010-reports-analytics/contracts/exports.md\n M specs/010-reports-analytics/plan.md\n M specs/010-reports-analytics/research.md\n M specs/010-reports-analytics/spec.md\n M specs/010-reports-analytics/tasks.md\n?? apps/web/modules/reports/overview-export-adapter.test.ts\n?? apps/web/modules/reports/overview-export-adapter.ts\n?? apps/web/modules/reports/ui/report-export-screen.tsx\n?? packages/db/src/repositories/report-overview-export.ts\n?? specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md\n?? specs/010-reports-analytics/evidence/reports-complete-2026-10-02-manifest.json\n",
+      "files": {
+        "apps/web/modules/exports/runtime.ts": "7132944ebfc70763b947716171ef266e741c13fa2cf40c91e6182585444eefa4",
+        "apps/web/modules/exports/ui/export-screen.tsx": "ff465480b83acf49dca1fb410ed9522d7a4b9b62bb0de0b8de8b6e23a9139092",
+        "apps/web/modules/exports/catalog.ts": "854920aeba12b64aaaf7af84be16f325396ed13f75f3c05cad5c23352305f16d",
+        "apps/web/modules/exports/query.ts": "59745818eba43247165b15e10b0bbfd44868d825b33145629cf2ecb6f613c664",
+        "apps/web/modules/reports/export-adapter.ts": "f47ba6391eaaaabd03dc27f857d50e6bc500f421dafa9630eebe7fc32b2a5725",
+        "apps/web/modules/reports/overview-export-adapter.ts": "eb45c267095391d1d1e039c3d3c09dbc603b0bf5c1b4236716be2e437ccf42bc",
+        "apps/web/modules/reports/ui/report-export-screen.tsx": "1fe31714145064fed9ab0b3a188974d6eb4cfc8b46d158be760b3ea9a83deb88",
+        "apps/web/modules/scheduling/export-adapter.ts": null,
+        "apps/web/modules/scheduling/ui/export-screen.tsx": null,
+        "packages/contracts/src/reports.ts": "2db6ad67d55e9baf2a56e12628fbc31a5169482028ba01789a4b7e60bd12b07c",
+        "packages/db/src/repositories/reports.ts": "2bb8056115adfebd5de1a0e633f9f652e28d47ddec27ef4b7b3422ca52dcdc76",
+        "packages/db/src/repositories/report-summary.ts": "c34d8989ad4b54d6d48f5df0c440025b336a29051c24833cb784d7edd3fa07aa",
+        "packages/db/src/repositories/report-overview-export.ts": "c976296a2c6cb116c2eec9a4413b164e46990609a2d015b7c385154dc0804d46"
+      },
+      "changedDuringReview": []
+    }
+  },
+  "localCorrectionSha256": {
+    "packages/db/src/repositories/report-summary.ts": "b393c319a893ab2b114d366f99752a7ada0b09ecad8e086a32e8e073fefb30a4",
+    "apps/web/tests/integration/scheduling-workflow.test.ts": "d118bc515083c001b6bd1858694a9cd2a0c6ba5a4eacd52205fcdfee92c10b60"
+  }
+}

@@ -1,4 +1,5 @@
 import { prepareScheduledMessages } from "./jobs/prepare-messages.js";
+import { registerSchedulingAbsenceFinalization } from "./jobs/finalize-absences.js";
 import { runReportExport } from "./jobs/report-export.js";
 import { reportJobSchema } from "@caab/contracts";
 import { loadServerEnv, loadWorkspaceEnv } from "@caab/config";
@@ -48,6 +49,7 @@ await boss.work(QUEUES.messagePreparation, async () => {
   await prepareScheduledMessages(database.pool);
 });
 await boss.schedule(QUEUES.messagePreparation, "* * * * *", {});
+await registerSchedulingAbsenceFinalization(boss, database.pool);
 
 await boss.work(QUEUES.newsPublication, async (jobs) => {
   const data = jobs[0]?.data;

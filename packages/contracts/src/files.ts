@@ -5,6 +5,8 @@ export const IMAGE_FILE_ACCEPT = ".jpg,.jpeg,.png,image/jpeg,image/png";
 export const DOCUMENT_FILE_ACCEPT = `${IMAGE_FILE_ACCEPT},.pdf,application/pdf`;
 
 export const MAX_UPLOAD_SIZE_BYTES = 25 * 1024 * 1024;
+// Private scheduling evidence is isolated from the general member document collection.
+export const SCHEDULING_ABSENCE_EVIDENCE_OWNER = "scheduling_absence_evidence";
 export const uploadMimeSchema = z.enum(["application/pdf", "image/jpeg", "image/png"]);
 export const checksumSha256Schema = z.string().regex(/^[a-f0-9]{64}$/);
 
