@@ -1,5 +1,107 @@
 # Modelo de dados — primeira entrega
 
+## Checkpoint administrativo — 02/10/2026-CODEX-Gabriel-Komunick
+
+O schema administrativo vigente em b676974 é0032_scheduling_administrative_workflow, seguido de
+0033/0034 para faltas/autoria de sistema. Aceita pending_approval e campos opcionais conforme o
+contrato admin e foi validado no CI37037047877; T107/T039 concluídos tecnicamente. Propostas abaixo
+sobre0032_scheduling_channels/schema sem NULL são históricas e não instruções para criar ou
+reescrever migrations. App/site permanecem adiados. A correção de fechamento isola novos
+comprovantes por owner_type=scheduling_absence_evidence no campo textual existente de stored_file,
+sem nova migration. Comprovantes legados vinculados também ficam fora do acervo geral.
+[Evidência de revisão e limites](evidence/closeout-review-2026-10-02.md).
+
+## Modelo implementado localmente — falta e bloqueio temporário, 28/09/2026
+
+BF-FR-01–06/BF-D01–05 de [spec.md](spec.md) orientam T091, autorizado a implementar a persistência
+confirmada em paralelo ao clarify. Distinguir falta registrada, restrição individual, oportunidade
+de resposta de sete dias desde o registro, efetivação sem pedido, pedido tempestivo em análise,
+decisão e cancelamentos decorrentes. Preservar fonte/autor/instantes e histórico: registro da falta
+inicia os 30 dias; efetivação e decisão não reiniciam esse prazo. Preservar reservas durante
+oportunidade de resposta e análise, mantendo-as válidas para comparecimento e atendimento normal.
+Atendimento já realizado não é convertido retroativamente em cancelamento pela decisão sobre a
+falta. Rejeição antes do fim dos 30 dias deve vincular a decisão aos cancelamentos imediatos das
+reservas futuras no período, mantendo o término original da restrição. Cancelar/liberar ocupação sem
+apagar registros quando aplicável. Registrar os três eventos de e-mail: aviso, envio do pedido e
+decisão. Não propagar à família via bloqueio manual P02. Vincular cada restrição, prazo de sete
+dias, pedido e decisão à respectiva falta. Permitir períodos próprios sobrepostos, sem somar
+automaticamente 30 dias ao término anterior. Aceitação/expiração encerra somente aquela restrição;
+cancelamento identifica a falta que o motivou. Distinguir expiração da restrição e conclusão da
+análise: aos 30 dias encerrar aquela restrição mesmo com pedido pendente, liberando novas reservas
+apenas na ausência de outros impedimentos vigentes; decisão posterior altera histórico, sem
+reiniciar ou prolongar bloqueio. Cada pedido apresentado deve vincular explicação em texto não vazio
+e pelo menos um comprovante, tanto em justificativa quanto em contestação. Preservar vínculo/autoria
+dos anexos e acesso autorizado; detalhar formatos, limites e validação no planejamento, sem arquivos
+completos ou conteúdo sensível na auditoria. Distinguir tipo do pedido e resultado: justificativa
+aceita e contestação aceita compartilham a apresentação **Falta abonada**, mas preservam o tipo nos
+detalhes. Manter decisão, autoria, instantes, registro original e auditoria, inclusive em
+deferimento após expiração; não fundir os tipos de pedido nem apagar a ocorrência. T091 adiciona
+migration 0033_scheduling_absence_penalties.sql; T098 complementa a autoria automática em 0034. Não
+alterar a 0032 nem tratar T078–T086 como implementação desta regra.
+
+Detalhamento físico do incremento:
+
+| Tabela                                 | Responsabilidade e integridade                                                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| scheduling_absence                     | Uma ocorrência por booking_id; member_id individual; recorded_by/at, prazos derivados em 168/720 horas, version e finalized_at. |
+| scheduling_absence_appeal              | Um pedido por ocorrência, kind, texto não vazio, submissor/instante e decisão opcional consistente com decisor/instante.        |
+| scheduling_absence_evidence            | Vínculos únicos aos arquivos privados da pessoa; conteúdo permanece no armazenamento existente.                                 |
+| scheduling_absence_event               | Eventos append-only; projeção mínima sem explicação, nome de arquivo ou conteúdo sensível.                                      |
+| scheduling_absence_notification_intent | Intenção única por evento para aviso, protocolo ou decisão; pending não significa entregue.                                     |
+| scheduling_absence_cancellation        | Vínculo append-only entre ocorrência, reserva e evento de cancelamento; preserva causalidade sem apagar agenda/histórico.       |
+
+Migration 0034 acrescenta a identificação de autoria humana/sistema aos eventos de reserva e falta,
+permitindo actor_id nulo somente para sistema. Autoria histórica permanece humana. O histórico
+consulta autores com LEFT JOIN e identifica os eventos automáticos como Sistema. finalized_at torna
+a efetivação repetível sem duplicar eventos; atraso além dos 30 dias encerra a pendência sem
+cancelar reservas.
+
+Regra adicional confirmada: registrar falta somente após término previsto de compromisso confirmado.
+Cancelamento atinge confirmadas e pendentes com início futuro dentro do período da ocorrência.
+Cancelar também reservas posteriores ao bloqueio é somente possibilidade para discussão futura
+(T097), sem configuração ou código nesta entrega. Não retroagir sobre atendimentos passados nem
+cancelar reservas sem horário.
+
+## Evolução administrativa vigente — 28/09, T080
+
+A prioridade posterior é painel/banco, sem ator externo. Migration implementada localmente
+`0032_scheduling_administrative_workflow.sql` sucede 0031 e substitui a proposta antiga de nome
+`0032_scheduling_channels.sql`; nunca criar ambas. Preservar autoria user nos registros/eventos e
+namespace administrativo de idempotência. Identidade de associado e consumidores externos ficam
+adiados. Mesmas políticas de aprovação, prazo e duas trocas aplicam-se ao operador.
+
+- Serviço: política tipada, revisão publicada separada do rascunho e versão; horários por serviço
+  para capacidade. Unidade conserva funcionamento; equipe vincula user sem conceder permissão.
+- Reserva: procedure_id explícito permite assignment/professional nulos no modo capacidade; modo e
+  duração preservados. scheduled/pending_approval ocupam; cancelled/rejected/awaiting_new_time não
+  ocupam. Intervalo nulo em awaiting_new_time; origem e tentativas ficam no histórico.
+- Processo ativo na própria reserva: tipo voluntário/recuperação, UUID, início original, entrada em
+  análise, contagem confirmada e uso reservado. Uma única linha/proposta vigente por reserva; versão
+  do registro identifica a proposta decidida. Eventos append-only preservam tentativas. Soma
+  confirmadas+reservada <= 2; recuperação nunca reserva utilização. Contadores anteriores
+  desconhecidos não são reconstruídos a partir de eventos de edição.
+- Migração substitui ambas as exclusões GiST por nome dentro da transação. Capacidade tem validação
+  transacional do pico simultâneo em toda a duração [), sob o lock 5010/1 compartilhado com
+  operações de elegibilidade, e proteção no banco. Profissionais e beneficiários preservam exclusão.
+- Bloqueio de recurso/período por indisponibilidade do estabelecimento impede reoferta; recuperação
+  não altera reservas de terceiros. Intenções de aviso são persistidas junto do evento, sem entrega
+  inferida; canais reais permanecem desativados.
+
+Detalhes físicos: scheduling_service.policy/published_revision/published_at/published_by;
+scheduling_service_hours(service_id,weekday,start_local,end_local);
+scheduling_unit_team(unit_id,user_id); scheduling_resource_block(service_id,professional_id
+opcional,starts_at,ends_at,created_by); scheduling_notification_intent(event_id,member_id,kind,
+state,created_at), com unicidade event_id/member_id/kind. Runtime insere/lê intenções, sem poder
+marcar entrega. Estados pending/suppressed/delivered/failed/uncertain não ativam processamento.
+0001–0031 permanecem intactas. A migration 0032 preserva contador desconhecido como NULL; a correção
+0036 o inicializa em zero e incrementa a versão por decisão de 05/10/2026. Novas reservas recebem
+zero. Nova remarcação voluntária em reserva histórica exige conciliação desse contador. Teste de
+upgrade e replay registrado na evidência administrativa de 28/09.
+
+DTOs, calendário, lista, Relatórios e exportação devem representar estados novos e ausência de
+profissional/horário antes de habilitar escrita. A seção histórica abaixo não limita esta evolução
+administrativa; gates de identidade/UI externos aplicam-se somente aos canais futuros.
+
 Migration aditiva 0020_scheduling.sql. Nomes finais conciliados com a base na implementação. Datas
 de reservas em UTC; exibição America/Bahia.
 
@@ -40,18 +142,25 @@ Alteração de jornada/ativação: verificar reservas futuras sob o mesmo lock d
 recusar se houver incompatibilidade. Cancelar libera ocupação, sem excluir. Recursos físicos,
 capacidade de grupo e fila não geram tabelas nesta primeira entrega.
 
-## Modelo vigente do incremento — 21/09/2026
+## Extensões administrativas planejadas — reconciliadas em 28/09/2026
 
 scheduling_booking conserva scheduled/cancelled, member_id individual e intervalo UTC [). Nova
-exclusão por pessoa é independente de professional_id e unit_id. eligibilityWarning derivado não
-vira coluna de status; sem trigger de cancelamento. Dados de titular no aviso são mínimos, sem
-revelar documentos/finanças. Campo opcional beneficiaryId da consulta de disponibilidade é validado
-e reautorizado; nenhuma listagem pública. Reserva cancelada não ocupa; intervalos adjacentes são
-válidos.
+exclusão por pessoa é independente de professional_id e unit_id. Caminho proposto após T029:
+packages/db/migrations/0031_scheduling_beneficiary_overlap.sql, próximo número livre em dev 89d2356
+(reconferir antes de criar), constraint scheduling_beneficiary_no_overlap. Preservar
+scheduling_no_overlap profissional e migrations 0020/0028–0030; nunca adicionar um segundo
+0028__.sql nem reescrever checksums aplicados. eligibilityWarning: 'blocked' | null é campo aditivo
+derivado, não coluna de status; sem trigger de cancelamento. Dados de titular no aviso são mínimos,
+sem revelar documentos/finanças. Campo opcional beneficiaryId da consulta de disponibilidade é
+validado e reautorizado; nenhuma listagem pública. Reserva cancelada não ocupa; intervalos
+adjacentes são válidos. beneficiaryId ainda não existe no schema de disponibilidade; adicioná-lo
+como opcional em T031 e atualizar consumidores, mantendo validação transacional pelo memberId real.
+Preservar todos os campos memberDeletion_, memberDeleted e keptAfterMemberDeletion de LC01; o aviso
+blocked pode coexistir com exclusão e não remove keep, versão ou trilha auditada.
 
 Entidades técnicas/ciclo de vida em
 [contrato comum](../002-integrated-modules/contracts/direct-exports.md); sem cópia de domínio.
-Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.0.0 e contratos de
+Regras anteriores de MFA ou motivo obrigatório não são vigentes; a constituição 2.1.0 e contratos de
 21/09 prevalecem. Mudanças descritas são planejamento, sem migration executada.
 
 ## Ciclo de vida implementado — 21/09/2026
@@ -62,4 +171,356 @@ exclusão; `member_deletion_kept_at` e `member_deletion_kept_by` identificam a d
 version; cancelar reutiliza o comando existente. Nova exclusão não herda decisão anterior. O aviso é
 derivado da data efetiva atual do associado e não remove o nome do histórico.
 
-Migration0028 validada no CI descartável; sem aplicação local.
+Migration 0028_account_member_lifecycle.sql integrada pelo PR #36/af6f096; não é a migration futura
+de overlap. Estado do banco local não foi consultado/aplicado nesta revisão documental.
+
+## Invariante de ocupação e transição física — 28/09/2026
+
+Uma pessoa ocupa um intervalo quando a reserva está scheduled ou pending_approval. A mesma
+invariante deve valer para disponibilidade, comandos, constraints por beneficiário e profissional e
+capacidade do serviço. rejected, cancelled e awaiting_new_time não ocupam; intervalos adjacentes são
+válidos. Propostas substituídas e snapshots da origem não ocupam em paralelo.
+
+A entrega administrativa atual só admite scheduled/cancelled no CHECK de 0020. T030 é uma proteção
+transitória explícita: 0031_scheduling_beneficiary_overlap.sql cria
+scheduling_beneficiary_no_overlap WHERE status='scheduled'. Nenhuma rota desta entrega pode
+persistir pending_approval. Não habilitar estados/rotas 2C em cima dessa constraint provisória.
+
+Após 0031 validada, T045/T048 planejam 0032_scheduling_channels.sql (reconferir próximo número
+livre, sem reutilizar 0031): migration posterior com DROP CONSTRAINT nomeado de
+scheduling_beneficiary_no_overlap e scheduling_no_overlap, seguido da recriação das exclusões com
+WHERE status IN ('scheduled','pending_approval'). Fazer a substituição na mesma transação, com lock
+adequado e diagnóstico prévio, antes de liberar qualquer escrita 2C. Para modo sem profissional,
+provar capacidade no recurso/serviço e manter exclusão global da pessoa; NULL de profissional não
+protege capacidade. Não editar arquivos 0020/0028/0031 já aplicados. O caráter aditivo da evolução
+permite ALTER/DROP CONSTRAINT explícitos na migration nova; não significa manter um predicado
+incompatível. A migration inteira falha sem alterações em caso de conflito. T048 depende de
+T030–T032, contrato físico T045 e compatibilidade de T047.
+
+### Gates de identidade e consumidores antes de 2C
+
+O banco vigente exige assignment_id, professional_id, starts_at/ends_at e created_by; este último e
+actor_id do evento/request referenciam colaborador em user. Isso não aceita diretamente um
+member.id. Better Auth no painel não comprova sessão geral do associado nem mapeamento de conta.
+T041 deve entregar contrato verificável de sessão geral → conta estável → member.id, revogação e
+separação do painel, no domínio transversal. Nenhuma conta técnica ou colaborador fictício pode
+representar silenciosamente o associado.
+
+T045 define autoria discriminada: autor administrativo conserva FK user; autor de canal tem
+referência própria à identidade geral verificada e pessoa, nunca reaproveita created_by com um
+member.id. Eventos e idempotência dos canais têm namespace/ator próprios (origem da conta,
+identificador estável, operação, chave e hash); não reutilizar scheduling_request.actor_id sem
+evoluir seu contrato. Não relaxar NOT NULL indiscriminadamente: assignment/profissional dependem do
+modo; intervalo depende do estado ocupante, com CHECKs explícitos e preservação do histórico.
+
+T047/T048 incluem compatibilidade de relatórios e DTO: substituir joins que eliminam reservas sem
+profissional, distinguir todos os estados por mapeamento explícito (pendente não é Cancelado) e
+refletir os NULLs autorizados. Provar regressão de LC01 e leitura administrativa antes da
+migration/ativação. Estado conhecido em 0020/DTO antigo não comprova suporte futuro.
+
+UI01/UI02 em 002 são tarefas pendentes, não uma spec/consumidor implementado. T043 exige antes uma
+especificação concreta da jornada, rota/app responsável, navegação e contrato de sessão. T049/T070
+dependem de T041 + UI01/T043 definidos; T072/T073 dependem também de UI02/consumidor localizado. Não
+inventar uma tela/app para cumprir caminho proposto. A única superfície pública é catálogo publicado
+sem vagas ou dados pessoais; todo restante exige identidade verificada.
+
+## Extensão proposta para 2C — 23/09/2026
+
+### Ajuste de identidade, transferência e WAHA — 28/09
+
+Identidade pertence ao login geral do app/site; Agendamentos guarda referência à pessoa/ator, sem
+cadastro, sessão ou credencial exclusivos do módulo. As correspondências abaixo ficam no domínio
+transversal responsável.
+
+Edição comum de pedido pendente muda data/horário/profissional permitido, sem trocar pessoa/serviço.
+Transferência pode mudar beneficiário para dependente compatível, com autorização vigente. Preservar
+bookingId, serviço, política/estado pendente e contagem/ciclo; controlar expectedVersion. Registrar
+anterior/novo beneficiário em evento auditável, sem expor dados pessoais além do acesso de cada
+leitor. Revalidar/atualizar conflitos de ambos os beneficiários e ocupação em transação; falha
+conserva a anterior. Pedido inicial pode escolher destino futuro válido após passar o horário
+anterior; manter enteredReviewAt original e atualizar urgência do destino. Troca voluntária mantém
+prazo da origem e ciclos; retomada/recuperação seguem suas exceções. Não executar a transferência em
+registro já confirmado. Intenções de aviso conservam o beneficiário do evento; reavaliar
+destinatários/acesso em envios e eventos novos.
+
+WAHA escolhido e ainda não instalado: planejar intenção/tentativa por instância/sessão/messageId e
+estados observados; e-mail integra o serviço já definido para o sistema, sem segredo no histórico.
+Deduplicar recibos e suportar ordem invertida; aceite, entrega e leitura são distintos. Detalhes de
+motor/versão e validação de callback permanecem em T044.
+
+Logs/estados históricos antigos são importação opcional. Não reconstruir contador nem causa como
+pré-requisito da modelagem nova. Se incluídos, indicar informação desconhecida; não apagar a origem
+ou atribuir zero por suposição. Nenhuma migration foi aplicada.
+
+### Independência dos provedores e transição — 25/09
+
+Conforme a diretriz de reformulação e a pesquisa, manter o ID de pessoa em Associados estável mesmo
+ao evoluir o login geral ou transporte. T041/T045 devem conciliar com o domínio de identidade uma
+correspondência única entre emissor/origem, ID da conta e member.id; origem legada é evidência de
+migração, não exige aceitar token antigo. Não criar outra tabela de pessoas nem fundir identidades
+por nome/OAB/e-mail sem vínculo comprovado.
+
+Preferência de canal (três inicialmente ativas) é distinta de elegibilidade do transporte.
+Representar evidência mínima de permissão, origem/data e supressão/opt-out para WhatsApp no domínio
+responsável por comunicação; não inferir isso do valor inicial da preferência. Intenção/tentativa
+conserva provedor, correlação/ID externo, template/versão e resultados observados. Recibos
+autenticados podem ser repetidos ou chegar fora de ordem; preservar histórico e projeção coerente
+sem alterar a reserva. Modelo lógico proposto, sem migration aplicada.
+
+### Estruturas lógicas propostas — consolidação de 24/09
+
+Não são tabelas criadas nem schemas executáveis. Conciliar nomes e migrations com o banco vigente
+antes de implementar; contrato de operações/estados em [channels.md](contracts/channels.md).
+
+| Estrutura                     | Campos/relações essenciais                                                                                                 | Invariantes                                                                                                |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Revisão da oferta             | serviceId, draftVersion, publishedVersion, dados/público-alvo/políticas, autor/data                                        | Uma revisão publicada para app/site; rascunho não muda regras públicas; operação de publicação versionada. |
+| Política temporal             | mínimo de nova reserva, horizonte, antecedência de troca, atraso de análise, antecedência de urgência                      | Regras independentes; padrões 0/90 dias/24h/24h/24h conforme spec, desativação somente onde definida.      |
+| Processo da reserva           | ID, bookingId, kind voluntário ou recuperação isenta, active, originalStart, confirmedVoluntaryCount, reservedVoluntaryUse | Uma atividade por reserva; soma debitável <= 2; causa isenta somente por comando da equipe.                |
+| Proposta                      | ID, bookingId, processId nulo no pedido inicial, version, destino, situação, enteredReviewAt, snapshots aplicáveis         | Uma proposta ativa; só destino ocupa; substituição atômica; proposta antiga não aprova.                    |
+| Ocorrência do estabelecimento | ID, bookingId, operador, instante, recurso/período afetado, referência do bloqueio                                         | Retirar reserva sem reofertar recurso indisponível; sem movimentar reservas alheias.                       |
+| Referência de identidade      | identificador externo verificável → member.id                                                                              | Responsabilidade do acesso externo/Associados; sem cadastro/login paralelo no módulo.                      |
+| Preferência de aviso          | pessoa, finalidade de agendamento, app/site, e-mail, WhatsApp, version                                                     | Edição pessoal; padrão dos três ativo; inventariar supressões antigas antes de converter.                  |
+| Intenção/entrega              | evento/reserva/version, destinatário, canal, chave estável, correlação, tentativas/resultados seguros                      | Evento+pessoa+canal único; revalidar vínculo/preferência no envio; não confundir enviado com entregue.     |
+
+O estado da reserva não deve acumular informação que pertence à proposta ou à entrega de aviso.
+Valores propostos: scheduled, pending_approval, awaiting_new_time, rejected e cancelled, com causa
+do processo separada. Mapa de transições e ocupação no contrato; nenhum estado infere
+comparecimento/falta. Uma reserva aguardando nova data continua consultável no mesmo ID mesmo sem
+intervalo ocupado. Snapshots originais não participam das constraints de ocupação.
+
+A intenção de aviso e a mutação causal compartilham transação; a chamada ao provedor acontece fora
+dela. Reutilizar jobs/worker existentes, payload com IDs e referências mínimas. Tratar resultado
+desconhecido sem duplicação cega, manter correlação do provedor quando existir e não reativar
+execuções antigas de campanhas bloqueadas por instalar um canal. Quantidade/backoff/ timeout de
+tentativas dependem do adaptador concreto e devem ser definidos antes de ativar.
+
+Publicação de serviço definida em 24/09: separar estado ativo do estado de publicação externa e
+registrar autor, instante e versão de uma única publicação compartilhada por app e site, sem lista
+de destinos configuráveis ou estados/versões publicados independentes por canal. Novo serviço salvo
+permanece não publicado; Publicar persiste dados e publicação atomicamente, inclusive na primeira
+gravação. Salvar/publicar serviço previamente salvo reutiliza seu ID. Guardas de
+catálogo/vagas/comandos externos de app e site exigem o mesmo estado de publicação, além de oferta
+ativa e autorização para a operação. Falha não produz publicação parcial; preservar
+integridade/idempotência e histórico. Na edição de serviço publicado, Salvar alterações persiste uma
+revisão de rascunho independente da revisão publicada; Publicar alterações salva e torna vigente a
+revisão editada atomicamente, mantendo o ID do serviço. Registrar versões, autoria e instantes do
+rascunho e da publicação para controle concorrente e idempotência. Reabrir edição recupera o
+rascunho; projeções e comandos externos consultam somente a mesma configuração publicada no app e no
+site. Publicar e Publicar alterações tornam a revisão vigente para ambos no mesmo commit;
+projeções/caches de ambos devem refletir essa revisão. Erro não substitui nem remove a publicação
+anterior. Ocupações, bloqueios e elegibilidade continuam sendo avaliados em seu estado operacional
+atual, sem serem congelados na revisão. Publicação preserva snapshots/histórico das reservas
+existentes e as guardas contra alterações que invalidem reservas futuras. Este desenho é proposto,
+sem esquema físico ou migration aplicados.
+
+Esta seção planeja a reserva externa e não descreve migration aplicada. O serviço terá política de
+confirmação imediata ativada por padrão, desativável pela equipe para novos envios. A alteração da
+política não muda a situação das reservas existentes.
+
+Um envio externo pode criar reserva confirmada ou aguardando aprovação. A pendência mantém ID, mas
+permite edição versionada de data/horário/profissional e transferência autorizada a dependente,
+conforme decisão de 28/09. Aprovar confirma a versão atual sem criar outra reserva. Recusa de pedido
+inicial é terminal; recusa de troca/recuperação mantém o registro aguardando nova escolha e libera
+destino. Nenhuma recusa restaura automaticamente a origem. Não há expiração automática. Os nomes
+finais dos novos estados e comandos devem ser conciliados com os contratos existentes antes da
+migration.
+
+Pendências e reservas confirmadas ocupam o intervalo do beneficiário e do profissional quando
+atribuído; sem profissional, ocupam a capacidade do serviço na unidade. Isso inclui disputas entre
+painel e app/site. A migration aditiva deve estender as restrições de exclusão e o protocolo
+transacional por capacidade para considerar ambas as situações ocupantes; recusa e cancelamento não
+ocupam. Conferir conflitos preexistentes antes de ativar a restrição, sem alterar dados por
+inferência. Decisões de aprovação/recusa exigem permissão de alteração, controle de versão,
+revalidação e evento auditado. A fila administrativa precisa expor a idade da pendência para que a
+equipe resolva solicitações sem expiração automática.
+
+Responsabilidade (2C-FR-21): referência ao estabelecimento e seu vínculo de equipe, em conjunto com
+permissões administrativas existentes. Registrar ator e atuação principal/backup na decisão;
+colaborador autorizado pode apoiar sem ganhar novas permissões. Revalidar vínculo/permissão e versão
+na decisão; não exigir dois aprovadores. Política de alerta por serviço (2C-FR-22): 24 horas
+corridas por padrão, duração configurável ou desativação explícita, instante de entrada em análise e
+política aplicável. Idade/atraso são derivados, sem novos estados terminais ou liberação automática
+de ocupação. Modelar antecedência independente de urgência por serviço, padrão de 24 horas corridas
+e configurável. Derivar pelo início solicitado e relógio do servidor; na remarcação usar destino
+atual. Não reutilizar início original da prioridade nem instante de entrada em análise para esse
+cálculo. Atraso desativado não desliga urgência; no início/passado sem decisão, sinalização e
+pendência permanecem, sem autorização retroativa.
+
+Acessos existentes (informação do usuário de 24/09): titulares e dependentes têm identidades
+individuais no app/site atual. Mapear referência estável de identidade externa ao member.id
+correspondente, preservando autoria e beneficiário distintos. Provedor, sessão e compatibilidade de
+credenciais não foram verificados; não presumir migração, copiar credenciais ou criar conta
+administrativa. Vínculos familiares continuam no domínio de Associados, revalidados em cada ação.
+Reservas futuras legadas ainda por inventariar; ausência de evidência não equivale a quantidade
+zero. Preservar IDs de origem/correspondências e rastreabilidade em eventual migração planejada.
+
+Revisão aceita de 24/09/2026: remarcação externa segue a aceitação do serviço e libera origem no
+envio bem-sucedido. Guardar origem/versão como snapshot histórico da proposta, sem ocupação. A
+transação valida destino, retira ocupação original e registra somente destino: confirmado no fluxo
+imediato ou retido no manual. Falha na transação preserva origem. No fluxo manual, representar
+explicitamente remarcação pendente sem horário confirmado; não conservar status confirmed na origem
+nem projetá-la como compromisso ativo. A proposta não é segundo atendimento independente.
+
+Aprovar confirma destino no mesmo identificador; recusar/desistir libera destino e deixa registro
+sem horário confirmado, com histórico preservado, sem recuperar origem automaticamente. Nome final
+dos estados deve ser conciliado nos contratos. Origem pode estar ocupada por terceiro, cujos dados
+não podem ser alterados pela resolução da troca. Manter no máximo uma proposta ativa por reserva;
+substituir destino atomicamente sem reocupar origem e conservar proposta/destino anteriores se
+falhar. Revalidar prazo sobre início original registrado. Usar versão para impedir decisão sobre
+proposta retirada/substituída. Após recusa/desistência, o usuário aceitou continuar no mesmo
+agendamento: estado sem horário confirmado referencia tentativas anteriores e não ocupa vaga. Nova
+tentativa preserva identidade, beneficiário, contador e início original para prioridade. Permitir
+retomada mesmo após início original, sem reaplicar antecedência de remarcação sobre esse instante
+nem antecedência de nova reserva. Revalidar destino futuro, horizonte, elegibilidade, autorização e
+disponibilidade; retê-lo segundo aceitação vigente. O contador não é zerado e recusas/tentativas não
+confirmadas não o incrementam nem criam nova utilização: referenciam um mesmo ciclo de troca com uma
+utilização reservada. Confirmação da alternativa converte essa utilização em confirmada uma vez.
+Versão do registro e unicidade de proposta ativa coordenam retomadas concorrentes. Falha mantém
+estado sem horário e não restaura origem.
+
+Decisão B da rodada 3: a proposta não expira quando chega o início original. A transição de
+aprovação dessa proposta pode ocorrer depois; exige destino estritamente futuro no relógio do
+servidor e todas as demais guardas, sem reutilizar a guarda de origem futura da criação de proposta.
+Preservar início original e versão em eventos; incrementar a contagem só ao efetivar. Não inferir
+presença, conclusão ou falta. Destino já iniciado não é aprovável retroativamente, mas não dispara
+expiração; a equipe precisa resolver a pendência explicitamente. Cancelamentos ou decisões
+concorrentes continuam impedindo reativação. A revisão aceita libera origem no envio bem-sucedido,
+mantendo apenas destino retido. A passagem do início original não altera isso.
+
+A prioridade decidida em 24/09 é: remarcações primeiro, pelo início original capturado no envio da
+troca, crescente; empates por instante do pedido e identificador estável. O destino não participa
+desse primeiro critério. A proposta referencia a versão e o início da reserva a que se aplica; se a
+origem for alterada concorrentemente, revalidar a proposta antes de qualquer decisão, sem aprovar
+dados obsoletos. Novos pedidos são ordenados por instante de envio após as remarcações.
+
+Decisão adicional da rodada 3 de 24/09: antecedência mínima de nova reserva externa desativada por
+padrão, configurável por serviço. Planejar um campo de duração independente do de remarcação, com
+ausência/zero representando sem antecedência e valor positivo representando o prazo exigido;
+normalizar a representação no contrato, recusando valores negativos. Comparar início e instante real
+do servidor, mantendo início estritamente futuro mesmo sem prazo. Configuração e comando
+compartilham o protocolo de locks/revalidação para não aceitar regra obsoleta nem início passado. A
+alteração alcança novos pedidos; não expira pendências nem cancela reservas existentes. Não usar
+esse campo para mudar a antecedência relativa ao horário original de uma remarcação.
+
+Horizonte futuro aceito na rodada 3: campo de dias positivos por serviço com padrão 90 e estado de
+desativação explícito (não representar zero como janela vazia acidental). A janela usa dias corridos
+de 24 horas a partir do instante do servidor, com limite inclusivo para o início. É calculada na
+leitura/comando, sem materializar infinitas vagas ou depender de worker. Consulta e envio de nova
+reserva/destino de troca aplicam a política vigente sob revalidação; reservas e propostas recebidas
+antes da mudança conservam sua validade quanto ao horizonte. Preservar versão/configuração
+necessária à auditoria, sem migrar datas ou expirar reservas por redução da janela. O limite é
+independente dos campos de antecedência mínima e remarcação. Nenhuma migration foi aplicada por esta
+decisão documental.
+
+Adicionar à política do serviço uma antecedência mínima opcional de remarcação, com valor inicial
+equivalente a 24 horas (1.440 minutos) e estado explícito de desativação. A representação final será
+conciliada com o contrato; valor negativo não é válido. Comparar instantes no servidor no envio do
+pedido, usando o início atual da reserva. Registrar o prazo aplicado para auditoria; exatamente no
+limite é permitido. Pedido recebido em tempo não expira por atravessar esse limite durante análise,
+nem por posterior alteração da configuração. Não confundir o limite de envio com a chegada do
+próprio horário de atendimento: a proposta permanece pendente (2C-FR-17).
+
+Cancelamento pelo app/site: permitido para reserva confirmada e pedido novo em pending_approval
+antes do início confirmado/solicitado, respectivamente, pelo relógio do servidor, sem antecedência
+mínima nem aprovação da equipe. Pedido novo transita pending_approval → cancelled, libera sua
+ocupação, encerra proposta de análise e sai da fila/alertas; mantém ID/histórico e não altera
+contador voluntário. Evento e intenção de aviso participam do commit; versão/locks impedem aprovação
+ou recusa concorrente de reativá-lo. Replay autorizado preserva o resultado original, mesmo após
+início, sem executar nova transição. O encerramento de troca pendente libera somente destino, pois
+origem foi liberada no envio. Para essa ação externa, manter a fronteira baseada no início original
+registrado. Coordenar versão/locks com aprovação para impedir reativação ou retenção órfã. No início
+exato ou depois, negar esse comando externo. Essa regra não cria expiração automática. A desistência
+apenas da troca segue a regra acima e usa o início original registrado como fronteira, sem aplicar
+antecedência mínima de remarcação; libera destino e mantém histórico sem horário confirmado, sem
+restaurar origem.
+
+Contagem esclarecida em 24/09: duas trocas voluntárias por agendamento, com utilização reservada no
+primeiro pedido e consolidação somente na confirmação. Modelar ciclo de troca com identificador
+estável, reserva de utilização e referência às tentativas. Ter no máximo um ciclo ativo, em análise
+de proposta ou aguardando nova escolha após recusa/desistência, e no máximo uma proposta pendente. A
+reserva da utilização não é retenção de horário: aguardando escolha ocupa zero vagas, mas conserva a
+mesma troca em andamento. Original permanece apenas como snapshot histórico.
+
+Invariante: confirmadas voluntárias + ciclos debitáveis ativos <= 2. Abrir ciclo e liberar
+origem/reter destino ocorrem na mesma transação. Substituir, recusar ou retomar não cria outro ciclo
+nem incrementa contador. Aprovar fecha ciclo e incrementa confirmadas exatamente uma vez,
+transferindo a utilização já reservada; não somar pedido e confirmação como duas trocas. Uma
+solicitação posterior a uma confirmação cria outro ciclo. Cancelar definitivamente fecha ciclo sem
+contar confirmação; trocas confirmadas anteriores permanecem. Cancelamento do registro sem horário é
+possível mesmo após início original, sem reativar origem ou alterar atendimento confirmado
+retroativamente. Usar versão, idempotência, locks e integridade de ciclo/proposta para concorrência
+e retry. Reconciliar legado com evidência; não inferir contador pelo total de eventos/pedidos nem
+inventar eventos históricos. A transição de 05/10/2026 inicializa contadores desconhecidos em zero
+pela migration 0036, sem alegar reconstrução. Expor contagem de confirmadas e em andamento
+separadamente.
+
+Recuperação por indisponibilidade do estabelecimento (2C-FR-20): distinguir causa do processo ativo
+(troca voluntária debitável ou recuperação isenta), vinculando a segunda a ocorrência registrada por
+operador autorizado, horário/recurso afetados, versão e histórico. Não aceitar causa isenta
+declarada pelo cliente. Partir de atendimento confirmado; criar processo isento, retirar
+confirmação/ocupação e registrar/manter bloqueio real do recurso/período na mesma transação. Não
+duplicar reserva, apagar histórico ou zerar confirmadas voluntárias. Estado “Aguardando nova data —
+alteração pelo estabelecimento” ocupa zero vagas e referencia a ocorrência e o aviso devido, com
+entrega rastreável quando comunicação estiver definida. Ter no máximo um processo ativo e uma
+proposta pendente por agendamento. Recuperação isenta não reserva utilização e sua confirmação não
+incrementa confirmadas, mesmo se já forem duas. Tentativas/recusas/retomadas mantêm causa isenta até
+confirmação/cancelamento. Nova mudança voluntária após confirmação volta ao limite e às políticas
+usuais. Guardar início afetado como referência de prioridade; recuperação não exige origem futura
+nem prazo de 24 horas ou prazo de nova reserva. Destino segue guardas normais de disponibilidade,
+futuro, horizonte, acesso e aceitação. Cancelamento sem horário encerra processo sem restituir
+contagens anteriores. Modelagem proposta, sem esquema físico/migration aplicados.
+
+Público-alvo da oferta (2C-FR-25): distinguir titulares/dependentes de exclusivo para titulares na
+revisão publicada do serviço, preservando rascunho separado. Perfil vem do beneficiário em
+Associados; papel do autor não substitui elegibilidade de quem será atendido. Referenciar regra
+aplicada para auditoria e revalidar perfil/vínculo/oferta em vagas/comandos/aprovação; não duplicar
+cadastro. Manter compatibilidade sem inventar restrições para ofertas legadas.
+
+Comunicações (2C-FR-23/24): preferências pessoais independentes para aviso interno app/site, e-mail
+e WhatsApp, inicialmente habilitadas, editáveis pelo próprio usuário no app. Modelar intenção e
+tentativa/resultado de entrega por evento, destinatário e canal, com unicidade para retry. Resolver
+pessoa atendida e titular vigente do dependente, independentemente de quem agendou; revalidar
+destinatário/vínculo/permissão/preferência antes de envio/reenvio. Guardar autoria da reserva
+separada dos destinatários. Ausência de contato e falha de provedor não são entrega; não alteram a
+reserva. Preferências não removem histórico. Provedor/template/operação de entrega permanecem
+dependências propostas, sem schema ou migration aplicados.
+
+Eventos são vinculados ao identificador individual do beneficiário; autor pode ser titular,
+dependente ou operador. Uma visão consolidada por pessoa pode projetar essa trilha sem duplicar
+cadastros ou converter autoria em titularidade do atendimento. Compras/atividades de outros domínios
+seguem contrato e autorização próprios no programa 002.
+
+Decisão da rodada 3 de 24/09: o estabelecimento/unidade controla a escolha de profissional pelo
+usuário. Acrescentar política própria da unidade à projeção externa; considerar também existência de
+profissionais ativos habilitados para a oferta. A opção qualquer disponível e a escolha desativada
+com equipe existente resolvem um assignment elegível no servidor, informado antes de concluir e
+revalidado no comando. Isso não altera a identidade dos profissionais nem elimina proteção contra
+sobreposição.
+
+Decisão seguinte da rodada 3: sem profissionais cadastrados, permitir reserva usando horários
+próprios e quantidade de vagas do serviço na unidade. O seletor é omitido. O modelo inicial exige
+assignment/professional; planejar extensão aditiva, não tratar a mudança como já aplicada.
+
+- A oferta distingue ocupação por profissional ou por capacidade do serviço. No primeiro modo,
+  assignment válido é obrigatório; no segundo, referência à oferta/unidade é obrigatória e não há
+  profissional fictício. Preservar modo e referências nas reservas e propostas de troca.
+- Modelar expediente do serviço e capacidade simultânea inteira positiva, sem valor ilimitado
+  implícito. Considerar a duração completa, [início,fim) e funcionamento da unidade. Ausência de
+  configuração não produz vagas; ausência temporária de profissional apto não muda o modo.
+- Contar ocupações confirmadas, aguardando aprovação e retenções de destino durante todo o
+  intervalo. Troca remove origem e inclui somente destino em transação, mesmo com sobreposição
+  parcial; após commit, apenas destino conta. Origem histórica não bloqueia profissional,
+  beneficiário ou capacidade, e pode ser reservada por terceiro. Locks transacionais da
+  oferta/capacidade e recontagem devem coordenar comandos e mudanças de configuração; a exclusão por
+  profissional existente não basta para garantir capacidade maior que um.
+- Aprovar conserva a ocupação, recusar/retirar libera destino, substituir troca a retenção
+  atomicamente e encerrar troca libera só destino, sem recuperar origem. Preservar exclusão global
+  por beneficiário, idempotência, versões e auditoria. Nenhuma decisão tardia pode recriar ocupação
+  cancelada.
+- Adicionar profissionais não converte reservas sem responsável; desativar equipe não elimina
+  vínculos históricos. Recusar mudança de horários/capacidade que invalide ocupações futuras até
+  resolução explícita. Planejar projeções e consumidores com profissional ausente quando esse for o
+  modo registrado, sem exigir que app/site ou calendário inventem nomes.
+
+Esta decisão estende o planejamento de 2C; nenhuma migration foi criada ou aplicada nesta etapa.

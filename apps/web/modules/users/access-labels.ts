@@ -7,6 +7,7 @@ export const accessGroups: { name: string; actions: [AccessPermission, string][]
     actions: [
       ["scheduling:read", "Consultar agendamentos"],
       ["scheduling:write", "Alterar agendamentos e oferta"],
+      ["scheduling:review_absences", "Analisar justificativas e contestações de faltas"],
     ],
   },
   {

@@ -1,8 +1,9 @@
 import { Client, Pool } from "pg";
+import { readFile } from "node:fs/promises";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { runMigrations } from "@caab/db";
-import type { SchedulingKind } from "@caab/contracts";
+import { reportQuerySchema, type SchedulingKind } from "@caab/contracts";
 import { startPostgres } from "../../../../packages/db/tests/postgres-container";
 import {
   saveSchedulingCatalog,
@@ -21,7 +22,8 @@ import {
   keepSchedulingBooking,
 } from "../../modules/scheduling/booking-service";
 import { createSchedulingRoute } from "../../modules/scheduling/http/routes";
-import type { SchedulingContext } from "../../modules/scheduling/access";
+import { schedulingAccess, type SchedulingContext } from "../../modules/scheduling/access";
+import { currentReportActor, queryReport } from "@caab/db/repositories/reports";
 import { commandMember, getMember } from "../../modules/members/member-service";
 
 let container: StartedPostgreSqlContainer;
@@ -91,7 +93,7 @@ const reserve = (data: Offer, hour = "09:00", ctx = next()) =>
     startsAt: at(hour),
   });
 beforeAll(async () => {
-  container = await startPostgres();
+  container = await startPostgres({ memory: 0.25, cpu: 1 });
   await runMigrations(container.getConnectionUri());
   admin = new Client({ connectionString: container.getConnectionUri() });
   await admin.connect();
@@ -118,7 +120,8 @@ beforeAll(async () => {
   const url = new URL(container.getConnectionUri());
   url.username = "caab_runtime";
   url.password = "change-me-runtime";
-  pool = new Pool({ connectionString: url.toString(), max: 25 });
+  // Keep twenty concurrent callers while bounding connections on the 256 MB test database.
+  pool = new Pool({ connectionString: url.toString(), max: 5, connectionTimeoutMillis: 10000 });
 }, 120000);
 afterAll(async () => {
   await pool?.end();
@@ -127,6 +130,389 @@ afterAll(async () => {
 });
 
 describe.sequential("scheduling transactions and migration", () => {
+  it("projects current blocking in list, calendar and detail without changing reservations or deletion decisions", async () => {
+    const holder = await offer();
+    const dependent = await offer();
+    const unrelated = await offer();
+    await admin.query(
+      "INSERT INTO member_relationship(holder_id,dependent_id,relationship,starts_on,created_by) VALUES($1,$2,'Filho',current_date,$3)",
+      [holder.memberId, dependent.memberId, context.actor.userId],
+    );
+    const bookings = await Promise.all([reserve(holder), reserve(dependent), reserve(unrelated)]);
+    await admin.query(
+      "UPDATE member SET administrative_status='blocked',administrative_changed_at=now(),administrative_changed_by=$2 WHERE id=$1",
+      [holder.memberId, context.actor.userId],
+    );
+    const calendar = await listSchedulingCalendar(pool, context.actor, {
+      start: date,
+      end: new Date(Date.parse(date) + 86400000).toISOString().slice(0, 10),
+    });
+    for (const [index, { value: original }] of bookings.entries()) {
+      const expected = index < 2 ? "blocked" : null;
+      const detail = await getSchedulingBooking(pool, context.actor, original.id);
+      const listed = await listSchedulingBookings(pool, context.actor, {
+        date,
+        memberId: original.memberId,
+      });
+      expect(detail.booking).toEqual({ ...original, eligibilityWarning: expected });
+      expect(listed.items[0]!.eligibilityWarning).toBe(expected);
+      expect(calendar.items.find((item) => item.id === original.id)?.eligibilityWarning).toBe(
+        expected,
+      );
+      expect(detail.history.total).toBe(1);
+    }
+    await expect(reserve(dependent, "10:00")).rejects.toMatchObject({
+      code: "SCHEDULING_BENEFICIARY_BLOCKED",
+    });
+    const busy = await getSchedulingAvailability(pool, context.actor, {
+      assignmentId: dependent.assignment.id,
+      date,
+    });
+    expect(busy.items.some((slot) => Date.parse(slot.startsAt) === Date.parse(at("09:00")))).toBe(
+      false,
+    );
+    await admin.query(
+      "UPDATE member SET deletion_effective_at=clock_timestamp()-interval '1 second' WHERE id=$1",
+      [dependent.memberId],
+    );
+    const beforeKeep = (await getSchedulingBooking(pool, context.actor, bookings[1].value.id))
+      .booking;
+    const kept = (
+      await keepSchedulingBooking(pool, next(), beforeKeep.id, {
+        expectedVersion: beforeKeep.version,
+        deletionEffectiveAt: beforeKeep.memberDeletionEffectiveAt,
+      })
+    ).value;
+    expect(kept).toMatchObject({
+      eligibilityWarning: "blocked",
+      memberDeleted: true,
+      keptAfterMemberDeletion: true,
+      status: "scheduled",
+    });
+    await cancelSchedulingBooking(pool, next(), kept.id, { expectedVersion: kept.version });
+    await admin.query("UPDATE member SET administrative_status='active' WHERE id=$1", [
+      holder.memberId,
+    ]);
+    expect(
+      (await getSchedulingBooking(pool, context.actor, bookings[0].value.id)).booking
+        .eligibilityWarning,
+    ).toBeNull();
+  });
+
+  it("admits only one of twenty requests for a person across professionals and units", async () => {
+    const first = await offer();
+    const second = { ...(await offer()), memberId: first.memberId };
+    const attempts = await Promise.allSettled(
+      Array.from({ length: 20 }, (_, index) => reserve(index % 2 ? first : second)),
+    );
+    expect(attempts.filter((entry) => entry.status === "fulfilled")).toHaveLength(1);
+    expect(attempts.filter((entry) => entry.status === "rejected")).toHaveLength(19);
+    for (const entry of attempts)
+      if (entry.status === "rejected")
+        expect(entry.reason).toMatchObject({ code: "SCHEDULING_BENEFICIARY_CONFLICT" });
+  });
+
+  it("filters another unit by beneficiary, preserves legacy availability and rejects a forged exclusion", async () => {
+    const first = await offer();
+    const second = await offer();
+    const booking = (await reserve(first)).value;
+    const query = { assignmentId: second.assignment.id, date };
+    const legacy = await getSchedulingAvailability(pool, context.actor, query);
+    expect(legacy.items.some((slot) => Date.parse(slot.startsAt) === Date.parse(at("09:00")))).toBe(
+      true,
+    );
+    const personal = await getSchedulingAvailability(pool, context.actor, {
+      ...query,
+      beneficiaryId: first.memberId,
+    });
+    expect(
+      personal.items.some((slot) => Date.parse(slot.startsAt) === Date.parse(at("09:00"))),
+    ).toBe(false);
+    await expect(
+      getSchedulingAvailability(pool, context.actor, {
+        ...query,
+        beneficiaryId: second.memberId,
+        excludeBookingId: booking.id,
+      }),
+    ).rejects.toMatchObject({ code: "SCHEDULING_INVALID_REFERENCE" });
+    const own = await getSchedulingAvailability(pool, context.actor, {
+      ...query,
+      beneficiaryId: first.memberId,
+      excludeBookingId: booking.id,
+    });
+    expect(own.items.some((slot) => Date.parse(slot.startsAt) === Date.parse(at("09:00")))).toBe(
+      true,
+    );
+  });
+
+  it("preserves the original booking and history when a cross-unit reschedule conflicts", async () => {
+    const first = await offer();
+    const second = { ...(await offer()), memberId: first.memberId };
+    await reserve(first, "09:00");
+    const original = (await reserve(second, "14:00")).value;
+    await expect(
+      rescheduleSchedulingBooking(pool, next(), original.id, {
+        assignmentId: second.assignment.id,
+        startsAt: at("09:00"),
+        expectedVersion: original.version,
+      }),
+    ).rejects.toMatchObject({ code: "SCHEDULING_BENEFICIARY_CONFLICT" });
+    const after = await getSchedulingBooking(pool, context.actor, original.id);
+    expect(after.booking).toEqual(original);
+    expect(after.history.total).toBe(1);
+  });
+
+  it("enforces partial overlap in SQL while allowing adjacent, cancelled and different-family-member bookings", async () => {
+    const first = await offer();
+    const second = await offer();
+    await reserve(first);
+    await admin.query(
+      "INSERT INTO member_relationship(holder_id,dependent_id,relationship,starts_on,created_by) VALUES($1,$2,'Filho',current_date,$3)",
+      [first.memberId, second.memberId, context.actor.userId],
+    );
+    await reserve(second);
+    const insert = (hour: string, status = "scheduled") =>
+      admin.query(
+        `INSERT INTO scheduling_booking(assignment_id,professional_id,member_id,starts_at,ends_at,duration_snapshot,created_by,status)
+       VALUES($1,$2,$3,$4::timestamptz,$4::timestamptz+interval '1 hour',60,$5,$6)`,
+        [
+          second.assignment.id,
+          second.professional.id,
+          first.memberId,
+          at(hour),
+          context.actor.userId,
+          status,
+        ],
+      );
+    // Remove only the second person's test reservation to isolate the member constraint.
+    await cancelSchedulingBooking(
+      pool,
+      next(),
+      (await listSchedulingBookings(pool, context.actor, { date, memberId: second.memberId }))
+        .items[0]!.id,
+      { expectedVersion: 1 },
+    );
+    await expect(insert("09:30")).rejects.toMatchObject({
+      code: "23P01",
+      constraint: "scheduling_beneficiary_no_overlap",
+    });
+    await expect(insert("10:00")).resolves.toHaveProperty("rowCount", 1);
+    await expect(insert("09:30", "cancelled")).resolves.toHaveProperty("rowCount", 1);
+  });
+
+  it("diagnoses legacy overlaps without personal data and rolls back a refused migration intact", async () => {
+    const first = await offer();
+    const second = await offer();
+    const original = (await reserve(first)).value;
+    const diagnostic = await readFile(
+      new URL(
+        "../../../../packages/db/scripts/check-scheduling-beneficiary-overlaps.sql",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    const migration = await readFile(
+      new URL(
+        "../../../../packages/db/migrations/0031_scheduling_beneficiary_overlap.sql",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    await admin.query("BEGIN");
+    try {
+      await admin.query(
+        "ALTER TABLE scheduling_booking DROP CONSTRAINT scheduling_beneficiary_no_overlap",
+      );
+      const inserted = await admin.query(
+        `INSERT INTO scheduling_booking(assignment_id,professional_id,member_id,starts_at,ends_at,duration_snapshot,created_by)
+         VALUES($1,$2,$3,$4::timestamptz,$4::timestamptz+interval '1 hour',60,$5) RETURNING id`,
+        [
+          second.assignment.id,
+          second.professional.id,
+          first.memberId,
+          at("09:30"),
+          context.actor.userId,
+        ],
+      );
+      const conflicts = (await admin.query(diagnostic)).rows;
+      const pair = conflicts.find((row) => row.member_id === first.memberId);
+      expect(pair).toBeDefined();
+      expect(Object.keys(pair).sort()).toEqual(
+        [
+          "booking_id",
+          "other_booking_id",
+          "member_id",
+          "starts_at",
+          "ends_at",
+          "other_starts_at",
+          "other_ends_at",
+        ].sort(),
+      );
+      await admin.query("SAVEPOINT before_migration");
+      await expect(admin.query(migration)).rejects.toMatchObject({ code: "23P01" });
+      await admin.query("ROLLBACK TO SAVEPOINT before_migration");
+      const retained = await admin.query(
+        "SELECT id,status,version FROM scheduling_booking WHERE id=ANY($1::uuid[]) ORDER BY id",
+        [[original.id, inserted.rows[0].id]],
+      );
+      expect(retained.rows).toHaveLength(2);
+      expect(retained.rows.every((row) => row.status === "scheduled" && row.version === 1)).toBe(
+        true,
+      );
+    } finally {
+      await admin.query("ROLLBACK");
+    }
+    expect(
+      (
+        await admin.query(
+          "SELECT 1 FROM pg_constraint WHERE conname='scheduling_beneficiary_no_overlap'",
+        )
+      ).rowCount,
+    ).toBe(1);
+  });
+
+  async function accessActor(permissions: string[]) {
+    const userId = (
+      await admin.query(
+        `INSERT INTO "user"(name,email) VALUES('Acesso sintético',$1) RETURNING id`,
+        [`${crypto.randomUUID()}@example.test`],
+      )
+    ).rows[0]!.id as string;
+    const sessionId = crypto.randomUUID();
+    await admin.query(
+      "INSERT INTO session(id,token,user_id,expires_at) VALUES($1,$1,$2,now()+interval '1 hour')",
+      [sessionId, userId],
+    );
+    await admin.query("INSERT INTO user_access(user_id,permissions,updated_by) VALUES($1,$2,$1)", [
+      userId,
+      permissions,
+    ]);
+    return { userId, sessionId, permissions: new Set(["scheduling:read", "scheduling:write"]) };
+  }
+
+  it.each([
+    { permissions: [], read: false, write: false },
+    { permissions: ["scheduling:read"], read: true, write: false },
+    { permissions: ["scheduling:write"], read: false, write: false },
+    { permissions: ["scheduling:read", "scheduling:write"], read: true, write: true },
+  ])("enforces persisted scheduling grants $permissions despite a stale actor", async (entry) => {
+    const actor = await accessActor(entry.permissions);
+    const reading = listSchedulingCatalog(pool, actor, "units", {});
+    if (entry.read) await expect(reading).resolves.toHaveProperty("items");
+    else await expect(reading).rejects.toMatchObject({ status: 403 });
+    const writing = saveSchedulingCatalog(pool, { ...next(), actor }, "units", undefined, {
+      name: "Unidade de acesso sintética",
+    });
+    if (entry.write) await expect(writing).resolves.toHaveProperty("value.id");
+    else await expect(writing).rejects.toMatchObject({ status: 403 });
+  });
+
+  it("denies unauthorized writes and serves reads without waiting for the eligibility lock", async () => {
+    const actor = await accessActor(["scheduling:read"]);
+    const locker = new Client({ connectionString: container.getConnectionUri() });
+    const runtime = new URL(container.getConnectionUri());
+    runtime.username = "caab_runtime";
+    runtime.password = "change-me-runtime";
+    // A mistaken lock attempt fails promptly rather than hanging the suite.
+    const bounded = new Pool({ connectionString: runtime.toString(), statement_timeout: 1500 });
+    await locker.connect();
+    try {
+      await locker.query("BEGIN");
+      await locker.query("SELECT pg_advisory_xact_lock(5010,1)");
+      await expect(
+        schedulingAccess(bounded, actor, true, async () => "forbidden"),
+      ).rejects.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
+      await expect(listSchedulingCatalog(bounded, actor, "units", {})).resolves.toHaveProperty(
+        "items",
+      );
+    } finally {
+      await locker.query("ROLLBACK");
+      await locker.end();
+      await bounded.end();
+    }
+  });
+
+  it("rechecks grants revoked while an authorized writer waits for 5010/1", async () => {
+    const actor = await accessActor(["scheduling:read", "scheduling:write"]);
+    const locker = new Client({ connectionString: container.getConnectionUri() });
+    const runtime = new URL(container.getConnectionUri());
+    runtime.username = "caab_runtime";
+    runtime.password = "change-me-runtime";
+    const applicationName = `scheduling-revocation-${crypto.randomUUID()}`;
+    const waitingPool = new Pool({
+      connectionString: runtime.toString(),
+      application_name: applicationName,
+      statement_timeout: 10000,
+    });
+    let invoked = false;
+    let pending: Promise<unknown> | undefined;
+    await locker.connect();
+    try {
+      await locker.query("BEGIN");
+      await locker.query("SELECT pg_advisory_xact_lock(5010,1)");
+      pending = schedulingAccess(waitingPool, actor, true, async () => {
+        invoked = true;
+      });
+      // Attach a handler before any assertion that may fail while the query is pending.
+      const outcome = pending.then(
+        () => ({ code: "unexpected success" }),
+        (error: unknown) => error,
+      );
+      await expect
+        .poll(
+          async () =>
+            (
+              await admin.query(
+                "SELECT 1 FROM pg_stat_activity WHERE application_name=$1 AND wait_event='advisory'",
+                [applicationName],
+              )
+            ).rowCount,
+          { timeout: 5000 },
+        )
+        .toBe(1);
+      await admin.query(
+        "UPDATE user_access SET permissions=ARRAY['scheduling:read'] WHERE user_id=$1",
+        [actor.userId],
+      );
+      await locker.query("COMMIT");
+      await expect(outcome).resolves.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
+      expect(invoked).toBe(false);
+    } finally {
+      await locker.query("ROLLBACK");
+      await pending?.catch(() => undefined);
+      await locker.end();
+      await waitingPool.end();
+    }
+  });
+
+  it("keeps Gestor able to consult scheduling and booking reports without write", async () => {
+    const actor = await accessActor([]);
+    await admin.query(
+      "INSERT INTO user_role(user_id,role_id,granted_by,justification) SELECT $1,id,$1,'' FROM role WHERE code='manager'",
+      [actor.userId],
+    );
+    const reportActor = await currentReportActor(pool, actor.userId);
+    expect(reportActor.permissions.has("scheduling:read")).toBe(true);
+    expect(reportActor.permissions.has("scheduling:write")).toBe(false);
+    await expect(listSchedulingBookings(pool, actor, { date })).resolves.toHaveProperty("items");
+    await expect(
+      queryReport(
+        pool,
+        reportActor,
+        reportQuerySchema.parse({
+          view: "details",
+          dataset: "bookings",
+          from: date,
+          to: date,
+          columns: ["name", "date"],
+        }),
+      ),
+    ).resolves.toHaveProperty("rows");
+    await expect(
+      schedulingAccess(pool, actor, true, async () => "forbidden"),
+    ).rejects.toMatchObject({ status: 403 });
+  });
+
   it("reads the complete calendar interval in Bahia with filters and exclusive boundaries", async () => {
     const data = await offer();
     const booking = (await reserve(data)).value;
@@ -268,7 +654,9 @@ describe.sequential("scheduling transactions and migration", () => {
       results
         .filter((result) => result.status === "rejected")
         .every(
-          (result) => result.status === "rejected" && result.reason.code === "SCHEDULING_CONFLICT",
+          (result) =>
+            result.status === "rejected" &&
+            result.reason.code === "SCHEDULING_BENEFICIARY_CONFLICT",
         ),
     ).toBe(true);
   });
@@ -419,7 +807,7 @@ describe.sequential("scheduling transactions and migration", () => {
         assignmentId: data.assignment.id,
         startsAt: at("10:00"),
       }),
-    ).rejects.toMatchObject({ code: "SCHEDULING_CONFLICT" });
+    ).rejects.toMatchObject({ code: "SCHEDULING_BENEFICIARY_CONFLICT" });
     expect((await getSchedulingBooking(pool, context.actor, first.id, {})).booking).toEqual(first);
     await expect(
       rescheduleSchedulingBooking(pool, next(), first.id, {
@@ -716,9 +1104,10 @@ describe.sequential("beneficiary eligibility under the shared transaction lock",
         startsAt: at("10:00"),
       }),
     ).rejects.toMatchObject({ code: "SCHEDULING_BENEFICIARY_BLOCKED" });
-    expect((await getSchedulingBooking(pool, context.actor, booked.id, {})).booking).toEqual(
-      booked,
-    );
+    expect((await getSchedulingBooking(pool, context.actor, booked.id, {})).booking).toEqual({
+      ...booked,
+      eligibilityWarning: "blocked",
+    });
   });
   it("measures a bounded daily list with ten thousand synthetic bookings", async () => {
     const data = await offer();

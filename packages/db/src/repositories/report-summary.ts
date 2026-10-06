@@ -82,7 +82,7 @@ export async function reportSummary(
   }
   if (actor.permissions.has("scheduling:read")) {
     const canceled = await db.query<{ total: string }>(
-      "SELECT count(*)::text AS total FROM scheduling_booking WHERE status='cancelled' AND starts_at >= $1 AND starts_at < $2",
+      "SELECT count(*)::text AS total FROM scheduling_booking WHERE status='cancelled' AND coalesce(starts_at,original_start,created_at) >= $1 AND coalesce(starts_at,original_start,created_at) < $2",
       [from, until],
     );
     notices.push(`${canceled.rows[0]!.total} reserva(s) do período estão canceladas atualmente.`);

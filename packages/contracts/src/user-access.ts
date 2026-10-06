@@ -7,6 +7,7 @@ export const accessPermissionSchema = z.enum([
   "access:manage",
   "scheduling:read",
   "scheduling:write",
+  "scheduling:review_absences",
   "messages:write",
   "messages:access",
   "partners:read",
@@ -37,6 +38,7 @@ export const accessPermissionSchema = z.enum([
 export type AccessPermission = z.infer<typeof accessPermissionSchema>;
 export const accessPrerequisites: Partial<Record<AccessPermission, AccessPermission[]>> = {
   "scheduling:write": ["scheduling:read"],
+  "scheduling:review_absences": ["scheduling:read"],
   "messages:write": ["messages:access"],
   "access:manage": ["users:read", "roles:read"],
   "partners:write": ["partners:read"],

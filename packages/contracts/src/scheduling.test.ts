@@ -7,6 +7,13 @@ import {
   schedulingCalendarQuerySchema,
 } from "./scheduling";
 describe("scheduling contracts", () => {
+  it("accepts agenda navigation parameters independently of the booking catalog projection", () => {
+    for (const view of ["list", "day", "week", "month"]) {
+      expect(schedulingBookingsQuerySchema.safeParse({ date: "2026-09-21", view }).success).toBe(
+        true,
+      );
+    }
+  });
   it("bounds the calendar interval to six weeks with an exclusive end", () => {
     expect(
       schedulingCalendarQuerySchema.safeParse({ start: "2026-09-01", end: "2026-10-13" }).success,

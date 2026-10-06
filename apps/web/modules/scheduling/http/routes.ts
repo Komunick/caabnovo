@@ -1,4 +1,10 @@
 import type { Pool } from "pg";
+import { z } from "zod";
+import { getObjectStorage, type WebObjectStorage } from "../../files/object-storage";
+import {
+  getSchedulingAbsenceReview,
+  getSchedulingAbsenceEvidenceDownload,
+} from "../absence-evidence-service";
 import { scheduleConfirmedBooking } from "../../reports/business-events";
 import { apiError, idSchema, schedulingKindSchema } from "@caab/contracts";
 import type { RequestActor } from "../../shared/request-context";
@@ -10,10 +16,25 @@ import {
   validateMutationRequest,
 } from "../../users/http/responses";
 import { SchedulingError } from "../access";
+import {
+  recordSchedulingAbsence,
+  getSchedulingAbsence,
+  listSchedulingAbsences,
+  submitSchedulingAbsenceAppeal,
+  decideSchedulingAbsence,
+} from "../absence-service";
 import { listSchedulingCatalog, saveSchedulingCatalog } from "../catalog-service";
 import { getSchedulingHours, saveSchedulingHours } from "../hours-service";
 import { getSchedulingAvailability } from "../availability-service";
 import { listSchedulingBeneficiaries } from "../beneficiary-service";
+import { getSchedulingPolicy, saveSchedulingPolicy } from "../service-policy";
+import { commandWorkflowBooking, type WorkflowAction } from "../booking-workflow";
+import {
+  listSchedulingApprovalQueue,
+  getSchedulingTeam,
+  saveSchedulingTeam,
+  listSchedulingTeamCandidates,
+} from "../approval-queue-service";
 import {
   listSchedulingBookings,
   listSchedulingCalendar,
@@ -26,6 +47,7 @@ import {
 
 export function createSchedulingRoute(deps: {
   pool: Pool;
+  getStorage?: () => WebObjectStorage;
   resolveActor(request: Request): Promise<RequestActor | null>;
   afterResponse(task: () => Promise<void>): void;
 }) {
@@ -48,7 +70,35 @@ export function createSchedulingRoute(deps: {
       const kind = schedulingKindSchema.safeParse(resource);
       if (request.method === "GET") {
         let result: unknown;
-        if (resource === "bookings" && !action)
+        if (resource === "absences" && path.length === 1) {
+          result = await listSchedulingAbsences(deps.pool, actor, query);
+        } else if (resource === "absences" && id && action === "review") {
+          z.object({}).strict().parse(query);
+          result = await getSchedulingAbsenceReview(deps.pool, actor, id, {
+            requestId: rid,
+            correlationId: correlationId(request),
+          });
+        } else if (resource === "absences" && id && action === "evidence") {
+          const { fileId } = z.object({ fileId: idSchema }).strict().parse(query);
+          result = await getSchedulingAbsenceEvidenceDownload(
+            deps.pool,
+            actor,
+            id,
+            fileId,
+            (deps.getStorage ?? getObjectStorage)(),
+            { requestId: rid, correlationId: correlationId(request) },
+          );
+        } else if (resource === "absences" && id && !action)
+          result = await getSchedulingAbsence(deps.pool, actor, id);
+        else if (resource === "approval-queue" && path.length === 1)
+          result = await listSchedulingApprovalQueue(deps.pool, actor, query);
+        else if (resource === "team-candidates" && path.length === 1)
+          result = await listSchedulingTeamCandidates(deps.pool, actor, query);
+        else if (resource === "units" && id && action === "team")
+          result = await getSchedulingTeam(deps.pool, actor, id);
+        else if (resource === "services" && id && action === "policy")
+          result = await getSchedulingPolicy(deps.pool, actor, id);
+        else if (resource === "bookings" && !action)
           result = id
             ? await getSchedulingBooking(deps.pool, actor, id, query)
             : await listSchedulingBookings(deps.pool, actor, query);
@@ -58,7 +108,11 @@ export function createSchedulingRoute(deps: {
           result = await listSchedulingBeneficiaries(deps.pool, actor, query);
         else if (resource === "availability" && path.length === 1)
           result = await getSchedulingAvailability(deps.pool, actor, query);
-        else if ((resource === "units" || resource === "professionals") && id && action === "hours")
+        else if (
+          (resource === "units" || resource === "professionals" || resource === "services") &&
+          id &&
+          action === "hours"
+        )
           result = await getSchedulingHours(deps.pool, actor, resource, id, query.unitId);
         else if (kind.success && path.length === 1)
           result = await listSchedulingCatalog(deps.pool, actor, kind.data, query);
@@ -75,9 +129,34 @@ export function createSchedulingRoute(deps: {
           idempotencyKey: idempotencyKey ?? "",
         };
         const body = await readJson(request);
-        if (
+        if (resource === "bookings" && id && action === "absence" && request.method === "POST") {
+          const result = await recordSchedulingAbsence(deps.pool, context, id, body);
+          response = Response.json(result.value, { status: result.replayed ? 200 : 201 });
+        } else if (
+          resource === "absences" &&
+          id &&
+          request.method === "POST" &&
+          (action === "appeal" || action === "decision")
+        ) {
+          const result =
+            action === "appeal"
+              ? await submitSchedulingAbsenceAppeal(deps.pool, context, id, body)
+              : await decideSchedulingAbsence(deps.pool, context, id, body);
+          response = Response.json(result.value);
+        } else if (resource === "units" && id && action === "team" && request.method === "POST") {
+          const result = await saveSchedulingTeam(deps.pool, context, id, body);
+          response = Response.json(result.value);
+        } else if (
+          resource === "services" &&
+          id &&
+          action === "policy" &&
+          request.method === "POST"
+        ) {
+          const result = await saveSchedulingPolicy(deps.pool, context, id, body);
+          response = Response.json(result.value);
+        } else if (
           request.method === "PUT" &&
-          (resource === "units" || resource === "professionals") &&
+          (resource === "units" || resource === "professionals" || resource === "services") &&
           id &&
           action === "hours"
         ) {
@@ -93,9 +172,25 @@ export function createSchedulingRoute(deps: {
                 ? await cancelSchedulingBooking(deps.pool, context, id, body)
                 : action === "keep"
                   ? await keepSchedulingBooking(deps.pool, context, id, body)
-                  : null;
+                  : action &&
+                      [
+                        "pending",
+                        "approve",
+                        "reject",
+                        "withdraw",
+                        "resume",
+                        "provider-unavailability",
+                      ].includes(action)
+                    ? await commandWorkflowBooking(
+                        deps.pool,
+                        context,
+                        id,
+                        action as WorkflowAction,
+                        body,
+                      )
+                    : null;
           if (!result) throw new SchedulingError("NOT_FOUND", 404);
-          if (!id)
+          if (!id && result.value.status === "scheduled")
             scheduleConfirmedBooking(
               deps.afterResponse,
               deps.pool,
