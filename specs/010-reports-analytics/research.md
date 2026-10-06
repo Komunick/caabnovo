@@ -29,6 +29,9 @@ pendentes, sem alteração.
 - O teto de 50 mil do caminho legado (`queryReport` com `exportAll`, que monta o arquivo inteiro em
   memória no worker) fica como proteção de memória desse caminho, que a aba Detalhe sem agrupamento
   deixa de oferecer. Ele continua servindo resumo, apresentação e detalhe agrupado.
+  _Atualização de 06/10/2026 (CAAB-44): resumo, resultados/evolução e detalhe agrupado também
+  exportam pelo download direto, sem esse teto. O teto de 50 mil permanece só no caminho legado da
+  fila, que não é mais oferecido na tela._
 - Excel acima de 1.048.576 linhas continua completo: o gravador de 001 abre novas planilhas ("Dados
   2", "Dados 3"…) em vez de cortar.
 - Exportar exige, a cada lote, `reports:read`, `exports:generate` e a permissão da fonte

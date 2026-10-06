@@ -49,6 +49,10 @@ migrations reais de Agendamentos; não altera o schema de teste para simular com
 base748539d ainda não contém original_start; a correção depende da conciliação com Agendamentos
 antes de concluir os gates e abrir PR para dev.
 
+_Atualização de 06/10/2026: o PR #43 de Agendamentos foi integrado na `dev` (squash `ea0bc3b`) e esta
+entrega foi atualizada com ela; a dependência de `original_start` está cumprida na `dev`. A
+migration 0035 do PR #45 ainda não está na `dev`._
+
 ## Planejamento anterior preservado
 
 Dataset reports com mode summary/details/presentation e domínios autorizados. Rotas existentes de
