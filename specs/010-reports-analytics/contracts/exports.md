@@ -51,7 +51,7 @@ antes de concluir os gates e abrir PR para dev.
 
 _Atualização de 06/10/2026: o PR #43 de Agendamentos foi integrado na `dev` (squash `ea0bc3b`) e esta
 entrega foi atualizada com ela; a dependência de `original_start` está cumprida na `dev`. A
-migration 0035 do PR #45 ainda não está na `dev`._
+migration 0035 do PR #45 também já está na `dev` (squash `212c4ea`), e esta entrega foi atualizada com ela._
 
 ## Planejamento anterior preservado
 

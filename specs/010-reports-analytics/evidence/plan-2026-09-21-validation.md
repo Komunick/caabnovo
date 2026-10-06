@@ -399,3 +399,27 @@ agora só de Relatórios e exportação (23 arquivos fora de `specs`). Gates loc
 typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram. A condição "depois do #43 na
 dev" das notas anteriores está cumprida; o CI desta ponta ainda não existe e T041, T042, T038 e T039
 seguem como descritos acima.
+
+### Integração do PR #45 e correções adicionais — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Em 06/10/2026 o PR #45 (cargo base Colaborador, migration 0035) também foi integrado na `dev` (squash
+212c4ea) e esta branch foi atualizada por merge sem conflito (00991bf); as listas de migrations de
+`packages/db/tests/migrations.test.ts` e `apps/web/tests/integration/scheduling-workflow.test.ts` já
+trazem 0035 entre 0034 e 0036, o que torna obsoleta a nota sobre a 0035 pendente acima.
+
+Terceira revisão externa do PR #46, verificada por leitura:
+- **403 sem registro de falha, corrigido.** Em `apps/web/modules/exports/http.ts` a falha só era
+  gravada para status 422; a seleção com item restrito, que passou a devolver 403, deixou de ser
+  gravada. Agora também é gravada quando o código é PERMISSION_DENIED depois de a operação existir
+  (origem e CSRF inválidos continuam sem operação e sem registro). Teste de contrato novo em
+  `apps/web/tests/contract/exports.test.ts`.
+- **Documentação, corrigida.** `research.md` (teto de 50 mil) e `contracts/exports.md` (dependência do
+  #43 e do #45) ganharam atualização datada; a mensagem do teto legado em `apps/worker/src/job-state.ts`
+  deixou de mandar agrupar e orienta Exportar dados.
+- **PDF de Resultados e evolução sem gráfico nem bloco de análise, ABERTO e sem decisão registrada.**
+  O download direto gera tabela, com as notas repetidas como coluna de contexto, e a tela ainda diz
+  "Incluída no PDF". Depende de decisão de produto sobre o layout do PDF.
+- **"Solicitar novamente", observação.** O link só navega para a tela de exportação, sem o formato; as
+  notas vão por sessionStorage e, sem permissão da fonte, o destino é 404. Não testado no navegador.
+- **security vermelho no CI**, alerta alto do `sharp` 0.35.4 (patch em 0.35.5), igual na `dev`; fora
+  do escopo deste PR, aguardando decisão sobre o override em PR próprio.

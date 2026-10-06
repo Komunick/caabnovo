@@ -82,11 +82,11 @@
     },
     {
       "path": "specs/010-reports-analytics/contracts/exports.md",
-      "sha256": "c68adad46fdfe1069927fc1fb431a5095327df4d86db05d99c7b303020f80511"
+      "sha256": "e7016d46661ff9b6fdb04b163f7c5933da94628657bed2a3a156d023256294de"
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "7c423783cfcac05cca39a79b1202fa89aabe6ca864c8af7d155754dc834e43fe"
+      "sha256": "205f51319a1ed4064dce24664c8ccc88b936284b027896019789bfed4057ecd6"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
@@ -94,7 +94,7 @@
     },
     {
       "path": "specs/010-reports-analytics/research.md",
-      "sha256": "38d67539b48130e5b751ecdbab0970395cd166d43f57b2635cd68fde3667abce"
+      "sha256": "14c8863d6c35c7e1f99077f67c9a5b04d5e1650c3f56ea2072d27b02f64fd82d"
     },
     {
       "path": "specs/010-reports-analytics/spec.md",
@@ -102,7 +102,7 @@
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "d863e99ef7b3811a559ea3eb50f6e1106530f938a57faa6226b870fe567aae0c"
+      "sha256": "c54df206f57bd8bc5edbe69c1abef370cfe9356a7debc2a1b72116650fba2363"
     }
   ],
   "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
@@ -220,7 +220,9 @@
         "apps/web/modules/exports/ui/export-screen.tsx (renderFilter additive kept)"
       ],
       "localGates": "typecheck, lint, prettier, 616 unit, 171 contract passed",
-      "ci": null
-    }
+      "ci": null,
+      "also": "PR #45 (212c4ea) merged in dev and into this branch (00991bf); migrations lists include 0035"
+    },
+    "openProductDecision": "PDF of Resultados e evolucao: no chart or analysis block, notes repeated per row"
   }
 }
