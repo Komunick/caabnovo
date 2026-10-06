@@ -199,3 +199,19 @@ O usuário posteriormente autorizou nova conferência da dev, correções e rela
 de domínio/repositório. A dev `951c103` foi integrada à branch; a comparação de origem ainda
 não havia sido alterada nela. O status atual e os resultados da revisão ampliada estão em
 [DEPLOYMENT-CONFIG-AUDIT.md](../../docs/DEPLOYMENT-CONFIG-AUDIT.md). A pausa acima é histórica.
+
+## Atualização de segurança do Payload — 06/10/2026-CLAUDE-Gabriel-Komunick
+
+O `pnpm audit --audit-level high` passou a reprovar o Payload 3.89.0 (um aviso crítico e cinco altos,
+corrigidos em 3.90.0). Os pacotes `payload` e `@payloadcms/*` de `apps/web`, `apps/worker` e
+`packages/news` foram atualizados em conjunto para 3.90.0, e a chave do override do Sass acompanha a
+versão. O editor de Notícias passa a importar o Lexical pelos reexports oficiais de
+`@payloadcms/richtext-lexical/lexical`, o que remove as dependências diretas de `lexical` e
+`@lexical/*`, que divergiam da versão que o Payload usa.
+
+Um teste novo em `packages/news/src/config.test.ts` confere que a projeção de identidade continua sem
+os campos de autenticação local (`resetPasswordRequestedAt`, `salt`, `hash`, `sessions`), com admin e
+GraphQL desabilitados. A atualização não exige migration. O código e o lockfile vêm do commit
+`90f82e2` do PR46, que já passou em quality e security; aqui foram isolados do restante daquele PR.
+Localmente: lockfile consistente com os manifestos e `pnpm audit --audit-level high` sem avisos
+altos ou críticos. Typecheck, testes e build ficam para o CI deste PR.
