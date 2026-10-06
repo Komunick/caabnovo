@@ -1,5 +1,31 @@
 # Tasks: Relatórios: exportação direta nas três abas — incremento de 21/09/2026
 
+## Estado da entrega combinada de 06/10/2026 — Conciliação com Agendamentos e gates locais-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
+refeita por este registro). Branch `feature/reports-complete-combined-20261006`, ponta 9c47c5e,
+worktree `.cache/pr-reports-combined-20261006`, criada de `feature/reports-complete-20261002`
+(c8a2614, preservada) com merge, sem conflito textual, de
+`origin/feature/scheduling-administrative-20261002` (PR #43, ffd8997) e de `origin/dev` (b80bf6e,
+#44). Motivo: c8a2614 usa original_start (migration 0032), presente só no PR #43. Detalhes, gates e limites em
+[evidência](evidence/plan-2026-09-21-validation.md).
+
+| Tarefa | Resultado em 06/10/2026                                                                                                                                                                                       |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T042   | Conciliação por leitura e gates locais concluídos; validação em PostgreSQL pendente no CI.                                                                                                                    |
+| T041   | Permanece aberta: SQL real em PostgreSQL com as migrations aplicadas ainda não foi executado na ponta combinada.                                                                                              |
+| T039   | Permanece aberta: a ponta combinada ainda não tem CI; o CI 0775bf3 é histórico da base antiga.                                                                                                                 |
+| T038   | Permanece aberta: sem C1, recursos/tempo e painel medidos na versão combinada.                                                                                                                                |
+
+Não declarar prontidão para PR, QA ou deploy. Segue Em Desenvolvimento, bloqueado por Operar aprovação,
+remarcação e recuperação de atendimentos (CAAB-40) / PR #43: Exportar detalhe agrupado, resumo e
+evolução sem os limites antigos (CAAB-44). Condição para PR: só depois que o PR #43 estiver na dev,
+atualizar esta branch com `origin/dev`, repetir os gates e, com pedido explícito do usuário, abrir PR
+para dev com o título `feat(relatorios): completa exportações agrupadas, resumo e evolução`. A
+numeração 0035 pertence ao PR #45 (`feature/roles-default-collaborator-20261005`); quando ele chegar
+à dev, as listas de migrations de `migrations.test.ts` e `scheduling-workflow.test.ts` precisarão
+incluí-la.
+
 ## Estado da entrega de 02/10/2026
 
 Autoria CODEX, solicitante GitHub não verificado (HTTP401). Branch
@@ -334,9 +360,12 @@ filtros. Ver
 Commit inicial da funcionalidade:9995361; ajuste E2E0775bf3 aprovado no CI37032398048. A correção
 dependente do modelo novo permanece em commit local separado; CI da base antiga não a comprova.
 
-- [ ] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
+- [x] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
       inteiros: manter registry com os três grupos de adaptadores, ExportScreen aditivo,
       reportSources.bookings com procedure_id/data de referência/profissional opcional e cinco
       estados, helpers do resumo e gerador agrupado. Conferir hashes e executar regressões reais de
       agrupamento por estado/profissional nulo e datas, além de todos os gates da versão combinada.
       Não copiar migrations nem considerar o CI anterior como aprovação.
+  _06/10 (CLAUDE, solicitante Gabriel-Komunick): conciliação por leitura e gates locais concluídos;
+  validação em PostgreSQL pendente no CI. Sem substituir arquivos inteiros; sem correção necessária.
+  Não satisfaz T041, T038 nem T039._

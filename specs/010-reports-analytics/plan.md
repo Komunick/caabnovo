@@ -265,3 +265,18 @@ original_start nem reservas sem horário. Não copiar migrations0031–0034 isol
 combinada deverá manter a projeção bookings de Agendamentos e os helpers/gerador desta entrega e ser
 revalidada. Correção preparada no segundo commit, com regressão real T041. Publicação/PR
 condicionados aos gates; serviços e merge proibidos.
+
+
+## Conciliação da branch combinada — 06/10/2026-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick. A dependência registrada acima foi atendida na branch
+`feature/reports-complete-combined-20261006` (ponta 9c47c5e), que incorpora o PR #43 (ffd8997) e a
+dev (b80bf6e, #44) sobre c8a2614, sem copiar migrations isoladamente. A conciliação semântica (T042)
+foi feita por leitura: registry com os três grupos de adaptadores, ExportScreen aditivo, projeção
+bookings com original_start/procedure_id e profissional opcional, helpers do resumo e gerador
+agrupado preservados. Gates locais (tipos, lint, Prettier, unitários e contratos) passaram; SQL real
+em PostgreSQL, T041, T038, T039, E2E, acessibilidade e QA humano seguem pendentes e a ponta ainda não
+tem CI. Detalhes e limites em [evidência](evidence/plan-2026-09-21-validation.md). A migration 0035
+pertence ao PR #45; as listas de migrations de dois testes precisarão incluí-la quando ele chegar à
+dev. PR para dev somente depois que o PR #43 estiver na dev, após nova atualização com `origin/dev`,
+repetição dos gates e pedido explícito do usuário.

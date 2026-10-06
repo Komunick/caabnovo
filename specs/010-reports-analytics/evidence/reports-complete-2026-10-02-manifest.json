@@ -86,11 +86,11 @@
     },
     {
       "path": "specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md",
-      "sha256": "246a0cbfc9d758f015e1a8c0343d8d0538f34a2ffb0a4ae9a150f541656d8a0d"
+      "sha256": "df46ea92429464c3ec278aba1628ac5bc24b6430e681eca7b0129b15f2719cbd"
     },
     {
       "path": "specs/010-reports-analytics/plan.md",
-      "sha256": "ed0dc187c139ddad20695a78243a6a4573de3fe01a06ee9a96e2f520bd83373a"
+      "sha256": "3fa69948328894cee458c5030ecce6baeff09031df70318e2cdfb8535f8576a2"
     },
     {
       "path": "specs/010-reports-analytics/research.md",
@@ -102,9 +102,67 @@
     },
     {
       "path": "specs/010-reports-analytics/tasks.md",
-      "sha256": "0d07b945a2ce3b17c39a671c30981cc8a1044f525ba9b65b73076ea29f73a1ec"
+      "sha256": "eb7dcd58d97d102f06ebac54ed8842d27d05f8491fdf124b664cd9c9bcca690a"
     }
   ],
   "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
-  "ciRun": 37032398048
+  "ciRun": 37032398048,
+  "combined": {
+    "date": "2026-10-06",
+    "author": "CLAUDE",
+    "requester": "Gabriel-Komunick",
+    "branch": "feature/reports-complete-combined-20261006",
+    "worktree": ".cache/pr-reports-combined-20261006",
+    "base": "c8a2614 (feature/reports-complete-20261002, preserved)",
+    "merges": [
+      {
+        "sha": "86bf311",
+        "source": "origin/feature/scheduling-administrative-20261002",
+        "sourceHead": "ffd8997",
+        "pr": "#43",
+        "textualConflicts": false
+      },
+      {
+        "sha": "9c47c5e",
+        "source": "origin/dev",
+        "sourceHead": "b80bf6e",
+        "pr": "#44",
+        "textualConflicts": false
+      }
+    ],
+    "head": "9c47c5e",
+    "reason": "c8a2614 uses original_start (migration 0032), present only in PR #43",
+    "t042": "semantic reconciliation done by reading; local gates done; PostgreSQL validation pending in CI",
+    "localGates": {
+      "typecheck": "passed (6 projects)",
+      "lint": "passed",
+      "prettier": "passed (100 changed ts/tsx/mjs/json files; .sql not checked)",
+      "vitestUnit": "passed (72 files, 595 tests)",
+      "contract": "passed (24 files, 170 tests)",
+      "workerProductionReadiness": "isolated run failed 1 of 14 by 5000 ms timeout in 'runs the actual promotion entry point from the worker directory'; passed in the full run; not compared with dev; recorded as time-unstable, cause not stated, isolated run not used as approval"
+    },
+    "notValidated": [
+      "real PostgreSQL SQL",
+      "migrations 0031-0036 applied",
+      "report-exports.test.ts (including the six cancelled bookings regression)",
+      "E2E",
+      "accessibility",
+      "browser",
+      "T038/C1",
+      "visual review",
+      "human QA"
+    ],
+    "openTasks": [
+      "T041",
+      "T038",
+      "T039"
+    ],
+    "validatedPublishedCommit": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
+    "ciRun": 37032398048,
+    "historicalCiNote": "validatedPublishedCommit and ciRun refer to the pre-reconciliation base only",
+    "combinedHeadHasCi": false,
+    "readiness": "not declared ready for PR, QA or deploy; CAAB-44 remains Em Desenvolvimento, blocked by CAAB-40 / PR #43",
+    "prCondition": "only after PR #43 is in dev: update with origin/dev, repeat gates, and open PR to dev only on explicit user request, title 'feat(relatorios): completa exportações agrupadas, resumo e evolução'",
+    "migration0035": "belongs to PR #45 (feature/roles-default-collaborator-20261005); migrations.test.ts:57-62 and scheduling-workflow.test.ts:482 must include it when #45 reaches dev"
+  }
 }

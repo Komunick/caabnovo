@@ -242,3 +242,66 @@ encerram o aceite de Exportar o conjunto completo de dados em Relatórios (CAAB-
 Repasse operacional completo ficará no bloco próprio do agentcache principal, conforme pedido do
 usuário, com releitura sob abertura exclusiva; demais notas serão preservadas. Sem merge, serviços
 locais, alteração de outras worktrees ou de fontes transversais.
+
+
+## Conciliação com Agendamentos e gates locais — 06/10/2026-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
+refeita por este registro). Os blocos CODEX acima permanecem como histórico. Este bloco registra a
+ponta combinada e não substitui o CI 0775bf3, que valida somente a base anterior à conciliação.
+
+### Branch combinada
+
+Em 06/10/2026 foi criada `feature/reports-complete-combined-20261006` a partir de
+`feature/reports-complete-20261002` (c8a2614, preservada), com merge, sem conflito textual, de
+`origin/feature/scheduling-administrative-20261002` (PR #43, ffd8997; merge 86bf311) e de
+`origin/dev` (b80bf6e, #44; merge 9c47c5e, ponta atual). Motivo: c8a2614 usa original_start
+(migration 0032), disponível apenas no PR #43. Worktree `.cache/pr-reports-combined-20261006`.
+
+### T042 — conciliação semântica por leitura e verificação
+
+Concluída sem necessidade de correção de código. Conferido:
+
+- runtime.ts registra usersExport, reportExports e schedulingExports (runtime.ts:17); o catálogo
+  recusa chave duplicada (catalog.ts:78-85).
+- export-screen.tsx mantém initial, initialFilters, renderFilter, context, defaultOrderLabel e
+  backLabel, usados por Agendamentos (scheduling/ui/export-screen.tsx:26-31) e por Relatórios
+  (reports/ui/report-export-screen.tsx:9-11).
+- reports.ts:50 mantém a projeção bookings (JOIN com procedure, LEFT JOIN com profissional,
+  at=coalesce(starts_at, original_start, created_at), cinco estados) junto ao gerador agrupado
+  (reports.ts:93-154); profissional nulo vira "Não informado".
+- report-summary.ts:97 e report-overview-export.ts:245 usam coalesce(starts_at, original_start,
+  created_at) com `>= $1` e `< $2`.
+- original_start e procedure_id vêm da migration 0032 (0032:26-28 e :39).
+- migrations.test.ts:57-62 e scheduling-workflow.test.ts:482 listam 0030–0034 e 0036. A 0035
+  pertence ao PR #45 (`feature/roles-default-collaborator-20261005`); essas duas listas precisarão
+  incluí-la quando o PR #45 chegar à dev.
+
+Resultado: conciliação por leitura e gates locais concluídos; validação em PostgreSQL pendente no
+CI. Isso não aprova T041, T038 nem T039.
+
+### Gates locais na ponta 9c47c5e
+
+Executados sem serviços locais: typecheck (6 projetos) e lint passaram; Prettier dos 100 arquivos
+ts/tsx/mjs/json alterados passou (arquivos .sql não verificados); vitest unitário 72 arquivos/595
+testes passaram; contratos 24 arquivos/170 testes passaram.
+
+Rodado isoladamente, apps/worker/tests/production-readiness.test.ts falhou em 1 de 14 testes por
+timeout de 5000 ms em "runs the actual promotion entry point from the worker directory"; na rodada
+completa passou. Não foi comparado com a dev. Registrado como instável por tempo, sem declarar
+causa; a rodada isolada não é usada como aprovação.
+
+### Não validado
+
+SQL real em PostgreSQL; migrations 0031–0036 aplicadas; report-exports.test.ts (inclui a regressão
+de seis reservas canceladas, linhas ~272–345); E2E; acessibilidade; navegador; T038/C1; revisão
+visual; QA humano. A ponta combinada ainda não tem CI. T041, T038 e T039 permanecem abertas.
+
+### Estado e condição para PR
+
+Não declarar prontidão para PR, QA ou deploy. Exportar detalhe agrupado, resumo e evolução sem os
+limites antigos (CAAB-44) segue Em Desenvolvimento, bloqueado por Operar aprovação, remarcação e
+recuperação de atendimentos (CAAB-40) / PR #43. Só depois que o PR #43 estiver na dev: atualizar esta
+branch com `origin/dev`, repetir os gates e, com pedido explícito do usuário, abrir PR para dev com
+o título `feat(relatorios): completa exportações agrupadas, resumo e evolução`. Sem push, PR ou
+alteração no Jira nesta etapa.
