@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import { expectWcag22AA } from "./accessibility";
 import { expect, syntheticUsers, test } from "./fixtures";
+import { provisionTestUser } from "../support/provision-user";
 
 async function signIn(page: import("@playwright/test").Page, email: string, password: string) {
   await page.goto("/login");
@@ -243,6 +244,131 @@ test("ordinary user cannot open user administration", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Colaboradores", exact: true })).toHaveCount(0);
   await page.goto("/users");
   await expect(page.getByText("Você não tem permissão para acessar colaboradores.")).toBeVisible();
+});
+
+test("delegated creator with roles:read uses the base role without granting a role", async ({
+  page,
+}, info) => {
+  const database = new Client({
+    connectionString:
+      process.env.DATABASE_ADMIN_URL ?? "postgresql://postgres:change-me@127.0.0.1:5432/caab",
+  });
+  await database.connect();
+  try {
+    const suffix = randomUUID();
+    const password = "Synthetic-Delegated-Creator-9!";
+    const actor = await provisionTestUser(database, {
+      name: "Criador delegado sintético",
+      email: `delegated-creator-${suffix}@example.test`,
+      password,
+      permissions: ["users:read", "users:create", "roles:read"],
+    });
+    const baseRoleId = (
+      await database.query<{ id: string }>("SELECT id FROM role WHERE code='collaborator'")
+    ).rows[0]!.id;
+    await database.query(
+      "INSERT INTO user_role(user_id,role_id,granted_by,justification) VALUES($1,$2,$1,'Fixture sintética')",
+      [actor.id, baseRoleId],
+    );
+    const authority = await database.query<{ permission: string }>(
+      "SELECT permission FROM effective_user_permission WHERE user_id=$1 ORDER BY permission",
+      [actor.id],
+    );
+    expect(authority.rows.map(({ permission }) => permission)).toEqual([
+      "roles:read",
+      "users:create",
+      "users:read",
+    ]);
+    await signIn(page, actor.email, password);
+    await page.goto("/users/new");
+    await expect(page.getByRole("heading", { name: "Novo colaborador" })).toBeVisible();
+    await expect(page.getByRole("radio")).toHaveCount(0);
+    await expect(page.locator('input[name="roleIds"]')).toHaveCount(0);
+    expect((await page.request.get("/api/v1/roles")).status()).toBe(200);
+    await page.route("https://viacep.com.br/**", (route) => route.abort());
+    const contact = syntheticUserContact();
+    const email = `delegated-created-${suffix}@example.test`;
+    await page.getByLabel("Nome").fill("Conta criada por perfil delegado");
+    await page.getByLabel("E-mail").fill(email);
+    await page.getByLabel("CPF", { exact: true }).fill(contact.cpf);
+    await page.getByLabel("Telefone", { exact: true }).fill(contact.phone);
+    await page.getByLabel("Rua", { exact: true }).fill(contact.address.street);
+    await page.getByLabel("Número", { exact: true }).fill(contact.address.number);
+    await page.getByLabel("Bairro", { exact: true }).fill(contact.address.neighborhood);
+    await page.getByLabel("Cidade", { exact: true }).fill(contact.address.city);
+    await page.getByLabel("Estado (UF)", { exact: true }).fill(contact.address.state);
+    for (const { width, theme } of [
+      { width: 1280, theme: "light" },
+      { width: 390, theme: "dark" },
+      { width: 320, theme: "light" },
+    ]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.evaluate((theme) => {
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem("caab-theme", theme);
+      }, theme);
+      await expect(page.getByRole("radio")).toHaveCount(0);
+      await expectWcag22AA(page);
+      await page.screenshot({
+        path: info.outputPath(`collaborator-delegated-base-role-${width}-${theme}.png`),
+        fullPage: true,
+      });
+    }
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/v1/users") && response.request().method() === "POST",
+    );
+    await page.getByRole("button", { name: "Criar colaborador" }).click();
+    const response = await responsePromise;
+    expect(response.request().postDataJSON()).toMatchObject({ email, roleIds: [] });
+    expect(response.status()).toBe(201);
+    const created = (await response.json()) as { id: string };
+    await expect(page.getByRole("region", { name: "Senha inicial do colaborador" })).toBeVisible();
+    const assignment = await database.query<{
+      code: string;
+      granted_by: string;
+      grant_origin: string;
+    }>(
+      `SELECT r.code,ur.granted_by,ur.grant_origin FROM user_role ur JOIN role r ON r.id=ur.role_id
+       WHERE ur.user_id=$1 AND ur.revoked_at IS NULL`,
+      [created.id],
+    );
+    expect(assignment.rows).toEqual([
+      { code: "collaborator", granted_by: actor.id, grant_origin: "web" },
+    ]);
+    expect(
+      (
+        await database.query("SELECT 1 FROM effective_user_permission WHERE user_id=$1", [
+          created.id,
+        ])
+      ).rowCount,
+    ).toBe(0);
+    const audit = await database.query<{ after: { baseRoleApplied: boolean } }>(
+      "SELECT after FROM audit_event WHERE action='user.created' AND entity_id=$1",
+      [created.id],
+    );
+    expect(audit.rows[0]!.after.baseRoleApplied).toBe(true);
+    const forgedEmail = `delegated-forged-${suffix}@example.test`;
+    const forged = await page.request.post("/api/v1/users", {
+      headers: {
+        origin: new URL(page.url()).origin,
+        "x-csrf-token": randomUUID(),
+        "idempotency-key": randomUUID(),
+      },
+      data: {
+        ...syntheticUserContact(),
+        name: "Cargo explícito não autorizado",
+        email: forgedEmail,
+        roleIds: [baseRoleId],
+      },
+    });
+    expect(forged.status()).toBe(403);
+    expect(
+      (await database.query('SELECT 1 FROM "user" WHERE email=$1', [forgedEmail])).rowCount,
+    ).toBe(0);
+  } finally {
+    await database.end();
+  }
 });
 
 test("administrator initializes a legacy account without replacing existing credentials", async ({

@@ -1,5 +1,15 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Correção do cadastro delegado — 06/10/2026-CODEX-mafaltti
+
+- [x] CB09 Corrigir a disponibilidade do seletor inicial para `roles:grant` e preparar regressão de
+      página e jornada do perfil com criação/consulta de cargos sem concessão. Unidade comprovou a
+      falha antes e passou depois; 23 testes de página/usuários aprovados, tipos/lint/formato
+      aprovados. A nova jornada de navegador e suas evidências serão verificadas no CI da ponta
+      publicada, com resultado no PR45 e na
+      [evidência](evidence/default-collaborator-role-2026-10-05.md). Não atribuir esse fechamento de
+      implementação a CB06, AC-T006 ou homologação humana.
+
 ## Conciliação após PR42/43 — 06/10/2026-CODEX-mafaltti
 
 Pedido atual: resolver os conflitos do PR45 com dev `ea0bc3b`, que já contém PR42/43. Sequência

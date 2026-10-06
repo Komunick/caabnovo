@@ -124,3 +124,36 @@ incluindo CB06/AC-T006 abertas. Três Markdown editados formatados, 26 links rel
 auditadas integralmente. Os dois testes alterados passam no Prettier; usado o formatador existente
 diretamente porque o wrapper pnpm exec não resolveu o binário nesta sessão Windows. Diff sem erros.
 PostgreSQL e navegador serão comprovados pelo CI, sem substituir por mocks.
+
+## Correção MEDIUM do seletor de cargo delegado — 06/10/2026
+
+Autoria: CODEX. Solicitante: mafaltti, login Danilo-Komunick, identidade get_profile já consultada
+nesta sessão. Pedido do usuário: corrigir divergência entre contrato e interface de criação para
+perfil delegado com users:create e roles:read, sem roles:grant. PR45 ainda aberto em 6caa9de.
+
+**Causa comprovada:** a página carregava cargos por roles:read; RoleOptions pré-selecionava
+Colaborador e o formulário enviava esse ID explícito. createUser exige roles:grant somente para
+roleIds não vazio, então esse caminho recebia 403. A regra de aplicar o cargo base sem concessão já
+está implementada no servidor. Correção de produção em uma linha: página consulta/oferece cargos
+somente por roles:grant. RoleOptions, UserForm e guardas de createUser permanecem intactos.
+
+**Prova antes/depois, sem serviços:** seis testes da página. Antes: um falhou porque o perfil com
+consulta sem concessão recebia opções; cinco passaram. Depois: os seis passaram. Junto aos testes
+existentes do seletor/usuários: 23 aprovados em seis arquivos. Tipos web, ESLint e Prettier dos
+arquivos alterados aprovados. Guia canônico e documentação de page/Server Components do Next
+instalado consultados, sem introduzir API ou componente novo.
+
+**Jornada nova, executada somente no CI:** Colaborador real recebe apenas users:read/users:create/
+roles:read; sua autoridade efetiva é conferida no PostgreSQL e consulta GET roles retorna 200.
+Formulário sem radio/campo roleIds; payload vazio observado, criação 201 e comprovante de senha
+inicial. Cargo Colaborador e baseRoleApplied conferidos por SQL/auditoria, sem privilégios novos.
+Envio explícito forjado de cargo recebe 403 e não persiste conta. Administrador conserva sua jornada
+existente de seleção, cadastro e concessão. Listagem Playwright reconhece quatro configurações; não
+é execução dessas configurações. CI vigente usa Chromium.
+
+**Revisão pelo guia:** mesma estrutura, campos, máscaras, rascunhos e ação primária. A única remoção
+é o controle não autorizado, conforme "funções iniciais se permitidas". E2E prepara Axe/capturas
+1280/claro, 390/escuro e 320/claro, com dados sintéticos, no artifact existente de Colaboradores.
+Capturas e resultados precisam ser conferidos após o CI; nenhuma revisão visual de navegador ou QA
+humano local declarada. Sem serviços, PostgreSQL local, banco de uso, alteração de dados reais ou
+merge de PR. Versão e CI da nova ponta serão registrados no corpo atualizado do PR45.
