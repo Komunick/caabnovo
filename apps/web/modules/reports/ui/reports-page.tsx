@@ -18,7 +18,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableContainer } from "@/components/ui/table";
 import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
-import { reportExportHref, reportRequest } from "./client";
+import { reportExportHref, reportRequest, stashReportExportNotes } from "./client";
 import styles from "./reports.module.css";
 type Saved = {
   id: string;
@@ -285,7 +285,8 @@ export function ReportsPage({
                 ) : (
                   <Link
                     className={buttonVariants()}
-                    href={reportExportHref(query, data.table?.columns, notes)}
+                    href={reportExportHref(query, data.table?.columns)}
+                    onClick={() => stashReportExportNotes(notes)}
                   >
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Link>
@@ -871,11 +872,8 @@ export function ReportsPage({
                       {item.status === "failed" && (
                         <Link
                           className={buttonVariants()}
-                          href={reportExportHref(
-                            item.configuration.query,
-                            undefined,
-                            item.configuration.notes,
-                          )}
+                          href={reportExportHref(item.configuration.query)}
+                          onClick={() => stashReportExportNotes(item.configuration.notes)}
                         >
                           Solicitar novamente
                         </Link>

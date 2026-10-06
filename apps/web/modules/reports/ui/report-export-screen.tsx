@@ -1,13 +1,31 @@
 "use client";
-import { Fragment, type ComponentProps } from "react";
+import { Fragment, useEffect, useMemo, useState, type ComponentProps } from "react";
 import { FormField } from "@/components/ui/form-field";
 import { ExportScreen } from "@/modules/exports/ui/export-screen";
+import { REPORT_EXPORT_NOTES_MAX, takeReportExportNotes } from "./client";
 
 /** Uses the same additive renderFilter hook supplied by the Scheduling delivery. */
 export function ReportExportScreen(props: ComponentProps<typeof ExportScreen>) {
+  // The comment travels through sessionStorage, not the URL. It is read after mounting so the
+  // first client render matches the server HTML; the screen then restarts once from the merged
+  // initial selection (its draft key follows `initial`), before the user can have typed anything.
+  const [carried, setCarried] = useState("");
+  useEffect(() => {
+    const notes = takeReportExportNotes();
+    if (notes) setCarried(notes);
+  }, []);
+  const hasNotes = props.catalog.filters.some((filter) => filter.key === "notes");
+  const initial = useMemo(
+    () =>
+      carried && hasNotes
+        ? { ...props.initial, filters: { ...props.initial?.filters, notes: carried } }
+        : props.initial,
+    [carried, hasNotes, props.initial],
+  );
   return (
     <ExportScreen
       {...props}
+      initial={initial}
       renderFilter={(key, value, onChange, group) => {
         const filter = props.catalog.filters.find((candidate) => candidate.key === key)!;
         if (key === "notes")
@@ -15,7 +33,7 @@ export function ReportExportScreen(props: ComponentProps<typeof ExportScreen>) {
             <FormField key={key} id={`export-filter-${key}`} label={filter.label}>
               <textarea
                 value={value}
-                maxLength={2000}
+                maxLength={REPORT_EXPORT_NOTES_MAX}
                 onChange={(event) => onChange(event.target.value)}
               />
             </FormField>

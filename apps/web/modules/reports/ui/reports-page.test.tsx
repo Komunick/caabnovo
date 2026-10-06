@@ -3,7 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { ReportsPage } from "./reports-page";
-import { reportRequest } from "./client";
+import { REPORT_EXPORT_NOTES_KEY, reportRequest } from "./client";
 import { reportQuerySchema } from "@caab/contracts";
 
 vi.mock("./client", async (original) => ({
@@ -51,7 +51,7 @@ beforeEach(() => {
           status: exportStatus,
           progress: 10,
           created_at: "2026-09-18T12:00:00Z",
-          configuration: { query, format: "csv" },
+          configuration: { query, format: "csv", notes: "漢".repeat(2000) },
           safe_error_code: "JOB_FAILED",
         },
       ];
@@ -105,4 +105,50 @@ it("stops polling and offers a new request after definitive failure", async () =
   const count = request.mock.calls.length;
   await act(() => vi.advanceTimersByTimeAsync(6000));
   expect(request.mock.calls).toHaveLength(count);
+});
+const clickWithoutNavigating = (element: Element) =>
+  act(() => {
+    const stop = (event: Event) => event.preventDefault();
+    container.addEventListener("click", stop);
+    (element as HTMLElement).click();
+    container.removeEventListener("click", stop);
+  });
+it("hands the 2000-character comment to the export screen without putting it in the link", async () => {
+  window.sessionStorage.clear();
+  await render();
+  const executive = Array.from(container.querySelectorAll("button")).find(
+    (button) => button.textContent === "Resultados e evolução",
+  )!;
+  await act(() => executive.click());
+  const comment = container.querySelector<HTMLTextAreaElement>("textarea[maxlength='2000']")!;
+  const text = "漢".repeat(2000);
+  await act(() => {
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(
+      comment,
+      text,
+    );
+    comment.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  const link = Array.from(container.querySelectorAll("a")).find(
+    (anchor) => anchor.textContent?.trim() === "Exportar dados",
+  )!;
+  expect(link.getAttribute("href")).toMatch(/^\/reports\/exportar\?/);
+  expect(link.getAttribute("href")).not.toContain("notes");
+  expect(link.getAttribute("href")!.length).toBeLessThan(400);
+  await clickWithoutNavigating(link);
+  expect(JSON.parse(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)!).text).toBe(text);
+});
+it("hands the saved comment of a failed export over when requesting it again", async () => {
+  window.sessionStorage.clear();
+  await render();
+  exportStatus = "failed";
+  await act(() => vi.advanceTimersByTimeAsync(3000));
+  const link = Array.from(container.querySelectorAll("a")).find(
+    (anchor) => anchor.textContent?.trim() === "Solicitar novamente",
+  )!;
+  expect(link.getAttribute("href")).not.toContain("notes");
+  await clickWithoutNavigating(link);
+  expect(JSON.parse(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)!).text).toHaveLength(
+    2000,
+  );
 });
