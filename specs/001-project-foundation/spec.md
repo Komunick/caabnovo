@@ -1,5 +1,17 @@
 # Feature Specification: Fundação do Sistema CAAB
 
+## Conciliação da decisão de cargo base — 06/10/2026
+
+Atualização documental por CODEX/mafaltti, login Danilo-Komunick, identidade consultada nesta sessão
+pelo GitHub get_profile. A decisão de 05/10, registrada no
+[contrato de cargos](contracts/roles.md#histórico-do-cargo-base--23092026-encerrado-em-05102026),
+encerra a dúvida de produto P01/AC-T005: contas novas sem cargo informado nascem Colaborador; contas
+existentes sem cargo em vigor recebem o cargo pela migration 0035, preservando `user_access`.
+Implementação e provas G02/G03 estão no [PR #45](https://github.com/Komunick/caabnovo/pull/45), HEAD
+`310aacd`, ainda aberto na consulta. Esta conciliação não aplica a migration nem declara integração,
+homologação ou encerramento de AC-T006. O retrato de 02/10 abaixo permanece histórico e não reabre a
+decisão já tomada.
+
 ## Revisão de aceite de acessos — 02/10/2026
 
 Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19), Restringir criação de

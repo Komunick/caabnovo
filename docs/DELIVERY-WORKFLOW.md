@@ -54,9 +54,10 @@ conferindo e registrando branch, commit e eventuais alterações locais que comp
 reutilizar silenciosamente build antigo; preservar banco, contas e arquivos. Essa regra não autoriza
 ligar serviços agora.
 
-Quando ligado, o preview principal usa `http://localhost:3107` e os limites locais de recursos
-registrados no [runbook local](runbooks/local-workspace.md). Builds e E2E pesados ficam no CI quando
-houver pouca memória local; testes usam bancos descartáveis.
+Quando autorizado, o preview usa a porta e os limites de recursos confirmados para o computador
+atual, conforme o [runbook local](runbooks/local-workspace.md). Não adotar o perfil histórico de
+outra máquina como padrão. Builds e E2E pesados ficam no CI quando houver pouca memória local;
+testes usam bancos descartáveis.
 
 ## 4. Fluxo padrão
 

@@ -24,8 +24,10 @@ T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
       sem persistência/auditoria de sucesso indevidas; verificar separadamente atualização de
       descoberta por intervalo 15s, foco e mudança de rota. Preservar guardas e registrar falhas de
       rede como limite de atualização visual, não autorização do servidor.
-- [ ] AC-T005 Obter decisão do alcance do cargo base para contas atualmente sem cargo (P01) e
-      atualizar o contrato existente antes de propor transição. Não atribuir cargos por inferência.
+- [x] AC-T005 Decisão de produto P01 obtida em 05/10: contas novas sem cargo informado nascem
+      Colaborador e existentes sem cargo em vigor recebem o cargo pela migration 0035, preservando
+      `user_access`. Contrato conciliado em 06/10; implementação no PR #45/`310aacd`, ainda não
+      integrado. Não atribuir aplicação em banco, QA humano ou AC-T006 a este encerramento.
 - [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
       concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
       limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos

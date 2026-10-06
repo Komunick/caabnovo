@@ -145,3 +145,47 @@ A frente de acessos iniciou em `.cache/pr-access-review-20261002`, branch
 preservar os blocos DS adicionados nesta entrega e incorporar somente os trechos de acessos; não
 substituir spec/plan/tasks inteiros. A conferência de código já realizada aqui serviu apenas ao mapa
 documental e não substitui a matriz em preparação naquela instância.
+
+## Correções da revisão do PR #42 — 06/10/2026
+
+Autoria: CODEX. Solicitante: mafaltti, login Danilo-Komunick; GitHub get_profile consultado em 06/10
+nesta sessão. Pedido: corrigir os quatro achados LOW/INFO na mesma entrega documental. Base desta
+revisão: PR #42 aberto, HEAD `cb1bea0`, após a integração de `dev`/`b80bf6e` na branch. O PR #44 foi
+integrado em 05/10; dependências já pertencem a `dev` e não são mudança nova deste PR.
+
+- Cargo base: a dúvida de 23/09 passa a histórico encerrado pela decisão de 05/10. Spec, plano e
+  AC-T005 distinguem decisão, implementação no PR #45 e aplicação de dados; não encerram AC-T006. A
+  revogação do único cargo continua permitida. Preservar a decisão e o encerramento histórico quando
+  conciliar os PRs #42/#45, mesmo sem conflito textual.
+- Runbook: procedimentos gerais separados do perfil de uma máquina e dos checkpoints de entrega.
+  Conteúdo original preservado no
+  [histórico operacional](../../../docs/history/local-workspace-2026-10-02.md), com autoria e
+  referências; AGENTS e workflow exigem conferir o perfil do computador atual.
+- Retratos: MODULES e spec/plano/tarefas do programa 002 atualizados para PR #43/`ffd8997`,
+  migrations 0031–0034/0036 e CI dessa ponta; PR #45/`310aacd` conserva 0035. Não promover
+  implementação publicada a integração, revisão humana ou homologação. Retratos anteriores continuam
+  identificados como históricos.
+- Descrição do PR: atualizar para a ponta desta correção e seus checks; runs de `a30f494` e
+  `cb1bea0` só constituem evidência das respectivas versões, não do novo commit.
+
+Escopo exclusivamente documental. Código, migrations, dependências, dados e worktrees das frentes
+funcionais preservados. Nenhum serviço, banco de uso, merge de PR ou homologação por esta revisão.
+
+### Verificação desta correção — 06/10/2026
+
+- 13 Markdown passam no Prettier existente, com `--ignore-path .gitignore`; `git diff --check`
+  aprovado. O wrapper pnpm não encontrou Prettier nesta worktree sem node_modules; foi usado
+  diretamente o formatador já instalado na principal, sem instalação ou alteração global.
+- 198 links relativos e quatro âncoras conferidos nos documentos alterados; zero destinos ausentes
+  ou âncoras inválidas. URLs externas e outras formas Markdown não foram auditadas integralmente.
+- 12 backups conferidos por SHA-256; perfil/checkpoints transferidos ao histórico sem perda de
+  conteúdo, desconsiderando whitespace. Caudas históricas do mapa/programa preservadas.
+- 15 blocos de tarefas protegidos DS/AC/cargo único preservados; só AC-T005 muda para decisão
+  encerrada. 48 outros arquivos da Fundação permanecem idênticos à base desta correção.
+- Merge textual de `roles.md` simulado nos dois sentidos com PR #45/`310aacd`: nenhum conflito;
+  decisão de 05/10 e encerramento histórico preservados, sem seção de pendência vigente de 23/09. A
+  simulação desse contrato não valida código, banco ou o conjunto completo dos dois PRs.
+
+Os checks verdes de `cb1bea0` (runs 37370079795/37370076178) são anteriores a esta correção. O CI da
+nova ponta deve ser conferido e registrado no corpo atualizado do PR #42; não atribuir os runs
+anteriores ao novo conteúdo. Testes de aplicação locais não foram executados.

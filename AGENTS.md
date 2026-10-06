@@ -18,8 +18,10 @@ planejada não deve ser presumida implementada ou homologada.
    de cada etapa, conferir as regras aplicáveis.
 2. Ler [docs/agentcache.md](docs/agentcache.md): trabalho em andamento, pedidos pendentes,
    branch/worktree, impedimentos e próximo passo. Rotinas locais ficam em
-   [docs/runbooks/local-workspace.md](docs/runbooks/local-workspace.md). Conferir essas informações
-   nos arquivos e no Git antes de agir.
+   [docs/runbooks/local-workspace.md](docs/runbooks/local-workspace.md), que define procedimentos
+   gerais. Conferir o perfil do computador atual antes de aplicar portas ou limites de recursos;
+   registros históricos de outra máquina não são configuração padrão. Conferir essas informações nos
+   arquivos e no Git antes de agir.
 3. Localizar a documentação responsável pelo assunto no mapa abaixo. Para uma função existente, ler
    sua spec, plano, tarefas e contratos antes de alterar código.
 4. Consultar as instruções adicionais do diretório afetado, quando existirem, como

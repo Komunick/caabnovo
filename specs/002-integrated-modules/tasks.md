@@ -1,22 +1,32 @@
 # Tasks: Coordenação da entrega após clarify — incremento de 21/09/2026
 
-## Atualização do retrato de Agendamentos — 02/10/2026
+## Atualização do retrato de Agendamentos e Acessos — 06/10/2026
 
-Conferência documental por CODEX; solicitante mafaltti. O incremento administrativo de Agendamentos
-está implementado na worktree própria e no PR #43, ainda aberto, com HEAD
-ba9a6eaa21182acedf48384d425a0e6e4810541a na consulta desta revisão. Correções de segurança
-identificadas no fechamento estão em validação pela frente responsável; checks de versões anteriores
-não comprovam essas correções. Não declarar conclusão, homologação ou integração desse incremento em
-dev.
+Conferência documental por CODEX; solicitante mafaltti (GitHub get_profile nesta sessão, login
+Danilo-Komunick). Base integrada `dev`: `b80bf6e`, após o merge do PR #44 em 05/10. Schema integrado
+ainda com migrations até 0030; a correção de dependências não integra mudanças de schema.
 
-A base integrada de referência continua 748539d, com migrations até 0030. As migrations 0031–0034 e
-a permissão scheduling:review_absences pertencem à entrega de Agendamentos, ainda não integrada. Os
-retratos anteriores de 4e9abac/WSL abaixo são históricos e não representam a ponta atual do PR.
+O [PR #43](https://github.com/Komunick/caabnovo/pull/43) continua aberto em
+`ffd89973920dbdfcbf9f71fc21d6c8c347e2c4a3`. Agendamentos inclui migrations 0031–0034 e
+`0036_scheduling_review_fixes.sql`, além de `scheduling:review_absences`. Quality, security e
+browser passaram nos eventos
+[PR 37349161935](https://github.com/Komunick/caabnovo/actions/runs/37349161935) e
+[push 37349152527](https://github.com/Komunick/caabnovo/actions/runs/37349152527). Esse resultado é
+validação técnica dessa ponta; revisão humana, rollout e homologação permanecem pendentes.
 
-**Pendência pós-integração:** após a integração autorizada do PR #43, atualizar MODULES e
-spec/plan/tasks do programa 002 com o SHA efetivamente integrado, migrations e evidências vigentes.
-Conferir primeiro o estado do PR e os resultados das correções; não marcar essa atualização como
-concluída nesta entrega. Preservar HIN, DS/AC, contratos, autoria e homologações pendentes.
+O [PR #45](https://github.com/Komunick/caabnovo/pull/45) continua aberto em `310aacd`, com a
+migration `0035_default_collaborator_role.sql`, cargo base e provas G02/G03. A decisão de 05/10
+encerra a dúvida de produto P01/AC-T005; implementação em PR não equivale a integração ou aplicação
+no banco. CI [37348954157](https://github.com/Komunick/caabnovo/actions/runs/37348954157) aprovado
+nessa ponta. AC-T006 e revisão humana permanecem pendentes; os detalhes pertencem ao contrato de
+cargos e às evidências da frente responsável.
+
+**Conciliação pós-integração:** atualizar o mapa e as specs com os SHAs efetivamente integrados.
+Quem integrar o segundo PR funcional deve preservar a lista completa de migrations 0031–0036 em
+`packages/db/tests/migrations.test.ts`; 0035 pertence a Acessos e 0036 a Agendamentos. Preservar
+HIN, DS/AC, contratos e autoria. Nenhuma migration foi aplicada nem aceite humano inferido nesta
+revisão. Os retratos de 02/10 abaixo são históricos, superados por esta conferência nos pontos de
+versão, CI, migrations e decisão sobre cargo base.
 
 ## Retrato anterior das quatro instâncias — primeira consolidação de 02/10/2026
 
