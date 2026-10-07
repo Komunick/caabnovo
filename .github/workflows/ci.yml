@@ -248,9 +248,11 @@ jobs:
           scanner=(docker run --rm
             --volume "$GITHUB_WORKSPACE:/github/workspace:ro"
             --workdir /github/workspace
-            --env GIT_CONFIG_COUNT=1
+            --env GIT_CONFIG_COUNT=2
             --env GIT_CONFIG_KEY_0=safe.directory
-            --env GIT_CONFIG_VALUE_0=/github/workspace)
+            --env GIT_CONFIG_VALUE_0=
+            --env GIT_CONFIG_KEY_1=safe.directory
+            --env GIT_CONFIG_VALUE_1=/github/workspace)
           history_commits="$("${scanner[@]}" --entrypoint git zricethezav/gitleaks:v8.28.0 rev-list --count --all)"
           if [[ ! "$history_commits" =~ ^[1-9][0-9]*$ ]]; then
             echo 'Secret scan requires readable, nonempty repository history' >&2
