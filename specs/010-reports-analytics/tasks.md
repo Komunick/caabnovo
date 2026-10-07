@@ -1,5 +1,19 @@
 # Tasks: Relatórios: exportação direta nas três abas — incremento de 21/09/2026
 
+## Correção da extração PDF — 07/10/2026-CODEX-mafaltti
+
+- [x] T053 Corrigir ordem de emissão das células por segmento de página, preservando coordenadas,
+      fonte, quatro colunas por faixa e todas as colunas selecionadas. Provar IDs compostos de
+      Agendamentos com UUID realista, quatro células preenchidas, início perto do limite inferior,
+      38/39 linhas e oito colunas em duas faixas. Writer real e PDFJS: nove regressões vermelhas
+      antes e 20 testes aprovados depois, incluindo as 11 regressões existentes. PDFs antes/depois
+      renderizados e revisados; execução E2E original ainda depende do novo CI.
+
+**Estado atual:** CI da ponta documental `8695c32` falhou na extração do ID em
+`scheduling-export.spec.ts:116`, em três tentativas. A correção do writer está local, sem redução de
+campos/fonte ou alteração da asserção de Agendamentos. T049 reaberta até validar a nova ponta;
+aprovação de `62a761f` abaixo é histórica para este novo recorte. T038/C1 e QA humano pendentes.
+
 ## Revisão de privacidade e rascunhos — 07/10/2026-CODEX-mafaltti
 
 - [x] T050 Isolar transporte do comentário no contexto autenticado; descartar no logout, troca de
@@ -21,7 +35,7 @@ T050/T051 e T049 concluídas tecnicamente para essa versão. O CI de `538e3e9` v
 anterior. T038/C1 e QA humano continuam pendentes. Sem reabertura de regras de cargos ou concessões;
 checks da última atualização somente documental ainda devem ser conferidos.
 
-## Estado atual — 07/10/2026-CODEX-mafaltti
+## Checkpoint técnico de 62a761f — histórico anterior à correção PDF — 07/10/2026-CODEX-mafaltti
 
 **Validação técnica confirmada:** correções de CSV, PDF, métricas, quatro janelas e identidade entre
 abas publicadas em `62a761f`, com quality/browser/security aprovados no CI 37637466072. O conjunto
@@ -34,11 +48,10 @@ acessibilidade passaram. Limitação fiel e resultados por versão na
       compactar faixas e verificar o documento renderizado e limpeza após cancelamento.
 - [x] T048 Corrigir meios exatos na tela e reduzir quatro leituras de janelas a um agregado
       materializado. Regressão real PostgreSQL/paridade/EXPLAIN aprovada no CI de `62a761f`.
-- [x] T049 Publicar conjunto consolidado após gates locais e confirmar CI da versão pós-PR49;
-      evidência atualizada, incluindo P1 e o retry observado. CI 37637466072 aprovado para
-      `62a761f`; CI de `538e3e9` é histórico anterior ao P1. A última atualização documental terá
-      checks próprios. T038 permanece aberta para medições de recursos/tempo/painel; QA humano não
-      foi concluído.
+- [ ] T049 Publicar o conjunto com a correção de extração PDF e confirmar o CI da nova ponta.
+      Reaberta após a falha em `8695c32`; aprovação do P1 em `62a761f` preservada como histórico,
+      sem atribuição ao writer corrigido depois. T038 permanece aberta para medições de
+      recursos/tempo/painel; QA humano não foi concluído.
 
 **Checkpoint histórico de 06/10/2026:** merge local `5a0d4b8` de dev `2b30f53`/PR49, conflitos
 resolvidos com lockfile e evidência de Notícias da dev. Naquela etapa T046–T049 ainda aguardavam

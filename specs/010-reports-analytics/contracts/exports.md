@@ -48,6 +48,13 @@ faixas. Arquivo temporário privado contém apenas valores selecionados para rea
 agregados do gráfico; removido no término/erro/cancelamento. Não cria uma página por registro/faixa.
 Campos longos continuam completos e paginados.
 
+Complemento de 07/10/2026-CODEX-mafaltti: dentro de cada segmento de página de um registro, o fluxo
+PDF emite todas as linhas da primeira célula antes da seguinte, nas mesmas posições visuais. A
+extração de texto não deve intercalar outra coluna no meio de UUID/ID composto quebrado em linhas.
+Registros que cabem numa página ficam juntos, sem cabeçalho interrompendo o ID; células maiores
+continuam com numeração, sem truncar valores ou reter o arquivo inteiro. Fonte, largura, quatro
+colunas por faixa, campos selecionados e asserções originais dos consumidores são preservados.
+
 CSV: valores finitos estritamente numéricos em coluna number preservam sinal negativo sem apóstrofo.
 Texto, cabeçalhos, controles/espaços e fórmulas disfarçadas seguem escapados. Arredondamento das
 contagens é o mesmo na tela e no arquivo: empate de décimo arredonda em direção a +infinito, como

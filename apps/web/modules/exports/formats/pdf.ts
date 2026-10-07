@@ -152,19 +152,32 @@ export function createPdfWriter(presentation?: {
         return result;
       });
       const length = Math.max(...lines.map((l) => l.length));
-      for (let n = 0; n < length; n++) {
-        if (y > 530) y = newPage(band);
-        if (n === 0 || y === 83) {
-          pdf
-            .fontSize(7)
-            .text(`${record}${n ? " cont." : ""}`, 35, y, { width: 45, lineBreak: false });
-          pdf.fontSize(8);
+      const available = (top: number) => Math.max(0, Math.floor((530 - top) / 12) + 1);
+      const pageLines = available(83);
+      // Keep cells that fit one page intact, while allowing giant cells to use the remaining space.
+      // For ordinary rows this keeps the whole row together, including wrapped identifiers.
+      const prefix = Math.max(1, ...lines.map((l) => l.length).filter((n) => n <= pageLines));
+      if (available(y) < prefix) y = newPage(band);
+      for (let offset = 0; offset < length;) {
+        const count = Math.min(available(y), length - offset);
+        pdf
+          .fontSize(7)
+          .text(`${record}${offset ? " cont." : ""}`, 35, y, { width: 45, lineBreak: false });
+        pdf.fontSize(8);
+        // Emit each cell's lines consecutively within this page segment. Coordinates are unchanged,
+        // but text extractors no longer insert adjacent columns between fragments of a cell.
+        for (let col = 0; col < lines.length; col++) {
+          for (let n = 0; n < count; n++) {
+            pdf.text(lines[col]![offset + n] ?? "", 85 + col * width, y + n * 12, {
+              width: width - 10,
+              lineBreak: false,
+            });
+            await flow();
+          }
         }
-        lines.forEach((line, i) =>
-          pdf.text(line[n] ?? "", 85 + i * width, y, { width: width - 10, lineBreak: false }),
-        );
-        y += 12;
-        await flow();
+        y += count * 12;
+        offset += count;
+        if (offset < length) y = newPage(band);
       }
       return y + 6;
     };

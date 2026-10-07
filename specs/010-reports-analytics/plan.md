@@ -1,5 +1,21 @@
 # Implementation Plan: Relatórios: exportação direta nas três abas
 
+## Ordem de texto e paginação PDF — 07/10/2026-CODEX-mafaltti
+
+No writer compartilhado, manter as linhas já calculadas por célula e emitir por coluna dentro do
+mesmo segmento de página, sempre nas coordenadas originais. A capacidade inclusiva é de 38
+baselines, de y=83 a y=527, passo 12 e limite y<=530. Reservar o maior prefixo das células que cabem
+numa página: conserva a linha inteira quando curta e evita fragmentar IDs junto ao cabeçalho.
+Células gigantes podem usar o espaço restante e continuar na página seguinte; não materializar o
+arquivo inteiro. Preservar fonte 8, largura 180 com quatro colunas, faixas, spool privado, gráfico,
+reautorização, cancelamento e backpressure; verificar flow/abort por linha emitida.
+
+Provar com writer real e o PDFJS já usado pelo teste de Agendamentos: IDs units/services e
+professionals com dois UUIDs, quatro células preenchidas, borda y=527, 38/39 linhas e oito colunas.
+Gerar dois PDFs sintéticos antes/depois na cache, renderizar todas as páginas e revisar geometria,
+continuação e ausência de cortes. Não alterar scheduling-export.spec.ts ou seu parser/asserção. T049
+reaberta após a falha do CI de `8695c32`; sucesso de `62a761f` preservado como histórico.
+
 ## Privacidade e identidade do rascunho — 07/10/2026-CODEX-mafaltti
 
 Reutilizar WorkspaceDrafts para transportar o comentário em memória, no provider autenticado

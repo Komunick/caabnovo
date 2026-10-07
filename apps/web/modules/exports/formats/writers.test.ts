@@ -36,6 +36,121 @@ function target() {
   });
   return { sink, bytes: () => Buffer.concat(chunks) };
 }
+const schedulingColumns: ExportColumn[] = [
+  ["id", "Identificador"],
+  ["kind", "Cadastro"],
+  ["unitName", "Unidade"],
+  ["serviceName", "Serviço"],
+].map(([key, label]) => ({ ...columns[0]!, key: key!, label: label! }));
+const unitId = "b51ead3d-d625-4cee-a8e9-2d3091266d47";
+const professionalId = "61f2925a-6316-4bf3-a6f0-f7a64a0382a2";
+it.each([
+  [`units/${unitId}/3`, false],
+  [`units/${unitId}/3`, true],
+  [`professionals/${unitId}/${professionalId}/3`, false],
+  [`professionals/${unitId}/${professionalId}/3`, true],
+  [`services/${unitId}/3`, false],
+  [`services/${unitId}/3`, true],
+] as const)(
+  "PDF keeps composite identifier %s intact with four filled columns, near footer=%s",
+  async (id, nearFooter) => {
+    async function* source() {
+      if (nearFooter) {
+        // One two-line filler and 23 single-line fillers put the target at y=527: one baseline left.
+        for (let n = 0; n < 24; n++)
+          yield {
+            id: `filler-${n}`,
+            values: {
+              id: `filler-${n}`,
+              kind: "Unidades",
+              unitName: n ? "Unidade" : "Linha um\nLinha dois",
+              serviceName: "Serviço",
+            },
+          };
+      }
+      yield {
+        id,
+        values: { id, kind: "Unidades", unitName: "UNIDADE_ALVO", serviceName: "SERVICO_ALVO" },
+      };
+    }
+    const t = target();
+    await writePdf(source(), schedulingColumns, t.sink, new AbortController().signal);
+    const pages = await readPdf(t.bytes());
+    expect(pages.join(" ").replace(/\s/g, "")).toContain(id);
+    expect(pages.join(" ")).toContain("UNIDADE_ALVO");
+    expect(pages.join(" ")).toContain("SERVICO_ALVO");
+    if (nearFooter) {
+      expect(pages).toHaveLength(2);
+      expect(pages[0]).not.toContain("UNIDADE_ALVO");
+      expect(pages[1]!.replace(/\s/g, "")).toContain(id);
+      expect(pages[1]).not.toContain("25 cont.");
+    }
+  },
+);
+it.each([38, 39])(
+  "PDF preserves all %s baselines of a long cell alongside a wrapped identifier",
+  async (lineCount) => {
+    const id = `units/${unitId}/3`;
+    async function* source() {
+      yield {
+        id,
+        values: {
+          id,
+          kind: "Unidades",
+          serviceName: "SERVICO_ALVO",
+          unitName: Array.from(
+            { length: lineCount },
+            (_, n) => `LINHA_${String(n + 1).padStart(2, "0")}`,
+          ).join("\n"),
+        },
+      };
+    }
+    const t = target();
+    await writePdf(source(), schedulingColumns, t.sink, new AbortController().signal);
+    const pages = await readPdf(t.bytes());
+    expect(pages).toHaveLength(lineCount === 38 ? 1 : 2);
+    expect(pages.join(" ").replace(/\s/g, "")).toContain(id);
+    for (let n = 1; n <= lineCount; n++)
+      expect(pages.join(" ")).toContain(`LINHA_${String(n).padStart(2, "0")}`);
+    if (lineCount === 39) expect(pages[1]).toContain("1 cont.");
+  },
+);
+it("PDF preserves the eight default hours columns across two four-column bands", async () => {
+  const allColumns = [
+    ...schedulingColumns,
+    ...[
+      ["professionalName", "Profissional"],
+      ["weekday", "Dia"],
+      ["start", "Início"],
+      ["end", "Fim"],
+    ].map(([key, label]) => ({ ...columns[0]!, key: key!, label: label! })),
+  ];
+  const id = `units/${unitId}/3`;
+  async function* source() {
+    yield {
+      id,
+      values: {
+        id,
+        kind: "Unidades",
+        unitName: "UNIDADE_ALVO",
+        serviceName: "SERVICO_ALVO",
+        professionalName: "PROFISSIONAL_ALVO",
+        weekday: 3,
+        start: "08:30",
+        end: "17:00",
+      },
+    };
+  }
+  const t = target();
+  await writePdf(source(), allColumns, t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes());
+  expect(pages).toHaveLength(2);
+  expect(pages[0]!.replace(/\s/g, "")).toContain(id);
+  for (const column of allColumns) expect(pages.join(" ")).toContain(column.label);
+  expect(pages[1]).toContain("PROFISSIONAL_ALVO");
+  expect(pages[1]).toContain("08:30");
+  expect(pages[1]).toContain("17:00");
+});
 it("CSV preserves finite negative numeric cells while still neutralizing text and disguised formulas", async () => {
   async function* source() {
     for (const value of [-5.2, "-5.2", "-5.2e2", "-2+3", "=2+3", "\t-5.2", "-5.2\n"])

@@ -6,7 +6,52 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
-## Validação técnica do P1 publicado — 07/10/2026-CODEX-mafaltti
+## Correção da ordem de texto PDF — 07/10/2026-CODEX-mafaltti
+
+Autor CODEX; solicitante mafaltti/login Danilo-Komunick, identidade autenticada da sessão
+reutilizada. Base `8695c32`, sem outra mudança local ao iniciar. O novo CI revelou falha em três
+tentativas de `scheduling-export.spec.ts:116`: PDFJS não encontrava o ID composto inteiro após
+concatenar as páginas e remover espaços. O teste e o parser originais permaneceram intactos.
+
+**Prova da causa:** writer real, quatro colunas selecionadas e preenchidas, ID sintético
+`units/b51ead3d-d625-4cee-a8e9-2d3091266d47/3`. A emissão anterior escrevia a primeira linha de
+todas as células antes da segunda; PDFJS extraía Cadastro/Unidade/Serviço entre o UUID e seu sufixo
+`7/3`. Perto de y=527, o cabeçalho seguinte também interrompia esse ID. Nove regressões novas
+falharam, enquanto as 11 existentes passaram. O PDF antes teve três páginas e zero das duas
+ocorrências esperadas do ID inteiro. Não era necessário cortar colunas ou diminuir a fonte.
+
+**Correção:** emissão por coluna dentro do segmento de página, mantendo x/y, fonte 8, largura 180
+com quatro colunas, passo 12 e limite 530. Capacidade inclusiva de 38 baselines. Células que cabem
+numa página ficam juntas; gigantes usam o restante e continuam com o mesmo número de registro.
+Flow/abort ocorre por linha; spool, limpeza, faixas, gráfico e reautorização não foram alterados.
+
+**Prova depois:** 20 testes de writers aprovados, incluindo nove regressões novas e as 11
+anteriores. Cobrem IDs units/services/professionals (dois UUIDs), quatro células preenchidas, limite
+inferior, 38/39 linhas e oito colunas em duas faixas. Mantidas as regressões de 14 colunas padrão/40
+registros/até 16 páginas, gráfico/análise, Unicode, valores longos, spool, cancelamento e slow sink.
+O PDF depois conserva três páginas e as duas ocorrências integrais do UUID na extração PDFJS, sem
+alterar readPdf ou a asserção de Agendamentos.
+
+**Skill PDF e visual:** marker existente executado com sucesso exatamente uma vez, imediatamente
+antes da primeira autoria de QA, com
+`--operation-kind create --expected-output-count 2 --output-format pdf`. Essa autoria inicial via
+tsx falhou em uv_os_get_passwd/ENOMEM antes de criar PDF; esbuild já instalado empacotou o mesmo
+gerador, executado por Node sem nova dependência ou serviço. Poppler ausente; runtime confiável
+PyMuPDF 1.28.2 já instalado na worktree renderizou as seis páginas para PNG. Todas foram
+inspecionadas: sem corte/sobreposição, margens e quatro colunas conservadas, registro 25 inteiro na
+página 2 e registro longo 26 continuado em 35 + 4 linhas. Revisão independente pela frente
+reports_validation leu o diff, os dois PDFs e as seis PNGs, sem editar/gerar arquivos; nenhum
+bloqueador encontrado.
+
+Dois PDFs, extrações JSON e PNGs preservados em `.cache/qa-pdf-uuid-20261007` da worktree. Backup de
+sete originais com SHA256 conferido em `.cache/local-backups/pdf-text-order-20261007`. Tipos web,
+lint focado, Prettier explícito dos sete arquivos alterados e `git diff --check` aprovados. Somente
+a suíte de writers foi executada, com até dois workers; sem novo teste de banco ou navegador. T049
+reaberta até publicar e validar a nova ponta; os resultados anteriores de `62a761f` e `8695c32` não
+validam esta correção. T038/C1 e QA humano continuam pendentes. Sem commit/push/CI, banco, serviços,
+metadados ou mudança em outra worktree nesta etapa.
+
+## Validação técnica do P1 publicado — histórico anterior à correção PDF — 07/10/2026-CODEX-mafaltti
 
 Autor CODEX; solicitante mafaltti/login Danilo-Komunick, identidade da mesma sessão reutilizada.
 Correção P1 publicada no PR46 em `62a761f6c84d7446adcf242514f8ba8dd1a549b5`, com dev `2b30f53`. O

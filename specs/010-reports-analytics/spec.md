@@ -1,6 +1,15 @@
 # Feature Specification: Relatórios e Análises
 
-## Estado técnico validado — 07/10/2026-CODEX-mafaltti
+## Integridade dos valores no PDF — 07/10/2026-CODEX-mafaltti
+
+IDs compostos e outros valores quebrados visualmente em linhas devem permanecer íntegros na extração
+de texto, sem intercalar valores de colunas vizinhas. Emitir as linhas de cada célula
+consecutivamente no segmento da página, preservando posição, fonte e seleção/ordem das colunas.
+Linhas que cabem numa página permanecem juntas; textos gigantes continuam em segmentos numerados,
+com memória limitada e cancelamento. Falha reproduzida em `8695c32`, correção local; T049 reaberta
+até novo CI. Prova e revisão visual na [evidência](evidence/pr46-corrections-2026-10-06.md).
+
+## Estado técnico de 62a761f — histórico anterior à correção PDF — 07/10/2026-CODEX-mafaltti
 
 A correção de identidade entre abas está publicada em `62a761f` e confirmada no CI 37637466072,
 incluindo autenticação real de duas contas com permissões iguais no mesmo BrowserContext. T049
