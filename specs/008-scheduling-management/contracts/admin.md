@@ -1,5 +1,15 @@
 # Contratos — painel de Agendamentos
 
+## Reautorização do upload restrito — 05/10/2026
+
+Criar ou repetir intenção e finalizar upload de `scheduling_absence_evidence` exige sessão atual,
+`scheduling:read/write` e os acessos próprios `members:read/write` + `files:create` também após
+esperas por locks de membro, idempotência ou arquivo. Snapshot prévio de permissões não conserva
+cargo temporário expirado. Negação não cria arquivo, URL de upload, job, auditoria de sucesso ou
+mudança de status. Documentos comuns conservam seu fluxo; análise de mérito e entrega de avisos
+continuam fora desta correção. Evidência em
+[fechamento de 05/10](../evidence/closeout-2026-10-05.md).
+
 ## Retomada e adiamento de e-mail — 02/10/2026-CODEX-SOLICITANTE_NAO_VERIFICADO
 
 O usuário autorizou conciliar a worktree preservada com dev e concluir/validar sobreposição,

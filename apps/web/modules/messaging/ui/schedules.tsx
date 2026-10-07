@@ -68,13 +68,15 @@ export function MessageSchedulesPage() {
       description="Confira quando cada campanha será processada e gerencie os horários."
     >
       <div className={styles.actions}>
-        <Link
-          href="/messages/campaigns/new"
-          className={buttonVariants({ intent: "primary", size: "add" })}
-        >
-          <Plus aria-hidden="true" />
-          Novo agendamento
-        </Link>
+        {canWrite && (
+          <Link
+            href="/messages/campaigns/new"
+            className={buttonVariants({ intent: "primary", size: "add" })}
+          >
+            <Plus aria-hidden="true" />
+            Novo agendamento
+          </Link>
+        )}
         <Link href="/messages" className={buttonVariants()}>
           Escolher campanha existente
         </Link>

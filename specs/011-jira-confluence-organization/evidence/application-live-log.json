@@ -1,0 +1,65 @@
+{
+  "pageIds": {
+    "NEW-PREVISTAS": "7700481",
+    "NEW-SUGESTOES": "7700506",
+    "NEW-GUIAS": "7700526",
+    "NEW-DECISOES": "7700546",
+    "NEW-CAASSH": "7700572",
+    "NEW-RH": "7700596"
+  },
+  "log": [
+    {
+      "key": "CAAB-37",
+      "kind": "jira-content",
+      "ok": true,
+      "after": {
+        "type": "Epic",
+        "status": "Em Desenvolvimento",
+        "updated": "2026-10-01T17:44:11.233-0300"
+      },
+      "error": false
+    },
+    {
+      "key": "NEW-PREVISTAS",
+      "kind": "confluence-create",
+      "id": "7700481",
+      "ok": true,
+      "title": "Funcionalidades previstas"
+    },
+    {
+      "key": "NEW-SUGESTOES",
+      "kind": "confluence-create",
+      "id": "7700506",
+      "ok": true,
+      "title": "Sugestões"
+    },
+    {
+      "key": "NEW-GUIAS",
+      "kind": "confluence-create",
+      "id": "7700526",
+      "ok": true,
+      "title": "Guias de uso"
+    },
+    {
+      "key": "NEW-DECISOES",
+      "kind": "confluence-create",
+      "id": "7700546",
+      "ok": true,
+      "title": "Decisões"
+    },
+    {
+      "key": "NEW-CAASSH",
+      "kind": "confluence-create",
+      "id": "7700572",
+      "ok": true,
+      "title": "CAASSH e Portal de Parceiros"
+    },
+    {
+      "key": "NEW-RH",
+      "kind": "confluence-create",
+      "id": "7700596",
+      "ok": true,
+      "title": "RH — sugestão em avaliação"
+    }
+  ]
+}

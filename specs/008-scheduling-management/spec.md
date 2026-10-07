@@ -1,5 +1,15 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Cobertura de autorização do upload — 07/10/2026-CODEX-mafaltti
+
+A revalidação existente após espera por lock deve ser comprovada separadamente na criação, no replay
+e na finalização do comprovante restrito. O cargo temporário que concede acesso a
+Associados/arquivos vence durante a espera, enquanto a sessão e o acesso a Agendamentos permanecem
+válidos. Cada caminho deve negar a operação sem novos arquivos, grants, jobs ou auditoria. Trata-se
+de ampliar a prova da regra existente, sem mudar concessões ou comportamento de produto. A regressão
+anterior do PR48 comprovava somente finalização; criação e replay eram conferidos por leitura do
+código. A nova matriz exige PostgreSQL descartável no CI.
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 Decisões explícitas do usuário nesta revisão: contador legado desconhecido passa a zero por política

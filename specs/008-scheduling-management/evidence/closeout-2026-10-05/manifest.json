@@ -1,0 +1,486 @@
+{
+  "author": "CODEX",
+  "requester": "mafaltti",
+  "requesterLogin": "Danilo-Komunick",
+  "date": "2026-10-05",
+  "technicalCommit": "ef66884f0d99ebf465fafac46d8a17628e2a61e8",
+  "runId": 37319200057,
+  "runUrl": "https://github.com/Komunick/caabnovo/actions/runs/37319200057",
+  "jobs": {
+    "quality": "success",
+    "browser": "success",
+    "security": "success"
+  },
+  "tests": {
+    "unit": 558,
+    "contract": 169,
+    "integration": 355,
+    "integrationOptionalSkipped": 1,
+    "schedulingIntegration": 126,
+    "schedulingAbsence": 30,
+    "e2e": 101,
+    "focusedReports": 3,
+    "a11y": 6,
+    "buildPages": 57
+  },
+  "artifacts": [
+    {
+      "id": 11350400319,
+      "name": "scheduling-synthetic-evidence",
+      "zipDigestFromGitHub": "sha256:5311c81f0dba81e6a580a54320aaac62884899bbaf6d42618ad04283ff7f38d2"
+    },
+    {
+      "id": 11350135560,
+      "name": "news-creation-synthetic-screenshots",
+      "zipDigestFromGitHub": "sha256:749dbfa571cc545db067c7659e2abb2185666d0004b326ea6b733841906c2820"
+    }
+  ],
+  "imageCount": 73,
+  "images": [
+    {
+      "source": "news-creation-synthetic-screenshots/news-direct-publish-create-281c5-out-manually-saving-a-draft-chromium/news-creation-optional-cover.png",
+      "sha256": "a5d3a0e3b90f5ec0642108bdd35595856892fe87c31a609a515d4119d1648f52",
+      "reviewedByAI": true,
+      "retainedSample": "news-creation-optional-cover.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-1280-dark.png",
+      "sha256": "593a14c77d57056cd98a968547f4f192f49e9d8a6627fac36101d4c137eca9cc",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-1280-light.png",
+      "sha256": "86692727c4481b7c4d9c71d423b76d26cff3197b211db50cedc9fefddce95807",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-320-dark.png",
+      "sha256": "29fdc107095c1502d75feccfee21a400b5c4dfeafce12b24b902fef1078415eb",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-320-light.png",
+      "sha256": "e42c560889d8b637a78ccc3844c5a6691d22854d6dd5c648a8566eba3eb29884",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-390-dark.png",
+      "sha256": "d6587aa5c3eea751c066612bc62d24a0905b09f236690df91ae9810e694740d1",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-export-390-light.png",
+      "sha256": "c6a76214d6516b11bdfe404990c0798cfe736f58db1a8db9bfc2ba60b393512f",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-1280-dark.png",
+      "sha256": "8b6f34ae5db11c790f600dc42ac883ac892f540b38039744b1d5bde5998b614b",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-1280-light.png",
+      "sha256": "1f7a92fdffa44efdeeeb1c4bfd4688e2826840ecbf7a26d9a0236a79901dbded",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-320-dark.png",
+      "sha256": "853e2af7a969a82fa00f942336177c61ea8936c64b2bf1328aa65f2d81f60a08",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-320-light.png",
+      "sha256": "1cab0e07de3a7f547dc678b98a273a06fdf24aadd4a83b3d74a04b33c922d366",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-390-dark.png",
+      "sha256": "bfb5e3410a624e0d3e8bc9c1444b56ed83dec16d216e56928acfd3fee3af4916",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-list-390-light.png",
+      "sha256": "6dd38ac18ba36dc25d6e2ef9ff4e9a2178226b0c4d97a6d27ea01181a04c73d2",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-1280-dark.png",
+      "sha256": "bcf3b2bd449e183a04b93185648c453a0eeece367d8dcaee6bcc573501ddfeec",
+      "reviewedByAI": true,
+      "retainedSample": "absence-review-1280-dark.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-1280-light.png",
+      "sha256": "4dd3b7e2b51f217c15339954868ea44eb29e8cf55403a19d703a47c2b2a5ca66",
+      "reviewedByAI": true,
+      "retainedSample": "absence-review-1280-light.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-320-dark.png",
+      "sha256": "b733563021c29f8057288500dc332f500b75f10a09dd3700e21ba91117640b3d",
+      "reviewedByAI": true,
+      "retainedSample": "absence-review-320-dark.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-320-light.png",
+      "sha256": "139f4703813ccb44dbc17cb39e2e2cace18c66c42668c879ad4acd973e67fdf6",
+      "reviewedByAI": true,
+      "retainedSample": "absence-review-320-light.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-390-dark.png",
+      "sha256": "692682d74c6c2d3994e050d082da3bc7f8c7510945badd9544bff66d4c09d533",
+      "reviewedByAI": true,
+      "retainedSample": "absence-review-390-dark.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-absence-record--aff76-nd-accept-through-the-panel-chromium/absence-review-390-light.png",
+      "sha256": "3a9f7d401d831c8db7f890f37ad59229ef08879532cc8e04ea8c8c3310aa1b34",
+      "reviewedByAI": true,
+      "retainedSample": "absence-review-390-light.png"
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-agenda-desktop-light.png",
+      "sha256": "d5e48340766ea71a1ebf4b195a658872c8cd3322d4992736d0059237113cc0a0",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-agenda-mobile-light.png",
+      "sha256": "0dbab87b892f00ccb5697264a4c6526bf3d3ce252ef8b9ead8775e74d66d3ceb",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-cancelled-mobile-light.png",
+      "sha256": "cf9f24ece750dcde1e5bcc1eae5356d4673e4b4a1670a33705dca94cfcdbc6d7",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-day-mobile-dark.png",
+      "sha256": "0f285728e4243ad3d5022521bedfc0a94123abe6ada6dfc8f34657cfde3175ed",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-Dia-mobile-light.png",
+      "sha256": "5114a87659740762d7d8662157506e085acd740e4bfef78251ef84245aca6ac0",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-Mês-mobile-light.png",
+      "sha256": "6dc52170a470c515db873826876199aba6d968ecc4192cd70601d94bb24cd74c",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-Semana-mobile-light.png",
+      "sha256": "a040fda1aea1603ccaf06ed193c0c67204bb1c52e2e1db92e802575415b1af5f",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-calendar-week-desktop-dark.png",
+      "sha256": "c958b5bc1581798c5f37358fe5b81ddba56538cf33b66b32f568cfc3586fd084",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-catalog-desktop-light.png",
+      "sha256": "e855e0459492d124bbc0e8c46fde52d0b447d604e26f1ca5744e12c3f115c36e",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-catalog-mobile-light.png",
+      "sha256": "ba9ad3777a4095564e17e0d021a84e983478e19490b2203c2e1cff73a1e611ad",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-combobox-mobile-light.png",
+      "sha256": "cb125f6fc934b0e6861ea860938bd289d6588329acd4b5992fa0a5bc9b4c827f",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-deleted-member-kept-mobile.png",
+      "sha256": "4d04b91ed7f755722ab2578c96092b98c991c6d7c6fbd2c30302f22c79dc0fa9",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-detail-desktop-dark.png",
+      "sha256": "c11f6df4005ed09790ee9758224a9d052f52ad0dd0d90c1029dd08c502fb18fd",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-detail-desktop-light.png",
+      "sha256": "584366753db837b5d30548f0ed41979e5b7162c0b9565d3f6a1e12a9ba5002da",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-detail-mobile-dark.png",
+      "sha256": "7591ac2b0ba5b8ce686372d67e974b8ccaa071afcd9d009b9c036fd532aae039",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-hours-mobile-light.png",
+      "sha256": "54a31c5d2ba5b52eac3099b64507f55fc7eab75bc7ffbfa86c6fd8ca020656d7",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-new-unit-mobile-light.png",
+      "sha256": "20a7b061c125ee7c7fa5e606446a3da1dd9070e3c44ed118ef9f6c979fb5f7d3",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-configure-and-m-180b3--explicit-scheduling-grants-chromium/scheduling-reserve-mobile-light.png",
+      "sha256": "04c822ca6e0086ee31bf7f7d74b84697b54fdc285917d355e9a457b3668e23ac",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-1280-dark.png",
+      "sha256": "d65130a99870dbb0072c0f337b635ea6600fd3fe2d6bbfba8baf7a249d0a72a7",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-1280-light.png",
+      "sha256": "2b1120e1e0de4d4d7de4f3f0d5a7028d8e91de130f79fe57c4411c4bcd1233ae",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-320-dark.png",
+      "sha256": "80b1a6fa1ae2aa32a202991916c693d40ebd324dd747669808ded34d2ab569b8",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-320-light.png",
+      "sha256": "a4408ffb6ec0a5af3a9aa47099b5c7d3b8aed7835bd99ce0dd9be74903768728",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-390-dark.png",
+      "sha256": "34dfbd5d253449c3e2d80ed0fb62777b9c140dd2087099f0b0f4dae596856ecf",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-bookings-390-light.png",
+      "sha256": "574131ce02d0c3438643f684a70dabbc6758ca21529b52d4dc2217beb7a65e20",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-1280-dark.png",
+      "sha256": "ea4db8ff1c08c82fd685e078fb50991045e1f8e2bc273d7669d37fe065f2666d",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-1280-light.png",
+      "sha256": "ee5cc813d6a5b248e2ce49d32dbe7cc6df76110f281fc79652cf7076227b95d4",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-320-dark.png",
+      "sha256": "1a9d06037121ee0918eb05dd1bcd1500c2b9ce7058e9c2b91add94911d3a9960",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-320-light.png",
+      "sha256": "7ebcc2d7b1a39d8d125ee76aa60c2c5abc65009d59be741f8157e4fa2b923b55",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-390-dark.png",
+      "sha256": "ceb9506a21340996ba4f23294289af5e5da83338b7b0cefd4162280e0930c891",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-catalog-390-light.png",
+      "sha256": "b47cd49bbeb1ded18f206b2873be28ea6509f66ab8a86e3688a3b6c4d743ede6",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-1280-dark.png",
+      "sha256": "d9f8febf6e2970c99836c798900d2a4fa97fbb3912bf8bd501759bb3d8d86af6",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-1280-light.png",
+      "sha256": "f9d04978130c89a35eb85f9674d7bca5dd01a88d14a88a55577825c114d16376",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-320-dark.png",
+      "sha256": "8d122917217fd78292a0d7a0d9a9172b1b4403c1092f075321c2a9b0f7115ece",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-320-light.png",
+      "sha256": "0003b1ba8fbd316c886791f09f5c573e389c126d277b53002854acd241cee273",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-390-dark.png",
+      "sha256": "3669363ca1659e86a93a94ae5b25b1246d4c9a4c6db6071ea5454ef1a2e450c9",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-export-scheduli-b167b-text-retry-and-users-export-chromium/scheduling-export-hours-390-light.png",
+      "sha256": "c285c6cada6c99e90727ec18e97810cde97b5a4cb247106e9130fc94aa5cd884",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-1280-dark.png",
+      "sha256": "a365386b2c7cf3bb62dde4969d00d7898b6c5ccfac2f9cf7dae00ec29b5e273a",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-1280-light.png",
+      "sha256": "c8af0a39768eb7608e4f7070c38decac989747d4686c9c7b4a4a453e285e211d",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-320-dark.png",
+      "sha256": "b327387ddda1f28904a01d0c29951bc08eaacd4d6f50fbc711cb05be8f9527cb",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-320-light.png",
+      "sha256": "d512f5bfb77526cc61dec0763b97c2d83c08ec11c974dd84cf20fc77db747df3",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-390-dark.png",
+      "sha256": "8afe7044bb7a48f5eede941e402096b8f5ec934a88327ca362173dc4b5856835",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-policy-390-light.png",
+      "sha256": "dce3cd8e792b04702b901eda4e3c0b6c04802d6f0352488cc84987824fbb1fdf",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-1280-dark.png",
+      "sha256": "31234685924a9e1a9f95d350363f983d08f8be2c7c71c4324ee9e22abba87437",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-1280-light.png",
+      "sha256": "ece94224e82330fcb67f683a39d65e2f7351a44a4f5fadd70d0ad8f0df4ac7b0",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-320-dark.png",
+      "sha256": "f2b492d2958d5e490b9952c127d87b04a4a256a6a3dbeb5b8affc76e55d75585",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-320-light.png",
+      "sha256": "d8c8fc4f56f04467d8e5a5e91631a41a275b91a1b2de15413c2c443d1ad768b5",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-390-dark.png",
+      "sha256": "2605efcb36d4c16cf661d146230ce9bf37236692143012e3365a6167e9f9f733",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-queue-390-light.png",
+      "sha256": "4afee5c34241a609035bfd8481d060d53e0e2f3f6a2911f485d77a458267fc2e",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-1280-dark.png",
+      "sha256": "579859c7ed3a363df75734c5ef08cca2b348029acd3dc42792355f566d11216b",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-1280-light.png",
+      "sha256": "25e5a17e94b46666b5d36125db54d35b277e19e6a7bee7010573dfa672e7f600",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-320-dark.png",
+      "sha256": "3e5149b2293329c3c83a9dac0c3f4af69f97986b1cf8565566ab825303543821",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-320-light.png",
+      "sha256": "c5be34d9825ca3869e71441dcab6349bf9e0a5612fb1206b9e3b16f4e7727bdf",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-390-dark.png",
+      "sha256": "e333e7f34a10ebb5a88ac1807c14451dd6106472a6579b66fb0fccdee7a9bedc",
+      "reviewedByAI": false,
+      "retainedSample": null
+    },
+    {
+      "source": "scheduling-synthetic-evidence/scheduling-workflow-operat-4b76a--entirely-through-the-panel-chromium/administrative-recovery-390-light.png",
+      "sha256": "71da6abbb3b722d6d832edb4c6f000fcbf7bf8778c6fd5fa11a8885ad92070f1",
+      "reviewedByAI": false,
+      "retainedSample": null
+    }
+  ],
+  "limits": [
+    "Review by AI only; no human acceptance",
+    "Clean scanning result simulated in scheduling E2E fixture",
+    "Existing bearer grant TTL remains up to 300 seconds",
+    "L01/L02 directed proof gaps remain documented",
+    "No preview, production data, deployment, merge or new PR"
+  ]
+}
