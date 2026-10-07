@@ -8,8 +8,10 @@ reservas por capacidade na lista diária. Quando `professionalName` for ausente,
 visíveis. A correção não altera permissões, horários, regras ou dados da reserva.
 
 O título e o rollback do PR devem explicitar a atualização transversal de CI/Gitleaks já contida na
-entrega. A referência de `.gitleaksignore` aponta para a evidência deste PR; os fingerprints e as
-regras do scanner permanecem iguais. Não depender da integração do PR #46 para consultar a prova.
+entrega. Após a integração do PR #46 em dev, `.gitleaksignore` usa a referência canônica
+`specs/010-reports-analytics/evidence/pr46-corrections-2026-10-06.md`, já disponível na base de
+destino. O arquivo deve coincidir com dev e o PR #48, inclusive o comentário, para evitar conflito
+add/add. Fingerprints e regras do scanner permanecem iguais; a evidência local complementa a fonte.
 
 ## Correções visuais autorizadas — 06/10/2026-CODEX-mafaltti
 

@@ -167,8 +167,10 @@ comentário da referência; os resultados anteriores permanecem atribuídos às 
 Rollback deve considerar que uma reversão integral do PR #50 também retira seus ajustes transversais
 de CI/Gitleaks se ainda não houver outra integração que os preserve em `dev`. Conferir a árvore
 efetiva antes de reverter; para retirar apenas a apresentação de Agendamentos, preservar o workflow
-e as exceções históricas revisadas em uma reversão seletiva. A equivalência das mudanças nos três
-PRs não concede autorização de merge ou de rollback.
+e as exceções históricas revisadas em uma reversão seletiva. Na correção inicial, a equivalência
+entre os três PRs abrangia workflow e fingerprints; a referência do comentário divergiu e gerou
+conflito add/add documental. A correção desse comentário está registrada abaixo. Nenhuma dessas
+verificações concede autorização de merge ou de rollback.
 
 ## Fallback da lista e correção da análise — 07/10/2026-CODEX-mafaltti
 
@@ -230,3 +232,28 @@ fingerprints, contratos e capturas permanecem exatamente os da ponta funcional v
 documental e diff-check são os gates próprios do checkpoint; qualquer CI automático posterior
 pertence ao seu novo SHA e não deve ser confundido com o run funcional acima. Não houve merge,
 deploy, serviço local, alteração de banco de uso ou homologação humana.
+
+## Alinhamento da referência entre PRs — 07/10/2026-CODEX-mafaltti
+
+Pedido explícito do usuário: corrigir o conflito documental entre `.gitleaksignore` dos PRs
+#46/#48/#50. O PR #46 já foi integrado quando esta correção começou: dev
+`1c21c9a711aa12f446918ac790bc6ede76490251` contém a evidência canônica
+`specs/010-reports-analytics/evidence/pr46-corrections-2026-10-06.md`. Portanto, a justificativa
+anterior de que o destino dependia de um PR aberto foi superada pela integração confirmada.
+
+O comentário do PR #50 volta à mesma referência de dev e do PR #48. O arquivo inteiro, incluindo os
+13 fingerprints e comentários, coincide com essas fontes; workflow e comportamento do scanner não
+mudam. A triagem autocontida da spec008 permanece preservada como complemento e histórico. Não se
+alterou o PR #46 integrado nem a branch do PR #48: a correção fica somente no PR #50 aberto.
+
+Spec e plano agora registram a referência canônica. Validação desta etapa: comparação dos blobs,
+existência do destino em dev, simulação das combinações Git, Prettier documental e diff-check. As
+evidências funcionais anteriores permanecem atribuídas aos seus SHAs; este ajuste não muda produção,
+testes ou políticas do scanner e não exige nova execução local de build/E2E. O CI automático após o
+push pertence à nova ponta e não é apresentado como já aprovado.
+
+Revisão independente com `git merge-tree --write-tree --name-only`: antes da correção, as quatro
+combinações dev↔PR50 e PR48↔PR50 apresentavam somente conflito add/add de `.gitleaksignore`. Depois,
+todas passaram com exit 0 e nenhum conflito, nas duas ordens. Blob comum de `.gitleaksignore`:
+`f816c0c31723db2ed6928df8d754ed65b1893bbe`; de `ci.yml`: `56e39aba2a040390f93e84aca63a102b9eb74a7b`.
+A simulação não alterou refs, branches ou worktrees.
