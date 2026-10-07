@@ -1,5 +1,16 @@
 # Implementation Plan: Agendamentos
 
+## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
+
+Na mesma branch aberta, aplicar na lista diária o fallback já adotado no calendário e detalhe.
+Conferir renderização com e sem profissional nos dois temas e em 320/390/1280 px, tipos, lint e
+formatação; validar os gates da nova ponta no CI, sem iniciar servidor ou banco local.
+
+Apontar o comentário de `.gitleaksignore` para a evidência local da spec008, registrando a triagem
+dos fingerprints sem alterar suas entradas. Atualizar título/corpo do PR para incluir CI/Gitleaks e
+o efeito de sua reversão, considerando a ordem de integração dos PRs #46/#48/#50. Preservar provas
+anteriores por SHA; não atribuir o CI de `9edc288` ao novo código.
+
 ## Correção visual após revisão — 06/10/2026-CODEX-mafaltti
 
 Autorização atual: implementar VQA01–VQA04 na worktree da revisão, atualizada com origin/dev

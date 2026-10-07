@@ -1,5 +1,16 @@
 # Feature Specification: Agendamentos — evolução incremental
 
+## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
+
+O usuário autorizou corrigir a referência de evidência do scanner e completar a identificação das
+reservas por capacidade na lista diária. Quando `professionalName` for ausente, a lista apresenta
+“Atendimento por capacidade do serviço”, como calendário e detalhe; nomes existentes permanecem
+visíveis. A correção não altera permissões, horários, regras ou dados da reserva.
+
+O título e o rollback do PR devem explicitar a atualização transversal de CI/Gitleaks já contida na
+entrega. A referência de `.gitleaksignore` aponta para a evidência deste PR; os fingerprints e as
+regras do scanner permanecem iguais. Não depender da integração do PR #46 para consultar a prova.
+
 ## Correções visuais autorizadas — 06/10/2026-CODEX-mafaltti
 
 Pedido do usuário após a revisão com Playwright: atualizar uma worktree de Agendamentos e corrigir

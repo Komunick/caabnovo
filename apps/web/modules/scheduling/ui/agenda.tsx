@@ -177,7 +177,9 @@ export function SchedulingAgenda() {
                         </td>
                         <td>
                           <strong>{booking.procedureName}</strong>
-                          <span className="scheduling-muted">{booking.professionalName}</span>
+                          <span className="scheduling-muted">
+                            {booking.professionalName ?? "Atendimento por capacidade do serviço"}
+                          </span>
                           <span className="scheduling-muted">
                             {booking.unitName} · {booking.serviceName}
                           </span>
