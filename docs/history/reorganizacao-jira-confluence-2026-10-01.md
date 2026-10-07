@@ -25,8 +25,8 @@ ainda necessária, não sugestão descartável.
 
 Confluence atende toda a equipe. Banco de Consulta da I.A. permanece; regras e stack precisam de
 conciliação. Sugestão aprovada move a mesma página para previstas. Histórico visível dispensa cópia
-no corpo. O relatório TMS/LH de João Paulo foi exemplo de escrita, não requisito funcional do CAAB
-nem prova de identidade do solicitante desta reorganização.
+no corpo. O relatório externo TMS/LH foi exemplo de escrita, não requisito funcional do CAAB nem
+prova de identidade do solicitante desta reorganização.
 
 ## Ações efetivamente realizadas
 
@@ -103,10 +103,10 @@ tarefas.
 
 Após a prévia, o usuário determinou “Aplique as mudanças”. Aplicadas e verificadas123/127 operações:
 37 tickets existentes atualizados, cinco novos40–44, seis páginas novas e seis existentes
-atualizadas. Zero exclusões. Nove atribuições a Gabriel, Jailson preservado no24 e atribuído ao
-recorte43. 37 tornou-se épico;19/23/29/30 histórias;43/44 são subtarefas de24. CAAB-24 passou para
-Desenvolvimento, 43 ficou em QA e44 em Backlog. Histórico e status dos demais existentes foram
-preservados.
+atualizadas. Zero exclusões. Nove atribuições ao responsável técnico da base de Agendamentos; o
+responsável original do24 foi preservado e atribuído ao recorte43. 37 tornou-se épico;19/23/29/30
+histórias;43/44 são subtarefas de24. CAAB-24 passou para Desenvolvimento, 43 ficou em QA e44 em
+Backlog. Histórico e status dos demais existentes foram preservados.
 
 CAASSH e Portal estão juntos em Funcionalidades previstas (7700572), RH separado em Sugestões
 (7700596). Regras2621487 e Stack2588776 reconciliados, Stack movida para Referência técnica2588761.

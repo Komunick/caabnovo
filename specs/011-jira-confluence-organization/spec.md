@@ -4,6 +4,13 @@ Data: 01/10/2026. Estado: aplicação inicial parcial; ajustes de coerência aut
 Entrega: `docs/jira-confluence-organization-20261001`. Autoria deste registro: CODEX; solicitante da
 sessão: mafaltti (Danilo-Komunick), verificado via GitHub em 30/09/2026.
 
+**Publicação minimizada de 07/10/2026 — CODEX:** referências pessoais do conteúdo histórico incluído
+usam os papéis definidos em [responsabilidade por evidência](evidence/responsibility-proposal.md).
+Originais nominais preservados em backup local verificável, fora do Git; decisões, datas, autoria
+IA, PRs e limites históricos permanecem. Registros brutos de identidade/capacidades foram omitidos
+por privacidade e não têm prova pública substituta. Esta representação pública não deve ser
+reaplicada ao Jira/Confluence como se fosse um snapshot nominal original ou uma consulta atual.
+
 ## Objetivo e limites
 
 Revisar individualmente os tickets abertos e concluídos do CAAB, corrigir redundância,
@@ -153,5 +160,6 @@ inspeção integral e três frentes simultâneas, com Agendamentos prioritário.
 responsáveis e QA. Execução pelas instâncias do usuário; publicação não comprova implementação.
 
 Usar projeto CAAB, espaço CAABNOVO e repositório Komunick/caabnovo. O exemplo de relatório TMS/LH,
-solicitado por João Paulo, orienta apenas a escrita; não pertence ao escopo funcional do CAAB. Dados
-de autoria da sessão não substituem solicitantes históricos sem comprovação.
+solicitado por solicitante do modelo externo, orienta apenas a escrita; não pertence ao escopo
+funcional do CAAB. Dados de autoria da sessão não substituem solicitantes históricos sem
+comprovação.

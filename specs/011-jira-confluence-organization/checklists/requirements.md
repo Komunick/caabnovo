@@ -14,3 +14,22 @@
 
 Resultado: suficiente para gerar tarefas. Manifesto atualizado e revisão da prévia continuam
 necessários antes de aplicar; esta checklist não substitui essas etapas.
+
+## Publicação minimizada — 07/10/2026-CODEX
+
+- [x] Originais incluídos da spec011 preservados em backup local ignorado, com SHA256 conferidos
+      antes das substituições; nenhuma fonte histórica ou arquivo foi apagado.
+- [x] Referências nominais a pessoas trocadas por papéis históricos definidos em
+      [responsabilidade por evidência](../evidence/responsibility-proposal.md), sem alterar
+      executor, solicitante, decisão, status, critérios de aceite ou autorização de qualquer ticket.
+- [x] Autoria IA, datas, PRs/SHA, escopos e logins operacionais comprovados preservados; identidade
+      atual não reatribuída a pedidos antigos.
+- [x] Conteúdo público incluído conferido sem os nomes pessoais tratados, accountIds brutos ou
+      endereços de e-mail; registros privados continuam fora do pacote público.
+- [x] Omissão do registro bruto de capacidades declarada sem criar prova pública substituta nem link
+      relativo para arquivo ausente. Uma nova consulta autenticada é requisito para nova operação
+      remota, não um resultado inventado nesta revisão.
+- [x] Formato do delta local conferido; seis JSON alterados equivalentes à minimização prevista,
+      ordem das referências de tickets preservada, 60 originais verificados por SHA256 e links
+      locais da spec011 conferidos. Isso não comprova CI da futura publicação, QA humano ou novas
+      operações Jira/Confluence.

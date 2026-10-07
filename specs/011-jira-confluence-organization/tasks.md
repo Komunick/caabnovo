@@ -32,8 +32,11 @@ numeração.
 - [x] T001 Conferir AGENTS, caderno da principal, branch/worktree e sincronização; registrar escopo,
       autorização e base em `specs/011-jira-confluence-organization/evidence/execution-context.md`.
 - [x] T002 Conferir identidade das conexões e capacidades de leitura/edição/conversão de CAAB e
-      CAABNOVO, sem escrita remota; registrar limites sem segredos em
-      `specs/011-jira-confluence-organization/evidence/capabilities.md`.
+      CAABNOVO, sem escrita remota. Registro bruto histórico de identidade/capacidades omitido do
+      pacote público por privacidade; papéis e limites da publicação em
+      [responsabilidade por evidência](evidence/responsibility-proposal.md). Não há comprovação
+      pública equivalente dos identificadores individuais; revalidar capacidades antes de nova
+      operação remota.
 
 ## Fase 2 — Base comum
 

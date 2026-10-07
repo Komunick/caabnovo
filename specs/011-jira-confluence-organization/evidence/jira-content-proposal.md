@@ -500,7 +500,7 @@ modulo-exportacoes.
 
 PR40 integrado cobre somente detalhe sem agrupamento. Agrupado, resumo e evolução continuam no
 caminho legado. Propor pai Em Desenvolvimento e subtarefa entregue em QA, sem afirmar homologação.
-Manter Jailson no pai; responsável do restante ainda não assumido.
+Manter responsável técnico 02 no pai; responsável do restante ainda não assumido.
 
 ### Corpo final
 
@@ -528,7 +528,7 @@ Permitir obter os dados selecionados por completo.
 
 PR40 integrado cobre somente detalhe sem agrupamento. Agrupado, resumo e evolução continuam no
 caminho legado. Propor pai Em Desenvolvimento e subtarefa entregue em QA, sem afirmar homologação.
-Manter Jailson no pai; responsável do restante ainda não assumido.
+Manter responsável técnico 02 no pai; responsável do restante ainda não assumido.
 
 Referência funcional:
 [spec 010-reports-analytics](https://github.com/Komunick/caabnovo/tree/dev/specs/010-reports-analytics).
@@ -665,9 +665,9 @@ houver código. O executor permanece responsável durante QA; não criar tickets
 Tipo: Tarefa → Tarefa. Pai: nenhum → CAAB-37. Categorias finais: melhoria, modulo-agendamentos,
 modulo-autenticacao, modulo-relatorios.
 
-Pai CAAB-37. Base PR36 de Gabriel; T027/AC03 possuem evidência local posterior. Não repetir
-migrations. Propor Gabriel pelo PR da base, preservando limite dessa evidência e estado Em
-Desenvolvimento.
+Pai CAAB-37. Base PR36 de responsável técnico 01; T027/AC03 possuem evidência local posterior. Não
+repetir migrations. Propor responsável técnico 01 pelo PR da base, preservando limite dessa
+evidência e estado Em Desenvolvimento.
 
 ### Corpo final
 
@@ -691,9 +691,9 @@ Permitir leitura sem conceder alterações e impedir acesso revogado.
 
 ## Observações e referências
 
-Pai CAAB-37. Base PR36 de Gabriel; T027/AC03 possuem evidência local posterior. Não repetir
-migrations. Propor Gabriel pelo PR da base, preservando limite dessa evidência e estado Em
-Desenvolvimento.
+Pai CAAB-37. Base PR36 de responsável técnico 01; T027/AC03 possuem evidência local posterior. Não
+repetir migrations. Propor responsável técnico 01 pelo PR da base, preservando limite dessa
+evidência e estado Em Desenvolvimento.
 
 Referência funcional:
 [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management).
@@ -1014,8 +1014,8 @@ Tipo: Tarefa → Epic. Pai: nenhum → nenhum. Categorias finais: nova-funcional
 modulo-agendamentos.
 
 Base integrada PR28/34/36; extensões locais administrativas/faltas e T103–T105 não integradas.
-Manter Gabriel e Em Desenvolvimento. Frente local pausada; app/site e transporte real não
-implementados por esta organização.
+Manter responsável técnico 01 e Em Desenvolvimento. Frente local pausada; app/site e transporte real
+não implementados por esta organização.
 
 ### Corpo final
 
@@ -1040,8 +1040,8 @@ Acompanhar resultado do módulo sem tratar frentes distintas como uma tarefa ún
 ## Observações e referências
 
 Base integrada PR28/34/36; extensões locais administrativas/faltas e T103–T105 não integradas.
-Manter Gabriel e Em Desenvolvimento. Frente local pausada; app/site e transporte real não
-implementados por esta organização.
+Manter responsável técnico 01 e Em Desenvolvimento. Frente local pausada; app/site e transporte real
+não implementados por esta organização.
 
 Referência funcional:
 [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management).
@@ -1056,8 +1056,8 @@ responsável durante QA; não criar tickets de teste rotineiro.
 
 Tipo: Tarefa → Tarefa. Pai: nenhum → nenhum. Categorias finais: documentacao, modulo-documentacao.
 
-Manter Gabriel e Em Desenvolvimento; worktree documental existente, sem copiar specs em andamento
-para principal.
+Manter responsável técnico 01 e Em Desenvolvimento; worktree documental existente, sem copiar specs
+em andamento para principal.
 
 ### Corpo final
 
@@ -1082,8 +1082,8 @@ Permitir encontrar regra vigente sem tratar histórico como instrução atual.
 
 ## Observações e referências
 
-Manter Gabriel e Em Desenvolvimento; worktree documental existente, sem copiar specs em andamento
-para principal.
+Manter responsável técnico 01 e Em Desenvolvimento; worktree documental existente, sem copiar specs
+em andamento para principal.
 
 Referência funcional:
 [spec 002-integrated-modules](https://github.com/Komunick/caabnovo/tree/dev/specs/002-integrated-modules).

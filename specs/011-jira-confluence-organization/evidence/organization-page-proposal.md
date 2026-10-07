@@ -68,12 +68,12 @@ evidência por módulo; não criar N1–N5.
 
 ### Exemplo de linguagem fornecido pelo usuário — TMS
 
-Este exemplo pertence ao TMS, não ao escopo de implementação do CAAB. João Paulo é o solicitante
-deste exemplo, não o solicitante presumido dos tickets CAAB.
+Este exemplo pertence ao TMS, não ao escopo de implementação do CAAB. solicitante do modelo externo
+é o solicitante deste exemplo, não o solicitante presumido dos tickets CAAB.
 
 **Título:** Relatórios — Acompanhar tempo de atribuição de LH por região e rota
 
-**Solicitante:** João Paulo
+**Solicitante:** solicitante do modelo externo
 
 **Tipo sugerido:** História
 
@@ -177,9 +177,10 @@ definição antes de eventual novo ticket adicional, sem ampliar silenciosamente
 
 ## Responsáveis e estado
 
-Nove atribuições propostas a Gabriel: 3, 7, 8, 13, 14, 15, 16, 17 e 28, com PR/histórico do recorte.
-Jailson permanece em 24; Gabriel permanece em 37/38. 26/27 não têm PR do recorte e ficam sem
-atribuição. 4/5 e 9–12 não recebem autoria do escopo só pela transição de status.
+Nove atribuições propostas a responsável técnico 01: 3, 7, 8, 13, 14, 15, 16, 17 e 28, com
+PR/histórico do recorte. responsável técnico 02 permanece em 24; responsável técnico 01 permanece em
+37/38. 26/27 não têm PR do recorte e ficam sem atribuição. 4/5 e 9–12 não recebem autoria do escopo
+só pela transição de status.
 
 CAAB-24 está em QA, mas o PR40 cobre somente detalhe sem agrupamento. Propõe-se pai Em
 Desenvolvimento, subtarefa desse recorte em QA e restante em Backlog. Merge não comprova QA humano.

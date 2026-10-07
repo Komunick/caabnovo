@@ -99,10 +99,10 @@ entrada. Confirmar transporte e ambiente antes de pronto.
 
 ## NEW-DETAIL — Exportar análise detalhada sem agrupamento
 
-Tipo: Subtarefa. Pai: CAAB-24. Status proposto: Em Teste / QA. Responsável: Jailson Junior.
+Tipo: Subtarefa. Pai: CAAB-24. Status proposto: Em Teste / QA. Responsável: responsável técnico 02.
 Categorias: melhoria, modulo-relatorios, modulo-exportacoes.
 
-Solicitante original não verificado. Executor: Jailson Junior, PR40 e histórico de CAAB-24.
+Solicitante original não verificado. Executor: responsável técnico 02, PR40 e histórico de CAAB-24.
 
 ## O que se pede
 
