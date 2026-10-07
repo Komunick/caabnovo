@@ -6,6 +6,43 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
+## Triagem dos candidatos históricos — 07/10/2026-CODEX-mafaltti
+
+Na ponta 72b0a0c, o [CI 37624277155](https://github.com/Komunick/caabnovo/actions/runs/37624277155)
+confirmou que a correção executa o scan real: 518 commits e 18487649 bytes examinados. Security
+112801951539 bloqueou corretamente a entrega com 13 candidatos, sem erro de Git. Quality
+112801951272 aprovado: 642 unitários, 178 contratos, 404 integrações e um opt-in não executado;
+migrations e build aprovados. A regressão PostgreSQL de arredondamento/janelas/EXPLAIN passou em 618
+ms. Os candidatos não foram presumidos benignos pelo resultado de outros gates.
+
+Triagem local autorizada, reutilizando o Gitleaks 8.28.0 existente: SHA256 do pacote Windows
+`da6458e8864af553807de1c46a7a8eac0880bd6b99ba56288e87e86a45af884f` confere o checksum oficial salvo,
+e o executável confere o conteúdo do ZIP. Nenhuma instalação, serviço ou configuração global. O scan
+do histórico inteiro local examinou 527 commits e 18603290 bytes; as referências locais incluem nove
+commits além das referências daquele checkout do CI. Encontrados 13 candidatos. Relatório redigido e
+resumo somente com metadados em `.cache/diagnostics/`, ignorados pelo Git.
+
+Cada linha foi conferida no blob histórico: nove candidatos são referências a variáveis
+`env.S3_ACCESS_KEY`/`env.S3_SECRET_KEY`, sem valores de credencial; quatro são identificadores de
+escopo de rascunho da UI, usados por `DraftForm`/`DraftScope`, sem autenticar pedidos. Todos são
+falsos positivos da regra `generic-api-key`, em sete commits de 08–16/09/2026. Alguns permanecem na
+dev e outros nas referências remotas históricas incluídas pelo scan completo; o número de commits
+não foi usado como equivalência entre essas referências.
+
+Preparado `.gitleaksignore` com **somente os 13 fingerprints completos** de commit/caminho/regra/
+linha, separados por justificativa. Sem regex, exclusão de caminhos/regras, baseline geral ou
+reescrita de história. O
+[README da versão fixada](https://github.com/gitleaks/gitleaks/blob/v8.28.0/README.md#gitleaksignore)
+documenta essa exceção por ocorrência; novas ocorrências permanecem sujeitas às regras padrão.
+
+Prova local: com essas exceções exatas, o mesmo scan completo de 527 commits/18603290 bytes terminou
+com exit 0 e sem candidatos. Prova negativa em repositório sintético isolado, com a mesma lista e
+uma chave falsa de alta entropia em fingerprint novo: scanner detectou `generic-api-key` e retornou
+exit 1. Nenhum valor de credencial foi impresso ou publicado. Revisão independente por outro agente
+CODEX confirmou os 13 blobs e o uso de `draftKey` como nome de escopo de rascunho; a coordenação
+autorizou essas exceções exatas. **CI final remoto e browser seguem pendentes. T049 permanece
+aberta.**
+
 ## Conferência do CI e correção da verificação de segredos — 07/10/2026-CODEX-mafaltti
 
 Publicado 99067ecfc12ae2a228d81a2fac26b246b43bae6c. O
