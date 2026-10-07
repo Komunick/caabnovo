@@ -9,6 +9,17 @@ import {
   reportOverviewFiltersSchema,
 } from "../src/reports";
 describe("report contracts", () => {
+  it.each([
+    [403, 80, 403.8],
+    [81, 80, 1.3],
+    [79, 80, -1.2],
+    [1, 16, -93.7],
+    [18, 19, -5.3],
+    [0, 0, 0],
+  ])(
+    "rounds the percentage for %s over %s exactly like the export (%s)",
+    (value, previous, expected) => expect(reportChange(value, previous)).toBe(expected),
+  );
   it("separates uncapped comparison exports from the paged screen", () => {
     expect(
       reportOverviewFiltersSchema.safeParse({ from: "2020-01-01", to: "2026-10-02" }).success,

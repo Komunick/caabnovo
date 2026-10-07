@@ -115,7 +115,13 @@ export function reportOverviewExportSql(
   const ctes = `current_usage AS (SELECT ${count} FROM analytics_event WHERE ${scope} AND occurred_at >= $1 AND occurred_at < $2),
     previous_usage AS (SELECT ${count} FROM analytics_event WHERE ${scope} AND occurred_at >= $3 AND occurred_at < $1),
     coverage AS (SELECT min(occurred_at) AS first_event,max(occurred_at) AS last_event FROM analytics_event WHERE ${scope}),
-    funnel AS MATERIALIZED (${reportUsageFunnelSql(scope, "$1", "$2")})`;
+    funnel AS MATERIALIZED (${reportUsageFunnelSql(scope, "$1", "$2")}),
+    live_usage AS MATERIALIZED (SELECT
+      count(DISTINCT session_hash) FILTER(WHERE occurred_at>now()-interval '5 minutes') AS recent,
+      count(DISTINCT account_hash) FILTER(WHERE occurred_at >= $2::timestamptz-interval '1 day' AND occurred_at < $2) AS daily,
+      count(DISTINCT account_hash) FILTER(WHERE occurred_at >= $2::timestamptz-interval '7 days' AND occurred_at < $2) AS weekly,
+      count(DISTINCT account_hash) FILTER(WHERE occurred_at >= $2::timestamptz-interval '30 days' AND occurred_at < $2) AS monthly
+      FROM analytics_event WHERE ${scope})`;
   for (const [key, label] of Object.entries({
     views: "Visualizações",
     sessions: "Sessões",
@@ -142,39 +148,23 @@ export function reportOverviewExportSql(
       (SELECT 1 FROM analytics_event old WHERE old.environment=e.environment AND old.source=e.source
         AND old.visitor_hash=e.visitor_hash AND old.occurred_at<$1)`,
   );
-  for (const [key, label, expression] of [
-    [
-      "recent",
-      "Sessões recentes",
-      "count(DISTINCT session_hash) FILTER(WHERE occurred_at>now()-interval '5 minutes')",
-    ],
-    [
-      "daily",
-      "Contas ativas no último dia",
-      "count(DISTINCT account_hash) FILTER(WHERE occurred_at >= $2::timestamptz-interval '1 day' AND occurred_at < $2)",
-    ],
-    [
-      "weekly",
-      "Contas ativas nos últimos 7 dias",
-      "count(DISTINCT account_hash) FILTER(WHERE occurred_at >= $2::timestamptz-interval '7 days' AND occurred_at < $2)",
-    ],
-    [
-      "monthly",
-      "Contas ativas nos últimos 30 dias",
-      "count(DISTINCT account_hash) FILTER(WHERE occurred_at >= $2::timestamptz-interval '30 days' AND occurred_at < $2)",
-    ],
+  for (const [key, label] of [
+    ["recent", "Sessões recentes"],
+    ["daily", "Contas ativas no último dia"],
+    ["weekly", "Contas ativas nos últimos 7 dias"],
+    ["monthly", "Contas ativas nos últimos 30 dias"],
   ] as const) {
     row(
       parameter(`usage:${key}`),
       "Acessos e uso",
       parameter(label),
-      expression,
+      `${key}::numeric`,
       parameter(
         key === "recent"
           ? "Últimos cinco minutos em relação à geração."
           : "Janela encerrada no fim do período selecionado.",
       ),
-      `FROM analytics_event WHERE ${scope}`,
+      "FROM live_usage",
     );
   }
   row(

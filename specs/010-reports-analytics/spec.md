@@ -1,5 +1,14 @@
 # Feature Specification: Relatórios e Análises
 
+## Segunda revisão de exportação — 06/10/2026-CODEX-mafaltti
+
+Corrigir números negativos no CSV sem reduzir a proteção contra fórmulas; PDF deve usar todas as 14
+colunas padrão sem criar uma página por faixa de cada registro. Tela e arquivo usam o mesmo
+arredondamento exato para contagens, incluindo meio exato e quedas. Quatro janelas de uso preservam
+semântica, canal/ambiente/fonte e valores, mas compartilham uma leitura. Branch conciliada com dev
+após PR49, mantendo lockfile e evidência de Notícias da base. Resultado e limites nesta rodada na
+[evidência](evidence/pr46-corrections-2026-10-06.md); CI anterior não valida a versão pós-merge.
+
 ## Correção do PR46 — 06/10/2026-CODEX-mafaltti
 
 Solicitante mafaltti (login Danilo-Komunick, GitHub get_profile em 06/10). O usuário decidiu

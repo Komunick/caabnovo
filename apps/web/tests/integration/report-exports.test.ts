@@ -2,7 +2,7 @@ import { Client } from "pg";
 import { Writable } from "node:stream";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import { reportQuerySchema, type ExportRequest } from "@caab/contracts";
+import { reportQuerySchema, reportChange, type ExportRequest } from "@caab/contracts";
 import { createDatabaseClient, runMigrations } from "@caab/db";
 import { queryReport } from "@caab/db/repositories/reports";
 import { reportSummary } from "@caab/db/repositories/report-summary";
@@ -163,6 +163,94 @@ async function download(input: ExportRequest, afterBatch?: (index: number) => Pr
   }
 }
 describe("direct export of the detailed analysis", () => {
+  it("matches screen rounding and numeric CSV declines, with the four usage windows computed once", async () => {
+    const source = `caab.rounding-${crypto.randomUUID()}`;
+    try {
+      for (const [current, previous, expected] of [
+        [403, 80, 403.8],
+        [91, 96, -5.2],
+      ]) {
+        await admin.query("DELETE FROM analytics_event WHERE source=$1", [source]);
+        await admin.query(
+          `INSERT INTO analytics_event(id,source,channel,environment,event,screen,visitor_hash,session_hash,account_hash,device,origin,occurred_at)
+          SELECT gen_random_uuid(),$1,'site','test','page_view','reports','visitor-'||n,'session-'||n,'account-'||(n%10),'desktop','direct',
+          CASE WHEN n<=$2 THEN '2026-01-01T12:00:00Z'::timestamptz ELSE '2025-12-31T12:00:00Z'::timestamptz END
+          FROM generate_series(1,$3::integer) n`,
+          [source, current, current! + previous!],
+        );
+        for (const [account, at] of [
+          ["week", "2025-12-29T12:00:00Z"],
+          ["month", "2025-12-15T12:00:00Z"],
+          ["live", new Date().toISOString()],
+        ])
+          await admin.query(
+            `INSERT INTO analytics_event(id,source,channel,environment,event,screen,visitor_hash,session_hash,account_hash,device,origin,occurred_at)
+            VALUES(gen_random_uuid(),$1,'site','test','page_view','reports',$2,$2,$2,'desktop','direct',$3)`,
+            [source, account, at],
+          );
+        const query = reportQuerySchema.parse({
+          from: "2026-01-01",
+          to: "2026-01-01",
+          source,
+          channel: "site",
+          environment: "test",
+        });
+        const usage = await reportUsage(control.pool, query);
+        const input = reportExportRequest({
+          dataset: "executive",
+          format: "csv",
+          columns: ["label", "value", "previous", "change"],
+          sort: [],
+          filters: { from: query.from, to: query.to, source, channel: "site", environment: "test" },
+        });
+        const rows = readCsv((await download(input)).bytes).slice(1);
+        const metric = rows.find(
+          (row) => row[0] === "Visualizações" && row[2] === String(previous),
+        )!;
+        expect(metric).toEqual([
+          "Visualizações",
+          String(current),
+          String(previous),
+          String(expected),
+        ]);
+        expect(Number(metric[3])).toBe(reportChange(usage.views, usage.previous.views));
+        for (const [label, value] of [
+          ["Sessões recentes", usage.recent],
+          ["Contas ativas no último dia", usage.daily],
+          ["Contas ativas nos últimos 7 dias", usage.weekly],
+          ["Contas ativas nos últimos 30 dias", usage.monthly],
+        ])
+          expect(Number(rows.find((row) => row[0] === label)![1])).toBe(value);
+        expect([usage.recent, usage.daily, usage.weekly, usage.monthly]).toEqual([1, 10, 11, 12]);
+        const adapter = reportExportAdapter("executive")!;
+        const sql = adapter.query(input);
+        const plan = (await admin.query(`EXPLAIN (ANALYZE, FORMAT JSON) ${sql.text}`, sql.values))
+          .rows[0]["QUERY PLAN"][0].Plan;
+        const nodes: Record<string, unknown>[] = [];
+        const walk = (node: Record<string, unknown>) => {
+          nodes.push(node);
+          for (const child of (node.Plans ?? []) as Record<string, unknown>[]) walk(child);
+        };
+        walk(plan);
+        const live = nodes.find((node) => node["Subplan Name"] === "CTE live_usage")!;
+        expect(live).toBeDefined();
+        const all = [...nodes];
+        nodes.length = 0;
+        walk(live);
+        expect(nodes.filter((node) => node["Relation Name"] === "analytics_event")).toHaveLength(1);
+        expect(all.filter((node) => node["CTE Name"] === "live_usage")).toHaveLength(4);
+        const selected = adapter.columns
+          .filter((column) => column.defaultSelected)
+          .map((column) => column.key);
+        const pdf = (await download({ ...input, format: "pdf", columns: selected })).bytes;
+        const pages = await readPdf(pdf);
+        expect(pages.length).toBeLessThan(25);
+        expect(pages.join(" ")).toContain(String(expected));
+      }
+    } finally {
+      await admin.query("DELETE FROM analytics_event WHERE source=$1", [source]);
+    }
+  }, 60000);
   it("exports every group in all formats, preserving filters and numeric totals", async () => {
     for (const format of ["csv", "xlsx", "pdf"] as const) {
       const input = reportExportRequest({

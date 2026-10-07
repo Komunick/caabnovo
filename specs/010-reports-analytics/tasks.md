@@ -2,12 +2,25 @@
 
 ## Estado atual — 06/10/2026-CODEX-mafaltti
 
+**Segunda revisão em validação:** merge local 5a0d4b8 de dev 2b30f53/PR49, conflitos resolvidos com
+lockfile e evidência de Notícias da dev. CSV negativo, paginação padrão, arredondamento e leitura
+das quatro janelas corrigidos; T046–T049 abaixo. Resultados anteriores são históricos e não validam
+os novos deltas nem a conciliação pós-PR49.
+
+- [x] T046 Corrigir CSV negativo tipado e regressões de fórmulas disfarçadas/controles.
+- [x] T047 Reproduzir PDF com catálogo padrão real (14 colunas/40 registros), conservar os campos,
+      compactar faixas e verificar o documento renderizado e limpeza após cancelamento.
+- [x] T048 Corrigir meios exatos na tela e reduzir quatro leituras de janelas a um agregado
+      materializado. Regressão real PostgreSQL/paridade/EXPLAIN preparada, execução no CI pendente.
+- [ ] T049 Publicar conjunto consolidado após gates locais e confirmar CI da versão pós-PR49;
+      atualizar evidência. T038 permanece aberta para medições de recursos/tempo/painel.
+
 Correções do PR46 publicadas em b67c30b/90f82e2. CI 37520740384 de 90f82e2 aprovado em
 quality/browser/security: 639 unitários, 172 contratos, 403 integração, 105 E2E e 6 a11y; 1 teste
 opt-in de volume não executado. T039, T041, T042 e T043–T045 concluídas tecnicamente. T038 (medições
 C1) e aceite humano permanecem independentes. Histórico abaixo preserva autoria e estados
-anteriores; resultado vigente na [evidência](evidence/pr46-corrections-2026-10-06.md). Descrição do
-PR aguarda aprovação explícita após rejeição automática; não impede correções de código.
+anteriores; resultado na [evidência](evidence/pr46-corrections-2026-10-06.md). A descrição da
+primeira rodada foi aprovada e publicada; atualização desta rodada segue autorização específica.
 
 ## Estado da entrega combinada de 06/10/2026 — Conciliação com Agendamentos e gates locais-CLAUDE-Gabriel-Komunick
 

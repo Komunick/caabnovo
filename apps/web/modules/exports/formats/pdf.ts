@@ -2,7 +2,7 @@ import PDFDocument from "pdfkit";
 import { finished } from "node:stream/promises";
 import { setImmediate } from "node:timers/promises";
 import { textValue, type Writer } from "./shared";
-import type { ExportColumn } from "@caab/contracts";
+import type { ExportColumn, ExportScalar } from "@caab/contracts";
 import { createReadStream } from "node:fs";
 import { mkdtemp, open, unlink, rmdir, type FileHandle } from "node:fs/promises";
 import { join } from "node:path";
@@ -63,6 +63,7 @@ export function createPdfWriter(presentation?: {
       page = 0;
     let chartDirectory: string | undefined,
       chartFile: FileHandle | undefined,
+      recordsFile: FileHandle | undefined,
       maximum = 1;
     const presentationPage = (heading: string) => {
       pdf.addPage();
@@ -113,11 +114,59 @@ export function createPdfWriter(presentation?: {
           35,
           40,
         );
-      const width = 770 / bands[band]!.length;
+      pdf.fontSize(7).text("Registro", 35, 58, { width: 45, lineBreak: false });
+      pdf.fontSize(8);
+      const width = 720 / bands[band]!.length;
       bands[band]!.forEach((c, i) =>
-        pdf.text(printable(c.label), 35 + i * width, 58, { width: width - 10, lineBreak: false }),
+        pdf.text(printable(c.label), 85 + i * width, 58, { width: width - 10, lineBreak: false }),
       );
       return 83;
+    };
+    const drawRow = async (
+      values: Record<string, ExportScalar>,
+      band: number,
+      record: number,
+      start: number,
+    ) => {
+      let y = start;
+      const cols = bands[band]!,
+        width = 720 / cols.length;
+      pdf.fontSize(8);
+      const lines = cols.map((c) => {
+        const value = printable(textValue(values[c.key]));
+        const result: string[] = [];
+        for (const paragraph of value.split("\n")) {
+          let line = "";
+          for (const char of paragraph) {
+            if (line && pdf.widthOfString(line + char) > width - 12) {
+              const split = line.lastIndexOf(" ");
+              const remaining = split > 0 ? line.slice(split + 1) : "";
+              if (split > 0) line = line.slice(0, split);
+              result.push(line);
+              line = remaining;
+            }
+            line += char;
+          }
+          result.push(line);
+        }
+        return result;
+      });
+      const length = Math.max(...lines.map((l) => l.length));
+      for (let n = 0; n < length; n++) {
+        if (y > 530) y = newPage(band);
+        if (n === 0 || y === 83) {
+          pdf
+            .fontSize(7)
+            .text(`${record}${n ? " cont." : ""}`, 35, y, { width: 45, lineBreak: false });
+          pdf.fontSize(8);
+        }
+        lines.forEach((line, i) =>
+          pdf.text(line[n] ?? "", 85 + i * width, y, { width: width - 10, lineBreak: false }),
+        );
+        y += 12;
+        await flow();
+      }
+      return y + 6;
     };
     try {
       if (presentation) {
@@ -149,6 +198,10 @@ export function createPdfWriter(presentation?: {
           chartFile = await open(join(chartDirectory, "series.jsonl"), "wx");
         }
       }
+      if (bands.length > 1) {
+        chartDirectory ??= await mkdtemp(join(tmpdir(), "caab-export-chart-"));
+        recordsFile = await open(join(chartDirectory, "records.jsonl"), "wx", 0o600);
+      }
       let y = newPage(0);
       for await (const row of rows) {
         if (chartFile && row.chart) {
@@ -156,41 +209,32 @@ export function createPdfWriter(presentation?: {
           await chartFile.writeFile(`${JSON.stringify(row.chart)}\n`);
         }
         logical++;
-        for (let band = 0; band < bands.length; band++) {
-          if (bands.length > 1 && (logical > 1 || band > 0)) y = newPage(band);
-          const cols = bands[band]!,
-            width = 770 / cols.length;
-          const lines = cols.map((c) => {
-            const value = printable(textValue(row.values[c.key]));
-            const result: string[] = [];
-            for (const paragraph of value.split("\n")) {
-              let line = "";
-              for (const char of paragraph) {
-                if (line && pdf.widthOfString(line + char) > width - 12) {
-                  result.push(line);
-                  line = "";
-                }
-                line += char;
-              }
-              result.push(line);
+        if (recordsFile)
+          await recordsFile.writeFile(
+            `${JSON.stringify(Object.fromEntries(columns.map((column) => [column.key, row.values[column.key] ?? null])))}\n`,
+          );
+        y = await drawRow(row.values, 0, logical, y);
+      }
+      if (recordsFile && chartDirectory) {
+        await recordsFile.close();
+        recordsFile = undefined;
+        // Each horizontal band contains all records, rather than opening a page per row/band.
+        // Replay selected values from a private spool to retain bounded memory and column order.
+        for (let band = 1; band < bands.length; band++) {
+          y = newPage(band);
+          const records = createReadStream(join(chartDirectory, "records.jsonl"));
+          const lines = createInterface({ input: records, crlfDelay: Infinity });
+          let record = 0;
+          try {
+            for await (const line of lines) {
+              signal.throwIfAborted();
+              y = await drawRow(JSON.parse(line), band, ++record, y);
             }
-            return result;
-          });
-          const length = Math.max(...lines.map((l) => l.length));
-          for (let n = 0; n < length; n++) {
-            if (y > 530) y = newPage(band);
-            if (n === 0 || y === 83) {
-              pdf.fontSize(7).text(`Registro ${logical}${n ? " (continuação)" : ""}`, 35, y);
-              y += 11;
-              pdf.fontSize(8);
-            }
-            lines.forEach((line, i) =>
-              pdf.text(line[n] ?? "", 35 + i * width, y, { width: width - 10, lineBreak: false }),
-            );
-            y += 12;
-            await flow();
+          } finally {
+            lines.close();
+            records.destroy();
+            await finished(records, { cleanup: true }).catch(() => {});
           }
-          y += 8;
         }
       }
       if (chartFile && chartDirectory) {
@@ -233,11 +277,17 @@ export function createPdfWriter(presentation?: {
     } finally {
       signal.removeEventListener("abort", stop);
       await chartFile?.close();
+      await recordsFile?.close();
       if (chartDirectory) {
-        // Delete only the two exact artifacts created by this invocation; no recursive deletion.
+        // Delete only the exact artifacts created by this invocation; no recursive deletion.
         await unlink(join(chartDirectory, "series.jsonl")).catch((error: NodeJS.ErrnoException) => {
           if (error.code !== "ENOENT") throw error;
         });
+        await unlink(join(chartDirectory, "records.jsonl")).catch(
+          (error: NodeJS.ErrnoException) => {
+            if (error.code !== "ENOENT") throw error;
+          },
+        );
         await rmdir(chartDirectory);
       }
     }

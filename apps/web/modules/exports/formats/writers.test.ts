@@ -1,10 +1,13 @@
 import { Writable } from "node:stream";
+import { readdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { expect, it } from "vitest";
 import { readCsv, readXlsx, readPdf } from "../../../tests/helpers/read-export";
 import { writeCsv } from "./csv";
 import { writeXlsx } from "./xlsx";
 import { createPdfWriter, writePdf } from "./pdf";
 import type { ExportColumn } from "@caab/contracts";
+import { reportExportAdapter } from "../../reports/export-adapter";
 const columns: ExportColumn[] = ["id", "name"].map((key) => ({
   key,
   label: key,
@@ -33,6 +36,76 @@ function target() {
   });
   return { sink, bytes: () => Buffer.concat(chunks) };
 }
+it("CSV preserves finite negative numeric cells while still neutralizing text and disguised formulas", async () => {
+  async function* source() {
+    for (const value of [-5.2, "-5.2", "-5.2e2", "-2+3", "=2+3", "\t-5.2", "-5.2\n"])
+      yield {
+        id: String(value),
+        values: { numeric: value, text: String(value) },
+      };
+  }
+  const t = target();
+  await writeCsv(
+    source(),
+    [
+      { ...columns[0]!, key: "numeric", label: "Variação", scalarType: "number" },
+      { ...columns[1]!, key: "text", label: "Texto" },
+    ],
+    t.sink,
+    new AbortController().signal,
+  );
+  expect(readCsv(t.bytes()).slice(1)).toEqual([
+    ["-5.2", "'-5.2"],
+    ["-5.2", "'-5.2"],
+    ["-5.2e2", "'-5.2e2"],
+    ["'-2+3", "'-2+3"],
+    ["'=2+3", "'=2+3"],
+    ["'\t-5.2", "'\t-5.2"],
+    ["'-5.2\n", "'-5.2\n"],
+  ]);
+});
+it("PDF packs forty executive records with every default catalog column into bounded pages", async () => {
+  const adapter = reportExportAdapter("executive")!;
+  const selected = adapter.columns.filter((column) => column.defaultSelected);
+  expect(selected).toHaveLength(14);
+  async function* source() {
+    for (let n = 0; n < 40; n++)
+      yield adapter.map({
+        _recordId: String(n),
+        section: "Indicadores",
+        label: `Indicador sintético ${n}`,
+        date: "2026-10",
+        value: n,
+        previous: 40,
+        change: -5.2,
+        definition: "Movimentação no período; base atual preservada.",
+        from: "2020-01-01",
+        to: "2026-10-06",
+        channel: "all",
+        environment: "test",
+        source: "caab.test",
+        updatedAt: "2026-10-06T12:00:00Z",
+        notes: "",
+        _chart: { label: `2026-10 Indicador sintético ${n}`, value: n },
+      });
+  }
+  const t = target();
+  await adapter.writePdf!({
+    module: "reports",
+    dataset: "executive",
+    format: "pdf",
+    sort: [],
+    columns: selected.map((column) => column.key),
+    filters: { from: "2020-01-01", to: "2026-10-06", environment: "test" },
+  })(source(), selected, t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes()),
+    text = pages.join(" ");
+  expect(pages.length).toBeLessThanOrEqual(16);
+  for (const column of selected) expect(text).toContain(column.label);
+  for (let n = 0; n < 40; n++) expect(text).toContain(`Indicador sintético ${n}`);
+  expect(text).toContain("Evolução mensal");
+  expect(text).toContain("2026-10-06T12:00:00Z");
+});
 it("executive PDF restores management analysis and paginated bars without changing selected table columns", async () => {
   async function* source() {
     for (let n = 0; n < 35; n++)
@@ -127,6 +200,27 @@ it("writers reject cancellation without reporting a complete file", async () => 
     const t = target();
     await expect(writer(records(), columns, t.sink, controller.signal)).rejects.toBeDefined();
   }
+});
+it("PDF removes its private wide-table spool after interruption", async () => {
+  const before = new Set(await readdir(tmpdir()));
+  const controller = new AbortController();
+  async function* source() {
+    yield { id: "one", values: { name: "Primeiro registro" } };
+    controller.abort();
+    yield { id: "two", values: { name: "Segundo registro" } };
+  }
+  const t = target();
+  t.sink.on("error", () => {});
+  const wide = Array.from({ length: 6 }, (_, n) => ({
+    ...columns[1]!,
+    key: n ? `field${n}` : "name",
+  }));
+  await expect(writePdf(source(), wide, t.sink, controller.signal)).rejects.toBeDefined();
+  expect(
+    (await readdir(tmpdir())).filter(
+      (name) => name.startsWith("caab-export-chart-") && !before.has(name),
+    ),
+  ).toEqual([]);
 });
 it("PDF retains the end of a long value, Unicode escapes and columns in horizontal bands", async () => {
   const many = Array.from({ length: 6 }, (_, n) => ({

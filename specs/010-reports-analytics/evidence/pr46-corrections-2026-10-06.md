@@ -6,7 +6,66 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
-## Versão e resultado final
+## Conferência para publicação — 07/10/2026-CODEX-mafaltti
+
+Solicitante reutilizado da consulta autenticada desta sessão pelo conector GitHub get_profile:
+mafaltti/login Danilo-Komunick, em 07/10/2026. Pedido atual autoriza conferir trabalho local, PR
+correspondente e executar os testes de CI. Revisados os 12 arquivos alterados sobre HEAD
+5a0d4b8bba7e25ed7c801d63dee54e404e0381e0; sem nova correção funcional necessária. O PR #46 continua
+aberto na mesma branch; a ponta remota anterior não inclui a conciliação local nem estes deltas.
+
+Revalidação local, com Node 24.20.0 e até dois workers:
+
+- `node node_modules/prettier/bin/prettier.cjs --check .`: aprovado.
+- `node node_modules/prettier/bin/prettier.cjs --ignore-path .gitignore --check` nos cinco
+  documentos modificados desta spec: aprovado.
+- `node node_modules/vitest/vitest.mjs run --project unit apps/web/modules/exports/formats/writers.test.ts apps/web/modules/reports/overview-export-adapter.test.ts --maxWorkers 2`:
+  19 testes aprovados.
+- `node node_modules/vitest/vitest.mjs run --project contract packages/contracts/tests/reports.test.ts --maxWorkers 2`:
+  12 testes aprovados.
+- `node node_modules/eslint/bin/eslint.js` nos sete arquivos TypeScript modificados: aprovado.
+- `git diff --check`: aprovado.
+
+As suítes completas e os tipos já aprovados na segunda revisão não foram repetidos sem mudança
+funcional adicional. Integração PostgreSQL, build, browser/a11y e segurança da ponta consolidada
+ficam para o CI remoto após publicação; não homologados por esta conferência local. T049 permanece
+aberta até conferir esse resultado. Nenhum serviço, container ou banco de uso iniciado. T038 e
+aceite humano continuam pendentes conforme os critérios existentes.
+
+## Segunda revisão — versão pós-PR49 em validação
+
+Achados do usuário confirmados e corrigidos nesta mesma entrega, sobre merge 5a0d4b8 com dev
+2b30f53. pnpm-lock.yaml e specs/004-news-publishing/evidence.md ficaram exatamente como dev;
+manifestos/código Payload também sem delta. Backups dos dois arquivos conferidos por SHA256 em
+`.cache/local-backups/pr46-before-dev-20261006`, sem reescrever a história ou aplicar migration.
+
+- CSV: -5.2 permanece numérico quando o catálogo declara number e o valor é número finito ou literal
+  numérico estrito. Texto -5.2, -2+3, fórmulas, tabs e quebra final seguem protegidos.
+- PDF: reproduzido pelo writer antigo de 7b74ae7 e pelo novo, com o mesmo catálogo padrão real de 14
+  colunas e 40 registros sintéticos. **162 páginas antes, 11 depois**, sem retirar coluna. Amostra
+  tem análise vazia e gráfico em estado vazio; a massa de 40 pontos de gráfico é coberta pelo teste
+  do adaptador real, com todas as colunas, limitado a 16 páginas nessa fixture. Onze PNGs da versão
+  final renderizados e inspecionados, incluindo todas as faixas e continuações. A evidência anterior
+  de sete páginas usava duas colunas e não cobria esse padrão.
+- PDF passa a reapresentar faixas do mesmo conjunto de registros: numeração comum, cabeçalhos
+  repetidos e palavra sem corte no limite normal. Spool privado inclui somente valores das colunas
+  selecionadas (arquivo 0600, diretório privado), retirado em sucesso, falha ou cancelamento. Teste
+  interrompe a escrita depois de criar o spool e verifica remoção; sem buffer do arquivo completo.
+- Arredondamento: contagens inteiras usam BigInt para equivaler ao floor do SQL em meios exatos;
+  403/80 = 403.8 na tela/arquivo, 79/80 = -1.2. Não muda tratamento de anterior zero.
+- Quatro janelas de uso: uma leitura via live_usage materializado com quatro contagens condicionais,
+  preservando filtros e datas. Regressores PostgreSQL usam casos 403/80 e 91/96, CSV e PDF padrão,
+  quatro janelas diferentes e EXPLAIN ANALYZE para conferir um scan e quatro consumidores.
+  **Execução PostgreSQL ainda pendente no CI; nenhuma afirmação de tempo em base grande.**
+
+Validação local: tipos web/contracts/db e lint focado aprovados; 642 unitários e 178 contratos
+aprovados; verificação de formato geral e diff check aprovados. Após reforço da regra numérica para
+quebra final, writer foi validado novamente em recorte específico. Arquivos visuais locais em
+`.cache/qa-pr46-round2/`; nenhum serviço/banco de uso iniciado. T038 permanece aberta.
+
+A validação seguinte deve usar a ponta publicada já conciliada; CI abaixo é histórico.
+
+## Validação da primeira rodada (histórico)
 
 Código entregue em b67c30b e 90f82e2.
 [CI 37520740384](https://github.com/Komunick/caabnovo/actions/runs/37520740384) de 90f82e2 aprovado:

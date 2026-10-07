@@ -339,9 +339,19 @@ export function reportBounds(query: Pick<ReportQuery, "from" | "to">) {
   };
 }
 export function reportChange(value: number, previous: number) {
+  if (previous > 0 && Number.isSafeInteger(value) && Number.isSafeInteger(previous)) {
+    // Exact integer arithmetic matches SQL's floor(change * 10 + 0.5), including negative ties.
+    const denominator = BigInt(previous);
+    const numerator = (BigInt(value) - BigInt(previous)) * 1000n;
+    let rounded = numerator / denominator;
+    const remainder = numerator % denominator;
+    if (remainder >= 0n && remainder * 2n >= denominator) rounded++;
+    else if (remainder < 0n && -remainder * 2n > denominator) rounded--;
+    return Number(rounded) / 10;
+  }
   return previous === 0
     ? value === 0
       ? 0
       : null
-    : Math.round(((value - previous) / previous) * 1000) / 10;
+    : Math.round(((value - previous) * 1000) / previous) / 10;
 }

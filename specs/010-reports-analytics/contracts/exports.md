@@ -42,6 +42,17 @@ initialFilters/renderFilter da entrega4e9abac. Testes técnicos não concluem QA
 
 ## PDF executivo e retentativa — decisão de 06/10/2026-CODEX-mafaltti
 
+Complemento da segunda revisão: todas as 14 colunas seguem disponíveis e pré-selecionadas; PDF
+pagina conjuntos de registros por faixa horizontal, numerados para relacionar as mesmas linhas entre
+faixas. Arquivo temporário privado contém apenas valores selecionados para reapresentação, além dos
+agregados do gráfico; removido no término/erro/cancelamento. Não cria uma página por registro/faixa.
+Campos longos continuam completos e paginados.
+
+CSV: valores finitos estritamente numéricos em coluna number preservam sinal negativo sem apóstrofo.
+Texto, cabeçalhos, controles/espaços e fórmulas disfarçadas seguem escapados. Arredondamento das
+contagens é o mesmo na tela e no arquivo: empate de décimo arredonda em direção a +infinito, como
+floor(valor escalado + 0.5), inclusive quando a variação é negativa.
+
 Por escolha explícita do usuário, PDF de Resultados e evolução acrescenta um bloco de análise da
 gestão e gráfico de barras mensais à tabela. Bloco usa `notes` integral (até 2000 caracteres), mesmo
 sem a coluna notes; gráfico usa séries dos domínios selecionados/autorizados e visualizações no

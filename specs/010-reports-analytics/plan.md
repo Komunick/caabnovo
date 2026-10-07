@@ -1,5 +1,17 @@
 # Implementation Plan: Relatórios: exportação direta nas três abas
 
+## Segunda revisão — 06/10/2026-CODEX-mafaltti
+
+CSV reconhece valores finitos em coluna numérica com gramática numérica estrita; demais valores e
+cabeçalhos continuam neutralizados. PDF imprime todos os registros da primeira faixa e repete o
+spool privado de valores selecionados para faixas adicionais, com numeração comum, cabeçalhos e
+continuações. Não mantém o arquivo inteiro em memória, não corta colunas/linhas e remove o spool.
+Arredondamento de contagens usa inteiros exatos para evitar erros binários em meios exatos, com
+mesma regra do SQL. Janelas de uso passam a um CTE materializado de quatro agregados condicionais.
+Regressões: writers reais/catálogo padrão, segurança CSV, cancelamento/limpeza, contrato de
+arredondamento, paridade PostgreSQL e EXPLAIN real. Medição T038 continua pendente, sem promessa de
+desempenho em bases grandes. Revalidar tudo após incorporar dev/PR49 na mesma branch aberta.
+
 ## Correção do PR46 — 06/10/2026-CODEX-mafaltti
 
 Restaurar análise e barras mensais no PDF executivo conforme decisão do usuário. O adaptador fornece
