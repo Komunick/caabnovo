@@ -1,5 +1,20 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## CI e conflitos do PR50 — 07/10/2026-CODEX-mafaltti
+
+- [ ] VQA08 Resolver os três conflitos documentais com dev `4fafc87`, preservando os blocos visuais
+      e T118, e validar a preparação APT/Playwright e todos os gates da ponta resultante. Os runs de
+      `7b1ed3a` são históricos; a execução do PR foi cancelada antes de executar E2E, durante APT.
+      Registrar conclusão e SHA no corpo do PR após o CI, sem atribuir resultados antigos à nova
+      composição.
+
+## Revisão de cobertura do PR48 — 07/10/2026-CODEX-mafaltti
+
+- [ ] T118 Complementar T112 com regressão parametrizada de criação, replay e finalização após
+      vencimento dos grants de Associados/arquivos durante lock real. Preservar sessão e
+      Agendamentos válidos, comprovar negação e ausência de efeitos por snapshots. Execução
+      PostgreSQL no CI da nova ponta do PR48; a prova anterior cobria somente finalização.
+
 ## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
 
 - [x] VQA05 Completar o fallback de profissional ausente na lista diária; conferir identificação,
@@ -65,7 +80,7 @@ Fixture corrigida para nova prova restrita, mantendo as asserções do revisor s
 em [revisão de 05/10](evidence/review-fixes-2026-10-05.md). A delimitação abaixo é anterior a esta
 correção e permanece como histórico; T110 mantém seus gates humanos/operacionais.
 
-## Fila de fechamento delimitada — 05/10/2026-CODEX-mafaltti
+## Histórico da delimitação, antes da execução — 05/10/2026-CODEX-mafaltti
 
 Decisão do usuário: fechar o escopo administrativo atual e parar após atualizar documentação/Jira. A
 fila de execução desta entrega é somente T111 → T110; os critérios de homologação dos cinco recortes
@@ -102,8 +117,11 @@ mafaltti/Danilo-Komunick. A coordenação encerra sua execução ao registrar es
 - [x] T111 Corrigir S01/S02 do parecer de segurança (CAAB-28/CAAB-41): isolar finalidade de
       comprovantes desde upload e proteger os caminhos genéricos/legados; revalidar autoridade e
       prazo após espera pelo arquivo. Correções locais e cinco regressões PostgreSQL reais
-      preparadas, com jornada de upload atualizada; executar no CI próprio e registrar resultados.
-      Não reescrever migrations aplicadas nem conceder cargos/permissões implicitamente.
+      preparadas, com jornada de upload atualizada; executadas no CI 37319200057/ef66884 da branch
+      de fechamento, com três regressões adicionais de upload e evidências revisadas em 05/10. Nesta
+      base entrou a regressão dos grants temporários de membro e arquivo; as outras duas têm
+      variante equivalente já integrada pelo PR43. Não reescrever migrations aplicadas nem conceder
+      cargos/permissões implicitamente.
 
 Fechamento técnico de T111 em 05/10/2026 por CODEX-mafaltti: e923e9d validado conforme evidência da
 revisão, preservando a autoria da tarefa original e os gates humanos/operacionais de T110.

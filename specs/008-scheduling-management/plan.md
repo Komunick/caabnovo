@@ -1,5 +1,15 @@
 # Implementation Plan: Agendamentos
 
+## Complemento de cobertura do PR48 — 07/10/2026-CODEX-mafaltti
+
+Parametrizar a regressão de grants temporários vencidos nos três pontos de espera: membro na
+criação, idempotência no replay e arquivo na finalização. Observar a espera real em
+`pg_stat_activity`, usar o relógio do PostgreSQL para o vencimento e verificar snapshots antes e
+depois da negação. Manter as permissões de Agendamentos e a sessão válidas para isolar a autoridade
+de Associados/arquivos. Validar código, documentação e matriz juntos sobre dev `1c21c9a`, que já
+inclui o PR46; PostgreSQL e E2E somente no CI. Registrar a ponta e os resultados na descrição do
+PR48, sem usar o CI anterior como validação das novas regressões.
+
 ## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
 
 Na mesma branch aberta, aplicar na lista diária o fallback já adotado no calendário e detalhe.

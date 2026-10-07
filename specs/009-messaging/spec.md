@@ -1,5 +1,14 @@
 # Mensagens — preparação e acompanhamento
 
+## Visibilidade autorizada de criação — 02/10/2026
+
+Correção restrita a Mostrar apenas funções autorizadas na navegação (CAAB-20), Fundação AC-T002/G01:
+na aba Agendamentos, Novo agendamento aparece somente com `messages:write`. Consulta com
+`messages:access` mantém filtros, listagem e navegação; ausência/revogação de escrita oculta o link
+e o servidor continua negando a mutação. Com escrita, manter o link existente e acesso por teclado.
+Sem ampliação do protótipo, envio real ou conclusão de M016.
+[Critérios, testes e evidência](../001-project-foundation/evidence/messages-access-fix-2026-10-02.md).
+
 ## Checkpoint de revisão de código — 21/09/2026
 
 Protótipo contém campanhas/modelos/públicos, segmentação, preferências e programação. Worker prepara

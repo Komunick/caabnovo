@@ -211,7 +211,26 @@ versão. O editor de Notícias passa a importar o Lexical pelos reexports oficia
 
 Um teste novo em `packages/news/src/config.test.ts` confere que a projeção de identidade continua sem
 os campos de autenticação local (`resetPasswordRequestedAt`, `salt`, `hash`, `sessions`), com admin e
-GraphQL desabilitados. A atualização não exige migration. O código e o lockfile vêm do commit
-`90f82e2` do PR46, que já passou em quality e security; aqui foram isolados do restante daquele PR.
-Localmente: lockfile consistente com os manifestos e `pnpm audit --audit-level high` sem avisos
-altos ou críticos. Typecheck, testes e build ficam para o CI deste PR.
+GraphQL desabilitados. A atualização não exige migration. O código vem do commit `90f82e2` do PR46,
+que já passou em quality e security; aqui foi isolado do restante daquele PR.
+
+Correção de 06/10/2026, depois da integração (#49): o lockfile que entrou em `dev` não é byte a byte
+o de `90f82e2`. Ele foi reescrito pelo `pnpm` local, com aspas simples, e tem o mesmo conjunto de 962
+pacotes e as mesmas versões (conferido por nome e versão). A diferença é só de formato, cerca de 10
+mil linhas de ruído, e é a causa do conflito de lockfile no PR46, que mantém o formato de `90f82e2`.
+Contra o lock anterior, o conjunto muda 34 versões da família Payload e Lexical, mais `sax` (entra) e
+`prismjs` e `react-error-boundary` (saem). A afirmação anterior de que regenerar o lock trazia pacotes
+a mais estava errada. Localmente, `pnpm audit --audit-level high` ficou sem avisos altos ou críticos
+(restam 2 baixos e 2 moderados).
+
+No CI da ponta integrada (`05e0d01`), quality (formatação, lint, typecheck, unitários, contratos,
+integração e build), browser e security passaram nos eventos de PR e de push.
+
+Limites: o editor passa do Lexical 0.41.0 para 0.50.0, com a mesma API de extensões, e a cobertura é
+a que já existia: `news-body.test.tsx` e as jornadas E2E `news-body-images`, `news-editor-experience`
+e `news-direct-publish`. Não há teste novo do editor nem inspeção visual. A mudança no código do
+editor troca só a origem dos imports, sem alteração visual intencional, e não foi conferida contra o
+guia de UI/UX com capturas. O teste de `config.test.ts` protege os quatro campos de autenticação
+nomeados; não garante que o Payload não injete outros no futuro. A chave do override do Sass em
+`pnpm-workspace.yaml` embute a versão (`@payloadcms/next@3.90.0>sass`) e precisa ser atualizada a
+cada nova versão do Payload, ou o audit volta a falhar.

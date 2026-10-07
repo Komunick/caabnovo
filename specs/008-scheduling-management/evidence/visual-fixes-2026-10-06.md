@@ -257,3 +257,44 @@ combinações dev↔PR50 e PR48↔PR50 apresentavam somente conflito add/add de 
 todas passaram com exit 0 e nenhum conflito, nas duas ordens. Blob comum de `.gitleaksignore`:
 `f816c0c31723db2ed6928df8d754ed65b1893bbe`; de `ci.yml`: `56e39aba2a040390f93e84aca63a102b9eb74a7b`.
 A simulação não alterou refs, branches ou worktrees.
+
+## Correção de CI e composição com dev — 07/10/2026-CODEX-mafaltti
+
+Pedido atual: corrigir o erro de CI e os conflitos do PR50. A ponta `7b1ed3a` já incorporava o PR46,
+mas dev avançou para `4fafc87` com a integração do PR48. Os conflitos eram somente nos três
+documentos `spec.md`, `plan.md` e `tasks.md` desta função. A resolução conserva integralmente os
+blocos visuais do PR50 e a cobertura de uploads/T118 de dev, sem escolher um arquivo inteiro de um
+lado. Backups dos três documentos e das regras de CI/scanner foram verificados antes da integração.
+As correções visuais, os 13 fingerprints e as validações de uploads integradas permanecem.
+
+O [CI do PR37667967432](https://github.com/Komunick/caabnovo/actions/runs/37667967432) de `7b1ed3a`
+terminou cancelado. Quality e security passaram; browser ficou na instalação de dependências do
+Playwright, sem executar E2E. O log mostra APT sem progresso ao acessar o espelho Ubuntu por HTTP e
+cancelamento após aproximadamente 24 minutos; é compatível com o limite de 25 minutos do job, mas o
+log isolado não identifica o iniciador do cancelamento. O
+[CI do push37667964826](https://github.com/Komunick/caabnovo/actions/runs/37667964826) da mesma
+ponta passou, com seis casos de Relatórios, 106 E2E e seis de acessibilidade. Não foi identificada
+uma asserção de produto falhando nesses runs.
+
+A preparação APT do runner troca os endereços Ubuntu HTTP por HTTPS, usando o arquivo oficial no
+lugar do espelho Azure. Abrange `.list`, `.sources` e os dois arquivos locais de mirrorlist do
+runner, preservando suites, componentes, metadados e chaves. Timeouts de transporte de 30 segundos e
+três retries limitam esperas de rede. A instalação `playwright install --with-deps chromium`, os
+testes, os gates e o limite total do job continuam. Configuração aplicada somente ao runner efêmero;
+nenhum APT, serviço ou banco local foi alterado.
+
+Validação local: sintaxe Bash do bloco real e quatro fixtures passaram, cobrindo fonte legada,
+Deb822, mirrorlist com prioridade/arquitetura e preservação de transportes `file`, fontes de
+terceiros e HTTPS existente. Transformação idempotente; chaves, componentes e metadados preservados.
+Prettier dos cinco arquivos alterados e diff-check passaram. A resolução documental foi conferida
+contra os dois lados; as fontes das quatro correções visuais e `.gitleaksignore` permanecem iguais
+às versões preservadas antes da composição. Nenhuma biblioteca Ubuntu foi instalada localmente.
+
+Referências oficiais verificadas em 07/10/2026:
+[configuração APT](https://manpages.ubuntu.com/manpages/noble/man5/apt.conf.5.html),
+[mirrorlists](https://manpages.ubuntu.com/manpages/noble/man1/apt-transport-mirror.1.html) e
+[instalação de dependências do Playwright](https://playwright.dev/docs/browsers). Os índices
+`noble/InRelease` e `noble-security/InRelease` dos arquivos oficiais responderam por HTTPS nesta
+verificação. O CI da nova ponta será a prova da integração e da instalação real; resultados finais
+serão registrados no corpo do PR sem novo envio apenas documental. Revisão humana e homologação
+permanecem independentes.

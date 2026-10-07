@@ -33,7 +33,11 @@ import {
   memberFileStatus,
   memberDownload,
 } from "../../modules/members/member-service";
-import { createDownloadGrant, createUploadIntent } from "../../modules/files/file-service";
+import {
+  createDownloadGrant,
+  createUploadIntent,
+  finalizeUpload,
+} from "../../modules/files/file-service";
 import type { WebObjectStorage } from "../../modules/files/object-storage";
 
 async function evidenceActor(permissions: string[]) {
@@ -1419,6 +1423,242 @@ describe.sequential("individual absence domain on disposable PostgreSQL", () => 
             "UPDATE session SET expires_at=clock_timestamp()+interval '1 hour' WHERE id=$1",
             [actor.sessionId],
           );
+        await waitingPool.end();
+        await locker.end();
+      }
+    },
+    20000,
+  );
+
+  it.each(["creation", "replay", "finalization"] as const)(
+    "rechecks temporary member and file grants after a restricted upload %s lock wait",
+    async (kind) => {
+      const memberId = await person();
+      const actor = await evidenceActor([
+        "scheduling:read",
+        "scheduling:write",
+        "members:read",
+        "members:write",
+        "files:create",
+      ]);
+      // Scheduling remains an individual grant; only the member/file authority expires.
+      await admin.query(
+        "UPDATE user_access SET permissions=ARRAY['scheduling:read','scheduling:write'] WHERE user_id=$1",
+        [actor.userId],
+      );
+      await admin.query(
+        "INSERT INTO role(code,name,description,is_administrative) VALUES('administrator','Administrador sintético de upload','Fixture isolada para expiração de acesso a comprovantes',true) ON CONFLICT(code) DO NOTHING",
+      );
+      const grant = (
+        await admin.query(
+          "INSERT INTO user_role(user_id,role_id,granted_by,justification,valid_until) SELECT $1,id,$1,'Upload sintético temporário',clock_timestamp()+interval '1 hour' FROM role WHERE code='administrator' RETURNING id",
+          [actor.userId],
+        )
+      ).rows[0];
+      const metadata = {
+        actor,
+        effectiveIdentity: `user:${actor.userId}`,
+        requestId: crypto.randomUUID(),
+        correlationId: crypto.randomUUID(),
+      };
+      const upload = {
+        ...metadata,
+        idempotencyKey: crypto.randomUUID(),
+        ownerType: SCHEDULING_ABSENCE_EVIDENCE_OWNER,
+        ownerId: memberId,
+        originalName: `prova-${kind}-restrita.pdf`,
+        declaredMime: "application/pdf" as const,
+        sizeBytes: 10,
+        checksumSha256: "b".repeat(64),
+      };
+      const intent =
+        kind === "creation"
+          ? undefined
+          : await createUploadIntent(pool, evidenceStorage, {
+              ...upload,
+              requestId: crypto.randomUUID(),
+              correlationId: crypto.randomUUID(),
+            });
+      const files = async () =>
+        (
+          await admin.query(
+            "SELECT * FROM stored_file WHERE owner_type=$1 AND owner_id=$2 ORDER BY id",
+            [SCHEDULING_ABSENCE_EVIDENCE_OWNER, memberId],
+          )
+        ).rows;
+      const idempotency = async () =>
+        (
+          await admin.query(
+            "SELECT * FROM idempotency_record WHERE scope='file:upload-intent' AND key=$1",
+            [upload.idempotencyKey],
+          )
+        ).rows;
+      const originalFiles = await files();
+      const originalIdempotency = await idempotency();
+      expect(originalFiles).toHaveLength(kind === "creation" ? 0 : 1);
+      expect(originalIdempotency).toHaveLength(kind === "creation" ? 0 : 1);
+      const finalize = {
+        ...metadata,
+        fileId: intent?.fileId ?? "",
+        checksumSha256: upload.checksumSha256,
+      };
+      const appName = `grant-${kind}-${crypto.randomUUID()}`;
+      const url = new URL(container.getConnectionUri());
+      url.username = "caab_runtime";
+      url.password = "change-me-runtime";
+      const waitingPool = new Pool({
+        connectionString: url.toString(),
+        application_name: appName,
+        statement_timeout: 15000,
+        max: 1,
+      });
+      const locker = new Client({ connectionString: container.getConnectionUri() });
+      await locker.connect();
+      let outcome: Promise<unknown> | undefined;
+      let queued = 0;
+      let issued = 0;
+      const enqueuer = {
+        enqueue: async () => {
+          queued++;
+        },
+      };
+      const storage: WebObjectStorage = {
+        ...evidenceStorage,
+        createQuarantineUpload: async (key, input) => {
+          issued++;
+          return evidenceStorage.createQuarantineUpload(key, input);
+        },
+        inspectQuarantine: async () => ({ sizeBytes: 10 }),
+      };
+      try {
+        await waitingPool.query("SELECT 1");
+        const deadline = (await admin.query("SELECT clock_timestamp()+interval '5 seconds' AS at"))
+          .rows[0].at;
+        await admin.query("UPDATE user_role SET valid_until=$2 WHERE id=$1", [grant.id, deadline]);
+        await locker.query("BEGIN");
+        if (kind === "creation")
+          await locker.query("SELECT id FROM member WHERE id=$1 FOR UPDATE", [memberId]);
+        else if (kind === "replay")
+          await locker.query(
+            "SELECT key FROM idempotency_record WHERE scope='file:upload-intent' AND key=$1 FOR UPDATE",
+            [upload.idempotencyKey],
+          );
+        else
+          await locker.query("SELECT id FROM stored_file WHERE id=$1 FOR UPDATE", [intent!.fileId]);
+        const pending =
+          kind === "finalization"
+            ? finalizeUpload(waitingPool, storage, enqueuer, finalize)
+            : createUploadIntent(waitingPool, storage, upload);
+        outcome = pending.then(
+          () => ({ code: "UNEXPECTED_SUCCESS" }),
+          (error) => error,
+        );
+        const blockedQuery =
+          kind === "creation"
+            ? "%member%FOR SHARE%"
+            : kind === "replay"
+              ? "%idempotency_record%"
+              : "%stored_file%FOR UPDATE%";
+        // Observe the correct lock while its transaction began before the future deadline.
+        await expect
+          .poll(
+            async () =>
+              Number(
+                (
+                  await admin.query(
+                    "SELECT count(*) AS n FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock' AND query LIKE $2 AND xact_start<$3::timestamptz",
+                    [appName, blockedQuery, deadline],
+                  )
+                ).rows[0].n,
+              ),
+            { timeout: 4000 },
+          )
+          .toBe(1);
+        await admin.query(
+          "SELECT pg_sleep(greatest(0,extract(epoch FROM $1::timestamptz-clock_timestamp()))+0.05)",
+          [deadline],
+        );
+        await locker.query("COMMIT");
+        await expect(outcome).resolves.toMatchObject({ code: "PERMISSION_DENIED", status: 403 });
+        expect(
+          (
+            await admin.query(
+              "SELECT permission FROM effective_user_permission WHERE user_id=$1 ORDER BY permission",
+              [actor.userId],
+            )
+          ).rows.map((row) => row.permission),
+        ).toEqual(["scheduling:read", "scheduling:write"]);
+        expect(issued).toBe(0);
+        expect(queued).toBe(0);
+        expect(await files()).toEqual(originalFiles);
+        expect(await idempotency()).toEqual(originalIdempotency);
+        expect(
+          (
+            await admin.query("SELECT 1 FROM job_execution WHERE correlation_id=$1", [
+              metadata.correlationId,
+            ])
+          ).rowCount,
+        ).toBe(0);
+        expect(
+          (
+            await admin.query("SELECT 1 FROM audit_event WHERE correlation_id=$1", [
+              metadata.correlationId,
+            ])
+          ).rowCount,
+        ).toBe(0);
+
+        await admin.query(
+          "UPDATE user_role SET valid_until=clock_timestamp()+interval '1 hour' WHERE id=$1",
+          [grant.id],
+        );
+        if (kind === "finalization") {
+          const retried = await finalizeUpload(waitingPool, storage, enqueuer, finalize);
+          await expect(finalizeUpload(waitingPool, storage, enqueuer, finalize)).resolves.toEqual(
+            retried,
+          );
+          expect(queued).toBe(1);
+          expect(issued).toBe(0);
+          expect((await files())[0].status).toBe("uploaded");
+          expect(await idempotency()).toEqual(originalIdempotency);
+          expect(
+            (
+              await admin.query(
+                "SELECT 1 FROM job_execution WHERE aggregate_id=$1 OR idempotency_key=$1",
+                [intent!.fileId],
+              )
+            ).rowCount,
+          ).toBe(1);
+        } else {
+          const retried = await createUploadIntent(waitingPool, storage, upload);
+          const replayed = await createUploadIntent(waitingPool, storage, upload);
+          expect(replayed.fileId).toBe(retried.fileId);
+          if (intent) expect(retried.fileId).toBe(intent.fileId);
+          expect(issued).toBe(2);
+          expect(queued).toBe(0);
+          const persisted = await files();
+          expect(persisted).toHaveLength(1);
+          expect(persisted[0].status).toBe("initiated");
+          const claim = await idempotency();
+          expect(claim).toHaveLength(1);
+          expect(claim[0]).toMatchObject({
+            status: "completed",
+            response_reference: retried.fileId,
+          });
+          if (kind === "replay") {
+            expect(persisted).toEqual(originalFiles);
+            expect(claim).toEqual(originalIdempotency);
+          }
+        }
+        expect(
+          (
+            await admin.query("SELECT 1 FROM audit_event WHERE correlation_id=$1", [
+              metadata.correlationId,
+            ])
+          ).rowCount,
+        ).toBe(kind === "replay" ? 0 : 1);
+      } finally {
+        await locker.query("ROLLBACK");
+        await outcome;
         await waitingPool.end();
         await locker.end();
       }

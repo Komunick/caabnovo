@@ -1,0 +1,241 @@
+{
+  "date": "2026-10-02",
+  "author": "CODEX",
+  "requester": "SOLICITANTE_NAO_VERIFICADO",
+  "identityLimitation": "gh api user HTTP401 nesta sessão",
+  "base": "748539d28ec7c94af5ff3ca7a37c46c73ae102e4",
+  "fronts": [
+    {
+      "name": "Documentação",
+      "path": ".cache/pr-docs-roles-20260923",
+      "local": "4b4a79b46dd5e274cc1730e04e3138c08216291a",
+      "published": "4b4a79b46dd5e274cc1730e04e3138c08216291a",
+      "pr": 42,
+      "ci": 37031233977,
+      "checks": ["quality:success", "browser:success", "security:success"],
+      "humanReviews": 0
+    },
+    {
+      "name": "Agendamentos",
+      "path": ".cache/pr-scheduling-research-20260923",
+      "local": "b676974a3514f87fcdfbdc943d74e9a013e5dbac",
+      "published": "b676974a3514f87fcdfbdc943d74e9a013e5dbac",
+      "pr": 43,
+      "ci": 37037047877,
+      "checks": ["quality:success", "browser:success", "security:success"],
+      "humanReviews": 0
+    },
+    {
+      "name": "Acessos",
+      "path": ".cache/pr-access-review-20261002",
+      "local": "0cf18c8038a5f3206563f189b257381101fd273f",
+      "published": "f8049372b1defbde002301a25df97793776773b9",
+      "pr": null,
+      "ci": 37034250928,
+      "checks": ["quality:success", "browser:success", "security:success"],
+      "unpublished": "somente documentação; código/testes iguais ao CI"
+    },
+    {
+      "name": "Relatórios",
+      "path": ".cache/pr-reports-complete-20261002",
+      "local": "c8a2614e4bd481ad77a659cd3f5a92e3e49b6818",
+      "published": "0775bf38a58d5ae0fc6b01ad6083ca2bbfab3a22",
+      "pr": null,
+      "ci": 37032398048,
+      "checks": ["quality:success", "browser:success", "security:success"],
+      "unpublished": "SQL/teste/contrato/evidência dependentes das migrations de Agendamentos; não cobertos pelo CI publicado"
+    }
+  ],
+  "jira": [
+    {
+      "key": "CAAB-18",
+      "title": "Restringir criação de contas ao fluxo administrativo",
+      "status": "Em Teste / QA",
+      "parent": null,
+      "links": []
+    },
+    {
+      "key": "CAAB-19",
+      "title": "Gerenciar cargos e acessos de Administrador, Gestor e Colaborador",
+      "status": "Em Desenvolvimento",
+      "parent": null,
+      "links": []
+    },
+    {
+      "key": "CAAB-20",
+      "title": "Mostrar apenas funções autorizadas na navegação",
+      "status": "Em Teste / QA",
+      "parent": null,
+      "links": []
+    },
+    {
+      "key": "CAAB-24",
+      "title": "Exportar o conjunto completo de dados em Relatórios",
+      "status": "Em Desenvolvimento",
+      "parent": null,
+      "links": [
+        {
+          "id": "10048",
+          "type": "Blocks",
+          "in": "CAAB-22",
+          "out": null
+        }
+      ]
+    },
+    {
+      "key": "CAAB-26",
+      "title": "Impedir sobreposição de agendamentos da mesma pessoa",
+      "status": "Em Teste / QA",
+      "parent": "CAAB-37",
+      "links": []
+    },
+    {
+      "key": "CAAB-37",
+      "title": "Agendamentos",
+      "status": "Em Desenvolvimento",
+      "parent": null,
+      "links": []
+    },
+    {
+      "key": "CAAB-38",
+      "title": "Conciliar a documentação do projeto",
+      "status": "Code Review",
+      "parent": null,
+      "links": []
+    },
+    {
+      "key": "CAAB-39",
+      "title": "Consolidar o guia de design do projeto",
+      "status": "Code Review",
+      "parent": null,
+      "links": []
+    },
+    {
+      "key": "CAAB-40",
+      "title": "Operar aprovação, remarcação e recuperação de atendimentos",
+      "status": "Em Teste / QA",
+      "parent": "CAAB-37",
+      "links": [
+        {
+          "id": "10050",
+          "type": "Blocks",
+          "in": "CAAB-42",
+          "out": null
+        },
+        {
+          "id": "10053",
+          "type": "Blocks",
+          "in": null,
+          "out": "CAAB-44"
+        }
+      ]
+    },
+    {
+      "key": "CAAB-41",
+      "title": "Tratar faltas, justificativas e contestações",
+      "status": "Em Teste / QA",
+      "parent": "CAAB-37",
+      "links": [
+        {
+          "id": "10051",
+          "type": "Blocks",
+          "in": "CAAB-42",
+          "out": null
+        }
+      ]
+    },
+    {
+      "key": "CAAB-42",
+      "title": "Entregar os avisos operacionais de Agendamentos por e-mail",
+      "status": "Backlog",
+      "parent": "CAAB-37",
+      "links": [
+        {
+          "id": "10049",
+          "type": "Blocks",
+          "in": "CAAB-2",
+          "out": null
+        },
+        {
+          "id": "10050",
+          "type": "Blocks",
+          "in": null,
+          "out": "CAAB-40"
+        },
+        {
+          "id": "10051",
+          "type": "Blocks",
+          "in": null,
+          "out": "CAAB-41"
+        }
+      ]
+    },
+    {
+      "key": "CAAB-44",
+      "title": "Exportar detalhe agrupado, resumo e evolução sem os limites antigos",
+      "status": "Em Desenvolvimento",
+      "parent": "CAAB-24",
+      "links": [
+        {
+          "id": "10053",
+          "type": "Blocks",
+          "in": "CAAB-40",
+          "out": null
+        }
+      ]
+    },
+    {
+      "key": "CAAB-46",
+      "title": "Retomar validações de Relatórios bloqueadas pelo WSL",
+      "status": "Backlog",
+      "parent": "CAAB-24",
+      "links": []
+    },
+    {
+      "key": "CAAB-47",
+      "title": "Definir o tratamento das contas atualmente sem cargo",
+      "status": "Backlog",
+      "parent": "CAAB-19",
+      "links": []
+    }
+  ],
+  "changes": {
+    "created": ["CAAB-47"],
+    "descriptionUpdates": [
+      "CAAB-18",
+      "CAAB-19",
+      "CAAB-20",
+      "CAAB-24",
+      "CAAB-26",
+      "CAAB-37",
+      "CAAB-38",
+      "CAAB-39",
+      "CAAB-40",
+      "CAAB-41",
+      "CAAB-42",
+      "CAAB-44",
+      "CAAB-46"
+    ],
+    "transitions": {
+      "CAAB-38": "Code Review",
+      "CAAB-39": "Code Review",
+      "CAAB-44": "Em Desenvolvimento"
+    },
+    "createdLinks": [
+      {
+        "type": "Blocks",
+        "in": "CAAB-40",
+        "out": "CAAB-44"
+      }
+    ]
+  },
+  "pendingManual": [
+    {
+      "action": "Remover somente vínculos Blocks históricos de CAAB-42 para CAAB-40/41",
+      "ids": ["10050", "10051"],
+      "reason": "Conector sem delete; cua.getState sem browsers e createBrowserTab chrome indisponível"
+    }
+  ],
+  "mergePerformed": false,
+  "applicationTestsRerun": false
+}

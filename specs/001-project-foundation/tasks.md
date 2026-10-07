@@ -32,7 +32,7 @@ T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
 - [x] AC-T001 Conferir implementação integrada, contrato documental, critérios e evidências;
       preparar matriz AC01–AC14, distinguir histórico/teste atual/QA humano e executar recorte sem
       serviços. Resultado: 31 unitários e 28 contratos aprovados, com G01–G03/P01 registrados.
-- [ ] AC-T002 Corrigir G01 em `apps/web/modules/messaging/ui/schedules.tsx`: esconder Novo
+- [x] AC-T002 Corrigir G01 em `apps/web/modules/messaging/ui/schedules.tsx`: esconder Novo
       agendamento sem `messages:write`, mantendo consulta; validar Gestor/Colaborador de leitura,
       escrita concedida, revogação e POST negado. Coordenar Mensagens, ler guia de design e
       preservar M016/envio real desativado. Não alterar Agendamentos por essa ocorrência.
