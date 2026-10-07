@@ -6,7 +6,42 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
-## Correção P1 de identidade entre abas — 07/10/2026-CODEX-mafaltti
+## Validação técnica do P1 publicado — 07/10/2026-CODEX-mafaltti
+
+Autor CODEX; solicitante mafaltti/login Danilo-Komunick, identidade da mesma sessão reutilizada.
+Correção P1 publicada no PR46 em `62a761f6c84d7446adcf242514f8ba8dd1a549b5`, com dev `2b30f53`. O
+[CI 37637466072](https://github.com/Komunick/caabnovo/actions/runs/37637466072) terminou success nos
+três jobs; merge de teste `cab45625d6163dcc4695f3f95bd98c8a4f30868f`. Logs conferidos pela frente
+reports_validation e consolidados nesta evidência, sem nova execução local.
+
+- **Quality (112847340258):** formato, lint, tipos, tooling de proteções, migrations e build
+  aprovados; 663 unitários, 178 contratos, 404 integrações e um opt-in de volume não executado. Web
+  gerou 57 páginas. Report-exports: 15 aprovados e um opt-in; paridade PostgreSQL de arredondamento,
+  CSV, quatro janelas e EXPLAIN aprovada em 1172 ms. Não comprova grande volume ou medição C1.
+- **Browser (112847340085):** seis testes isolados de Relatórios aprovados. A regressão real de duas
+  abas, ids diferentes e permissões efetivas iguais passou em 17,9 s no recorte e 17,8 s no conjunto
+  completo, sem retry. Confirmou descarte do comentário A, menu da conta B e Axe com login e `/me`
+  reais. No conjunto completo, 105 cenários passaram diretamente e um ficou flaky, total de 106
+  concluídos após retry. Os seis testes adicionais de acessibilidade passaram.
+- **Security (112847339469):** Gitleaks examinou 529 commits/18.565.538 bytes e não encontrou
+  candidatos. Validador confirmou varredura positiva/completa, sem erro Git ou scan parcial; reset
+  de confiança restrito ao workspace e as 13 exceções históricas exatas preservados. Audit sem
+  high/critical; dois avisos low e dois moderate.
+
+**Retry observado:** `navigation-speed.spec.ts:55`, “a slow area shows its loading state and
+navigation remains interruptible”, falhou na primeira tentativa ao aguardar por 5000 ms o status
+“Carregando associados…” visível, sem encontrar o elemento na linha 65. Passou no retry 1 em 3,5 s.
+Não houve falha terminal, mas esse caso não passou na primeira tentativa. Causa não reproduzida nem
+corrigida nesta etapa; screenshot, error-context e trace estão nos resultados do browser. Nenhuma
+asserção foi relaxada e não foi atribuída uma causa ao P1 ou à navegação.
+
+T050/T051 confirmadas pelos componentes reais e pelo E2E entre abas; T049 concluída tecnicamente
+para a publicação validada `62a761f`. T038/C1 e QA humano continuam pendentes. Esta consolidação
+altera somente documentos: o resultado acima pertence ao código de `62a761f`, sem atribuir sua
+aprovação à futura ponta documental ou antecipar os checks automáticos desse último envio. Sem
+merge, deploy, serviços locais, teste repetido ou nova execução manual de CI nesta etapa.
+
+## Correção P1 de identidade entre abas — checkpoint local anterior ao CI — 07/10/2026-CODEX-mafaltti
 
 Autor CODEX; solicitante mafaltti/login Danilo-Komunick, identidade autenticada consultada uma vez
 pela coordenação via GitHub get_profile em 07/10/2026 e reutilizada nesta sessão. A retomada

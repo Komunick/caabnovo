@@ -23,11 +23,13 @@ continuam identificando filtros/colunas/ordenação/formato da origem. Validar c
 desmontagem/remontagem entre módulos, StrictMode, negação e troca de conta, além de tipos/lint e
 regressões dos demais consumidores. Sem nova dependência, migration ou serviço.
 
-Provar também a janela sem refresh, troca entre contas com permissões iguais, formulário já editado,
-401, resposta atrasada de geração abortada e preservação da mesma conta. Regressão E2E real usa duas
-páginas do mesmo BrowserContext e as contas sintéticas existentes; apenas escrever/listar
-localmente, com execução em CI. A validação aprovada de `538e3e9` é anterior ao P1 e não cobre essa
-correção; T049 continua aberta até confirmar a nova ponta completa.
+Janela sem refresh, troca entre contas com permissões iguais, formulário já editado, 401, resposta
+atrasada de geração abortada e preservação da mesma conta foram validados localmente. O E2E real usa
+duas páginas do mesmo BrowserContext e contas sintéticas existentes; foi apenas escrito/listado
+localmente e executado com sucesso no CI 37637466072 de `62a761f`, sem retry nesse caso. T049
+concluída tecnicamente para essa ponta. A validação de `538e3e9` é anterior ao P1; a última
+consolidação documental terá checks próprios. Retry de navegação e limites na
+[evidência](evidence/pr46-corrections-2026-10-06.md); T038/C1 e QA humano continuam pendentes.
 
 ## Segunda revisão — 06/10/2026-CODEX-mafaltti
 

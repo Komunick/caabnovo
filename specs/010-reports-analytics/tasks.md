@@ -4,10 +4,10 @@
 
 - [x] T050 Isolar transporte do comentário no contexto autenticado; descartar no logout, troca de
       conta e destino negado. Provar que conta B não recebe comentário pendente da conta A, usando
-      componentes reais e sem depender da expiração de cinco minutos. Complemento P1 implementado
-      localmente: vincular identidade inicial do layout à observada em /me; desmontar contexto antes
-      do refresh em troca entre abas com permissões iguais ou 401. Regressões de foco/poll, props
-      atrasadas e resposta abortada; mesma conta preserva edição.
+      componentes reais e sem depender da expiração de cinco minutos. Complemento P1 publicado e
+      validado em `62a761f`: vincular identidade inicial do layout à observada em /me; desmontar
+      contexto antes do refresh em troca entre abas com permissões iguais ou 401. Regressões de
+      foco/poll, props atrasadas e resposta abortada; mesma conta preserva edição.
 - [x] T051 Manter identidade estável da seleção de origem; aplicar comentário como valor do
       rascunho. Testar desmontagem/retorno com WorkspaceDrafts preservado, recuperando comentário,
       filtros, colunas/ordem, ordenação e formato sem sobrescrever edições.
@@ -16,25 +16,34 @@
       resultado e limites na evidência; não concluir gates de código novo pelo CI da base.
 
 **Complemento P1 de 07/10/2026-CODEX-mafaltti:** implementação e regressões herméticas locais
-concluídas; E2E real entre duas páginas preparado para execução exclusiva em CI. O CI de `538e3e9`
-valida somente a ponta anterior. T049 permanece aberta para publicar e confirmar a nova versão;
-T038/C1 e QA humano continuam pendentes. Sem reabertura de regras de cargos ou concessões.
+concluídas; E2E real entre duas páginas executado e aprovado no CI 37637466072 de `62a761f`.
+T050/T051 e T049 concluídas tecnicamente para essa versão. O CI de `538e3e9` valida somente a ponta
+anterior. T038/C1 e QA humano continuam pendentes. Sem reabertura de regras de cargos ou concessões;
+checks da última atualização somente documental ainda devem ser conferidos.
 
-## Estado atual — 06/10/2026-CODEX-mafaltti
+## Estado atual — 07/10/2026-CODEX-mafaltti
 
-**Segunda revisão em validação:** merge local 5a0d4b8 de dev 2b30f53/PR49, conflitos resolvidos com
-lockfile e evidência de Notícias da dev. CSV negativo, paginação padrão, arredondamento e leitura
-das quatro janelas corrigidos; T046–T049 abaixo. Resultados anteriores são históricos e não validam
-os novos deltas nem a conciliação pós-PR49.
+**Validação técnica confirmada:** correções de CSV, PDF, métricas, quatro janelas e identidade entre
+abas publicadas em `62a761f`, com quality/browser/security aprovados no CI 37637466072. O conjunto
+E2E registrou 105 passados diretamente e um flaky aprovado no retry 1; seis testes adicionais de
+acessibilidade passaram. Limitação fiel e resultados por versão na
+[evidência](evidence/pr46-corrections-2026-10-06.md), sem conclusão de QA humano.
 
 - [x] T046 Corrigir CSV negativo tipado e regressões de fórmulas disfarçadas/controles.
 - [x] T047 Reproduzir PDF com catálogo padrão real (14 colunas/40 registros), conservar os campos,
       compactar faixas e verificar o documento renderizado e limpeza após cancelamento.
 - [x] T048 Corrigir meios exatos na tela e reduzir quatro leituras de janelas a um agregado
-      materializado. Regressão real PostgreSQL/paridade/EXPLAIN preparada, execução no CI pendente.
-- [ ] T049 Publicar conjunto consolidado após gates locais e confirmar CI da versão pós-PR49;
-      atualizar evidência, incluindo a correção P1 de identidade entre abas. CI de 538e3e9 é
-      histórico para este incremento. T038 permanece aberta para medições de recursos/tempo/painel.
+      materializado. Regressão real PostgreSQL/paridade/EXPLAIN aprovada no CI de `62a761f`.
+- [x] T049 Publicar conjunto consolidado após gates locais e confirmar CI da versão pós-PR49;
+      evidência atualizada, incluindo P1 e o retry observado. CI 37637466072 aprovado para
+      `62a761f`; CI de `538e3e9` é histórico anterior ao P1. A última atualização documental terá
+      checks próprios. T038 permanece aberta para medições de recursos/tempo/painel; QA humano não
+      foi concluído.
+
+**Checkpoint histórico de 06/10/2026:** merge local `5a0d4b8` de dev `2b30f53`/PR49, conflitos
+resolvidos com lockfile e evidência de Notícias da dev. Naquela etapa T046–T049 ainda aguardavam
+validação; resultados anteriores não cobriam os deltas ou a conciliação pós-PR49. O estado técnico
+atual está registrado acima, por ponta e CI.
 
 Correções do PR46 publicadas em b67c30b/90f82e2. CI 37520740384 de 90f82e2 aprovado em
 quality/browser/security: 639 unitários, 172 contratos, 403 integração, 105 E2E e 6 a11y; 1 teste

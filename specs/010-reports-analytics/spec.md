@@ -1,5 +1,14 @@
 # Feature Specification: Relatórios e Análises
 
+## Estado técnico validado — 07/10/2026-CODEX-mafaltti
+
+A correção de identidade entre abas está publicada em `62a761f` e confirmada no CI 37637466072,
+incluindo autenticação real de duas contas com permissões iguais no mesmo BrowserContext. T049
+concluída tecnicamente para essa ponta; T038/C1 e QA humano continuam pendentes. Um caso de
+navegação exigiu retry e está registrado, sem causa presumida, na
+[evidência](evidence/pr46-corrections-2026-10-06.md). O CI de `538e3e9` é histórico anterior ao P1;
+este fechamento documental terá checks próprios, sem herdar uma aprovação por SHA diferente.
+
 ## Privacidade e recuperação do comentário — 07/10/2026-CODEX-mafaltti
 
 Correção dos achados enviados pelo solicitante mafaltti (login Danilo-Komunick, consulta autenticada
