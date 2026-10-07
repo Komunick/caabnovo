@@ -74,6 +74,14 @@ reutilizada. O comentário transportado é valor inicial suplementar, separado d
 rascunho; retornar à mesma seleção preserva todas as edições. Rascunho existente prevalece sobre
 novo transporte, incluindo comentário deliberadamente apagado. Comentário continua fora da URL.
 
+Complemento P1 de 07/10/2026-CODEX-mafaltti: o transporte e a edição também ficam isolados quando
+outra aba troca a sessão para uma conta com as mesmas permissões. A identidade inicial vem do layout
+autenticado; a identidade atual é revalidada em `/api/v1/me`. Outra identidade ou 401 desmonta o
+contexto privado antes do refresh, impedindo consumo/exibição durante a janela em que o layout
+anterior ainda está cacheado. Props antigas não reabrem o contexto; layout e identidade atual devem
+coincidir. Mesma conta mantém suas edições, inclusive após erro transitório; a mudança de concessões
+continua revalidada, sem ampliar acessos.
+
 ## Cancelamentos sem horário — compatibilidade de 02/10/2026
 
 O aviso de cancelamentos em tela e arquivo usa `coalesce(starts_at,original_start,created_at)` nos

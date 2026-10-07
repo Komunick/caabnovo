@@ -4,13 +4,21 @@
 
 - [x] T050 Isolar transporte do comentário no contexto autenticado; descartar no logout, troca de
       conta e destino negado. Provar que conta B não recebe comentário pendente da conta A, usando
-      componentes reais e sem depender da expiração de cinco minutos.
+      componentes reais e sem depender da expiração de cinco minutos. Complemento P1 implementado
+      localmente: vincular identidade inicial do layout à observada em /me; desmontar contexto antes
+      do refresh em troca entre abas com permissões iguais ou 401. Regressões de foco/poll, props
+      atrasadas e resposta abortada; mesma conta preserva edição.
 - [x] T051 Manter identidade estável da seleção de origem; aplicar comentário como valor do
       rascunho. Testar desmontagem/retorno com WorkspaceDrafts preservado, recuperando comentário,
       filtros, colunas/ordem, ordenação e formato sem sobrescrever edições.
 - [x] T052 Conferir os 13 falsos positivos históricos com fingerprints específicos, varredura
       integral positiva e controle que continue detectando credencial sintética. Registrar versão,
       resultado e limites na evidência; não concluir gates de código novo pelo CI da base.
+
+**Complemento P1 de 07/10/2026-CODEX-mafaltti:** implementação e regressões herméticas locais
+concluídas; E2E real entre duas páginas preparado para execução exclusiva em CI. O CI de `538e3e9`
+valida somente a ponta anterior. T049 permanece aberta para publicar e confirmar a nova versão;
+T038/C1 e QA humano continuam pendentes. Sem reabertura de regras de cargos ou concessões.
 
 ## Estado atual — 06/10/2026-CODEX-mafaltti
 
@@ -25,7 +33,8 @@ os novos deltas nem a conciliação pós-PR49.
 - [x] T048 Corrigir meios exatos na tela e reduzir quatro leituras de janelas a um agregado
       materializado. Regressão real PostgreSQL/paridade/EXPLAIN preparada, execução no CI pendente.
 - [ ] T049 Publicar conjunto consolidado após gates locais e confirmar CI da versão pós-PR49;
-      atualizar evidência. T038 permanece aberta para medições de recursos/tempo/painel.
+      atualizar evidência, incluindo a correção P1 de identidade entre abas. CI de 538e3e9 é
+      histórico para este incremento. T038 permanece aberta para medições de recursos/tempo/painel.
 
 Correções do PR46 publicadas em b67c30b/90f82e2. CI 37520740384 de 90f82e2 aprovado em
 quality/browser/security: 639 unitários, 172 contratos, 403 integração, 105 E2E e 6 a11y; 1 teste

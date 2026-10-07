@@ -6,6 +6,104 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
+## Correção P1 de identidade entre abas — 07/10/2026-CODEX-mafaltti
+
+Autor CODEX; solicitante mafaltti/login Danilo-Komunick, identidade autenticada consultada uma vez
+pela coordenação via GitHub get_profile em 07/10/2026 e reutilizada nesta sessão. A retomada
+autorizou corrigir falha comprovada na mesma entrega. Não houve commit/push, CI novo, serviço,
+banco, merge ou deploy nesta etapa local. O CI aprovado de `538e3e9` abaixo é histórico e não valida
+este incremento; T049 continua aberta.
+
+**Prova antes da correção:** providers e componentes reais, `/me` sintético A→B com permissões
+iguais, chave A do layout mantida durante navegação. Foco e polling de 15s reproduziram o consumo do
+handoff de A por B: dois testes falharam recebendo “Análise privada da conta A” em vez de vazio; 15
+testes anteriores passaram. A troca não executou logout na primeira aba nem aguardou o TTL. Next
+documenta o reaproveitamento de layouts na referência instalada
+`apps/web/node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/layout.md`, seção
+Caveats/Request Object. O layout real usava id somente na key de WorkspaceDrafts; o provider
+comparava apenas permissões, embora `/me` já fornecesse o id.
+
+**Correção:** AdminLayout fornece `initialIdentityId`. WorkspacePermissions mantém separadamente o
+id do layout e o id observado. Diferença de id ou 401 desmonta todos os children, removendo o mapa e
+o estado React dos drafts; o efeito seguinte solicita refresh. Props A atrasadas não reabrem o
+contexto e não geram refresh repetido. Layout B confirmado reabre com cache vazio. Mesma identidade
+mantém edições; mudança de concessões segue aplicada. Respostas de geração abortada são ignoradas, e
+falha transitória mantém a sessão conhecida sem apagar drafts.
+
+**Prova local depois:** 55 testes unitários aprovados em cinco arquivos, até dois workers, incluindo
+23 de ReportExportScreen. Casos novos verificam foco/poll, ausência do formulário e menu antigos
+antes de router.refresh, props A atrasadas, B confirmado sem comentário, formulário A já editado,
+401 sem loop, mesma identidade/permissões iguais ou alteradas, falha de rede/503 e resposta A
+atrasada de geração abortada. Os demais testes cobrem handoff, StrictMode e recuperação entre
+módulos, sem afrouxar asserções. Comando:
+`vitest run --project unit apps/web/modules/reports/ui/report-export-screen.test.tsx apps/web/modules/reports/ui/client.test.ts apps/web/components/workspace-drafts.test.tsx apps/web/components/workspace-draft-errors.test.tsx apps/web/modules/exports/ui/export-screen.test.tsx --maxWorkers=2`.
+
+Revisão independente por CODEX na frente reports_validation leu produção e regressões sem editar os
+arquivos ou repetir a suíte; nenhum bloqueador encontrado. Backup prévio de nove arquivos com SHA256
+conferido em `.cache/local-backups/account-identity-p1-20261007` da worktree. Prova anterior
+preservada em `.cache/diagnostics/account-switch-before-20261007.txt`, sem dado real.
+
+**Guia e limites:** reutilizado o padrão existente de estado nativo curto com `role="status"`,
+anúncio sem prender foco, sem CSS/componente novo; área anterior fica ausente durante revalidação.
+Critério de edição/sessão do guia aplicado: mesma conta preserva edição, contexto encerrado não
+compartilha conteúdo. Não houve revisão visual em navegador. E2E real em duas páginas do mesmo
+contexto, com login sintético existente e cookie compartilhado, preparado pela coordenação para CI;
+sua escrita/listagem não comprova execução. Tipos web, lint focado dos três TSX de produção/teste,
+Prettier explícito dos oito arquivos deste recorte e `git diff --check` aprovados. Os wrappers
+`.cmd` de Prettier/ESLint não aceitaram o caminho com parênteses do layout; comandos corrigidos
+usando os CLIs Node já instalados, sem instalar dependências ou alterar o escopo.
+
+A coordenação escreveu o E2E
+`reports discards a private draft when another tab changes to an equally authorized account`, usando
+as contas sintéticas administrator/accessManager já provisionadas com o mesmo cargo. O teste valida
+id distinto e igualdade das permissões efetivas por `currentUserSchema`, faz login normal na segunda
+página e aguarda `/me` de B na primeira, sem mock de autenticação/cookie. Confere comentário vazio,
+menu da conta B e acessibilidade; captura sintética preparada. Formato, lint focado e diff-check
+desse arquivo aprovados pela coordenação. Playwright `--list` enumerou os seis testes de Relatórios
+em Chromium, incluindo o novo caso, sem executar globalSetup, navegador ou serviços.
+E2E/build/security da nova ponta, C1/T038 e QA humano continuam pendentes.
+
+## Publicação e CI de 538e3e9 — histórico anterior ao P1 — 07/10/2026-CODEX-mafaltti
+
+Conferência posterior pela frente reports_validation: CI 37630717773 terminou aprovado nos três
+jobs. Browser112823943030 passou cinco casos isolados de Relatórios, 105 E2E completos e seis testes
+de acessibilidade. O checkpoint de acompanhamento abaixo foi preservado; seus resultados pertencem
+somente à ponta publicada 538e3e9, anterior à reprodução e correção P1.
+
+Código e workflow publicados na mesma branch aberta do PR46 em
+`538e3e9718cbd7ecc2c4043ce06f012a2cf6a323`, incorporando dev2b30f53. Os 20 arquivos tiveram backup
+conferido por SHA256 em .cache/local-backups/pr46-consolidated-publication-20261007. A tentativa
+inicial de backup PowerShell falhou por acesso/comando indisponível; não foi considerada prova.
+Backup nativo Node fora do sandbox completou cópia e comparação dos 20 hashes, com patch binário.
+Worktree ficou limpa e sincronizada após o push. Descrição do PR foi atualizada e relida idêntica;
+as descrições dos PRs48/50 também refletem suas pontas e CIs atuais.
+
+No [CI 37630717773](https://github.com/Komunick/caabnovo/actions/runs/37630717773), merge de teste
+438776f: quality112823943444 e security112823943494 aprovados. Quality conferiu formato/lint/tipos,
+655 unitários, 178 contratos, 404 integrações e um caso opcional ignorado; build dos pacotes, worker
+e web aprovado, com 57 páginas estáticas. A regressão real PostgreSQL confirmou 403/80→403,8 e
+91/96→−5,2, janelas [1,10,11,12] e EXPLAIN ANALYZE com uma leitura de analytics_event materializada
+em live_usage, sem alegar medição de grande volume. Browser112823943030 ainda em acompanhamento;
+T049 permanece aberta até concluir esse gate.
+
+Gitleaks 8.28.0 executou o reset de confiança COUNT2 e examinou 526 commits/18.541.100 bytes, sem
+candidatos; commits/bytes positivos conferidos. Audit passou no limiar high, com dois avisos low e
+dois moderate. Scan nativo local do commit novo examinou 532 commits/18.645.468 bytes sem candidatos
+(inclui mais referências locais). Oito fixtures do workflow: sucesso aprovado e sete falhas
+corretamente rejeitadas; Git nativo confirmou wildcard eliminado e confiança restrita ao workspace,
+sem mudar configuração persistente. Nenhuma exceção geral ou credencial real adicionada.
+
+As 16 descrições Jira auditadas foram conciliadas por ADF e relidas, com revisão independente de
+conteúdo/formatação/histórico e campos disponíveis. Sem status, comentários, responsáveis, pais ou
+links alterados. PR46/CI em acompanhamento aparecem explicitamente nos três recortes Relatórios.
+Relações nativas10050/10051 e conversão de navegação para subtarefa continuam pendentes: ferramentas
+disponíveis não expõem essas operações, inventário UI vazio e tentativa de navegador IAB retornou
+indisponível. Preservar dependências reais e não recriar itens para contornar a limitação.
+
+T050–T052 publicadas. C1/T038 e QA humano continuam pendentes; aprovação técnica não os substitui.
+Sem merge, deploy, serviços locais ou banco de uso. Registros anteriores abaixo são checkpoints
+históricos e não descrevem o estado vigente desta publicação.
+
 ## Consolidação autorizada para publicação — 07/10/2026-CODEX-mafaltti
 
 Pedido explícito do solicitante nesta sessão: corrigir a auditoria começando pelo PR46 e atualizá-lo

@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   if (!identity) redirect("/login");
 
   return (
-    <WorkspacePermissions initial={identity.permissions}>
+    <WorkspacePermissions initial={identity.permissions} initialIdentityId={identity.id}>
       <WorkspaceDrafts key={identity.id}>
         <AppShell
           controls={<WorkspaceControls permissions={identity.permissions} />}

@@ -8,11 +8,26 @@ uma única vez e rejeitar destino divergente/expirado. Remover resíduos da chav
 sessionStorage, sem importar seu conteúdo. Colocar AccountMenu no mesmo provider; logout limpa o
 cache completo e a troca de identidade remonta o provider. A tela de negação descarta o handoff.
 
+Complemento P1: AdminLayout fornece `initialIdentityId` a WorkspacePermissions. O provider mantém a
+identidade observada em `/api/v1/me` separada da identidade do layout em cache. Diferença de id ou
+401 desmonta os children, incluindo WorkspaceDrafts, e apresenta o estado curto de sessão em
+atualização com `role="status"`. Pedir `router.refresh()` somente no efeito posterior a esse commit;
+props antigas não removem o bloqueio. Layout novo e identidade observada precisam coincidir para
+remontar o contexto vazio. Polling/foco deduplicam a mesma resposta e ignoram gerações abortadas.
+Confirmação da mesma identidade preserva o cache; revalidação de permissões e falhas transitórias
+mantêm seu comportamento. Sem BroadcastChannel, persistência ou mudança da autenticação.
+
 ExportScreen recebe valores iniciais suplementares separados da identidade da seleção. O comentário
 preenche apenas a criação do rascunho; rascunho existente tem prioridade. initial e context
 continuam identificando filtros/colunas/ordenação/formato da origem. Validar componentes reais com
 desmontagem/remontagem entre módulos, StrictMode, negação e troca de conta, além de tipos/lint e
 regressões dos demais consumidores. Sem nova dependência, migration ou serviço.
+
+Provar também a janela sem refresh, troca entre contas com permissões iguais, formulário já editado,
+401, resposta atrasada de geração abortada e preservação da mesma conta. Regressão E2E real usa duas
+páginas do mesmo BrowserContext e as contas sintéticas existentes; apenas escrever/listar
+localmente, com execução em CI. A validação aprovada de `538e3e9` é anterior ao P1 e não cobre essa
+correção; T049 continua aberta até confirmar a nova ponta completa.
 
 ## Segunda revisão — 06/10/2026-CODEX-mafaltti
 

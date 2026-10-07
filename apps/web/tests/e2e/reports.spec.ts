@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { test, expect, syntheticUsers } from "./fixtures";
 import { expectWcag22AA, expectThemeContrast } from "./accessibility";
 import { readPdf } from "../helpers/read-export";
-import { reportQuerySchema } from "@caab/contracts";
+import { currentUserSchema, reportQuerySchema } from "@caab/contracts";
 test.use({
   actionTimeout: 15000,
   userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36",
@@ -166,6 +166,62 @@ test("reports: three views, private saved queries, preserved edits, usage and re
   await page.getByRole("button", { name: `Excluir ${name}`, exact: true }).click();
   await expect(page.getByText("Consulta excluída.")).toBeVisible();
 });
+test("reports discards a private draft when another tab changes to an equally authorized account", async ({
+  page,
+  context,
+}, testInfo) => {
+  test.setTimeout(90000);
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill(syntheticUsers.administrator.email);
+  await page.getByLabel("Senha", { exact: true }).fill(syntheticUsers.administrator.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  const firstIdentity = currentUserSchema.parse(
+    await (await page.request.get("/api/v1/me")).json(),
+  );
+  await page.goto("/reports/exportar?dataset=executive&format=csv&environment=test");
+  const comment = page.getByLabel("Análise da gestão (opcional)");
+  await comment.fill("Análise privada sintética da conta A");
+
+  // Two actual pages share the browser's HttpOnly session cookie. No auth or /me mocks.
+  const otherTab = await context.newPage();
+  try {
+    await otherTab.bringToFront();
+    await otherTab.goto("/login");
+    await otherTab.getByLabel("E-mail").fill(syntheticUsers.accessManager.email);
+    await otherTab.getByLabel("Senha", { exact: true }).fill(syntheticUsers.accessManager.password);
+    await otherTab.getByRole("button", { name: "Entrar", exact: true }).click();
+    await expect(otherTab).toHaveURL(/\/$/);
+    const secondIdentity = currentUserSchema.parse(
+      await (await otherTab.request.get("/api/v1/me")).json(),
+    );
+    expect(secondIdentity.id).not.toBe(firstIdentity.id);
+    expect([...secondIdentity.permissions].sort()).toEqual([...firstIdentity.permissions].sort());
+
+    const identityChecked = page.waitForResponse(
+      async (response) => {
+        if (new URL(response.url()).pathname !== "/api/v1/me" || response.status() !== 200)
+          return false;
+        return (await response.json()).id === secondIdentity.id;
+      },
+      { timeout: 25000 },
+    );
+    await page.bringToFront();
+    await identityChecked;
+    await expect(comment).toHaveValue("");
+    await expect(
+      page.getByRole("button", { name: `Menu da conta de ${secondIdentity.name}`, exact: true }),
+    ).toBeVisible();
+    await expectWcag22AA(page);
+    await page.screenshot({
+      path: testInfo.outputPath("reports-shared-session-reset.png"),
+      fullPage: true,
+    });
+  } finally {
+    await otherTab.close();
+  }
+});
+
 test("reports denies ordinary access and export before data", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(syntheticUsers.ordinary.email);

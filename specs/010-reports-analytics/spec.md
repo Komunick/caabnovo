@@ -13,6 +13,14 @@ filtros, seleção e ordem das colunas, ordenação e formato. Transportar um co
 sobrescrever edições já recuperáveis. Regressões devem desmontar e remontar a tela mantendo o
 contexto de rascunhos, além de reproduzir conta A → logout → conta B e acesso negado.
 
+Complemento P1 de 07/10/2026: a troca de cookie em outra aba deve isolar as contas mesmo quando
+ambas têm as mesmas permissões e o layout de servidor da conta anterior permanece em cache. Ao foco
+ou polling confirmar outra identidade ou sessão encerrada, desmontar a área privada e seus rascunhos
+antes de atualizar o layout. Não reabrir o conteúdo anterior com props atrasadas; liberar somente
+quando a identidade observada corresponder à do novo layout autenticado. Confirmação da mesma conta
+ou indisponibilidade transitória preserva as edições; mudança de permissões mantém a autorização
+vigente. Nenhum cargo, concessão, storage ou regra institucional nova.
+
 O achado de Gitleaks refere-se à ponta 72b0a0c. A correção posterior 7b56324 mantém varredura
 integral com exceções somente para os 13 fingerprints triados. Resultados e limites constam na
 [evidência da entrega](evidence/pr46-corrections-2026-10-06.md).
