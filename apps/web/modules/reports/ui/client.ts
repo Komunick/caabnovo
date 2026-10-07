@@ -1,45 +1,58 @@
 import { reportCatalog, type ReportQuery, type ReportTable } from "@caab/contracts";
 
+import type { useDraftCache } from "@/components/workspace-drafts";
+
 /** Same limit as the report contract's `notes` ("Análise da gestão"). */
 export const REPORT_EXPORT_NOTES_MAX = 2000;
-export const REPORT_EXPORT_NOTES_KEY = "caab:reports-export-notes";
-/** A leftover from a navigation that never completed must not leak into a later visit. */
+export const REPORT_EXPORT_NOTES_KEY = "reports:export-pending-notes";
+const LEGACY_REPORT_EXPORT_NOTES_KEY = "caab:reports-export-notes";
 const REPORT_EXPORT_NOTES_TTL_MS = 5 * 60 * 1000;
+type NotesCache = Pick<ReturnType<typeof useDraftCache>, "writeForRoute" | "read" | "remove">;
 
-/**
- * Hands the management comment to the export screen through sessionStorage (same tab and origin):
- * up to 2000 multibyte characters would make the link URL exceed the server's header limit (431).
- * Storage failures (private mode, quota) only mean the comment is typed again on the export screen.
- */
-export function stashReportExportNotes(notes: string | undefined): void {
+/** Discard the old global transport without ever trusting or displaying its contents. */
+export function clearLegacyReportExportNotes(): void {
   try {
-    const text = (notes ?? "").trim().slice(0, REPORT_EXPORT_NOTES_MAX);
-    if (!text) window.sessionStorage.removeItem(REPORT_EXPORT_NOTES_KEY);
-    else
-      window.sessionStorage.setItem(
-        REPORT_EXPORT_NOTES_KEY,
-        JSON.stringify({ text, at: Date.now() }),
-      );
+    window.sessionStorage.removeItem(LEGACY_REPORT_EXPORT_NOTES_KEY);
   } catch {
-    // Opening the export screen is never blocked by storage.
+    // Private mode/storage failures do not affect the authenticated in-memory draft.
   }
 }
+const selection = (href: string) => {
+  const [pathname, query = ""] = href.split("?");
+  const params = new URLSearchParams(query);
+  params.sort();
+  return `${pathname}?${params}`;
+};
 
-/** Reads and removes the stashed comment; the stored value is untrusted input. Returns "" if none. */
-export function takeReportExportNotes(): string {
-  try {
-    const raw = window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY);
-    if (raw === null) return "";
-    window.sessionStorage.removeItem(REPORT_EXPORT_NOTES_KEY);
-    const stored: unknown = JSON.parse(raw);
-    if (typeof stored !== "object" || stored === null) return "";
-    const { text, at } = stored as { text?: unknown; at?: unknown };
-    if (typeof text !== "string" || typeof at !== "number") return "";
-    if (Date.now() - at > REPORT_EXPORT_NOTES_TTL_MS || at > Date.now() + 60_000) return "";
-    return text.trim().slice(0, REPORT_EXPORT_NOTES_MAX);
-  } catch {
-    return "";
-  }
+/** Hand the comment to this selection within the authenticated workspace, never browser storage. */
+export function stashReportExportNotes(
+  cache: NotesCache,
+  notes: string | undefined,
+  href: string,
+): void {
+  clearLegacyReportExportNotes();
+  cache.writeForRoute("/reports/exportar", REPORT_EXPORT_NOTES_KEY, {
+    text: (notes ?? "").trim().slice(0, REPORT_EXPORT_NOTES_MAX),
+    at: Date.now(),
+    selection: selection(href),
+  });
+}
+
+/** Consume once, including denied/mismatched destinations; validate the pending value defensively. */
+export function takeReportExportNotes(cache: NotesCache, href: string): string {
+  clearLegacyReportExportNotes();
+  const stored = cache.read(REPORT_EXPORT_NOTES_KEY);
+  cache.remove(REPORT_EXPORT_NOTES_KEY);
+  if (typeof stored !== "object" || stored === null) return "";
+  const {
+    text,
+    at,
+    selection: target,
+  } = stored as { text?: unknown; at?: unknown; selection?: unknown };
+  if (typeof text !== "string" || typeof at !== "number" || !Number.isFinite(at)) return "";
+  if (Date.now() - at > REPORT_EXPORT_NOTES_TTL_MS || at > Date.now() + 60_000) return "";
+  if (target !== selection(href)) return "";
+  return text.trim().slice(0, REPORT_EXPORT_NOTES_MAX);
 }
 
 /**

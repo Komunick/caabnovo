@@ -2,6 +2,7 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { WorkspaceDrafts, useDraftCache } from "@/components/workspace-drafts";
 import { ReportsPage } from "./reports-page";
 import { REPORT_EXPORT_NOTES_KEY, reportRequest } from "./client";
 import { reportQuerySchema } from "@caab/contracts";
@@ -12,7 +13,17 @@ vi.mock("./client", async (original) => ({
 }));
 const request = vi.mocked(reportRequest);
 const push = vi.hoisted(() => vi.fn());
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+const route = vi.hoisted(() => ({ path: "/reports" }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push }),
+  usePathname: () => route.path,
+  useSearchParams: () => new URLSearchParams(),
+}));
+let pendingNotes: unknown;
+function ReadPending() {
+  pendingNotes = useDraftCache().read(REPORT_EXPORT_NOTES_KEY);
+  return null;
+}
 let root: Root, container: HTMLDivElement, value: number, exportStatus: string;
 const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
 function result() {
@@ -42,6 +53,7 @@ function result() {
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   vi.useFakeTimers();
+  route.path = "/reports";
   value = 17;
   exportStatus = "retrying";
   push.mockClear();
@@ -70,7 +82,13 @@ afterEach(async () => {
   vi.useRealTimers();
 });
 async function render() {
-  await act(() => root.render(<ReportsPage environment="test" datasets={["members"]} />));
+  await act(() =>
+    root.render(
+      <WorkspaceDrafts>
+        <ReportsPage environment="test" datasets={["members"]} />
+      </WorkspaceDrafts>,
+    ),
+  );
 }
 it("refreshes the displayed result when Generate is clicked with identical filters", async () => {
   await render();
@@ -139,7 +157,16 @@ it("hands the 2000-character comment to the export screen without putting it in 
   expect(link.getAttribute("href")).not.toContain("notes");
   expect(link.getAttribute("href")!.length).toBeLessThan(400);
   await clickWithoutNavigating(link);
-  expect(JSON.parse(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)!).text).toBe(text);
+  route.path = "/reports/exportar";
+  await act(() =>
+    root.render(
+      <WorkspaceDrafts>
+        <ReadPending />
+      </WorkspaceDrafts>,
+    ),
+  );
+  expect((pendingNotes as { text: string }).text).toBe(text);
+  expect(window.sessionStorage.length).toBe(0);
 });
 it("hands the saved comment of a failed export over when requesting it again", async () => {
   window.sessionStorage.clear();
@@ -154,7 +181,14 @@ it("hands the saved comment of a failed export over when requesting it again", a
   expect(href.searchParams.get("format")).toBe("csv");
   expect(href.searchParams.has("notes")).toBe(false);
   expect(href.searchParams.get("from")).toBe(query.from);
-  expect(JSON.parse(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)!).text).toHaveLength(
-    2000,
+  route.path = "/reports/exportar";
+  await act(() =>
+    root.render(
+      <WorkspaceDrafts>
+        <ReadPending />
+      </WorkspaceDrafts>,
+    ),
   );
+  expect((pendingNotes as { text: string }).text).toHaveLength(2000);
+  expect(window.sessionStorage.length).toBe(0);
 });

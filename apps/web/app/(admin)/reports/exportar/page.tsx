@@ -9,7 +9,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { exportCsrf } from "@/modules/exports/http";
 import { reportExportAdapter } from "@/modules/reports/export-adapter";
 import { type ExportInitial } from "@/modules/exports/ui/export-screen";
-import { ReportExportScreen } from "@/modules/reports/ui/report-export-screen";
+import {
+  ClearReportExportNotes,
+  ReportExportScreen,
+} from "@/modules/reports/ui/report-export-screen";
 
 type Params = Record<string, string | string[] | undefined>;
 const one = (value: string | string[] | undefined) => (typeof value === "string" ? value : "");
@@ -37,6 +40,7 @@ export default async function ReportExportPage({
     if (!(error instanceof ExportError) || error.code !== "PERMISSION_DENIED") throw error;
     return (
       <div className="page-stack">
+        <ClearReportExportNotes />
         <h1>Exportar Relatórios</h1>
         <section className="panel">
           <p role="alert">Seu acesso mudou. Você não tem permissão para exportar esses dados.</p>

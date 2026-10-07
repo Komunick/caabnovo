@@ -1,24 +1,26 @@
 // @vitest-environment happy-dom
-import { act, type ReactNode } from "react";
+import { StrictMode, act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ExportCatalog } from "@caab/contracts";
-import { WorkspaceDrafts } from "@/components/workspace-drafts";
-import { REPORT_EXPORT_NOTES_KEY, stashReportExportNotes } from "./client";
+import { WorkspaceDrafts, useDraftCache } from "@/components/workspace-drafts";
+import { WorkspacePermissions } from "@/components/workspace-permissions";
+import { AccountMenu } from "@/modules/auth/ui/account-menu";
+import { stashReportExportNotes } from "./client";
 import type { ExportInitial } from "@/modules/exports/ui/export-screen";
-import { ReportExportScreen } from "./report-export-screen";
+import { ClearReportExportNotes, ReportExportScreen } from "./report-export-screen";
 
+const route = vi.hoisted(() => ({ path: "/reports", query: "dataset=executive" }));
+const router = vi.hoisted(() => ({ replace: vi.fn(), refresh: vi.fn() }));
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/reports/exportar",
-  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => route.path,
+  useSearchParams: () => new URLSearchParams(route.query),
+  useRouter: () => router,
 }));
 vi.mock("next/link", () => ({
   default: ({ children, href }: { children: ReactNode; href: string }) => (
     <a href={href}>{children}</a>
   ),
-}));
-vi.mock("@/components/workspace-permissions", () => ({
-  PermissionGate: ({ children }: { children: ReactNode }) => children,
 }));
 
 const catalog: ExportCatalog = {
@@ -27,6 +29,7 @@ const catalog: ExportCatalog = {
   label: "Resultados e evolução",
   columns: [
     { key: "id", label: "Indicador", scalarType: "text", defaultSelected: true, sortable: true },
+    { key: "value", label: "Valor", scalarType: "number", defaultSelected: true, sortable: true },
   ],
   filters: [
     { key: "from", label: "Data inicial", type: "date" },
@@ -38,11 +41,36 @@ const catalog: ExportCatalog = {
 };
 const initial: ExportInitial = { filters: { from: "2026-09-01" }, sort: "", direction: "desc" };
 const text = "漢".repeat(2000);
-let root: Root;
-let container: HTMLDivElement;
+const permissions = ["reports:read", "exports:generate"];
+let root: Root, container: HTMLDivElement, logoutOK: boolean, strict: boolean;
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+  route.path = "/reports";
+  route.query = "dataset=executive";
+  logoutOK = true;
+  strict = false;
   window.sessionStorage.clear();
+  router.replace.mockReset();
+  router.refresh.mockReset();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (path: string) =>
+      path === "/api/auth/sign-out"
+        ? { ok: logoutOK }
+        : path.startsWith("/api/v1/exports/operations/")
+          ? {
+              ok: true,
+              json: async () => ({
+                requestId: path.split("/").at(-1),
+                phase: "completed",
+                rowCount: 1,
+                byteCount: 1,
+                errorCode: null,
+              }),
+            }
+          : { ok: true, json: async () => ({ permissions }) },
+    ),
+  );
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);
@@ -51,98 +79,229 @@ afterEach(async () => {
   await act(() => root.unmount());
   container.remove();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
-async function render(screenInitial = initial, screenCatalog = catalog) {
+function Handoff({ comment }: { comment: string | undefined }) {
+  const cache = useDraftCache();
+  return (
+    <button
+      onClick={() => stashReportExportNotes(cache, comment, `/reports/exportar?${route.query}`)}
+    >
+      Transportar
+    </button>
+  );
+}
+type Screen = "origin" | "export" | "denied" | "away";
+async function render(
+  screen: Screen = "export",
+  screenInitial = initial,
+  account = "A",
+  comment: string | undefined = text,
+  screenCatalog = catalog,
+) {
+  route.path =
+    screen === "origin" ? "/reports" : screen === "away" ? "/users" : "/reports/exportar";
+  const workspace = (
+    <WorkspacePermissions initial={permissions}>
+      <WorkspaceDrafts key={account}>
+        <AccountMenu name={account} email={`${account}@example.test`} role="Gestor" />
+        {screen === "origin" && <Handoff comment={comment} />}
+        {screen === "denied" && <ClearReportExportNotes />}
+        {screen === "export" && (
+          <ReportExportScreen
+            catalog={screenCatalog}
+            sourcePermission="reports:read"
+            backHref="/reports"
+            initial={screenInitial}
+          />
+        )}
+      </WorkspaceDrafts>
+    </WorkspacePermissions>
+  );
+  await act(() => root.render(strict ? <StrictMode>{workspace}</StrictMode> : workspace));
+}
+async function handoff(comment = text, screenInitial = initial, account = "A") {
+  await render("origin", screenInitial, account, comment);
   await act(() =>
-    root.render(
-      <WorkspaceDrafts>
-        <ReportExportScreen
-          catalog={screenCatalog}
-          sourcePermission="reports:read"
-          backHref="/reports"
-          initial={screenInitial}
-        />
-      </WorkspaceDrafts>,
-    ),
+    [...container.querySelectorAll("button")]
+      .find((button) => button.textContent === "Transportar")!
+      .click(),
   );
 }
 const notes = () => container.querySelector<HTMLTextAreaElement>("#export-filter-notes")!;
 const from = () => container.querySelector<HTMLInputElement>("#export-filter-from")!;
-
-describe("report export screen comment", () => {
-  it("offers the previous format first and submits it with the preserved comment and filters", async () => {
-    stashReportExportNotes(text);
-    await render({ ...initial, format: "csv" });
-    const form = container.querySelector<HTMLFormElement>(".export-form")!;
-    const preferred = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-    expect(preferred.value).toBe("csv");
-    expect(container.textContent).toContain("Formato anterior: CSV.");
-    await act(() =>
-      form.dispatchEvent(
-        new SubmitEvent("submit", { bubbles: true, cancelable: true, submitter: preferred }),
-      ),
-    );
-    const config = JSON.parse(form.querySelector<HTMLInputElement>('input[name="config"]')!.value);
-    expect(config.format).toBe("csv");
-    expect(config.filters).toEqual({ from: "2026-09-01", notes: text });
-    expect(form.querySelectorAll('button[type="submit"]')).toHaveLength(3);
+async function type(element: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  await act(() => {
+    Object.getOwnPropertyDescriptor(
+      element instanceof HTMLTextAreaElement
+        ? HTMLTextAreaElement.prototype
+        : HTMLInputElement.prototype,
+      "value",
+    )!.set!.call(element, value);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
   });
-  it("fills the comment with the full text handed over by the link and removes the key", async () => {
-    stashReportExportNotes(text);
+}
+async function submit(value: string) {
+  const form = container.querySelector<HTMLFormElement>(".export-form")!;
+  const button = form.querySelector<HTMLButtonElement>(`button[type="submit"][value="${value}"]`)!;
+  await act(() =>
+    form.dispatchEvent(
+      new SubmitEvent("submit", { bubbles: true, cancelable: true, submitter: button }),
+    ),
+  );
+  return JSON.parse(form.querySelector<HTMLInputElement>('input[name="config"]')!.value);
+}
+async function logout() {
+  await act(() =>
+    container.querySelector<HTMLButtonElement>('[aria-label="Menu da conta de A"]')!.click(),
+  );
+  await act(() => container.querySelector<HTMLButtonElement>(".account-menu-logout")!.click());
+}
+describe("report export authenticated comment", () => {
+  it("consumes the comment once under Strict Mode and restores edits after a real remount", async () => {
+    strict = true;
+    await handoff(text);
     await render();
-    expect(notes().value).toHaveLength(2000);
     expect(notes().value).toBe(text);
-    expect(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)).toBeNull();
-    // Other filters from the URL are kept.
-    expect(from().value).toBe("2026-09-01");
-  });
-  it("does not overwrite what the user types afterwards", async () => {
-    stashReportExportNotes("Comentário trazido");
+    await type(notes(), "Editado no modo estrito");
+    await render("away");
     await render();
+    expect(notes().value).toBe("Editado no modo estrito");
+  });
+  it("preserves previous format, full multibyte comment and origin filters without storage", async () => {
+    await handoff();
+    await render("export", { ...initial, format: "csv" });
+    expect(notes().value).toBe(text);
+    expect(from().value).toBe("2026-09-01");
+    const first = container.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    expect(first.value).toBe("csv");
+    expect((await submit("csv")).filters).toEqual({ from: "2026-09-01", notes: text });
+    expect(window.sessionStorage.length).toBe(0);
+    expect(window.localStorage.length).toBe(0);
+  });
+  it("restores edited notes, filters, columns, ordering and format after navigating away and remounting", async () => {
+    await handoff("Comentário trazido");
+    await render();
+    await type(notes(), "Comentário editado");
+    await type(from(), "2026-08-01");
     await act(() => {
-      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(
-        notes(),
-        "Editado na tela",
-      );
-      notes().dispatchEvent(new Event("input", { bubbles: true }));
+      container.querySelector<HTMLButtonElement>('[aria-label="Mover Valor para cima"]')!.click();
+      const sort = container.querySelector<HTMLSelectElement>("#export-sort")!;
+      sort.value = "value";
+      sort.dispatchEvent(new Event("change", { bubbles: true }));
+      const direction = container.querySelector<HTMLSelectElement>("#export-direction")!;
+      direction.value = "asc";
+      direction.dispatchEvent(new Event("change", { bubbles: true }));
     });
-    expect(notes().value).toBe("Editado na tela");
-    await render({ ...initial });
-    expect(notes().value).toBe("Editado na tela");
+    const config = await submit("pdf");
+    expect(config.columns).toEqual(["value", "id"]);
+    expect(config.sort).toEqual([{ field: "value", direction: "asc" }]);
+    await render("away");
+    await render("export", { ...initial });
+    expect(notes().value).toBe("Comentário editado");
+    expect(from().value).toBe("2026-08-01");
+    // Submitting with no submitter uses the format retained in the draft.
+    const form = container.querySelector<HTMLFormElement>(".export-form")!;
+    await act(() => form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    expect(JSON.parse(form.querySelector<HTMLInputElement>('input[name="config"]')!.value)).toEqual(
+      config,
+    );
   });
-  it("renders without a comment when nothing was handed over", async () => {
+  it("preserves an existing edited draft when an origin hands the comment over again", async () => {
+    await handoff("Do relatório");
+    await render();
+    await type(notes(), "Editado na exportação");
+    await handoff("Novo transporte");
+    await render();
+    expect(notes().value).toBe("Editado na exportação");
+  });
+  it("consumes the handoff only once", async () => {
+    await handoff();
+    await render();
+    await render("away");
+    await render("export", { ...initial, filters: { from: "2026-07-01" } });
+    expect(notes().value).toBe("");
+  });
+  it("does not expose A's pending comment after real logout and authenticated workspace replacement by B", async () => {
+    await handoff("Análise privada da conta A");
+    await logout();
+    expect(router.replace).toHaveBeenCalledWith("/login");
+    await render("export", initial, "B");
+    expect(notes().value).toBe("");
+  });
+  it("clears pending comments on successful logout even before the workspace is replaced", async () => {
+    await handoff("Análise privada da conta A");
+    await logout();
     await render();
     expect(notes().value).toBe("");
-    expect(from().value).toBe("2026-09-01");
   });
-  it("still accepts the legacy ?notes= selection", async () => {
-    await render({ ...initial, filters: { ...initial.filters, notes: "Favorito antigo" } });
+  it("keeps the pending comment when logout fails and the same session remains authenticated", async () => {
+    await handoff("Privado");
+    logoutOK = false;
+    await logout();
+    expect(router.replace).not.toHaveBeenCalled();
+    expect(container.textContent).toContain("Não foi possível sair");
+    await render();
+    expect(notes().value).toBe("Privado");
+  });
+  it("clears a pending comment when the destination is denied before rendering the form", async () => {
+    await handoff("Privado");
+    await render("denied");
+    await render("away");
+    await render();
+    expect(notes().value).toBe("");
+  });
+  it("rejects the comment when navigating to another selection", async () => {
+    await handoff("Da evolução");
+    route.query = "dataset=summary";
+    await render();
+    expect(notes().value).toBe("");
+    route.query = "dataset=executive";
+    await render("away");
+    await render();
+    expect(notes().value).toBe("");
+  });
+  it("does not apply the previous seed when the selection changes without unmounting", async () => {
+    await handoff("Da evolução");
+    await render();
+    expect(notes().value).toBe("Da evolução");
+    route.query = "dataset=executive&from=2026-07-01";
+    await render("export", { ...initial, filters: { from: "2026-07-01" } });
+    expect(notes().value).toBe("");
+  });
+  it("accepts legacy URL notes while ignoring and deleting the previous global storage", async () => {
+    window.sessionStorage.setItem(
+      "caab:reports-export-notes",
+      JSON.stringify({ text: "Análise privada da conta A", at: Date.now() }),
+    );
+    await render("export", {
+      ...initial,
+      filters: { ...initial.filters, notes: "Favorito antigo" },
+    });
     expect(notes().value).toBe("Favorito antigo");
+    expect(window.sessionStorage.length).toBe(0);
   });
-  it("lets the handed-over comment win over a legacy one", async () => {
-    stashReportExportNotes("Do link");
-    await render({ ...initial, filters: { ...initial.filters, notes: "Favorito antigo" } });
-    expect(notes().value).toBe("Do link");
-  });
-  it("opens normally and keeps the field editable when sessionStorage throws", async () => {
-    const fail = () => {
+  it("opens normally when browser storage is unavailable", async () => {
+    vi.spyOn(window, "sessionStorage", "get").mockImplementation(() => {
       throw new Error("denied");
-    };
-    vi.spyOn(window, "sessionStorage", "get").mockReturnValue({
-      getItem: fail,
-      setItem: fail,
-      removeItem: fail,
-    } as unknown as Storage);
+    });
+    await handoff();
     await render();
-    expect(container.querySelector("h1")?.textContent).toContain("Exportar");
-    expect(notes().value).toBe("");
+    expect(notes().value).toBe(text);
     expect(notes().disabled).toBe(false);
-    expect(from().value).toBe("2026-09-01");
   });
-  it("ignores the hand-over for datasets without a comment field", async () => {
-    stashReportExportNotes("Não se aplica");
-    await render(initial, { ...catalog, dataset: "members", filters: [catalog.filters[0]!] });
+  it("does not transport anything without the authenticated drafts provider", async () => {
+    await act(() => root.render(<Handoff comment="Privado" />));
+    await act(() => container.querySelector<HTMLButtonElement>("button")!.click());
+    await render();
+    expect(notes().value).toBe("");
+  });
+  it("discards the handoff for datasets without a comment field", async () => {
+    await handoff();
+    await render("export", initial, "A", text, { ...catalog, filters: [catalog.filters[0]!] });
     expect(container.querySelector("#export-filter-notes")).toBeNull();
-    expect(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)).toBeNull();
+    await render("away");
+    await render();
+    expect(notes().value).toBe("");
   });
 });

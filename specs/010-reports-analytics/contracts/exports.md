@@ -62,10 +62,17 @@ estado vazio explícito. CSV/Excel mantêm exatamente a tabela e colunas escolhi
 gráfico usam arquivo temporário privado, apagado ao terminar/falhar/cancelar.
 
 Solicitar novamente é botão que navega na mesma aba para filtros do download direto. Preserva
-formato validado (`xlsx/csv/pdf`), ordenação, filtros e comentário via sessionStorage de leitura
-única. O formato anterior aparece como primeira ação, com opção de outro; não dispara download
-automaticamente. Sem acesso à fonte, mostra mensagem e volta para Relatórios, sem formulário.
-Dataset inexistente continua 404; requisições e revalidações continuam negando acesso com 403.
+formato validado (`xlsx/csv/pdf`), ordenação, filtros e comentário no contexto autenticado de
+rascunhos em memória, com transporte de leitura única vinculado à seleção de destino. O formato
+anterior aparece como primeira ação, com opção de outro; não dispara download automaticamente. Sem
+acesso à fonte, mostra mensagem e volta para Relatórios, sem formulário. Dataset inexistente
+continua 404; requisições e revalidações continuam negando acesso com 403.
+
+Atualização de 07/10/2026-CODEX-mafaltti: transporte pendente é descartado ao sair, trocar de conta
+ou encontrar destino negado/divergente. A chave global legada de sessionStorage é removida, nunca
+reutilizada. O comentário transportado é valor inicial suplementar, separado da assinatura do
+rascunho; retornar à mesma seleção preserva todas as edições. Rascunho existente prevalece sobre
+novo transporte, incluindo comentário deliberadamente apagado. Comentário continua fora da URL.
 
 ## Cancelamentos sem horário — compatibilidade de 02/10/2026
 

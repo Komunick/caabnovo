@@ -160,60 +160,78 @@ it("keeps the management comment out of the link, so 2000 multibyte characters c
     16000,
   );
 });
-describe("export comment handoff through sessionStorage", () => {
+describe("export comment handoff in authenticated drafts", () => {
   const text = "漢".repeat(2000);
-  beforeEach(() => window.sessionStorage.clear());
-  afterEach(() => vi.useRealTimers());
-  it("stores the full comment and takes it once, removing the key", () => {
-    stashReportExportNotes(text);
-    expect(JSON.parse(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)!).text).toHaveLength(
-      2000,
-    );
-    expect(takeReportExportNotes()).toBe(text);
-    expect(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)).toBeNull();
-    expect(takeReportExportNotes()).toBe("");
+  const href = "/reports/exportar?dataset=executive&format=csv";
+  const values = new Map<string, unknown>();
+  const cache = {
+    writeForRoute: (_path: string, key: string, value: unknown) => {
+      values.set(key, value);
+    },
+    read: (key: string) => values.get(key),
+    remove: (key: string) => {
+      values.delete(key);
+    },
+  };
+  beforeEach(() => {
+    values.clear();
+    window.sessionStorage.clear();
   });
-  it("clears a stale value when the new comment is empty", () => {
-    stashReportExportNotes("antigo");
-    stashReportExportNotes("   ");
-    expect(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)).toBeNull();
-    stashReportExportNotes(undefined);
-    expect(takeReportExportNotes()).toBe("");
-  });
-  it("treats the stored value as untrusted input", () => {
-    const store = (value: string) => window.sessionStorage.setItem(REPORT_EXPORT_NOTES_KEY, value);
-    store("not json");
-    expect(takeReportExportNotes()).toBe("");
-    store(JSON.stringify({ text: 42, at: Date.now() }));
-    expect(takeReportExportNotes()).toBe("");
-    store(JSON.stringify(["x"]));
-    expect(takeReportExportNotes()).toBe("");
-    store(JSON.stringify({ text: `  ${"a".repeat(2500)}  `, at: Date.now() }));
-    expect(takeReportExportNotes()).toBe("a".repeat(2000));
-    // Every attempt consumed the key, valid or not.
-    expect(window.sessionStorage.getItem(REPORT_EXPORT_NOTES_KEY)).toBeNull();
-  });
-  it("ignores a value left behind by a navigation that never completed", () => {
-    vi.useFakeTimers();
-    stashReportExportNotes("pendente");
-    vi.advanceTimersByTime(6 * 60 * 1000);
-    expect(takeReportExportNotes()).toBe("");
-  });
-  it("never throws when sessionStorage is unavailable", () => {
-    const broken = {
-      getItem: () => {
-        throw new Error("denied");
-      },
-      setItem: () => {
-        throw new Error("quota");
-      },
-      removeItem: () => {
-        throw new Error("denied");
-      },
-    };
-    vi.spyOn(window, "sessionStorage", "get").mockReturnValue(broken as unknown as Storage);
-    expect(() => stashReportExportNotes(text)).not.toThrow();
-    expect(takeReportExportNotes()).toBe("");
+  afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+  it("keeps the full comment in memory and consumes it once", () => {
+    stashReportExportNotes(cache, text, href);
+    expect(window.sessionStorage.length).toBe(0);
+    expect(takeReportExportNotes(cache, href)).toBe(text);
+    expect(values.has(REPORT_EXPORT_NOTES_KEY)).toBe(false);
+    expect(takeReportExportNotes(cache, href)).toBe("");
+  });
+  it("replaces a pending comment with an empty one", () => {
+    stashReportExportNotes(cache, "antigo", href);
+    stashReportExportNotes(cache, "   ", href);
+    expect(takeReportExportNotes(cache, href)).toBe("");
+    stashReportExportNotes(cache, undefined, href);
+    expect(takeReportExportNotes(cache, href)).toBe("");
+  });
+  it("validates malformed values and truncates untrusted comments", () => {
+    for (const stored of ["not json", { text: 42 }, { text: "x", at: NaN }, ["x"]]) {
+      values.set(REPORT_EXPORT_NOTES_KEY, stored);
+      expect(takeReportExportNotes(cache, href)).toBe("");
+      expect(values.has(REPORT_EXPORT_NOTES_KEY)).toBe(false);
+    }
+    stashReportExportNotes(cache, `  ${"a".repeat(2500)}  `, href);
+    expect(takeReportExportNotes(cache, href)).toBe("a".repeat(2000));
+  });
+  it("discards handoffs for another selection and accepts equivalent query order", () => {
+    stashReportExportNotes(cache, text, href);
+    expect(takeReportExportNotes(cache, "/reports/exportar?dataset=summary")).toBe("");
+    expect(takeReportExportNotes(cache, href)).toBe("");
+    stashReportExportNotes(cache, text, href);
+    expect(takeReportExportNotes(cache, "/reports/exportar?format=csv&dataset=executive")).toBe(
+      text,
+    );
+  });
+  it("expires a comment left behind by a navigation that never completed", () => {
+    vi.useFakeTimers();
+    stashReportExportNotes(cache, "pendente", href);
+    vi.advanceTimersByTime(6 * 60 * 1000);
+    expect(takeReportExportNotes(cache, href)).toBe("");
+  });
+  it("discards legacy storage without displaying it", () => {
+    window.sessionStorage.setItem(
+      "caab:reports-export-notes",
+      JSON.stringify({ text: "Conta A", at: Date.now() }),
+    );
+    expect(takeReportExportNotes(cache, href)).toBe("");
+    expect(window.sessionStorage.getItem("caab:reports-export-notes")).toBeNull();
+  });
+  it("continues to transport comments when sessionStorage is unavailable", () => {
+    vi.spyOn(window, "sessionStorage", "get").mockImplementation(() => {
+      throw new Error("denied");
+    });
+    expect(() => stashReportExportNotes(cache, text, href)).not.toThrow();
+    expect(takeReportExportNotes(cache, href)).toBe(text);
   });
 });

@@ -6,6 +6,86 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
+## Consolidação autorizada para publicação — 07/10/2026-CODEX-mafaltti
+
+Pedido explícito do solicitante nesta sessão: corrigir a auditoria começando pelo PR46 e atualizá-lo
+agora. A rodada de privacidade/rascunhos abaixo terminou suas verificações locais; T050–T052 estão
+concluídas. A barreira antiga de esperar a outra instância foi satisfeita pela conclusão verificável
+e pelo novo pedido. Consolidar os 20 deltas locais na mesma branch aberta, incluindo o reset
+adicional de safe.directory da coordenação. Não há autorização de merge/deploy, serviços ou banco de
+uso.
+
+Workflow: a configuração de runtime começa com safe.directory vazio e acrescenta somente
+/github/workspace, removendo eventual wildcard herdado da imagem fixada. Mantém histórico completo,
+preflight de commits positivos, pipefail e validação do log, sem aceitar sucesso com scan vazio. As
+13 exceções específicas já publicadas permanecem inalteradas. Fixtures locais de sucesso, histórico
+vazio, erro de Git/scanner, parcial e zero bytes conferem a invocação; CI real desta nova versão
+ainda precisa terminar antes de concluir T049. Código/types/lint/655 unitários/178 contratos já
+verificados na rodada abaixo; novos deltas funcionais não foram introduzidos na consolidação.
+
+Descrição do PR será atualizada para o conjunto real e CI atual, distinguindo validação local, CI da
+nova ponta e QA humano/C1 ainda pendentes. Os registros anteriores são checkpoints datados, sem
+atribuir CI da base 0a95b29 ao código novo.
+
+## Revisão de privacidade e recuperação — 07/10/2026-CODEX-mafaltti
+
+Solicitante mafaltti/login Danilo-Komunick, identidade reutilizada da consulta GitHub get_profile
+desta sessão em 07/10/2026. Três achados enviados pelo usuário, duplicados no prompt; tratados uma
+vez. Base 0a95b29, mesma branch/worktree do PR46. Código desta revisão ainda local, sem commit/push,
+alteração de metadados, merge, serviços ou banco de uso por esta instância.
+
+Revisão independente de segurança confirmou que o terceiro achado já estava corrigido em 7b56324: 13
+fingerprints completos (commit/caminho/regra/linha) correspondem exatamente aos 13 blobs triados.
+Quatro identificadores de rascunho, nove referências a variáveis env, sem valor de credencial
+embutido. Regras padrão e varredura integral permanecem ativas.
+
+No [CI 37625902296](https://github.com/Komunick/caabnovo/actions/runs/37625902296), security
+112807448639 aprovado: 523 commits, 18.503.459 bytes, zero candidatos e confirmação do validador;
+checkout de teste 4eda6bc combina 0a95b29 com dev 2b30f53. Reexecução local independente em
+07/10/2026 com Gitleaks 8.28.0: 531 commits/18.611.275 bytes, exit 0 e zero candidatos (inclui mais
+referências locais que o CI). Controle sintético descartável com a lista atual detectou a chave
+falsa por generic-api-key, exit 1. Binário confere com ZIP/checksum salvo. Relatórios redigidos
+ignorados em .cache/diagnostics/gitleaks-reverify20261007.json e
+gitleaks-control-reverify20261007.json. Nenhum conteúdo de credencial foi publicado. Esses
+resultados da base não validam o novo código de rascunhos.
+
+Os dois primeiros achados foram confirmados na base e corrigidos localmente: transporte em
+WorkspaceDrafts autenticado, vinculado ao href e consumido uma vez, sem leitura/escrita de
+comentário em storage. A chave global legada é apenas removida. Provider continua identificado por
+usuário e agora inclui AccountMenu; logout bem-sucedido limpa todo o cache, falha preserva o
+contexto atual. Destino negado/divergente descarta o transporte. seedFilters separado da identidade
+mantém initial estável e preserva rascunhos existentes. Seed tardio também respeita
+edição/apagamento e scope.
+
+Regressões com componentes reais: conta A → logout → conta B, limpeza antes da substituição do
+provider, falha no logout, negação, destino divergente, ausência do provider, storage indisponível,
+comentário multibyte de 2000 caracteres, novo transporte sobre rascunho editado, StrictMode e
+desmontagem/retorno entre módulos. Após retornar, configuração submetida mantém comentário, filtros,
+colunas/ordem, ordenação/direção e formato. Revisão independente encontrou seed tardio/scope, ambos
+corrigidos e cobertos; revisão final sem bloqueadores. Não houve execução vermelha desses novos
+testes na base anterior; o resultado comprova a versão corrigida.
+
+Validação em Node 24.20.0, até dois workers, sem serviços/banco de uso:
+
+- Foco de seis arquivos: 56 testes aprovados; após incluir StrictMode, 15/15 da tela aprovados (57
+  casos nos seis arquivos). Revisão independente: 7/7 de ExportScreen aprovados.
+- `node node_modules/vitest/vitest.mjs run --project unit --maxWorkers 2`: 654/655 aprovados no
+  sandbox. Um teste preexistente de production-readiness do worker falhou antes da regra, no tsx,
+  com uv_os_get_passwd/ENOMEM. Reexecução apenas desse arquivo fora do sandbox, sem alterar teste ou
+  implementação: 14/14 aprovados; todos os 655 casos ficaram verificados, sem repetir os demais.
+- `node node_modules/vitest/vitest.mjs run --project contract --maxWorkers 2`: 178/178 aprovados.
+- Typecheck web (`tsc --noEmit -p apps/web/tsconfig.json`), ESLint global, Prettier global e
+  explícito dos seis documentos alterados e `git diff --check`: aprovados. Lint iniciado durante
+  inclusão do teste StrictMode leu arquivo incompleto; reexecutado após estabilizar os arquivos,
+  aprovado.
+
+Revisão pelo guia de design: controles, FormField, rótulos, três formatos, classes e apresentação
+preservados; mudança somente de transporte/estado/limpeza. Sem divergência visual introduzida.
+Build, PostgreSQL, E2E e acessibilidade desta revisão não executados localmente; serviços continuam
+desligados. CI da base 0a95b29 e scan local do histórico não validam alterações não commitadas.
+T050/T051/T052 concluídas neste recorte; T049 segue para CI da próxima versão e T038/QA humano
+permanecem independentes. Deltas de workflow feitos por outra instância foram preservados.
+
 ## Triagem dos candidatos históricos — 07/10/2026-CODEX-mafaltti
 
 Na ponta 72b0a0c, o [CI 37624277155](https://github.com/Komunick/caabnovo/actions/runs/37624277155)

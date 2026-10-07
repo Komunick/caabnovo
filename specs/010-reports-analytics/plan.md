@@ -1,5 +1,19 @@
 # Implementation Plan: Relatórios: exportação direta nas três abas
 
+## Privacidade e identidade do rascunho — 07/10/2026-CODEX-mafaltti
+
+Reutilizar WorkspaceDrafts para transportar o comentário em memória, no provider autenticado
+identificado por usuário. Vincular o handoff à seleção de destino (href sem comentário), consumir
+uma única vez e rejeitar destino divergente/expirado. Remover resíduos da chave legada de
+sessionStorage, sem importar seu conteúdo. Colocar AccountMenu no mesmo provider; logout limpa o
+cache completo e a troca de identidade remonta o provider. A tela de negação descarta o handoff.
+
+ExportScreen recebe valores iniciais suplementares separados da identidade da seleção. O comentário
+preenche apenas a criação do rascunho; rascunho existente tem prioridade. initial e context
+continuam identificando filtros/colunas/ordenação/formato da origem. Validar componentes reais com
+desmontagem/remontagem entre módulos, StrictMode, negação e troca de conta, além de tipos/lint e
+regressões dos demais consumidores. Sem nova dependência, migration ou serviço.
+
 ## Segunda revisão — 06/10/2026-CODEX-mafaltti
 
 CSV reconhece valores finitos em coluna numérica com gramática numérica estrita; demais valores e

@@ -6,9 +6,10 @@ import type { ExportCatalog } from "@caab/contracts";
 import { WorkspaceDrafts } from "@/components/workspace-drafts";
 import { ExportScreen } from "./export-screen";
 
+const route = vi.hoisted(() => ({ kind: "" }));
 vi.mock("next/navigation", () => ({
   usePathname: () => "/scheduling/exportar",
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams({ kind: route.kind }),
 }));
 vi.mock("next/link", () => ({
   default: ({ children, href }: { children: ReactNode; href: string }) => (
@@ -51,6 +52,7 @@ let root: Root;
 let container: HTMLDivElement;
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+  route.kind = "";
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);
@@ -106,6 +108,46 @@ function columnOrder() {
 }
 
 describe("export drafts from different list filters", () => {
+  it("applies a delayed seed to an untouched draft and restores it after remount", async () => {
+    const props = { initialFilters: { from: "2026-10-05" } };
+    await render(props);
+    await render({ ...props, seedFilters: { q: "Valor transportado" } });
+    expect(field<HTMLInputElement>("export-filter-q").value).toBe("Valor transportado");
+    expect(field<HTMLInputElement>("export-filter-from").value).toBe("2026-10-05");
+
+    await render();
+    await render(props);
+    expect(field<HTMLInputElement>("export-filter-q").value).toBe("Valor transportado");
+  });
+
+  it.each(["Edição antes do transporte", ""])(
+    "keeps a user edit (%j) when the seed arrives later",
+    async (value) => {
+      await render({});
+      await type("export-filter-q", "Edição iniciada");
+      await type("export-filter-q", value);
+      await render({ seedFilters: { q: "Valor transportado" } });
+      expect(field<HTMLInputElement>("export-filter-q").value).toBe(value);
+
+      await render();
+      await render({ seedFilters: { q: "Novo transporte" } });
+      expect(field<HTMLInputElement>("export-filter-q").value).toBe(value);
+    },
+  );
+
+  it("tracks seed eligibility separately for each draft scope in the mounted screen", async () => {
+    await render({});
+    await type("export-filter-q", "Edição do contexto A");
+
+    route.kind = "context-b";
+    await render({ seedFilters: { q: "Transporte do contexto B" } });
+    expect(field<HTMLInputElement>("export-filter-q").value).toBe("Transporte do contexto B");
+
+    route.kind = "";
+    await render({ seedFilters: { q: "Não substituir A" } });
+    expect(field<HTMLInputElement>("export-filter-q").value).toBe("Edição do contexto A");
+  });
+
   it.each([false, true])(
     "keeps A and B edits separate when the screen remounts=%s",
     async (remount) => {

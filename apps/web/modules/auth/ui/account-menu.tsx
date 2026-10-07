@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronsUpDown, LogOut, MonitorCog, Settings } from "lucide-react";
+import { useDraftCache } from "@/components/workspace-drafts";
+import { clearLegacyReportExportNotes } from "@/modules/reports/ui/client";
 
 export function AccountMenu({
   name,
@@ -11,6 +13,7 @@ export function AccountMenu({
   role,
 }: Readonly<{ name: string; email: string; role: string }>) {
   const router = useRouter();
+  const drafts = useDraftCache();
   const pathname = usePathname();
   const panelId = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -47,6 +50,8 @@ export function AccountMenu({
         body: "{}",
       });
       if (!response.ok) throw new Error();
+      drafts.clearAll();
+      clearLegacyReportExportNotes();
       router.replace("/login");
       router.refresh();
     } catch {

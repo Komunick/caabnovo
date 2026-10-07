@@ -288,7 +288,13 @@ export function ReportsPage({
                   <Link
                     className={buttonVariants()}
                     href={reportExportHref(query, data.table?.columns)}
-                    onClick={() => stashReportExportNotes(notes)}
+                    onClick={() =>
+                      stashReportExportNotes(
+                        cache,
+                        notes,
+                        reportExportHref(query, data.table?.columns),
+                      )
+                    }
                   >
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Link>
@@ -876,14 +882,13 @@ export function ReportsPage({
                       {item.status === "failed" && (
                         <Button
                           onClick={() => {
-                            stashReportExportNotes(item.configuration.notes);
-                            router.push(
-                              reportExportHref(
-                                item.configuration.query,
-                                undefined,
-                                item.configuration.format,
-                              ),
+                            const href = reportExportHref(
+                              item.configuration.query,
+                              undefined,
+                              item.configuration.format,
                             );
+                            stashReportExportNotes(cache, item.configuration.notes, href);
+                            router.push(href);
                           }}
                         >
                           Solicitar novamente

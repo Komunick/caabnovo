@@ -17,7 +17,10 @@ vi.mock("@caab/config", () => ({
   loadServerEnv: () => ({ BETTER_AUTH_SECRET: "synthetic-secret" }),
 }));
 vi.mock("@/modules/exports/http", () => ({ exportCsrf: () => "synthetic-csrf" }));
-vi.mock("@/modules/reports/ui/report-export-screen", () => ({ ReportExportScreen: () => null }));
+vi.mock("@/modules/reports/ui/report-export-screen", () => ({
+  ReportExportScreen: () => null,
+  ClearReportExportNotes: () => <span data-clears-pending-comment />,
+}));
 
 beforeEach(() => {
   vi.mocked(resolveRequestActor).mockResolvedValue({
@@ -35,6 +38,7 @@ it("explains revoked source access without exposing the export form or using a 4
   expect(markup).toContain("Seu acesso mudou.");
   expect(markup).toContain('href="/reports"');
   expect(markup).not.toContain("export-form");
+  expect(markup).toContain("data-clears-pending-comment");
 });
 it.each(["xlsx", "csv", "pdf", "html"])(
   "validates the requested format %s before prefilling",

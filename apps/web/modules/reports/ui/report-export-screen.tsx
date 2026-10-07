@@ -1,31 +1,34 @@
 "use client";
-import { Fragment, useEffect, useMemo, useState, type ComponentProps } from "react";
+import { Fragment, useEffect, useState, type ComponentProps } from "react";
+import { useSearchParams } from "next/navigation";
+import { useDraftCache } from "@/components/workspace-drafts";
+import { useModulePermission } from "@/components/workspace-permissions";
 import { FormField } from "@/components/ui/form-field";
 import { ExportScreen } from "@/modules/exports/ui/export-screen";
 import { REPORT_EXPORT_NOTES_MAX, takeReportExportNotes } from "./client";
 
 /** Uses the same additive renderFilter hook supplied by the Scheduling delivery. */
 export function ReportExportScreen(props: ComponentProps<typeof ExportScreen>) {
-  // The comment travels through sessionStorage, not the URL. It is read after mounting so the
-  // first client render matches the server HTML; the screen then restarts once from the merged
-  // initial selection (its draft key follows `initial`), before the user can have typed anything.
-  const [carried, setCarried] = useState("");
+  const cache = useDraftCache();
+  const params = useSearchParams();
+  const href = `/reports/exportar?${params}`;
+  const canRead = useModulePermission(props.sourcePermission);
+  const canExport = useModulePermission("exports:generate");
+  const [seed, setSeed] = useState<{ href: string; filters: Record<string, string> }>();
   useEffect(() => {
-    const notes = takeReportExportNotes();
-    if (notes) setCarried(notes);
-  }, []);
-  const hasNotes = props.catalog.filters.some((filter) => filter.key === "notes");
-  const initial = useMemo(
-    () =>
-      carried && hasNotes
-        ? { ...props.initial, filters: { ...props.initial?.filters, notes: carried } }
-        : props.initial,
-    [carried, hasNotes, props.initial],
-  );
+    const notes = takeReportExportNotes(cache, href);
+    if (
+      notes &&
+      canRead &&
+      canExport &&
+      props.catalog.filters.some((filter) => filter.key === "notes")
+    )
+      setSeed({ href, filters: { notes } });
+  }, [cache, href, canRead, canExport, props.catalog.filters]);
   return (
     <ExportScreen
       {...props}
-      initial={initial}
+      seedFilters={seed?.href === href ? seed.filters : undefined}
       renderFilter={(key, value, onChange, group) => {
         const filter = props.catalog.filters.find((candidate) => candidate.key === key)!;
         if (key === "notes")
@@ -94,4 +97,13 @@ export function ReportExportScreen(props: ComponentProps<typeof ExportScreen>) {
       }}
     />
   );
+}
+
+/** The server denied the destination before mounting an export form. */
+export function ClearReportExportNotes() {
+  const cache = useDraftCache();
+  useEffect(() => {
+    takeReportExportNotes(cache, "");
+  }, [cache]);
+  return null;
 }

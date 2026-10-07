@@ -1,5 +1,17 @@
 # Tasks: Relatórios: exportação direta nas três abas — incremento de 21/09/2026
 
+## Revisão de privacidade e rascunhos — 07/10/2026-CODEX-mafaltti
+
+- [x] T050 Isolar transporte do comentário no contexto autenticado; descartar no logout, troca de
+      conta e destino negado. Provar que conta B não recebe comentário pendente da conta A, usando
+      componentes reais e sem depender da expiração de cinco minutos.
+- [x] T051 Manter identidade estável da seleção de origem; aplicar comentário como valor do
+      rascunho. Testar desmontagem/retorno com WorkspaceDrafts preservado, recuperando comentário,
+      filtros, colunas/ordem, ordenação e formato sem sobrescrever edições.
+- [x] T052 Conferir os 13 falsos positivos históricos com fingerprints específicos, varredura
+      integral positiva e controle que continue detectando credencial sintética. Registrar versão,
+      resultado e limites na evidência; não concluir gates de código novo pelo CI da base.
+
 ## Estado atual — 06/10/2026-CODEX-mafaltti
 
 **Segunda revisão em validação:** merge local 5a0d4b8 de dev 2b30f53/PR49, conflitos resolvidos com

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { ExportCatalog, ExportFormat, ExportOperation, ExportRequest } from "@caab/contracts";
-import { useDraftState } from "@/components/workspace-drafts";
+import { useDraftCache, useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
 import { ArrowUp, ArrowDown, Download, ArrowLeft } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
@@ -35,6 +35,7 @@ export function ExportScreen({
   backHref,
   initial,
   initialFilters = {},
+  seedFilters,
   renderFilter,
   context,
   defaultOrderLabel = "Identificador",
@@ -46,6 +47,8 @@ export function ExportScreen({
   /** Selection brought from the originating screen (e.g. the report the user was reading). */
   initial?: ExportInitial;
   initialFilters?: Record<string, string>;
+  /** One-time draft values, excluded from the identity of the originating selection. */
+  seedFilters?: Record<string, string>;
   renderFilter?(
     key: string,
     value: string,
@@ -59,10 +62,24 @@ export function ExportScreen({
   backLabel?: string;
 }) {
   const key = `export:${catalog.module}:${catalog.dataset}:${signature({ ...initial, filters: Object.fromEntries(Object.entries(initial?.filters ?? initialFilters).sort(([a], [b]) => a.localeCompare(b))), context })}`;
-  const [draftFilters, setFilters] = useDraftState<Record<string, string>>(
+  const cache = useDraftCache();
+  const identity = `${cache.scope}${key}`;
+  const seed = useRef({ identity, allowed: !cache.has(`${key}:filters`) });
+  if (seed.current.identity !== identity)
+    seed.current = { identity, allowed: !cache.has(`${key}:filters`) };
+  const [draftFilters, updateFilters] = useDraftState<Record<string, string>>(
     `${key}:filters`,
     initial?.filters ?? initialFilters,
   );
+  useEffect(() => {
+    if (!seedFilters || !seed.current.allowed) return;
+    seed.current.allowed = false;
+    updateFilters((previous) => ({ ...previous, ...seedFilters }));
+  }, [seedFilters, updateFilters]);
+  const setFilters: typeof updateFilters = (next) => {
+    seed.current.allowed = false;
+    updateFilters(next);
+  };
   const accessReport = catalog.module === "reports" && catalog.dataset === "access";
   // Normalize old empty drafts as well as the initial selection, for display and submission.
   const filters = accessReport

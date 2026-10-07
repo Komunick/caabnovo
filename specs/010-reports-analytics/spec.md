@@ -1,5 +1,22 @@
 # Feature Specification: Relatórios e Análises
 
+## Privacidade e recuperação do comentário — 07/10/2026-CODEX-mafaltti
+
+Correção dos achados enviados pelo solicitante mafaltti (login Danilo-Komunick, consulta autenticada
+GitHub get_profile em 07/10/2026). O comentário pendente pertence ao contexto autenticado que o
+produziu; logout, troca de conta ou destino negado descartam seu transporte. Nunca preencher o campo
+nem gerar arquivo de outra conta com esse conteúdo. Comentário não faz parte da URL.
+
+A identidade do rascunho depende da seleção de origem e permanece estável depois de consumir o
+transporte. Ao sair para outro módulo e retornar à mesma seleção, recuperar comentário editado,
+filtros, seleção e ordem das colunas, ordenação e formato. Transportar um comentário não pode
+sobrescrever edições já recuperáveis. Regressões devem desmontar e remontar a tela mantendo o
+contexto de rascunhos, além de reproduzir conta A → logout → conta B e acesso negado.
+
+O achado de Gitleaks refere-se à ponta 72b0a0c. A correção posterior 7b56324 mantém varredura
+integral com exceções somente para os 13 fingerprints triados. Resultados e limites constam na
+[evidência da entrega](evidence/pr46-corrections-2026-10-06.md).
+
 ## Segunda revisão de exportação — 06/10/2026-CODEX-mafaltti
 
 Corrigir números negativos no CSV sem reduzir a proteção contra fórmulas; PDF deve usar todas as 14
