@@ -208,3 +208,25 @@ A fonte `agenda.tsx` validada tem SHA-256
 preservam duas amostras auditáveis. Demais capturas e harness ficam na pasta privada
 `.cache/pr50-list-review/` desta worktree. Revisão independente não encontrou bloqueador nos
 arquivos corrigidos. VQA07 permanece aberta até conferir publicação e gates da nova ponta.
+
+## CI da correção da análise — 07/10/2026-CODEX-mafaltti
+
+VQA07 concluída: ponta funcional `01f86c23e523842db4a0254e32b3dbe9ce5379c2`, publicada no PR #50.
+[CI 37650738847](https://github.com/Komunick/caabnovo/actions/runs/37650738847) concluído com
+quality, browser e security aprovados. Conferidos formato, lint, tipos, 626 unitários, 169
+contratos, 395 integrações PostgreSQL e um opt-in de volume não executado, migrations e build.
+Browser aprovou três casos de Relatórios, 103 E2E e seis de acessibilidade, sem retry; oito jornadas
+de Agendamentos incluem geometria em 320 px e retorno de foco por Escape/Fechar/Voltar. Security fez
+varredura real de 532 commits e 18.589.164 bytes, sem candidatos; audit aprovado no limiar high, com
+dois avisos low e dois moderate. Não equivale à ausência de todos os avisos ou a QA humano.
+
+O typecheck passou no ambiente congelado do CI, superando a limitação da instalação local de
+Notícias descrita acima. Os 13 fingerprints permaneceram iguais e a referência de evidência existe
+na árvore entregue; o SHA-256 de `agenda.tsx` corresponde ao manifesto de componentes. Metadados do
+PR explicitam os três pontos da análise, a ponta verificada e o rollback transversal.
+
+Este fechamento modifica somente esta evidência e a marcação de VQA07 em tasks.md. Código, workflow,
+fingerprints, contratos e capturas permanecem exatamente os da ponta funcional validada. Formatação
+documental e diff-check são os gates próprios do checkpoint; qualquer CI automático posterior
+pertence ao seu novo SHA e não deve ser confundido com o run funcional acima. Não houve merge,
+deploy, serviço local, alteração de banco de uso ou homologação humana.

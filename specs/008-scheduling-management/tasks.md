@@ -6,7 +6,7 @@
       nomes existentes, temas, telas pequenas e acessibilidade com dados sintéticos.
 - [x] VQA06 Tornar a evidência do `.gitleaksignore` acessível nesta entrega, preservando os
       fingerprints; explicitar CI/Gitleaks no título e seu efeito no rollback do PR #50.
-- [ ] VQA07 Publicar a correção no PR existente e conferir os gates da nova ponta, registrando
+- [x] VQA07 Publicar a correção no PR existente e conferir os gates da nova ponta, registrando
       versão, resultados e limites na [evidência](evidence/visual-fixes-2026-10-06.md).
 
 ## Revisão visual do DEV hospedado — 06/10/2026-CODEX-mafaltti
