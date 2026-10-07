@@ -241,6 +241,31 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm security:scan
       - name: Scan repository history for secrets
-        uses: docker://zricethezav/gitleaks:v8.28.0
-        with:
-          args: git /github/workspace --redact --no-banner
+        shell: bash
+        run: |
+          set -euo pipefail
+          scan_log="$RUNNER_TEMP/gitleaks.log"
+          scanner=(docker run --rm
+            --volume "$GITHUB_WORKSPACE:/github/workspace:ro"
+            --workdir /github/workspace
+            --env GIT_CONFIG_COUNT=1
+            --env GIT_CONFIG_KEY_0=safe.directory
+            --env GIT_CONFIG_VALUE_0=/github/workspace)
+          history_commits="$("${scanner[@]}" --entrypoint git zricethezav/gitleaks:v8.28.0 rev-list --count --all)"
+          if [[ ! "$history_commits" =~ ^[1-9][0-9]*$ ]]; then
+            echo 'Secret scan requires readable, nonempty repository history' >&2
+            exit 1
+          fi
+          "${scanner[@]}" zricethezav/gitleaks:v8.28.0 \
+            git /github/workspace --redact --no-banner --no-color 2>&1 | tee "$scan_log"
+          # Gitleaks 8.28 can exit zero after Git fails. Require evidence of a complete scan.
+          node --input-type=module - "$scan_log" <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const log = readFileSync(process.argv[2], 'utf8');
+          const commits = log.match(/\b([1-9]\d*) commits scanned\./);
+          const bytes = log.match(/\bscanned ~([1-9]\d*) bytes\b/);
+          if (/\b(?:ERR|FTL)\b|fatal:|dubious ownership|failed to scan Git repository|partial scan/i.test(log) || !commits || !bytes) {
+            throw new Error('Secret scan failed or did not scan repository history completely');
+          }
+          console.log(`Verified secret scan: ${commits[1]} commits, ${bytes[1]} bytes`);
+          NODE
