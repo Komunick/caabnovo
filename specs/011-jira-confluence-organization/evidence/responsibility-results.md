@@ -11,4 +11,6 @@ de24.
 autoria pelo simples movimento de status. 44 não herda Jailson do pai. Conta técnica da conexão não
 foi usada como executor.
 
-[Fundamento das atribuições](responsibility-proposal.md) e [campos após aplicação](jira-after.json).
+[Fundamento das atribuições](responsibility-proposal.md). Os campos após aplicação estão em
+`jira-after.json`, evidência privada preservada na worktree histórica
+`.cache/pr-jira-confluence-20261001`, sem publicação de identificadores de contas Atlassian.

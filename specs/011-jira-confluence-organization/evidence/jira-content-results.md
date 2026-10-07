@@ -11,5 +11,7 @@ CAAB-20 permanece Tarefa sem pai: tentativa de conversão retornou 400 (hierarqu
 labels aplicados. Usar conversão nativa para Subtarefa de CAAB-19; não clonar nem apagar.
 
 Textos de 2/21/24/28/34 foram reconciliados para descrever o estado aplicado; links dos recursos
-criados foram resolvidos. [Releitura completa](jira-after.json) e
-[operações](application-results.json).
+criados foram resolvidos. A releitura completa está em `jira-after.json`, evidência privada
+preservada na worktree histórica `.cache/pr-jira-confluence-20261001`, sem publicação de
+identificadores de contas Atlassian. As [operações](application-results.json) permanecem
+versionadas.

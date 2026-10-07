@@ -108,6 +108,9 @@ referências, sem duplicação neste arquivo.
 
 ## Implementação e validação
 
+- Sempre que houver tarefas independentes e o paralelismo for útil, usar o maior número útil de
+  subagentes permitido pelos recursos disponíveis para acelerar o trabalho. Coordenar dependências e
+  arquivos compartilhados; evitar delegações redundantes ou escritas concorrentes no mesmo alvo.
 - Conferir os critérios de aceite antes de implementar. Atualizar a spec, o plano e as tarefas
   existentes quando o escopo mudar; não criar documentação concorrente.
 - Consultar decisões de produto ainda ausentes antes de inventar regras ou comportamentos. Não

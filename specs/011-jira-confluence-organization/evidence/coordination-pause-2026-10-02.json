@@ -4,12 +4,7 @@
   "requester": "SOLICITANTE_NAO_VERIFICADO",
   "scope": "Transições concluídas antes do pedido de parada; nenhum acesso remoto novo neste salvamento.",
   "externalReviewEvidence": {
-    "pullRequests": [
-      35,
-      36,
-      40,
-      43
-    ],
+    "pullRequests": [35, 36, 40, 43],
     "reviewsReturned": 0,
     "discussionCommentsReturned": 0,
     "limitation": "Ausência de evidência nos registros consultados; não prova que revisão fora dessas fontes nunca ocorreu."

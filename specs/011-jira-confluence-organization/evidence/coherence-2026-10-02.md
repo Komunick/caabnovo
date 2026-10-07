@@ -58,6 +58,7 @@ Inventário de navegadores vazio; tentativas de abrir Chrome e IAB retornaram in
 foram recriados tickets ou alterado o quadro para contornar esses limites. A pendência anterior do
 índice do Banco de Consulta da I.A. permanece na execução original, fora deste ajuste.
 
-Artefatos: [proposta e snapshot anterior](coherence-2026-10-02-plan.json) e
-[releitura e resultados](coherence-2026-10-02-results.json). Entrega local na branch
-docs/jira-confluence-organization-20261001, sem commit, push ou PR.
+Artefatos: proposta e snapshot anterior em `coherence-2026-10-02-plan.json`; releitura e resultados
+em `coherence-2026-10-02-results.json`. São evidências privadas preservadas na worktree histórica
+`.cache/pr-jira-confluence-20261001`, sem publicação de identificadores de contas Atlassian. Entrega
+local na branch docs/jira-confluence-organization-20261001, sem commit, push ou PR.

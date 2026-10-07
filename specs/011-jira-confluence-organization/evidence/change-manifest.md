@@ -1,9 +1,10 @@
 # Prévia para revisão — manifesto de mudanças
 
 **Estado da prévia original:** preparada antes da aplicação. 127 operações propostas, com valores
-exatos em [change-manifest.json](change-manifest.json). O usuário pediu revisão antes das
-alterações. Analyze não identificou conflitos críticos. Aplicação remota depende desta revisão e das
-pré-condições de cada operação.
+exatos em `change-manifest.json`, evidência privada preservada na worktree histórica
+`.cache/pr-jira-confluence-20261001`, sem publicação de identificadores de contas Atlassian. O
+usuário pediu revisão antes das alterações. Analyze não identificou conflitos críticos. Aplicação
+remota depende desta revisão e das pré-condições de cada operação.
 
 **Resultado atual:** aprovação recebida e123/127 operações verificadas. Consulte
 [aplicação e pendências](application-summary.md) antes de executar qualquer operação desta prévia.

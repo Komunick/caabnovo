@@ -35,3 +35,23 @@ arquivos locais preexistentes não rastreados; nada foi descartado. Worktree da 
 somente docs/history e specs/011 como alterações não rastreadas. Nenhum commit/push/PR foi feito.
 Validação por API e arquivos; ausência de navegador impede inspeção visual e operações nativas
 restantes. Execução parcial entregue com pendências explícitas, não declarada integralmente pronta.
+
+## Conferência documental do PR48 — 07/10/2026-CODEX-mafaltti
+
+Conferida a ponta `cddbc2e` com a worktree histórica: 61 dos 73 arquivos não rastreados já estão
+idênticos no PR48. Os onze artefatos privados excluídos por identificadores de contas Atlassian e o
+script de uso único removido por lint permanecem locais; não foram restaurados. Os cinco documentos
+transversais históricos não foram reaplicados, pois PR42/43 atualizaram suas fontes.
+
+Corrigidos cinco links para JSON privados em quatro documentos, explicitando a preservação local.
+Formatados três arquivos cujo Prettier explícito falhava. AGENTS recebeu a preferência atual do
+usuário por usar o maior número útil de subagentes em tarefas independentes. CLAUDE.md mantém
+somente `@AGENTS.md`, sem alteração necessária. Backups de nove arquivos conferidos por SHA256 em
+`.cache/local-backups/pr48-docs-review-20261007` da principal.
+
+Validação desta rodada: formato explícito de AGENTS, todos os 61 documentos/evidências da spec011 e
+histórico; links Markdown locais do mesmo conjunto; preservação semântica dos dois JSON formatados;
+`git diff --check`. Sem alteração funcional, publicação de evidência privada, serviços, banco ou QA
+humano. A ponta funcional do PR48 mantém sua validação CI anterior; novo CI após publicação deve ser
+conferido pelo SHA entregue. Esta nota complementa os registros datados anteriores, sem reexecutar
+operações Jira/Confluence ou transformar seus snapshots em estado atual.
