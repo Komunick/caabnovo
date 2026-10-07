@@ -6,6 +6,38 @@ em 06/10/2026. Pedido: corrigir o PR46 aberto na branch
 gráfico e bloco de análise no PDF de Resultados e evolução. Sem merge, serviços locais ou banco de
 uso.
 
+## Conferência do CI e correção da verificação de segredos — 07/10/2026-CODEX-mafaltti
+
+Publicado 99067ecfc12ae2a228d81a2fac26b246b43bae6c. O
+[CI 37623048182](https://github.com/Komunick/caabnovo/actions/runs/37623048182) do PR usa a
+conciliação de teste 737bd824bea7e4a40b4c6bb153ba6ba4b47c8e64 com dev 2b30f53. Quality 112797829225
+aprovado, com logs conferidos: 642 unitários, 178 contratos, 404 testes de integração e um opt-in de
+volume não executado; build, tipos, lint, formato e migrations aprovados. A suíte report-exports
+contém 15 testes aprovados e um opt-in não executado. Sua nova regressão real de
+arredondamento/CSV/quatro janelas/EXPLAIN passou em 1062 ms. Browser ainda em execução ao registrar.
+
+Security 112797829256 aparece aprovado, e o audit confirmou somente dois avisos low e dois moderate.
+**A leitura dos logs invalida a aprovação do scan de segredos:** Git recusou o diretório do
+container por ownership divergente; Gitleaks registrou erro, zero commits e zero bytes examinados,
+mas encerrou com sucesso. Esse resultado não comprova ausência de segredos. Limitação corresponde ao
+[erro relatado no projeto Gitleaks](https://github.com/gitleaks/gitleaks/issues/1981).
+
+Corrigida a invocação em `.github/workflows/ci.yml`, mantendo imagem 8.28.0 e regras de detecção:
+mount somente leitura; configuração de confiança no processo para apenas `/github/workspace`;
+preflight Git exige histórico legível e não vazio. A pipeline preserva códigos de erro, registra
+saída redigida sem cores e rejeita erros/scan parcial ou ausência de commits/bytes positivos, mesmo
+se o scanner retornar zero. Nenhuma configuração global do host é alterada. A
+[documentação oficial do Git](https://git-scm.com/docs/git-config#SCOPES) confirma a configuração de
+runtime como escopo protegido; flags e mensagens conferidas no
+[código fixado do Gitleaks](https://github.com/gitleaks/gitleaks/blob/v8.28.0/cmd/root.go).
+
+Validação local sem Docker/serviços: YAML parseado; `bash -n` aprovado; sete fixtures do validador
+de log e seis da invocação completa com comando Docker sintético aprovadas. Incluem sucesso real
+simulado, histórico vazio, Git retornando 128, scanner retornando 1 apesar de resumo positivo, falso
+sucesso com zero scan, erro Git no log, resumo ausente, zero bytes e scan parcial. Prettier e diff
+check aprovados. **O scan real corrigido e o CI completo da próxima ponta ainda precisam de execução
+remota; T049 permanece aberta.**
+
 ## Conferência para publicação — 07/10/2026-CODEX-mafaltti
 
 Solicitante reutilizado da consulta autenticada desta sessão pelo conector GitHub get_profile:
