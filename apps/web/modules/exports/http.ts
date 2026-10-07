@@ -209,7 +209,7 @@ export function createExportRoutes(deps: Dependencies) {
         });
       } catch (error) {
         const safe = safeError(error);
-        if (operation && !prepared && safe.status === 422)
+        if (operation && !prepared && (safe.status === 422 || safe.code === "PERMISSION_DENIED"))
           await deps.failed(operation, safe.code).catch(() => {});
         return frameError(error, rid, deps.origin());
       }

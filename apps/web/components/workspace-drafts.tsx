@@ -56,6 +56,7 @@ export function useDraftCache() {
         for (const key of context.values.keys())
           if (key.startsWith(`${context.scope}${prefix}`)) context.values.delete(key);
       },
+      clearAll: () => context?.values.clear(),
     }),
     [context],
   );

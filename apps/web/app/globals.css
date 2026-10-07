@@ -4923,6 +4923,9 @@ thead th {
   padding: 0;
   font-weight: 700;
 }
+.export-sources {
+  grid-column: 1 / -1;
+}
 .export-filters {
   margin-top: 0.75rem;
 }

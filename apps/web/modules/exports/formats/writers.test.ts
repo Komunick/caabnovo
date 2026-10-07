@@ -1,10 +1,13 @@
 import { Writable } from "node:stream";
+import { readdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { expect, it } from "vitest";
 import { readCsv, readXlsx, readPdf } from "../../../tests/helpers/read-export";
 import { writeCsv } from "./csv";
 import { writeXlsx } from "./xlsx";
-import { writePdf } from "./pdf";
+import { createPdfWriter, writePdf } from "./pdf";
 import type { ExportColumn } from "@caab/contracts";
+import { reportExportAdapter } from "../../reports/export-adapter";
 const columns: ExportColumn[] = ["id", "name"].map((key) => ({
   key,
   label: key,
@@ -33,6 +36,232 @@ function target() {
   });
   return { sink, bytes: () => Buffer.concat(chunks) };
 }
+const schedulingColumns: ExportColumn[] = [
+  ["id", "Identificador"],
+  ["kind", "Cadastro"],
+  ["unitName", "Unidade"],
+  ["serviceName", "Serviço"],
+].map(([key, label]) => ({ ...columns[0]!, key: key!, label: label! }));
+const unitId = "b51ead3d-d625-4cee-a8e9-2d3091266d47";
+const professionalId = "61f2925a-6316-4bf3-a6f0-f7a64a0382a2";
+it.each([
+  [`units/${unitId}/3`, false],
+  [`units/${unitId}/3`, true],
+  [`professionals/${unitId}/${professionalId}/3`, false],
+  [`professionals/${unitId}/${professionalId}/3`, true],
+  [`services/${unitId}/3`, false],
+  [`services/${unitId}/3`, true],
+] as const)(
+  "PDF keeps composite identifier %s intact with four filled columns, near footer=%s",
+  async (id, nearFooter) => {
+    async function* source() {
+      if (nearFooter) {
+        // One two-line filler and 23 single-line fillers put the target at y=527: one baseline left.
+        for (let n = 0; n < 24; n++)
+          yield {
+            id: `filler-${n}`,
+            values: {
+              id: `filler-${n}`,
+              kind: "Unidades",
+              unitName: n ? "Unidade" : "Linha um\nLinha dois",
+              serviceName: "Serviço",
+            },
+          };
+      }
+      yield {
+        id,
+        values: { id, kind: "Unidades", unitName: "UNIDADE_ALVO", serviceName: "SERVICO_ALVO" },
+      };
+    }
+    const t = target();
+    await writePdf(source(), schedulingColumns, t.sink, new AbortController().signal);
+    const pages = await readPdf(t.bytes());
+    expect(pages.join(" ").replace(/\s/g, "")).toContain(id);
+    expect(pages.join(" ")).toContain("UNIDADE_ALVO");
+    expect(pages.join(" ")).toContain("SERVICO_ALVO");
+    if (nearFooter) {
+      expect(pages).toHaveLength(2);
+      expect(pages[0]).not.toContain("UNIDADE_ALVO");
+      expect(pages[1]!.replace(/\s/g, "")).toContain(id);
+      expect(pages[1]).not.toContain("25 cont.");
+    }
+  },
+);
+it.each([38, 39])(
+  "PDF preserves all %s baselines of a long cell alongside a wrapped identifier",
+  async (lineCount) => {
+    const id = `units/${unitId}/3`;
+    async function* source() {
+      yield {
+        id,
+        values: {
+          id,
+          kind: "Unidades",
+          serviceName: "SERVICO_ALVO",
+          unitName: Array.from(
+            { length: lineCount },
+            (_, n) => `LINHA_${String(n + 1).padStart(2, "0")}`,
+          ).join("\n"),
+        },
+      };
+    }
+    const t = target();
+    await writePdf(source(), schedulingColumns, t.sink, new AbortController().signal);
+    const pages = await readPdf(t.bytes());
+    expect(pages).toHaveLength(lineCount === 38 ? 1 : 2);
+    expect(pages.join(" ").replace(/\s/g, "")).toContain(id);
+    for (let n = 1; n <= lineCount; n++)
+      expect(pages.join(" ")).toContain(`LINHA_${String(n).padStart(2, "0")}`);
+    if (lineCount === 39) expect(pages[1]).toContain("1 cont.");
+  },
+);
+it("PDF preserves the eight default hours columns across two four-column bands", async () => {
+  const allColumns = [
+    ...schedulingColumns,
+    ...[
+      ["professionalName", "Profissional"],
+      ["weekday", "Dia"],
+      ["start", "Início"],
+      ["end", "Fim"],
+    ].map(([key, label]) => ({ ...columns[0]!, key: key!, label: label! })),
+  ];
+  const id = `units/${unitId}/3`;
+  async function* source() {
+    yield {
+      id,
+      values: {
+        id,
+        kind: "Unidades",
+        unitName: "UNIDADE_ALVO",
+        serviceName: "SERVICO_ALVO",
+        professionalName: "PROFISSIONAL_ALVO",
+        weekday: 3,
+        start: "08:30",
+        end: "17:00",
+      },
+    };
+  }
+  const t = target();
+  await writePdf(source(), allColumns, t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes());
+  expect(pages).toHaveLength(2);
+  expect(pages[0]!.replace(/\s/g, "")).toContain(id);
+  for (const column of allColumns) expect(pages.join(" ")).toContain(column.label);
+  expect(pages[1]).toContain("PROFISSIONAL_ALVO");
+  expect(pages[1]).toContain("08:30");
+  expect(pages[1]).toContain("17:00");
+});
+it("CSV preserves finite negative numeric cells while still neutralizing text and disguised formulas", async () => {
+  async function* source() {
+    for (const value of [-5.2, "-5.2", "-5.2e2", "-2+3", "=2+3", "\t-5.2", "-5.2\n"])
+      yield {
+        id: String(value),
+        values: { numeric: value, text: String(value) },
+      };
+  }
+  const t = target();
+  await writeCsv(
+    source(),
+    [
+      { ...columns[0]!, key: "numeric", label: "Variação", scalarType: "number" },
+      { ...columns[1]!, key: "text", label: "Texto" },
+    ],
+    t.sink,
+    new AbortController().signal,
+  );
+  expect(readCsv(t.bytes()).slice(1)).toEqual([
+    ["-5.2", "'-5.2"],
+    ["-5.2", "'-5.2"],
+    ["-5.2e2", "'-5.2e2"],
+    ["'-2+3", "'-2+3"],
+    ["'=2+3", "'=2+3"],
+    ["'\t-5.2", "'\t-5.2"],
+    ["'-5.2\n", "'-5.2\n"],
+  ]);
+});
+it("PDF packs forty executive records with every default catalog column into bounded pages", async () => {
+  const adapter = reportExportAdapter("executive")!;
+  const selected = adapter.columns.filter((column) => column.defaultSelected);
+  expect(selected).toHaveLength(14);
+  async function* source() {
+    for (let n = 0; n < 40; n++)
+      yield adapter.map({
+        _recordId: String(n),
+        section: "Indicadores",
+        label: `Indicador sintético ${n}`,
+        date: "2026-10",
+        value: n,
+        previous: 40,
+        change: -5.2,
+        definition: "Movimentação no período; base atual preservada.",
+        from: "2020-01-01",
+        to: "2026-10-06",
+        channel: "all",
+        environment: "test",
+        source: "caab.test",
+        updatedAt: "2026-10-06T12:00:00Z",
+        notes: "",
+        _chart: { label: `2026-10 Indicador sintético ${n}`, value: n },
+      });
+  }
+  const t = target();
+  await adapter.writePdf!({
+    module: "reports",
+    dataset: "executive",
+    format: "pdf",
+    sort: [],
+    columns: selected.map((column) => column.key),
+    filters: { from: "2020-01-01", to: "2026-10-06", environment: "test" },
+  })(source(), selected, t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes()),
+    text = pages.join(" ");
+  expect(pages.length).toBeLessThanOrEqual(16);
+  for (const column of selected) expect(text).toContain(column.label);
+  for (let n = 0; n < 40; n++) expect(text).toContain(`Indicador sintético ${n}`);
+  expect(text).toContain("Evolução mensal");
+  expect(text).toContain("2026-10-06T12:00:00Z");
+});
+it("executive PDF restores management analysis and paginated bars without changing selected table columns", async () => {
+  async function* source() {
+    for (let n = 0; n < 35; n++)
+      yield {
+        id: String(n),
+        values: { name: `Indicador ${n}`, hidden: "COLUNA_NAO_SELECIONADA" },
+        chart: {
+          label: `2026-${String(n + 1).padStart(2, "0")} Série sintética com rótulo extenso`,
+          value: n,
+        },
+      };
+  }
+  const t = target();
+  await createPdfWriter({
+    title: "Resultados e evolução",
+    context: "2020-01-01 a 2026-10-06 | Teste",
+    notes: "Comentário da gestão ".repeat(95) + "FIM_ANALISE",
+    evolution: true,
+  })(source(), [columns[1]!], t.sink, new AbortController().signal);
+  const pages = await readPdf(t.bytes()),
+    text = pages.join(" ");
+  expect(text).toContain("Análise da gestão");
+  expect(text.replace(/\s/g, "")).toContain("FIM_ANALISE");
+  expect(text).toContain("Evolução mensal (continuação)");
+  expect(text).toContain("Indicador 34");
+  expect(text).not.toContain("COLUNA_NAO_SELECIONADA");
+  expect(text).toContain("2026-35");
+}, 30000);
+it("executive PDF makes an empty series explicit", async () => {
+  async function* empty() {}
+  const t = target();
+  await createPdfWriter({
+    title: "Resultados e evolução",
+    context: "Teste",
+    notes: "",
+    evolution: true,
+  })(empty(), columns, t.sink, new AbortController().signal);
+  const text = (await readPdf(t.bytes())).join(" ");
+  expect(text).toContain("Nenhum comentário incluído.");
+  expect(text).toContain("Sem dados de evolução no período selecionado.");
+});
 it("CSV preserves 100 rows, identifiers, quoted newlines and neutralizes formulas", async () => {
   const t = target();
   await writeCsv(records(), columns, t.sink, new AbortController().signal);
@@ -86,6 +315,27 @@ it("writers reject cancellation without reporting a complete file", async () => 
     const t = target();
     await expect(writer(records(), columns, t.sink, controller.signal)).rejects.toBeDefined();
   }
+});
+it("PDF removes its private wide-table spool after interruption", async () => {
+  const before = new Set(await readdir(tmpdir()));
+  const controller = new AbortController();
+  async function* source() {
+    yield { id: "one", values: { name: "Primeiro registro" } };
+    controller.abort();
+    yield { id: "two", values: { name: "Segundo registro" } };
+  }
+  const t = target();
+  t.sink.on("error", () => {});
+  const wide = Array.from({ length: 6 }, (_, n) => ({
+    ...columns[1]!,
+    key: n ? `field${n}` : "name",
+  }));
+  await expect(writePdf(source(), wide, t.sink, controller.signal)).rejects.toBeDefined();
+  expect(
+    (await readdir(tmpdir())).filter(
+      (name) => name.startsWith("caab-export-chart-") && !before.has(name),
+    ),
+  ).toEqual([]);
 });
 it("PDF retains the end of a long value, Unicode escapes and columns in horizontal bands", async () => {
   const many = Array.from({ length: 6 }, (_, n) => ({

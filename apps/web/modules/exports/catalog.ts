@@ -9,8 +9,14 @@ import {
   type ExportScalar,
 } from "@caab/contracts";
 import type { RequestActor } from "../shared/request-context";
+import type { Writer } from "./formats/shared";
 
-export type ExportRow = { id: string; values: Record<string, ExportScalar> };
+export type ExportRow = {
+  id: string;
+  values: Record<string, ExportScalar>;
+  /** Authorized aggregate series from the same cursor, used only by presentation PDFs. */
+  chart?: { label: string; value: number };
+};
 export type ExportAdapter = {
   module: ExportModule;
   dataset: string;
@@ -24,6 +30,7 @@ export type ExportAdapter = {
   scope: "module" | "records";
   query(input: ExportRequest): { text: string; values: unknown[] };
   map(row: Record<string, unknown>): ExportRow;
+  writePdf?(input: ExportRequest): Writer;
   authorizeRecords?(
     db: PoolClient,
     actor: RequestActor,
@@ -59,6 +66,17 @@ export function authorizedCatalog(adapter: ExportAdapter, actor: RequestActor) {
     ),
   };
 }
+/** True when the request names a filter/column/sort key that exists but needs a permission the actor lacks. */
+function selectsRestrictedItem(adapter: ExportAdapter, actor: RequestActor, input: ExportRequest) {
+  const restricted = (item: { permission?: string }) =>
+    item.permission !== undefined && !actor.permissions.has(item.permission);
+  const columnKeys = new Set([...input.columns, ...input.sort.map((sort) => sort.field)]);
+  return (
+    adapter.filters.some(
+      (filter) => Object.hasOwn(input.filters, filter.key) && restricted(filter),
+    ) || adapter.columns.some((column) => columnKeys.has(column.key) && restricted(column))
+  );
+}
 export function authorizeExport(adapter: ExportAdapter, actor: RequestActor, input: ExportRequest) {
   const catalog = authorizedCatalog(adapter, actor);
   if (input.context?.source === "reports" && !actor.permissions.has("reports:read"))
@@ -68,6 +86,10 @@ export function authorizeExport(adapter: ExportAdapter, actor: RequestActor, inp
   try {
     validateExportSelection(input, catalog);
   } catch {
+    // The catalog above already hides what the actor may not use, so a selection that still names
+    // a filter, column or sort field the adapter restricts is an access change, not a bad
+    // configuration. Still denied; only the diagnosis (403 instead of 422) differs.
+    if (selectsRestrictedItem(adapter, actor, input)) throw new ExportError("PERMISSION_DENIED");
     throw new ExportError("EXPORT_CONFIGURATION_INVALID", 422);
   }
   // Validate adapter-specific filters before opening the download stream.

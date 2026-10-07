@@ -6,6 +6,44 @@ import {
   type ReportSummary,
 } from "@caab/contracts";
 import { allowedReports, reportSources, type ReportDb, type ReportActor } from "./reports";
+export const reportInventory = [
+  {
+    dataset: "members" as const,
+    permission: "members:read",
+    label: "Associados ativos agora",
+    sql: "SELECT count(*)::text AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND administrative_status='active'",
+  },
+  {
+    dataset: "members" as const,
+    permission: "members:read",
+    label: "Municípios com associados",
+    sql: "SELECT count(DISTINCT (lower(city),residence_state))::text AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND city<>''",
+  },
+  {
+    dataset: "partners" as const,
+    permission: "partners:read",
+    label: "Parceiros ativos agora",
+    sql: "SELECT count(*)::text AS total FROM partner WHERE archived_at IS NULL AND status='active'",
+  },
+  {
+    dataset: "benefits" as const,
+    permission: "partners:read",
+    label: "Benefícios vigentes agora",
+    sql: `SELECT count(*)::text AS total FROM partner_benefit b JOIN partner p ON p.id=b.partner_id JOIN partner_unit u ON u.id=b.published_unit_id JOIN partner_contract c ON c.id=b.published_contract_id WHERE p.status='active' AND p.archived_at IS NULL AND u.active AND c.status='approved' AND (now() AT TIME ZONE 'America/Bahia')::date BETWEEN c.starts_on AND c.ends_on AND (now() AT TIME ZONE 'America/Bahia')::date BETWEEN (b.published->>'startsOn')::date AND (b.published->>'endsOn')::date AND jsonb_array_length(b.published->'channels')>0`,
+  },
+];
+
+export function reportMetricLabel(dataset: Exclude<keyof typeof reportCatalog, "access">) {
+  return dataset === "contracts"
+    ? "Contratos com vencimento no período"
+    : dataset === "bookings"
+      ? "Reservas no período"
+      : `${reportCatalog[dataset].label} cadastrados no período`;
+}
+export function reportMetricDefinition(dataset: Exclude<keyof typeof reportCatalog, "access">) {
+  return `${reportCatalog[dataset].dateLabel} no período. Situação atual; não reconstrói estados passados.`;
+}
+
 export async function reportSummary(
   db: ReportDb,
   actor: ReportActor,
@@ -22,15 +60,10 @@ export async function reportSummary(
     );
     const value = Number(result.rows[0]!.value),
       previous = Number(result.rows[0]!.previous);
-    const definition = `${reportCatalog[dataset].dateLabel} no período. Situação atual; não reconstrói estados passados.`;
+    const definition = reportMetricDefinition(dataset);
     metrics.push({
       id: dataset,
-      label:
-        dataset === "contracts"
-          ? "Contratos com vencimento no período"
-          : dataset === "bookings"
-            ? "Reservas no período"
-            : `${reportCatalog[dataset].label} cadastrados no período`,
+      label: reportMetricLabel(dataset),
       value,
       previous,
       change: reportChange(value, previous),
@@ -49,28 +82,7 @@ export async function reportSummary(
     "Situações atuais não representam situações históricas. Reservas não comprovam atendimento realizado.",
   ];
   const inventory: ReportSummary["inventory"] = [];
-  for (const item of [
-    {
-      permission: "members:read",
-      label: "Associados ativos agora",
-      sql: "SELECT count(*)::text AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND administrative_status='active'",
-    },
-    {
-      permission: "members:read",
-      label: "Municípios com associados",
-      sql: "SELECT count(DISTINCT (lower(city),residence_state))::text AS total FROM member WHERE (deletion_effective_at IS NULL OR deletion_effective_at>clock_timestamp()) AND archived_at IS NULL AND city<>''",
-    },
-    {
-      permission: "partners:read",
-      label: "Parceiros ativos agora",
-      sql: "SELECT count(*)::text AS total FROM partner WHERE archived_at IS NULL AND status='active'",
-    },
-    {
-      permission: "partners:read",
-      label: "Benefícios vigentes agora",
-      sql: `SELECT count(*)::text AS total FROM partner_benefit b JOIN partner p ON p.id=b.partner_id JOIN partner_unit u ON u.id=b.published_unit_id JOIN partner_contract c ON c.id=b.published_contract_id WHERE p.status='active' AND p.archived_at IS NULL AND u.active AND c.status='approved' AND (now() AT TIME ZONE 'America/Bahia')::date BETWEEN c.starts_on AND c.ends_on AND (now() AT TIME ZONE 'America/Bahia')::date BETWEEN (b.published->>'startsOn')::date AND (b.published->>'endsOn')::date AND jsonb_array_length(b.published->'channels')>0`,
-    },
-  ]) {
+  for (const item of reportInventory) {
     if (!actor.permissions.has(item.permission)) continue;
     const result = await db.query<{ total: string }>(item.sql);
     inventory.push({

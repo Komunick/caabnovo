@@ -6,8 +6,43 @@ import {
   reportQuerySchema,
   analyticsEventSchema,
   sameReportFilters,
+  reportOverviewFiltersSchema,
 } from "../src/reports";
 describe("report contracts", () => {
+  it.each([
+    [403, 80, 403.8],
+    [81, 80, 1.3],
+    [79, 80, -1.2],
+    [1, 16, -93.7],
+    [18, 19, -5.3],
+    [0, 0, 0],
+  ])(
+    "rounds the percentage for %s over %s exactly like the export (%s)",
+    (value, previous, expected) => expect(reportChange(value, previous)).toBe(expected),
+  );
+  it("separates uncapped comparison exports from the paged screen", () => {
+    expect(
+      reportOverviewFiltersSchema.safeParse({ from: "2020-01-01", to: "2026-10-02" }).success,
+    ).toBe(true);
+    for (const input of [
+      { from: "2026-02-30", to: "2026-10-02" },
+      { from: "2026-10-02", to: "2020-01-01" },
+      { from: "", to: "2026-10-02" },
+      { from: "2020-01-01", to: "2026-10-02", source: "';DROP" },
+    ])
+      expect(reportOverviewFiltersSchema.safeParse(input).success).toBe(false);
+  });
+  it("rejects periods whose previous window or end leave the range PostgreSQL accepts", () => {
+    for (const input of [
+      { from: "0001-01-01", to: "9999-12-31" },
+      { from: "0500-01-01", to: "2026-10-02" },
+      { from: "2020-01-01", to: "9999-12-31" },
+    ])
+      expect(reportOverviewFiltersSchema.safeParse(input).success).toBe(false);
+    expect(
+      reportOverviewFiltersSchema.safeParse({ from: "1990-01-01", to: "2026-10-02" }).success,
+    ).toBe(true);
+  });
   it("compares saved JSONB filters independently of object order and page", () => {
     const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
     const restored = Object.fromEntries(Object.entries(query).reverse()) as typeof query;
