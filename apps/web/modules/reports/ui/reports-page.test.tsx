@@ -2,12 +2,28 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { WorkspaceDrafts, useDraftCache } from "@/components/workspace-drafts";
 import { ReportsPage } from "./reports-page";
-import { reportRequest } from "./client";
+import { REPORT_EXPORT_NOTES_KEY, reportRequest } from "./client";
 import { reportQuerySchema } from "@caab/contracts";
 
-vi.mock("./client", () => ({ reportRequest: vi.fn() }));
+vi.mock("./client", async (original) => ({
+  ...(await original<typeof import("./client")>()),
+  reportRequest: vi.fn(),
+}));
 const request = vi.mocked(reportRequest);
+const push = vi.hoisted(() => vi.fn());
+const route = vi.hoisted(() => ({ path: "/reports" }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push }),
+  usePathname: () => route.path,
+  useSearchParams: () => new URLSearchParams(),
+}));
+let pendingNotes: unknown;
+function ReadPending() {
+  pendingNotes = useDraftCache().read(REPORT_EXPORT_NOTES_KEY);
+  return null;
+}
 let root: Root, container: HTMLDivElement, value: number, exportStatus: string;
 const query = reportQuerySchema.parse({ from: "2026-09-01", to: "2026-09-18" });
 function result() {
@@ -37,8 +53,10 @@ function result() {
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   vi.useFakeTimers();
+  route.path = "/reports";
   value = 17;
   exportStatus = "retrying";
+  push.mockClear();
   request.mockReset().mockImplementation(async (path) => {
     if (path === "/queries") return [];
     if (path.startsWith("/exports"))
@@ -48,7 +66,7 @@ beforeEach(() => {
           status: exportStatus,
           progress: 10,
           created_at: "2026-09-18T12:00:00Z",
-          configuration: { query, format: "csv" },
+          configuration: { query, format: "csv", notes: "漢".repeat(2000) },
           safe_error_code: "JOB_FAILED",
         },
       ];
@@ -64,7 +82,13 @@ afterEach(async () => {
   vi.useRealTimers();
 });
 async function render() {
-  await act(() => root.render(<ReportsPage environment="test" datasets={["members"]} />));
+  await act(() =>
+    root.render(
+      <WorkspaceDrafts>
+        <ReportsPage environment="test" datasets={["members"]} />
+      </WorkspaceDrafts>,
+    ),
+  );
 }
 it("refreshes the displayed result when Generate is clicked with identical filters", async () => {
   await render();
@@ -102,4 +126,69 @@ it("stops polling and offers a new request after definitive failure", async () =
   const count = request.mock.calls.length;
   await act(() => vi.advanceTimersByTimeAsync(6000));
   expect(request.mock.calls).toHaveLength(count);
+});
+const clickWithoutNavigating = (element: Element) =>
+  act(() => {
+    const stop = (event: Event) => event.preventDefault();
+    container.addEventListener("click", stop);
+    (element as HTMLElement).click();
+    container.removeEventListener("click", stop);
+  });
+it("hands the 2000-character comment to the export screen without putting it in the link", async () => {
+  window.sessionStorage.clear();
+  await render();
+  const executive = Array.from(container.querySelectorAll("button")).find(
+    (button) => button.textContent === "Resultados e evolução",
+  )!;
+  await act(() => executive.click());
+  const comment = container.querySelector<HTMLTextAreaElement>("textarea[maxlength='2000']")!;
+  const text = "漢".repeat(2000);
+  await act(() => {
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(
+      comment,
+      text,
+    );
+    comment.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  const link = Array.from(container.querySelectorAll("a")).find(
+    (anchor) => anchor.textContent?.trim() === "Exportar dados",
+  )!;
+  expect(link.getAttribute("href")).toMatch(/^\/reports\/exportar\?/);
+  expect(link.getAttribute("href")).not.toContain("notes");
+  expect(link.getAttribute("href")!.length).toBeLessThan(400);
+  await clickWithoutNavigating(link);
+  route.path = "/reports/exportar";
+  await act(() =>
+    root.render(
+      <WorkspaceDrafts>
+        <ReadPending />
+      </WorkspaceDrafts>,
+    ),
+  );
+  expect((pendingNotes as { text: string }).text).toBe(text);
+  expect(window.sessionStorage.length).toBe(0);
+});
+it("hands the saved comment of a failed export over when requesting it again", async () => {
+  window.sessionStorage.clear();
+  await render();
+  exportStatus = "failed";
+  await act(() => vi.advanceTimersByTimeAsync(3000));
+  const button = Array.from(container.querySelectorAll("button")).find(
+    (candidate) => candidate.textContent?.trim() === "Solicitar novamente",
+  )!;
+  await act(() => button.click());
+  const href = new URL(push.mock.calls[0]![0], "http://caab.test");
+  expect(href.searchParams.get("format")).toBe("csv");
+  expect(href.searchParams.has("notes")).toBe(false);
+  expect(href.searchParams.get("from")).toBe(query.from);
+  route.path = "/reports/exportar";
+  await act(() =>
+    root.render(
+      <WorkspaceDrafts>
+        <ReadPending />
+      </WorkspaceDrafts>,
+    ),
+  );
+  expect((pendingNotes as { text: string }).text).toHaveLength(2000);
+  expect(window.sessionStorage.length).toBe(0);
 });

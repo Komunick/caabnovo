@@ -69,6 +69,16 @@ it("records authorized invalid configuration and never silently drops forbidden 
   expect(f.prepare).not.toHaveBeenCalled();
   expect(f.failed).toHaveBeenCalledOnce();
 });
+it("records a selection that names a column the actor lost the permission for as a denial", async () => {
+  const f = fixture();
+  const response = await f.routes.download(
+    post({ config: JSON.stringify({ ...config, columns: ["name", "roles"] }) }),
+  );
+  expect(response.status).toBe(403);
+  expect(f.prepare).not.toHaveBeenCalled();
+  expect(f.failed).toHaveBeenCalledOnce();
+  expect(f.failed).toHaveBeenCalledWith(expect.anything(), "PERMISSION_DENIED");
+});
 it("catalog exposes only permitted columns and status hides another owner's operation", async () => {
   const f = fixture();
   const response = await f.routes.catalog(

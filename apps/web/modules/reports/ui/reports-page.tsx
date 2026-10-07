@@ -2,6 +2,7 @@
 import { PanelHeading } from "@/components/ui/panel-heading";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Download, Plus, Presentation, X } from "lucide-react";
 import {
   reportCatalog,
@@ -18,7 +19,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableContainer } from "@/components/ui/table";
 import { useDraftState, useDraftCache } from "@/components/workspace-drafts";
-import { reportExportHref, reportRequest } from "./client";
+import { reportExportHref, reportRequest, stashReportExportNotes } from "./client";
 import styles from "./reports.module.css";
 type Saved = {
   id: string;
@@ -31,7 +32,7 @@ type Export = {
   status: string;
   progress: number;
   created_at: string;
-  configuration: { query: ReportQuery; format: string };
+  configuration: { query: ReportQuery; format: string; notes?: string };
   safe_error_code: string | null;
 };
 type Data = {
@@ -66,6 +67,7 @@ export function ReportsPage({
   environment: ReportQuery["environment"];
   datasets: ReportDataset[];
 }) {
+  const router = useRouter();
   const cache = useDraftCache();
   const [selected, setSelected] = useDraftState<Saved | null>("reports:selection", null);
   const prefix = `reports:${selected?.id ?? "new"}:`;
@@ -231,13 +233,6 @@ export function ReportsPage({
       setMessage("Consulta salva. Ao abrir novamente, os dados serão atualizados.");
     }
   }
-  async function exportFile(format: "pdf" | "csv" | "xlsx") {
-    const result = await mutate<{ id: string }>("/exports", "POST", { query, notes, format });
-    if (result) {
-      setExportPage(1);
-      setMessage("Exportação solicitada. Acompanhe o processamento em Exportações abaixo.");
-    }
-  }
   function switchView(view: ReportQuery["view"]) {
     change({ view });
     setQuery((old) => ({ ...old, view, page: 1 }));
@@ -284,38 +279,26 @@ export function ReportsPage({
           </nav>
           <section className="panel" aria-labelledby="report-filters-title">
             <PanelHeading id="report-filters-title" title="Período e filtros">
-              {data?.canExport && query.view === "details" && !query.groupBy ? (
-                // CAAB-24: the complete selection downloads directly, without the 50k cap.
-                dirtyFilters || pending || !data.table ? (
+              {data?.canExport &&
+                (dirtyFilters || pending || (query.view === "details" && !data.table) ? (
                   <Button disabled>
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Button>
                 ) : (
                   <Link
                     className={buttonVariants()}
-                    href={reportExportHref(query, data.table.columns)}
+                    href={reportExportHref(query, data.table?.columns)}
+                    onClick={() =>
+                      stashReportExportNotes(
+                        cache,
+                        notes,
+                        reportExportHref(query, data.table?.columns),
+                      )
+                    }
                   >
                     <Download size={18} aria-hidden="true" /> Exportar dados
                   </Link>
-                )
-              ) : data?.canExport ? (
-                <>
-                  {(
-                    ["pdf", "csv", ...(query.view === "details" ? ["xlsx"] : [])] as (
-                      "pdf" | "csv" | "xlsx"
-                    )[]
-                  ).map((format) => (
-                    <Button
-                      key={format}
-                      disabled={pending || dirtyFilters}
-                      onClick={() => void exportFile(format)}
-                    >
-                      <Download size={18} aria-hidden="true" />
-                      {`Exportar ${format === "xlsx" ? "Excel" : format.toUpperCase()}`}
-                    </Button>
-                  ))}
-                </>
-              ) : null}
+                ))}
             </PanelHeading>
             <div className={styles.actions}>
               {(["week", "month"] as const).map((preset) => (
@@ -775,7 +758,9 @@ export function ReportsPage({
                 onChange={(e) => setNotes(e.target.value)}
               />
               <span>
-                Interpretação da gestão, separada dos indicadores medidos. Incluída no PDF.
+                Interpretação da gestão, separada dos indicadores medidos. O PDF de Resultados e
+                evolução inclui um bloco de análise e o gráfico mensal. Nos três formatos, a coluna
+                "Análise da gestão" também pode ser selecionada.
               </span>
             </label>
           )}
@@ -881,8 +866,8 @@ export function ReportsPage({
                         {item.status === "failed" && (
                           <p>
                             {item.safe_error_code === "REPORT_TOO_LARGE"
-                              ? "Refine os filtros: limite de 50 mil linhas por arquivo."
-                              : "Confira suas permissões e solicite novamente. Se persistir, consulte Processamentos."}
+                              ? "Esta geração antiga excedeu seu limite. Solicite novamente pelo download direto."
+                              : "Confira suas permissões e solicite novamente pelo download direto."}
                           </p>
                         )}
                       </div>
@@ -896,8 +881,15 @@ export function ReportsPage({
                       )}
                       {item.status === "failed" && (
                         <Button
-                          disabled={pending}
-                          onClick={() => void mutate("/exports", "POST", item.configuration)}
+                          onClick={() => {
+                            const href = reportExportHref(
+                              item.configuration.query,
+                              undefined,
+                              item.configuration.format,
+                            );
+                            stashReportExportNotes(cache, item.configuration.notes, href);
+                            router.push(href);
+                          }}
                         >
                           Solicitar novamente
                         </Button>

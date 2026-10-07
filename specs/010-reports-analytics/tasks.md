@@ -1,5 +1,126 @@
 # Tasks: Relatórios: exportação direta nas três abas — incremento de 21/09/2026
 
+## Correção da extração PDF — 07/10/2026-CODEX-mafaltti
+
+- [x] T053 Corrigir ordem de emissão das células por segmento de página, preservando coordenadas,
+      fonte, quatro colunas por faixa e todas as colunas selecionadas. Provar IDs compostos de
+      Agendamentos com UUID realista, quatro células preenchidas, início perto do limite inferior,
+      38/39 linhas e oito colunas em duas faixas. Writer real e PDFJS: nove regressões vermelhas
+      antes e 20 testes aprovados depois, incluindo as 11 regressões existentes. PDFs antes/depois
+      renderizados e revisados; execução E2E original ainda depende do novo CI.
+
+**Estado atual:** CI da ponta documental `8695c32` falhou na extração do ID em
+`scheduling-export.spec.ts:116`, em três tentativas. A correção do writer está local, sem redução de
+campos/fonte ou alteração da asserção de Agendamentos. T049 reaberta até validar a nova ponta;
+aprovação de `62a761f` abaixo é histórica para este novo recorte. T038/C1 e QA humano pendentes.
+
+## Revisão de privacidade e rascunhos — 07/10/2026-CODEX-mafaltti
+
+- [x] T050 Isolar transporte do comentário no contexto autenticado; descartar no logout, troca de
+      conta e destino negado. Provar que conta B não recebe comentário pendente da conta A, usando
+      componentes reais e sem depender da expiração de cinco minutos. Complemento P1 publicado e
+      validado em `62a761f`: vincular identidade inicial do layout à observada em /me; desmontar
+      contexto antes do refresh em troca entre abas com permissões iguais ou 401. Regressões de
+      foco/poll, props atrasadas e resposta abortada; mesma conta preserva edição.
+- [x] T051 Manter identidade estável da seleção de origem; aplicar comentário como valor do
+      rascunho. Testar desmontagem/retorno com WorkspaceDrafts preservado, recuperando comentário,
+      filtros, colunas/ordem, ordenação e formato sem sobrescrever edições.
+- [x] T052 Conferir os 13 falsos positivos históricos com fingerprints específicos, varredura
+      integral positiva e controle que continue detectando credencial sintética. Registrar versão,
+      resultado e limites na evidência; não concluir gates de código novo pelo CI da base.
+
+**Complemento P1 de 07/10/2026-CODEX-mafaltti:** implementação e regressões herméticas locais
+concluídas; E2E real entre duas páginas executado e aprovado no CI 37637466072 de `62a761f`.
+T050/T051 e T049 concluídas tecnicamente para essa versão. O CI de `538e3e9` valida somente a ponta
+anterior. T038/C1 e QA humano continuam pendentes. Sem reabertura de regras de cargos ou concessões;
+checks da última atualização somente documental ainda devem ser conferidos.
+
+## Checkpoint técnico de 62a761f — histórico anterior à correção PDF — 07/10/2026-CODEX-mafaltti
+
+**Validação técnica confirmada:** correções de CSV, PDF, métricas, quatro janelas e identidade entre
+abas publicadas em `62a761f`, com quality/browser/security aprovados no CI 37637466072. O conjunto
+E2E registrou 105 passados diretamente e um flaky aprovado no retry 1; seis testes adicionais de
+acessibilidade passaram. Limitação fiel e resultados por versão na
+[evidência](evidence/pr46-corrections-2026-10-06.md), sem conclusão de QA humano.
+
+- [x] T046 Corrigir CSV negativo tipado e regressões de fórmulas disfarçadas/controles.
+- [x] T047 Reproduzir PDF com catálogo padrão real (14 colunas/40 registros), conservar os campos,
+      compactar faixas e verificar o documento renderizado e limpeza após cancelamento.
+- [x] T048 Corrigir meios exatos na tela e reduzir quatro leituras de janelas a um agregado
+      materializado. Regressão real PostgreSQL/paridade/EXPLAIN aprovada no CI de `62a761f`.
+- [ ] T049 Publicar o conjunto com a correção de extração PDF e confirmar o CI da nova ponta.
+      Reaberta após a falha em `8695c32`; aprovação do P1 em `62a761f` preservada como histórico,
+      sem atribuição ao writer corrigido depois. T038 permanece aberta para medições de
+      recursos/tempo/painel; QA humano não foi concluído.
+
+**Checkpoint histórico de 06/10/2026:** merge local `5a0d4b8` de dev `2b30f53`/PR49, conflitos
+resolvidos com lockfile e evidência de Notícias da dev. Naquela etapa T046–T049 ainda aguardavam
+validação; resultados anteriores não cobriam os deltas ou a conciliação pós-PR49. O estado técnico
+atual está registrado acima, por ponta e CI.
+
+Correções do PR46 publicadas em b67c30b/90f82e2. CI 37520740384 de 90f82e2 aprovado em
+quality/browser/security: 639 unitários, 172 contratos, 403 integração, 105 E2E e 6 a11y; 1 teste
+opt-in de volume não executado. T039, T041, T042 e T043–T045 concluídas tecnicamente. T038 (medições
+C1) e aceite humano permanecem independentes. Histórico abaixo preserva autoria e estados
+anteriores; resultado na [evidência](evidence/pr46-corrections-2026-10-06.md). A descrição da
+primeira rodada foi aprovada e publicada; atualização desta rodada segue autorização específica.
+
+## Estado da entrega combinada de 06/10/2026 — Conciliação com Agendamentos e gates locais-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
+refeita por este registro). Branch `feature/reports-complete-combined-20261006`, ponta 9c47c5e,
+worktree `.cache/pr-reports-combined-20261006`, criada de `feature/reports-complete-20261002`
+(c8a2614, preservada) com merge, sem conflito textual, de
+`origin/feature/scheduling-administrative-20261002` (PR #43, ffd8997) e de `origin/dev` (b80bf6e,
+#44). Motivo: c8a2614 usa original_start (migration 0032), presente só no PR #43. Detalhes, gates e
+limites em [evidência](evidence/plan-2026-09-21-validation.md).
+
+| Tarefa | Resultado em 06/10/2026                                                                                          |
+| ------ | ---------------------------------------------------------------------------------------------------------------- |
+| T042   | Conciliação por leitura e gates locais concluídos; validação em PostgreSQL pendente no CI.                       |
+| T041   | Permanece aberta: SQL real em PostgreSQL com as migrations aplicadas ainda não foi executado na ponta combinada. |
+| T039   | Permanece aberta: a ponta combinada ainda não tem CI; o CI 0775bf3 é histórico da base antiga.                   |
+| T038   | Permanece aberta: sem C1, recursos/tempo e painel medidos na versão combinada.                                   |
+
+Não declarar prontidão para PR, QA ou deploy. Segue Em Desenvolvimento, bloqueado por Operar
+aprovação, remarcação e recuperação de atendimentos (CAAB-40) / PR #43: Exportar detalhe agrupado,
+resumo e evolução sem os limites antigos (CAAB-44). Condição para PR: só depois que o PR #43 estiver
+na dev, atualizar esta branch com `origin/dev`, repetir os gates e, com pedido explícito do usuário,
+abrir PR para dev com o título
+`feat(relatorios): completa exportações agrupadas, resumo e evolução`. A numeração 0035 pertence ao
+PR #45 (`feature/roles-default-collaborator-20261005`); quando ele chegar à dev, as listas de
+migrations de `migrations.test.ts` e `scheduling-workflow.test.ts` precisarão incluí-la.
+
+## Estado da entrega de 02/10/2026
+
+Autoria CODEX, solicitante GitHub não verificado (HTTP401). Branch
+`feature/reports-complete-20261002`, base748539d, worktree `.cache/pr-reports-complete-20261002`.
+Código preparado para Exportar detalhe agrupado, resumo e evolução sem os limites antigos (CAAB-44),
+preservando Exportar análise detalhada sem agrupamento (CAAB-43) e Disponibilizar motor
+compartilhado de download direto (CAAB-22).
+[Evidência e bloqueios](evidence/plan-2026-09-21-validation.md).
+
+| Tarefa    | Resultado atual e restante                                                                                                                                                                     |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T027      | Catálogo conferido: nove detalhes, oito agrupados, resumo e evolução; contrato atualizado.                                                                                                     |
+| T029      | Schema de comparação direta separado da consulta visual, sem teto de período; três formatos pelo núcleo. Contratos/unitários aprovados.                                                        |
+| T030      | Agrupamento acrescentado ao SQL completo; colunas e ordenação preservadas. A proteção scheduling:read em resumo já existe na base integrada e foi preservada. Teste PostgreSQL ainda pendente. |
+| T031/T025 | Política U1 já integrada, conferida em código e unitários de legacy-exports; regressão PostgreSQL/worker/download ainda não reexecutada nesta entrega.                                         |
+| T032–T034 | Adaptadores/tela expandidos; testes unitários incluem fontes, agrupamento, períodos, colunas e negações. Extensão de UI compatível com Agendamentos4e9abac.                                    |
+| T035/T036 | Integrações reais e97 E2E/6 a11y aprovados em0775bf3. Cancelamentos/modelo combinado, revisão visual e C1 pendentes.                                                                           |
+| T037      | Regressões unitária e integrada da coleta aprovadas no CI9995361; versão combinada ainda não validada.                                                                                         |
+| T038      | Telemetria opcional CAAB_EXPORT_PROFILE=1 nos testes reais preparada; recursos/tempo/painel ainda sem medição atual.                                                                           |
+| T039      | CI0775bf3 aprovou quality/browser/security, incluindo420 unitários completos sem ENOMEM. Correção dependente de Agendamentos, C1/revisão visual/QA pendentes.                                  |
+
+Usuário confirmou WSL indisponível e solicitou ticket próprio: Retomar validações de Relatórios
+bloqueadas pelo WSL (CAAB-46), subtarefa de Exportar o conjunto completo de dados em Relatórios
+(CAAB-24). Banco descartável e arquivos reais da base publicada passaram no CI37031769176;
+CI37032398048 aprovou97 E2E e6 a11y em0775bf3; revisão visual dos artefatos pendente por401/403 no
+download. C1 e a versão combinada com Agendamentos permanecem pendentes. Não iniciar serviços,
+reparar WSL ou usar o ambiente de Agendamentos por inferência. Retomada autorizada: commits e push
+para CI; PR para dev somente após gates. Merge e serviços locais continuam proibidos. Os checkpoints
+abaixo preservam o histórico, sem substituir este estado atual.
+
 **Pendências preservadas pela revisão de código — 21/09:** T025 (A02: autorização de Agendamentos em
 resumo/detalhes/worker/download) deve ser executada em conjunto com T030/T031, sem duplicação; T026
 (A13: instrumentação externa) continua dependência futura, não coberta pela regressão da coleta
@@ -37,7 +158,7 @@ já concluídas.
 
 ## Setup
 
-- [ ] T027 Conferir o catálogo real de telas/abas e filtros contra
+- [x] T027 Conferir o catálogo real de telas/abas e filtros contra
       `specs/010-reports-analytics/contracts/exports.md`; mapear campos permitidos/defaults e
       projeções atuais, sem criar fonte ou ampliar permissão.
 
@@ -54,7 +175,7 @@ já concluídas.
 **Objetivo/aceite independente:** Resumo oferece três formatos e período maior que 366 dias com os
 mesmos agregados autorizados da consulta completa.
 
-- [ ] T029 [US1] Permitir xlsx/csv/pdf no resumo e separar limites de tela dos filtros de exportação
+- [x] T029 [US1] Permitir xlsx/csv/pdf no resumo e separar limites de tela dos filtros de exportação
       em `packages/contracts/src/reports.ts` e `packages/contracts/tests/reports.test.ts`; preservar
       métricas e testar intervalo maior que 366 dias sem corte.
 
@@ -126,7 +247,7 @@ duplica eventos ou altera métricas.
       do painel, revogação/interrupção/retentativa. Sem massa maior ou teste de estresse nesta
       rodada; registrar limites da evidência, sem alegar validação da virada real de planilha/grande
       volume.
-- [ ] T039 Executar gates/testes da função no CI e registrar resultados/capturas/limites em
+- [x] T039 Executar gates/testes da função no CI e registrar resultados/capturas/limites em
       `specs/010-reports-analytics/evidence/plan-2026-09-21-validation.md` (novo); marcar conclusão
       somente com evidência, preservando tarefas institucionais e históricas.
 
@@ -290,3 +411,185 @@ quality/browser/security eme9d05ed (95 E2E e6 a11y). Imagens de Colaboradores, A
 Relatórios revisadas em desktop/celular e claro/escuro; exportação dentro do quadro acima dos
 filtros. Ver
 [evidências do complemento](../001-project-foundation/evidence/collaborators-2026-09-22-validation.md).
+
+## Correção de compatibilidade — retomada de 02/10/2026
+
+- [x] T040 Aplicar o coalesce da revisão spec008 em notice:cancelled e no aviso de
+      report-summary.ts, preservando helpers, inclusão de fonte e autorização.
+- [x] T041 Executar regressão PostgreSQL real de cancelamentos sem horário: início incluído, fim
+      excluído, fallback para criação, prioridade de original_start, três formatos, fonte não
+      selecionada e permissão revogada. Preparada em report-exports.test.ts; depende das migrations
+      reais de Agendamentos e da versão conciliada. Não usar mock, teste de string SQL ou alteração
+      artificial do schema como prova. _06/10 CODEX-mafaltti: execução real confirmada no log
+      quality112438064693 do CI37512816327, ponta04fcd3a; caso passou em590ms. Nova ponta repetirá a
+      suíte, sem usar mocks nem schema artificial._
+
+## Correção solicitada do PR46 — 06/10/2026-CODEX-mafaltti
+
+Solicitante mafaltti/login Danilo-Komunick, conector GitHub get_profile em 06/10/2026. Decisão
+explícita: restaurar gráfico e bloco de análise no PDF executivo.
+
+- [x] T043 Preservar formato/notas/filtros em Solicitar novamente na mesma aba; explicar perda de
+      acesso à fonte sem 404. Testes de link, componente, página e E2E da retentativa preparados.
+- [x] T044 Restaurar análise e gráfico mensal autorizado no PDF executivo, conservando colunas
+      tabulares; spool temporário com remoção e paginação; funil calculado uma vez. Regressores de
+      writer e PostgreSQL preparados; PDF sintético renderizado e sete páginas conferidas.
+- [x] T045 Publicar correções na mesma branch aberta, confirmar quality/browser/security da ponta
+      entregue e registrar resultados na evidência, incluindo SQL real e E2E novo. _Primeiro CI
+      b67c30b: quality passou, incluindo PostgreSQL/build; browser passou o fluxo novo de
+      PDF/retentativa, mas o locator de negação era ambíguo (corrigido). Security bloqueou Payload;
+      atualização 3.90.0 e alinhamento Lexical preparados, sem migração ou serviço novo._
+
+Estado desta correção: [evidência](evidence/pr46-corrections-2026-10-06.md). T038 e aceite humano
+continuam independentes; checkpoints abaixo são históricos.
+
+Commit inicial da funcionalidade:9995361; ajuste E2E0775bf3 aprovado no CI37032398048. A correção
+dependente do modelo novo permanece em commit local separado; CI da base antiga não a comprova.
+
+- [x] T042 Após disponibilizar a base de Agendamentos em dev, conciliar sem substituir arquivos
+      inteiros: manter registry com os três grupos de adaptadores, ExportScreen aditivo,
+      reportSources.bookings com procedure_id/data de referência/profissional opcional e cinco
+      estados, helpers do resumo e gerador agrupado. Conferir hashes e executar regressões reais de
+      agrupamento por estado/profissional nulo e datas, além de todos os gates da versão combinada.
+      Não copiar migrations nem considerar o CI anterior como aprovação. _06/10 (CLAUDE, solicitante
+      Gabriel-Komunick): conciliação por leitura e gates locais concluídos; validação em PostgreSQL
+      pendente no CI. Sem substituir arquivos inteiros; sem correção necessária. Não satisfaz T041,
+      T038 nem T039._ _06/10 (CLAUDE, solicitante Gabriel-Komunick), reaberta após a revisão
+      independente: conciliação por leitura e gates locais concluídos; faltam as regressões reais
+      (agrupamento por estado/profissional nulo, datas, hashes) no CI._
+
+## Revisão independente de 06/10/2026 e correções — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick (informado no pedido da sessão; consulta GitHub não
+refeita por este registro). Exportar detalhe agrupado, resumo e evolução sem os limites antigos
+(CAAB-44), branch `feature/reports-complete-combined-20261006`. Nada acima foi apagado; T042 voltou
+a `[ ]` pelos motivos abaixo.
+
+**Revisão independente (somente leitura).** Leu: o diff integral, sem specs, contra a base de
+Agendamentos; os módulos de Relatórios e de exportação citados; o guia de design só por trechos. Não
+leu: os corpos completos de report-exports.test.ts, reports.spec.ts e reports-page.tsx, nem http.ts,
+export-authority, os writers csv/xlsx/pdf, as migrations e apps/worker. Não executou testes. A
+revisão não achou bug de SQL nem de autorização.
+
+**Conferência por leitura nesta etapa (CLAUDE).** Cada achado foi conferido no código antes de
+alterar. CONFIRMADO = comprovado por leitura de código; PLAUSÍVEL = coerente com o código lido, sem
+execução ou medição.
+
+| Achado | Classificação | Situação                                                                                               |
+| ------ | ------------- | ------------------------------------------------------------------------------------------------------ |
+| A1     | CONFIRMADO    | Aberto. `''` e NULL formam dois grupos com o mesmo rótulo; igual à tela, herdado do PR40.              |
+| A2     | CONFIRMADO    | Corrigido em 4b0c515 (falta de conversão); falha de SQL por período extremo: PLAUSÍVEL, não executada. |
+| A3     | PLAUSÍVEL     | Aberto. O funil é recalculado 4 vezes (laço em report-overview-export.ts); timeout de 30 s não medido. |
+| B1     | CONFIRMADO    | Aberto, comportamento seguro. Fonte revogada sai do catálogo e vira EXPORT_CONFIGURATION_INVALID.      |
+| C1     | CONFIRMADO    | Corrigido em 4b0c515 só no rótulo; o SQL de ordenação não foi alterado.                                |
+| C2     | CONFIRMADO    | Corrigido em 4b0c515 (fieldset/legend "Fontes incluídas").                                             |
+| C3     | PLAUSÍVEL     | Aberto. O campo notes (até 2000 caracteres) na URL GET não foi verificado; decisão de produto.         |
+| D1     | CONFIRMADO    | Reforçado em 4b0c515; teste de integração sem execução.                                                |
+| D2     | CONFIRMADO    | Casos acrescentados em 4b0c515; sem execução.                                                          |
+| D3     | CONFIRMADO    | Paridade acrescentada em 4b0c515; sem execução.                                                        |
+| D4     | CONFIRMADO    | Aberto. reports.spec.ts não tem revogação (busca textual); outros specs não verificados.               |
+
+**Corrigido (commit 4b0c515).**
+
+- C1: rótulo da ordenação padrão da visão geral trocado de "Seção e indicador" para "Identificador
+  interno da seção e do indicador", descrevendo a ordem real por id (prefixos coverage, funnel,
+  inventory, metric, notice, series, usage). SQL intocado: ordenar por seção exigiria mudar a
+  consulta sem poder rodá-la.
+- A2: overview-export-adapter.ts passou a converter qualquer falha de montagem em
+  EXPORT_CONFIGURATION_INVALID 422, no mesmo padrão de export-adapter.ts;
+  reportOverviewFiltersSchema rejeita período cujo início anterior (do dobro do intervalo) fique
+  antes do ano 1000 ou cujo fim passe do ano 9999. Testes unitário e de contrato acrescentados.
+- C2: oito seletores include\_\* agrupados em fieldset/legend "Fontes incluídas" (padrão
+  export-fields do ExportScreen), sem mudar nomes nem valores. Mudança aditiva em export-screen.tsx:
+  quarto argumento opcional de renderFilter (filters e setFilter); escopo CSS `.export-sources`.
+- D1: a revogação entre lotes agora exige código EXPORT_CONFIGURATION_INVALID/422, que a revogação
+  ocorreu após o primeiro lote e que a operação terminou `failed`, com `finished_at`, nunca
+  `completed`. Testes unitários de autorização passaram a conferir código e status.
+- D2: agrupamento de associados sem UF (residence_state é NOT NULL DEFAULT '', então só o texto
+  vazio existe) e de reservas sem profissional (modo capacity) resulta em "Não informado".
+- D3: o total agrupado é comparado com o total da consulta da tela nas mesmas fixtures.
+
+**Aberto.** A1, A3, B1, C3 e D4 (não corrigidos por decisão do pedido). T042 reaberta. Testes de
+integração (D1, D2, D3) escritos e não executados: dependem de PostgreSQL, só no CI. T041, T038 e
+T039 seguem abertas. A ponta combinada continua sem CI.
+
+### Revisão externa (PR #46) e correções — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Em 06/10/2026 uma revisão externa do PR #46 (ponta eb1c142) apontou dois achados, ambos confirmados
+por leitura e corrigidos nesta entrega. Atualiza as linhas B1 e C3 da tabela acima, que ficam como
+histórico.
+
+- **C3 / MEDIUM, corrigido.** `reportExportHref` levava o campo `notes` (até 2000 caracteres) na
+  URL; 2000 caracteres multibyte geram cerca de 18 KB e o servidor HTTP responde 431 antes do
+  handler. Agora o link não leva `notes`; o texto integral vai por `sessionStorage` (chave
+  `caab:reports-export-notes`, prazo de 5 minutos, leitura única, tratado como entrada não
+  confiável) e a tela de exportação o consome na montagem. Sem storage, a tela abre normalmente e o
+  usuário digita o comentário nela. `?notes=` legado continua aceito. Testes de unidade novos em
+  `client.test.ts`, `report-export-screen.test.tsx` e `reports-page.test.tsx`. Sem E2E do caminho
+  clique → tela.
+- **B1 / LOW, corrigido.** `authorizeExport` (`apps/web/modules/exports/catalog.ts`) devolve
+  PERMISSION_DENIED (403) quando a seleção ainda cita filtro, coluna ou campo de ordenação que o
+  adaptador restringe e o ator perdeu; configuração inválida sem relação com permissão segue 422.
+  Nada é afrouxado, só o diagnóstico muda. A operação passa a terminar com `error_code`
+  PERMISSION_DENIED e a tela mostra "Seu acesso mudou". Testes: `catalog.test.ts` (novo),
+  `overview-export-adapter.test.ts` e o de integração `report-exports.test.ts`, este sem execução
+  local (PostgreSQL só no CI).
+
+Gates locais após as correções: typecheck, lint, Prettier, 616 unitários e 171 de contrato passaram.
+CI do push 37473938245 na ponta 61d361c (anterior a estas correções): quality, browser e security
+aprovados; os logs dos jobs não puderam ser lidos pela API, então os resultados por teste não foram
+conferidos. As correções acima ainda não têm CI.
+
+### Integração do PR #43 na dev e atualização da branch — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Em 06/10/2026 o PR #43 (Agendamentos) foi integrado na `dev` por squash (ea0bc3b). A branch
+combinada passou a conflitar com o squash e foi atualizada com `origin/dev` por merge. Conflitos: as
+três fontes de `specs/008-scheduling-management` (checkpoint, tasks, review-fixes), resolvidas com a
+versão da `dev`, sem alteração própria desta frente; e
+`apps/web/modules/exports/ui/export-screen.tsx`, resolvido mantendo o quarto argumento opcional de
+`renderFilter` desta entrega. Delta contra a `dev` agora só de Relatórios e exportação (23 arquivos
+fora de `specs`). Gates locais depois do merge: typecheck, lint, Prettier, 616 unitários e 171 de
+contrato passaram. A condição "depois do #43 na dev" das notas anteriores está cumprida; o CI desta
+ponta ainda não existe e T041, T042, T038 e T039 seguem como descritos acima.
+
+### Integração do PR #45 e correções adicionais — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Em 06/10/2026 o PR #45 (cargo base Colaborador, migration 0035) também foi integrado na `dev`
+(squash 212c4ea) e esta branch foi atualizada por merge sem conflito (00991bf); as listas de
+migrations de `packages/db/tests/migrations.test.ts` e
+`apps/web/tests/integration/scheduling-workflow.test.ts` já trazem 0035 entre 0034 e 0036, o que
+torna obsoleta a nota sobre a 0035 pendente acima.
+
+Terceira revisão externa do PR #46, verificada por leitura:
+
+- **403 sem registro de falha, corrigido.** Em `apps/web/modules/exports/http.ts` a falha só era
+  gravada para status 422; a seleção com item restrito, que passou a devolver 403, deixou de ser
+  gravada. Agora também é gravada quando o código é PERMISSION_DENIED depois de a operação existir
+  (origem e CSRF inválidos continuam sem operação e sem registro). Teste de contrato novo em
+  `apps/web/tests/contract/exports.test.ts`.
+- **Documentação, corrigida.** `research.md` (teto de 50 mil) e `contracts/exports.md` (dependência
+  do #43 e do #45) ganharam atualização datada; a mensagem do teto legado em
+  `apps/worker/src/job-state.ts` deixou de mandar agrupar e orienta Exportar dados.
+- **PDF de Resultados e evolução sem gráfico nem bloco de análise, ABERTO e sem decisão
+  registrada.** O download direto gera tabela, com as notas repetidas como coluna de contexto, e a
+  tela ainda diz "Incluída no PDF". Depende de decisão de produto sobre o layout do PDF.
+- **"Solicitar novamente", observação.** O link só navega para a tela de exportação, sem o formato;
+  as notas vão por sessionStorage e, sem permissão da fonte, o destino é 404. Não testado no
+  navegador.
+- **security vermelho no CI**, alerta alto do `sharp` 0.35.4 (patch em 0.35.5), igual na `dev`; fora
+  do escopo deste PR, aguardando decisão sobre o override em PR próprio.
+
+### Texto da tela sobre o PDF e solicitação de novo — CAAB-44-CLAUDE-Gabriel-Komunick
+
+Quarta revisão externa do PR #46, mesmos pontos já registrados acima; verificados por leitura em
+06/10/2026.
+
+- **PDF de Resultados e evolução, texto corrigido; layout segue aberto.** A tela dizia "Incluída no
+  PDF" sobre o comentário da análise, o que sugeria o bloco do PDF antigo. Agora diz que o texto vai
+  no arquivo exportado (Excel, CSV e PDF) como a coluna "Análise da gestão", repetida em cada linha,
+  que é o que o download direto gera. O gráfico de barras e o bloco de análise do PDF antigo não
+  fazem parte do download direto; refazer o layout do PDF depende de decisão de produto e não foi
+  planejado.
+- **"Solicitar novamente".** Só navega para a tela de exportação, sem o formato; em nova aba o
+  comentário pode se perder (sessionStorage é por aba) e, sem a permissão da fonte, o destino é 404.
+  Inconveniente pequeno, sem mudança de código nesta etapa e não testado no navegador.

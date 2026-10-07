@@ -19,7 +19,7 @@ export function safeJobFailure(error: unknown): { code: string; message: string 
     typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
   const messages: Record<string, string> = {
     REPORT_TOO_LARGE:
-      "O relatório excede 50 mil linhas. Refine os filtros ou agrupe os resultados.",
+      "O relatório excede 50 mil linhas. Use Exportar dados para baixar o conjunto completo.",
     PERMISSION_DENIED: "O responsável não possui mais as permissões necessárias.",
     NEWS_NOT_READY: "Confira o conteúdo e a liberação das imagens da revisão agendada.",
     NEWS_SLUG_CONFLICT: "O endereço da notícia já está publicado em outro cadastro.",

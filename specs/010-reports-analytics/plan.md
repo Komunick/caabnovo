@@ -1,5 +1,93 @@
 # Implementation Plan: Relatórios: exportação direta nas três abas
 
+## Ordem de texto e paginação PDF — 07/10/2026-CODEX-mafaltti
+
+No writer compartilhado, manter as linhas já calculadas por célula e emitir por coluna dentro do
+mesmo segmento de página, sempre nas coordenadas originais. A capacidade inclusiva é de 38
+baselines, de y=83 a y=527, passo 12 e limite y<=530. Reservar o maior prefixo das células que cabem
+numa página: conserva a linha inteira quando curta e evita fragmentar IDs junto ao cabeçalho.
+Células gigantes podem usar o espaço restante e continuar na página seguinte; não materializar o
+arquivo inteiro. Preservar fonte 8, largura 180 com quatro colunas, faixas, spool privado, gráfico,
+reautorização, cancelamento e backpressure; verificar flow/abort por linha emitida.
+
+Provar com writer real e o PDFJS já usado pelo teste de Agendamentos: IDs units/services e
+professionals com dois UUIDs, quatro células preenchidas, borda y=527, 38/39 linhas e oito colunas.
+Gerar dois PDFs sintéticos antes/depois na cache, renderizar todas as páginas e revisar geometria,
+continuação e ausência de cortes. Não alterar scheduling-export.spec.ts ou seu parser/asserção. T049
+reaberta após a falha do CI de `8695c32`; sucesso de `62a761f` preservado como histórico.
+
+## Privacidade e identidade do rascunho — 07/10/2026-CODEX-mafaltti
+
+Reutilizar WorkspaceDrafts para transportar o comentário em memória, no provider autenticado
+identificado por usuário. Vincular o handoff à seleção de destino (href sem comentário), consumir
+uma única vez e rejeitar destino divergente/expirado. Remover resíduos da chave legada de
+sessionStorage, sem importar seu conteúdo. Colocar AccountMenu no mesmo provider; logout limpa o
+cache completo e a troca de identidade remonta o provider. A tela de negação descarta o handoff.
+
+Complemento P1: AdminLayout fornece `initialIdentityId` a WorkspacePermissions. O provider mantém a
+identidade observada em `/api/v1/me` separada da identidade do layout em cache. Diferença de id ou
+401 desmonta os children, incluindo WorkspaceDrafts, e apresenta o estado curto de sessão em
+atualização com `role="status"`. Pedir `router.refresh()` somente no efeito posterior a esse commit;
+props antigas não removem o bloqueio. Layout novo e identidade observada precisam coincidir para
+remontar o contexto vazio. Polling/foco deduplicam a mesma resposta e ignoram gerações abortadas.
+Confirmação da mesma identidade preserva o cache; revalidação de permissões e falhas transitórias
+mantêm seu comportamento. Sem BroadcastChannel, persistência ou mudança da autenticação.
+
+ExportScreen recebe valores iniciais suplementares separados da identidade da seleção. O comentário
+preenche apenas a criação do rascunho; rascunho existente tem prioridade. initial e context
+continuam identificando filtros/colunas/ordenação/formato da origem. Validar componentes reais com
+desmontagem/remontagem entre módulos, StrictMode, negação e troca de conta, além de tipos/lint e
+regressões dos demais consumidores. Sem nova dependência, migration ou serviço.
+
+Janela sem refresh, troca entre contas com permissões iguais, formulário já editado, 401, resposta
+atrasada de geração abortada e preservação da mesma conta foram validados localmente. O E2E real usa
+duas páginas do mesmo BrowserContext e contas sintéticas existentes; foi apenas escrito/listado
+localmente e executado com sucesso no CI 37637466072 de `62a761f`, sem retry nesse caso. T049
+concluída tecnicamente para essa ponta. A validação de `538e3e9` é anterior ao P1; a última
+consolidação documental terá checks próprios. Retry de navegação e limites na
+[evidência](evidence/pr46-corrections-2026-10-06.md); T038/C1 e QA humano continuam pendentes.
+
+## Segunda revisão — 06/10/2026-CODEX-mafaltti
+
+CSV reconhece valores finitos em coluna numérica com gramática numérica estrita; demais valores e
+cabeçalhos continuam neutralizados. PDF imprime todos os registros da primeira faixa e repete o
+spool privado de valores selecionados para faixas adicionais, com numeração comum, cabeçalhos e
+continuações. Não mantém o arquivo inteiro em memória, não corta colunas/linhas e remove o spool.
+Arredondamento de contagens usa inteiros exatos para evitar erros binários em meios exatos, com
+mesma regra do SQL. Janelas de uso passam a um CTE materializado de quatro agregados condicionais.
+Regressões: writers reais/catálogo padrão, segurança CSV, cancelamento/limpeza, contrato de
+arredondamento, paridade PostgreSQL e EXPLAIN real. Medição T038 continua pendente, sem promessa de
+desempenho em bases grandes. Revalidar tudo após incorporar dev/PR49 na mesma branch aberta.
+
+## Correção do PR46 — 06/10/2026-CODEX-mafaltti
+
+Restaurar análise e barras mensais no PDF executivo conforme decisão do usuário. O adaptador fornece
+um writer PDF opcional ao núcleo existente; o cursor devolve metadados internos de séries apenas
+nesse modo/formato, excluídos das colunas tabulares. O gráfico usa as mesmas fontes e
+reautorizações. Um spool temporário de agregados em diretório privado do sistema mantém memória
+constante e é removido no sucesso, erro ou cancelamento; não cria armazenamento permanente nem
+guarda o arquivo inteiro. Funil passa a CTE materializado único, sem alterar suas etapas.
+Retentativa leva formato validado e notas via sessionStorage; botão na mesma aba evita perder o
+comentário em nova aba. Mensagem de acesso negado substitui 404 apenas para autorização. Validar
+writers, autorização, paridade PostgreSQL, E2E da retentativa e PDF renderizado.
+
+## Execução de 02/10/2026 — CODEX/SOLICITANTE_NAO_VERIFICADO
+
+Entrega `feature/reports-complete-20261002`, base dev748539d. Concluir Exportar detalhe agrupado,
+resumo e evolução sem os limites antigos (CAAB-44) e conferir Exportar análise detalhada sem
+agrupamento (CAAB-43), integrantes de Exportar o conjunto completo de dados em Relatórios (CAAB-24).
+Reutilizar cursor, snapshot, writers e revalidação do motor integrado; nenhum novo
+serviço/migration. Detalhe agrupado usa o mesmo SQL de agrupamento e filtros da tabela, com catálogo
+grupo/quantidade. Resumo/evolução usam projeção tabular de indicadores, inventário, séries, contexto
+e comentários, com fontes explicitamente autorizadas e revalidadas por lote. Datas de comparação
+continuam explícitas, sem teto de duração. A seleção de fontes nunca concede permissões.
+
+Coordenação: Agendamentos4e9abac tem prioridade e controla bookings/migrations0031–0034. Não editar
+seu ambiente. Preservar runtime.ts; a extensão renderFilter/initialFilters da sua tela compartilhada
+será reutilizada sem substituição dos adaptadores. Em reports.ts, manter a projeção bookings
+separada das mudanças de agrupamento, permitindo conciliação com o modelo novo. Documentos
+transversais pertencem à terceira frente. Testes técnicos e QA humano são aceites distintos.
+
 **Branch da entrega**: `docs/project-clarify-20260921` | **Data**: 2026-09-21 **Spec**:
 [spec.md](spec.md) | **Estado**: desenho concluído; implementação/validação pendentes.
 
@@ -240,3 +328,25 @@ existentes de Colaboradores, Auditoria e Relatórios acima dos filtros, mantendo
 existentes. Remover agrupamento especial do cabeçalho de Colaboradores para seguir a inclusão de
 Parceiros/Associados. Validar posição, cores, navegação e responsividade em temas claro/escuro nos
 testes existentes.
+
+## Dependência confirmada para publicação — 02/10/2026
+
+A revisão spec008 foi conferida por hashes antes de corrigir notice:cancelled. A base748539d não tem
+original_start nem reservas sem horário. Não copiar migrations0031–0034 isoladamente: a versão
+combinada deverá manter a projeção bookings de Agendamentos e os helpers/gerador desta entrega e ser
+revalidada. Correção preparada no segundo commit, com regressão real T041. Publicação/PR
+condicionados aos gates; serviços e merge proibidos.
+
+## Conciliação da branch combinada — 06/10/2026-CLAUDE-Gabriel-Komunick
+
+Autoria CLAUDE, solicitante Gabriel-Komunick. A dependência registrada acima foi atendida na branch
+`feature/reports-complete-combined-20261006` (ponta 9c47c5e), que incorpora o PR #43 (ffd8997) e a
+dev (b80bf6e, #44) sobre c8a2614, sem copiar migrations isoladamente. A conciliação semântica (T042)
+foi feita por leitura: registry com os três grupos de adaptadores, ExportScreen aditivo, projeção
+bookings com original_start/procedure_id e profissional opcional, helpers do resumo e gerador
+agrupado preservados. Gates locais (tipos, lint, Prettier, unitários e contratos) passaram; SQL real
+em PostgreSQL, T041, T038, T039, E2E, acessibilidade e QA humano seguem pendentes e a ponta ainda
+não tem CI. Detalhes e limites em [evidência](evidence/plan-2026-09-21-validation.md). A migration
+0035 pertence ao PR #45; as listas de migrations de dois testes precisarão incluí-la quando ele
+chegar à dev. PR para dev somente depois que o PR #43 estiver na dev, após nova atualização com
+`origin/dev`, repetição dos gates e pedido explícito do usuário.

@@ -1,5 +1,84 @@
 # Feature Specification: Relatórios e Análises
 
+## Integridade dos valores no PDF — 07/10/2026-CODEX-mafaltti
+
+IDs compostos e outros valores quebrados visualmente em linhas devem permanecer íntegros na extração
+de texto, sem intercalar valores de colunas vizinhas. Emitir as linhas de cada célula
+consecutivamente no segmento da página, preservando posição, fonte e seleção/ordem das colunas.
+Linhas que cabem numa página permanecem juntas; textos gigantes continuam em segmentos numerados,
+com memória limitada e cancelamento. Falha reproduzida em `8695c32`, correção local; T049 reaberta
+até novo CI. Prova e revisão visual na [evidência](evidence/pr46-corrections-2026-10-06.md).
+
+## Estado técnico de 62a761f — histórico anterior à correção PDF — 07/10/2026-CODEX-mafaltti
+
+A correção de identidade entre abas está publicada em `62a761f` e confirmada no CI 37637466072,
+incluindo autenticação real de duas contas com permissões iguais no mesmo BrowserContext. T049
+concluída tecnicamente para essa ponta; T038/C1 e QA humano continuam pendentes. Um caso de
+navegação exigiu retry e está registrado, sem causa presumida, na
+[evidência](evidence/pr46-corrections-2026-10-06.md). O CI de `538e3e9` é histórico anterior ao P1;
+este fechamento documental terá checks próprios, sem herdar uma aprovação por SHA diferente.
+
+## Privacidade e recuperação do comentário — 07/10/2026-CODEX-mafaltti
+
+Correção dos achados enviados pelo solicitante mafaltti (login Danilo-Komunick, consulta autenticada
+GitHub get_profile em 07/10/2026). O comentário pendente pertence ao contexto autenticado que o
+produziu; logout, troca de conta ou destino negado descartam seu transporte. Nunca preencher o campo
+nem gerar arquivo de outra conta com esse conteúdo. Comentário não faz parte da URL.
+
+A identidade do rascunho depende da seleção de origem e permanece estável depois de consumir o
+transporte. Ao sair para outro módulo e retornar à mesma seleção, recuperar comentário editado,
+filtros, seleção e ordem das colunas, ordenação e formato. Transportar um comentário não pode
+sobrescrever edições já recuperáveis. Regressões devem desmontar e remontar a tela mantendo o
+contexto de rascunhos, além de reproduzir conta A → logout → conta B e acesso negado.
+
+Complemento P1 de 07/10/2026: a troca de cookie em outra aba deve isolar as contas mesmo quando
+ambas têm as mesmas permissões e o layout de servidor da conta anterior permanece em cache. Ao foco
+ou polling confirmar outra identidade ou sessão encerrada, desmontar a área privada e seus rascunhos
+antes de atualizar o layout. Não reabrir o conteúdo anterior com props atrasadas; liberar somente
+quando a identidade observada corresponder à do novo layout autenticado. Confirmação da mesma conta
+ou indisponibilidade transitória preserva as edições; mudança de permissões mantém a autorização
+vigente. Nenhum cargo, concessão, storage ou regra institucional nova.
+
+O achado de Gitleaks refere-se à ponta 72b0a0c. A correção posterior 7b56324 mantém varredura
+integral com exceções somente para os 13 fingerprints triados. Resultados e limites constam na
+[evidência da entrega](evidence/pr46-corrections-2026-10-06.md).
+
+## Segunda revisão de exportação — 06/10/2026-CODEX-mafaltti
+
+Corrigir números negativos no CSV sem reduzir a proteção contra fórmulas; PDF deve usar todas as 14
+colunas padrão sem criar uma página por faixa de cada registro. Tela e arquivo usam o mesmo
+arredondamento exato para contagens, incluindo meio exato e quedas. Quatro janelas de uso preservam
+semântica, canal/ambiente/fonte e valores, mas compartilham uma leitura. Branch conciliada com dev
+após PR49, mantendo lockfile e evidência de Notícias da base. Resultado e limites nesta rodada na
+[evidência](evidence/pr46-corrections-2026-10-06.md); CI anterior não valida a versão pós-merge.
+
+## Correção do PR46 — 06/10/2026-CODEX-mafaltti
+
+Solicitante mafaltti (login Danilo-Komunick, GitHub get_profile em 06/10). O usuário decidiu
+restaurar o gráfico e o bloco de análise no PDF de Resultados e evolução. O PDF mantém a tabela com
+seleção e ordem de colunas, acrescenta análise da gestão identificada e evolução mensal das fontes
+escolhidas e autorizadas, no mesmo snapshot. Excel/CSV permanecem tabulares. Solicitar novamente
+preserva filtros, comentário e formato em navegação na mesma aba; acesso revogado apresenta mensagem
+clara. Entrega na branch aberta `feature/reports-complete-combined-20261006`; validações e limites
+na [evidência da correção](evidence/pr46-corrections-2026-10-06.md).
+
+## Entrega em validação — 02/10/2026
+
+Exportar o conjunto completo de dados em Relatórios (CAAB-24): o detalhe sem agrupamento integrado
+em748539d é preservado, com aceite humano de Exportar análise detalhada sem agrupamento (CAAB-43)
+ainda não registrado. A nova branch `feature/reports-complete-20261002` implementa Exportar detalhe
+agrupado, resumo e evolução sem os limites antigos (CAAB-44), conforme
+[contrato](contracts/exports.md). As três abas e retentativas de exportações antigas usam download
+direto Excel/CSV/PDF. Limites de consulta visual e worker histórico não se aplicam ao novo caminho.
+Sem migrations, novas permissões, serviços de produto ou reconstrução de Disponibilizar motor
+compartilhado de download direto (CAAB-22). Status de validação e limitações devem ser lidos na
+evidência desta entrega; checkpoints abaixo são históricos.
+
+A correção de compatibilidade de cancelamentos usa a data de referência
+`coalesce(starts_at,original_start,created_at)` no aviso da tela e do arquivo, mantendo fontes e
+permissões. Depende do modelo de Agendamentos, ainda ausente da base748539d; aprovação do CI da
+funcionalidade sem essa correção não comprova a versão combinada. Validação real em T041/T042.
+
 ## Checkpoint de padronização visual — 22/09/2026
 
 Pedido implementado no mesmo PR37: exportação dentro do quadro, acima dos filtros, com cabeçalho,
