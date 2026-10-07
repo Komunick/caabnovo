@@ -10,6 +10,38 @@ de Associados/arquivos. Validar código, documentação e matriz juntos sobre de
 inclui o PR46; PostgreSQL e E2E somente no CI. Registrar a ponta e os resultados na descrição do
 PR48, sem usar o CI anterior como validação das novas regressões.
 
+## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
+
+Na mesma branch aberta, aplicar na lista diária o fallback já adotado no calendário e detalhe.
+Conferir renderização com e sem profissional nos dois temas e em 320/390/1280 px, tipos, lint e
+formatação; validar os gates da nova ponta no CI, sem iniciar servidor ou banco local.
+
+Alinhar o comentário de `.gitleaksignore` à referência canônica da spec010, já integrada em dev pelo
+PR #46, preservando a triagem local e as entradas dos fingerprints. Comparar o arquivo completo com
+dev e o PR #48 e simular a combinação das branches para verificar a ausência de conflito nesse
+arquivo. Título/corpo incluem CI/Gitleaks e o efeito de sua reversão, considerando a ordem de
+integração dos PRs #46/#48/#50. Preservar provas anteriores por SHA; não atribuir o CI de `9edc288`
+ao novo código.
+
+## Correção visual após revisão — 06/10/2026-CODEX-mafaltti
+
+Autorização atual: implementar VQA01–VQA04 na worktree da revisão, atualizada com origin/dev
+`9dc6a7f` e branch renomeada para `fix/scheduling-visual-20261006`. Preservar relatório/capturas
+originais e não reutilizar branches de PRs integrados.
+
+1. Reservar no título do diálogo compartilhado a área do botão Fechar, com a medida existente do
+   alvo, sem mudar paleta ou reduzir fonte; revisar o título longo nos dois temas e três larguras.
+2. Guardar a referência do acionador das decisões de reserva e restaurar foco no fechamento, quando
+   ainda conectado e habilitado; não executar comandos ao desistir.
+3. Corrigir a identificação no calendário por capacidade e a apresentação de histórico/contadores,
+   preservando conteúdo de snapshots, vínculos, datas e dados exportados.
+4. Acrescentar regressões de componentes e ao E2E administrativo existente; validar tipos, lint,
+   formatação e Chromium com componentes reais e respostas sintéticas interceptadas, sem iniciar
+   servidor/banco. Registrar evidência distinguindo componentes locais de E2E com backend e do site
+   hospedado. Build/CI, publicação, PR, deploy e homologação não são presumidos por este recorte.
+
+Critérios no [incremento visual da spec](spec.md) e em VQA01–VQA04 de [tasks.md](tasks.md).
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 Tratar os achados confirmados na branch do PR43. Preservar migrations 0031–0034; acrescentar

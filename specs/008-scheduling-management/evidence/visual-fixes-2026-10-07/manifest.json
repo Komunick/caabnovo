@@ -1,0 +1,136 @@
+{
+  "baseCommit": "9edc288ed61d4da24687327ac94024b991ab1944",
+  "sourceState": "base commit plus uncommitted agenda fallback; verified by agendaSourceSha256",
+  "agendaSourceSha256": "317d9c7907c463d356f77d4da93350ce167b0b1dfb88e86ec6ffc6cf69e4f5f2",
+  "component": "SchedulingAgenda real + WorkspaceDrafts/WorkspacePermissions real + repo CSS/tokens",
+  "boundary": "Next navigation/link shim only; synthetic responses intercepted; no server/database/DEV request",
+  "checks": [
+    {
+      "width": 320,
+      "theme": "light",
+      "capacityFallback": true,
+      "namedProfessionalPreserved": true,
+      "hoursAndLinksPreserved": true,
+      "nullOrUndefined": false,
+      "axeViolations": 0,
+      "geometry": {
+        "viewport": 320,
+        "body": 320,
+        "scrollContainers": [
+          {
+            "width": 254,
+            "scroll": 608
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "capacityFallback": true,
+      "namedProfessionalPreserved": true,
+      "hoursAndLinksPreserved": true,
+      "nullOrUndefined": false,
+      "axeViolations": 0,
+      "geometry": {
+        "viewport": 390,
+        "body": 390,
+        "scrollContainers": [
+          {
+            "width": 324,
+            "scroll": 608
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "theme": "light",
+      "capacityFallback": true,
+      "namedProfessionalPreserved": true,
+      "hoursAndLinksPreserved": true,
+      "nullOrUndefined": false,
+      "axeViolations": 0,
+      "geometry": {
+        "viewport": 1280,
+        "body": 1280,
+        "scrollContainers": [
+          {
+            "width": 1158,
+            "scroll": 1158
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "capacityFallback": true,
+      "namedProfessionalPreserved": true,
+      "hoursAndLinksPreserved": true,
+      "nullOrUndefined": false,
+      "axeViolations": 0,
+      "geometry": {
+        "viewport": 320,
+        "body": 320,
+        "scrollContainers": [
+          {
+            "width": 254,
+            "scroll": 608
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "capacityFallback": true,
+      "namedProfessionalPreserved": true,
+      "hoursAndLinksPreserved": true,
+      "nullOrUndefined": false,
+      "axeViolations": 0,
+      "geometry": {
+        "viewport": 390,
+        "body": 390,
+        "scrollContainers": [
+          {
+            "width": 324,
+            "scroll": 608
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "theme": "dark",
+      "capacityFallback": true,
+      "namedProfessionalPreserved": true,
+      "hoursAndLinksPreserved": true,
+      "nullOrUndefined": false,
+      "axeViolations": 0,
+      "geometry": {
+        "viewport": 1280,
+        "body": 1280,
+        "scrollContainers": [
+          {
+            "width": 1158,
+            "scroll": 1158
+          }
+        ]
+      }
+    }
+  ],
+  "pageErrors": [],
+  "screenshots": [
+    {
+      "file": "agenda-list-1280-light.png",
+      "sha256": "0df350c29dfb1a388bf27a32c4f37ee56418baaebb60b1c9ed163652d70636c9"
+    },
+    {
+      "file": "agenda-list-320-dark-attendance.png",
+      "sha256": "ffe07635d2dcfbad0a7f2a8a9829873653bcb28360aaf0908049a6c39b556034"
+    }
+  ],
+  "visualReview": "CODEX inspected all ten screenshots; mobile attendance reached by table-local horizontal scrolling; no page overflow.",
+  "axeStates": "Six initial viewport/theme states plus four mobile states scrolled to attendance: zero violations (WCAG2 A/AA,2.1AA,2.2AA)."
+}

@@ -1,11 +1,50 @@
 # Tasks: Agendamentos — implementação administrativa local
 
+## CI e conflitos do PR50 — 07/10/2026-CODEX-mafaltti
+
+- [ ] VQA08 Resolver os três conflitos documentais com dev `4fafc87`, preservando os blocos visuais
+      e T118, e validar a preparação APT/Playwright e todos os gates da ponta resultante. Os runs de
+      `7b1ed3a` são históricos; a execução do PR foi cancelada antes de executar E2E, durante APT.
+      Registrar conclusão e SHA no corpo do PR após o CI, sem atribuir resultados antigos à nova
+      composição.
+
 ## Revisão de cobertura do PR48 — 07/10/2026-CODEX-mafaltti
 
 - [ ] T118 Complementar T112 com regressão parametrizada de criação, replay e finalização após
       vencimento dos grants de Associados/arquivos durante lock real. Preservar sessão e
       Agendamentos válidos, comprovar negação e ausência de efeitos por snapshots. Execução
       PostgreSQL no CI da nova ponta do PR48; a prova anterior cobria somente finalização.
+
+## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
+
+- [x] VQA05 Completar o fallback de profissional ausente na lista diária; conferir identificação,
+      nomes existentes, temas, telas pequenas e acessibilidade com dados sintéticos.
+- [x] VQA06 Tornar a evidência do `.gitleaksignore` acessível nesta entrega, preservando os
+      fingerprints; explicitar CI/Gitleaks no título e seu efeito no rollback do PR #50.
+- [x] VQA07 Publicar a correção no PR existente e conferir os gates da nova ponta, registrando
+      versão, resultados e limites na [evidência](evidence/visual-fixes-2026-10-06.md).
+
+## Revisão visual do DEV hospedado — 06/10/2026-CODEX-mafaltti
+
+Verificação solicitada pelo usuário, com Playwright e banco de teste confirmado. Base documental dev
+`9dc6a7f`; SHA hospedado não confirmado. Jornadas e limitações na
+[evidência visual](evidence/visual-hosted-2026-10-06.md). Os itens abaixo registram defeitos
+observados; a revisão inicial não executou nem autorizou automaticamente as correções. O pedido
+posterior de correção autorizou a implementação local abaixo; T110 não é encerrada por isso.
+
+**Correção local concluída:** componentes e textos ajustados; regressões e validação em Chromium com
+respostas sintéticas, conforme [evidência](evidence/visual-fixes-2026-10-06.md). E2E com backend,
+CI, publicação e homologação não são inferidos dos testes de componentes.
+
+- [x] VQA01 Corrigir a sobreposição do título com Fechar no modal de indisponibilidade em 320 px;
+      conferir geometria, teclado e os dois temas, preservando as demais utilizações do diálogo.
+- [x] VQA02 Restaurar foco ao acionador após fechar os modais de decisão de Agendamentos por
+      Escape/Fechar/Voltar; validar continuidade do teclado sem executar a decisão ao desistir.
+- [x] VQA03 Tratar profissional ausente nos eventos do calendário por capacidade, evitando `null` em
+      texto, tooltip e aria-label de dia/semana/mês, preservando identificação e horário.
+- [x] VQA04 Ajustar separadores do histórico sem profissional e singular/plural nos contadores
+      observados (“1 confirmadas”, “1 registros”) e colunas selecionadas, sem alterar contagem,
+      estados ou exportação.
 
 ## Conciliação após PR42 — 06/10/2026-CODEX-mafaltti
 

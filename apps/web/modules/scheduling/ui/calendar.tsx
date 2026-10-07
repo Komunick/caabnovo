@@ -37,12 +37,13 @@ export default function SchedulingCalendar({
     )
     .map((booking) => {
       const status = `${schedulingStatusLabels[booking.status]}${booking.memberDeleted ? " · Associado excluído" : ""}${booking.eligibilityWarning === "blocked" ? " · Beneficiário bloqueado" : ""}`;
-      const label = `${booking.memberName}, ${timeLabel(booking.startsAt)} às ${timeLabel(booking.endsAt)}, ${booking.procedureName}, ${booking.professionalName}, ${booking.unitName}, ${status}`;
+      const professional = booking.professionalName ?? "Atendimento por capacidade do serviço";
+      const label = `${booking.memberName}, ${timeLabel(booking.startsAt)} às ${timeLabel(booking.endsAt)}, ${booking.procedureName}, ${professional}, ${booking.unitName}, ${status}`;
       return {
         id: booking.id,
         start: booking.startsAt,
         end: booking.endsAt,
-        title: `${status} · ${booking.memberName} · ${booking.procedureName} · ${booking.professionalName}`,
+        title: `${status} · ${booking.memberName} · ${booking.procedureName} · ${professional}`,
         url: `/scheduling/${booking.id}`,
         extendedProps: { label, status: booking.status },
       };

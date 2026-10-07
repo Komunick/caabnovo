@@ -60,6 +60,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(() => root.unmount());
   container.remove();
+  vi.unstubAllGlobals();
 });
 
 async function render(props?: Partial<ComponentProps<typeof ExportScreen>>) {
@@ -209,4 +210,37 @@ describe("export drafts from different list filters", () => {
     await render({ initial, initialFilters: { q: "Filtro da lista B" } });
     expect(field<HTMLInputElement>("export-filter-q").value).toBe("Seleção em edição");
   });
+});
+
+it.each([0, 1, 2])(
+  "announces a completed export with the correct record count %s",
+  async (rowCount) => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        Response.json({
+          requestId: url.split("/").at(-1),
+          phase: "completed",
+          rowCount,
+          byteCount: 100,
+          errorCode: null,
+        }),
+      ),
+    );
+    await render({ initialFilters: {} });
+    const submitter = container.querySelector<HTMLButtonElement>('button[value="csv"]')!;
+    await act(async () => {
+      submitter
+        .closest("form")!
+        .dispatchEvent(new SubmitEvent("submit", { bubbles: true, cancelable: true, submitter }));
+    });
+    expect(container.querySelector('[role="status"]')!.textContent).toContain(
+      `${rowCount} ${rowCount === 1 ? "registro" : "registros"}.`,
+    );
+  },
+);
+
+it("announces one selected column in the singular", async () => {
+  await render({ initial: { columns: ["id"] } });
+  expect(container.querySelector("fieldset:last-of-type")!.textContent).toContain("1 selecionada.");
 });

@@ -124,7 +124,7 @@ test("scheduling read and export grants download three datasets and preserve con
         }
         await expect(
           page.getByRole("status").filter({ hasText: "Geração e transferência concluídas" }),
-        ).toContainText("1 registros");
+        ).toContainText("1 registro.");
       }
       for (const width of [390, 1280, 320]) {
         await page.setViewportSize({ width, height: 900 });

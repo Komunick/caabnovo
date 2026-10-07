@@ -1,0 +1,239 @@
+{
+  "localReference": "9dc6a7f plus working-tree changes",
+  "hostedApplication": false,
+  "backend": "Synthetic responses intercepted in Playwright; no server or database",
+  "checks": [
+    {
+      "scenario": "modal",
+      "width": 320,
+      "theme": "light",
+      "titleOverlap": false,
+      "focusRestored": true,
+      "axeViolations": 0
+    },
+    {
+      "scenario": "modal",
+      "width": 390,
+      "theme": "light",
+      "titleOverlap": false,
+      "focusRestored": true,
+      "axeViolations": 0
+    },
+    {
+      "scenario": "modal",
+      "width": 1280,
+      "theme": "light",
+      "titleOverlap": false,
+      "focusRestored": true,
+      "axeViolations": 0
+    },
+    {
+      "scenario": "modal",
+      "width": 320,
+      "theme": "dark",
+      "titleOverlap": false,
+      "focusRestored": true,
+      "axeViolations": 0
+    },
+    {
+      "scenario": "modal",
+      "width": 390,
+      "theme": "dark",
+      "titleOverlap": false,
+      "focusRestored": true,
+      "axeViolations": 0
+    },
+    {
+      "scenario": "modal",
+      "width": 1280,
+      "theme": "dark",
+      "titleOverlap": false,
+      "focusRestored": true,
+      "axeViolations": 0
+    },
+    {
+      "scenario": "focus",
+      "action": "Aprovar pedido",
+      "close": "Escape",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Aprovar pedido",
+      "close": "Fechar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Aprovar pedido",
+      "close": "Voltar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Recusar pedido",
+      "close": "Escape",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Recusar pedido",
+      "close": "Fechar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Recusar pedido",
+      "close": "Voltar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Retirar proposta",
+      "close": "Escape",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Retirar proposta",
+      "close": "Fechar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Retirar proposta",
+      "close": "Voltar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Estabelecimento nÃ£o poderÃ¡ atender",
+      "close": "Escape",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Estabelecimento nÃ£o poderÃ¡ atender",
+      "close": "Fechar",
+      "restored": true
+    },
+    {
+      "scenario": "focus",
+      "action": "Estabelecimento nÃ£o poderÃ¡ atender",
+      "close": "Voltar",
+      "restored": true
+    },
+    {
+      "scenario": "calendar",
+      "view": "day",
+      "nullLabel": false
+    },
+    {
+      "scenario": "calendar",
+      "view": "week",
+      "nullLabel": false
+    },
+    {
+      "scenario": "calendar",
+      "view": "month",
+      "nullLabel": false
+    },
+    {
+      "scenario": "export-count",
+      "count": 0,
+      "correct": true
+    },
+    {
+      "scenario": "export-count",
+      "count": 1,
+      "correct": true
+    },
+    {
+      "scenario": "export-count",
+      "count": 2,
+      "correct": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "dialog-320-light.png",
+      "sha256": "6fcc2314745cd10bfa60b58bf5d032dc721256baf7aa197f6e6c53b9923af20e"
+    },
+    {
+      "file": "dialog-390-light.png",
+      "sha256": "05de7977f001fd61e6ce1423def977708fef2597a29bda674a4c27510991ea38"
+    },
+    {
+      "file": "dialog-1280-light.png",
+      "sha256": "e16055469544c0bff8e8a25fa7ecc51dd80c9f2f0e0e2f170f2439fe4d7d5568"
+    },
+    {
+      "file": "dialog-320-dark.png",
+      "sha256": "741bc6eec2882c1ca498e7a477191cae4b68af39b310db19f9c6ba6125213c93"
+    },
+    {
+      "file": "dialog-390-dark.png",
+      "sha256": "8b0c3bdd474c60cdf44653a8c989810eb1811559397635bb662383ba69878b45"
+    },
+    {
+      "file": "dialog-1280-dark.png",
+      "sha256": "7598f967f9fdf17d0cb81d517b4e82c7a2d9afa8ac65dc438287b5b6983d58f4"
+    },
+    {
+      "file": "calendar-day-390-light.png",
+      "sha256": "12082b49f44a97ee6468445f0524b51b3d35a8d3acabf619dac2f968db973f05"
+    },
+    {
+      "file": "calendar-week-390-light.png",
+      "sha256": "4936dd8e8b98919b84aa064546f92d467e8aff7a81f9733fb411a84a52b8f8ca"
+    },
+    {
+      "file": "calendar-month-390-light.png",
+      "sha256": "811f9efa2b39e1bc9e79bdd8c3afadbc8ef21255f5b326daa47423850aa87240"
+    },
+    {
+      "file": "export-single-390-light.png",
+      "sha256": "30843c70cc74ddd46458adbe6b5be60b7ecd91f89bd31f2a505d135a25bdb559"
+    }
+  ],
+  "pageErrors": [],
+  "exportRecheck": [
+    {
+      "scenario": "export-count",
+      "count": 0,
+      "correct": true
+    },
+    {
+      "scenario": "export-count",
+      "count": 1,
+      "correct": true
+    },
+    {
+      "scenario": "export-count",
+      "count": 2,
+      "correct": true
+    }
+  ],
+  "productionFiles": [
+    {
+      "path": "apps/web/app/globals.css",
+      "sha256": "8468892dcf6d3e27f3451617feaa53ddda7979ff531445e089c543ae70e1210f"
+    },
+    {
+      "path": "apps/web/components/ui/dialog.tsx",
+      "sha256": "cf8a512793415801d08a7021dec29049499c0637eeed4f932f7cd48aa9dd59db"
+    },
+    {
+      "path": "apps/web/modules/scheduling/ui/calendar.tsx",
+      "sha256": "cc2af47b046eb78f536f8af16e9b5ace4cfa9c8177bd347f0180a17746e12036"
+    },
+    {
+      "path": "apps/web/modules/scheduling/ui/booking-detail.tsx",
+      "sha256": "262e59e1f3e47048b3f308ede6df3ba0ecfb9c552b72333d802db073103d90fc"
+    },
+    {
+      "path": "apps/web/modules/exports/ui/export-screen.tsx",
+      "sha256": "38feb7d3b43829b1eb4eddb11a97f732311ab048184457b32dc588e15a7316f3"
+    }
+  ]
+}

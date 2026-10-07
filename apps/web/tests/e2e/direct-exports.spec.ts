@@ -790,6 +790,6 @@ test("exports collaborator contact filtered by CPF and pending deletion in Excel
     expect(content).toContain(contact.address.postalCode);
     await expect(
       page.getByRole("status").filter({ hasText: "Geração e transferência concluídas" }),
-    ).toContainText("1 registros");
+    ).toContainText("1 registro.");
   }
 });

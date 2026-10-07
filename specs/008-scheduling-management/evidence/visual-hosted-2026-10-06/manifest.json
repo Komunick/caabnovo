@@ -1,0 +1,219 @@
+{
+  "author": "CODEX",
+  "requester": "mafaltti/Danilo-Komunick",
+  "date": "2026-10-06",
+  "application": "https://caabv2dev.komunick.com/",
+  "hostedSha": null,
+  "localReference": "9dc6a7fa78dea304d9186c967dae63f8a42b22a2",
+  "method": "Headed Playwright 1.62.1 with visual AI review; fullPage screenshots",
+  "screenshots": [
+    {
+      "file": "02-agenda-desktop-light.png",
+      "width": 1265,
+      "height": 901,
+      "bytes": 81122,
+      "sha256": "9291f7f73e29644252ba83cea177b0bc0862e27257830f9d57d438d90bceca46",
+      "reviewed": true
+    },
+    {
+      "file": "04-agenda-mobile-dark.png",
+      "width": 375,
+      "height": 1444,
+      "bytes": 51895,
+      "sha256": "ab8b45d948fc3bf427b6911d4b4f66c91cecf415c426b858771a063711aea9c0",
+      "reviewed": true
+    },
+    {
+      "file": "05-unit-form-mobile-dark.png",
+      "width": 375,
+      "height": 1587,
+      "bytes": 50776,
+      "sha256": "85081941cf239898df616f16411bdad939a94511160d13d679660d977e231d8f",
+      "reviewed": true
+    },
+    {
+      "file": "06-hours-mobile-dark.png",
+      "width": 375,
+      "height": 2394,
+      "bytes": 84292,
+      "sha256": "b4e10e9b0c8a19fb5ded9bf92faed988405e49a5e9b6289c8b57ddbaf4c530be",
+      "reviewed": true
+    },
+    {
+      "file": "10-booking-form-mobile-dark.png",
+      "width": 375,
+      "height": 1573,
+      "bytes": 58219,
+      "sha256": "5f1a08758fa8e5480fd3f76829d6d295786021ee3d583926825a8c69fadfb4c2",
+      "reviewed": true
+    },
+    {
+      "file": "11-booking-pending-mobile-dark.png",
+      "width": 375,
+      "height": 1860,
+      "bytes": 67247,
+      "sha256": "88532477824f364c4f845d8d2b90cb019c8aa73c57f0d031c9d512805b07a577",
+      "reviewed": true
+    },
+    {
+      "file": "13-approval-queue-desktop-dark.png",
+      "width": 1265,
+      "height": 901,
+      "bytes": 77344,
+      "sha256": "33d12a51c75f9b7f54a8e029c7d7e6888afc26f791bdb2b73304629ec0f106e2",
+      "reviewed": true
+    },
+    {
+      "file": "15-reschedule-mobile-dark.png",
+      "width": 375,
+      "height": 3305,
+      "bytes": 122628,
+      "sha256": "feaf531dd5edd17e180ed50fac47469b3c422b285028ed92f0de863c9069471b",
+      "reviewed": true
+    },
+    {
+      "file": "17-recovery-detail-320-dark.png",
+      "width": 320,
+      "height": 3107,
+      "bytes": 115831,
+      "sha256": "4cf723b224263ca25060f4067fe35600841f03afe578c00d0fea03ffb7c2be7f",
+      "reviewed": true
+    },
+    {
+      "file": "18-recovery-modal-320-confirm.png",
+      "width": 320,
+      "height": 3380,
+      "bytes": 177345,
+      "sha256": "2bac88d2b1c9acbada2d2b76879e8a8712dea6b5d0162708818be38e33cae316",
+      "reviewed": true
+    },
+    {
+      "file": "19-calendar-week-320-dark.png",
+      "width": 320,
+      "height": 2043,
+      "bytes": 58505,
+      "sha256": "bd97b2eb9e2bffd605ce091efa24973ee242930472cb354e50e8df48db9b2617",
+      "reviewed": true
+    },
+    {
+      "file": "20-calendar-week-desktop-dark.png",
+      "width": 1265,
+      "height": 1370,
+      "bytes": 93425,
+      "sha256": "5251b2d6b665798445d8d633a2ba5a790888670d3676094635e00564c7176d31",
+      "reviewed": true
+    },
+    {
+      "file": "21-calendar-month-desktop-light.png",
+      "width": 1265,
+      "height": 1452,
+      "bytes": 93390,
+      "sha256": "19e3671cbc03f5bc6a38417d82ea6d64aede0f47013bb8ff2813f935d0d49d83",
+      "reviewed": true
+    },
+    {
+      "file": "22-calendar-month-mobile-light.png",
+      "width": 375,
+      "height": 1906,
+      "bytes": 53027,
+      "sha256": "b57c9b0634529f287a2d0f7d0f123edebc571c25ca0652d0b5a7cf5a8eb7a17e",
+      "reviewed": true
+    },
+    {
+      "file": "23-absence-list-mobile-light.png",
+      "width": 375,
+      "height": 858,
+      "bytes": 31768,
+      "sha256": "050ffcec34ffe8ad180e2cae918ebbdef9f53526f8ed1ecc18288db3b5a84e62",
+      "reviewed": true
+    },
+    {
+      "file": "24-export-mobile-light.png",
+      "width": 375,
+      "height": 2773,
+      "bytes": 77643,
+      "sha256": "e1974e719e138137d5b21632ea8ebb0d66dea2fd7e60ee33f1e67f1f52ad37eb",
+      "reviewed": true
+    },
+    {
+      "file": "25-export-320-light-completed.png",
+      "width": 320,
+      "height": 2912,
+      "bytes": 82966,
+      "sha256": "e4566cda305cb72ea4f905ba157c7977c5056ea0b87b454fd2e8bab4fe4bcc25",
+      "reviewed": true
+    },
+    {
+      "file": "27-calendar-day-desktop-light.png",
+      "width": 1265,
+      "height": 1370,
+      "bytes": 93441,
+      "sha256": "88b829066fecd60e880125236bc0d6d4c932e200dfbbe09cce8340eca204a99e",
+      "reviewed": true
+    },
+    {
+      "file": "28-agenda-filtered-desktop-light.png",
+      "width": 1265,
+      "height": 901,
+      "bytes": 85890,
+      "sha256": "cb7f7a52281154416265f9049915fe4b7f6b14a9a4585e8898eda0592069ee10",
+      "reviewed": true
+    },
+    {
+      "file": "29-professional-draft-mobile-light.png",
+      "width": 375,
+      "height": 845,
+      "bytes": 29255,
+      "sha256": "f6baa08682d16c6ae731fac5d8f3ef188aec14185d2ed025369cef682b467a3f",
+      "reviewed": true
+    },
+    {
+      "file": "30-assignment-form-mobile-light.png",
+      "width": 375,
+      "height": 1126,
+      "bytes": 39193,
+      "sha256": "eb7d09c1a2135129e6dfda801882bfc6b429fe1baa062dc9b85a4099f55d500c",
+      "reviewed": true
+    },
+    {
+      "file": "31-professional-required-field-light.png",
+      "width": 1265,
+      "height": 901,
+      "bytes": 67460,
+      "sha256": "4807839cc2d618e887756110974ec4098df1a294060f1fba159ad7e60904f9b5",
+      "reviewed": true
+    },
+    {
+      "file": "32-procedure-form-mobile-light.png",
+      "width": 375,
+      "height": 1438,
+      "bytes": 44539,
+      "sha256": "f0f52bc1aff3ce253b7a0f0fcde8884bfffc053edf6870c38ed78670bcbc4b7b",
+      "reviewed": true
+    },
+    {
+      "file": "33-approval-empty-mobile-light.png",
+      "width": 375,
+      "height": 845,
+      "bytes": 28813,
+      "sha256": "250f69d88cc1036fbc51a76bde695152175a6e272c15399ed3c53d25d6318309",
+      "reviewed": true
+    },
+    {
+      "file": "34-service-edit-mobile-light.png",
+      "width": 375,
+      "height": 2511,
+      "bytes": 95682,
+      "sha256": "d60fcf5d31f0e7552e2ed67ca95fb5a6f4763847fa00c9e058a6cf6a7a5680b7",
+      "reviewed": true
+    },
+    {
+      "file": "35-service-edit-320-light.png",
+      "width": 320,
+      "height": 2658,
+      "bytes": 97454,
+      "sha256": "38b070c48397afa10b39e04548bae61c3347295f0ea3752c028b5a790055bc8b",
+      "reviewed": true
+    }
+  ]
+}

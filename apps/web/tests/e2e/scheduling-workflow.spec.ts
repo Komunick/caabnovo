@@ -162,13 +162,41 @@ test("operate capacity, publication, manual decisions, changes and recovery enti
   await page.getByRole("button", { name: "Enviar pedido", exact: true }).click();
   await page.getByRole("button", { name: "Aprovar pedido", exact: true }).click();
   await page.getByRole("button", { name: "Confirmar decisão", exact: true }).click();
-  await expect(page.getByText("1 confirmadas · 0 em andamento", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 confirmada · 0 em andamento", { exact: true })).toBeVisible();
+  const recoveryTrigger = page.getByRole("button", {
+    name: "Estabelecimento não poderá atender",
+    exact: true,
+  });
+  await page.setViewportSize({ width: 320, height: 800 });
+  for (const close of ["Escape", "Fechar", "Voltar"]) {
+    await recoveryTrigger.click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    const overlap = await dialog.evaluate((element) => {
+      const title = element.querySelector("h2")!;
+      const range = document.createRange();
+      range.selectNodeContents(title);
+      const close = element.querySelector('[aria-label="Fechar"]')!.getBoundingClientRect();
+      return [...range.getClientRects()].some(
+        (r) =>
+          r.left < close.right &&
+          r.right > close.left &&
+          r.top < close.bottom &&
+          r.bottom > close.top,
+      );
+    });
+    expect(overlap).toBe(false);
+    if (close === "Escape") await page.keyboard.press("Escape");
+    else await dialog.getByRole("button", { name: close, exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(recoveryTrigger).toBeFocused();
+  }
   await page
     .getByRole("button", { name: "Estabelecimento não poderá atender", exact: true })
     .click();
   await page.getByRole("button", { name: "Confirmar decisão", exact: true }).click();
   await expect(page.getByText("Aguardando nova data", { exact: true })).toBeVisible();
-  await expect(page.getByText("1 confirmadas · 0 em andamento", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 confirmada · 0 em andamento", { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.emulateMedia({ colorScheme: "dark" });
   await expectWcag22AA(page);

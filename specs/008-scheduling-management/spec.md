@@ -10,6 +10,39 @@ de ampliar a prova da regra existente, sem mudar concessões ou comportamento de
 anterior do PR48 comprovava somente finalização; criação e replay eram conferidos por leitura do
 código. A nova matriz exige PostgreSQL descartável no CI.
 
+## Ajustes após análise do PR #50 — 07/10/2026-CODEX-mafaltti
+
+O usuário autorizou corrigir a referência de evidência do scanner e completar a identificação das
+reservas por capacidade na lista diária. Quando `professionalName` for ausente, a lista apresenta
+“Atendimento por capacidade do serviço”, como calendário e detalhe; nomes existentes permanecem
+visíveis. A correção não altera permissões, horários, regras ou dados da reserva.
+
+O título e o rollback do PR devem explicitar a atualização transversal de CI/Gitleaks já contida na
+entrega. Após a integração do PR #46 em dev, `.gitleaksignore` usa a referência canônica
+`specs/010-reports-analytics/evidence/pr46-corrections-2026-10-06.md`, já disponível na base de
+destino. O arquivo deve coincidir com dev e o PR #48, inclusive o comentário, para evitar conflito
+add/add. Fingerprints e regras do scanner permanecem iguais; a evidência local complementa a fonte.
+
+## Correções visuais autorizadas — 06/10/2026-CODEX-mafaltti
+
+Pedido do usuário após a revisão com Playwright: atualizar uma worktree de Agendamentos e corrigir
+VQA01–VQA04. Preservar os contratos administrativos, permissões, contadores e histórico; nenhum
+schema, migration, transporte ou nova regra de reserva entra neste recorte.
+
+- VQA01: título de modal permanece legível e fora da área de Fechar em 320/390/1280 px e nos dois
+  temas.
+- VQA02: fechar uma decisão por Escape, Fechar ou Voltar devolve o foco ao respectivo acionador
+  disponível, sem enviar a decisão ou alterar a reserva.
+- VQA03: calendário de dia/semana/mês usa identificação compreensível do atendimento por capacidade
+  quando não há profissional, incluindo texto, tooltip e nome acessível; não expor `null`.
+- VQA04: histórico omite separadores de campos ausentes; contadores de remarcações, registros
+  exportados e colunas selecionadas usam singular/plural conforme a quantidade. Valores e datas
+  permanecem iguais.
+
+Origem, capturas e limites na [revisão hospedada](evidence/visual-hosted-2026-10-06.md);
+implementação e validação local na [evidência da correção](evidence/visual-fixes-2026-10-06.md). Não
+atribuir o código local ao site hospedado antes de publicação e conferência da versão.
+
 ## Correções da revisão — 05/10/2026-CODEX-mafaltti
 
 Decisões explícitas do usuário nesta revisão: contador legado desconhecido passa a zero por política

@@ -308,7 +308,8 @@ export function ExportScreen({
             <fieldset className="export-fields" disabled={active}>
               <legend>Colunas do arquivo</legend>
               <p className="export-hint">
-                Marque as colunas e use as setas para ordenar. {columns.length} selecionadas.
+                Marque as colunas e use as setas para ordenar. {columns.length}{" "}
+                {columns.length === 1 ? "selecionada" : "selecionadas"}.
               </p>
               <ol className="export-column-order" aria-label="Ordem das colunas">
                 {[
@@ -399,7 +400,7 @@ export function ExportScreen({
             </div>
             <p role="status" aria-live="polite">
               {operation?.phase === "completed"
-                ? `Geração e transferência concluídas pelo servidor: ${operation.rowCount} registros. Confira o arquivo nos downloads do navegador.`
+                ? `Geração e transferência concluídas pelo servidor: ${operation.rowCount} ${operation.rowCount === 1 ? "registro" : "registros"}. Confira o arquivo nos downloads do navegador.`
                 : active
                   ? "Preparando e transferindo o arquivo…"
                   : ""}
