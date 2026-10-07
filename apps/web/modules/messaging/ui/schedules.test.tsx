@@ -18,6 +18,7 @@ vi.mock("next/navigation", () => ({
 let root: Root, container: HTMLDivElement;
 let permissions: string[];
 const fetchMock = vi.fn();
+const testIdentity = { initialIdentityId: "00000000-0000-4000-8000-000000000001" };
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   vi.useFakeTimers();
@@ -25,7 +26,8 @@ beforeEach(() => {
   navigation.router.refresh.mockClear();
   permissions = ["messages:access"];
   fetchMock.mockReset().mockImplementation(async (url: string) => {
-    if (url === "/api/v1/me") return Response.json({ permissions });
+    if (url === "/api/v1/me")
+      return Response.json({ id: testIdentity.initialIdentityId, permissions });
     if (url.startsWith("/api/v1/messages/schedules?"))
       return Response.json({ items: [], page: 1, pageSize: 20, total: 0 });
     throw new Error(`Unexpected request: ${url}`);
@@ -44,7 +46,7 @@ afterEach(async () => {
 async function render(initial: string[]) {
   await act(() =>
     root.render(
-      <WorkspacePermissions initial={initial}>
+      <WorkspacePermissions {...testIdentity} initial={initial}>
         <MessageSchedulesPage />
       </WorkspacePermissions>,
     ),

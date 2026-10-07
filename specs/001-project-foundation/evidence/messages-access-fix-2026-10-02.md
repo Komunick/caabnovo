@@ -104,3 +104,44 @@ PR funcional ainda não aberto: PR42 segue aberto/sem merge na última consulta.
 dev/origin/dev em0/0 na base748539d; arquivos locais da principal e outras instâncias preservados. O
 registro final de evidência fica preservado em commit documental local para compor a conciliação
 após integração humana; o SHA executado pelo CI é f804937, não um commit documental posterior.
+
+## Compatibilidade do fixture de identidade — 07/10/2026-CODEX-mafaltti
+
+Solicitante desta sessão: mafaltti/login Danilo-Komunick, perfil GitHub get_profile consultado pela
+coordenação em 07/10/2026 e reutilizado. Pedido autorizado: adaptar somente o fixture G01 do PR #48
+para o contrato de identidade do provider publicado no PR #46. Autoria e resultados históricos
+acima permanecem preservados. PR #48 aberto, worktree limpa antes do incremento, base publicada
+`e24ce056804c27eccd548569db353ba3e9a024d4`.
+
+Incompatibilidade concreta: `schedules.test.tsx` passava somente `initial`, e a resposta simulada de
+`/api/v1/me` não continha `id`. O provider de `62a761f6c84d7446adcf242514f8ba8dd1a549b5` exige
+`initialIdentityId` e ignora respostas 200 sem identidade válida; sem adaptar o fixture, a futura
+combinação falharia em tipos e os gatilhos de revogação não atualizariam a tela. O teste passa agora
+um UUID sintético estável por spread de `testIdentity` e devolve o mesmo `id` em `/me`. O spread é
+estruturalmente compatível com a assinatura antiga e fornece a propriedade obrigatória da nova.
+Nenhuma asserção, produção, permissão, grant, endpoint ou cenário foi alterado. G01 continua cobrindo
+leitura sem criação, escrita concedida e revogação por foco, polling de 15 segundos e pathname.
+
+Verificações locais sem instalar dependências ou iniciar serviços:
+
+- Formato do fixture aprovado com Prettier existente da worktree do PR #46.
+- Lint focado aprovado com ESLint/configuração existente dessa worktree.
+- Cinco casos G01 aprovados com o provider real da branch PR #48 na base `e24ce05`.
+- Os mesmos cinco casos aprovados com o provider real do PR #46 em `62a761f`.
+- `git diff --check` e preservação das asserções conferidos neste incremento.
+
+A worktree PR #48 continua sem `node_modules`. O runner temporário ignorado fica em
+`.cache/compat-g01-20261007/` da worktree PR #46: cópia byte a byte do teste adaptado, aliases para a
+UI real de Mensagens do PR #48 e para o provider selecionado, usando dependências já instaladas no
+peer. Não houve cópia de produção do PR #46 para o PR #48 nem mock do provider. A primeira tentativa
+de usar diretamente a raiz externa falhou na resolução de caminho Windows antes de executar casos;
+somente o runner isolado foi ajustado, e as duas execuções posteriores passaram integralmente.
+
+Comandos executados no peer: `node node_modules/vitest/vitest.mjs run --config
+.cache/compat-g01-20261007/vitest.compat.mts`; para o provider novo, a mesma execução com
+`CAAB_G01_PROVIDER=current`. Cada execução reconheceu e aprovou os cinco testes. Isso comprova o
+comportamento DOM do fixture nos dois providers, sem substituir typecheck completo ou CI da futura
+combinação. Typecheck/CI da nova ponta PR #48 e gates da combinação com PR #46 permanecem pendentes;
+o CI verde da base `e24ce05` não é promovido a aprovação deste incremento ainda sem commit. QA
+humano e homologação global continuam independentes. Nenhum commit, push, CI novo ou metadado de PR
+foi enviado por esta frente.
