@@ -5,19 +5,32 @@ import { usePathname, useRouter } from "next/navigation";
 const Context = createContext<readonly string[] | null>(null);
 export function WorkspacePermissions({
   initial,
+  initialIdentityId,
   children,
 }: {
   initial: readonly string[];
+  initialIdentityId: string;
   children: ReactNode;
 }) {
   const [permissions, setPermissions] = useState(initial);
+  const [identityId, setIdentityId] = useState<string | null>(initialIdentityId);
+  const [refreshPending, setRefreshPending] = useState(false);
   const current = useRef(initial);
+  const currentIdentity = useRef<string | null>(initialIdentityId);
   const pathname = usePathname(),
     router = useRouter();
   useEffect(() => {
+    // A stale server layout must not restore the old account after /me changed identity.
+    if (currentIdentity.current !== initialIdentityId) return;
     current.current = initial;
     setPermissions(initial);
-  }, [initial]);
+  }, [initial, initialIdentityId]);
+  useEffect(() => {
+    if (!refreshPending) return;
+    setRefreshPending(false);
+    // Commit the identity gate (and unmount private drafts) before requesting a new layout.
+    router.refresh();
+  }, [refreshPending, router]);
   useEffect(() => {
     const controller = new AbortController();
     let running = false;
@@ -30,20 +43,25 @@ export function WorkspacePermissions({
           signal: controller.signal,
         });
         if (!response.ok && response.status !== 401) return;
-        const data = response.ok ? await response.json() : { permissions: [] };
+        const data = response.ok ? await response.json() : { id: null, permissions: [] };
+        if (response.ok && (typeof data.id !== "string" || !data.id)) return;
         if (
           !Array.isArray(data.permissions) ||
           !data.permissions.every((key: unknown) => typeof key === "string")
         )
           return;
         const next: string[] = data.permissions;
+        const nextIdentity: string | null = data.id;
         if (
           !controller.signal.aborted &&
-          [...current.current].sort().join() !== [...next].sort().join()
+          (currentIdentity.current !== nextIdentity ||
+            [...current.current].sort().join() !== [...next].sort().join())
         ) {
+          currentIdentity.current = nextIdentity;
           current.current = next;
+          setIdentityId(nextIdentity);
           setPermissions(next);
-          router.refresh();
+          setRefreshPending(true);
         }
       } catch {
         /* Keep navigation stable during transient network errors; APIs reauthorize. */
@@ -59,8 +77,13 @@ export function WorkspacePermissions({
       clearInterval(timer);
       window.removeEventListener("focus", refresh);
     };
-  }, [pathname, router]);
-  return <Context value={permissions}>{children}</Context>;
+  }, [pathname, router, initialIdentityId]);
+  const confirmedIdentity = identityId === initialIdentityId;
+  return (
+    <Context value={confirmedIdentity ? permissions : []}>
+      {confirmedIdentity ? children : <p role="status">Atualizando sua sessão…</p>}
+    </Context>
+  );
 }
 export function useWorkspacePermissions(fallback: readonly string[] = []) {
   return useContext(Context) ?? fallback;

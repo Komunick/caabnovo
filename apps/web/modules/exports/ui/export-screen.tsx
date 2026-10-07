@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { ExportCatalog, ExportFormat, ExportOperation, ExportRequest } from "@caab/contracts";
-import { useDraftState } from "@/components/workspace-drafts";
+import { useDraftCache, useDraftState } from "@/components/workspace-drafts";
 import Link from "next/link";
 import { ArrowUp, ArrowDown, Download, ArrowLeft } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
@@ -23,6 +23,7 @@ const signature = (value: unknown) => {
   return hash.toString(36);
 };
 export type ExportInitial = {
+  format?: ExportFormat;
   filters?: Record<string, string>;
   columns?: string[];
   sort?: string;
@@ -34,6 +35,7 @@ export function ExportScreen({
   backHref,
   initial,
   initialFilters = {},
+  seedFilters,
   renderFilter,
   context,
   defaultOrderLabel = "Identificador",
@@ -45,17 +47,39 @@ export function ExportScreen({
   /** Selection brought from the originating screen (e.g. the report the user was reading). */
   initial?: ExportInitial;
   initialFilters?: Record<string, string>;
-  renderFilter?(key: string, value: string, onChange: (value: string) => void): ReactNode;
+  /** One-time draft values, excluded from the identity of the originating selection. */
+  seedFilters?: Record<string, string>;
+  renderFilter?(
+    key: string,
+    value: string,
+    onChange: (value: string) => void,
+    /** Lets a renderer group several filters under one fieldset. */
+    group?: { filters: Record<string, string>; setFilter(key: string, value: string): void },
+  ): ReactNode;
   context?: ExportRequest["context"];
   /** What the adapter orders by when no sort column is chosen. */
   defaultOrderLabel?: string;
   backLabel?: string;
 }) {
   const key = `export:${catalog.module}:${catalog.dataset}:${signature({ ...initial, filters: Object.fromEntries(Object.entries(initial?.filters ?? initialFilters).sort(([a], [b]) => a.localeCompare(b))), context })}`;
-  const [draftFilters, setFilters] = useDraftState<Record<string, string>>(
+  const cache = useDraftCache();
+  const identity = `${cache.scope}${key}`;
+  const seed = useRef({ identity, allowed: !cache.has(`${key}:filters`) });
+  if (seed.current.identity !== identity)
+    seed.current = { identity, allowed: !cache.has(`${key}:filters`) };
+  const [draftFilters, updateFilters] = useDraftState<Record<string, string>>(
     `${key}:filters`,
     initial?.filters ?? initialFilters,
   );
+  useEffect(() => {
+    if (!seedFilters || !seed.current.allowed) return;
+    seed.current.allowed = false;
+    updateFilters((previous) => ({ ...previous, ...seedFilters }));
+  }, [seedFilters, updateFilters]);
+  const setFilters: typeof updateFilters = (next) => {
+    seed.current.allowed = false;
+    updateFilters(next);
+  };
   const accessReport = catalog.module === "reports" && catalog.dataset === "access";
   // Normalize old empty drafts as well as the initial selection, for display and submission.
   const filters = accessReport
@@ -71,7 +95,10 @@ export function ExportScreen({
     `${key}:direction`,
     initial?.direction ?? "asc",
   );
-  const [format, setFormat] = useDraftState<ExportFormat>(`${key}:format`, "xlsx");
+  const [format, setFormat] = useDraftState<ExportFormat>(
+    `${key}:format`,
+    initial?.format ?? "xlsx",
+  );
   const [error, setError] = useDraftState(`${key}:error`, "");
   const [operation, setOperation] = useState<ExportOperation | null>(null);
   const frame = useRef<HTMLIFrameElement>(null),
@@ -210,8 +237,14 @@ export function ExportScreen({
               <div className="list-filters export-filters">
                 {catalog.filters.map(
                   (filter) =>
-                    renderFilter?.(filter.key, filters[filter.key] ?? "", (value) =>
-                      setFilters({ ...filters, [filter.key]: value }),
+                    renderFilter?.(
+                      filter.key,
+                      filters[filter.key] ?? "",
+                      (value) => setFilters({ ...filters, [filter.key]: value }),
+                      {
+                        filters,
+                        setFilter: (key, value) => setFilters({ ...filters, [key]: value }),
+                      },
                     ) ?? (
                       <FormField
                         key={filter.key}
@@ -333,6 +366,13 @@ export function ExportScreen({
               </ol>
             </fieldset>
             {error ? <p role="alert">{error}</p> : null}
+            {initial?.format && (
+              <p className="export-hint">
+                Formato anterior:{" "}
+                {initial.format === "xlsx" ? "Excel" : initial.format.toUpperCase()}. Você pode
+                escolher outro formato abaixo.
+              </p>
+            )}
             <div className="button-row">
               {(
                 [
@@ -340,18 +380,22 @@ export function ExportScreen({
                   ["csv", "CSV"],
                   ["pdf", "PDF"],
                 ] as const
-              ).map(([value, label]) => (
-                <Button
-                  key={value}
-                  type="submit"
-                  value={value}
-                  intent="primary"
-                  size="compact"
-                  disabled={active}
-                >
-                  <Download size={18} aria-hidden="true" /> Exportar em {label}
-                </Button>
-              ))}
+              )
+                .toSorted(
+                  ([a], [b]) => Number(b === initial?.format) - Number(a === initial?.format),
+                )
+                .map(([value, label]) => (
+                  <Button
+                    key={value}
+                    type="submit"
+                    value={value}
+                    intent="primary"
+                    size="compact"
+                    disabled={active}
+                  >
+                    <Download size={18} aria-hidden="true" /> Exportar em {label}
+                  </Button>
+                ))}
             </div>
             <p role="status" aria-live="polite">
               {operation?.phase === "completed"

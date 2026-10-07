@@ -2,7 +2,12 @@ import PDFDocument from "pdfkit";
 import { finished } from "node:stream/promises";
 import { setImmediate } from "node:timers/promises";
 import { textValue, type Writer } from "./shared";
-import type { ExportColumn } from "@caab/contracts";
+import type { ExportColumn, ExportScalar } from "@caab/contracts";
+import { createReadStream } from "node:fs";
+import { mkdtemp, open, unlink, rmdir, type FileHandle } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { createInterface } from "node:readline";
 /** Portuguese is covered by the standard PDF font. Unsupported code points
  * use an explicit reversible escape instead of disappearing as missing glyphs. */
 function printable(value: string) {
@@ -16,112 +21,289 @@ function printable(value: string) {
     )
     .join("");
 }
-export const writePdf: Writer = async (rows, columns, output, signal) => {
-  signal.throwIfAborted();
-  const pdf = new PDFDocument({
-    size: "A4",
-    layout: "landscape",
-    margin: 35,
-    bufferPages: false,
-    autoFirstPage: false,
-    info: {
-      Title: "Exportação CAAB",
-      Subject: "America/Bahia. Unicode: \\u{hex}; barra original: \\\\.",
-    },
-  });
-  const stop = () => {
-    pdf.destroy(new Error("EXPORT_CANCELLED"));
-    output.destroy(new Error("EXPORT_CANCELLED"));
-  };
-  signal.addEventListener("abort", stop, { once: true });
-  const done = finished(output, { readable: false, signal, cleanup: true });
-  void done.catch(() => {});
-  pdf.on("error", (error) => output.destroy(error));
-  output.on("error", () => pdf.destroy());
-  pdf.pipe(output);
-  const flow = async () => {
+export function createPdfWriter(presentation?: {
+  title: string;
+  notes: string;
+  context: string;
+  evolution: boolean;
+}): Writer {
+  return async (rows, columns, output, signal) => {
     signal.throwIfAborted();
-    while (pdf.readableLength > 65536) {
-      await setImmediate(undefined, { signal });
-      if (output.destroyed) throw output.errored ?? new Error("EXPORT_STREAM_CLOSED");
-    }
-  };
-  const bands: ExportColumn[][] = [];
-  for (let n = 0; n < columns.length; n += 4) bands.push(columns.slice(n, n + 4));
-  let logical = 0,
-    page = 0;
-  const newPage = (band: number) => {
-    pdf.addPage();
-    page++;
-    pdf.font("Helvetica").fontSize(9);
-    pdf.text(
-      `CAAB | Fuso: America/Bahia | Faixa ${band + 1}/${bands.length} | Página ${page}`,
-      35,
-      25,
-    );
-    pdf
-      .fontSize(8)
-      .text(
-        "Unicode: \\u{hex}; barra original: \\\\. Continuação mantém o número do registro.",
-        35,
-        40,
-      );
-    const width = 770 / bands[band]!.length;
-    bands[band]!.forEach((c, i) =>
-      pdf.text(printable(c.label), 35 + i * width, 58, { width: width - 10, lineBreak: false }),
-    );
-    return 83;
-  };
-  try {
-    let y = newPage(0);
-    for await (const row of rows) {
-      logical++;
-      for (let band = 0; band < bands.length; band++) {
-        if (bands.length > 1 && (logical > 1 || band > 0)) y = newPage(band);
-        const cols = bands[band]!,
-          width = 770 / cols.length;
-        const lines = cols.map((c) => {
-          const value = printable(textValue(row.values[c.key]));
-          const result: string[] = [];
-          for (const paragraph of value.split("\n")) {
-            let line = "";
-            for (const char of paragraph) {
-              if (line && pdf.widthOfString(line + char) > width - 12) {
-                result.push(line);
-                line = "";
-              }
-              line += char;
-            }
-            result.push(line);
-          }
-          return result;
-        });
-        const length = Math.max(...lines.map((l) => l.length));
-        for (let n = 0; n < length; n++) {
-          if (y > 530) y = newPage(band);
-          if (n === 0 || y === 83) {
-            pdf.fontSize(7).text(`Registro ${logical}${n ? " (continuação)" : ""}`, 35, y);
-            y += 11;
-            pdf.fontSize(8);
-          }
-          lines.forEach((line, i) =>
-            pdf.text(line[n] ?? "", 35 + i * width, y, { width: width - 10, lineBreak: false }),
-          );
-          y += 12;
+    const pdf = new PDFDocument({
+      size: "A4",
+      layout: "landscape",
+      margin: 35,
+      bufferPages: false,
+      autoFirstPage: false,
+      info: {
+        Title: presentation?.title ?? "Exportação CAAB",
+        Subject: "America/Bahia. Unicode: \\u{hex}; barra original: \\\\.",
+      },
+    });
+    const stop = () => {
+      pdf.destroy(new Error("EXPORT_CANCELLED"));
+      output.destroy(new Error("EXPORT_CANCELLED"));
+    };
+    signal.addEventListener("abort", stop, { once: true });
+    const done = finished(output, { readable: false, signal, cleanup: true });
+    void done.catch(() => {});
+    pdf.on("error", (error) => output.destroy(error));
+    output.on("error", () => pdf.destroy());
+    pdf.pipe(output);
+    const flow = async () => {
+      signal.throwIfAborted();
+      while (pdf.readableLength > 65536) {
+        await setImmediate(undefined, { signal });
+        if (output.destroyed) throw output.errored ?? new Error("EXPORT_STREAM_CLOSED");
+      }
+    };
+    const bands: ExportColumn[][] = [];
+    for (let n = 0; n < columns.length; n += 4) bands.push(columns.slice(n, n + 4));
+    let logical = 0,
+      page = 0;
+    let chartDirectory: string | undefined,
+      chartFile: FileHandle | undefined,
+      recordsFile: FileHandle | undefined,
+      maximum = 1;
+    const presentationPage = (heading: string) => {
+      pdf.addPage();
+      page++;
+      pdf.font("Helvetica").fontSize(9).fillColor("#142b49");
+      pdf.text(`CAAB | Fuso: America/Bahia | Página ${page}`, 35, 25);
+      pdf.font("Helvetica-Bold").fontSize(18).text(heading, 35, 58);
+      pdf.font("Helvetica").fontSize(10);
+      return 92;
+    };
+    const paragraph = async (text: string, start: number, heading: string) => {
+      let y = start;
+      for (const part of printable(text).split("\n")) {
+        let line = "";
+        const draw = async () => {
+          if (y > 525) y = presentationPage(heading);
+          pdf.text(line, 35, y, { width: 770, lineBreak: false });
+          y += 15;
           await flow();
+        };
+        for (const char of part) {
+          if (line && pdf.widthOfString(line + char) > 760) {
+            const split = line.lastIndexOf(" ");
+            const remaining = split > 0 ? line.slice(split + 1) : "";
+            if (split > 0) line = line.slice(0, split);
+            await draw();
+            line = remaining;
+          }
+          line += char;
         }
-        y += 8;
+        await draw();
+      }
+      return y;
+    };
+    const newPage = (band: number) => {
+      pdf.addPage();
+      page++;
+      pdf.font("Helvetica").fontSize(9);
+      pdf.text(
+        `CAAB | Fuso: America/Bahia | Faixa ${band + 1}/${bands.length} | Página ${page}`,
+        35,
+        25,
+      );
+      pdf
+        .fontSize(8)
+        .text(
+          "Unicode: \\u{hex}; barra original: \\\\. Continuação mantém o número do registro.",
+          35,
+          40,
+        );
+      pdf.fontSize(7).text("Registro", 35, 58, { width: 45, lineBreak: false });
+      pdf.fontSize(8);
+      const width = 720 / bands[band]!.length;
+      bands[band]!.forEach((c, i) =>
+        pdf.text(printable(c.label), 85 + i * width, 58, { width: width - 10, lineBreak: false }),
+      );
+      return 83;
+    };
+    const drawRow = async (
+      values: Record<string, ExportScalar>,
+      band: number,
+      record: number,
+      start: number,
+    ) => {
+      let y = start;
+      const cols = bands[band]!,
+        width = 720 / cols.length;
+      pdf.fontSize(8);
+      const lines = cols.map((c) => {
+        const value = printable(textValue(values[c.key]));
+        const result: string[] = [];
+        for (const paragraph of value.split("\n")) {
+          let line = "";
+          for (const char of paragraph) {
+            if (line && pdf.widthOfString(line + char) > width - 12) {
+              const split = line.lastIndexOf(" ");
+              const remaining = split > 0 ? line.slice(split + 1) : "";
+              if (split > 0) line = line.slice(0, split);
+              result.push(line);
+              line = remaining;
+            }
+            line += char;
+          }
+          result.push(line);
+        }
+        return result;
+      });
+      const length = Math.max(...lines.map((l) => l.length));
+      const available = (top: number) => Math.max(0, Math.floor((530 - top) / 12) + 1);
+      const pageLines = available(83);
+      // Keep cells that fit one page intact, while allowing giant cells to use the remaining space.
+      // For ordinary rows this keeps the whole row together, including wrapped identifiers.
+      const prefix = Math.max(1, ...lines.map((l) => l.length).filter((n) => n <= pageLines));
+      if (available(y) < prefix) y = newPage(band);
+      for (let offset = 0; offset < length;) {
+        const count = Math.min(available(y), length - offset);
+        pdf
+          .fontSize(7)
+          .text(`${record}${offset ? " cont." : ""}`, 35, y, { width: 45, lineBreak: false });
+        pdf.fontSize(8);
+        // Emit each cell's lines consecutively within this page segment. Coordinates are unchanged,
+        // but text extractors no longer insert adjacent columns between fragments of a cell.
+        for (let col = 0; col < lines.length; col++) {
+          for (let n = 0; n < count; n++) {
+            pdf.text(lines[col]![offset + n] ?? "", 85 + col * width, y + n * 12, {
+              width: width - 10,
+              lineBreak: false,
+            });
+            await flow();
+          }
+        }
+        y += count * 12;
+        offset += count;
+        if (offset < length) y = newPage(band);
+      }
+      return y + 6;
+    };
+    try {
+      if (presentation) {
+        let coverY = presentationPage(`CAAB | ${presentation.title}`);
+        coverY = await paragraph(presentation.context, coverY, presentation.title);
+        coverY = await paragraph(
+          `Gerado em: ${new Date().toISOString()} (UTC)`,
+          coverY,
+          presentation.title,
+        );
+        coverY += 20;
+        if (coverY > 495) coverY = presentationPage(presentation.title);
+        pdf.font("Helvetica-Bold").fontSize(12).text("Análise da gestão", 35, coverY);
+        pdf.font("Helvetica").fontSize(10);
+        coverY = await paragraph(
+          "Interpretação da gestão, separada dos indicadores medidos.",
+          coverY + 22,
+          "Análise da gestão (continuação)",
+        );
+        await paragraph(
+          presentation.notes || "Nenhum comentário incluído.",
+          coverY + 10,
+          "Análise da gestão (continuação)",
+        );
+        if (presentation.evolution) {
+          // Spool only authorized aggregate chart points, never the whole file or detail rows.
+          // This keeps memory bounded for long periods and is removed on success/failure/cancel.
+          chartDirectory = await mkdtemp(join(tmpdir(), "caab-export-chart-"));
+          chartFile = await open(join(chartDirectory, "series.jsonl"), "wx");
+        }
+      }
+      if (bands.length > 1) {
+        chartDirectory ??= await mkdtemp(join(tmpdir(), "caab-export-chart-"));
+        recordsFile = await open(join(chartDirectory, "records.jsonl"), "wx", 0o600);
+      }
+      let y = newPage(0);
+      for await (const row of rows) {
+        if (chartFile && row.chart) {
+          maximum = Math.max(maximum, row.chart.value);
+          await chartFile.writeFile(`${JSON.stringify(row.chart)}\n`);
+        }
+        logical++;
+        if (recordsFile)
+          await recordsFile.writeFile(
+            `${JSON.stringify(Object.fromEntries(columns.map((column) => [column.key, row.values[column.key] ?? null])))}\n`,
+          );
+        y = await drawRow(row.values, 0, logical, y);
+      }
+      if (recordsFile && chartDirectory) {
+        await recordsFile.close();
+        recordsFile = undefined;
+        // Each horizontal band contains all records, rather than opening a page per row/band.
+        // Replay selected values from a private spool to retain bounded memory and column order.
+        for (let band = 1; band < bands.length; band++) {
+          y = newPage(band);
+          const records = createReadStream(join(chartDirectory, "records.jsonl"));
+          const lines = createInterface({ input: records, crlfDelay: Infinity });
+          let record = 0;
+          try {
+            for await (const line of lines) {
+              signal.throwIfAborted();
+              y = await drawRow(JSON.parse(line), band, ++record, y);
+            }
+          } finally {
+            lines.close();
+            records.destroy();
+            await finished(records, { cleanup: true }).catch(() => {});
+          }
+        }
+      }
+      if (chartFile && chartDirectory) {
+        await chartFile.close();
+        chartFile = undefined;
+        const series = createReadStream(join(chartDirectory, "series.jsonl"));
+        const lines = createInterface({ input: series, crlfDelay: Infinity });
+        let chartY = presentationPage("Evolução mensal"),
+          hasSeries = false;
+        try {
+          for await (const line of lines) {
+            signal.throwIfAborted();
+            hasSeries = true;
+            const point = JSON.parse(line) as { label: string; value: number };
+            pdf.font("Helvetica").fontSize(9);
+            const label = printable(`${point.label}: ${point.value.toLocaleString("pt-BR")}`);
+            const height = Math.max(24, pdf.heightOfString(label, { width: 285 }) + 8);
+            if (chartY + height > 530) chartY = presentationPage("Evolução mensal (continuação)");
+            pdf.fontSize(9).fillColor("#142b49").text(label, 35, chartY, { width: 285 });
+            if (point.value > 0)
+              pdf.rect(335, chartY + 2, (point.value / maximum) * 450, 10).fill("#214f86");
+            chartY += height;
+            await flow();
+          }
+          if (!hasSeries) pdf.text("Sem dados de evolução no período selecionado.", 35, chartY);
+        } finally {
+          lines.close();
+          series.destroy();
+          await finished(series, { cleanup: true }).catch(() => {});
+        }
+      }
+      signal.throwIfAborted();
+      pdf.end();
+      await done;
+    } catch (error) {
+      pdf.destroy();
+      if (!output.destroyed)
+        output.destroy(error instanceof Error ? error : new Error("EXPORT_FAILED"));
+      throw error;
+    } finally {
+      signal.removeEventListener("abort", stop);
+      await chartFile?.close();
+      await recordsFile?.close();
+      if (chartDirectory) {
+        // Delete only the exact artifacts created by this invocation; no recursive deletion.
+        await unlink(join(chartDirectory, "series.jsonl")).catch((error: NodeJS.ErrnoException) => {
+          if (error.code !== "ENOENT") throw error;
+        });
+        await unlink(join(chartDirectory, "records.jsonl")).catch(
+          (error: NodeJS.ErrnoException) => {
+            if (error.code !== "ENOENT") throw error;
+          },
+        );
+        await rmdir(chartDirectory);
       }
     }
-    signal.throwIfAborted();
-    pdf.end();
-    await done;
-  } catch (error) {
-    pdf.destroy();
-    if (!output.destroyed)
-      output.destroy(error instanceof Error ? error : new Error("EXPORT_FAILED"));
-    throw error;
-  } finally {
-    signal.removeEventListener("abort", stop);
-  }
-};
+  };
+}
+export const writePdf: Writer = createPdfWriter();

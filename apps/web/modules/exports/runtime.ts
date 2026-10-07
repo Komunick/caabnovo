@@ -78,7 +78,10 @@ export async function prepareExport(
   await beginExportOperation(pools.control, operation);
   return {
     columns: input.columns.map((key) => catalog.columns.find((c) => c.key === key)!),
-    write: { csv: writeCsv, xlsx: writeXlsx, pdf: writePdf }[input.format],
+    write:
+      input.format === "pdf" && adapter.writePdf
+        ? adapter.writePdf(input)
+        : { csv: writeCsv, xlsx: writeXlsx, pdf: writePdf }[input.format],
     batches: (signal) => exportBatches(pools.data, adapter, input, signal),
     authorize: (ids, signal) =>
       authorizeCurrentExport(pools.control, adapter, actor, input, ids, signal),

@@ -167,6 +167,34 @@ export const reportQuerySchema = z
       ctx.addIssue({ code: "custom", path: ["groupBy"], message: "Agrupamento inválido" });
   });
 export type ReportQuery = z.infer<typeof reportQuerySchema>;
+/** Direct overview exports require a comparison period, with no duration or row ceiling.
+ * The paged screen and the historical queued-export schema remain separate. */
+export const reportOverviewFiltersSchema = z
+  .object({
+    from: reportDaySchema,
+    to: reportDaySchema,
+    channel: z.enum(["all", "admin", "site", "app"]).default("all"),
+    environment: z.enum(["production", "development", "test"]).default("production"),
+    source: z
+      .string()
+      .regex(/^[a-z0-9.-]{0,80}$/)
+      .default(""),
+    notes: z.string().trim().max(2000).default(""),
+  })
+  .strict()
+  .refine((input) => input.from <= input.to, {
+    path: ["to"],
+    message: "Confira a ordem das datas.",
+  })
+  // The previous period doubles the span back from `from`; keep every bound well inside
+  // the range PostgreSQL accepts so an extreme period is a 422 before download, not a SQL error.
+  .refine(
+    (input) => {
+      const { previousFrom, until } = reportBounds(input);
+      return previousFrom.getUTCFullYear() >= 1000 && until.getUTCFullYear() <= 9999;
+    },
+    { path: ["from"], message: "Período fora do intervalo suportado." },
+  );
 /** JSONB changes object key order; pagination does not change the exported filters. */
 export function sameReportFilters(candidate: ReportQuery, applied: ReportQuery): boolean {
   const left = reportQuerySchema.safeParse({ ...candidate, page: 1 });
@@ -311,9 +339,19 @@ export function reportBounds(query: Pick<ReportQuery, "from" | "to">) {
   };
 }
 export function reportChange(value: number, previous: number) {
+  if (previous > 0 && Number.isSafeInteger(value) && Number.isSafeInteger(previous)) {
+    // Exact integer arithmetic matches SQL's floor(change * 10 + 0.5), including negative ties.
+    const denominator = BigInt(previous);
+    const numerator = (BigInt(value) - BigInt(previous)) * 1000n;
+    let rounded = numerator / denominator;
+    const remainder = numerator % denominator;
+    if (remainder >= 0n && remainder * 2n >= denominator) rounded++;
+    else if (remainder < 0n && -remainder * 2n > denominator) rounded--;
+    return Number(rounded) / 10;
+  }
   return previous === 0
     ? value === 0
       ? 0
       : null
-    : Math.round(((value - previous) / previous) * 1000) / 10;
+    : Math.round(((value - previous) * 1000) / previous) / 10;
 }

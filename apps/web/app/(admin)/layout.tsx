@@ -19,29 +19,29 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   if (!identity) redirect("/login");
 
   return (
-    <WorkspacePermissions initial={identity.permissions}>
-      <AppShell
-        controls={<WorkspaceControls permissions={identity.permissions} />}
-        sidebar={
-          <div className="sidebar-inner">
-            <Brand inverse />
-            <AuthorizedNav permissions={identity.permissions} />
-            <p className="sidebar-footer">
-              <span aria-hidden="true" /> Ambiente seguro
-            </p>
-            <AccountMenu
-              name={identity.name}
-              email={identity.email}
-              role={identity.roles[0]?.name ?? "Usuário interno"}
-            />
-          </div>
-        }
-      >
-        <WorkspaceDrafts key={identity.id}>
+    <WorkspacePermissions initial={identity.permissions} initialIdentityId={identity.id}>
+      <WorkspaceDrafts key={identity.id}>
+        <AppShell
+          controls={<WorkspaceControls permissions={identity.permissions} />}
+          sidebar={
+            <div className="sidebar-inner">
+              <Brand inverse />
+              <AuthorizedNav permissions={identity.permissions} />
+              <p className="sidebar-footer">
+                <span aria-hidden="true" /> Ambiente seguro
+              </p>
+              <AccountMenu
+                name={identity.name}
+                email={identity.email}
+                role={identity.roles[0]?.name ?? "Usuário interno"}
+              />
+            </div>
+          }
+        >
           <PanelAnalytics />
           {children}
-        </WorkspaceDrafts>
-      </AppShell>
+        </AppShell>
+      </WorkspaceDrafts>
     </WorkspacePermissions>
   );
 }

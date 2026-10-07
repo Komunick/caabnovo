@@ -116,10 +116,7 @@ export async function reportUsage(db: ReportDb, query: ReportQuery): Promise<Rep
     service: string;
     slot: string;
     confirmed: string;
-  }>(
-    `WITH opened AS (SELECT session_hash,min(occurred_at) AS at FROM analytics_event WHERE ${where} AND occurred_at >= $4 AND occurred_at < $5 AND event='schedule_open' GROUP BY session_hash), service AS (SELECT o.session_hash,min(e.occurred_at) AS at FROM opened o JOIN analytics_event e ON e.session_hash=o.session_hash AND e.occurred_at>=o.at AND e.occurred_at<$5 AND e.event='service_selected' GROUP BY o.session_hash), slot AS (SELECT s.session_hash,min(e.occurred_at) AS at FROM service s JOIN analytics_event e ON e.session_hash=s.session_hash AND e.occurred_at>=s.at AND e.occurred_at<$5 AND e.event='slot_selected' GROUP BY s.session_hash), confirmed AS (SELECT s.session_hash FROM slot s JOIN analytics_event e ON e.session_hash=s.session_hash AND e.occurred_at>=s.at AND e.occurred_at<$5 AND e.event='booking_confirmed' GROUP BY s.session_hash) SELECT (SELECT count(*) FROM opened)::text AS opened,(SELECT count(*) FROM service)::text AS service,(SELECT count(*) FROM slot)::text AS slot,(SELECT count(*) FROM confirmed)::text AS confirmed`,
-    values,
-  );
+  }>(reportUsageFunnelSql(where), values);
   const row = result.rows[0]!,
     active = live.rows[0]!,
     steps = funnel.rows[0]!;
@@ -162,4 +159,9 @@ export async function reportUsage(db: ReportDb, query: ReportQuery): Promise<Rep
       { step: "Confirmou reserva", sessions: Number(steps.confirmed) },
     ],
   };
+}
+
+/** Shared ordered-session funnel for the screen and the direct overview export. */
+export function reportUsageFunnelSql(where: string, from = "$4", until = "$5") {
+  return `WITH opened AS (SELECT session_hash,min(occurred_at) AS at FROM analytics_event WHERE ${where} AND occurred_at >= ${from} AND occurred_at < ${until} AND event='schedule_open' GROUP BY session_hash), service AS (SELECT o.session_hash,min(e.occurred_at) AS at FROM opened o JOIN analytics_event e ON e.session_hash=o.session_hash AND e.occurred_at>=o.at AND e.occurred_at<${until} AND e.event='service_selected' GROUP BY o.session_hash), slot AS (SELECT s.session_hash,min(e.occurred_at) AS at FROM service s JOIN analytics_event e ON e.session_hash=s.session_hash AND e.occurred_at>=s.at AND e.occurred_at<${until} AND e.event='slot_selected' GROUP BY s.session_hash), confirmed AS (SELECT s.session_hash FROM slot s JOIN analytics_event e ON e.session_hash=s.session_hash AND e.occurred_at>=s.at AND e.occurred_at<${until} AND e.event='booking_confirmed' GROUP BY s.session_hash) SELECT (SELECT count(*) FROM opened)::text AS opened,(SELECT count(*) FROM service)::text AS service,(SELECT count(*) FROM slot)::text AS slot,(SELECT count(*) FROM confirmed)::text AS confirmed`;
 }
