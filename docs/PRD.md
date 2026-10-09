@@ -1,12 +1,5 @@
 # CAAB — Sistema Interno de Gestão
 
-## Checkpoint da consolidação — 09/10/2026
-
-A revisão abaixo conserva o retrato consultado em 07/10/2026. Na consolidação local de 09/10, `dev`
-está em `76965dc`: os PRs #48 (Mensagens/uploads/evidências) e #50 (agenda/Gitleaks) já foram
-integrados. Referências a esses PRs como abertos nas seções da revisão são históricas. O plano de
-Chat interno permanece documental, com implementação e homologação pendentes.
-
 Este PRD define objetivos, requisitos e limites do produto. O [mapa de módulos](MODULES.md) e as
 specs são as fontes por domínio; seus checkpoints devem ser lidos com a data e a versão a que se
 referem. Planejamento, código integrado, CI e homologação são estados distintos. UI/UX segue o
@@ -22,20 +15,22 @@ CAASSH permanece suspenso e RH é sugestão em avaliação.
 
 **Tipo:** Product Requirements Document (PRD)
 
-**Versão:** 0.6
+**Versão:** 0.7
 
-**Data:** 07/10/2026 (revisão integral; versão inicial de 09/09/2026)
+**Data:** 09/10/2026 (conciliação da revisão integral de 07/10; versão inicial de 09/09/2026)
 
 **Status:** requisitos conciliados com as specs e tickets; capacidades integradas, pendências de
 aceite e funcionalidades futuras distinguidas abaixo.
 
-**Base conferida:** dev/origin/dev em 1c21c9a711aa12f446918ac790bc6ede76490251, incluindo
+**Base conferida:** dev/origin/dev em 76965dc37167de64bdfa3086085519ec38125cfe, incluindo
 Agendamentos administrativo, cargo base Colaborador e exportações completas de Relatórios. A base
 Git não comprova implantação nem estado do banco de uso.
 
-**Cobertura:** specs 001–010 da base integrada; organização Jira/Confluence da spec 011 no PR #48;
-plano local 012 de Chat interno; todos os 53 tickets retornados pela consulta final do projeto CAAB,
-incluindo concluídos e históricos. Fontes, versões, limitações e correspondência por ticket estão na
+**Cobertura:** specs 001–010 da base integrada; organização Jira/Confluence da spec 011 integrada
+pelo PR #48; plano 012 de Chat interno reunido nesta entrega; todos os 53 tickets retornados pela
+consulta final do projeto CAAB, incluindo concluídos e históricos, consultados em 07/10/2026. Esta
+conciliação de 09/10 confirmou Git e PRs, sem nova consulta aos estados do Jira. Fontes, versões,
+limitações e correspondência por ticket estão na
 [evidência desta revisão](history/prd-review-2026-10-07.md). A versão 0.5 preparada na frente de
 Chat interno foi conciliada por seus requisitos CHAT-001–CHAT-015, sem substituir sua documentação.
 
@@ -43,18 +38,18 @@ Chat interno foi conciliada por seus requisitos CHAT-001–CHAT-015, sem substit
 
 | Área / fonte                                                        | Situação observada                                                                                                              | O que permanece aberto                                                                                                                           |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [Fundação e Colaboradores](../specs/001-project-foundation/spec.md) | Autenticação, cadastro administrativo, cargo único, delegação e cargo base implementados e integrados.                          | Matriz/QA humano, ativação da migration de cargo base no destino e correção visual G01 de Mensagens no PR #48.                                   |
+| [Fundação e Colaboradores](../specs/001-project-foundation/spec.md) | Autenticação, cadastro administrativo, cargo único, delegação e cargo base implementados e integrados.                          | Matriz/QA humano e ativação da migration de cargo base no destino. G01 de Mensagens foi integrado pelo PR #48.                                   |
 | [Programa integrado](../specs/002-integrated-modules/spec.md)       | Organiza dependências e critérios transversais; não equivale a todos os módulos entregues.                                      | Revisão transversal, histórico individual integrado e candidatos futuros delimitados.                                                            |
 | [Auditoria e Processamentos](../specs/003-audit-operations/spec.md) | Eventos e jobs reunidos, histórico e operação autorizada existentes.                                                            | Migrar exportação própria legada para download direto nos três formatos.                                                                         |
 | [Notícias](../specs/004-news-publishing/spec.md)                    | Editor, versões, mídia, publicação por canal e API pública de consulta implementados.                                           | Exportação própria, revalidação editorial no worker e validação dos consumidores externos.                                                       |
 | [Associados](../specs/005-members-management/spec.md)               | Cadastro, dependentes, foto/documentos, bloqueios e consulta OAB-BA implementados.                                              | Implementação da matriz documental/definição de reanálise, exportação própria, homologação institucional da consulta e definição da carteirinha. |
 | [Conta e Configurações](../specs/006-account-settings/spec.md)      | Perfil, senha, sessões, tema, rascunhos e senha inicial implementados.                                                          | Recebimento real de e-mails e caixa de entrada com escopo próprio; tema Cores Legado ainda planejado.                                            |
 | [Parceiros](../specs/007-partners-management/spec.md)               | Parceiros, unidades, benefícios, avaliações, dados públicos autorizados e CEP implementados.                                    | Exportação própria e portal autenticado externo, que é uma função futura distinta.                                                               |
-| [Agendamentos](../specs/008-scheduling-management/spec.md)          | Calendário, oferta por profissional/capacidade, aprovação, remarcação/recuperação, faltas e exportações integrados pelo PR #43. | QA humano/rollout, endurecimento de uploads no PR #48, ajustes visuais no PR #50; app/site e e-mails adiados.                                    |
+| [Agendamentos](../specs/008-scheduling-management/spec.md)          | Calendário, oferta por profissional/capacidade, aprovação, remarcação/recuperação, faltas e exportações integrados pelo PR #43. | QA humano/rollout; uploads e ajustes visuais foram integrados pelos PRs #48 e #50. App/site e e-mails adiados.                                   |
 | [Mensagens](../specs/009-messaging/spec.md)                         | Públicos, campanhas, prévia, agendamentos e histórico persistidos como protótipo.                                               | Aderência à finalidade, contratos e envio real por canal; exportação própria.                                                                    |
 | [Relatórios](../specs/010-reports-analytics/spec.md)                | Resumo, análise detalhada agrupada ou não e evolução com Excel/CSV/PDF diretos integrados pelos PRs #40 e #46.                  | Medições C1/T038, revisão humana específica e QA; integração não encerra o aceite.                                                               |
-| Organização documental — spec 011                                   | Aplicação parcial no Jira/Confluence e evidência preparada no PR #48; não é módulo do produto.                                  | Operações nativas de vínculos/hierarquia e fechamento documental.                                                                                |
-| Chat interno — plano 012                                            | Escopo definido, ticket Em Desenvolvimento; apenas planejamento/documentação nesta revisão.                                     | Spec, contratos e tarefas completos antes do código; implementação e homologação da entrega única.                                               |
+| Organização documental — spec 011                                   | Aplicação parcial no Jira/Confluence e evidência integrada pelo PR #48; não é módulo do produto.                                | Operações nativas de vínculos/hierarquia e fechamento documental.                                                                                |
+| Chat interno — plano 012                                            | Escopo definido, ticket Em Desenvolvimento; apenas planejamento/documentação nesta revisão.                                     | Spec, modelo e contratos antes do código; tarefas de distribuição já preparadas, implementação e homologação pendentes.                          |
 
 **Ordem e limites:** a prioridade máxima de Agendamentos foi definida no programa; o recorte
 administrativo avançou para código integrado, com os aceites acima ainda abertos. O número de
@@ -380,9 +375,9 @@ lista genérica Em atendimento/Concluído/Não compareceu. Transições e autori
 | AGE-016 | Entregar avisos operacionais de bloqueio, protocolo e decisão ao titular ou ao dependente e titular vigente, sem depender de preferências de campanhas; integração e homologação adiadas ao transporte real.              | Pós-MVP    |
 
 Sobreposição por beneficiário, aprovação, remarcação, faltas e permissões já estão integradas.
-Endurecimento adicional de autorização dos uploads após espera por lock está no PR #48; ajustes de
-calendário, diálogo e foco estão no PR #50. Isso não altera as pendências de QA e ativação no
-destino.
+Endurecimento adicional de autorização dos uploads após espera por lock foi integrado pelo PR #48;
+ajustes de calendário, diálogo e foco foram integrados pelo PR #50. Permanecem as pendências de QA e
+ativação no destino.
 
 ### 9.4 Associados
 
@@ -511,9 +506,9 @@ código ainda esteja ausente; os contratos da função discriminam o restante.
 
 Disponibilizar chat interno e comentários operacionais com notificações configuráveis (CAAB-49) tem
 plano definido em 07/10 e status Em Desenvolvimento, sem implementação comprovada. O
-[plano 012](../specs/012-internal-chat/plan.md) integra esta consolidação documental; sua origem
-está na [evidência desta revisão](history/prd-review-2026-10-07.md). Os requisitos abaixo preservam
-os mesmos IDs e o escopo da frente de Chat interno.
+[plano 012](../specs/012-internal-chat/plan.md) e a distribuição de tarefas integram esta
+conciliação; sua origem está na [evidência desta revisão](history/prd-review-2026-10-07.md). Os
+requisitos abaixo preservam os mesmos IDs e o escopo da frente de Chat interno.
 
 | ID       | Requisito                                                                                                                                                                                                                    | Prioridade    |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
@@ -919,7 +914,7 @@ identificar versão, ambiente, evidência e pessoa responsável pela homologaç�
 | ------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Cargos e contas sem cargo       | Três cargos, cargo único e regra de Colaborador decididos e implementados.      | Matriz/QA humano; conferir CB06 antes de aplicar migration no banco de uso.                          |
 | Publicação de Notícias          | Consulta, escrita e publicação têm permissões distintas, sem segunda aprovação. | Revalidação de autorização na execução assíncrona; aceite dos consumidores.                          |
-| Oferta e faltas de Agendamentos | Regras administrativas constam da spec 008 e estão integradas.                  | QA, revisão de destino, reservas legadas e correções específicas dos PRs #48/#50.                    |
+| Oferta e faltas de Agendamentos | Regras administrativas constam da spec 008 e estão integradas.                  | QA, revisão de destino e reservas legadas; correções dos PRs #48/#50 já integradas.                  |
 | E-mail e caixa de entrada       | E-mail transacional necessário; caixa de entrada confirmada como futura.        | Entrega real, usuários/canais/ações da caixa de entrada; não inventar provedor.                      |
 | Consulta OAB                    | Adaptador OAB-BA/Implanta e STATUS CAAB existentes.                             | Credenciais/configuração autorizadas e homologação positiva no destino.                              |
 | Documentação de dependentes     | Vínculos e parte dos documentos definidos na spec 005.                          | Implementar matriz documental em POL02; definir em POL01 quais alterações exigem nova análise.       |

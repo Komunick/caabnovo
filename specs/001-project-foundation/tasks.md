@@ -1,5 +1,15 @@
 # Tasks: Fundação, Colaboradores e infraestrutura de exportação — incremento de 21/09/2026
 
+## Conciliação documental dos marcadores — 09/10/2026-CODEX-mafaltti
+
+Base `dev` `76965dc`, conferida com o remoto. AC-T003 foi conciliada com CB07 e com a
+[evidência G02/G03](evidence/access-g02-g03-2026-10-05.md): ambas descrevem a mesma prova G02 já
+integrada pelo PR #45. AC-T005 registra agora a integração efetiva. AC-T004 conserva o marcador
+aberto porque sua redação também exige atualização visual por intervalo, foco e rota; a prova de
+lock G03/CB08 já está concluída, mas a evidência citada não demonstra esse restante visual. CB06,
+AC-T006 e QA humano permanecem pendentes. Nenhum teste ou aceite novo foi executado por esta
+conciliação; retratos datados abaixo conservam sua procedência.
+
 ## Correção do cadastro delegado — 06/10/2026-CODEX-mafaltti
 
 - [x] CB09 Corrigir a disponibilidade do seletor inicial para `roles:grant` e preparar regressão de
@@ -36,7 +46,7 @@ T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
       agendamento sem `messages:write`, mantendo consulta; validar Gestor/Colaborador de leitura,
       escrita concedida, revogação e POST negado. Coordenar Mensagens, ler guia de design e
       preservar M016/envio real desativado. Não alterar Agendamentos por essa ocorrência.
-- [ ] AC-T003 Complementar G02 em `apps/web/tests/e2e/direct-exports.spec.ts`: atribuir cargo
+- [x] AC-T003 Complementar G02 em `apps/web/tests/e2e/direct-exports.spec.ts`: atribuir cargo
       Colaborador real ao destinatário, executar a escrita recebida e confirmar que Gestor permanece
       negado e Colaborador não concede acessos/cargos por API forjada. Não converter a fixture sem
       cargo em decisão de migração de contas.
@@ -46,8 +56,9 @@ T096/T101–T118/T139–T142 nem alterar os IDs DS da entrega documental.
       rede como limite de atualização visual, não autorização do servidor.
 - [x] AC-T005 Decisão de produto P01 obtida em 05/10: contas novas sem cargo informado nascem
       Colaborador e existentes sem cargo em vigor recebem o cargo pela migration 0035, preservando
-      `user_access`. Contrato conciliado em 06/10; implementação no PR #45/`310aacd`, ainda não
-      integrado. Não atribuir aplicação em banco, QA humano ou AC-T006 a este encerramento.
+      `user_access`. Contrato conciliado em 06/10; implementação integrada pelo PR #45 em 06/10
+      (commit de integração `212c4ea`). Não atribuir aplicação em banco, QA humano ou AC-T006 a este
+      encerramento.
 - [ ] AC-T006 Quando houver autorização de ambiente, reexecutar integrações de autenticação,
       concessão, cargo único/migrations e E2E da matriz na versão conciliada; registrar commit e
       limites. QA humano e aceite de negócio devem ter registro próprio, nunca ser inferidos dos
