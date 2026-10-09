@@ -1,0 +1,976 @@
+{
+  "date": "2026-10-02",
+  "author": "CODEX",
+  "requester": "SOLICITANTE_NAO_VERIFICADO",
+  "authorization": "faça os ajsutees e atualize a documentação",
+  "base": "748539d",
+  "operations": [
+    {
+      "key": "CAAB-3",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Pendente\n\nhttps://trello.com/c/et8SwnMC/25-ajustar-informa%C3%A7%C3%B5es-recebidas-pela-consulta-a-oab\n\n## Escopo e rastreabilidade\n\nAjustes de apresentação e informações da consulta OAB registrados como concluídos. O adaptador oficial e a gestão de associados existem; esta revisão não reconstrói quais campos foram homologados no pedido original.\n\nFonte conferida: [specs/005-members-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/005-members-management). [PR15](https://github.com/Komunick/caabnovo/pull/15).\n\nHomologação externa permanece em Homologar a consulta oficial à OAB-BA (CAAB-31); não confundir ajuste de apresentação com validação do provedor real.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-7",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/XSVJPvdd/23-adi%C3%A7%C3%A3o-de-fotos-de-perfil-para-associados\n\n## Escopo e rastreabilidade\n\nFoto privada no cadastro e no perfil de associados, com controle de acesso e persistência.\n\nFonte conferida: [specs/005-members-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/005-members-management). [PR17](https://github.com/Komunick/caabnovo/pull/17).\n\nNão comprova identidade externa ou carteirinha digital.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-8",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/wI2aZEbN/24-implementa%C3%A7%C3%A3o-do-modulo-parceiros\n\n## Escopo e rastreabilidade\n\nAdministração de parceiros, unidades, categorias, contratos, benefícios, diretório e moderação; API pública de ofertas vigentes.\n\nFonte conferida: [specs/007-partners-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/007-partners-management). [PR18](https://github.com/Komunick/caabnovo/pull/18).\n\nPortal, QR/resgates e coleta externa não pertencem ao recorte integrado. Portal de Parceiros — funcionalidade prevista (CAAB-34) mantém o planejamento futuro.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-9",
+      "fields": {
+        "description": "Brainstorme sobre como ocorrera o projeto, quais tecnologias e ferramentas são as melhores para este projeto e quais funcionalidades serão oferecidas\n\n---\n\nOrigem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/zfWiAHrl/8-brainstorme-com-chatgpt\n\n## Escopo e rastreabilidade\n\nRegistro histórico de levantamento de ideias e direção inicial do projeto.\n\nFonte conferida: [docs/PRD.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/docs/PRD.md).\n\nA correspondência entre cada discussão original e os artefatos atuais não foi comprovada; não atribuir implementação ou homologação a este registro.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-10",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/wi1klxIM/9-gera%C3%A7%C3%A3o-do-plano-e-prd\n\n## Escopo e rastreabilidade\n\nProdução de plano e PRD, cujas versões atuais existem no repositório.\n\nFonte conferida: [docs/PRD.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/docs/PRD.md).\n\nPRD e plano são fontes de requisitos; sua existência não comprova implementação ou homologação.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-11",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/o3SBKGJm/10-spec-kit\n\n## Escopo e rastreabilidade\n\nEstrutura Spec Kit, templates, scripts e skills presentes no repositório.\n\nFonte conferida: [docs/TOOLING.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/docs/TOOLING.md).\n\nA presença das ferramentas não comprova execução integral de cada workflow.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-12",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/PJIwxxOE/13-analise-do-codex-sobre-os-modulos\n\n## Escopo e rastreabilidade\n\nAnálise documental dos módulos; há inventário funcional e auditoria de código no repositório.\n\nFonte conferida: [specs/002-integrated-modules/code-audit-2026-09-21.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/002-integrated-modules/code-audit-2026-09-21.md).\n\nNão foi comprovado que a auditoria atual corresponde exatamente ao pedido importado; preservar conclusão histórica sem inventar autoria ou aceite.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-13",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/3FjCINCJ/15-implementa%C3%A7%C3%A3o-do-modulo-noticias\n\n## Escopo e rastreabilidade\n\nEditor, mídia, versões, publicação/programação e prévias de notícias; rotas públicas de conteúdo.\n\nFonte conferida: [specs/004-news-publishing](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/004-news-publishing). [PR12](https://github.com/Komunick/caabnovo/pull/12).\n\nExportação transversal pertence a Baixar dados dos módulos em Excel, CSV e PDF (CAAB-23); integração completa dos consumidores externos não é comprovada por esta entrega.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-14",
+      "fields": {
+        "description": "Configurações da própria conta: nome, senha, e-mail e recuperação. O autenticador/MFA foi removido no PR13 por decisão explícita; não faz parte do requisito vigente.\n\nOrigem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/cMddrecm/20-implementa%C3%A7%C3%A3o-da-aba-configura%C3%A7%C3%B5es\n\n## Escopo e rastreabilidade\n\nConfigurações da própria conta: nome, e-mail, senha e recuperação; MFA removido por decisão explícita.\n\nFonte conferida: [specs/006-account-settings](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/006-account-settings). [PR13](https://github.com/Komunick/caabnovo/pull/13).\n\nEntrega real de recuperação/convites permanece em Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2).\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-15",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/m7AR88B7/19-implementa%C3%A7%C3%A3o-do-modulo-associados\n\n## Escopo e rastreabilidade\n\nGestão administrativa de associados, dependentes, documentos, análises e integração de consulta OAB.\n\nFonte conferida: [specs/005-members-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/005-members-management). [PR15](https://github.com/Komunick/caabnovo/pull/15).\n\nHomologação externa em Homologar a consulta oficial à OAB-BA (CAAB-31); requisitos institucionais de elegibilidade e credencial externa não são declarados entregues.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-16",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/LEDSZgn5/21-substitui%C3%A7%C3%A3o-do-modulo-usu%C3%A1rios-por-colaboradores\n\n## Escopo e rastreabilidade\n\nGestão de contas e permissões denominada Colaboradores, com acessos individuais e harmonização do painel.\n\nFonte conferida: [specs/001-project-foundation](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/001-project-foundation). [PR16](https://github.com/Komunick/caabnovo/pull/16).\n\nRegras posteriores de cargos e cargo único são acompanhadas em Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19). RH é possibilidade separada.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-17",
+      "fields": {
+        "description": "## Escopo e rastreabilidade\n\nPrimeira versão administrativa: catálogo, horários, reservas, remarcação, cancelamento, histórico e prevenção de conflitos da oferta.\n\nFonte conferida: [specs/008-scheduling-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/008-scheduling-management). [PR28](https://github.com/Komunick/caabnovo/pull/28).\n\nCalendário veio no PR34. Extensões locais de aprovação, faltas e avisos são acompanhadas em Agendamentos (CAAB-37); app/site continuam adiados.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-18",
+      "fields": {
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nBloquear autocadastro público por e-mail e preservar criação administrativa, login e recuperação.\n\n## Por que é importante\n\nEvitar criação de contas fora do fluxo autorizado.\n\n## Critérios de aceite\n\n- [ ] Tentativa pública não cria usuário, credencial ou sessão\n- [ ] Administrador autorizado continua criando contas\n- [ ] Login e recuperação preservados\n\n## Observações e referências\n\nPR35 integrado; implementação existente, com aceite humano pendente.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR35](https://github.com/Komunick/caabnovo/pull/35) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nImplementação integrada pelo PR35 e presente em dev 748539d: apps/web/modules/auth/auth-factory.ts mantém disableSignUp: true. Encaminhar para Em Teste / QA para reconciliar aceite humano, sem repetir implementação.\n\nAceite restante: registrar pessoa, versão e resultado para tentativa pública sem criação de usuário/credencial/sessão, criação administrativa, login e recuperação. Entrega real de e-mail é dependência própria em Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). Nenhuma homologação nova foi executada nesta revisão."
+      },
+      "status": "Em Teste / QA"
+    },
+    {
+      "key": "CAAB-19",
+      "fields": {
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nAplicar os três cargos e acessos expressamente concedidos, com um cargo vigente por conta e histórico preservado.\n\n## Por que é importante\n\nDar acesso coerente com as atribuições de cada pessoa.\n\n## Critérios de aceite\n\n- [ ] Administrador mantém administração autorizada\n- [ ] Gestor consulta módulos, exporta e usa Relatórios e delega acessos a terceiros sem alterar seus próprios acessos ou cargos\n- [ ] Colaborador só acessa funções concedidas\n- [ ] Navegação e servidor respeitam permissões\n- [ ] Cargo único e histórico são preservados\n\n## Observações e referências\n\nPR36 e PR39 integrados. Mostrar apenas funções autorizadas na navegação (CAAB-20) tem conversão para subtarefa pendente. Regra de contas sem cargo ainda precisa de definição; não impor cargo base retroativamente.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) [PR39](https://github.com/Komunick/caabnovo/pull/39) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nImplementação de cargos/acessos integrada pelos PR36 e PR39, incluindo cargo único. Em Desenvolvimento representa entrega parcialmente conciliada; não autoriza iniciar alterações de produto.\n\nPendências: validar a matriz Administrador/Gestor/Colaborador com humano identificado; definir com o responsável a regra para contas atualmente sem cargo antes de atribuição retroativa; acompanhar Mostrar apenas funções autorizadas na navegação (CAAB-20). Não inventar backfill de cargos nem declarar o conjunto homologado."
+      },
+      "status": "Em Desenvolvimento"
+    },
+    {
+      "key": "CAAB-20",
+      "fields": {
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nOcultar módulos, telas e ações não autorizados no menu, Início e busca global.\n\n## Por que é importante\n\nEvitar descoberta e uso de funções sem autorização.\n\n## Critérios de aceite\n\n- [ ] Menu, Início e busca não revelam funções sem consulta\n- [ ] URL e API continuam protegidas no servidor\n- [ ] Revogação elimina o acesso aplicável\n\n## Observações e referências\n\nPai CAAB-19. PR36 integrado; converter no próprio item, sem recriar.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nBase de navegação por permissão integrada no PR36. Encaminhar para Em Teste / QA para registrar humano, versão e resultados de menu, Início, busca, URL/API e revogação. A filiação pretendida é Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19); conversão nativa no mesmo ticket ainda precisa ser concluída. Não recriar o item."
+      },
+      "status": "Em Teste / QA"
+    },
+    {
+      "key": "CAAB-22",
+      "fields": {
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nFornecer núcleo reutilizável para baixar Excel, CSV e PDF com autorização e processamento incremental.\n\n## Por que é importante\n\nEvitar implementações incompatíveis e limites artificiais de paginação.\n\n## Critérios de aceite\n\n- [ ] Arquivos contêm conjunto completo autorizado\n- [ ] Filtros, ordem e colunas são respeitados\n- [ ] Revogação é revalidada durante processamento\n- [ ] Falhas não expõem dados sem autorização\n\n## Observações e referências\n\nPR36 integra núcleo e Colaboradores. Não duplica integração dos módulos em CAAB-23 nem Relatórios em CAAB-24. Não declarar os consumidores concluídos pelo motor.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nNúcleo de download direto integrado no PR36, com adaptador de Colaboradores; dev 748539d contém runtime, autorização e revalidação. Encaminhar para Em Teste / QA do núcleo, sem declarar todos os consumidores concluídos.\n\nAceite restante: humano identificado, versão e resultados para Excel/CSV/PDF, filtros/colunas/ordem, seleção completa e revogação. A evidência de Relatórios registra intermitência anterior no teste de revogação sob backpressure; conferir resultado na versão homologada. Integrações de módulos permanecem em Baixar dados dos módulos em Excel, CSV e PDF (CAAB-23) e Exportar o conjunto completo de dados em Relatórios (CAAB-24)."
+      },
+      "status": "Em Teste / QA"
+    },
+    {
+      "key": "CAAB-33",
+      "fields": {
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nPreservar a finalidade já confirmada de comunicados/campanhas aos associados. Revisar a aderência do protótipo existente antes de nova construção e alinhar com a diretoria os canais e limites ainda pendentes.\n\n## Por que é importante\n\nEscolher integrações com base na necessidade institucional.\n\n## Critérios de aceite\n\n- [ ] Revisar campanhas, públicos, programação, estados e permissões do protótipo conforme spec009 M016/T003\n- [ ] Registrar matriz de aderência, ajustes e decisão explícita de continuidade em specs/009-messaging/evidence/purpose-review.md antes de fixtures ou código novo\n- [ ] Manter envio real e M009/M010 adiados; finalidade confirmada não equivale à homologação do protótipo\n\n- [ ] Decisão identifica finalidade, público e canais autorizados\n- [ ] Distingue campanha, aviso operacional, caixa de entrada e atendimento\n- [ ] Pendências e critérios da futura integração ficam explícitos\n\n## Observações e referências\n\nProtótipo de Mensagens não prova envio real. Preservar escolhas já feitas em seus recortes, como WAHA de Agendamentos; não reabrir seleção indiscriminadamente.\n\nReferência funcional: [spec 009-messaging](https://github.com/Komunick/caabnovo/tree/dev/specs/009-messaging).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-4",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/p841tsK8/11-implementa%C3%A7%C3%A3o\n\nRegistro histórico de planejamento genérico. A execução é acompanhada nos tickets específicos; preservar status e referências, sem tratar este item como funcionalidade entregue.\n\n## Uso no acompanhamento\n\nRegistro de referência histórica, excluído da visão de trabalho ativo pela etiqueta historico-planejamento. O status preserva a importação e não indica execução atual. Acompanhar entregas nos tickets específicos; não contabilizar este item como esforço em curso."
+      },
+      "status": null
+    },
+    {
+      "key": "CAAB-5",
+      "fields": {
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/XqCeVJIt/12-ui-e-ux\n\nRegistro histórico de planejamento genérico. A execução é acompanhada nos tickets específicos; preservar status e referências, sem tratar este item como funcionalidade entregue.\n\n## Uso no acompanhamento\n\nRegistro de referência histórica, excluído da visão de trabalho ativo pela etiqueta historico-planejamento. O status preserva a importação e não indica execução atual. Acompanhar entregas nos tickets específicos; não contabilizar este item como esforço em curso."
+      },
+      "status": null
+    }
+  ],
+  "before": [
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10170",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10170",
+      "key": "CAAB-3",
+      "fields": {
+        "summary": "Ajustar informações recebidas pela consulta a OAB",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Pendente\n\nhttps://trello.com/c/et8SwnMC/25-ajustar-informa%C3%A7%C3%B5es-recebidas-pela-consulta-a-oab",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:45:41.002-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": [
+          "caabnovo",
+          "melhoria",
+          "modulo-associados",
+          "modulo-oab",
+          "pendente",
+          "trello-import"
+        ]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10176",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10176",
+      "key": "CAAB-4",
+      "fields": {
+        "summary": "Implementação",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/p841tsK8/11-implementa%C3%A7%C3%A3o\n\nRegistro histórico de planejamento genérico. A execução é acompanhada nos tickets específicos; preservar status e referências, sem tratar este item como funcionalidade entregue.",
+        "assignee": null,
+        "updated": "2026-10-01T17:45:44.845-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Em Desenvolvimento",
+          "id": "10012",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "Em andamento"
+          }
+        },
+        "labels": [
+          "caabnovo",
+          "documentacao",
+          "em-andamento",
+          "historico-planejamento",
+          "modulo-documentacao",
+          "trello-import"
+        ]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10182",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10182",
+      "key": "CAAB-5",
+      "fields": {
+        "summary": "UI e UX",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/XqCeVJIt/12-ui-e-ux\n\nRegistro histórico de planejamento genérico. A execução é acompanhada nos tickets específicos; preservar status e referências, sem tratar este item como funcionalidade entregue.",
+        "assignee": null,
+        "updated": "2026-10-01T17:45:48.869-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Em Desenvolvimento",
+          "id": "10012",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "Em andamento"
+          }
+        },
+        "labels": [
+          "caabnovo",
+          "documentacao",
+          "em-andamento",
+          "historico-planejamento",
+          "modulo-interface",
+          "trello-import"
+        ]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10194",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10194",
+      "key": "CAAB-7",
+      "fields": {
+        "summary": "Adição de fotos de perfil para associados",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/XSVJPvdd/23-adi%C3%A7%C3%A3o-de-fotos-de-perfil-para-associados",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:45:52.796-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "em-andamento", "melhoria", "modulo-associados", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10201",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10201",
+      "key": "CAAB-8",
+      "fields": {
+        "summary": "Implementação do modulo: Parceiros",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/wI2aZEbN/24-implementa%C3%A7%C3%A3o-do-modulo-parceiros",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:45:56.806-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "em-andamento", "melhoria", "modulo-parceiros", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10209",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10209",
+      "key": "CAAB-9",
+      "fields": {
+        "summary": "Brainstorme com chatgpt",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Brainstorme sobre como ocorrera o projeto, quais tecnologias e ferramentas são as melhores para este projeto e quais funcionalidades serão oferecidas\n\n---\n\nOrigem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/zfWiAHrl/8-brainstorme-com-chatgpt",
+        "assignee": null,
+        "updated": "2026-10-01T17:46:01.620-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "documentacao", "modulo-documentacao", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10214",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10214",
+      "key": "CAAB-10",
+      "fields": {
+        "summary": "Geração do plano e PRD",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/wi1klxIM/9-gera%C3%A7%C3%A3o-do-plano-e-prd",
+        "assignee": null,
+        "updated": "2026-10-01T17:46:05.933-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "documentacao", "modulo-documentacao", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10221",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10221",
+      "key": "CAAB-11",
+      "fields": {
+        "summary": "Spec kit",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/o3SBKGJm/10-spec-kit",
+        "assignee": null,
+        "updated": "2026-10-01T17:46:46.440-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "documentacao", "modulo-documentacao", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10230",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10230",
+      "key": "CAAB-12",
+      "fields": {
+        "summary": "Analise do codex sobre os modulos",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/PJIwxxOE/13-analise-do-codex-sobre-os-modulos",
+        "assignee": null,
+        "updated": "2026-10-01T17:46:50.728-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "documentacao", "modulo-documentacao", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10234",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10234",
+      "key": "CAAB-13",
+      "fields": {
+        "summary": "Implementação do modulo: Noticias",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/3FjCINCJ/15-implementa%C3%A7%C3%A3o-do-modulo-noticias",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:46:54.680-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "melhoria", "modulo-noticias", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10241",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10241",
+      "key": "CAAB-14",
+      "fields": {
+        "summary": "Implementação da aba: configurações",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Configurações da própria conta: nome, senha, e-mail e recuperação. O autenticador/MFA foi removido no PR13 por decisão explícita; não faz parte do requisito vigente.\n\nOrigem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/cMddrecm/20-implementa%C3%A7%C3%A3o-da-aba-configura%C3%A7%C3%B5es",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:46:58.621-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "melhoria", "modulo-configuracoes", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10246",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10246",
+      "key": "CAAB-15",
+      "fields": {
+        "summary": "Implementação do modulo: Associados",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/m7AR88B7/19-implementa%C3%A7%C3%A3o-do-modulo-associados",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:47:02.569-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "melhoria", "modulo-associados", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10253",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10253",
+      "key": "CAAB-16",
+      "fields": {
+        "summary": "Substituição do modulo usuários por Colaboradores",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/LEDSZgn5/21-substitui%C3%A7%C3%A3o-do-modulo-usu%C3%A1rios-por-colaboradores",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:47:06.694-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["caabnovo", "concluido", "melhoria", "modulo-colaboradores", "trello-import"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10327",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10327",
+      "key": "CAAB-17",
+      "fields": {
+        "summary": "Implementação inicial da aba: Agendamentos",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": null,
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+          "accountId": "responsável técnico 01",
+          "avatarUrls": {
+            "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+            "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+            "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+            "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+          },
+          "displayName": "responsável técnico 01",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "updated": "2026-10-01T17:47:10.992-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Concluído",
+          "id": "10016",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+            "id": 3,
+            "key": "done",
+            "colorName": "green",
+            "name": "Itens concluídos"
+          }
+        },
+        "labels": ["melhoria", "modulo-agendamentos"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10333",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10333",
+      "key": "CAAB-18",
+      "fields": {
+        "summary": "Restringir criação de contas ao fluxo administrativo",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nBloquear autocadastro público por e-mail e preservar criação administrativa, login e recuperação.\n\n## Por que é importante\n\nEvitar criação de contas fora do fluxo autorizado.\n\n## Critérios de aceite\n\n- [ ] Tentativa pública não cria usuário, credencial ou sessão\n- [ ] Administrador autorizado continua criando contas\n- [ ] Login e recuperação preservados\n\n## Observações e referências\n\nPR35 integrado; manter Backlog até reconciliar aceite/homologação, sem repetir implementação.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR35](https://github.com/Komunick/caabnovo/pull/35) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+        "assignee": null,
+        "updated": "2026-10-01T17:47:15.025-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        },
+        "labels": ["manutencao-tecnica", "modulo-autenticacao", "modulo-colaboradores"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10334",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10334",
+      "key": "CAAB-19",
+      "fields": {
+        "summary": "Gerenciar cargos e acessos de Administrador, Gestor e Colaborador",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10005",
+          "id": "10005",
+          "description": "Funcionalidade ou recurso expressado como um objetivo do usuário.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10300?size=medium",
+          "name": "História",
+          "subtask": false,
+          "avatarId": 10300,
+          "hierarchyLevel": 0
+        },
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nAplicar os três cargos e acessos expressamente concedidos, com um cargo vigente por conta e histórico preservado.\n\n## Por que é importante\n\nDar acesso coerente com as atribuições de cada pessoa.\n\n## Critérios de aceite\n\n- [ ] Administrador mantém administração autorizada\n- [ ] Gestor consulta módulos, exporta e usa Relatórios e delega acessos a terceiros sem alterar seus próprios acessos ou cargos\n- [ ] Colaborador só acessa funções concedidas\n- [ ] Navegação e servidor respeitam permissões\n- [ ] Cargo único e histórico são preservados\n\n## Observações e referências\n\nPR36 e PR39 integrados. CAAB-20 será subtarefa. Regra de contas sem cargo ainda precisa de definição; não impor cargo base retroativamente.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) [PR39](https://github.com/Komunick/caabnovo/pull/39) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+        "assignee": null,
+        "updated": "2026-10-01T17:47:49.272-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        },
+        "labels": ["melhoria", "modulo-autenticacao", "modulo-colaboradores"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10335",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10335",
+      "key": "CAAB-20",
+      "fields": {
+        "summary": "Mostrar apenas funções autorizadas na navegação",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nOcultar módulos, telas e ações não autorizados no menu, Início e busca global.\n\n## Por que é importante\n\nEvitar descoberta e uso de funções sem autorização.\n\n## Critérios de aceite\n\n- [ ] Menu, Início e busca não revelam funções sem consulta\n- [ ] URL e API continuam protegidas no servidor\n- [ ] Revogação elimina o acesso aplicável\n\n## Observações e referências\n\nPai CAAB-19. PR36 integrado; converter no próprio item, sem recriar.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+        "assignee": null,
+        "updated": "2026-10-01T17:47:55.536-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        },
+        "labels": ["melhoria", "modulo-autenticacao", "modulo-colaboradores"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10337",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10337",
+      "key": "CAAB-22",
+      "fields": {
+        "summary": "Disponibilizar motor compartilhado de download direto",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nFornecer núcleo reutilizável para baixar Excel, CSV e PDF com autorização e processamento incremental.\n\n## Por que é importante\n\nEvitar implementações incompatíveis e limites artificiais de paginação.\n\n## Critérios de aceite\n\n- [ ] Arquivos contêm conjunto completo autorizado\n- [ ] Filtros, ordem e colunas são respeitados\n- [ ] Revogação é revalidada durante processamento\n- [ ] Falhas não expõem dados sem autorização\n\n## Observações e referências\n\nPR36 integra núcleo e Colaboradores. Não duplica integração dos módulos em CAAB-23 nem Relatórios em CAAB-24. Não declarar os consumidores concluídos pelo motor.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+        "assignee": null,
+        "updated": "2026-10-01T17:58:30.488-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        },
+        "labels": ["manutencao-tecnica", "modulo-exportacoes"]
+      }
+    },
+    {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10348",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10348",
+      "key": "CAAB-33",
+      "fields": {
+        "summary": "Definir canais institucionais de comunicação",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nAlinhar com a diretoria finalidade, canais e limites de comunicados/campanhas.\n\n## Por que é importante\n\nEscolher integrações com base na necessidade institucional.\n\n## Critérios de aceite\n\n- [ ] Decisão identifica finalidade, público e canais autorizados\n- [ ] Distingue campanha, aviso operacional, caixa de entrada e atendimento\n- [ ] Pendências e critérios da futura integração ficam explícitos\n\n## Observações e referências\n\nProtótipo de Mensagens não prova envio real. Preservar escolhas já feitas em seus recortes, como WAHA de Agendamentos; não reabrir seleção indiscriminadamente.\n\nReferência funcional: [spec 009-messaging](https://github.com/Komunick/caabnovo/tree/dev/specs/009-messaging).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+        "assignee": null,
+        "updated": "2026-10-01T17:51:32.561-0300",
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        },
+        "labels": ["documentacao", "modulo-comunicacao"]
+      }
+    }
+  ],
+  "blockedCandidates": [
+    "Conversão nativa de Mostrar apenas funções autorizadas na navegação (CAAB-20)",
+    "Salvar filtro separado de trabalho ativo; Chrome/IAB indisponíveis"
+  ]
+}

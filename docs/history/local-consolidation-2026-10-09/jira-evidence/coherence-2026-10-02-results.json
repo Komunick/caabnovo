@@ -1,0 +1,2287 @@
+{
+  "date": "2026-10-02",
+  "author": "CODEX",
+  "requester": "SOLICITANTE_NAO_VERIFICADO",
+  "results": [
+    {
+      "key": "CAAB-3",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-7",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-8",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-9",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-10",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-11",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-12",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-13",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-14",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-15",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-16",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-17",
+      "result": "applied"
+    },
+    {
+      "key": "CAAB-18",
+      "result": "applied",
+      "status": "Em Teste / QA",
+      "transitionError": null
+    },
+    {
+      "key": "CAAB-19",
+      "result": "applied",
+      "status": "Em Desenvolvimento",
+      "transitionError": null
+    },
+    {
+      "key": "CAAB-20",
+      "result": "applied",
+      "status": "Em Teste / QA",
+      "transitionError": null
+    },
+    {
+      "key": "CAAB-22",
+      "result": "applied",
+      "status": "Em Teste / QA",
+      "transitionError": null
+    },
+    {
+      "key": "CAAB-33",
+      "result": "applied",
+      "error": null
+    },
+    {
+      "key": "CAAB-4",
+      "result": "applied",
+      "error": null
+    },
+    {
+      "key": "CAAB-5",
+      "result": "applied",
+      "error": null
+    }
+  ],
+  "after": {
+    "issues": [
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10164",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10164",
+        "key": "CAAB-2",
+        "fields": {
+          "summary": "Serviço de e-mail transacional e definição da caixa de entrada",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nDisponibilizar entrega real dos e-mails de recuperação de senha e convites. Registrar a caixa de entrada como próxima funcionalidade, com escopo próprio a definir.\n\n## Por que é importante\n\nPermitir acesso e comunicação confiáveis sem confundir intenção de envio com entrega.\n\n## Critérios de aceite\n\n- [ ] Recuperação e convite chegam ao destinatário de teste e seus links funcionam\n- [ ] Falha de envio é identificável e permite recuperação sem duplicação\n- [ ] Revisão/testes IA e QA humano identificado registram versão e resultado\n\n## Observações e referências\n\nAceite do CAAB-21 incorporado neste ticket. Caixa de entrada: definir usuários, canais, ações e limites antes de Pronto para Desenvolver. Não assumir provedor pela existência de biblioteca.\n\nReferência funcional: [spec 006-account-settings](https://github.com/Komunick/caabnovo/tree/dev/specs/006-account-settings). [PR13](https://github.com/Komunick/caabnovo/pull/13) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\nOrigem preservada: https://trello.com/c/vD3LJhLR/22-servi%C3%A7o-de-email-e-caixa-de-entrada",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:39.793-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "integracao",
+            "modulo-colaboradores",
+            "modulo-comunicacao",
+            "modulo-configuracoes",
+            "pendente",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10170",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10170",
+        "key": "CAAB-3",
+        "fields": {
+          "summary": "Ajustar informações recebidas pela consulta a OAB",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Pendente\n\nhttps://trello.com/c/et8SwnMC/25-ajustar-informa%C3%A7%C3%B5es-recebidas-pela-consulta-a-oab\n\n## Escopo e rastreabilidade\n\nAjustes de apresentação e informações da consulta OAB registrados como concluídos. O adaptador oficial e a gestão de associados existem; esta revisão não reconstrói quais campos foram homologados no pedido original.\n\nFonte conferida: [specs/005-members-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/005-members-management). [PR15](https://github.com/Komunick/caabnovo/pull/15).\n\nHomologação externa permanece em Homologar a consulta oficial à OAB-BA (CAAB-31); não confundir ajuste de apresentação com validação do provedor real.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:27:59.408-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "melhoria",
+            "modulo-associados",
+            "modulo-oab",
+            "pendente",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10176",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10176",
+        "key": "CAAB-4",
+        "fields": {
+          "summary": "Implementação",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/p841tsK8/11-implementa%C3%A7%C3%A3o\n\nRegistro histórico de planejamento genérico. A execução é acompanhada nos tickets específicos; preservar status e referências, sem tratar este item como funcionalidade entregue.\n\n## Uso no acompanhamento\n\nRegistro de referência histórica, excluído da visão de trabalho ativo pela etiqueta historico-planejamento. O status preserva a importação e não indica execução atual. Acompanhar entregas nos tickets específicos; não contabilizar este item como esforço em curso.",
+          "assignee": null,
+          "updated": "2026-10-02T10:31:59.234-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "documentacao",
+            "em-andamento",
+            "historico-planejamento",
+            "modulo-documentacao",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10182",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10182",
+        "key": "CAAB-5",
+        "fields": {
+          "summary": "UI e UX",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/XqCeVJIt/12-ui-e-ux\n\nRegistro histórico de planejamento genérico. A execução é acompanhada nos tickets específicos; preservar status e referências, sem tratar este item como funcionalidade entregue.\n\n## Uso no acompanhamento\n\nRegistro de referência histórica, excluído da visão de trabalho ativo pela etiqueta historico-planejamento. O status preserva a importação e não indica execução atual. Acompanhar entregas nos tickets específicos; não contabilizar este item como esforço em curso.",
+          "assignee": null,
+          "updated": "2026-10-02T10:32:03.289-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "documentacao",
+            "em-andamento",
+            "historico-planejamento",
+            "modulo-interface",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10194",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10194",
+        "key": "CAAB-7",
+        "fields": {
+          "summary": "Adição de fotos de perfil para associados",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/XSVJPvdd/23-adi%C3%A7%C3%A3o-de-fotos-de-perfil-para-associados\n\n## Escopo e rastreabilidade\n\nFoto privada no cadastro e no perfil de associados, com controle de acesso e persistência.\n\nFonte conferida: [specs/005-members-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/005-members-management). [PR17](https://github.com/Komunick/caabnovo/pull/17).\n\nNão comprova identidade externa ou carteirinha digital.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:28:04.231-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["caabnovo", "em-andamento", "melhoria", "modulo-associados", "trello-import"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10201",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10201",
+        "key": "CAAB-8",
+        "fields": {
+          "summary": "Implementação do modulo: Parceiros",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Em Andamento\n\nhttps://trello.com/c/wI2aZEbN/24-implementa%C3%A7%C3%A3o-do-modulo-parceiros\n\n## Escopo e rastreabilidade\n\nAdministração de parceiros, unidades, categorias, contratos, benefícios, diretório e moderação; API pública de ofertas vigentes.\n\nFonte conferida: [specs/007-partners-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/007-partners-management). [PR18](https://github.com/Komunick/caabnovo/pull/18).\n\nPortal, QR/resgates e coleta externa não pertencem ao recorte integrado. Portal de Parceiros — funcionalidade prevista (CAAB-34) mantém o planejamento futuro.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:28:08.940-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["caabnovo", "em-andamento", "melhoria", "modulo-parceiros", "trello-import"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10209",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10209",
+        "key": "CAAB-9",
+        "fields": {
+          "summary": "Brainstorme com chatgpt",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Brainstorme sobre como ocorrera o projeto, quais tecnologias e ferramentas são as melhores para este projeto e quais funcionalidades serão oferecidas\n\n---\n\nOrigem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/zfWiAHrl/8-brainstorme-com-chatgpt\n\n## Escopo e rastreabilidade\n\nRegistro histórico de levantamento de ideias e direção inicial do projeto.\n\nFonte conferida: [docs/PRD.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/docs/PRD.md).\n\nA correspondência entre cada discussão original e os artefatos atuais não foi comprovada; não atribuir implementação ou homologação a este registro.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": null,
+          "updated": "2026-10-02T10:28:13.091-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "concluido",
+            "documentacao",
+            "modulo-documentacao",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10214",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10214",
+        "key": "CAAB-10",
+        "fields": {
+          "summary": "Geração do plano e PRD",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/wi1klxIM/9-gera%C3%A7%C3%A3o-do-plano-e-prd\n\n## Escopo e rastreabilidade\n\nProdução de plano e PRD, cujas versões atuais existem no repositório.\n\nFonte conferida: [docs/PRD.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/docs/PRD.md).\n\nPRD e plano são fontes de requisitos; sua existência não comprova implementação ou homologação.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": null,
+          "updated": "2026-10-02T10:28:17.371-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "concluido",
+            "documentacao",
+            "modulo-documentacao",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10221",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10221",
+        "key": "CAAB-11",
+        "fields": {
+          "summary": "Spec kit",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/o3SBKGJm/10-spec-kit\n\n## Escopo e rastreabilidade\n\nEstrutura Spec Kit, templates, scripts e skills presentes no repositório.\n\nFonte conferida: [docs/TOOLING.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/docs/TOOLING.md).\n\nA presença das ferramentas não comprova execução integral de cada workflow.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": null,
+          "updated": "2026-10-02T10:28:21.537-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "concluido",
+            "documentacao",
+            "modulo-documentacao",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10230",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10230",
+        "key": "CAAB-12",
+        "fields": {
+          "summary": "Analise do codex sobre os modulos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/PJIwxxOE/13-analise-do-codex-sobre-os-modulos\n\n## Escopo e rastreabilidade\n\nAnálise documental dos módulos; há inventário funcional e auditoria de código no repositório.\n\nFonte conferida: [specs/002-integrated-modules/code-audit-2026-09-21.md](https://github.com/Komunick/caabnovo/blob/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/002-integrated-modules/code-audit-2026-09-21.md).\n\nNão foi comprovado que a auditoria atual corresponde exatamente ao pedido importado; preservar conclusão histórica sem inventar autoria ou aceite.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": null,
+          "updated": "2026-10-02T10:28:26.558-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": [
+            "caabnovo",
+            "concluido",
+            "documentacao",
+            "modulo-documentacao",
+            "trello-import"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10234",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10234",
+        "key": "CAAB-13",
+        "fields": {
+          "summary": "Implementação do modulo: Noticias",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/3FjCINCJ/15-implementa%C3%A7%C3%A3o-do-modulo-noticias\n\n## Escopo e rastreabilidade\n\nEditor, mídia, versões, publicação/programação e prévias de notícias; rotas públicas de conteúdo.\n\nFonte conferida: [specs/004-news-publishing](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/004-news-publishing). [PR12](https://github.com/Komunick/caabnovo/pull/12).\n\nExportação transversal pertence a Baixar dados dos módulos em Excel, CSV e PDF (CAAB-23); integração completa dos consumidores externos não é comprovada por esta entrega.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:32:05.540-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["caabnovo", "concluido", "melhoria", "modulo-noticias", "trello-import"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10241",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10241",
+        "key": "CAAB-14",
+        "fields": {
+          "summary": "Implementação da aba: configurações",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Configurações da própria conta: nome, senha, e-mail e recuperação. O autenticador/MFA foi removido no PR13 por decisão explícita; não faz parte do requisito vigente.\n\nOrigem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/cMddrecm/20-implementa%C3%A7%C3%A3o-da-aba-configura%C3%A7%C3%B5es\n\n## Escopo e rastreabilidade\n\nConfigurações da própria conta: nome, e-mail, senha e recuperação; MFA removido por decisão explícita.\n\nFonte conferida: [specs/006-account-settings](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/006-account-settings). [PR13](https://github.com/Komunick/caabnovo/pull/13).\n\nEntrega real de recuperação/convites permanece em Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2).\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:29:00.190-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["caabnovo", "concluido", "melhoria", "modulo-configuracoes", "trello-import"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10246",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10246",
+        "key": "CAAB-15",
+        "fields": {
+          "summary": "Implementação do modulo: Associados",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/m7AR88B7/19-implementa%C3%A7%C3%A3o-do-modulo-associados\n\n## Escopo e rastreabilidade\n\nGestão administrativa de associados, dependentes, documentos, análises e integração de consulta OAB.\n\nFonte conferida: [specs/005-members-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/005-members-management). [PR15](https://github.com/Komunick/caabnovo/pull/15).\n\nHomologação externa em Homologar a consulta oficial à OAB-BA (CAAB-31); requisitos institucionais de elegibilidade e credencial externa não são declarados entregues.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:29:04.369-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["caabnovo", "concluido", "melhoria", "modulo-associados", "trello-import"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10253",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10253",
+        "key": "CAAB-16",
+        "fields": {
+          "summary": "Substituição do modulo usuários por Colaboradores",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "Origem: Trello — CAAB Rework › Concluido\n\nhttps://trello.com/c/LEDSZgn5/21-substitui%C3%A7%C3%A3o-do-modulo-usu%C3%A1rios-por-colaboradores\n\n## Escopo e rastreabilidade\n\nGestão de contas e permissões denominada Colaboradores, com acessos individuais e harmonização do painel.\n\nFonte conferida: [specs/001-project-foundation](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/001-project-foundation). [PR16](https://github.com/Komunick/caabnovo/pull/16).\n\nRegras posteriores de cargos e cargo único são acompanhadas em Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19). RH é possibilidade separada.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:29:08.467-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["caabnovo", "concluido", "melhoria", "modulo-colaboradores", "trello-import"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10327",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10327",
+        "key": "CAAB-17",
+        "fields": {
+          "summary": "Implementação inicial da aba: Agendamentos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "## Escopo e rastreabilidade\n\nPrimeira versão administrativa: catálogo, horários, reservas, remarcação, cancelamento, histórico e prevenção de conflitos da oferta.\n\nFonte conferida: [specs/008-scheduling-management](https://github.com/Komunick/caabnovo/tree/748539d28ec7c94af5ff3ca7a37c46c73ae102e4/specs/008-scheduling-management). [PR28](https://github.com/Komunick/caabnovo/pull/28).\n\nCalendário veio no PR34. Extensões locais de aprovação, faltas e avisos são acompanhadas em Agendamentos (CAAB-37); app/site continuam adiados.\n\n## Limite da conclusão histórica\n\nStatus Concluído preservado. A revisão documental de 02/10/2026 não realizou nova homologação e não identificou neste ticket evidência de QA humano com pessoa, versão e resultado. O solicitante original permanece não verificado. Não reabrir nem declarar QA retroativo por inferência.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-02T10:29:12.512-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10016",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Concluído",
+            "id": "10016",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/3",
+              "id": 3,
+              "key": "done",
+              "colorName": "green",
+              "name": "Itens concluídos"
+            }
+          },
+          "labels": ["melhoria", "modulo-agendamentos"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10333",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10333",
+        "key": "CAAB-18",
+        "fields": {
+          "summary": "Restringir criação de contas ao fluxo administrativo",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nBloquear autocadastro público por e-mail e preservar criação administrativa, login e recuperação.\n\n## Por que é importante\n\nEvitar criação de contas fora do fluxo autorizado.\n\n## Critérios de aceite\n\n- [ ] Tentativa pública não cria usuário, credencial ou sessão\n- [ ] Administrador autorizado continua criando contas\n- [ ] Login e recuperação preservados\n\n## Observações e referências\n\nPR35 integrado; implementação existente, com aceite humano pendente.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR35](https://github.com/Komunick/caabnovo/pull/35) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nImplementação integrada pelo PR35 e presente em dev 748539d: apps/web/modules/auth/auth-factory.ts mantém disableSignUp: true. Encaminhar para Em Teste / QA para reconciliar aceite humano, sem repetir implementação.\n\nAceite restante: registrar pessoa, versão e resultado para tentativa pública sem criação de usuário/credencial/sessão, criação administrativa, login e recuperação. Entrega real de e-mail é dependência própria em Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2). Nenhuma homologação nova foi executada nesta revisão.",
+          "assignee": null,
+          "updated": "2026-10-02T10:30:30.103-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10014",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Teste / QA",
+            "id": "10014",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["manutencao-tecnica", "modulo-autenticacao", "modulo-colaboradores"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10334",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10334",
+        "key": "CAAB-19",
+        "fields": {
+          "summary": "Gerenciar cargos e acessos de Administrador, Gestor e Colaborador",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10005",
+            "id": "10005",
+            "description": "Funcionalidade ou recurso expressado como um objetivo do usuário.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10300?size=medium",
+            "name": "História",
+            "subtask": false,
+            "avatarId": 10300,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nAplicar os três cargos e acessos expressamente concedidos, com um cargo vigente por conta e histórico preservado.\n\n## Por que é importante\n\nDar acesso coerente com as atribuições de cada pessoa.\n\n## Critérios de aceite\n\n- [ ] Administrador mantém administração autorizada\n- [ ] Gestor consulta módulos, exporta e usa Relatórios e delega acessos a terceiros sem alterar seus próprios acessos ou cargos\n- [ ] Colaborador só acessa funções concedidas\n- [ ] Navegação e servidor respeitam permissões\n- [ ] Cargo único e histórico são preservados\n\n## Observações e referências\n\nPR36 e PR39 integrados. Mostrar apenas funções autorizadas na navegação (CAAB-20) tem conversão para subtarefa pendente. Regra de contas sem cargo ainda precisa de definição; não impor cargo base retroativamente.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) [PR39](https://github.com/Komunick/caabnovo/pull/39) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nImplementação de cargos/acessos integrada pelos PR36 e PR39, incluindo cargo único. Em Desenvolvimento representa entrega parcialmente conciliada; não autoriza iniciar alterações de produto.\n\nPendências: validar a matriz Administrador/Gestor/Colaborador com humano identificado; definir com o responsável a regra para contas atualmente sem cargo antes de atribuição retroativa; acompanhar Mostrar apenas funções autorizadas na navegação (CAAB-20). Não inventar backfill de cargos nem declarar o conjunto homologado.",
+          "assignee": null,
+          "updated": "2026-10-02T10:30:37.637-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-autenticacao", "modulo-colaboradores"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10335",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10335",
+        "key": "CAAB-20",
+        "fields": {
+          "summary": "Mostrar apenas funções autorizadas na navegação",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nOcultar módulos, telas e ações não autorizados no menu, Início e busca global.\n\n## Por que é importante\n\nEvitar descoberta e uso de funções sem autorização.\n\n## Critérios de aceite\n\n- [ ] Menu, Início e busca não revelam funções sem consulta\n- [ ] URL e API continuam protegidas no servidor\n- [ ] Revogação elimina o acesso aplicável\n\n## Observações e referências\n\nPai CAAB-19. PR36 integrado; converter no próprio item, sem recriar.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nBase de navegação por permissão integrada no PR36. Encaminhar para Em Teste / QA para registrar humano, versão e resultados de menu, Início, busca, URL/API e revogação. A filiação pretendida é Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19); conversão nativa no mesmo ticket ainda precisa ser concluída. Não recriar o item.",
+          "assignee": null,
+          "updated": "2026-10-02T10:30:44.370-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10014",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Teste / QA",
+            "id": "10014",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-autenticacao", "modulo-colaboradores"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10336",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10336",
+        "key": "CAAB-21",
+        "fields": {
+          "summary": "Validação de e-mail incorporada ao CAAB-2",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nAcompanhar recuperação e convites pelos critérios do CAAB-2.\n\n## Por que é importante\n\nEvitar duplicar a mesma validação como entrega independente.\n\n## Critérios de aceite\n\n- [ ] CAAB-2 contém os critérios de entrega real, links, erros e QA\n- [ ] Este item preserva chave, comentários e vínculo com CAAB-2\n\n## Observações e referências\n\nConsolidado em CAAB-2 após conferência dos critérios de entrega real, links, erros e QA. Manter Backlog; não declarar envio homologado.\n\nReferência funcional: [spec 006-account-settings](https://github.com/Komunick/caabnovo/tree/dev/specs/006-account-settings). [PR13](https://github.com/Komunick/caabnovo/pull/13) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:41.968-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": [
+            "consolidado",
+            "integracao",
+            "modulo-colaboradores",
+            "modulo-comunicacao",
+            "modulo-configuracoes"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10337",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10337",
+        "key": "CAAB-22",
+        "fields": {
+          "summary": "Disponibilizar motor compartilhado de download direto",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nFornecer núcleo reutilizável para baixar Excel, CSV e PDF com autorização e processamento incremental.\n\n## Por que é importante\n\nEvitar implementações incompatíveis e limites artificiais de paginação.\n\n## Critérios de aceite\n\n- [ ] Arquivos contêm conjunto completo autorizado\n- [ ] Filtros, ordem e colunas são respeitados\n- [ ] Revogação é revalidada durante processamento\n- [ ] Falhas não expõem dados sem autorização\n\n## Observações e referências\n\nPR36 integra núcleo e Colaboradores. Não duplica integração dos módulos em CAAB-23 nem Relatórios em CAAB-24. Não declarar os consumidores concluídos pelo motor.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\n## Estado conciliado e trabalho restante\n\nNúcleo de download direto integrado no PR36, com adaptador de Colaboradores; dev 748539d contém runtime, autorização e revalidação. Encaminhar para Em Teste / QA do núcleo, sem declarar todos os consumidores concluídos.\n\nAceite restante: humano identificado, versão e resultados para Excel/CSV/PDF, filtros/colunas/ordem, seleção completa e revogação. A evidência de Relatórios registra intermitência anterior no teste de revogação sob backpressure; conferir resultado na versão homologada. Integrações de módulos permanecem em Baixar dados dos módulos em Excel, CSV e PDF (CAAB-23) e Exportar o conjunto completo de dados em Relatórios (CAAB-24).",
+          "assignee": null,
+          "updated": "2026-10-02T10:30:50.761-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10014",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Teste / QA",
+            "id": "10014",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["manutencao-tecnica", "modulo-exportacoes"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10338",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10338",
+        "key": "CAAB-23",
+        "fields": {
+          "summary": "Baixar dados dos módulos em Excel, CSV e PDF",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10005",
+            "id": "10005",
+            "description": "Funcionalidade ou recurso expressado como um objetivo do usuário.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10300?size=medium",
+            "name": "História",
+            "subtask": false,
+            "avatarId": 10300,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nDisponibilizar download em Auditoria, Notícias, Associados, Parceiros e Agendamentos, com seleção autorizada de dados.\n\n## Por que é importante\n\nPermitir trabalhar com conjuntos completos sem copiar a tela.\n\n## Critérios de aceite\n\n- [ ] Auditoria possui download\n- [ ] Notícias possui download\n- [ ] Associados possui download sem dados da Consulta OAB\n- [ ] Parceiros possui download\n- [ ] Agendamentos possui download de reservas, catálogo e horários\n- [ ] Excel/CSV/PDF respeitam filtros, ordenação e colunas, sem teto da listagem/calendário\n- [ ] Permissão geral e consulta do módulo são revalidadas\n\n## Observações e referências\n\nCAAB-22 é dependência compartilhada. Agendamentos tem evidência local de T035–T038, sem publicação; preservar /users/exportar, scheduling:read + exports:generate, sem exigir scheduling:write. Checklist por módulo, sem criar N1–N5. QA por módulo ainda deve ser registrado.\n\nReferência funcional: [spec 002-integrated-modules](https://github.com/Komunick/caabnovo/tree/dev/specs/002-integrated-modules).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:28.467-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": [
+            "melhoria",
+            "modulo-agendamentos",
+            "modulo-associados",
+            "modulo-auditoria",
+            "modulo-exportacoes",
+            "modulo-noticias",
+            "modulo-parceiros"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10339",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10339",
+        "key": "CAAB-24",
+        "fields": {
+          "summary": "Exportar o conjunto completo de dados em Relatórios",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nRemover limites herdados da paginação em todos os modos de exportação de Relatórios, preservando filtros, colunas e autorização.\n\n## Por que é importante\n\nPermitir obter os dados selecionados por completo.\n\n## Critérios de aceite\n\n- [ ] Análise detalhada sem agrupamento é acompanhada em subtarefa própria\n- [ ] Detalhe agrupado, resumo e evolução são acompanhados na outra subtarefa\n- [ ] Conjunto completo corresponde à seleção\n- [ ] Permissões de relatórios, exportação e fonte são respeitadas\n- [ ] Cada recorte possui evidência IA e QA humano\n\n## Observações e referências\n\nPR40 integrado cobre somente detalhe sem agrupamento. Agrupado, resumo e evolução continuam no caminho legado. Pai em Desenvolvimento; CAAB-43 acompanha o detalhe sem agrupamento em QA, e CAAB-44 acompanha o restante em Backlog, sem afirmar homologação. Manter responsável técnico 02 no pai; responsável do restante ainda não assumido.\n\nReferência funcional: [spec 010-reports-analytics](https://github.com/Komunick/caabnovo/tree/dev/specs/010-reports-analytics). [PR40](https://github.com/Komunick/caabnovo/pull/40) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 02",
+            "accountId": "responsável técnico 02",
+            "avatarUrls": {
+              "48x48": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+              "24x24": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+              "16x16": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+              "32x32": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png"
+            },
+            "displayName": "responsável técnico 02",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-01T17:58:44.119-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-exportacoes", "modulo-relatorios"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10340",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10340",
+        "key": "CAAB-25",
+        "fields": {
+          "summary": "Revalidar acesso ao baixar arquivos antigos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nRevalidar autorização vigente antes de baixar arquivos/relatórios legados e negar quando o escopo não puder ser comprovado.\n\n## Por que é importante\n\nEvitar que um arquivo já gerado mantenha acesso revogado.\n\n## Critérios de aceite\n\n- [ ] Revogação impede download posterior\n- [ ] Arquivo sem escopo comprovável é negado\n- [ ] Arquivos e histórico existentes são preservados\n\n## Observações e referências\n\nBase descrita no PR36; reconciliar os caminhos remanescentes de Relatórios. Independente do motor novo.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:48:16.134-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["manutencao-tecnica", "modulo-exportacoes", "modulo-relatorios"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10341",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10341",
+        "key": "CAAB-26",
+        "fields": {
+          "summary": "Impedir sobreposição de agendamentos da mesma pessoa",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nImpedir reserva simultânea para o mesmo titular/dependente, inclusive entre profissionais e unidades.\n\n## Por que é importante\n\nEvitar dois atendimentos incompatíveis para a mesma pessoa.\n\n## Critérios de aceite\n\n- [ ] Criação/remarcação concorrentes não produzem sobreposição\n- [ ] Horários adjacentes e pessoas diferentes continuam permitidos\n- [ ] Disponibilidade considera a pessoa selecionada\n- [ ] Reservas e migrations anteriores são preservadas\n- [ ] Confirmações e pendências ocupam conforme contrato administrativo vigente\n\n## Observações e referências\n\nPai CAAB-37. Implementação e testes locais registrados; 0031 era transitória e 0032 passou a cobrir scheduled/pending_approval nas duas exclusões. Não reexecutar migrations nem retomar trabalho. Não há PR correspondente; responsável pendente.\n\nReferência funcional: [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:02.888-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-agendamentos"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10342",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10342",
+        "key": "CAAB-27",
+        "fields": {
+          "summary": "Sinalizar reservas de pessoa bloqueada sem cancelá-las",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nMostrar bloqueio próprio ou do titular nas reservas afetadas, mantendo reserva, vaga e histórico para decisão autorizada.\n\n## Por que é importante\n\nPermitir à equipe agir sem cancelamentos silenciosos.\n\n## Critérios de aceite\n\n- [ ] Lista, calendário e detalhe mostram bloqueio vigente\n- [ ] Desbloqueio remove aviso\n- [ ] Inatividade isolada não inventa veto\n- [ ] Avisos de bloqueio e exclusão coexistem\n- [ ] Manter reserva e Cancelar preservam seus controles\n\n## Observações e referências\n\nPai CAAB-37. Evidência local de implementação/testes; sem PR da entrega. Não confundir regra com penalidade individual por falta.\n\nReferência funcional: [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:07.561-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-agendamentos", "modulo-associados"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10343",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10343",
+        "key": "CAAB-28",
+        "fields": {
+          "summary": "Separar consulta e alteração em Agendamentos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nAplicar permissões de consulta/alteração na navegação, páginas, APIs e mutações da agenda.\n\n## Por que é importante\n\nPermitir leitura sem conceder alterações e impedir acesso revogado.\n\n## Critérios de aceite\n\n- [ ] Matriz sem acesso/só leitura/leitura+alteração/alteração sem leitura é verificada\n- [ ] Revogação durante espera é respeitada\n- [ ] Leituras não exigem lock de escrita\n- [ ] Gestor consulta relatórios de agendamentos com leitura, sem alteração\n\n## Observações e referências\n\nPai CAAB-37. Base PR36 de responsável técnico 01; T027/AC03 possuem evidência local posterior. Não repetir migrations. responsável técnico 01 atribuído pelo PR da base, preservando o limite dessa evidência e o estado Em Desenvolvimento.\n\nReferência funcional: [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management). [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-01T17:58:46.334-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-agendamentos", "modulo-autenticacao", "modulo-relatorios"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10344",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10344",
+        "key": "CAAB-29",
+        "fields": {
+          "summary": "Disponibilizar o tema Cores Legado",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10005",
+            "id": "10005",
+            "description": "Funcionalidade ou recurso expressado como um objetivo do usuário.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10300?size=medium",
+            "name": "História",
+            "subtask": false,
+            "avatarId": 10300,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nOferecer tema secundário vermelho e branco, com referência no site antigo e opção discreta em Configurações.\n\n## Por que é importante\n\nPermitir uso da identidade clássica preservando o padrão CAAB.\n\n## Critérios de aceite\n\n- [ ] Tema CAAB continua padrão\n- [ ] Opção Legado funciona no claro e escuro\n- [ ] Layout e componentes permanecem coerentes\n- [ ] Contraste e navegação por teclado atendem ao guia\n\n## Observações e referências\n\nConsultar guia vigente e referência antes de implementar; não iniciar UI neste trabalho.\n\nReferência funcional: [spec 002-integrated-modules](https://github.com/Komunick/caabnovo/tree/dev/specs/002-integrated-modules).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:16.037-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["melhoria", "modulo-interface"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10345",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10345",
+        "key": "CAAB-30",
+        "fields": {
+          "summary": "Permitir agendamento pelo app e site",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10005",
+            "id": "10005",
+            "description": "Funcionalidade ou recurso expressado como um objetivo do usuário.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10300?size=medium",
+            "name": "História",
+            "subtask": false,
+            "avatarId": 10300,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nOferecer jornada externa de agendamento conforme contrato de canais e identidade geral do app/site.\n\n## Por que é importante\n\nDar autonomia ao titular e dependente respeitando elegibilidade e regras da agenda.\n\n## Critérios de aceite\n\n- [ ] Sessão geral identifica member verificável\n- [ ] Titular age para si/dependentes e dependente para si\n- [ ] Aprovação, edição, transferência e remarcação seguem contrato de canais\n- [ ] UI01/UI02 e consumidores são localizados e validados antes de prontidão\n\n## Observações e referências\n\nPai CAAB-37; adiado em Backlog. Contrato channels.md e T040–T077 na spec008. Testes administrativos não homologam canais. WAHA escolhido para essa frente, sem instalar/ativar; entrega real permanece pendente.\n\nReferência funcional: [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:20.151-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["modulo-agendamentos", "modulo-app", "modulo-site", "nova-funcionalidade"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10346",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10346",
+        "key": "CAAB-31",
+        "fields": {
+          "summary": "Homologar a consulta oficial à OAB-BA",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nValidar consulta oficial autorizada com credenciais e contrato reais, registrando resultados e limites.\n\n## Por que é importante\n\nComprovar integração externa além dos testes com provedor simulado.\n\n## Critérios de aceite\n\n- [ ] Autorização e fonte oficial comprovadas\n- [ ] Respostas/erros são registrados com operador/data sem expor segredos\n- [ ] Resultado não decide automaticamente elegibilidade\n- [ ] Sem scraping ou contorno de CAPTCHA\n\n## Observações e referências\n\nEscopo distinto do ajuste de apresentação CAAB-3. Confirmar contrato/credenciais em canal adequado, sem incluí-las no ticket.\n\nReferência funcional: [spec 005-members-management](https://github.com/Komunick/caabnovo/tree/dev/specs/005-members-management). [PR15](https://github.com/Komunick/caabnovo/pull/15) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:24.550-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["integracao", "modulo-associados", "modulo-oab"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10347",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10347",
+        "key": "CAAB-32",
+        "fields": {
+          "summary": "Definir a carteirinha digital do aplicativo",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nDefinir requisitos de emissão, consulta offline e validação de QR da credencial digital.\n\n## Por que é importante\n\nEvitar implementar regras institucionais não decididas.\n\n## Critérios de aceite\n\n- [ ] Documento distingue decisões confirmadas e perguntas\n- [ ] Validade, vínculo, revogação e uso offline têm decisão antes da implementação\n- [ ] Critérios de aceite da futura entrega são verificáveis\n\n## Observações e referências\n\nQR dinâmico é proposta a revisar, não comportamento inventado. Tipo Tarefa de definição; não forçar Spike.\n\nReferência funcional: [spec 005-members-management](https://github.com/Komunick/caabnovo/tree/dev/specs/005-members-management).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:28.547-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["documentacao", "modulo-app", "modulo-associados"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10348",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10348",
+        "key": "CAAB-33",
+        "fields": {
+          "summary": "Definir canais institucionais de comunicação",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nPreservar a finalidade já confirmada de comunicados/campanhas aos associados. Revisar a aderência do protótipo existente antes de nova construção e alinhar com a diretoria os canais e limites ainda pendentes.\n\n## Por que é importante\n\nEscolher integrações com base na necessidade institucional.\n\n## Critérios de aceite\n\n- [ ] Revisar campanhas, públicos, programação, estados e permissões do protótipo conforme spec009 M016/T003\n- [ ] Registrar matriz de aderência, ajustes e decisão explícita de continuidade em specs/009-messaging/evidence/purpose-review.md antes de fixtures ou código novo\n- [ ] Manter envio real e M009/M010 adiados; finalidade confirmada não equivale à homologação do protótipo\n- [ ] Decisão identifica finalidade, público e canais autorizados\n- [ ] Distingue campanha, aviso operacional, caixa de entrada e atendimento\n- [ ] Pendências e critérios da futura integração ficam explícitos\n\n## Observações e referências\n\nProtótipo de Mensagens não prova envio real. Preservar escolhas já feitas em seus recortes, como WAHA de Agendamentos; não reabrir seleção indiscriminadamente.\n\nReferência funcional: [spec 009-messaging](https://github.com/Komunick/caabnovo/tree/dev/specs/009-messaging).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-02T10:31:55.010-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["documentacao", "modulo-comunicacao"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10349",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10349",
+        "key": "CAAB-34",
+        "fields": {
+          "summary": "Portal de Parceiros — funcionalidade prevista",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nConsultar escopo do Portal de Parceiros na página conjunta com CAASSH em Funcionalidades previstas.\n\n## Por que é importante\n\nManter a revisão de produto acessível sem simular execução pronta.\n\n## Critérios de aceite\n\n- [ ] Página de destino preserva validação de benefícios/cupons como escopo a revisar\n- [ ] Origem e destino ficam vinculados\n\n## Observações e referências\n\nEscopo transferido para a página confirmada abaixo; aguarda revisão e permanece em Backlog. QR e regras de validação não são implementação comprovada.\n\nReferência funcional: [spec 007-partners-management](https://github.com/Komunick/caabnovo/tree/dev/specs/007-partners-management).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\nDestino confirmado: https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/7700572",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:48.562-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": [
+            "modulo-parceiros",
+            "modulo-portal-parceiros",
+            "nova-funcionalidade",
+            "transferido-confluence"
+          ]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10350",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10350",
+        "key": "CAAB-35",
+        "fields": {
+          "summary": "CAASSH — funcionalidade prevista",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nConsultar o escopo de créditos na página conjunta com Portal de Parceiros em Funcionalidades previstas.\n\n## Por que é importante\n\nPreservar funcionalidade planejada aguardando revisão.\n\n## Critérios de aceite\n\n- [ ] Página registra finalidade conhecida e decisões ainda abertas\n- [ ] Não afirma regras de crédito ou integração financeira não confirmadas\n- [ ] Ticket mantém origem e link\n\n## Observações e referências\n\nAguardar revisão; manter Backlog e aplicar transferido-confluence só após página confirmada.\n\nReferência funcional: [spec 002-integrated-modules](https://github.com/Komunick/caabnovo/tree/dev/specs/002-integrated-modules).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\nDestino confirmado: https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/7700572",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:40.884-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["modulo-caassh", "nova-funcionalidade", "transferido-confluence"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10351",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10351",
+        "key": "CAAB-36",
+        "fields": {
+          "summary": "RH — sugestão em avaliação",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nRegistrar possibilidade de RH em página própria de Sugestões.\n\n## Por que é importante\n\nAvaliar necessidade sem duplicar contas e permissões de Colaboradores.\n\n## Critérios de aceite\n\n- [ ] Página distingue hipótese de requisito aprovado\n- [ ] Questões de finalidade, dados e integração estão explícitas\n- [ ] Ticket mantém vínculo e histórico\n\n## Observações e referências\n\nManter Backlog e aplicar transferido-confluence após confirmação da página. Aprovação futura move a mesma página para previstas.\n\nReferência funcional: [spec 002-integrated-modules](https://github.com/Komunick/caabnovo/tree/dev/specs/002-integrated-modules).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.\n\nDestino confirmado: https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/7700596",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:44.903-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["modulo-rh", "nova-funcionalidade", "transferido-confluence"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10370",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+        "key": "CAAB-37",
+        "fields": {
+          "summary": "Agendamentos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+            "id": "10000",
+            "description": "Uma coleção de bugs, histórias e tarefas.",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+            "name": "Epic",
+            "subtask": false,
+            "hierarchyLevel": 1
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nOrganizar entregas da operação administrativa e da futura jornada externa de agendamentos.\n\n## Por que é importante\n\nAcompanhar resultado do módulo sem tratar frentes distintas como uma tarefa única.\n\n## Critérios de aceite\n\n- [ ] 26/27/28 vinculados como tarefas\n- [ ] 30 vinculado como história adiada\n- [ ] Fluxo administrativo, faltas e avisos reais têm recortes próprios após busca de equivalentes\n- [ ] Integração, testes e homologação são distinguidos por entrega\n\n## Observações e referências\n\nBase integrada PR28/34/36; extensões locais administrativas/faltas e T103–T105 não integradas. Manter responsável técnico 01 e Em Desenvolvimento. Frente local pausada; app/site e transporte real não implementados por esta organização.\n\nReferência funcional: [spec 008-scheduling-management](https://github.com/Komunick/caabnovo/tree/dev/specs/008-scheduling-management). [PR28](https://github.com/Komunick/caabnovo/pull/28) [PR34](https://github.com/Komunick/caabnovo/pull/34) [PR36](https://github.com/Komunick/caabnovo/pull/36) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-01T17:44:11.233-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["modulo-agendamentos", "nova-funcionalidade"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10371",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10371",
+        "key": "CAAB-38",
+        "fields": {
+          "summary": "Conciliar a documentação do projeto",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nConsolidar fontes responsáveis por produto, módulos, stack, processo e execução, eliminando duplicação e instruções superadas.\n\n## Por que é importante\n\nPermitir encontrar regra vigente sem tratar histórico como instrução atual.\n\n## Critérios de aceite\n\n- [ ] Documentos indicam fonte responsável e limites\n- [ ] Links e referências são válidos\n- [ ] Planejamento e entrega/homologação permanecem distintos\n- [ ] Alterações locais da entrega documental são preservadas\n\n## Observações e referências\n\nManter responsável técnico 01 e Em Desenvolvimento; worktree documental existente, sem copiar specs em andamento para principal.\n\nReferência funcional: [spec 002-integrated-modules](https://github.com/Komunick/caabnovo/tree/dev/specs/002-integrated-modules).  Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 01",
+            "accountId": "responsável técnico 01",
+            "avatarUrls": {
+              "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/48",
+              "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/24",
+              "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/16",
+              "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/responsável técnico 01/fcf9335a-6522-460e-a343-6351faf6377f/32"
+            },
+            "displayName": "responsável técnico 01",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-01T17:51:48.890-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["documentacao", "modulo-documentacao"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10372",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10372",
+        "key": "CAAB-39",
+        "fields": {
+          "summary": "Consolidar o guia de design do projeto",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nManter guia canônico de layout, UX, paleta, campos e formatação coerente com o projeto.\n\n## Por que é importante\n\nOrientar telas futuras com padrões verificáveis.\n\n## Critérios de aceite\n\n- [ ] Guia cobre claro/escuro, responsividade, acessibilidade, rascunhos e padrões de interação\n- [ ] Referências apontam ao guia vigente\n- [ ] Proposta não é confundida com UI implantada\n\n## Observações e referências\n\nPR38 fechado sem merge. docs/caab-design.md existe localmente como referência vigente indicada pelo AGENTS; não declarar integração. Manter Backlog.\n\nReferência funcional: [spec 001-project-foundation](https://github.com/Komunick/caabnovo/tree/dev/specs/001-project-foundation). [PR38](https://github.com/Komunick/caabnovo/pull/38) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+          "assignee": null,
+          "updated": "2026-10-01T17:51:52.920-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["documentacao", "modulo-documentacao", "modulo-interface"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10466",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10466",
+        "key": "CAAB-40",
+        "fields": {
+          "summary": "Operar aprovação, remarcação e recuperação de atendimentos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "Solicitante: decisão da conversa registrada na spec008; não atribuir autoria humana da implementação por inferência.\n\n## O que se pede\n\nOperar no painel pedidos, aprovação, remarcação e recuperação por indisponibilidade conforme contrato administrativo vigente.\n\n## Por que é importante\n\nPermitir à equipe resolver mudanças de atendimento preservando vagas e histórico.\n\n## Critérios de aceite\n\n* Aprovação revalida elegibilidade e disponibilidade do intervalo.\n* Trocas voluntárias respeitam prazo e limite confirmado; recuperação operacional é isenta.\n* Pedidos, confirmações e pendências ocupam a capacidade correta.\n* Histórico distingue decisão, publicação e intenção de aviso.\n* Revisão/testes IA e QA humano identificam versão e resultado.\n\n## Evidências e limites\n\nT078–T086 e correções T103–T105 da spec008 têm evidência local, sem PR/integração. Não repetir implementação nem retomar a frente pausada. Entrega real dos avisos fica em CAAB-42; app/site em CAAB-30.",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:34.784-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-agendamentos"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10467",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10467",
+        "key": "CAAB-41",
+        "fields": {
+          "summary": "Tratar faltas, justificativas e contestações",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "Solicitante: decisão da conversa registrada na spec008; executor humano ainda não comprovado por PR.\n\n## O que se pede\n\nRegistrar faltas após o término do compromisso e permitir pedido com texto/comprovante e decisão da equipe responsável.\n\n## Por que é importante\n\nAplicar as regras de falta com prazo, possibilidade de resposta e rastreabilidade.\n\n## Critérios de aceite\n\n* Prazo individual de sete dias para pedido e restrição de trinta dias desde registro, sem soma automática.\n* Reservas preservadas durante oportunidade/análise seguem contrato; cancelamentos respeitam período e estado.\n* Revisão de mérito exige permissão própria e comprovantes privados.\n* Aceitação mostra Falta abonada sem apagar histórico.\n* OK apenas fecha aviso; expiração não inventa decisão.\n* Revisão IA e QA humano identificados cobrem o recorte.\n\n## Evidências e limites\n\nT090–T102 têm evidência local; sem PR/integração. Cancelar além dos trinta dias é possibilidade futura T097. Sem envio real; depende de CAAB-42.",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:37.572-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Desenvolvimento",
+            "id": "10012",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["modulo-agendamentos", "modulo-associados", "nova-funcionalidade"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10468",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10468",
+        "key": "CAAB-42",
+        "fields": {
+          "summary": "Entregar os avisos operacionais de Agendamentos por e-mail",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+            "id": "10012",
+            "description": "Uma parte pequena e distinta do trabalho.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+            "name": "Tarefa",
+            "subtask": false,
+            "avatarId": 10318,
+            "hierarchyLevel": 0
+          },
+          "parent": {
+            "id": "10370",
+            "key": "CAAB-37",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10370",
+            "fields": {
+              "summary": "Agendamentos",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10000",
+                "id": "10000",
+                "description": "Uma coleção de bugs, histórias e tarefas.",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/issuetypes/epic.svg",
+                "name": "Epic",
+                "subtask": false,
+                "hierarchyLevel": 1
+              }
+            }
+          },
+          "description": "Solicitante: decisão da conversa registrada em T088/T089 da spec008; executor não atribuído.\n\n## O que se pede\n\nTransformar intenções persistidas de avisos operacionais em entrega real pelo serviço de e-mail do sistema.\n\n## Por que é importante\n\nUma intenção gravada não garante que titular ou dependente recebeu a informação.\n\n## Critérios de aceite\n\n* Destinatários seguem regras operacionais confirmadas para titular e dependente, independentes de campanhas.\n* Retry não duplica entrega; falhas e estados são rastreáveis sem expor dados desnecessários.\n* Evidência distingue intenção, processamento e resultado do provedor.\n* Integração é validada por IA e por humano identificado em ambiente autorizado.\n\n## Observações\n\nDepende de CAAB-2. T089 ainda pendente. Não presumir ativação de WAHA, campanhas ou caixa de entrada. Confirmar transporte e ambiente antes de pronto.",
+          "assignee": null,
+          "updated": "2026-10-01T17:58:37.538-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["integracao", "modulo-agendamentos", "modulo-comunicacao"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10469",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10469",
+        "key": "CAAB-43",
+        "fields": {
+          "summary": "Exportar análise detalhada sem agrupamento",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10010",
+            "id": "10010",
+            "description": "Uma pequena parte do trabalho que faz parte de uma tarefa maior.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+            "name": "Subtarefa",
+            "subtask": true,
+            "avatarId": 10316,
+            "hierarchyLevel": -1
+          },
+          "parent": {
+            "id": "10339",
+            "key": "CAAB-24",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10339",
+            "fields": {
+              "summary": "Exportar o conjunto completo de dados em Relatórios",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+                "id": "10012",
+                "description": "Uma parte pequena e distinta do trabalho.",
+                "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+                "name": "Tarefa",
+                "subtask": false,
+                "avatarId": 10318,
+                "hierarchyLevel": 0
+              }
+            }
+          },
+          "description": "Solicitante original não verificado. Executor: responsável técnico 02, PR40 e histórico de CAAB-24.\n\n## O que se pede\n\nBaixar dados completos da análise detalhada sem agrupamento em Excel, CSV e PDF.\n\n## Por que é importante\n\nEliminar limites de linhas/período nesse recorte preservando a seleção da tela.\n\n## Critérios de aceite\n\n* Exportar dados recebe filtros, colunas/ordem e ordenação da análise.\n* Mais de 50 mil linhas e período superior a 366 dias não são recusados por esses limites.\n* Revalidação combina reports:read, exports:generate e acesso à fonte.\n* QA humano identifica pessoa, versão e resultado.\n\n## Evidência\n\nPR40 integrado em 748539d. Preservar QA atual do recorte, sem declará-lo homologado só pelo merge. Os demais modos pertencem à outra subtarefa.",
+          "assignee": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 02",
+            "accountId": "responsável técnico 02",
+            "avatarUrls": {
+              "48x48": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+              "24x24": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+              "16x16": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+              "32x32": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png"
+            },
+            "displayName": "responsável técnico 02",
+            "active": true,
+            "timeZone": "America/Sao_Paulo",
+            "accountType": "atlassian"
+          },
+          "updated": "2026-10-01T17:53:25.865-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10014",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Em Teste / QA",
+            "id": "10014",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+              "id": 4,
+              "key": "indeterminate",
+              "colorName": "yellow",
+              "name": "Em andamento"
+            }
+          },
+          "labels": ["melhoria", "modulo-exportacoes", "modulo-relatorios"]
+        }
+      },
+      {
+        "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+        "id": "10470",
+        "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10470",
+        "key": "CAAB-44",
+        "fields": {
+          "summary": "Exportar detalhe agrupado, resumo e evolução sem os limites antigos",
+          "issuetype": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10010",
+            "id": "10010",
+            "description": "Uma pequena parte do trabalho que faz parte de uma tarefa maior.",
+            "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+            "name": "Subtarefa",
+            "subtask": true,
+            "avatarId": 10316,
+            "hierarchyLevel": -1
+          },
+          "parent": {
+            "id": "10339",
+            "key": "CAAB-24",
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10339",
+            "fields": {
+              "summary": "Exportar o conjunto completo de dados em Relatórios",
+              "status": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+                "description": "",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+                "name": "Em Desenvolvimento",
+                "id": "10012",
+                "statusCategory": {
+                  "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "Em andamento"
+                }
+              },
+              "priority": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/priority/3",
+                "iconUrl": "https://komunick.atlassian.net/images/icons/priorities/medium_new.svg",
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+                "id": "10012",
+                "description": "Uma parte pequena e distinta do trabalho.",
+                "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+                "name": "Tarefa",
+                "subtask": false,
+                "avatarId": 10318,
+                "hierarchyLevel": 0
+              }
+            }
+          },
+          "description": "Solicitante original não verificado. Responsável não assumido para este recorte.\n\n## O que se pede\n\nCompletar exportação dos modos agrupado, resumo gerencial e resultados/evolução preservando agregações e seleção.\n\n## Por que é importante\n\nO PR40 resolveu somente o detalhe sem agrupamento; o restante ainda usa o caminho antigo.\n\n## Critérios de aceite\n\n* Os três modos exportam o conjunto completo selecionado.\n* Filtros, grupos, agregações e ordenação correspondem à consulta.\n* Permissões atuais e revogação são respeitadas.\n* Validações incluem revisão/testes IA e QA humano identificado.\n\n## Observações\n\nSpec010 T029/T031/T036–T039 e parcelas T030/T035. Não retirar teto do worker antigo sem solução compatível; não refazer o motor CAAB-22.",
+          "assignee": null,
+          "updated": "2026-10-01T17:52:42.339-0300",
+          "status": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+            "description": "",
+            "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+            "name": "Backlog",
+            "id": "10010",
+            "statusCategory": {
+              "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+              "id": 2,
+              "key": "new",
+              "colorName": "blue-gray",
+              "name": "Itens Pendentes"
+            }
+          },
+          "labels": ["melhoria", "modulo-exportacoes", "modulo-relatorios"]
+        }
+      }
+    ],
+    "isLast": true
+  },
+  "activeFilterKeys": [
+    "CAAB-2",
+    "CAAB-9",
+    "CAAB-10",
+    "CAAB-11",
+    "CAAB-12",
+    "CAAB-13",
+    "CAAB-15",
+    "CAAB-3",
+    "CAAB-7",
+    "CAAB-16",
+    "CAAB-8",
+    "CAAB-14",
+    "CAAB-17",
+    "CAAB-18",
+    "CAAB-19",
+    "CAAB-20",
+    "CAAB-22",
+    "CAAB-23",
+    "CAAB-24",
+    "CAAB-43",
+    "CAAB-44",
+    "CAAB-25",
+    "CAAB-26",
+    "CAAB-27",
+    "CAAB-28",
+    "CAAB-29",
+    "CAAB-30",
+    "CAAB-31",
+    "CAAB-32",
+    "CAAB-33",
+    "CAAB-37",
+    "CAAB-38",
+    "CAAB-39",
+    "CAAB-40",
+    "CAAB-41",
+    "CAAB-42"
+  ],
+  "pages": [
+    {
+      "id": "7143436",
+      "title": "Organização do Jira e Confluence — proposta e modelos",
+      "version": 4,
+      "parentId": "1867914",
+      "body": "<h1>Organização do Jira e Confluence — proposta e modelos</h1><p>Organização aplicada em 01/10/2026 e conciliada em 02/10/2026. Foram complementadas 19 descrições e reconciliados quatro estados após comparação com a base integrada 748539d e entregas locais. Os 42 tickets e seus históricos foram preservados. Permanecem pendentes a conversão nativa de Mostrar apenas funções autorizadas na navegação (CAAB-20), o salvamento da visão ativa e o índice do Banco de Consulta da I.A. registrado na execução anterior. Esta página mantém o padrão vigente; versões preservam o histórico.</p><h2>Tipos conforme a entrega</h2><table><thead><tr><th><p>Tipo</p></th><th><p>Quando cabe</p></th></tr></thead><tbody><tr><td><p>Épico</p></td><td><p>Objetivo que agrega várias entregas independentes.</p></td></tr><tr><td><p>História</p></td><td><p>Resultado útil observável para o usuário.</p></td></tr><tr><td><p>Tarefa</p></td><td><p>Trabalho concreto que não precisa do formato de história.</p></td></tr><tr><td><p>Subtarefa</p></td><td><p>Recorte dependente de um pai com acompanhamento próprio.</p></td></tr><tr><td><p>Bug</p></td><td><p>Comportamento observado difere do esperado; incluir reprodução.</p></td></tr><tr><td><p>Spike</p></td><td><p>Investigar uma incerteza definida, com limite e saída verificável.</p></td></tr></tbody></table><p>Nenhum tipo é obrigatório por convenção. Checklist basta quando não há status ou responsabilidade<br>\nindependente. Não abrir ticket para cada endpoint, migration, teste ou revisão rotineira.</p><h2>Categorias</h2><p>Usar Categorias (labels existentes): uma natureza principal entre nova-funcionalidade, melhoria,<br>\nintegracao, manutencao-tecnica e documentacao; adicionar todos os módulos afetados com modulo-*.<br>\nPreservar etiquetas de origem. Sugestão é estado de avaliação no Confluence, não tipo imposto no Jira.</p><p>Transferidos/consolidados/históricos mantêm status e vínculos, com transferido-confluence,<br>\nconsolidado ou historico-planejamento. Uma visão ativa separada exclui essas etiquetas e mantém itens<br>\nsem labels. Não apagar registros nem trocar filtro compartilhado do quadro.</p><h2>Fluxo e responsabilidade</h2><p>Backlog → Pronto para Desenvolver → Em Desenvolvimento → Code Review → Em Teste / QA →<br>\nPronto para Deploy → Concluído.</p><p>Code Review registra revisão/testes por IA. QA identifica humano, versão, data e resultado antes da<br>\nintegração; solicitante ou membro designado pode validar. Executor permanece no Assignee durante QA.<br>\nNão criar ticket separado para esses testes rotineiros. Homologação de dependência externa pode<br>\nconstituir entrega própria.</p><p>Atribuir por PR correspondente e histórico de quem assumiu o item, sem herdar pessoa do épico.<br>\nConta de automação não prova autor humano. Ausência de QA em merge histórico não reabre<br>\nautomaticamente ticket: registrar lacuna e preservar status. Perguntas de escopo ficam no item e<br>\nimpedem prontidão; critérios desconhecidos não são inventados.</p><h2>Modelo de ticket</h2><p><strong>Título:</strong> resultado específico em linguagem clara.\n<strong>Solicitante:</strong> pessoa comprovada; caso contrário, não verificado.\n<strong>O que se pede:</strong> resultado, público e limites.\n<strong>Por que é importante:</strong> problema e impacto.\n<strong>Sugestão de apresentação:</strong> opcional, distinta do aceite.\n<strong>Critérios de aceite:</strong> resultados observáveis, permissões/integridade relevantes e revisão/QA<br>\naplicáveis.\n<strong>Observações e referências:</strong> spec, dependências, PR, questões abertas e evidências da versão.</p><h3>Exemplo — Download de dados nos módulos</h3><p>Solicitante original não verificado. História CAAB-23, com checklist de Auditoria, Notícias,<br>\nAssociados, Parceiros e Agendamentos. Baixar Excel/CSV/PDF completos, com filtros, colunas e ordenação,<br>\nautorização atual e exceção de dados da Consulta OAB. Motor CAAB-22 é dependência compartilhada,<br>\nnão substitui a integração em cada módulo. Registrar implementação, IA, QA e evidência por módulo;<br>\nnão criar N1–N5.</p><h3>Exemplo de linguagem fornecido pelo usuário — TMS</h3><p>Este exemplo pertence ao TMS, não ao escopo de implementação do CAAB. solicitante do modelo externo é o solicitante deste exemplo, não o solicitante presumido dos tickets CAAB.</p><p><strong>Título:</strong> Relatórios — Acompanhar tempo de atribuição de LH por região e rota</p><p><strong>Solicitante:</strong> solicitante do modelo externo</p><p><strong>Tipo sugerido:</strong> História</p><p><strong>O que se pede:</strong> relatório diário por região, mostrando LH atribuídas, rotas e tempo entre a LH aparecer e a atribuição do motorista.</p><p><strong>Por que é importante:</strong> identificar regiões e rotas com atribuição lenta e apoiar a atuação diária da operação.</p><p><strong>Sugestão de como mostrar:</strong> gráfico diário por região e tabela com dia, região, rota, quantidade de LH, tempo médio e maior tempo até atribuição. Pode ser somente tabela, se mais legível. Filtros de período, região e rota.</p><p><strong>Critérios de aceite:</strong></p><ul data-local-id=\"46db96b4d498\" data-type=\"task-list\"><li data-local-id=\"a7084e4c32ed\" data-type=\"task-item\"><input type=\"checkbox\"> O período mostra as regiões com LH atribuída em cada dia.</li><li data-local-id=\"d72d6081f1b9\" data-type=\"task-item\"><input type=\"checkbox\"> Cada região permite identificar rotas e tempo até atribuição.</li><li data-local-id=\"56cfd32b9d1d\" data-type=\"task-item\"><input type=\"checkbox\"> Os filtros por região e rota funcionam.</li><li data-local-id=\"8339470f5f29\" data-type=\"task-item\"><input type=\"checkbox\"> Os números correspondem às LH atribuídas no período.</li><li data-local-id=\"e84eb580acc1\" data-type=\"task-item\"><input type=\"checkbox\"> A região utiliza a mesma definição do Spot e do Painel do Dia.</li></ul><p><strong>Definições pendentes:</strong> evento que significa “LH aparecer”, data de referência do agrupamento e tratamento de reatribuições. Não assumir essas regras.</p><h2>Organização do Confluence</h2><p>Visão do projeto; Funcionalidades previstas; Sugestões; Guias de uso; Decisões; Referência técnica;<br>\nBanco de Consulta da I.A. CAASSH e Portal de Parceiros têm página conjunta em previstas, aguardando<br>\nrevisão. RH permanece sugestão separada. Caixa de entrada é próxima funcionalidade, com definição<br>\npendente no CAAB-2. Sugestão aprovada move a mesma página para previstas e vincula execução.</p><p>Banco mantém regras e links necessários; stack é referência compartilhada para a equipe, sem cópia<br>\nnormativa concorrente. Preservar IDs e conferir conteúdo/versão/rascunho antes de publicar.</p><h3>Modelo — Funcionalidade prevista</h3><p>Título; estado atual; objetivo; escopo confirmado; questões abertas; dependências; critério para<br>\nexecução; referências. Não declarar como implementada por estar planejada.</p><h3>Modelo — Sugestão</h3><p>Título; origem/proponente comprovado; problema; hipótese; benefício; questões; decisão atual e<br>\nreferências. Não criar execução antes de definir resultado/aceite.</p><h2>Prévia individual</h2><table><thead><tr><th><p>Ticket</p></th><th><p>Destino proposto</p></th></tr></thead><tbody><tr><td><p>CAAB-2</p></td><td><p>Tarefa — Serviço de e-mail transacional e definição da caixa de entrada.</p></td></tr><tr><td><p>CAAB-3</p></td><td><p>Tarefa — Ajustar informações recebidas pela consulta a OAB.</p></td></tr><tr><td><p>CAAB-4</p></td><td><p>Tarefa — Implementação. Histórico de planejamento; preservar status.</p></td></tr><tr><td><p>CAAB-5</p></td><td><p>Tarefa — UI e UX. Histórico de planejamento; preservar status.</p></td></tr><tr><td><p>CAAB-7</p></td><td><p>Tarefa — Adição de fotos de perfil para associados.</p></td></tr><tr><td><p>CAAB-8</p></td><td><p>Tarefa — Implementação do modulo: Parceiros.</p></td></tr><tr><td><p>CAAB-9</p></td><td><p>Tarefa — Brainstorme com chatgpt.</p></td></tr><tr><td><p>CAAB-10</p></td><td><p>Tarefa — Geração do plano e PRD.</p></td></tr><tr><td><p>CAAB-11</p></td><td><p>Tarefa — Spec kit.</p></td></tr><tr><td><p>CAAB-12</p></td><td><p>Tarefa — Analise do codex sobre os modulos.</p></td></tr><tr><td><p>CAAB-13</p></td><td><p>Tarefa — Implementação do modulo: Noticias.</p></td></tr><tr><td><p>CAAB-14</p></td><td><p>Tarefa — Implementação da aba: configurações.</p></td></tr><tr><td><p>CAAB-15</p></td><td><p>Tarefa — Implementação do modulo: Associados.</p></td></tr><tr><td><p>CAAB-16</p></td><td><p>Tarefa — Substituição do modulo usuários por Colaboradores.</p></td></tr><tr><td><p>CAAB-17</p></td><td><p>Tarefa — Implementação inicial da aba: Agendamentos.</p></td></tr><tr><td><p>CAAB-18</p></td><td><p>Tarefa — Restringir criação de contas ao fluxo administrativo.</p></td></tr><tr><td><p>CAAB-19</p></td><td><p>História — Gerenciar cargos e acessos de Administrador, Gestor e Colaborador.</p></td></tr><tr><td><p>CAAB-20</p></td><td><p>Tarefa — Mostrar apenas funções autorizadas na navegação. Conversão para subtarefa de CAAB-19 aprovada, mas pendente no Jira.</p></td></tr><tr><td><p>CAAB-21</p></td><td><p>Tarefa — Validação de e-mail incorporada ao CAAB-2. Consolidado no 2; preservar origem/status.</p></td></tr><tr><td><p>CAAB-22</p></td><td><p>Tarefa — Disponibilizar motor compartilhado de download direto.</p></td></tr><tr><td><p>CAAB-23</p></td><td><p>História — Baixar dados dos módulos em Excel, CSV e PDF.</p></td></tr><tr><td><p>CAAB-24</p></td><td><p>Tarefa — Exportar o conjunto completo de dados em Relatórios.</p></td></tr><tr><td><p>CAAB-25</p></td><td><p>Tarefa — Revalidar acesso ao baixar arquivos antigos.</p></td></tr><tr><td><p>CAAB-26</p></td><td><p>Tarefa de CAAB-37 — Impedir sobreposição de agendamentos da mesma pessoa.</p></td></tr><tr><td><p>CAAB-27</p></td><td><p>Tarefa de CAAB-37 — Sinalizar reservas de pessoa bloqueada sem cancelá-las.</p></td></tr><tr><td><p>CAAB-28</p></td><td><p>Tarefa de CAAB-37 — Separar consulta e alteração em Agendamentos.</p></td></tr><tr><td><p>CAAB-29</p></td><td><p>História — Disponibilizar o tema Cores Legado.</p></td></tr><tr><td><p>CAAB-30</p></td><td><p>História de CAAB-37 — Permitir agendamento pelo app e site.</p></td></tr><tr><td><p>CAAB-31</p></td><td><p>Tarefa — Homologar a consulta oficial à OAB-BA.</p></td></tr><tr><td><p>CAAB-32</p></td><td><p>Tarefa — Definir a carteirinha digital do aplicativo.</p></td></tr><tr><td><p>CAAB-33</p></td><td><p>Tarefa — Definir canais institucionais de comunicação.</p></td></tr><tr><td><p>CAAB-34</p></td><td><p>Tarefa — Portal de Parceiros — funcionalidade prevista. Página vinculada; manter ticket/status.</p></td></tr><tr><td><p>CAAB-35</p></td><td><p>Tarefa — CAASSH — funcionalidade prevista. Página vinculada; manter ticket/status.</p></td></tr><tr><td><p>CAAB-36</p></td><td><p>Tarefa — RH — sugestão em avaliação. Página vinculada; manter ticket/status.</p></td></tr><tr><td><p>CAAB-37</p></td><td><p>Epic — Agendamentos.</p></td></tr><tr><td><p>CAAB-38</p></td><td><p>Tarefa — Conciliar a documentação do projeto.</p></td></tr><tr><td><p>CAAB-39</p></td><td><p>Tarefa — Consolidar o guia de design do projeto.</p></td></tr></tbody></table><h3>Novos registros criados</h3><ul><li><p>Tarefa de CAAB-37: Operar aprovação, remarcação e recuperação de atendimentos (CAAB-40) — Operar aprovação, remarcação e recuperação de atendimentos. Status: Em Desenvolvimento.</p></li><li><p>Tarefa de CAAB-37: Tratar faltas, justificativas e contestações (CAAB-41) — Tratar faltas, justificativas e contestações. Status: Em Desenvolvimento.</p></li><li><p>Tarefa de CAAB-37: Entregar os avisos operacionais de Agendamentos por e-mail (CAAB-42) — Entregar os avisos operacionais de Agendamentos por e-mail. Status: Backlog.</p></li><li><p>Subtarefa de CAAB-24: Exportar análise detalhada sem agrupamento (CAAB-43) — Exportar análise detalhada sem agrupamento. Status: Em Teste / QA.</p></li><li><p>Subtarefa de CAAB-24: Exportar detalhe agrupado, resumo e evolução sem os limites antigos (CAAB-44) — Exportar detalhe agrupado, resumo e evolução sem os limites antigos. Status: Backlog.</p></li></ul><p>Foram criados cinco registros após busca de equivalentes. A caixa de entrada terá<br>\ndefinição antes de eventual novo ticket adicional, sem ampliar silenciosamente esse lote.</p><h2>Responsáveis e estado</h2><p>Nove atribuições aplicadas a responsável técnico 01: 3, 7, 8, 13, 14, 15, 16, 17 e 28, com PR/histórico do recorte.<br>\nresponsável técnico 02 permanece em 24; responsável técnico 01 permanece em 37/38. 26/27 não têm PR do recorte e ficam sem atribuição.<br>\n4/5 e 9–12 não recebem autoria do escopo só pela transição de status.</p><p>CAAB-24 está Em Desenvolvimento; CAAB-43, com o recorte do PR40, está em QA com responsável técnico 02; CAAB-44 acompanha o restante em Backlog e sem responsável atribuído. Merge não comprova QA humano.<br>\nConcluídos preservam estado; CAAB-14 teve a referência vigente a MFA removida conforme PR13.<br>\nRestringir criação de contas ao fluxo administrativo (CAAB-18), Mostrar apenas funções autorizadas na navegação (CAAB-20) e Disponibilizar motor compartilhado de download direto (CAAB-22) estão Em Teste / QA para aceite humano pendente. Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) está Em Desenvolvimento, com implementação integrada e regra de contas sem cargo ainda pendente. Nenhum foi declarado homologado. PR38 do guia<br>\nfoi fechado sem merge. Incrementos locais de Agendamentos não equivalem a integração ou ativação.</p><h2>Aplicação</h2><p>Preparar antes/depois e texto final, revisar a prévia, reler concorrência, executar somente operações<br>\nautorizadas e verificar cada resultado. Publicar página e conferir vínculo antes de sinalizar<br>\ntransferência. Bloqueios de capacidade/autoria ficam explícitos; não recriar nem apagar recursos<br>\npara contorná-los.</p><p><a href=\"https://komunick.atlassian.net/jira/software/c/projects/CAAB/boards/9\">Quadro CAAB</a> ·\n<a href=\"https://github.com/Komunick/caabnovo\">Repositório</a> ·\n<a href=\"https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/2621487\">Regras</a> ·\n<a href=\"https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/2588776\">Stack</a>.</p><p><a href=\"https://komunick.atlassian.net/issues/?jql=project%20%3D%20CAAB%20AND%20(labels%20IS%20EMPTY%20OR%20labels%20NOT%20IN%20(transferido-confluence%2C%20consolidado%2C%20historico-planejamento))%20ORDER%20BY%20Rank%20ASC\">Consultar trabalho ativo</a>: JQL validada com 36 resultados; consulta disponível por link, ainda não salva como filtro.</p><h2>Critérios de acompanhamento</h2><p>Referir tickets pelo título e código, sem links de tickets. Os concluídos históricos têm escopo, fonte e limites registrados; ausência de QA humano identificado não deve ser preenchida por inferência.</p><p>Definir canais institucionais de comunicação (CAAB-33) exige M016/T003: revisar aderência de campanhas, públicos, programação, estados e permissões; registrar decisão de continuidade antes de nova construção. A finalidade já confirmada e o adiamento de M009/M010 são preservados.</p><p>Implementação (CAAB-4) e UI e UX (CAAB-5) são registros históricos. Seu status preservado não significa execução atual. A consulta abaixo exclui históricos, consolidados e transferidos, inclusive preservando itens sem etiquetas. Validada com 36 resultados de 42 em 02/10/2026; ainda não salva como filtro por indisponibilidade de capacidade.</p><pre><code class=\"language-jql\">project = CAAB AND (labels IS EMPTY OR labels NOT IN (transferido-confluence, consolidado, historico-planejamento)) ORDER BY Rank ASC</code></pre>"
+    },
+    {
+      "id": "819227",
+      "title": "Visão do projeto",
+      "version": 4,
+      "parentId": "1867914",
+      "body": "<h1>Visão do projeto</h1><p>O CAAB é um sistema interno de gestão para operação administrativa, com domínios de associados, colaboradores, parceiros, notícias, agendamentos, auditoria, comunicação e relatórios. O repositório também contém planejamento e contratos para app, site e portal de parceiros.</p><h2>Como consultar o projeto</h2><ul><li><p><a href=\"https://github.com/Komunick/caabnovo\">Repositório</a> e <a href=\"https://komunick.atlassian.net/jira/software/c/projects/CAAB/boards/9\">quadro CAAB</a>.</p></li><li><p><a href=\"https://github.com/Komunick/caabnovo/blob/dev/docs/PRD.md\">PRD</a>: objetivos e escopo.</p></li><li><p><a href=\"https://github.com/Komunick/caabnovo/blob/dev/docs/MODULES.md\">Módulos</a> e <a href=\"https://github.com/Komunick/caabnovo/tree/dev/specs\">specs</a>: fontes funcionais; conferir data, versão e evidências.</p></li><li><p><a href=\"https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/2588776\">Referência técnica</a> e <a href=\"https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/2621487\">regras</a>.</p></li><li><p><a href=\"https://komunick.atlassian.net/wiki/spaces/CAABNOVO/pages/7143436\">Organização do Jira e Confluence</a>: tipos, categorias, modelos e validação.</p></li></ul><p>Descrição, planejamento, código integrado e homologação são estados diferentes. Não considerar toda funcionalidade listada como pronta. Agendamentos possui base integrada e incrementos locais; app/site continuam adiados. CAASSH/Portal aguardam revisão; RH é sugestão.</p><h2>Começar o trabalho</h2><p>Siga o <a href=\"https://komunick.atlassian.net/wiki/spaces/DEV/pages/426207\">onboarding Komunick</a>, leia AGENTS do checkout e sua spec responsável. Confirme escopo, critérios e executor. Detalhes de deploy e ambientes seguem o <a href=\"https://github.com/Komunick/caabnovo/blob/dev/docs/DELIVERY-WORKFLOW.md\">workflow de entrega</a>; nenhuma implantação foi conferida por esta página.</p><h2>Estado verificado em 02/10/2026</h2><p>Base integrada: dev 748539d. Autocadastro público bloqueado, cargos/acessos, cargo único e motor de exportação direta estão implementados. Restringir criação de contas ao fluxo administrativo (CAAB-18), Mostrar apenas funções autorizadas na navegação (CAAB-20) e Disponibilizar motor compartilhado de download direto (CAAB-22) aguardam aceite humano em QA; Gerenciar cargos e acessos de Administrador, Gestor e Colaborador (CAAB-19) conserva a pendência de regra para contas sem cargo.</p><p>Exportar análise detalhada sem agrupamento (CAAB-43) cobre somente a análise detalhada sem agrupamento. Exportar detalhe agrupado, resumo e evolução sem os limites antigos (CAAB-44) mantém os demais modos no Backlog. Incrementos administrativos e de faltas de Agendamentos existem somente na worktree local ainda não integrada, cuja execução permanece pausada; entrega real de avisos segue pendente.</p><p>Definir canais institucionais de comunicação (CAAB-33) registra a revisão obrigatória M016/T003 e decisão de continuidade do protótipo antes de nova construção. Referenciar tickets por título e código, sem links de tickets.</p><p>A atualização de MODULES, PRD, STACK e TOOLING está preparada na entrega local docs/jira-confluence-organization-20261001; ainda não foi publicada no GitHub. As referências em dev podem conter retratos anteriores. A consulta documental não constitui homologação ou verificação de implantação.</p>"
+    }
+  ],
+  "pending": [
+    "Conversão nativa no mesmo ticket Mostrar apenas funções autorizadas na navegação (CAAB-20)",
+    "Salvar filtro de trabalho ativo; Chrome e IAB indisponíveis"
+  ],
+  "scope": "Sem novas funcionalidades, QA humano, commit, push ou PR."
+}

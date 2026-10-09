@@ -1,0 +1,588 @@
+[
+  {
+    "kind": "jira-content",
+    "key": "CAAB-37",
+    "ok": true,
+    "error": false
+  },
+  {
+    "kind": "confluence-create",
+    "key": "NEW-PREVISTAS",
+    "id": "7700481",
+    "ok": true
+  },
+  {
+    "kind": "confluence-create",
+    "key": "NEW-SUGESTOES",
+    "id": "7700506",
+    "ok": true
+  },
+  {
+    "kind": "confluence-create",
+    "key": "NEW-GUIAS",
+    "id": "7700526",
+    "ok": true
+  },
+  {
+    "kind": "confluence-create",
+    "key": "NEW-DECISOES",
+    "id": "7700546",
+    "ok": true
+  },
+  {
+    "kind": "confluence-create",
+    "key": "NEW-CAASSH",
+    "id": "7700572",
+    "ok": true
+  },
+  {
+    "kind": "confluence-create",
+    "key": "NEW-RH",
+    "id": "7700596",
+    "ok": true
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-2",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-3",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-4",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-5",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-7",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-8",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-9",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-10",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-11",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-12",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-13",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-14",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "description", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-15",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-16",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-17",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-18",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-19",
+    "ok": true,
+    "type": "História",
+    "fields": ["labels", "summary", "description", "issuetype"],
+    "error": null
+  },
+  {
+    "kind": "jira-conversion-error",
+    "key": "CAAB-20",
+    "error": {
+      "error": true,
+      "message": "{\"errorMessages\":[\"O ticket pai informado não pertence à hierarquia apropriada.\"],\"errors\":{\"pid\":\"Os itens desse tipo de item devem ser criados no mesmo projeto que o pai.\"}}",
+      "repairHint": "Fix each entry in problems. Fields with canOmit:true can be dropped if you do not have a valid value; otherwise provide a valid value (use allowedValues where present). Then retry.",
+      "problems": [
+        {
+          "field": "parent",
+          "name": "Parent",
+          "reason": "Os itens desse tipo de item devem ser criados no mesmo projeto que o pai.",
+          "canOmit": true
+        }
+      ],
+      "rateLimit": {
+        "limit": 300,
+        "remaining": 299,
+        "headers": {
+          "x-ratelimit-limit": "300",
+          "x-ratelimit-remaining": "299"
+        }
+      },
+      "statusCode": 400
+    }
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-20",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-21",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-22",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-23",
+    "ok": true,
+    "type": "História",
+    "fields": ["labels", "summary", "description", "issuetype"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-24",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-25",
+    "ok": true,
+    "type": "Tarefa",
+    "fields": ["labels", "summary", "description"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-26",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "parent"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-27",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "parent"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-28",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "parent", "assignee"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-29",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "issuetype"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-30",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "issuetype", "parent"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-31",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-32",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-33",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-34",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-35",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-36",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-38",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-content",
+    "key": "CAAB-39",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-ADMIN",
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-ABSENCE",
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-EMAIL",
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-DETAIL",
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-REPORTS",
+    "ok": true
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-24",
+    "id": "31",
+    "ok": true
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-40",
+    "id": "31",
+    "ok": true
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-41",
+    "id": "31",
+    "ok": true
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-43",
+    "id": "51",
+    "ok": true
+  },
+  {
+    "kind": "jira-resolve-reference",
+    "key": "CAAB-40",
+    "ok": true
+  },
+  {
+    "kind": "jira-resolve-reference",
+    "key": "CAAB-41",
+    "ok": true
+  },
+  {
+    "kind": "confluence-update",
+    "id": "1867914",
+    "ok": false,
+    "error": {
+      "error": true,
+      "message": "Failed to update page: 422 Unprocessable Entity. Details: {\n  \"errors\": [\n    {\n      \"status\": 422,\n      \"code\": null,\n      \"title\": \"Markdown body replacement would cause data loss. The existing content contains elements that cannot be represented in markdown: confluence resource (caabnovo), confluence macro (children), confluence macro (panel), generic html, underline, generic html, generic html. Use a supported non-markdown body representation for full replacement.\",\n      \"detail\": null\n    }\n  ]\n}",
+      "statusCode": 422
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "819227",
+    "ok": true,
+    "error": null,
+    "version": {
+      "number": 3,
+      "message": "Aplicar organização aprovada: tipos, modelos e fontes vigentes",
+      "minorEdit": false,
+      "authorId": "conexão técnica histórica",
+      "createdAt": "2026-10-01T20:54:51.592Z",
+      "ncsStepVersion": "12"
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "2588761",
+    "ok": true,
+    "error": null,
+    "version": {
+      "number": 2,
+      "message": "Aplicar organização aprovada: tipos, modelos e fontes vigentes",
+      "minorEdit": false,
+      "authorId": "conexão técnica histórica",
+      "createdAt": "2026-10-01T20:54:56.109Z",
+      "ncsStepVersion": "1"
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "2621487",
+    "ok": false,
+    "error": {
+      "error": true,
+      "message": "Failed to update page: 422 Unprocessable Entity. Details: {\n  \"errors\": [\n    {\n      \"status\": 422,\n      \"code\": null,\n      \"title\": \"Markdown body replacement would cause data loss. The existing content contains elements that cannot be represented in markdown: confluence macro (info). Use a supported non-markdown body representation for full replacement.\",\n      \"detail\": null\n    }\n  ]\n}",
+      "statusCode": 422
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "2588776",
+    "ok": false,
+    "error": {
+      "error": true,
+      "message": "Failed to update page: 422 Unprocessable Entity. Details: {\n  \"errors\": [\n    {\n      \"status\": 422,\n      \"code\": null,\n      \"title\": \"Markdown body replacement would cause data loss. The existing content contains elements that cannot be represented in markdown: confluence macro (info), confluence macro (note), adf extension (panel). Use a supported non-markdown body representation for full replacement.\",\n      \"detail\": null\n    }\n  ]\n}",
+      "statusCode": 422
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "7143436",
+    "ok": true,
+    "error": null,
+    "version": {
+      "number": 2,
+      "message": "Aplicar organização aprovada: tipos, modelos e fontes vigentes",
+      "minorEdit": false,
+      "authorId": "conexão técnica histórica",
+      "createdAt": "2026-10-01T20:55:08.318Z",
+      "ncsStepVersion": "1"
+    }
+  },
+  {
+    "kind": "confluence-update-html",
+    "id": "1867914",
+    "ok": true,
+    "error": null,
+    "version": 4
+  },
+  {
+    "kind": "confluence-update-html",
+    "id": "2621487",
+    "ok": true,
+    "error": null,
+    "version": 3
+  },
+  {
+    "kind": "confluence-update-html",
+    "id": "2588776",
+    "ok": true,
+    "error": null,
+    "version": 3
+  },
+  {
+    "kind": "jira-link",
+    "ok": true,
+    "type": "Relates",
+    "inwardIssue": "CAAB-21",
+    "outwardIssue": "CAAB-2",
+    "error": null
+  },
+  {
+    "kind": "jira-link",
+    "ok": true,
+    "type": "Blocks",
+    "inwardIssue": "CAAB-22",
+    "outwardIssue": "CAAB-23",
+    "error": null
+  },
+  {
+    "kind": "jira-link",
+    "ok": true,
+    "type": "Blocks",
+    "inwardIssue": "CAAB-22",
+    "outwardIssue": "CAAB-24",
+    "error": null
+  },
+  {
+    "kind": "jira-link",
+    "ok": true,
+    "type": "Blocks",
+    "inwardIssue": "CAAB-2",
+    "outwardIssue": "CAAB-42",
+    "error": null
+  },
+  {
+    "kind": "jira-link",
+    "ok": true,
+    "type": "Blocks",
+    "inwardIssue": "CAAB-42",
+    "outwardIssue": "CAAB-40",
+    "error": null
+  },
+  {
+    "kind": "jira-link",
+    "ok": true,
+    "type": "Blocks",
+    "inwardIssue": "CAAB-42",
+    "outwardIssue": "CAAB-41",
+    "error": null
+  },
+  {
+    "kind": "jira-reconcile-applied-wording",
+    "key": "CAAB-2",
+    "ok": true
+  },
+  {
+    "kind": "jira-reconcile-applied-wording",
+    "key": "CAAB-21",
+    "ok": true
+  },
+  {
+    "kind": "jira-reconcile-applied-wording",
+    "key": "CAAB-24",
+    "ok": true
+  },
+  {
+    "kind": "jira-reconcile-applied-wording",
+    "key": "CAAB-28",
+    "ok": true
+  },
+  {
+    "kind": "jira-reconcile-applied-wording",
+    "key": "CAAB-34",
+    "ok": true
+  },
+  {
+    "kind": "confluence-finalize",
+    "id": "7143436",
+    "ok": true,
+    "error": null
+  },
+  {
+    "kind": "confluence-finalize",
+    "id": "7700481",
+    "ok": true,
+    "error": null
+  },
+  {
+    "kind": "confluence-finalize",
+    "id": "7700506",
+    "ok": true,
+    "error": null
+  }
+]

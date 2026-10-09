@@ -109,8 +109,9 @@ documental.
 
 EXP01–EXP07/ACC01: coordenação e critérios nas histórias correspondentes; execução técnica pertence
 aos specs próprios. DOC01: conciliação histórica concluída; complemento documental atual concluído,
-com revisão transversal T099 ainda aberta. FUT01/FUT02 continuam pesquisa futura, fora da lista
-ativa.
+com revisão transversal T099 ainda aberta. FUT01 teve pesquisa e plano concluídos em 07/10/2026, com
+implementação ainda pendente em [012 — Chat interno](../012-internal-chat/plan.md). FUT02 continua
+pesquisa futura, fora da lista ativa.
 
 O histórico abaixo conserva marcadores e evidências originais. IDs provisórios detalhados aqui não
 são uma segunda execução; usar a lista ativa. Pendências de política/pesquisa/homologação e funções
@@ -239,7 +240,9 @@ Primeiro invariantes de acesso/migração e descoberta; depois fluxo completo de
 núcleo 001 como prova vertical (três formatos, todos os dados). Isso é marco de validação, não
 redução do escopo: completar depois cada função do contrato, incluindo003/004/005/007/008 e
 Colaboradores;009 permanece condicionada. Reservas Q1/Q2 seguem incremento independente008 após
-permissões. Políticas adiadas, chat/suporte, CAASSH, portal e app/site não são parte do MVP.
+permissões. Políticas adiadas, chat/suporte, CAASSH, portal e app/site não são parte deste MVP de
+exportações. Chat interno tem planejamento próprio de entrega única em
+[012 — Chat interno](../012-internal-chat/plan.md); suporte permanece possibilidade futura.
 
 ## Histórico e backlog anterior — não executar automaticamente
 
@@ -630,9 +633,12 @@ da central de relatórios.
 
 ## Possibilidades futuras de comunicação — 21/09/2026
 
-- [ ] FUT01 Pesquisar posteriormente uso, jornadas, participantes, permissões, privacidade e
-      alternativas técnicas para conversa interna entre usuários do painel; propor nomenclatura e
-      escopo para decisão. Sem construção ou spec nova autorizada nesta etapa.
+- [x] FUT01 Pesquisa e definição de escopo concluídas em 07/10/2026 com o usuário: Chat interno e
+      comentários operacionais, em entrega única. Plano e fontes em
+      [012 — Chat interno](../012-internal-chat/plan.md). Disponibilizar chat interno e comentários
+      operacionais com notificações configuráveis (CAAB-49) criado em Em Desenvolvimento por pedido
+      explícito; esse status não comprova implementação ou homologação. Este pedido atualizou o PRD
+      e o ticket, sem iniciar código.
 - [ ] FUT02 Pesquisar posteriormente uso e implementação de suporte por tickets para app/site:
       abertura pelo usuário, conversa com equipe e resolução; investigar operação e integrações e
       propor nomenclatura/escopo. Sem construção ou spec nova autorizada nesta etapa.
@@ -712,5 +718,5 @@ iniciar. Ideias futuras, suspensões e homologações adiadas continuam assim.
 | Aceite transversal                     | Conciliar tarefas e validar jornadas/contratos/evidências conforme conclusão dos módulos; não tratar módulos futuros como prontos.                                                                                                                                             | Programa 002 T055–T057 e T098–T108                                                                                    | `Aceite transversal-CODEX-SOLICITANTE_NAO_VERIFICADO`                     |
 | Portal de parceiros / Meu trabalho     | Portal depende de definição/implementação própria; Meu trabalho tem base parcial e pendências operacionais, não é módulo inteiramente inexistente.                                                                                                                             | Programa 002 T046–T053                                                                                                | `Portal de parceiros / Meu trabalho-CODEX-SOLICITANTE_NAO_VERIFICADO`     |
 | Login com provedores externos          | Ideia futura registrada: Google, Apple ID e outros a definir; planejar vínculo com contas existentes e primeiro acesso, separando autenticação da autorização para criar conta. Sem integração/credenciais definidas.                                                          | Decisão de 17/09; identidade externa D02                                                                              | `Login com provedores externos-CODEX-SOLICITANTE_NAO_VERIFICADO`          |
-| Conversa interna / suporte por tickets | Duas possibilidades futuras separadas; pesquisar uso e funcionamento antes de nomear/especificar/construir.                                                                                                                                                                    | Programa 002 FUT01/FUT02                                                                                              | `Conversa interna / suporte por tickets-CODEX-SOLICITANTE_NAO_VERIFICADO` |
+| Conversa interna / suporte por tickets | Origem histórica preservada. FUT01 teve pesquisa e plano concluídos em 07/10/2026, conforme seção vigente e plano 012; implementação pendente. FUT02 (suporte) continua possibilidade futura separada.                                                                         | Programa 002 FUT01/FUT02                                                                                              | `Conversa interna / suporte por tickets-CODEX-SOLICITANTE_NAO_VERIFICADO` |
 | Recursos Humanos / CAASSH-Créditos     | RH sem finalidade/escopo autorizado. CAASSH/Créditos segue suspenso e desativado; não reativar por estar no backlog.                                                                                                                                                           | Programa 002 e decisões de 17/09                                                                                      | `Recursos Humanos / CAASSH-Créditos-CODEX-SOLICITANTE_NAO_VERIFICADO`     |

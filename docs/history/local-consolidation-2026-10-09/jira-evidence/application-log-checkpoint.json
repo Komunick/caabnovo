@@ -1,0 +1,1030 @@
+[
+  {
+    "key": "CAAB-37",
+    "kind": "jira-content",
+    "ok": true,
+    "after": {
+      "type": "Epic",
+      "status": "Em Desenvolvimento",
+      "updated": "2026-10-01T17:44:11.233-0300"
+    },
+    "error": false
+  },
+  {
+    "key": "NEW-PREVISTAS",
+    "kind": "confluence-create",
+    "id": "7700481",
+    "ok": true,
+    "title": "Funcionalidades previstas"
+  },
+  {
+    "key": "NEW-SUGESTOES",
+    "kind": "confluence-create",
+    "id": "7700506",
+    "ok": true,
+    "title": "Sugestões"
+  },
+  {
+    "key": "NEW-GUIAS",
+    "kind": "confluence-create",
+    "id": "7700526",
+    "ok": true,
+    "title": "Guias de uso"
+  },
+  {
+    "key": "NEW-DECISOES",
+    "kind": "confluence-create",
+    "id": "7700546",
+    "ok": true,
+    "title": "Decisões"
+  },
+  {
+    "key": "NEW-CAASSH",
+    "kind": "confluence-create",
+    "id": "7700572",
+    "ok": true,
+    "title": "CAASSH e Portal de Parceiros"
+  },
+  {
+    "key": "NEW-RH",
+    "kind": "confluence-create",
+    "id": "7700596",
+    "ok": true,
+    "title": "RH — sugestão em avaliação"
+  },
+  {
+    "key": "CAAB-2",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:45:36.861-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-3",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:45:41.002-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-4",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "description"],
+    "type": "Tarefa",
+    "status": "Em Desenvolvimento",
+    "updated": "2026-10-01T17:45:44.845-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-5",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "description"],
+    "type": "Tarefa",
+    "status": "Em Desenvolvimento",
+    "updated": "2026-10-01T17:45:48.869-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-7",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:45:52.796-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-8",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:45:56.806-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-9",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "updated": "2026-10-01T17:46:01.620-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-10",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "updated": "2026-10-01T17:46:05.933-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-11",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "updated": "2026-10-01T17:46:46.440-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-12",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "updated": "2026-10-01T17:46:50.728-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-13",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:46:54.680-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-14",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "description", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:46:58.621-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-15",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:47:02.569-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-16",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:47:06.694-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-17",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "assignee"],
+    "type": "Tarefa",
+    "status": "Concluído",
+    "assignee": "responsável técnico 01",
+    "updated": "2026-10-01T17:47:10.992-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-18",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:47:15.025-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-19",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description", "issuetype"],
+    "type": "História",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:47:49.272-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-20",
+    "kind": "jira-conversion-error",
+    "error": {
+      "error": true,
+      "message": "{\"errorMessages\":[\"O ticket pai informado não pertence à hierarquia apropriada.\"],\"errors\":{\"pid\":\"Os itens desse tipo de item devem ser criados no mesmo projeto que o pai.\"}}",
+      "repairHint": "Fix each entry in problems. Fields with canOmit:true can be dropped if you do not have a valid value; otherwise provide a valid value (use allowedValues where present). Then retry.",
+      "problems": [
+        {
+          "field": "parent",
+          "name": "Parent",
+          "reason": "Os itens desse tipo de item devem ser criados no mesmo projeto que o pai.",
+          "canOmit": true
+        }
+      ],
+      "rateLimit": {
+        "limit": 300,
+        "remaining": 299,
+        "headers": {
+          "x-ratelimit-limit": "300",
+          "x-ratelimit-remaining": "299"
+        }
+      },
+      "statusCode": 400
+    }
+  },
+  {
+    "key": "CAAB-20",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:47:55.536-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-21",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:47:59.635-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-22",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:48:03.897-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-23",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description", "issuetype"],
+    "type": "História",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:48:07.877-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-24",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Em Teste / QA",
+    "updated": "2026-10-01T17:48:12.201-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-25",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["labels", "summary", "description"],
+    "type": "Tarefa",
+    "status": "Backlog",
+    "updated": "2026-10-01T17:48:16.134-0300",
+    "error": null
+  },
+  {
+    "key": "CAAB-26",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "parent"],
+    "error": null
+  },
+  {
+    "key": "CAAB-27",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "parent"],
+    "error": null
+  },
+  {
+    "key": "CAAB-28",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "parent", "assignee"],
+    "error": null
+  },
+  {
+    "key": "CAAB-29",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "issuetype"],
+    "error": null
+  },
+  {
+    "key": "CAAB-30",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels", "issuetype", "parent"],
+    "error": null
+  },
+  {
+    "key": "CAAB-31",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-32",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-33",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-34",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-35",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-36",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-38",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "key": "CAAB-39",
+    "kind": "jira-content",
+    "ok": true,
+    "fields": ["summary", "description", "labels"],
+    "error": null
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-ADMIN",
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10466",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10466",
+      "key": "CAAB-40",
+      "fields": {
+        "summary": "Operar aprovação, remarcação e recuperação de atendimentos",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante: decisão da conversa registrada na spec008; não atribuir autoria humana da implementação por inferência.\n\n## O que se pede\n\nOperar no painel pedidos, aprovação, remarcação e recuperação por indisponibilidade conforme contrato administrativo vigente.\n\n## Por que é importante\n\nPermitir à equipe resolver mudanças de atendimento preservando vagas e histórico.\n\n## Critérios de aceite\n\n* Aprovação revalida elegibilidade e disponibilidade do intervalo.\n* Trocas voluntárias respeitam prazo e limite confirmado; recuperação operacional é isenta.\n* Pedidos, confirmações e pendências ocupam a capacidade correta.\n* Histórico distingue decisão, publicação e intenção de aviso.\n* Revisão/testes IA e QA humano identificam versão e resultado.\n\n## Evidências e limites\n\nT078–T086 e correções T103–T105 da spec008 têm evidência local, sem PR/integração. Não repetir implementação nem retomar a frente pausada. Entrega real dos avisos fica em NEW-EMAIL; app/site em CAAB-30.",
+        "assignee": null,
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-40"
+    },
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-ABSENCE",
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10467",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10467",
+      "key": "CAAB-41",
+      "fields": {
+        "summary": "Tratar faltas, justificativas e contestações",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante: decisão da conversa registrada na spec008; executor humano ainda não comprovado por PR.\n\n## O que se pede\n\nRegistrar faltas após o término do compromisso e permitir pedido com texto/comprovante e decisão da equipe responsável.\n\n## Por que é importante\n\nAplicar as regras de falta com prazo, possibilidade de resposta e rastreabilidade.\n\n## Critérios de aceite\n\n* Prazo individual de sete dias para pedido e restrição de trinta dias desde registro, sem soma automática.\n* Reservas preservadas durante oportunidade/análise seguem contrato; cancelamentos respeitam período e estado.\n* Revisão de mérito exige permissão própria e comprovantes privados.\n* Aceitação mostra Falta abonada sem apagar histórico.\n* OK apenas fecha aviso; expiração não inventa decisão.\n* Revisão IA e QA humano identificados cobrem o recorte.\n\n## Evidências e limites\n\nT090–T102 têm evidência local; sem PR/integração. Cancelar além dos trinta dias é possibilidade futura T097. Sem envio real; depende de NEW-EMAIL.",
+        "assignee": null,
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-41"
+    },
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-EMAIL",
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10468",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10468",
+      "key": "CAAB-42",
+      "fields": {
+        "summary": "Entregar os avisos operacionais de Agendamentos por e-mail",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante: decisão da conversa registrada em T088/T089 da spec008; executor não atribuído.\n\n## O que se pede\n\nTransformar intenções persistidas de avisos operacionais em entrega real pelo serviço de e-mail do sistema.\n\n## Por que é importante\n\nUma intenção gravada não garante que titular ou dependente recebeu a informação.\n\n## Critérios de aceite\n\n* Destinatários seguem regras operacionais confirmadas para titular e dependente, independentes de campanhas.\n* Retry não duplica entrega; falhas e estados são rastreáveis sem expor dados desnecessários.\n* Evidência distingue intenção, processamento e resultado do provedor.\n* Integração é validada por IA e por humano identificado em ambiente autorizado.\n\n## Observações\n\nDepende de CAAB-2. T089 ainda pendente. Não presumir ativação de WAHA, campanhas ou caixa de entrada. Confirmar transporte e ambiente antes de pronto.",
+        "assignee": null,
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-42"
+    },
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-DETAIL",
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10469",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10469",
+      "key": "CAAB-43",
+      "fields": {
+        "summary": "Exportar análise detalhada sem agrupamento",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10010",
+          "id": "10010",
+          "description": "Uma pequena parte do trabalho que faz parte de uma tarefa maior.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+          "name": "Subtarefa",
+          "subtask": true,
+          "avatarId": 10316,
+          "hierarchyLevel": -1
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante original não verificado. Executor: responsável técnico 02, PR40 e histórico de CAAB-24.\n\n## O que se pede\n\nBaixar dados completos da análise detalhada sem agrupamento em Excel, CSV e PDF.\n\n## Por que é importante\n\nEliminar limites de linhas/período nesse recorte preservando a seleção da tela.\n\n## Critérios de aceite\n\n* Exportar dados recebe filtros, colunas/ordem e ordenação da análise.\n* Mais de 50 mil linhas e período superior a 366 dias não são recusados por esses limites.\n* Revalidação combina reports:read, exports:generate e acesso à fonte.\n* QA humano identifica pessoa, versão e resultado.\n\n## Evidência\n\nPR40 integrado em 748539d. Preservar QA atual do recorte, sem declará-lo homologado só pelo merge. Os demais modos pertencem à outra subtarefa.",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 02",
+          "accountId": "responsável técnico 02",
+          "avatarUrls": {
+            "48x48": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "24x24": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "16x16": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "32x32": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png"
+          },
+          "displayName": "responsável técnico 02",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-43"
+    },
+    "ok": true
+  },
+  {
+    "kind": "jira-create",
+    "id": "NEW-REPORTS",
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10470",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10470",
+      "key": "CAAB-44",
+      "fields": {
+        "summary": "Exportar detalhe agrupado, resumo e evolução sem os limites antigos",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10010",
+          "id": "10010",
+          "description": "Uma pequena parte do trabalho que faz parte de uma tarefa maior.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+          "name": "Subtarefa",
+          "subtask": true,
+          "avatarId": 10316,
+          "hierarchyLevel": -1
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante original não verificado. Responsável não assumido para este recorte.\n\n## O que se pede\n\nCompletar exportação dos modos agrupado, resumo gerencial e resultados/evolução preservando agregações e seleção.\n\n## Por que é importante\n\nO PR40 resolveu somente o detalhe sem agrupamento; o restante ainda usa o caminho antigo.\n\n## Critérios de aceite\n\n* Os três modos exportam o conjunto completo selecionado.\n* Filtros, grupos, agregações e ordenação correspondem à consulta.\n* Permissões atuais e revogação são respeitadas.\n* Validações incluem revisão/testes IA e QA humano identificado.\n\n## Observações\n\nSpec010 T029/T031/T036–T039 e parcelas T030/T035. Não retirar teto do worker antigo sem solução compatível; não refazer o motor CAAB-22.",
+        "assignee": null,
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10010",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Backlog",
+          "id": "10010",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/2",
+            "id": 2,
+            "key": "new",
+            "colorName": "blue-gray",
+            "name": "Itens Pendentes"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-44"
+    },
+    "ok": true
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-24",
+    "id": "31",
+    "ok": true,
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10339",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10339",
+      "key": "CAAB-24",
+      "fields": {
+        "summary": "Exportar o conjunto completo de dados em Relatórios",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "**Solicitante:** não verificado no pedido original; reporter de importação não equivale ao solicitante.\n\n## O que se pede\n\nRemover limites herdados da paginação em todos os modos de exportação de Relatórios, preservando filtros, colunas e autorização.\n\n## Por que é importante\n\nPermitir obter os dados selecionados por completo.\n\n## Critérios de aceite\n\n- [ ] Análise detalhada sem agrupamento é acompanhada em subtarefa própria\n- [ ] Detalhe agrupado, resumo e evolução são acompanhados na outra subtarefa\n- [ ] Conjunto completo corresponde à seleção\n- [ ] Permissões de relatórios, exportação e fonte são respeitadas\n- [ ] Cada recorte possui evidência IA e QA humano\n\n## Observações e referências\n\nPR40 integrado cobre somente detalhe sem agrupamento. Agrupado, resumo e evolução continuam no caminho legado. Propor pai Em Desenvolvimento e subtarefa entregue em QA, sem afirmar homologação. Manter responsável técnico 02 no pai; responsável do restante ainda não assumido.\n\nReferência funcional: [spec 010-reports-analytics](https://github.com/Komunick/caabnovo/tree/dev/specs/010-reports-analytics). [PR40](https://github.com/Komunick/caabnovo/pull/40) Para recortes locais ainda não integrados, consultar o checkpoint da worktree indicada nas evidências. Revisão/testes por IA e QA humano identificado devem registrar versão e resultado quando houver código. O executor permanece responsável durante QA; não criar tickets de teste rotineiro.",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 02",
+          "accountId": "responsável técnico 02",
+          "avatarUrls": {
+            "48x48": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "24x24": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "16x16": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "32x32": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png"
+          },
+          "displayName": "responsável técnico 02",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Em Desenvolvimento",
+          "id": "10012",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "Em andamento"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-24"
+    }
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-40",
+    "id": "31",
+    "ok": true,
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10466",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10466",
+      "key": "CAAB-40",
+      "fields": {
+        "summary": "Operar aprovação, remarcação e recuperação de atendimentos",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante: decisão da conversa registrada na spec008; não atribuir autoria humana da implementação por inferência.\n\n## O que se pede\n\nOperar no painel pedidos, aprovação, remarcação e recuperação por indisponibilidade conforme contrato administrativo vigente.\n\n## Por que é importante\n\nPermitir à equipe resolver mudanças de atendimento preservando vagas e histórico.\n\n## Critérios de aceite\n\n* Aprovação revalida elegibilidade e disponibilidade do intervalo.\n* Trocas voluntárias respeitam prazo e limite confirmado; recuperação operacional é isenta.\n* Pedidos, confirmações e pendências ocupam a capacidade correta.\n* Histórico distingue decisão, publicação e intenção de aviso.\n* Revisão/testes IA e QA humano identificam versão e resultado.\n\n## Evidências e limites\n\nT078–T086 e correções T103–T105 da spec008 têm evidência local, sem PR/integração. Não repetir implementação nem retomar a frente pausada. Entrega real dos avisos fica em NEW-EMAIL; app/site em CAAB-30.",
+        "assignee": null,
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Em Desenvolvimento",
+          "id": "10012",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "Em andamento"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-40"
+    }
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-41",
+    "id": "31",
+    "ok": true,
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10467",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10467",
+      "key": "CAAB-41",
+      "fields": {
+        "summary": "Tratar faltas, justificativas e contestações",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10012",
+          "id": "10012",
+          "description": "Uma parte pequena e distinta do trabalho.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+          "name": "Tarefa",
+          "subtask": false,
+          "avatarId": 10318,
+          "hierarchyLevel": 0
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante: decisão da conversa registrada na spec008; executor humano ainda não comprovado por PR.\n\n## O que se pede\n\nRegistrar faltas após o término do compromisso e permitir pedido com texto/comprovante e decisão da equipe responsável.\n\n## Por que é importante\n\nAplicar as regras de falta com prazo, possibilidade de resposta e rastreabilidade.\n\n## Critérios de aceite\n\n* Prazo individual de sete dias para pedido e restrição de trinta dias desde registro, sem soma automática.\n* Reservas preservadas durante oportunidade/análise seguem contrato; cancelamentos respeitam período e estado.\n* Revisão de mérito exige permissão própria e comprovantes privados.\n* Aceitação mostra Falta abonada sem apagar histórico.\n* OK apenas fecha aviso; expiração não inventa decisão.\n* Revisão IA e QA humano identificados cobrem o recorte.\n\n## Evidências e limites\n\nT090–T102 têm evidência local; sem PR/integração. Cancelar além dos trinta dias é possibilidade futura T097. Sem envio real; depende de NEW-EMAIL.",
+        "assignee": null,
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10012",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Em Desenvolvimento",
+          "id": "10012",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "Em andamento"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-41"
+    }
+  },
+  {
+    "kind": "jira-transition",
+    "key": "CAAB-43",
+    "id": "51",
+    "ok": true,
+    "result": {
+      "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+      "id": "10469",
+      "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issue/10469",
+      "key": "CAAB-43",
+      "fields": {
+        "summary": "Exportar análise detalhada sem agrupamento",
+        "issuetype": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/issuetype/10010",
+          "id": "10010",
+          "description": "Uma pequena parte do trabalho que faz parte de uma tarefa maior.",
+          "iconUrl": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
+          "name": "Subtarefa",
+          "subtask": true,
+          "avatarId": 10316,
+          "hierarchyLevel": -1
+        },
+        "project": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/project/10007",
+          "id": "10007",
+          "key": "CAAB",
+          "name": "CAAB Novo",
+          "projectTypeKey": "software",
+          "simplified": false,
+          "avatarUrls": {
+            "48x48": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417",
+            "24x24": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=small",
+            "16x16": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=xsmall",
+            "32x32": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/universal_avatar/view/type/project/avatar/10417?size=medium"
+          }
+        },
+        "description": "Solicitante original não verificado. Executor: responsável técnico 02, PR40 e histórico de CAAB-24.\n\n## O que se pede\n\nBaixar dados completos da análise detalhada sem agrupamento em Excel, CSV e PDF.\n\n## Por que é importante\n\nEliminar limites de linhas/período nesse recorte preservando a seleção da tela.\n\n## Critérios de aceite\n\n* Exportar dados recebe filtros, colunas/ordem e ordenação da análise.\n* Mais de 50 mil linhas e período superior a 366 dias não são recusados por esses limites.\n* Revalidação combina reports:read, exports:generate e acesso à fonte.\n* QA humano identifica pessoa, versão e resultado.\n\n## Evidência\n\nPR40 integrado em 748539d. Preservar QA atual do recorte, sem declará-lo homologado só pelo merge. Os demais modos pertencem à outra subtarefa.",
+        "assignee": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/user?accountId=responsável técnico 02",
+          "accountId": "responsável técnico 02",
+          "avatarUrls": {
+            "48x48": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "24x24": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "16x16": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png",
+            "32x32": "https://secure.gravatar.com/avatar/a9fbd947d4e4066a83ab6ba7c1fe3518?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJJ-2.png"
+          },
+          "displayName": "responsável técnico 02",
+          "active": true,
+          "timeZone": "America/Sao_Paulo",
+          "accountType": "atlassian"
+        },
+        "status": {
+          "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/status/10014",
+          "description": "",
+          "iconUrl": "https://komunick.atlassian.net/images/icons/statuses/generic.png",
+          "name": "Em Teste / QA",
+          "id": "10014",
+          "statusCategory": {
+            "self": "https://api.atlassian.com/ex/jira/6ea7907b-1db7-44db-b6e3-a6d42ed7d8cb/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "Em andamento"
+          }
+        }
+      },
+      "webUrl": "https://komunick.atlassian.net/browse/CAAB-43"
+    }
+  },
+  {
+    "kind": "jira-resolve-reference",
+    "key": "CAAB-40",
+    "ok": true
+  },
+  {
+    "kind": "jira-resolve-reference",
+    "key": "CAAB-41",
+    "ok": true
+  },
+  {
+    "kind": "confluence-update",
+    "id": "1867914",
+    "ok": false,
+    "error": {
+      "error": true,
+      "message": "Failed to update page: 422 Unprocessable Entity. Details: {\n  \"errors\": [\n    {\n      \"status\": 422,\n      \"code\": null,\n      \"title\": \"Markdown body replacement would cause data loss. The existing content contains elements that cannot be represented in markdown: confluence resource (caabnovo), confluence macro (children), confluence macro (panel), generic html, underline, generic html, generic html. Use a supported non-markdown body representation for full replacement.\",\n      \"detail\": null\n    }\n  ]\n}",
+      "statusCode": 422
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "819227",
+    "ok": true,
+    "version": {
+      "number": 3,
+      "message": "Aplicar organização aprovada: tipos, modelos e fontes vigentes",
+      "minorEdit": false,
+      "authorId": "conexão técnica histórica",
+      "createdAt": "2026-10-01T20:54:51.592Z",
+      "ncsStepVersion": "12"
+    },
+    "error": null
+  },
+  {
+    "kind": "confluence-update",
+    "id": "2588761",
+    "ok": true,
+    "version": {
+      "number": 2,
+      "message": "Aplicar organização aprovada: tipos, modelos e fontes vigentes",
+      "minorEdit": false,
+      "authorId": "conexão técnica histórica",
+      "createdAt": "2026-10-01T20:54:56.109Z",
+      "ncsStepVersion": "1"
+    },
+    "error": null
+  },
+  {
+    "kind": "confluence-update",
+    "id": "2621487",
+    "ok": false,
+    "error": {
+      "error": true,
+      "message": "Failed to update page: 422 Unprocessable Entity. Details: {\n  \"errors\": [\n    {\n      \"status\": 422,\n      \"code\": null,\n      \"title\": \"Markdown body replacement would cause data loss. The existing content contains elements that cannot be represented in markdown: confluence macro (info). Use a supported non-markdown body representation for full replacement.\",\n      \"detail\": null\n    }\n  ]\n}",
+      "statusCode": 422
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "2588776",
+    "ok": false,
+    "error": {
+      "error": true,
+      "message": "Failed to update page: 422 Unprocessable Entity. Details: {\n  \"errors\": [\n    {\n      \"status\": 422,\n      \"code\": null,\n      \"title\": \"Markdown body replacement would cause data loss. The existing content contains elements that cannot be represented in markdown: confluence macro (info), confluence macro (note), adf extension (panel). Use a supported non-markdown body representation for full replacement.\",\n      \"detail\": null\n    }\n  ]\n}",
+      "statusCode": 422
+    }
+  },
+  {
+    "kind": "confluence-update",
+    "id": "7143436",
+    "ok": true,
+    "version": {
+      "number": 2,
+      "message": "Aplicar organização aprovada: tipos, modelos e fontes vigentes",
+      "minorEdit": false,
+      "authorId": "conexão técnica histórica",
+      "createdAt": "2026-10-01T20:55:08.318Z",
+      "ncsStepVersion": "1"
+    },
+    "error": null
+  }
+]

@@ -1,0 +1,55 @@
+[
+  {
+    "id": "NEW-ADMIN",
+    "title": "Operar aprovação, remarcação e recuperação de atendimentos",
+    "type": "Tarefa",
+    "parent": "CAAB-37",
+    "status": "Em Desenvolvimento",
+    "assignee": null,
+    "labels": ["melhoria", "modulo-agendamentos"],
+    "body": "Solicitante: decisão da conversa registrada na spec008; não atribuir autoria humana da implementação por inferência.\n\n## O que se pede\nOperar no painel pedidos, aprovação, remarcação e recuperação por indisponibilidade conforme contrato administrativo vigente.\n\n## Por que é importante\nPermitir à equipe resolver mudanças de atendimento preservando vagas e histórico.\n\n## Critérios de aceite\n- Aprovação revalida elegibilidade e disponibilidade do intervalo.\n- Trocas voluntárias respeitam prazo e limite confirmado; recuperação operacional é isenta.\n- Pedidos, confirmações e pendências ocupam a capacidade correta.\n- Histórico distingue decisão, publicação e intenção de aviso.\n- Revisão/testes IA e QA humano identificam versão e resultado.\n\n## Evidências e limites\nT078–T086 e correções T103–T105 da spec008 têm evidência local, sem PR/integração. Não repetir implementação nem retomar a frente pausada. Entrega real dos avisos fica em NEW-EMAIL; app/site em CAAB-30."
+  },
+  {
+    "id": "NEW-ABSENCE",
+    "title": "Tratar faltas, justificativas e contestações",
+    "type": "Tarefa",
+    "parent": "CAAB-37",
+    "status": "Em Desenvolvimento",
+    "assignee": null,
+    "labels": ["nova-funcionalidade", "modulo-agendamentos", "modulo-associados"],
+    "body": "Solicitante: decisão da conversa registrada na spec008; executor humano ainda não comprovado por PR.\n\n## O que se pede\nRegistrar faltas após o término do compromisso e permitir pedido com texto/comprovante e decisão da equipe responsável.\n\n## Por que é importante\nAplicar as regras de falta com prazo, possibilidade de resposta e rastreabilidade.\n\n## Critérios de aceite\n- Prazo individual de sete dias para pedido e restrição de trinta dias desde registro, sem soma automática.\n- Reservas preservadas durante oportunidade/análise seguem contrato; cancelamentos respeitam período e estado.\n- Revisão de mérito exige permissão própria e comprovantes privados.\n- Aceitação mostra Falta abonada sem apagar histórico.\n- OK apenas fecha aviso; expiração não inventa decisão.\n- Revisão IA e QA humano identificados cobrem o recorte.\n\n## Evidências e limites\nT090–T102 têm evidência local; sem PR/integração. Cancelar além dos trinta dias é possibilidade futura T097. Sem envio real; depende de NEW-EMAIL."
+  },
+  {
+    "id": "NEW-EMAIL",
+    "title": "Entregar os avisos operacionais de Agendamentos por e-mail",
+    "type": "Tarefa",
+    "parent": "CAAB-37",
+    "status": "Backlog",
+    "assignee": null,
+    "labels": ["integracao", "modulo-agendamentos", "modulo-comunicacao"],
+    "body": "Solicitante: decisão da conversa registrada em T088/T089 da spec008; executor não atribuído.\n\n## O que se pede\nTransformar intenções persistidas de avisos operacionais em entrega real pelo serviço de e-mail do sistema.\n\n## Por que é importante\nUma intenção gravada não garante que titular ou dependente recebeu a informação.\n\n## Critérios de aceite\n- Destinatários seguem regras operacionais confirmadas para titular e dependente, independentes de campanhas.\n- Retry não duplica entrega; falhas e estados são rastreáveis sem expor dados desnecessários.\n- Evidência distingue intenção, processamento e resultado do provedor.\n- Integração é validada por IA e por humano identificado em ambiente autorizado.\n\n## Observações\nDepende de CAAB-2. T089 ainda pendente. Não presumir ativação de WAHA, campanhas ou caixa de entrada. Confirmar transporte e ambiente antes de pronto."
+  },
+  {
+    "id": "NEW-DETAIL",
+    "title": "Exportar análise detalhada sem agrupamento",
+    "type": "Subtarefa",
+    "parent": "CAAB-24",
+    "status": "Em Teste / QA",
+    "assignee": {
+      "name": "responsável técnico 02",
+      "id": "responsável técnico 02"
+    },
+    "labels": ["melhoria", "modulo-relatorios", "modulo-exportacoes"],
+    "body": "Solicitante original não verificado. Executor: responsável técnico 02, PR40 e histórico de CAAB-24.\n\n## O que se pede\nBaixar dados completos da análise detalhada sem agrupamento em Excel, CSV e PDF.\n\n## Por que é importante\nEliminar limites de linhas/período nesse recorte preservando a seleção da tela.\n\n## Critérios de aceite\n- Exportar dados recebe filtros, colunas/ordem e ordenação da análise.\n- Mais de 50 mil linhas e período superior a 366 dias não são recusados por esses limites.\n- Revalidação combina reports:read, exports:generate e acesso à fonte.\n- QA humano identifica pessoa, versão e resultado.\n\n## Evidência\nPR40 integrado em 748539d. Preservar QA atual do recorte, sem declará-lo homologado só pelo merge. Os demais modos pertencem à outra subtarefa."
+  },
+  {
+    "id": "NEW-REPORTS",
+    "title": "Exportar detalhe agrupado, resumo e evolução sem os limites antigos",
+    "type": "Subtarefa",
+    "parent": "CAAB-24",
+    "status": "Backlog",
+    "assignee": null,
+    "labels": ["melhoria", "modulo-relatorios", "modulo-exportacoes"],
+    "body": "Solicitante original não verificado. Responsável não assumido para este recorte.\n\n## O que se pede\nCompletar exportação dos modos agrupado, resumo gerencial e resultados/evolução preservando agregações e seleção.\n\n## Por que é importante\nO PR40 resolveu somente o detalhe sem agrupamento; o restante ainda usa o caminho antigo.\n\n## Critérios de aceite\n- Os três modos exportam o conjunto completo selecionado.\n- Filtros, grupos, agregações e ordenação correspondem à consulta.\n- Permissões atuais e revogação são respeitadas.\n- Validações incluem revisão/testes IA e QA humano identificado.\n\n## Observações\nSpec010 T029/T031/T036–T039 e parcelas T030/T035. Não retirar teto do worker antigo sem solução compatível; não refazer o motor CAAB-22."
+  }
+]

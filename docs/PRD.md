@@ -1,12 +1,20 @@
 # CAAB — Sistema Interno de Gestão
 
-Este PRD define objetivos, requisitos e limites do produto. Estado de implementação fica no
-[mapa de módulos](MODULES.md); critérios detalhados e tarefas ficam nas specs de cada função.
-Planejamento não comprova entrega ou homologação. UI/UX segue o [guia principal](caab-design.md).
+## Checkpoint da consolidação — 09/10/2026
 
-Colaboradores significa contas e permissões; RH é possibilidade futura. Mensagens tem finalidade de
-comunicados/campanhas, com envio real ainda dependente de definição própria. CAASSH permanece
-suspenso. O escopo previsto não autoriza construir módulos suspensos ou integrações sem contrato.
+A revisão abaixo conserva o retrato consultado em 07/10/2026. Na consolidação local de 09/10, `dev`
+está em `76965dc`: os PRs #48 (Mensagens/uploads/evidências) e #50 (agenda/Gitleaks) já foram
+integrados. Referências a esses PRs como abertos nas seções da revisão são históricas. O plano de
+Chat interno permanece documental, com implementação e homologação pendentes.
+
+Este PRD define objetivos, requisitos e limites do produto. O [mapa de módulos](MODULES.md) e as
+specs são as fontes por domínio; seus checkpoints devem ser lidos com a data e a versão a que se
+referem. Planejamento, código integrado, CI e homologação são estados distintos. UI/UX segue o
+[guia principal](caab-design.md).
+
+Colaboradores corresponde às contas e permissões. Mensagens prepara comunicados/campanhas para
+associados; Chat interno é uma entrega planejada independente. Portal de Parceiros aguarda revisão,
+CAASSH permanece suspenso e RH é sugestão em avaliação.
 
 ## 1. Controle do documento
 
@@ -14,37 +22,54 @@ suspenso. O escopo previsto não autoriza construir módulos suspensos ou integr
 
 **Tipo:** Product Requirements Document (PRD)
 
-**Versão:** 0.4
+**Versão:** 0.6
 
-**Status:** Escopo consolidado; Mensagens em protótipo com finalidade confirmada e aderência
-pendente; Recursos Humanos como possibilidade futura
+**Data:** 07/10/2026 (revisão integral; versão inicial de 09/09/2026)
 
-**Data:** 02/10/2026 (conciliação documental; versão inicial de 09/09/2026)
+**Status:** requisitos conciliados com as specs e tickets; capacidades integradas, pendências de
+aceite e funcionalidades futuras distinguidas abaixo.
 
-**Escopo desta versão:** todos os módulos do painel e portal do parceiro
+**Base conferida:** dev/origin/dev em 1c21c9a711aa12f446918ac790bc6ede76490251, incluindo
+Agendamentos administrativo, cargo base Colaborador e exportações completas de Relatórios. A base
+Git não comprova implantação nem estado do banco de uso.
 
-**Ordem de execução:** Agendamentos tem prioridade máxima, em paralelo a Relatórios e à consolidação
-documental e à frente independente de Acessos, totalizando quatro instâncias. A revisão de acessos
-já foi conciliada nesta entrega documental; suas correções e decisões continuam pendentes. Consultar
-o [plano do programa](../specs/002-integrated-modules/plan.md) e o
-[estado de implementação](MODULES.md). A interface do app/site permanece adiada e depende de
-jornadas, identidade, contratos e critérios próprios. Integração e homologação dos e-mails de
-Agendamentos estão adiadas porque o serviço não existe; preservar destinatários/finalidade já
-confirmados, sem transformar a dependência em construção autorizada de comunicação.
+**Cobertura:** specs 001–010 da base integrada; organização Jira/Confluence da spec 011 no PR #48;
+plano local 012 de Chat interno; todos os 53 tickets retornados pela consulta final do projeto CAAB,
+incluindo concluídos e históricos. Fontes, versões, limitações e correspondência por ticket estão na
+[evidência desta revisão](history/prd-review-2026-10-07.md). A versão 0.5 preparada na frente de
+Chat interno foi conciliada por seus requisitos CHAT-001–CHAT-015, sem substituir sua documentação.
 
-O aplicativo e o site externo participam do desenho dos contratos de conteúdo, benefícios, cadastro,
-credencial, agenda e mensagens. Alterações nesses consumidores, contratação de serviços e migração
-de dados exigem escopo próprio. A implementação desta entrega concentra-se no novo painel e portal.
+### 1.1 Situação do produto na data da revisão
 
-O [mapa de módulos](MODULES.md) compara capacidades existentes e novas e define responsabilidades
-para evitar duplicatas. Todos os módulos integram o mesmo escopo; a sequência interna de construção
-respeita dependências. O [plano integrado](../specs/002-integrated-modules/plan.md) substitui a
-proposta anterior de entregar somente Notícias primeiro. Refinamentos posteriores não dispensam
-persistência, autorização, acessibilidade ou integridade na primeira versão funcional.
+| Área / fonte                                                        | Situação observada                                                                                                              | O que permanece aberto                                                                                                                           |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Fundação e Colaboradores](../specs/001-project-foundation/spec.md) | Autenticação, cadastro administrativo, cargo único, delegação e cargo base implementados e integrados.                          | Matriz/QA humano, ativação da migration de cargo base no destino e correção visual G01 de Mensagens no PR #48.                                   |
+| [Programa integrado](../specs/002-integrated-modules/spec.md)       | Organiza dependências e critérios transversais; não equivale a todos os módulos entregues.                                      | Revisão transversal, histórico individual integrado e candidatos futuros delimitados.                                                            |
+| [Auditoria e Processamentos](../specs/003-audit-operations/spec.md) | Eventos e jobs reunidos, histórico e operação autorizada existentes.                                                            | Migrar exportação própria legada para download direto nos três formatos.                                                                         |
+| [Notícias](../specs/004-news-publishing/spec.md)                    | Editor, versões, mídia, publicação por canal e API pública de consulta implementados.                                           | Exportação própria, revalidação editorial no worker e validação dos consumidores externos.                                                       |
+| [Associados](../specs/005-members-management/spec.md)               | Cadastro, dependentes, foto/documentos, bloqueios e consulta OAB-BA implementados.                                              | Implementação da matriz documental/definição de reanálise, exportação própria, homologação institucional da consulta e definição da carteirinha. |
+| [Conta e Configurações](../specs/006-account-settings/spec.md)      | Perfil, senha, sessões, tema, rascunhos e senha inicial implementados.                                                          | Recebimento real de e-mails e caixa de entrada com escopo próprio; tema Cores Legado ainda planejado.                                            |
+| [Parceiros](../specs/007-partners-management/spec.md)               | Parceiros, unidades, benefícios, avaliações, dados públicos autorizados e CEP implementados.                                    | Exportação própria e portal autenticado externo, que é uma função futura distinta.                                                               |
+| [Agendamentos](../specs/008-scheduling-management/spec.md)          | Calendário, oferta por profissional/capacidade, aprovação, remarcação/recuperação, faltas e exportações integrados pelo PR #43. | QA humano/rollout, endurecimento de uploads no PR #48, ajustes visuais no PR #50; app/site e e-mails adiados.                                    |
+| [Mensagens](../specs/009-messaging/spec.md)                         | Públicos, campanhas, prévia, agendamentos e histórico persistidos como protótipo.                                               | Aderência à finalidade, contratos e envio real por canal; exportação própria.                                                                    |
+| [Relatórios](../specs/010-reports-analytics/spec.md)                | Resumo, análise detalhada agrupada ou não e evolução com Excel/CSV/PDF diretos integrados pelos PRs #40 e #46.                  | Medições C1/T038, revisão humana específica e QA; integração não encerra o aceite.                                                               |
+| Organização documental — spec 011                                   | Aplicação parcial no Jira/Confluence e evidência preparada no PR #48; não é módulo do produto.                                  | Operações nativas de vínculos/hierarquia e fechamento documental.                                                                                |
+| Chat interno — plano 012                                            | Escopo definido, ticket Em Desenvolvimento; apenas planejamento/documentação nesta revisão.                                     | Spec, contratos e tarefas completos antes do código; implementação e homologação da entrega única.                                               |
 
-O laudo de 09/09/2026 é inventário funcional, não modelo visual ou técnico. Não consultar código,
-telas, capturas ou vídeos do painel antigo ou de refações anteriores. Contratos devem ser novos ou
-formalmente fornecidos; regras institucionais não podem ser inferidas do legado ou do mercado.
+**Ordem e limites:** a prioridade máxima de Agendamentos foi definida no programa; o recorte
+administrativo avançou para código integrado, com os aceites acima ainda abertos. O número de
+instâncias/terminais usado em entregas antigas não define um plano atual de produto. App/site,
+e-mails e canais externos dependem de seus contratos e critérios próprios. O serviço de e-mail não é
+pré-condição para aceitar as regras administrativas de aprovação e faltas.
+
+App, site externo e futuro portal participam do desenho dos contratos de conteúdo, benefícios,
+cadastro, credencial, agenda e comunicação. Alterar consumidores, contratar serviços e migrar dados
+exige escopo próprio. A plataforma atual concentra a operação no painel.
+
+O laudo inicial é inventário funcional, não modelo visual ou técnico. Não consultar código, telas,
+capturas ou vídeos do painel antigo sem autorização específica. Contratos e regras institucionais
+não podem ser inferidos do legado ou do mercado; reaproveitamentos autorizados seguem
+[LEGACY-REUSE.md](LEGACY-REUSE.md).
 
 ## 2. Resumo executivo
 
@@ -55,9 +80,9 @@ O sistema deve reduzir cadastros duplicados, operações manuais, conflitos de a
 rastreabilidade. A experiência deve ser moderna, rápida, acessível e adequada ao trabalho
 administrativo diário.
 
-A solução será construída como um monólito modular: uma aplicação única, com módulos de domínio
-claramente separados. Notícias poderão ser distribuídas ao aplicativo, ao site externo ou a ambos
-por contratos de API versionados.
+A solução adota um monólito modular: uma aplicação única, com módulos de domínio claramente
+separados e processamento assíncrono compartilhado. Notícias poderão ser distribuídas ao aplicativo,
+ao site externo ou a ambos por contratos de API versionados.
 
 ## 3. Problemas a resolver
 
@@ -107,15 +132,15 @@ por contratos de API versionados.
 
 ## 6. Usuários e funções
 
-**Decisão vigente de21/09/2026:** os cargos iniciais são Administrador, Gestor e Colaborador.
-Administrador tem todas as permissões concretas dos módulos disponíveis, atuais e futuros, incluindo
-exportação e gestão de cargos/acessos. Gestor possui consulta a todos os módulos, exportação geral e
-acesso completo a Relatórios; pode conceder acessos de qualquer módulo a outros colaboradores,
-inclusive alterações que não possui para uso próprio, mas não altera os próprios acessos nem atribui
-cargos. Colaborador somente usa os acessos recebidos e não concede cargos ou permissões. Atribuição
-de cargos permanece com Administrador. As categorias profissionais abaixo são descrições de
-atuação/propostas anteriores, não cargos adicionais a criar nesta entrega. Contrato vigente:
-[cargos](../specs/001-project-foundation/contracts/roles.md).
+**Decisão de cargos de 21/09/2026, complementada em 22/09 e 05/10:** os cargos iniciais são
+Administrador, Gestor e Colaborador. Administrador tem todas as permissões concretas dos módulos
+disponíveis, atuais e futuros, incluindo exportação e gestão de cargos/acessos. Gestor possui
+consulta a todos os módulos, exportação geral e acesso completo a Relatórios; pode conceder acessos
+de qualquer módulo a outros colaboradores, inclusive alterações que não possui para uso próprio, mas
+não altera os próprios acessos nem atribui cargos. Colaborador somente usa os acessos recebidos e
+não concede cargos ou permissões. Atribuição de cargos permanece com Administrador. As categorias
+profissionais abaixo são descrições de atuação/propostas anteriores, não cargos adicionais a criar
+nesta entrega. Contrato vigente: [cargos](../specs/001-project-foundation/contracts/roles.md).
 
 ### 6.1 Administrador
 
@@ -156,12 +181,22 @@ requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões
 
 Possui acesso somente leitura aos logs, históricos, versões e relatórios autorizados.
 
-As funções podem ser acumuladas. O sistema deve conceder permissões concretas, e não acesso amplo
-apenas pelo nome do cargo.
+Uma pessoa pode atuar em mais de uma área, mas cada conta mantém **no máximo um cargo vigente**. As
+permissões concretas resultam do cargo e dos acessos individuais válidos. Colaborador não traz
+permissões próprias de negócio por padrão. O autocadastro público permanece bloqueado; criação de
+contas exige fluxo administrativo autorizado. Contas novas sem cargo informado nascem Colaborador; a
+migração das contas existentes sem cargo preserva acessos individuais. A decisão está definida e
+implementada; sua aplicação no banco de uso exige a revisão prevista no contrato. Revogar o único
+cargo ainda pode deixar uma conta sem cargo: não há reatribuição automática a cada revogação.
+
+O plano de Chat interno define uma capacidade base para usuários internos ativos e supervisão por
+cargo de Administrador/Gestor, sem delegação implícita dessa supervisão. Comentários exigem consulta
+ao registro, sem conceder edição de negócio. Essa regra específica planejada deve ser conciliada com
+o contrato de cargos antes da implementação.
 
 ## 7. Escopo funcional
 
-### 7.1 MVP
+### 7.1 Núcleo administrativo vigente
 
 - Autenticação e autorização.
 - Dashboard por função.
@@ -169,41 +204,40 @@ apenas pelo nome do cargo.
 - Publicação imediata ou agendada por canal.
 - Cadastros de unidades, serviços, profissões e profissionais.
 - Disponibilidade e bloqueios de agenda.
-- Criação, remarcação e cancelamento de agendamentos.
+- Criação, aprovação, remarcação, recuperação, cancelamento e tratamento de faltas de agendamentos.
 - Gestão de associados e registro de verificação da OAB.
 - Bloqueio e desbloqueio de associados sem justificativa obrigatória, com auditoria.
 - Gestão de parceiros e serviços parceiros.
 - Gestão de contas e permissões, apresentada como Colaboradores.
 - Logs de alterações e histórico dos registros críticos.
-- Pesquisa, filtros, paginação e exportação autorizada.
+- Pesquisa, filtros, paginação, relatórios e exportação autorizada, com migração por módulo.
 
-### 7.2 Integrações previstas no planejamento completo
+### 7.2 Evoluções e integrações com critérios próprios
 
-- Sincronização de agendas externas.
-- Lembretes por e-mail, SMS ou WhatsApp.
-- Integração oficial automatizada com a OAB, se disponibilizada ou contratada.
-- Fluxos de aprovação com múltiplos níveis.
-- Relatórios analíticos avançados.
-- Alterações no aplicativo e no site externo.
-- Integração com sistemas de RH, ERP ou atendimento.
+O planejamento integrado conserva requisitos além do núcleo já construído. Sua inclusão não autoriza
+implementação, contratação ou alteração de consumidores externos.
 
-A presença no planejamento não autoriza contratar serviços ou alterar consumidores externos.
-Integrações reais dependem de contrato e responsável. Os módulos adicionais abaixo fazem parte da
-entrega integrada, inclusive os anteriormente ausentes ou adiados:
+- Pessoas: dependentes e análise documental já têm base; matriz documental, reanálise, carteirinha
+  digital e visão individual integrada continuam com recortes próprios.
+- Agendamentos: autoatendimento no app/site, entrega real de avisos e expansões de avaliações ou
+  integração de calendários seguem o planejamento da spec 008.
+- Comunicação: Mensagens atende campanhas/comunicados aos associados; transporte real, preferências
+  e canais ainda precisam de definição e validação. E-mail transacional e caixa de entrada são
+  acompanhados separadamente; não presumir que a caixa de entrada seja um chat.
+- Chat interno: conversas diretas/grupos, comentários nos registros e notificações configuráveis em
+  uma entrega funcional, conforme a seção 9.10. É independente das campanhas e do futuro suporte
+  externo por tickets.
+- Portal do parceiro: funcionalidade prevista aguardando revisão, baseada no cadastro autoritativo
+  de Parceiros. API pública de benefícios não comprova portal autenticado.
+- CAASSH: suspenso, pendente de revisão de finalidade, regras e dependências; requisitos CRE são
+  referências preservadas, sem construção ou ativação autorizadas.
+- Recursos Humanos: sugestão em avaliação, sem escopo aprovado; não duplica Colaboradores.
+- Tema Cores Legado: opção futura vermelho/branco, com CAAB preservado como padrão, claro/escuro e
+  referência autorizada própria; não está implementado por existir como tema planejado.
 
-- Pessoas: dependentes, análise documental, correções, credencial e elegibilidade por finalidade.
-- Agendamentos: avaliações e acompanhamento de qualidade, além de oferta e agenda.
-- Benefícios: condições, contratos, ofertas e avaliações de parceiros.
-- Comunicação: notícias/destaques, públicos, campanhas e modelos automáticos com acompanhamento.
-- Créditos: Caassh, configuração do programa, concessões individuais/em lote, extrato e correções.
-- Portal do parceiro: acesso por organização, solicitações avulsas ou identificadas por QR.
-- Equipe e acesso: Colaboradores é a gestão das contas e permissões existentes, sem cadastro de RH
-  separado.
-- Auditoria: Eventos e Processamentos reunidos, preservando autorizações independentes.
-- Relatórios: consultas e exportações dos mesmos registros dos domínios.
-
-Os rótulos MVP dos requisitos abaixo representam a primeira versão funcional desta entrega. Pós-MVP
-nos itens de integração indica dependência de contrato externo, não exclusão do planejamento.
+Sincronizações externas, SMS/WhatsApp, aprovações adicionais e integrações com RH/ERP dependem de
+contrato, responsável e autorização próprios. Os rótulos **MVP** nos requisitos identificam o núcleo
+funcional; **Pós-MVP**, as evoluções. Nenhum rótulo é prova de implementação ou homologação.
 
 ## 8. Fluxos principais
 
@@ -211,7 +245,8 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 
 1. Usuário autorizado cria um rascunho.
 2. Informa título, resumo, conteúdo, categoria, capa e canais.
-3. Adiciona imagens, vídeo, links ou anexos permitidos.
+3. Adiciona imagens, links e anexos permitidos. Vídeos/embeds dependem de provedores habilitados;
+   não há provedor autorizado nesta revisão.
 4. Visualiza a prévia para cada canal.
 5. Salva para revisão ou publica, conforme sua permissão.
 6. Na publicação imediata, o conteúdo passa a ser retornado pelas APIs públicas autorizadas.
@@ -220,56 +255,87 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 
 ### 8.2 Agendamento
 
-1. Usuário identifica o beneficiário e procura o serviço necessário.
-2. Sistema permite filtrar unidade, data e profissional e comparar as próximas vagas permitidas.
-3. Sistema apresenta a oferta e explica restrições ou indisponibilidade.
-4. Sistema identifica os profissionais e recursos habilitados para a oferta.
-5. Sistema considera jornada, intervalos, bloqueios, afastamentos, duração do serviço e compromissos
-   existentes.
-6. Usuário escolhe um horário disponível.
-7. Servidor revalida a disponibilidade dentro de uma transação.
-8. Agendamento é confirmado e registrado no histórico.
+1. Operador com consulta identifica a pessoa beneficiária, inclusive dependente, e a oferta.
+2. O sistema mostra unidade, serviço/procedimento, profissional quando aplicável e horários ou vagas
+   por capacidade, respeitando funcionamento, duração, bloqueios e elegibilidade.
+3. Operador com alteração solicita a reserva. O servidor revalida autoridade, sobreposição da
+   pessoa, disponibilidade e capacidade dentro da transação.
+4. A reserva entra em Agendado ou Aguardando aprovação, conforme a política; ambas ocupam vaga e
+   impedem sobreposição. A aprovação revalida elegibilidade e disponibilidade, preservando o
+   intervalo retido, a identidade e o histórico da reserva.
+5. A interface apresenta o resultado e o histórico. Registro de intenção de aviso não significa
+   envio de e-mail.
 
-### 8.3 Remarcação e cancelamento
+### 8.3 Remarcação, cancelamento e faltas
 
-1. Usuário abre o agendamento.
-2. Seleciona a ação, sem exigir motivo ou justificativa humana.
-3. Para remarcação, o novo horário passa por todas as validações de disponibilidade.
-4. O registro anterior é preservado no histórico.
-5. O sistema registra responsável, horário e origem da alteração.
+1. Operador autorizado consulta a reserva e escolhe a ação disponível no estado atual.
+2. Cada agendamento permite duas trocas voluntárias confirmadas; uma troca em andamento reserva um
+   uso no mesmo ciclo. A antecedência padrão é de 24 horas em relação ao horário original,
+   configurável/desativável por serviço. Recuperação por indisponibilidade usa ciclo isento.
+3. Novo horário passa novamente por capacidade, disponibilidade, autorização e sobreposição. Reserva
+   a remarcar pode ficar sem horário/profissional; a origem e as transições continuam no histórico.
+4. Cancelamento e remarcação não exigem justificativa genérica; dados operacionais são preservados.
+5. A equipe pode registrar falta após o término previsto; o tempo sozinho não registra ausência.
+   Sete dias para justificativa/contestação e 30 dias de restrição individual contam do registro da
+   falta. O pedido exige texto e ao menos um comprovante privado, com decisão humana e permissão
+   dedicada. A restrição não bloqueia familiares.
+6. Durante prazo/análise tempestiva, reservas existentes são preservadas e novas ficam impedidas.
+   Sem pedido ou com rejeição antes do término da restrição, a regra cancela apenas reservas
+   agendadas/pendentes cujo início futuro esteja dentro do período. Aceitação remove somente essa
+   restrição; expirar 30 dias não decide a análise nem reabre prazo.
+7. Bloqueio cadastral posterior sinaliza reservas existentes para decisão manual; não as cancela
+   automaticamente. Critérios e casos de borda permanecem no contrato da spec 008.
 
 ### 8.4 Cadastro e verificação de associado
 
-1. Usuário cadastra os dados mínimos necessários.
-2. Informa número da OAB e seccional.
-3. Sistema procura uma integração oficial configurada.
-4. Sem integração oficial, o usuário realiza consulta manual no Cadastro Nacional da OAB.
-5. Registra fonte, data, responsável, situação encontrada e observação.
-6. O associado recebe situação cadastral interna independente do resultado da verificação.
+1. Usuário autorizado cadastra dados mínimos e identificadores, com prevenção de duplicidade.
+2. Quando pertinente, consulta OAB-BA/Implanta, relatório STATUS CAAB, pelo adaptador institucional
+   implementado, avulso ou a partir do cadastro, usando configuração autorizada.
+3. Indisponibilidade, ausência de cadastro e falha da consulta são resultados distintos. Conferência
+   manual continua disponível; CNA/ConfirmADV não substituem automaticamente a fonte CAAB.
+4. Registra fonte, data, operador e resultado sem inferir bloqueio interno, condição financeira ou
+   credencial a partir de uma resposta externa isolada.
+5. A homologação positiva no ambiente de destino e as regras institucionais pendentes seguem a spec
+   005; existência do adaptador não comprova homologação.
 
 ### 8.5 Bloqueio de associado
 
 1. Usuário autorizado solicita o bloqueio.
-2. Sistema registra a alteração e, quando aplicável, data de término, sem exigir justificativa.
+2. Sistema registra a alteração sem exigir justificativa; bloqueio administrativo persiste até
+   desbloqueio manual, sem expiração automática.
 3. Ação é confirmada no servidor.
 4. Bloqueio passa a impedir apenas as ações definidas pela política da CAAB.
 5. O registro permanece pesquisável e o evento entra na auditoria.
+
+### 8.6 Conversas e comentários internos
+
+1. Usuário interno ativo abre uma conversa direta, participa de um grupo por convite ou consulta os
+   comentários de um registro autorizado.
+2. Escreve texto, responde, menciona participantes autorizados ou adiciona referência a registro;
+   anexos precisam ser liberados pela validação e pelo antivírus antes da publicação.
+3. O servidor revalida acesso e salva uma única publicação, mesmo após nova tentativa do envio.
+4. Participantes da conversa ou seguidores/mencionados autorizados do registro recebem avisos
+   conforme canal, menções, módulos e silêncio configurados; o autor não recebe aviso próprio.
+5. Histórico e pesquisa preservam o contexto autorizado, versões e indicação de edição/remoção;
+   compartilhar referência não concede acesso ao registro.
+6. Supervisão permite consulta e moderação auditadas por Administrador/Gestor; para enviar em grupo,
+   o supervisor precisa participar, sem entrada silenciosa.
 
 ## 9. Requisitos funcionais
 
 ### 9.1 Notícias
 
-| ID      | Requisito                                                                                                                                               | Prioridade |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| NOT-001 | Criar, editar, duplicar e arquivar notícias.                                                                                                            | MVP        |
-| NOT-002 | Manter rascunhos e histórico de versões.                                                                                                                | MVP        |
-| NOT-003 | Suportar texto rico, imagens, vídeos, links e anexos permitidos.                                                                                        | MVP        |
-| NOT-004 | Definir capa, resumo, categoria, tags, autor e responsável pela publicação.                                                                             | MVP        |
-| NOT-005 | Publicar no aplicativo, site externo ou ambos.                                                                                                          | MVP        |
-| NOT-006 | Agendar publicação e despublicação.                                                                                                                     | MVP        |
-| NOT-007 | Exibir prévia antes da publicação.                                                                                                                      | MVP        |
-| NOT-008 | Registrar falhas de distribuição e permitir nova tentativa idempotente.                                                                                 | MVP        |
-| NOT-009 | Permitir publicação direta a quem já tem acesso autorizado ao painel, sem permissão adicional de Notícias ou segunda aprovação (decisão de 09/09/2026). | MVP        |
+| ID      | Requisito                                                                                                                                                                                                                 | Prioridade |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| NOT-001 | Criar, editar, duplicar e arquivar notícias.                                                                                                                                                                              | MVP        |
+| NOT-002 | Manter rascunhos e histórico de versões.                                                                                                                                                                                  | MVP        |
+| NOT-003 | Suportar texto rico, imagens, links e anexos permitidos; vídeos/embeds dependem de definição e habilitação de provedores, ainda pendentes.                                                                                | MVP        |
+| NOT-004 | Definir capa, resumo, categoria, tags, autor e responsável pela publicação.                                                                                                                                               | MVP        |
+| NOT-005 | Disponibilizar notícias publicadas ao aplicativo, site externo ou ambos por consulta à API do canal; não presumir push ou recebimento pelos consumidores.                                                                 | MVP        |
+| NOT-006 | Agendar publicação e despublicação.                                                                                                                                                                                       | MVP        |
+| NOT-007 | Exibir prévia antes da publicação.                                                                                                                                                                                        | MVP        |
+| NOT-008 | Registrar tentativas e falhas das ações programadas por canal e permitir retry idempotente; disponibilidade na API não comprova recebimento externo.                                                                      | MVP        |
+| NOT-009 | Exigir permissões distintas de consulta, alteração e publicação em Notícias (news:read, news:write, news:publish), sem segunda aprovação editorial obrigatória; decisão de 21/09 substitui a autorização por mera sessão. | MVP        |
 
 ### 9.2 Unidades, serviços e profissionais
 
@@ -285,38 +351,64 @@ nos itens de integração indica dependência de contrato externo, não exclusã
 
 ### 9.3 Agenda e disponibilidade
 
-| ID      | Requisito                                                                              | Prioridade |
-| ------- | -------------------------------------------------------------------------------------- | ---------- |
-| AGE-001 | Configurar jornada recorrente por profissional e unidade.                              | MVP        |
-| AGE-002 | Configurar intervalos, bloqueios e indisponibilidades.                                 | MVP        |
-| AGE-003 | Calcular horários usando a duração do serviço.                                         | MVP        |
-| AGE-004 | Impedir sobreposição de agendamentos confirmados.                                      | MVP        |
-| AGE-005 | Criar, confirmar, concluir, cancelar e remarcar agendamentos.                          | MVP        |
-| AGE-006 | Registrar autor, ação e mudanças de cancelamento/remarcação, sem exigir justificativa. | MVP        |
-| AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional.                        | MVP        |
-| AGE-008 | Manter histórico das transições.                                                       | MVP        |
-| AGE-009 | Integrar calendários externos.                                                         | Pós-MVP    |
+| ID      | Requisito                                                                                                                                                                             | Prioridade |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| AGE-001 | Configurar jornada recorrente por profissional e unidade.                                                                                                                             | MVP        |
+| AGE-002 | Configurar intervalos, bloqueios e indisponibilidades.                                                                                                                                | MVP        |
+| AGE-003 | Calcular vagas pela duração do procedimento, retida na reserva, e reservar por profissional ou capacidade conforme a oferta.                                                          | MVP        |
+| AGE-004 | Impedir sobreposição da mesma pessoa entre unidades/profissionais, além de conflito de profissional e excesso de capacidade; reservas agendadas e pendentes de aprovação ocupam vaga. | MVP        |
+| AGE-005 | Criar, aprovar/rejeitar, cancelar, remarcar e recuperar reservas conforme estados e transições autorizados.                                                                           | MVP        |
+| AGE-006 | Registrar autor, ação e mudanças de cancelamento/remarcação, sem exigir justificativa.                                                                                                | MVP        |
+| AGE-007 | Visualizar agenda por dia, semana, mês, unidade e profissional.                                                                                                                       | MVP        |
+| AGE-008 | Manter histórico das transições.                                                                                                                                                      | MVP        |
+| AGE-009 | Integrar calendários externos.                                                                                                                                                        | Pós-MVP    |
 
-Status padrão: `Pendente`, `Confirmado`, `Em atendimento`, `Concluído`, `Não compareceu` e
-`Cancelado`.
+Estados implementados da reserva: **Agendado**, **Aguardando aprovação**, **Cancelado**,
+**Recusado** e **Aguardando nova data**. Recuperação é um tipo de processo, não um sexto estado.
+Falta é uma ocorrência própria associada à reserva; não se deve substituir esse modelo pela antiga
+lista genérica Em atendimento/Concluído/Não compareceu. Transições e autorização pertencem ao
+[contrato administrativo](../specs/008-scheduling-management/contracts/admin.md).
 
-Transições não previstas devem ser recusadas pelo servidor. Um agendamento cancelado ou concluído é
-terminal no desenho de expansão; correções administrativas exigem autorização e auditoria, sem
-justificativa obrigatória. A base integrada usa Agendado/Cancelado; aprovação, recuperação e faltas
-têm incremento local ainda não integrado. Estados e transições efetivos pertencem à spec 008 da
-entrega ativa; a lista de produto acima não homologa nem substitui seu contrato.
+| ID      | Requisito                                                                                                                                                                                                                 | Prioridade |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| AGE-010 | Separar consulta e alteração; alteração depende de consulta, com revalidação no servidor e efeitos das revogações.                                                                                                        | MVP        |
+| AGE-011 | Aprovar/rejeitar reservas, revalidando elegibilidade e disponibilidade, com intervalo/duração retidos, controle de versão e ocupação da vaga.                                                                             | MVP        |
+| AGE-012 | Separar remarcação voluntária sujeita a prazo/limite da recuperação isenta por indisponibilidade do serviço.                                                                                                              | MVP        |
+| AGE-013 | Sinalizar reservas de pessoa bloqueada/excluída sem cancelamento automático e sem afetar familiares por inferência.                                                                                                       | MVP        |
+| AGE-014 | Registrar falta após o término previsto; contar do registro sete dias para justificativa/contestação com texto/comprovante e 30 dias de restrição individual, preservando os critérios de decisão e cancelamento da spec. | MVP        |
+| AGE-015 | Exigir revisão dedicada de faltas, proteger comprovantes desde o upload e preservar decisão, autoria e eventos automáticos idempotentes.                                                                                  | MVP        |
+| AGE-016 | Entregar avisos operacionais de bloqueio, protocolo e decisão ao titular ou ao dependente e titular vigente, sem depender de preferências de campanhas; integração e homologação adiadas ao transporte real.              | Pós-MVP    |
+
+Sobreposição por beneficiário, aprovação, remarcação, faltas e permissões já estão integradas.
+Endurecimento adicional de autorização dos uploads após espera por lock está no PR #48; ajustes de
+calendário, diálogo e foco estão no PR #50. Isso não altera as pendências de QA e ativação no
+destino.
 
 ### 9.4 Associados
 
-| ID      | Requisito                                                             | Prioridade |
-| ------- | --------------------------------------------------------------------- | ---------- |
-| ASS-001 | Criar, visualizar e atualizar associados.                             | MVP        |
-| ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional.            | MVP        |
-| ASS-003 | Ativar, bloquear e desbloquear sem motivo obrigatório, com auditoria. | MVP        |
-| ASS-004 | Registrar situação, fonte e data da verificação da OAB.               | MVP        |
-| ASS-005 | Manter histórico cadastral e de bloqueios.                            | MVP        |
-| ASS-006 | Evitar duplicidade por identificadores definidos.                     | MVP        |
-| ASS-007 | Automatizar consulta somente por integração oficial autorizada.       | Pós-MVP    |
+| ID      | Requisito                                                                                                                                                   | Prioridade |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| ASS-001 | Criar, visualizar e atualizar associados.                                                                                                                   | MVP        |
+| ASS-002 | Pesquisar por nome, documento autorizado, OAB e seccional.                                                                                                  | MVP        |
+| ASS-003 | Ativar, bloquear e desbloquear sem motivo obrigatório, com auditoria.                                                                                       | MVP        |
+| ASS-004 | Registrar situação, fonte e data da verificação da OAB.                                                                                                     | MVP        |
+| ASS-005 | Manter histórico cadastral e de bloqueios.                                                                                                                  | MVP        |
+| ASS-006 | Evitar duplicidade por identificadores definidos.                                                                                                           | MVP        |
+| ASS-007 | Usar a integração institucional OAB-BA autorizada e manter conferência manual; homologar retorno positivo no destino antes de declarar a integração aceita. | MVP        |
+
+O domínio também mantém dependentes e vínculos históricos, foto privada e documentos, análise
+documental e situações cadastral/OAB/financeira/credencial separadas. Não há login externo
+provisionado nem emissão de cartão/QR por essas capacidades. Solicitação de exclusão exige motivo
+por ocorrência e programa exclusão lógica para sete dias depois, com possibilidade de
+desfazer/restaurar e preservação de vínculos, reservas e histórico. Isso não é descarte definitivo
+nem política de retenção.
+
+Vínculos/documentos já definidos: titular apresenta carteira OAB; cônjuge, identidade e
+casamento/união estável; filho, identidade e, se maior de idade, matrícula superior; enteado,
+identidade e casamento/união estável, também matrícula superior se maior. Filhos/enteados têm limite
+de até 25 anos. A aplicação da matriz está pendente em POL02; quais alterações exigem nova análise
+continuam em definição em POL01, sem bloqueio etário ou reanálise automática inferidos. Fonte:
+[decisões de Associados](../specs/005-members-management/open-decisions.md).
 
 ### 9.5 Parceiros
 
@@ -328,6 +420,11 @@ entrega ativa; a lista de produto acima não homologa nem substitui seu contrato
 | PAR-004 | Controlar vigência e documentos administrativos.                          | MVP        |
 | PAR-005 | Publicar dados selecionados para canais externos por contrato autorizado. | MVP        |
 
+Parceiros inclui categorias, unidades, contratos/vigências e benefícios, com rascunho/publicação e
+seleção do catálogo do app independente da presença no site. A moderação de avaliações preserva
+nota/opinião original. APIs públicas e cadastro administrativo não comprovam autenticação do
+parceiro, portal, validação por QR ou coleta externa de avaliações.
+
 ### 9.6 Colaboradores
 
 Colaboradores é a gestão atual de contas e permissões, nas rotas `/users`; não há cadastro separado
@@ -338,16 +435,34 @@ requisitos antigos COL-001–COL-005 nem autoriza duplicar contas ou permissões
 COL-001–COL-005 foram retirados do escopo de RH em 11/09/2026; seus IDs ficam reservados como
 histórico e não representam tarefas aprovadas ou concluídas.
 
+Capacidades vigentes na [spec de Fundação](../specs/001-project-foundation/spec.md):
+
+- Cadastro administrativo com nome, CPF válido/único, e-mail, telefone e endereço; CEP/complemento
+  opcionais e consulta de CEP com recuperação manual. Cadastros antigos podem completar dados
+  gradualmente.
+- CPF permanece único inclusive após exclusão; restauração recupera a identidade anterior com
+  confirmação, sem sobrescrever seu cadastro pelos dados de uma nova tentativa.
+- Solicitação de exclusão exige motivo por ocorrência, bloqueia imediatamente a conta e conclui
+  exclusão lógica após 24 horas; desfazer/restaurar preserva histórico e concessões válidas.
+- Senha inicial/nova senha é apresentada uma vez, sem segredo em logs nem e-mail automático.
+  Administrador/Gestor podem redefinir senha de terceiros conforme matriz; Gestor não redefine
+  Administrador, e senha própria é tratada em Configurações.
+- Atribuição de cargo e promoção são de Administrador, com troca atômica e histórico; delegação do
+  Gestor e permissões individuais seguem o contrato, sem acesso automático de RH.
+- Listas, filtros e exportações diretas respeitam consulta e autorização geral de exportação.
+
 ### 9.7 Usuários e permissões
 
-| ID      | Requisito                                                                                                                                | Prioridade |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| SEG-001 | Autenticar usuários e permitir desativação imediata.                                                                                     | MVP        |
-| SEG-002 | Aplicar autorização no servidor em todas as ações.                                                                                       | MVP        |
-| SEG-003 | Permitir no máximo um cargo vigente por colaborador, com descrição das opções e acessos individuais preservados (decisão de 22/09/2026). | MVP        |
-| SEG-004 | MFA retirado em 10/09/2026 por reclamações; motivo registrado em 17/09/2026.                                                             | Retirado   |
-| SEG-005 | Testar automaticamente a matriz de permissões.                                                                                           | MVP        |
-| SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis.                                                                               | MVP        |
+| ID      | Requisito                                                                                                                                                                         | Prioridade |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| SEG-001 | Autenticar usuários e permitir desativação imediata.                                                                                                                              | MVP        |
+| SEG-002 | Aplicar autorização no servidor em todas as ações.                                                                                                                                | MVP        |
+| SEG-003 | Permitir no máximo um cargo vigente por colaborador, com descrição das opções e acessos individuais preservados (decisão de 22/09/2026).                                          | MVP        |
+| SEG-004 | MFA retirado em 10/09/2026 por reclamações; motivo registrado em 17/09/2026.                                                                                                      | Retirado   |
+| SEG-005 | Testar automaticamente a matriz de permissões.                                                                                                                                    | MVP        |
+| SEG-006 | Solicitar confirmação para ações destrutivas ou sensíveis.                                                                                                                        | MVP        |
+| SEG-007 | Criar contas novas como Colaborador quando omitido o cargo e migrar contas existentes sem cargo preservando acessos individuais, conforme decisão de 05/10 e revisão de ativação. | MVP        |
+| SEG-008 | Revalidar sessão e acessos em operações sensíveis após esperas por lock; troca de identidade deve limpar contextos privados, rascunhos e respostas pendentes.                     | MVP        |
 
 ### 9.8 Auditoria
 
@@ -364,27 +479,123 @@ histórico e não representam tarefas aprovadas ou concluídas.
 | AUD-009 | Preservar permissões independentes de eventos, exportação, leitura de jobs e reenvio. | MVP        |
 | AUD-010 | Apresentar histórico contextual usando a trilha de auditoria existente.               | MVP        |
 
-### 9.9 Requisitos adicionais da entrega integrada
+### 9.9 Requisitos adicionais e seus limites
 
-| ID      | Requisito                                                                                                                                  | Dependência institucional                  |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ |
-| PES-001 | Cadastrar dependentes e vínculos, com histórico.                                                                                           | Tipos de vínculo aceitos.                  |
-| PES-002 | Analisar documentação, registrar decisão e solicitar correções pontuais.                                                                   | Campos, documentos mínimos e responsáveis. |
-| PES-003 | Separar aprovação cadastral, vínculo, regularidade OAB, situação financeira, credencial e restrições por finalidade.                       | Matriz de consequências.                   |
-| PES-004 | Exibir fonte/data das verificações; sem política, não decidir elegibilidade automaticamente.                                               | Fonte autorizada e política.               |
-| AVA-001 | Vincular avaliações a atendimento ou benefício e moderar sem exigir justificativa, preservando nota/opinião original e motivos históricos. | Acesso e critérios de moderação.           |
-| COM-001 | Preparar públicos com critérios legíveis, prévia e exclusões.                                                                              | Preferências e política de envio.          |
-| COM-002 | Preparar, revisar, enviar/programar mensagens e manter modelos transacionais.                                                              | Responsáveis, canais e contratos.          |
-| COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                                       | Evidência suportada por canal.             |
-| COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                                                    | Política de composição do público.         |
-| CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                                          | Regras aprovadas de Caassh.                |
-| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                                                 | Autoridade e limites de concessão.         |
-| CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                                      | Regras de utilização e correção.           |
-| POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                                         | Tarefas delegáveis.                        |
-| POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                                      | Estados e responsáveis da operação.        |
-| POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                                           | Cadastro autoritativo único.               |
-| REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                                                    | Público e uso esperado.                    |
-| REL-002 | Oferecer Excel/CSV/PDF com download direto, filtros e seleção/ordem de colunas autorizadas.                                                | Retenção e formato.                        |
+PES e AVA possuem partes implementadas e evoluções nas specs 005/007/008. COM descreve a finalidade
+de campanhas, cuja entrega externa ainda não foi homologada. **CRE está suspenso; POR é previsto
+aguardando revisão**, sem aceite de MVP atual. REL possui implementação integrada, com validações de
+desempenho e humanas pendentes. As dependências abaixo não significam que toda decisão ou todo
+código ainda esteja ausente; os contratos da função discriminam o restante.
+
+| ID      | Requisito                                                                                                                                                                                       | Dependência institucional                                                      |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| PES-001 | Cadastrar dependentes e vínculos, com histórico.                                                                                                                                                | Vínculos definidos na spec 005; aplicar condições sem automatismos presumidos. |
+| PES-002 | Analisar documentação, registrar decisão e solicitar correções pontuais.                                                                                                                        | Matriz definida; implementar POL02 e definir gatilhos de reanálise em POL01.   |
+| PES-003 | Separar aprovação cadastral, vínculo, regularidade OAB, situação financeira, credencial e restrições por finalidade.                                                                            | Matriz de consequências.                                                       |
+| PES-004 | Exibir fonte/data das verificações; sem política, não decidir elegibilidade automaticamente.                                                                                                    | Fonte autorizada e política.                                                   |
+| AVA-001 | Vincular avaliações a atendimento ou benefício e moderar sem exigir justificativa, preservando nota/opinião original e motivos históricos.                                                      | Acesso e critérios de moderação.                                               |
+| COM-001 | Preparar públicos com critérios legíveis, prévia e exclusões.                                                                                                                                   | Preferências e política de envio.                                              |
+| COM-002 | Preparar, revisar e programar solicitações de mensagens e modelos; execução permanece bloqueada sem canal disponível, sem simular envio.                                                        | Responsáveis, canais e contratos.                                              |
+| COM-003 | Distinguir solicitação, aceitação pelo provedor, entrega, abertura, falha e ausência de confirmação.                                                                                            | Evidência suportada por canal.                                                 |
+| COM-004 | Evitar envio duplicado e revalidar preferências/restrições ao executar.                                                                                                                         | Política de composição do público.                                             |
+| CRE-001 | Configurar programa, unidade, conversão, limites, validade e responsáveis sem valores presumidos.                                                                                               | Regras aprovadas de Caassh.                                                    |
+| CRE-002 | Conceder individualmente/em lote com prévia e idempotência, sem justificativa obrigatória.                                                                                                      | Autoridade e limites de concessão.                                             |
+| CRE-003 | Derivar saldo do extrato e corrigir por lançamento referenciado, sem apagar a origem.                                                                                                           | Regras de utilização e correção.                                               |
+| POR-001 | Restringir acesso do parceiro à sua organização, inclusive arquivos e exportações.                                                                                                              | Tarefas delegáveis.                                                            |
+| POR-002 | Preparar e consultar solicitações avulsas ou por QR sem presumir liquidação bancária.                                                                                                           | Estados e responsáveis da operação.                                            |
+| POR-003 | Reutilizar o cadastro do parceiro no portal e no administrativo.                                                                                                                                | Cadastro autoritativo único.                                                   |
+| REL-001 | Gerar relatórios com finalidade, filtros, período e campos autorizados.                                                                                                                         | Público e uso esperado.                                                        |
+| REL-002 | Exportar o conjunto completo autorizado em Excel/CSV/PDF nas três abas, com detalhe agrupado ou não, filtros, seleção/ordem de colunas, ordenação e contexto, sem tetos herdados de amostragem. | Revalidação das fontes e aceite de desempenho.                                 |
+
+### 9.10 Chat interno e comentários operacionais
+
+Disponibilizar chat interno e comentários operacionais com notificações configuráveis (CAAB-49) tem
+plano definido em 07/10 e status Em Desenvolvimento, sem implementação comprovada. O
+[plano 012](../specs/012-internal-chat/plan.md) integra esta consolidação documental; sua origem
+está na [evidência desta revisão](history/prd-review-2026-10-07.md). Os requisitos abaixo preservam
+os mesmos IDs e o escopo da frente de Chat interno.
+
+| ID       | Requisito                                                                                                                                                                                                                    | Prioridade    |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| CHAT-001 | Permitir uma conversa direta por par de usuários internos ativos e grupos por convite; contas externas ou desativadas não participam.                                                                                        | Entrega única |
+| CHAT-002 | Permitir aos responsáveis nomear grupos, convidar/remover integrantes, transferir responsabilidade e arquivar/restaurar. Novos integrantes acessam o histórico completo, com aviso na inclusão; saída/remoção revoga acesso. | Entrega única |
+| CHAT-003 | Oferecer texto, respostas na sequência principal, menções individuais, referências a registros e anexos em conversas e comentários.                                                                                          | Entrega única |
+| CHAT-004 | Oferecer busca por texto, pessoa, conversa, período e módulo, filtros de não lidas/menções e histórico paginado, sempre com autorização atual.                                                                               | Entrega única |
+| CHAT-005 | Permitir supervisão e moderação de todas as conversas por Administrador/Gestor, com aviso claro e auditoria de acesso, versões e downloads; distinguir participação de supervisão.                                           | Entrega única |
+| CHAT-006 | Oferecer comentários internos em associado, parceiro, unidade de parceiro, unidade de atendimento, reserva/agendamento e notícia, inclusive rascunho autorizado; quem consulta pode comentar sem adquirir edição.            | Entrega única |
+| CHAT-007 | Permitir seguir/deixar de seguir comentários; publicar inicia acompanhamento e menção não inscreve automaticamente. Comentários permanecem separados das avaliações e não alteram estados de negócio.                        | Entrega única |
+| CHAT-008 | Revalidar acesso ao abrir referências, sem conceder acesso ou copiar automaticamente dados pessoais. Quem não tem acesso vê somente a indicação de registro indisponível.                                                    | Entrega única |
+| CHAT-009 | Permitir edição e remoção lógica pelo autor sem prazo artificial; preservar versões para autor/supervisão. Supervisores podem ocultar/restaurar conteúdo de terceiros, sem reescrevê-lo.                                     | Entrega única |
+| CHAT-010 | Permitir até três anexos PDF/JPG/JPEG/PNG de até 25 MiB cada, com checksum, quarentena e antivírus; revalidar autorização ao fornecer os bytes, inclusive após remoção ou revogação.                                         | Entrega única |
+| CHAT-011 | Configurar painel, navegador e e-mail independentemente, com todas as mensagens ou apenas menções, seleção de módulos e herança/personalização/silêncio por conversa ou discussão.                                           | Entrega única |
+| CHAT-012 | Combinar filtros de menções e módulos; silêncio/canal desativado prevalece. Módulo deriva de registro, referência ou assunto explicitamente escolhido, sem classificação por palavras.                                       | Entrega única |
+| CHAT-013 | Avisar somente participantes ou seguidores/mencionados autorizados, nunca o próprio autor ou apenas por supervisão. Revalidar destinatários, acesso e preferências ao executar os avisos.                                    | Entrega única |
+| CHAT-014 | Manter não lidas mesmo com avisos desativados; leitura depende da exibição efetiva. Atualizar sem duplicação após reconexão e preservar rascunhos em memória por identidade/contexto, limpando-os na troca de conta.         | Entrega única |
+| CHAT-015 | Agrupar e-mails de eventos não lidos por usuário em janela de um minuto, com processamento durável e deduplicação; avisos externos contêm texto genérico e link autenticado, sem conteúdo pessoal.                           | Entrega única |
+
+Padrões iniciais: painel ativado para todas as mensagens e módulos; navegador e e-mail desativados
+até escolha do usuário; conversas e discussões herdam as preferências gerais. Mensagem sem módulo
+explícito não passa por filtro restrito a módulos. Edição não redistribui avisos gerais; uma nova
+menção pode avisar o destinatário uma única vez por publicação.
+
+Notificações do navegador exigem ativação explícita e funcionam com o painel aberto, inclusive em
+segundo plano quando o navegador permitir. E-mail reutiliza o transporte SMTP existente e depende de
+Serviço de e-mail transacional e definição da caixa de entrada (CAAB-2), com recebimento controlado
+comprovado para aceitar a entrega completa. Indisponibilidade do canal é informada sem comprometer o
+salvamento da mensagem; aceitação SMTP não comprova entrega, e resultado incerto não provoca reenvio
+automático cego.
+
+Grupo arquivado ou registro arquivado/excluído logicamente mantém o histórico autorizado e bloqueia
+novas publicações; inatividade simples de registro não bloqueia colaboração. Remoção/ocultação de
+conteúdo impede downloads comuns, preservando o acesso de supervisão ao histórico. Comentários nunca
+aparecem no app, site, portal ou APIs públicas. Descarte automático permanece desligado, sem
+presumir prazo institucional de retenção.
+
+Sem chamadas, áudio/vídeo, canais públicos, suporte externo, integrações com mensageiros, IA,
+exportação de conversas ou Web Push com painel fechado nesta entrega. Antes de iniciar código,
+completar spec, contratos e tarefas próprios; o plano e este PRD não comprovam esses artefatos.
+
+### 9.11 Exportações e histórico individual
+
+| ID      | Requisito                                                                                                                                                                                       | Situação                                                                                                               |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| EXP-001 | Oferecer Excel, CSV e PDF por download direto nas superfícies aplicáveis, com filtros, seleção/ordem de colunas, autorização e todos os resultados, sem teto funcional de registros ou período. | Núcleo compartilhado, Colaboradores, Agendamentos e Relatórios integrados; demais módulos migram por tarefas próprias. |
+| EXP-002 | Revalidar leitura do módulo/fontes e exports:generate durante a transferência; arquivos legados preservam autorização de dono e domínio.                                                        | Contratos transversais e dos módulos; não presumir migração integral.                                                  |
+| HIN-001 | Reunir o histórico individual de atendimentos e demais eventos autorizados, preservando pessoa beneficiária, operador e sequência após remarcação/cancelamento.                                 | Planejado no programa 002; consolidação visual ainda não implementada.                                                 |
+| HIN-002 | Mostrar eventos do dependente no histórico dele, mesmo quando o titular opera a reserva; restringir cada parte ao domínio autorizado.                                                           | Planejado; não atribuir eventos automaticamente à família inteira.                                                     |
+
+Padrão: [EXPORT-STANDARD.md](EXPORT-STANDARD.md). O resultado da Consulta OAB, avulsa ou pelo
+cadastro, é excluído por decisão própria; o plano de Chat interno também exclui exportação de
+conversas. Downloads de arquivos antigos não são removidos por esta migração. Compras só entram no
+histórico individual após existir domínio e contratos próprios; não há módulo de compras
+implementado por essa previsão.
+
+### 9.12 Conta, Mensagens e Relatórios
+
+**Conta e Configurações:** perfil pessoal, preferências de tema, senha própria, sessões e rascunhos
+em memória por identidade/contexto. Recuperação usa link de uso único; troca de e-mail requer
+confirmação. Senha inicial de colaborador é exibida no fluxo administrativo e não é envio
+automático. Transporte SMTP existente não comprova recebimento real; aceite de conta/e-mail segue a
+[spec 006](../specs/006-account-settings/spec.md).
+
+**Mensagens:** públicos com filtros combináveis, inclusão/exclusão explícita, prévia e contagem sem
+teto funcional de destinatários; campanhas, modelos, programação, reagendamento/cancelamento e
+histórico. Consulta exige messages:access e alteração messages:write. A execução de solicitações
+fica bloqueada sem canal; não mostrar Enviada/Entregue sem evidência. Finalidade é
+campanha/comunicado aos associados; a revisão M016/T003 e os canais de
+[Mensagens](../specs/009-messaging/spec.md) continuam pendentes.
+
+**Relatórios:** Resumo gerencial, Análise detalhada e Resultados e evolução consultam registros dos
+próprios domínios, com filtros, comparação de períodos, agrupamentos, colunas, consultas pessoais
+salvas e apresentação. As três abas exportam o conjunto completo autorizado; paginação da tela não
+limita o arquivo. O PDF executivo preserva análise da gestão e gráfico mensal; Excel/CSV permanecem
+tabulares. Contexto, comentário e rascunhos não atravessam identidades.
+
+Métricas explicitam definição, período, base e atualização: reserva não comprova atendimento, acesso
+ao painel não mede produtividade, eventos não equivalem a pessoas únicas entre canais. App e site
+têm contratos de coleta, sem consumidores instrumentados/homologados comprovados; canal sem eventos
+mostra Sem dados. A [spec 010](../specs/010-reports-analytics/spec.md) governa fontes, privacidade e
+limites de interpretação.
 
 ## 10. Modelo conceitual de dados
 
@@ -395,12 +606,14 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - **Mídia:** tipo, localização, nome original, nome seguro, MIME detectado, tamanho, dimensões,
   checksum, estado de verificação e texto alternativo.
 - **Versão da notícia:** notícia, conteúdo completo, autor da mudança, data e estado editorial.
-- **Distribuição:** notícia, canal, versão, status, tentativas, última resposta e data.
+- **Ação por canal:** notícia, canal, versão, programação, execução, tentativas e falhas;
+  disponibilidade pública é distinta de confirmação de recebimento externo.
 
 ### 10.2 Agenda
 
 - **Unidade:** identificação, endereço, contatos, timezone e status.
-- **Serviço:** nome, descrição, duração, antecedência, tolerância e status.
+- **Serviço e procedimento:** oferta, procedimentos/durações, publicação, capacidade e políticas de
+  aprovação, antecedência, remarcação e horizonte.
 - **Profissão:** nome, registro profissional aplicável e status.
 - **Profissional:** identificação, profissão, situação e dados administrativos permitidos.
 - **Oferta de serviço:** unidade, serviço, profissão e regras específicas.
@@ -408,7 +621,10 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - **Disponibilidade:** profissional, unidade, regra semanal e validade.
 - **Bloqueio de agenda:** profissional/unidade, início, fim e origem; preservar motivo histórico,
   sem exigir nova justificativa.
-- **Agendamento:** associado, unidade, serviço, profissional, início, fim, status e observações.
+- **Agendamento:** pessoa beneficiária, unidade, serviço/procedimento, profissional e horário quando
+  aplicáveis, capacidade, duração retida, estado, ciclo de remarcação e observações.
+- **Falta e pedido de revisão:** ocorrência individual, prazo, justificativa/contestação,
+  comprovantes privados, decisão e restrição associada, separados do estado da reserva.
 - **Evento do agendamento:** status anterior, novo status, ator e data; motivo histórico opcional.
 
 ### 10.3 Cadastros
@@ -418,7 +634,7 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - **Bloqueio do associado:** tipo, início, fim, responsável e situação; motivo histórico opcional.
 - **Parceiro:** dados institucionais, categoria, contatos, vigência e status.
 - **Serviço parceiro:** parceiro, descrição, condições, abrangência e status.
-- **Colaborador/Usuário:** a mesma conta de acesso, com identidade de autenticação, funções,
+- **Colaborador/Usuário:** a mesma conta de acesso, com identidade de autenticação, cargo único,
   permissões e status; a interface usa Colaboradores.
 - **Recursos Humanos:** possibilidade futura, sem entidade ou campos aprovados nesta revisão.
 - **Evento de auditoria:** registro imutável da ação e seu contexto.
@@ -432,6 +648,23 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - Arquivos e metadados no PostgreSQL, conforme a decisão vigente de armazenamento; sem fallback
   S3/MinIO.
 - Estados controlados por enums ou máquinas de estado explícitas.
+
+### 10.5 Colaboração interna
+
+- **Conversa:** direta ou grupo, nome quando aplicável, responsáveis e estado de arquivamento.
+- **Participação:** vínculo do usuário à conversa, responsabilidade e eventos de entrada/saída.
+- **Discussão de registro:** vínculo íntegro a um dos seis tipos de registro autorizados, criado no
+  primeiro comentário.
+- **Publicação e versão:** mensagem/comentário, contexto, autor, texto, resposta, menções, datas e
+  estados de edição/remoção/moderação; versões preservam o conteúdo anterior protegido.
+- **Referência e anexo:** registro compartilhado ou arquivo validado, vinculados à publicação e
+  sujeitos à autorização vigente de leitura.
+- **Acompanhamento e leitura:** seguidores dos comentários e posição de leitura por
+  usuário/contexto.
+- **Preferência de aviso:** canais, modo todas/menções, módulos, herança e silêncio por
+  usuário/contexto.
+- **Evento de notificação:** publicação, destinatário, canal, agrupamento, estado e tentativas,
+  separado da confirmação de persistência da publicação.
 
 ## 11. Telas necessárias
 
@@ -466,7 +699,8 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - Filtros por unidade, serviço e profissional.
 - Criação rápida.
 - Detalhe, histórico, remarcação e cancelamento.
-- Configuração de disponibilidade e bloqueios.
+- Configuração de disponibilidade, capacidade, publicação e políticas; filas de aprovação,
+  recuperação e faltas com revisão dedicada.
 
 ### 11.5 Associados
 
@@ -489,13 +723,33 @@ histórico e não representam tarefas aprovadas ou concluídas.
 - Identificação de ação, ator e origem.
 - Exportação controlada.
 
+### 11.8 Chat interno e comentários
+
+- Entrada Chat interno imediatamente antes de Mensagens, com lista, pesquisa, histórico e
+  compositor; navegação em etapas entre lista e conversa em telas estreitas.
+- Minhas conversas e Supervisão em áreas distintas, com informação explícita sobre supervisão.
+- Criação de conversa/grupo e gestão de participantes, responsáveis e arquivamento.
+- Atalho no cabeçalho com não lidas e menções; preferências em Configurações e no contexto.
+- Comentários internos no detalhe de cada registro contemplado, com contador e ação de seguir.
+- Estados de envio, anexo em verificação, indisponibilidade, revogação e reconexão, sem perda
+  silenciosa do texto. Novas mensagens não deslocam quem consulta o histórico; Enter quebra linha e
+  Ctrl/Cmd+Enter envia, com instrução visível.
+
+### 11.9 Mensagens e Relatórios
+
+- Mensagens: públicos/filtros/prévia, campanhas/modelos, solicitações programadas e histórico, com
+  estado bloqueado explícito quando não houver canal.
+- Relatórios: Resumo gerencial, Análise detalhada e Resultados e evolução, com filtros, comparações,
+  grupos, consultas salvas, apresentação e exportação configurável.
+
 ## 12. Requisitos de experiência
 
 Padrões visuais, componentes e revisão obrigatória: [caab-design.md](caab-design.md). Esta seção
 registra objetivos de experiência; medidas e instruções visuais pertencem ao guia.
 
 - Interface pt-BR.
-- Design desktop-first, responsivo para tablets.
+- Uso administrativo em desktop com responsividade em tablet e celular, nos dois temas; revisão nas
+  larguras e critérios do guia.
 - Navegação lateral recolhível e busca global.
 - Ações frequentes disponíveis com poucos cliques.
 - Tabelas densas, legíveis e com filtros persistentes.
@@ -521,10 +775,14 @@ operacionais e motivos históricos são preservados. Fonte: princípio V da
 - Lista permitida de provedores e formatos para embeds.
 - Upload validado por extensão, MIME real, assinatura, tamanho e antivírus.
 - Nomes de arquivo gerados pelo sistema.
-- URLs assinadas para arquivos privados.
+- URLs assinadas e temporárias para arquivos privados, com os limites documentados por função.
+  Comprovantes de faltas já emitidos possuem janela bearer de até 300 segundos; isso não equivale a
+  revogação imediata de todo link. Chat/comentários têm requisito futuro mais estrito: revalidar
+  sessão e acesso ao servir bytes, inclusive após remoção do grupo ou ocultação.
 - Segredos fora do código e rotação documentada.
 - Criptografia em trânsito e proteção adequada em repouso.
-- Política de retenção, anonimização e descarte compatível com LGPD.
+- Política de retenção, anonimização e descarte a aprovar institucionalmente; não inventar prazos
+  nem ativar descarte automático.
 - Logs sem senhas, tokens, documentos completos ou dados pessoais desnecessários.
 
 ## 14. Requisitos não funcionais
@@ -533,7 +791,13 @@ operacionais e motivos históricos são preservados. Fonte: princípio V da
 
 - Telas comuns devem responder em até 2 segundos no percentil 95, descontadas integrações externas.
 - Buscas e filtros devem usar paginação server-side.
-- Operações demoradas devem ir para filas e informar progresso.
+- Jobs demorados devem usar processamento durável quando aplicável. Exportações diretas usam
+  transferência progressiva e recursos limitados; não exigir arquivo integral em memória nem
+  redirecionar obrigatoriamente para uma central de jobs.
+- Chat interno planeja atualização em até cinco segundos com aba visível/rede normal, verificada em
+  cenário sintético de 100 sessões concorrentes; não é desempenho medido do produto atual.
+- Relatórios ainda deve comprovar C1/T038: tempo/primeiro byte, memória, CPU, conexões e efeito
+  sobre leituras simultâneas do painel. Metas e testes existentes não substituem essa medição.
 
 ### 14.2 Disponibilidade e recuperação
 
@@ -556,7 +820,8 @@ operacionais e motivos históricos são preservados. Fonte: princípio V da
 ## 15. Indicadores de sucesso
 
 - Tempo médio para publicar uma notícia.
-- Percentual de publicações distribuídas sem erro.
+- Percentual de publicações disponíveis por canal sem falha; recebimento externo só é medido quando
+  houver evidência própria.
 - Taxa de conflitos de agenda impedidos.
 - Percentual de agendamentos concluídos, cancelados e não comparecidos.
 - Tempo médio para registrar/verificar associado.
@@ -572,40 +837,68 @@ operacionais e motivos históricos são preservados. Fonte: princípio V da
 - Design system e layout administrativo.
 - Banco, auditoria, storage, worker e observabilidade.
 
-### Entrega integrada — todos os módulos
+### Evolução do núcleo e entregas delimitadas
 
-O [planejamento geral](../specs/002-integrated-modules/plan.md) inclui Conteúdo, Pessoas,
-Agendamentos, Benefícios, Equipe, Comunicação, Créditos, Portal e Relatórios. Começar pela
-consolidação da fundação em [Auditoria e Processamentos](../specs/003-audit-operations/spec.md),
-seguida das dependências internas.
+O [programa integrado](../specs/002-integrated-modules/plan.md) organiza dependências. A base atual
+inclui fundação, cadastros, Auditoria, Notícias, Agendamentos administrativo e Relatórios. Mensagens
+continua em protótipo. Exportações próprias dos módulos ainda não migrados e os aceites de acessos,
+Agendamentos e Relatórios seguem suas tarefas existentes.
 
-Cada funcionalidade nova terá seu próprio spec, plano e tarefas antes de implementar. Correções,
-melhorias e mudanças atualizam os artefatos da função existente, sem criar outro spec. A pesquisa de
-mercado atual fundamenta cada implementação e evolução e fica registrada no respectivo research.md.
-A organização das branches, autorização de PR e validações seguem o
-[fluxo de entrega](DELIVERY-WORKFLOW.md) e o [AGENTS](../AGENTS.md). Documentação e testes
-acompanham a implementação de cada função; o PRD não define uma política concorrente de publicação.
+Chat interno tem **uma entrega funcional**, com conversas, comentários nos seis tipos de registro,
+anexos, pesquisa, supervisão e canais de aviso. Dados, autorização, interface e testes são etapas
+internas; não declarar a entrega completa sem e-mail recebido em destinatário controlado e
+homologação humana identificada. O transporte depende de Serviço de e-mail transacional e definição
+da caixa de entrada (CAAB-2), sem incorporar a caixa de entrada ao chat.
 
-## 17. Critérios de aceite do MVP
+Em 07/10, a frente responsável organizou seis subtarefas de contratos/dados, conversas, comentários,
+anexos, avisos e interface sob o ticket principal. São frentes de planejamento da mesma entrega, com
+dependências e arquivos compartilhados coordenados; **implementação permanece não iniciada por
+determinação do usuário registrada no ticket**. A divisão não autoriza código nem conclusão parcial
+da função. A evidência relaciona os seis tickets e a dependência de e-mail.
+
+Portal, CAASSH, RH e demais candidatos preservam os estados da seção 7.2. Não são parte
+automaticamente autorizada do núcleo atual. Cada funcionalidade nova precisa de spec, plano,
+contratos e tarefas antes do código; melhorias atualizam os artefatos existentes. Pesquisa e
+decisões ficam nas fontes da função. Branches, PRs, validações e integração seguem o
+[fluxo de entrega](DELIVERY-WORKFLOW.md) e o [AGENTS](../AGENTS.md); este PRD não muda autorizações.
+
+## 17. Critérios de aceite por entrega
+
+### 17.1 Núcleo administrativo e incrementos integrados
+
+Código integrado e tickets históricos concluídos não dispensam os critérios abaixo. Cada aceite deve
+identificar versão, ambiente, evidência e pessoa responsável pela homologação.
 
 - Usuários acessam apenas módulos e ações autorizados.
 - Uma notícia pode ser criada, revisada, agendada, publicada e restaurada.
-- Imagens, vídeos e anexos passam pelas validações de segurança.
+- Imagens e anexos passam pelas validações de segurança; vídeo/embeds só podem ser aceitos quando
+  seus provedores e controles forem definidos e habilitados.
 - App e site conseguem consumir somente notícias publicadas destinadas a eles.
 - O sistema mostra apenas horários realmente disponíveis.
-- Dois usuários concorrentes não conseguem reservar o mesmo profissional e horário.
+- Reservas concorrentes não excedem capacidade nem sobrepõem profissional ou pessoa beneficiária,
+  inclusive pendentes de aprovação.
 - Agendamentos mantêm histórico de remarcações e cancelamentos.
 - Associados podem ser cadastrados, verificados, bloqueados e desbloqueados com histórico.
 - Parceiros e colaboradores podem ser administrados por usuários autorizados.
 - Dependentes, correções documentais e situações de elegibilidade seguem regras definidas e têm
   histórico.
-- Caassh mantém concessão/lote/correção sem saldo duplicado, sob política explícita.
-- Mensagens respeitam público/preferências e apresentam estados conforme evidência do canal.
-- Portal impede acesso entre parceiros, inclusive em solicitações, arquivos e exportações.
 - Avaliações preservam opinião original; relatórios usam dados/filtros/escopos dos domínios.
 - Auditoria reúne Eventos e Processamentos sem ampliar permissões nem duplicar entradas.
 - Toda ação crítica aparece na auditoria.
 - Lint, typecheck, testes e build passam no CI.
+
+### 17.2 Entregas ainda planejadas ou com transporte pendente
+
+- Mensagens precisa comprovar aderência do protótipo à finalidade confirmada de campanhas,
+  públicos/preferências e estados com evidência real do canal; o protótipo não é envio homologado.
+- Chat interno deve cumprir CHAT-001–CHAT-015 e os cenários do plano: seis tipos de comentários,
+  acesso/revogação, supervisão informada, anexos/versões, notificações, recebimento controlado,
+  reconexão, múltiplas contas, carga e acessibilidade. Aceite único, sem transformar planejamento em
+  entrega parcial concluída.
+- E-mails operacionais de Agendamentos dependem do transporte real e de sua homologação; sua
+  ausência não bloqueia o aceite independente do recorte administrativo.
+- Se Portal for retomado, deverá comprovar isolamento por organização, arquivos e solicitações.
+  CAASSH depende primeiro da revisão do programa; CRE não é gate atual do núcleo administrativo.
 
 ## 18. Riscos e mitigação
 
@@ -620,34 +913,38 @@ acompanham a implementação de cada função; o PRD não define uma política c
 | Dependência excessiva do CMS           | Limitar Payload ao conteúdo e cadastros adequados; regras críticas ficam no domínio.                                   |
 | Cal.com duplicar a fonte de verdade    | Referência de pesquisa; integrar somente se nenhuma outra possibilidade for encontrada (15/09/2026).                   |
 
-## 19. Entradas necessárias antes da construção
+## 19. Definições e validações ainda necessárias
 
-| #   | Informação                                                                           | Fonte                     | Bloqueia                         |
-| --- | ------------------------------------------------------------------------------------ | ------------------------- | -------------------------------- |
-| 1   | Necessidades atuais e decisões do projeto novo, sem consultar código/telas do legado | Responsáveis pelo produto | Especificação do domínio         |
-| 2   | Contratos novos ou documentação vigente formalmente fornecida de app/site            | Tecnologia                | Integração real com consumidores |
-| 3   | Perfis reais e matriz de permissões                                                  | Gestores                  | Fundação                         |
-| 4   | Acesso editorial confirmado: pessoas autorizadas ao painel publicam diretamente      | Usuário, 09/09/2026       | Resolvido; ver spec 004          |
-| 5   | Formatos, limites e provedores de vídeo permitidos                                   | Comunicação/TI            | Notícias                         |
-| 6   | Lista de unidades, serviços, durações e regras                                       | Operação                  | Agenda                           |
-| 7   | Jornada, bloqueios e vínculo dos profissionais                                       | Operação                  | Agenda                           |
-| 8   | Políticas de cancelamento, atraso e não comparecimento                               | Operação                  | Agenda                           |
-| 9   | Campos mínimos e regras de bloqueio de associados                                    | Cadastro/Jurídico         | Associados                       |
-| 10  | Canal oficial para integração com CNA/OAB                                            | OAB/TI/Jurídico           | Automação OAB                    |
-| 11  | Política de retenção e classificação de dados                                        | Jurídico/DPO              | Produção                         |
-| 12  | Infraestrutura e requisitos de disponibilidade                                       | TI                        | Produção                         |
+| Assunto                         | Decisão ou evidência atual                                                      | Restante                                                                                             |
+| ------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Cargos e contas sem cargo       | Três cargos, cargo único e regra de Colaborador decididos e implementados.      | Matriz/QA humano; conferir CB06 antes de aplicar migration no banco de uso.                          |
+| Publicação de Notícias          | Consulta, escrita e publicação têm permissões distintas, sem segunda aprovação. | Revalidação de autorização na execução assíncrona; aceite dos consumidores.                          |
+| Oferta e faltas de Agendamentos | Regras administrativas constam da spec 008 e estão integradas.                  | QA, revisão de destino, reservas legadas e correções específicas dos PRs #48/#50.                    |
+| E-mail e caixa de entrada       | E-mail transacional necessário; caixa de entrada confirmada como futura.        | Entrega real, usuários/canais/ações da caixa de entrada; não inventar provedor.                      |
+| Consulta OAB                    | Adaptador OAB-BA/Implanta e STATUS CAAB existentes.                             | Credenciais/configuração autorizadas e homologação positiva no destino.                              |
+| Documentação de dependentes     | Vínculos e parte dos documentos definidos na spec 005.                          | Implementar matriz documental em POL02; definir em POL01 quais alterações exigem nova análise.       |
+| Carteirinha digital             | Situação/validade cadastral não equivalem à emissão da carteirinha.             | Formato, emissor, validação, segurança, revogação e contrato do app.                                 |
+| Relatórios                      | Todos os modos de exportação integrados.                                        | C1/T038 e QA identificados, sem usar o checkbox histórico de T049 como defeito vigente.              |
+| Chat interno                    | Plano de entrega única e regras descritos no ticket e plano 012.                | Completar artefatos próprios, conciliar cargos/design, implementar e validar.                        |
+| App/site e portal               | Contratos do servidor não comprovam a interface externa.                        | Jornadas, identidade, elegibilidade, contratos e implantação autorizados.                            |
+| Retenção e produção             | Requisitos de proteção, backup e restauração existentes.                        | Política institucional, responsáveis e evidência do ambiente/restore; descarte automático desligado. |
 
-## 20. Decisões iniciais
+O estado operacional de tickets, dependências e PRs pode mudar após esta data. Conflitos entre
+status nativo e descrições históricas estão registrados na evidência, sem alterar os tickets nesta
+revisão.
+
+## 20. Decisões técnicas e rastreabilidade
 
 - O trabalho inicial limita-se ao sistema interno.
 - TypeScript é a linguagem do projeto novo, sem condicionamento à implementação do legado.
-- Lucide React será a biblioteca padrão de ícones.
-- Payload CMS e Lexical são a escolha inicial para notícias.
-- PostgreSQL será a fonte de verdade dos domínios operacionais.
-- Agendamentos: avaliar domínio próprio; Cal.com é referência, com integração somente se nenhuma
-  outra possibilidade for encontrada (15/09/2026).
-- Consulta à OAB será manual até existir integração oficial autorizada.
-- O sistema será um monólito modular com worker, não um conjunto prematuro de microserviços.
+- Lucide React é a biblioteca padrão de ícones.
+- Payload CMS e Lexical são usados em Notícias; versões vigentes pertencem aos manifests/lockfile.
+- PostgreSQL é a fonte de verdade dos domínios operacionais e dos arquivos.
+- Agendamentos usa domínio próprio e FullCalendar como interface; Cal.com continua apenas
+  referência, com integração condicionada ao esgotamento das alternativas (15/09/2026).
+- Consulta institucional OAB-BA implementada, com fallback manual e homologação de destino pendente;
+  sem scraping ou substituição automática por outra fonte.
+- O sistema usa monólito modular com worker e fila compartilhada.
 
 ### Rastreabilidade de reaproveitamento — decisão de 10/09/2026
 
@@ -658,7 +955,7 @@ Segredos e dados pessoais não entram na documentação. A pesquisa e validaçã
 explicitamente solicitadas pelo usuário, estão registradas em LEG-001; as regras institucionais
 antigas de ativo/inativo e finanças não foram adotadas implicitamente.
 
-# Colaboradores, Usuários e Parceiros: decisão de escopo
+### Colaboradores, Usuários e Parceiros: decisão de escopo
 
 Confirmado pelo usuário em 11/09/2026: Colaboradores no sistema antigo corresponde à atual gestão de
 Usuários. Parceiros representa externos, como estabelecimentos e conveniados. Não há módulo separado
@@ -681,23 +978,3 @@ para essa renomeação.
 
 Esta decisão substitui as propostas anteriores de cadastro funcional separado no programa 002 e no
 PRD. Dependências de US6 usam a gestão de contas/RBAC existente.
-
-## Estado vigente — Agendamentos e CAASSH, consolidado em 21/09/2026
-
-**Atualização de Agendamentos em 21/09/2026:** a CAAB gerencia no painel o serviço de reservas.
-Consulta e alteração exigem concessões separadas; alteração depende de consulta. O acesso
-indiscriminado por sessão persiste no código e precisa ser corrigido (A01), inclusive em Relatórios
-(A02). Escopo confirmado: unidades com um ou mais serviços, profissionais, procedimentos,
-funcionamento e consulta/gestão de avaliações. Autenticação e auditoria permanecem; outros módulos
-mantêm suas permissões. Ações específicas de avaliações e regras operacionais ainda em
-brainstorming. Cal.com somente como referência, salvo se nenhuma alternativa for encontrada.
-
-A primeira versão administrativa de **Agendamentos** está implementada (US1/US2 da
-[spec 008](../specs/008-scheduling-management/spec.md)): oferta, horários, criação, consulta,
-remarcação, cancelamento e histórico. A interface do usuário no app/site e as expansões restantes
-continuam pendentes. O brainstorming anterior é histórico e não significa que o painel atual esteja
-apenas em pesquisa.
-
-**CAASSH: desativado — pendente de revisão.** As propostas de créditos abaixo/acima são referências
-históricas, sem ativação ou implementação autorizada no ciclo atual. A revisão deverá confirmar
-finalidade, escopo e eventuais dependências antes da retomada.

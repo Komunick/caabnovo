@@ -1,0 +1,1089 @@
+[
+  {
+    "key": "CAAB-2",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-3",
+    "total": 3,
+    "histories": [
+      {
+        "at": "2026-09-16T09:42:59.337-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:42:52.362-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked lower"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:39:58.767-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-4",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:55:50.530-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10013",
+            "fromString": "Code Review",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:42:25.785-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10013",
+            "toString": "Code Review"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-5",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:55:45.980-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10015",
+            "fromString": "Pronto para Deploy",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:40:06.844-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10015",
+            "toString": "Pronto para Deploy"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-7",
+    "total": 1,
+    "histories": [
+      {
+        "at": "2026-09-16T09:40:56.198-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-8",
+    "total": 1,
+    "histories": [
+      {
+        "at": "2026-09-16T09:42:23.938-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-9",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:41:01.857-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:40:57.875-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-10",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:41:03.926-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:40:51.599-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-11",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:41:05.902-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:40:59.045-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-12",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:42:48.692-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:42:21.231-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-13",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:42:42.477-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:41:12.141-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-14",
+    "total": 1,
+    "histories": [
+      {
+        "at": "2026-09-16T09:42:19.035-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-15",
+    "total": 3,
+    "histories": [
+      {
+        "at": "2026-09-16T09:42:57.860-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:42:55.791-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:42:17.831-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-16",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-16T09:43:06.997-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Classificação",
+            "fieldtype": "custom",
+            "from": "",
+            "fromString": "",
+            "to": "",
+            "toString": "Ranked higher"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T09:42:15.821-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-17",
+    "total": 4,
+    "histories": [
+      {
+        "at": "2026-09-23T09:04:31.710-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "summary",
+            "fieldtype": "jira",
+            "fieldId": "summary",
+            "from": null,
+            "fromString": "Implementação da aba: Agendamentos",
+            "to": null,
+            "toString": "Implementação inicial da aba: Agendamentos"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T10:47:09.210-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10016",
+            "toString": "Concluído"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T10:47:02.444-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "Epic Status",
+            "fieldtype": "custom",
+            "fieldId": "customfield_10012",
+            "from": "10016",
+            "fromString": "To Do",
+            "to": null,
+            "toString": ""
+          },
+          {
+            "field": "Epic Color",
+            "fieldtype": "custom",
+            "fieldId": "customfield_10013",
+            "from": null,
+            "fromString": "ghx-label-7",
+            "to": null,
+            "toString": "ghx-label-12"
+          },
+          {
+            "field": "Issue color",
+            "fieldtype": "custom",
+            "fieldId": "customfield_10017",
+            "from": null,
+            "fromString": "purple",
+            "to": null,
+            "toString": "grey"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-16T10:47:02.197-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "issuetype",
+            "fieldtype": "jira",
+            "fieldId": "issuetype",
+            "from": "10000",
+            "fromString": "Epic",
+            "to": "10012",
+            "toString": "Task"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-18",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-19",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-20",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-21",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-22",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-23",
+    "total": 1,
+    "histories": [
+      {
+        "at": "2026-09-28T11:25:56.630-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "description",
+            "fieldtype": "jira",
+            "fieldId": "description",
+            "from": null,
+            "fromString": "Disponibilizar a ação de exportação direta nas telas de Auditoria, Notícias, Associados (sem exportar dados da OAB), Parceiros e Agendamentos.",
+            "to": null,
+            "toString": "Disponibilizar a ação de exportação direta nas telas de Auditoria, Notícias, Associados (sem exportar dados da OAB), Parceiros e Agendamentos.\n\nh2. Recorte Agendamentos — 28/09/2026\n\nT035–T038 da spec 008: datasets scheduling.bookings/catalog/hours, Excel/CSV/PDF, filtros/ordem/colunas e conjunto completo, sem teto de 42 dias/1.000 itens do calendário. Exigir scheduling:read + exports:generate, sem scheduling:write.\nAcrescentar adapters ao registry existente ao lado de usersExport; SQL/cursor incremental; preservar /users/exportar. Exportar acima dos filtros no quadro; manter Nova reserva no cabeçalho da página. E2E dedicado scheduling-export.spec.ts, preservando scheduling.spec.ts.\nAceite US4 independente de corrida de reservas. Este registro atualiza somente Agendamentos; não conclui ou altera o restante deste ticket transversal."
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-28T12:40:43.067-0300",
+        "author": "conexão técnica histórica",
+        "body": "Parcela de Agendamentos concluída localmente: datasets bookings/catalog/hours registrados junto de usersExport, cursor SQL, filtros por nome, contexto/rascunho e colunas ordenáveis; Excel/CSV/PDF sem limite do calendário. 20 integrações geram e validam 100 linhas por dataset, vazios, filtros/ordem, textos longos e revogação. E2E baixa os três formatos dos três conjuntos sem scheduling:write e confirma /users/exportar. Esta atualização não conclui a exportação dos demais módulos. CI/publicação continuam pendentes por orientação de manter local."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-24",
+    "total": 3,
+    "histories": [
+      {
+        "at": "2026-09-30T14:56:39.139-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "assignee",
+            "fieldtype": "jira",
+            "fieldId": "assignee",
+            "from": null,
+            "fromString": null,
+            "to": "responsável técnico 02",
+            "toString": "responsável técnico 02",
+            "tmpFromAccountId": null,
+            "tmpToAccountId": "responsável técnico 02"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-30T14:56:33.456-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10013",
+            "fromString": "Code Review",
+            "to": "10014",
+            "toString": "Em Teste / QA"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-30T10:45:56.815-0300",
+        "author": "responsável técnico 02",
+        "accountId": "responsável técnico 02",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10013",
+            "toString": "Code Review"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-30T10:45:56.395-0300",
+        "author": "responsável técnico 02",
+        "body": "<custom data-type=\"mention\" data-id=\"id-0\">@responsável técnico 01</custom> PR aberto contra o `dev`: [Komunick/caabnovo#40](https://github.com/Komunick/caabnovo/pull/40)\n\n**O que mudou**\n\n* Na Análise detalhada sem agrupamento, o botão **Exportar dados** abre a tela de exportação já com os filtros, as colunas (na ordem) e a ordenação aplicados.\n* O arquivo sai completo em Excel, CSV ou PDF, pelo mesmo download direto de Colaboradores: **sem limite de 50 mil linhas** e sem a janela de 366 dias. No Excel, passando de 1.048.576 linhas, o arquivo continua em novas planilhas.\n* A permissão é conferida a cada lote de 100 linhas: `reports:read`, `exports:generate` e a permissão da fonte (`scheduling:read` em Agendamentos).\n* Resumo, Resultados e evolução e o detalhe **agrupado** continuam pela fila, com o limite antigo (esse caminho monta o arquivo inteiro na memória do worker).\n\n**Testes**\n\n* Formatação, lint, tipos, unitários (399), contrato (169), integração (251) e build passaram localmente; no CI, a etapa de qualidade passou.\n* Uma exportação de 50.001 linhas saiu completa em 37 s, e o caminho antigo recusa a mesma seleção (teste sob demanda, `CAAB_EXPORT_VOLUME=1`).\n* O E2E foi atualizado para o novo fluxo e roda no job de navegador do CI.\n\n**Atenção no CI**\n\n* O job de segurança falha por alertas novos (\"high\") no `undici`, dependência indireta do Testcontainers e do Payload. Este PR não mexe em dependências; o `dev` deve falhar no mesmo passo. Corrigir pede atualizar dependências, em outro PR.\n\nSpec 010 atualizada: T028 e T032–T034 feitas; T030 e T035 parciais. Pesquisa e evidências em `specs/010-reports-analytics`."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-25",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-26",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-28T12:18:43.793-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-28T11:25:49.210-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "description",
+            "fieldtype": "jira",
+            "fieldId": "description",
+            "from": null,
+            "fromString": "Impedir no banco de dados e na interface que o mesmo titular ou dependente tenha atendimentos sobrepostos no mesmo intervalo de tempo.",
+            "to": null,
+            "toString": "Impedir no banco de dados e na interface que o mesmo titular ou dependente tenha atendimentos sobrepostos no mesmo intervalo de tempo.\n\nh2. Plano corrigido — 28/09/2026\n\nT029: diagnóstico somente leitura de sobreposições existentes, sem cancelar/alterar reservas; conflitos exigem decisão explícita.\nT030: migration aditiva proposta 0031_scheduling_beneficiary_overlap.sql (0031 livre em dev 89d2356; reconferir), constraint própria scheduling_beneficiary_no_overlap por member_id e intervalo [), apenas scheduled. Executar diagnóstico antes do EXCLUDE.\nPreservar scheduling_no_overlap por profissional e migrations 0020/0028–0030. 0028 pertence ao ciclo de vida e não pode ser reutilizada.\nT031/T032: beneficiaryId opcional e validado na disponibilidade, consumidores enviam a pessoa selecionada; criar/remarcar sempre valida beneficiário real. Cobrir corrida entre profissionais/unidades, familiares distintos, adjacência, cancelamento e rollback. Pendente, após frente de acessos."
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-28T11:43:19.319-0300",
+        "author": "conexão técnica histórica",
+        "body": "Complemento da segunda revisão: 0031 é proteção transitória explícita para o schema administrativo scheduled/cancelled. Invariante 2C: scheduled e pending_approval ocupam. Antes de habilitar 2C, T045/T048 devem criar migration posterior (0032 proposta, reconferir) que faça DROP CONSTRAINT nomeado e recriação atômica de scheduling_beneficiary_no_overlap e scheduling_no_overlap com ambos os estados, após diagnóstico e T030–T032. Não reescrever migrations antigas nem habilitar pending_approval sobre o predicado provisório. SQL ainda não criado/aplicado."
+      },
+      {
+        "at": "2026-09-28T12:40:36.699-0300",
+        "author": "conexão técnica histórica",
+        "body": "Implementação local concluída no recorte administrativo: diagnóstico read-only + migration 0031 com preflight e constraint scheduling_beneficiary_no_overlap. Disponibilidade por pessoa entre unidades, erro recuperável, corrida de vinte chamadas, parcial/adjacente/cancelada, familiares distintos e rollback conferidos; 37 integrações Scheduling aprovadas. Migrations aplicadas preservadas. 0031 cobre scheduled; 2C ainda exige substituição atômica das duas constraints para pending_approval. Sem aplicação em banco de uso, push/PR/merge ou CI desta entrega."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-27",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-28T12:18:46.748-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-28T11:25:51.693-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "description",
+            "fieldtype": "jira",
+            "fieldId": "description",
+            "from": null,
+            "fromString": "Exibir alerta visual na agenda e nas listas para reservas futuras vinculadas a associados que foram posteriormente bloqueados ou inativados.",
+            "to": null,
+            "toString": "Exibir alerta visual na agenda e nas listas para reservas futuras vinculadas a associados que foram posteriormente bloqueados ou inativados.\n\nh2. Regra vigente — 28/09/2026\n\nT033/T034: projetar eligibilityWarning: 'blocked' | null em lote, sem N+1, em lista/calendário/detalhe. Bloqueio próprio ou de titular vigente sinaliza a reserva, preservando status/versão/ocupação; desbloqueio remove o aviso. Inatividade isolada não cria veto novo.\nCampo aditivo: preservar memberDeleted, memberDeletionEffectiveAt, keptAfterMemberDeletion, memberDeletionKeptAt/By e evento kept_after_member_deletion. Bloqueio e exclusão podem coexistir. Preservar Manter reserva (/keep), cancelamento e E2E de LC01; não substituir o aviso de exclusão pelo de bloqueio.\nCriar/remarcar já recusam bloqueados; o aviso de reservas existentes continua pendente."
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-28T12:40:39.395-0300",
+        "author": "conexão técnica histórica",
+        "body": "Implementação local concluída: eligibilityWarning aditivo projetado em lote para bloqueio próprio/titular vigente; lista/calendário/detalhe preservam reserva, vaga e histórico. E2E Chromium aprovado para bloqueio/desbloqueio e coexistência com exclusão: Manter reserva e Cancelar permanecem. LC01 preservada. Capturas claro/escuro e mobile/desktop revisadas; 37 integrações e cinco jornadas da entrega aprovadas. Mantido local, CI/publicação pendentes."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-28",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-28T11:26:01.297-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-28T11:25:47.006-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "description",
+            "fieldtype": "jira",
+            "fieldId": "description",
+            "from": null,
+            "fromString": "Dividir os privilégios de agendamento entre leitura (consultar agenda e atendimentos) e escrita (marcar, remarcar, cancelar e alterar horários).",
+            "to": null,
+            "toString": "Dividir os privilégios de agendamento entre leitura (consultar agenda e atendimentos) e escrita (marcar, remarcar, cancelar e alterar horários).\n\nh2. Estado reconciliado — 28/09/2026\n\nA separação read/write já foi implementada no PR #36 (af6f096), incluindo catálogo 0026, access.ts, layout, menu/descoberta e mutações. T028/AC01/AC02 concluídos; não reexecutar migrations 0025/0026.\n\nRestante em T027/AC03: matriz sem grant / só read / read+write / write sem read / revogação após espera; conferir permissões antes do lock 5010/1 e novamente após espera. GET não adquire esse lock. Preservar reports.bookings com scheduling:read e o cargo Gestor, sem exigir escrita. Implementação deste restante autorizada e iniciada nesta retomada. Não considerar o ticket integralmente concluído antes das evidências."
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-28T11:43:17.440-0300",
+        "author": "conexão técnica histórica",
+        "body": "Progresso local — 28/09: T027 concluído. Pré-checagem de grants antes de 5010/1 implementada, mantendo a releitura após espera e GET sem esse lock. 14 testes da guarda (4 falhavam antes), 46 unitários focados no total, 31 testes de integração PostgreSQL reais aprovados; lint e tipos web aprovados. Sete cenários novos de integração cobrem matriz de grants, lock ocupado/revogação e Gestor consultando bookings sem write. AC03 permanece aberta para evidências das superfícies; ticket continua Em Desenvolvimento. O usuário autorizou Docker/banco descartável e determinou manter tudo local, sem publicação."
+      },
+      {
+        "at": "2026-09-28T12:40:41.305-0300",
+        "author": "conexão técnica histórica",
+        "body": "T027 e AC03 concluídos localmente. Pré-grant antes de 5010/1 e revalidação após espera; GET sem lock. Matriz PostgreSQL + E2E comprovam nenhum grant/read/read+write/write sem read/revogação em Início, menu, busca, página e API; Gestor mantém relatórios bookings sem write. A guarda original AC01/AC02 continua sendo PR36. Sem push/PR/merge; CI desta entrega não executado."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-29",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-30",
+    "total": 1,
+    "histories": [
+      {
+        "at": "2026-09-28T11:25:53.970-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "description",
+            "fieldtype": "jira",
+            "fieldId": "description",
+            "from": null,
+            "fromString": "Desenvolver a interface do usuário e integrar as rotas para permitir que advogados e dependentes agendem serviços pelo aplicativo e pelo portal web.",
+            "to": null,
+            "toString": "Desenvolver a interface do usuário e integrar as rotas para permitir que advogados e dependentes agendem serviços pelo aplicativo e pelo portal web.\n\nh2. Planejamento atualizado — 28/09/2026\n\nO contrato já existe em specs/008-scheduling-management/contracts/channels.md, com modelo, plano e 38 tarefas T040–T077 ainda abertas. Executar após pendências administrativas de CAAB-37.\nLogin geral do app/site, sem login separado. Titular agenda para si/dependentes; dependente somente para si. Confirmação imediata padrão, desativável; edição antes do aceite e transferência a dependente elegível conforme contrato. Preservar políticas acordadas de remarcação e histórico individual.\nWhatsApp: WAHA escolhido, ainda a instalar; e-mail usa serviço definido para o sistema. Não reabrir seleção de fornecedor. Integração de identidade/UI01/UI02, inventário necessário do legado e entrega real precisam de evidências. Autorização de implementação recebida; homologação/ativação continuam dependentes desses gates."
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-28T11:43:21.151-0300",
+        "author": "conexão técnica histórica",
+        "body": "Gates reforçados na segunda revisão: UI01/UI02 são tarefas pendentes, não consumidor pronto. T049/T070 dependem de T041 (sessão geral → conta estável → member.id, revogação) e UI01/T043 definidos. T072/T073 exigem também consumidor UI02 localizado. Migration 2C posterior à 0031 precisa tratar NULLs por modo/estado, autoria e idempotência do canal separadas de user/colaborador, DTO e Relatórios (LEFT JOIN adequado e mapeamento de estados, sem converter pending em Cancelado). Público somente catálogo publicado. Corpo ativo de tasks agora é T025–T039; T040 apenas gates, sem schema. Nenhuma escrita/consumidor 2C iniciada."
+      },
+      {
+        "at": "2026-09-28T12:40:44.890-0300",
+        "author": "conexão técnica histórica",
+        "body": "T040 conferido após entrega administrativa local: integridade/avisos/exportação e AC03 validados. Escrita 2C continua condicionada a T041 (sessão geral→member verificável), UI01/UI02 da spec 002 e contrato físico de atores/NULLs/idempotência; não criar login próprio. Migration posterior deve incluir pending_approval em ambas as constraints. Nenhuma instalação/pareamento WAHA, canal real ou consumidor externo ativado."
+      },
+      {
+        "at": "2026-09-28T15:06:16.207-0300",
+        "author": "conexão técnica histórica",
+        "body": "Atualização de escopo — 28/09/2026 — CODEX / solicitante mafaltti (Danilo-Komunick).\n\nPor decisão explícita do usuário, app e site ficam adiados. A prioridade atual é concluir e validar a operação pelo painel administrativo e banco (spec 008, T078–T086; acompanhamento CAAB-37). Não será criada interface provisória: o painel existente permite testar a jornada.\n\nIdentidade externa sessão→member e UI01/UI02 continuam pré-requisitos da futura retomada deste item, sem bloquear a entrega administrativa. Não considerar testes administrativos como homologação de canais externos. Manter em Backlog; nenhuma publicação, ativação de canais ou instalação/pareamento WAHA nesta entrega."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-31",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-32",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-33",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-34",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-35",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-36",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  },
+  {
+    "key": "CAAB-37",
+    "total": 5,
+    "histories": [
+      {
+        "at": "2026-09-30T14:57:09.761-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "summary",
+            "fieldtype": "jira",
+            "fieldId": "summary",
+            "from": null,
+            "fromString": "Continuar Modulo de agendamentos",
+            "to": null,
+            "toString": "Modulo de agendamentos"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-30T14:57:00.968-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "assignee",
+            "fieldtype": "jira",
+            "fieldId": "assignee",
+            "from": null,
+            "fromString": null,
+            "to": "responsável técnico 01",
+            "toString": "responsável técnico 01",
+            "tmpFromAccountId": null,
+            "tmpToAccountId": "responsável técnico 01"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-28T11:25:58.986-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10013",
+            "fromString": "Code Review",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-28T11:25:44.642-0300",
+        "author": "conexão técnica histórica",
+        "accountId": "conexão técnica histórica",
+        "items": [
+          {
+            "field": "description",
+            "fieldtype": "jira",
+            "fieldId": "description",
+            "from": null,
+            "fromString": null,
+            "to": null,
+            "toString": "h2. Retomada autorizada — 28/09/2026\n\nO usuário autorizou atualizar o Jira e iniciar a implementação. Base conferida: dev 89d2356. Entrega na branch codex/scheduling-market-research-20260923.\n\nh3. Ordem de execução\n\n# Revisão CAL06 e evidências do calendário já integrado (PR #34).\n# Pendências administrativas T025–T039: testes/permissões (CAAB-28), conflito por beneficiário (CAAB-26), aviso de bloqueio (CAAB-27) e exportação (recorte de CAAB-23).\n# Integração app/site (CAAB-30), T022/T040–T077, respeitando dependências.\n\nh3. Estado reconciliado\n\nT028/AC01/AC02 já entregues pelo PR #36. Não repetir migrations 0025/0026 nem reconstruir FullCalendar. 0028 é lifecycle; próxima migration proposta é 0031, a reconferir. Preservar Manter reserva.\nA documentação local foi reconciliada em 13 arquivos; formatação/diff/links verificados. Isso não homologa novo código. Checklist 2C mantém 25 itens abertos e 38 tarefas pendentes; autorização de início recebida sem marcar revisão como concluída.\n\nFonte: specs/008-scheduling-management/{spec,plan,tasks}.md e evidence/reconciliation-2026-09-28.md. Correções locais ainda não publicadas. PR/merge/deploy, serviços pausados e instalação WAHA não estão autorizados por esta retomada."
+          }
+        ]
+      },
+      {
+        "at": "2026-09-23T09:05:34.244-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10013",
+            "toString": "Code Review"
+          }
+        ]
+      }
+    ],
+    "comments": [
+      {
+        "at": "2026-09-28T11:43:22.986-0300",
+        "author": "conexão técnica histórica",
+        "body": "Checkpoint local — 28/09: CAL06 encerrada após consulta dos checks finais do PR34 (head fb218fb, merge ed31baf) e revisão das quatro capturas versionadas. T027 implementado e validado com 46 unitários focados e 31 integrações PostgreSQL; AC03 e demais tarefas administrativas permanecem abertas. Segunda revisão incorporada: T025–T039 no corpo ativo, 2C depois; transição 0031→0032 explícita; identidade/UI/ator/NULLs/Relatórios como gates. Checkpoint vigente unifica autorização e Constitution Check usa 2.1.0. Usuário autorizou testes locais/Docker, mas pediu manter sem publicação: origin/dev ainda não recebeu a reconciliação; não foi aberto PR. Fontes locais: specs/008-scheduling-management/checkpoint.md e evidence/implement-2026-09-28.md."
+      },
+      {
+        "at": "2026-09-28T12:18:23.124-0300",
+        "author": "conexão técnica histórica",
+        "body": "Entrega administrativa local concluída em 28/09: T025–T038 + AC03; T040 conferiu gates. Pré-grant antes/depois do lock, diagnóstico + migration 0031 transitória, disponibilidade por pessoa, aviso de bloqueio preservando LC01, exportação bookings/catalog/hours ao lado de usersExport e filtros por nome. Validação: 81 unitários, 169 contratos, 37 integrações de agenda + 20 de exportação, cinco jornadas Chromium, lint, tipos, build e revisão de capturas aprovados. Arquivos reais CSV/XLSX/PDF conferidos com 100 registros por dataset e vazios. Tudo em worktree codex/scheduling-market-research-20260923, sobre 500f84f/base dev 89d2356, sem commit/push/PR/merge. T039 conserva CI pendente porque publicação não foi autorizada. 2C não implementado: T041/UI01/schema ainda são gates; nenhum canal real/WAHA ativado. Evidência local: specs/008-scheduling-management/evidence/plan-2026-09-21-validation.md."
+      },
+      {
+        "at": "2026-09-28T15:17:19.297-0300",
+        "author": "conexão técnica histórica",
+        "body": "Entrega administrativa local — 28/09/2026 — CODEX / solicitante mafaltti (Danilo-Komunick).\n\nDecisão incorporada: app/site adiado; painel aplica as mesmas regras de aprovação, prazo e duas trocas, preservando recuperação isenta por indisponibilidade do estabelecimento. T078–T086 da spec 008 concluídas localmente. Não foi necessária interface provisória.\n\nImplementado: migration 0032 após 0031 com exclusões pessoa/profissional para scheduled/pending_approval, capacidade por serviço e autoria administrativa; publicação/rascunho; pedido manual/imediato, edição/transferência elegível, decisões e ciclos de troca; recuperação com bloqueio do período; equipe/backup/fila; histórico com estado real de intenção de aviso; relatórios/exportações com cinco estados e profissional/intervalo nulos. LC01 e usersExport preservados.\n\nValidação: 98 unitários, 169 contratos, 72 integrações (37 anteriores + 15 workflow + 20 exportações), 6 E2E Chromium finais, build/tipos/lint e revisão visual aprovados. Upgrade com reserva anterior, replay de migration, 20 concorrentes, idempotência, autorização/revogação, teclado/Axe e 320/390/1280px cobertos. Corrigidos durante a validação: rascunho inativo afetando publicação, colisão do parâmetro de visualização da agenda e foco de teclado na lista longa. Nenhum check desativado.\n\nFonte: specs/008-scheduling-management/evidence/admin-workflow-2026-09-28.md e manifesto SHA-256 da entrega. Branch codex/scheduling-market-research-20260923, worktree local .cache/pr-scheduling-research-20260923; HEAD 500f84f com alterações ainda não commitadas. dev/origin/dev 89d2356 confirmado por fetch.\n\nLimites: manter local, sem push/PR/merge/deploy/CI remoto; banco de uso não migrado. Contador antigo desconhecido permanece NULL e requer conciliação para nova troca voluntária. WAHA/e-mail possuem somente intenção transacional, sem dispatcher ou entrega real. CAAB-30 permanece adiado em Backlog. Não encerrar o módulo inteiro nem declarar app/site/provedores homologados com esta evidência."
+      },
+      {
+        "at": "2026-09-28T17:42:04.966-0300",
+        "author": "conexão técnica histórica",
+        "body": "Consolidação local para revisão — 28/09/2026 — CODEX / mafaltti (Danilo-Komunick).\n\nItens 1 e 2 autorizados pelo usuário concluídos: T102 de faltas conferida (2 E2E Chromium, 18 capturas; 62 integrações do incremento) e revisão do conjunto realizada. Gate adicional completo: 702 testes unitários/contratos em 92 arquivos, lint do repositório, tipos dos seis pacotes, formatação explícita de 32 documentos e 120 destinos locais sem ausência.\n\nGitleaks 8.28.0 no delta/histórico da entrega sem achados. Auditoria de dependências passou no limite high, com aviso moderado preexistente uuid 8.3.2 transitivo do ExcelJS; registrado sem override ou atualização de dependências. A varredura integral apresentou dois identificadores de formulários preexistentes em dev, conferidos como falsos positivos, sem alterar scanner/allowlist.\n\nEvidência: specs/008-scheduling-management/evidence/pr-review-2026-09-28.md; manifesto SHA-256 de 80 arquivos; ordem 0031–0034, compatibilidade e plano de implantação/reversão documentados. Inventários e checkpoint reconciliados com a UI de faltas concluída.\n\nContinua somente local, sem commit/push/PR/merge/deploy. Publicação depende de pedido explícito; CI remoto e revisão humana continuam necessários antes do merge. App/site, entrega real de avisos e cancelamento fora dos trinta dias permanecem fora do recorte."
+      }
+    ]
+  },
+  {
+    "key": "CAAB-38",
+    "total": 2,
+    "histories": [
+      {
+        "at": "2026-09-30T14:57:19.222-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "assignee",
+            "fieldtype": "jira",
+            "fieldId": "assignee",
+            "from": null,
+            "fromString": null,
+            "to": "responsável técnico 01",
+            "toString": "responsável técnico 01",
+            "tmpFromAccountId": null,
+            "tmpToAccountId": "responsável técnico 01"
+          }
+        ]
+      },
+      {
+        "at": "2026-09-23T09:53:18.956-0300",
+        "author": "responsável técnico 01",
+        "accountId": "responsável técnico 01",
+        "items": [
+          {
+            "field": "status",
+            "fieldtype": "jira",
+            "fieldId": "status",
+            "from": "10010",
+            "fromString": "Backlog",
+            "to": "10012",
+            "toString": "Em Desenvolvimento"
+          }
+        ]
+      }
+    ],
+    "comments": []
+  },
+  {
+    "key": "CAAB-39",
+    "total": 0,
+    "histories": [],
+    "comments": []
+  }
+]
